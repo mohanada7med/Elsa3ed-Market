@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #FDFBF7;
+    color: #2D2A26;
+  }
+
+  h1, h2, h3, h4, .font-heritage {
+    font-family: 'Amiri', 'Cairo', serif;
+  }
+}
+
+/* Geometric Balance theme utilities and crisp structured cards */
+.bg-heritage-pattern {
+  background-color: #FDFBF7;
+  background-image: radial-gradient(#B45F42 0.75px, transparent 0.75px), radial-gradient(#8C5039 0.75px, #FDFBF7 0.75px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+.geometric-card {
+  background: #ffffff;
+  border: 1px solid #E8E1D9;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.geometric-card:hover {
+  border-color: #CBBDB0;
+  box-shadow: 0 8px 24px -6px rgba(45, 42, 38, 0.08);
+}
+
+.clay-glow {
+  box-shadow: 0 10px 25px -10px rgba(180, 95, 66, 0.2);
+}
+
+.clay-card {
+  background: #ffffff;
+  border: 1px solid #E8E1D9;
+  border-radius: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-card:hover {
+  border-color: #B45F42;
+  box-shadow: 0 10px 28px -8px rgba(45, 42, 38, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar matching Geometric Balance */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #F3EFE9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBBDB0;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B45F42;
+}
+

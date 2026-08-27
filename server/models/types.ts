@@ -1,0 +1,347 @@
+export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin';
+
+export type ProductStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+
+export type SellerStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
+
+export type OrderStatus =
+  | 'pending'
+  | 'review'
+  | 'confirmed'
+  | 'processing'
+  | 'shipped'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled';
+
+export type PaymentMethod = 'vodafone_cash' | 'instapay' | 'cod' | 'credit_card';
+
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+
+export interface ProductDocument {
+  id: string;
+  title: string;
+  titleEn?: string;
+  categoryId: string;
+  categoryName: string;
+  sellerId: string;
+  sellerName: string;
+  sellerGovernorate: string;
+  price: number;
+  originalPrice?: number;
+  discountPercent?: number;
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+  stockCount: number;
+  images: string[];
+  description: string;
+  specifications: {
+    material: string;
+    originGovernorate: string;
+    craftsmanship: string;
+    dimensions?: string;
+    weight?: string;
+    careInstructions?: string;
+    estimatedMakingTime?: string;
+  };
+  tags: string[];
+  isHandmade: boolean;
+  isHeritage: boolean;
+  isFeatured?: boolean;
+  isNewArrival?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  approvalStatus: ProductStatus;
+  approvedAt?: string | null;
+  approvedBy?: string | null;
+  rejectionReason?: string | null;
+}
+
+export interface SellerDocument {
+  id: string;
+  userId?: string;
+  name: string;
+  brandName: string;
+  governorate: string;
+  rating: number;
+  salesCount: number;
+  productsCount: number;
+  badge: string;
+  avatar: string;
+  coverImage: string;
+  bio: string;
+  story: string;
+  verified: boolean;
+  joinedDate: string;
+  phone: string;
+  email: string;
+  payoutMethod: 'vodafone_cash' | 'instapay' | 'bank_transfer';
+  payoutAccount: string;
+  status: SellerStatus;
+  specialty: string;
+  rejectionReason?: string | null;
+  suspensionReason?: string | null;
+  approvedAt?: string | null;
+  approvedBy?: string | null;
+  rejectedAt?: string | null;
+  rejectedBy?: string | null;
+  suspendedAt?: string | null;
+  suspendedBy?: string | null;
+}
+
+export interface AuditLogDocument {
+  id: string;
+  actorId?: string;
+  userName: string;
+  userRole: UserRole;
+  action: string;
+  resource: string;
+  resourceId?: string;
+  timestamp: string;
+  status: 'نجاح' | 'تنبيه' | 'خطأ';
+  details: string;
+  metadata?: Record<string, any>;
+}
+
+export interface CartItemDocument {
+  productId: string;
+  quantity: number;
+  selectedColor?: string;
+  customNote?: string;
+  addedAt: string;
+}
+
+export interface CartDocument {
+  id: string;
+  buyerId: string;
+  items: CartItemDocument[];
+  updatedAt: string;
+}
+
+export interface PopulatedCartItem {
+  product: ProductDocument;
+  quantity: number;
+  selectedColor?: string;
+  customNote?: string;
+  itemSubtotal: number;
+  isAvailable: boolean;
+  stockCount: number;
+  warning?: string;
+}
+
+export interface OrderItemSnapshot {
+  productId: string;
+  productTitle: string;
+  productImage: string;
+  sellerId: string;
+  sellerName: string;
+  sellerGovernorate: string;
+  quantity: number;
+  unitPrice: number; // Historical price snapshot at order creation
+  subtotal: number;
+  selectedColor?: string;
+  customNote?: string;
+}
+
+export interface OrderAddressDocument {
+  fullName: string;
+  phone: string;
+  governorate: string;
+  city: string;
+  streetAddress: string;
+  buildingNo?: string;
+  notes?: string;
+}
+
+export interface OrderTimelineDocument {
+  status: OrderStatus;
+  title: string;
+  description: string;
+  time: string;
+  done: boolean;
+}
+
+export interface OrderDocument {
+  id: string;
+  orderNumber: string;
+  buyerId: string;
+  buyerName: string;
+  buyerPhone: string;
+  buyerEmail?: string;
+  shippingAddress: OrderAddressDocument;
+  items: OrderItemSnapshot[];
+  status: OrderStatus;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentReference?: string;
+  paymentReceiptUrl?: string;
+  subtotal: number;
+  shippingFee: number;
+  discountAmount: number;
+  discountCode?: string;
+  total: number;
+  createdAt: string;
+  updatedAt: string;
+  trackingNumber: string;
+  timeline: OrderTimelineDocument[];
+  sellerIds: string[];
+  cancellationReason?: string;
+}
+
+export interface CategoryDocument {
+  id: string;
+  name: string;
+  nameEn?: string;
+  slug: string;
+  description: string;
+  image: string;
+  iconName: string;
+  productsCount: number;
+  active: boolean;
+  heritageNote?: string;
+  featuredGovernorate?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ReviewDocument {
+  id: string;
+  productId: string;
+  productTitle?: string;
+  userId: string;
+  userName: string;
+  userGovernorate?: string;
+  orderId?: string;
+  rating: number;
+  comment: string;
+  date: string;
+  verifiedPurchase: boolean;
+  status: 'published' | 'hidden';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface StockMovementDocument {
+  id: string;
+  productId: string;
+  productTitle: string;
+  sellerId: string;
+  type: 'STOCK_ADDED' | 'STOCK_REMOVED' | 'ORDER_SOLD' | 'MANUAL_ADJUSTMENT';
+  quantity: number;
+  previousStock: number;
+  newStock: number;
+  reason: string;
+  actorId: string;
+  actorName: string;
+  timestamp: string;
+}
+
+export interface DiscountCouponDocument {
+  id: string;
+  code: string;
+  discountPercent: number;
+  maxDiscount?: number;
+  minOrderValue: number;
+  active: boolean;
+  validUntil: string;
+  usageCount: number;
+  description: string;
+}
+
+export interface UserAddress {
+  fullName: string;
+  phone: string;
+  governorate: string;
+  city: string;
+  streetAddress: string;
+  buildingNo?: string;
+  notes?: string;
+  isDefault?: boolean;
+}
+
+export interface UserDocument {
+  id: string;
+  name: string;
+  email: string;
+  passwordHash?: string;
+  phone: string;
+  role: UserRole;
+  avatar?: string;
+  profileImage?: {
+    secureUrl: string;
+    publicId: string;
+  } | null;
+  governorate?: string;
+  sellerId?: string;
+  sellerStatus?: SellerStatus;
+  savedAddresses?: UserAddress[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface FavoriteDocument {
+  id: string;
+  buyerId: string;
+  productId: string;
+  createdAt: string;
+}
+
+export interface NotificationDocument {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  type: 'order' | 'product' | 'system' | 'promotion';
+  isRead: boolean;
+  link?: string;
+  createdAt: string;
+}
+
+export interface PaymentDocument {
+  id: string;
+  orderId: string;
+  buyerId: string;
+  amount: number;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  paymentReference?: string;
+  paymentReceiptUrl?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ShipmentDocument {
+  id: string;
+  orderId: string;
+  trackingNumber: string;
+  carrier: string;
+  status: OrderStatus;
+  estimatedDelivery?: string;
+  updates: Array<{
+    status: string;
+    message: string;
+    timestamp: string;
+    location?: string;
+  }>;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface CraftStoryDocument {
+  id: string;
+  title: string;
+  subtitle: string;
+  governorate: string;
+  historyAge: string;
+  image: string;
+  description: string;
+  keyFeatures: string[];
+  categoryId: string;
+  displayOrder: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+

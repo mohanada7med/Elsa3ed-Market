@@ -1,0 +1,6 @@
+{
+  "name": "سوق الصعيد (Elsa3ed Market)",
+  "description": "المنصة الرائدة للتجارة الإلكترونية والحرف التراثية والمنتجات الأصيلة من قلب صعيد مصر",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
