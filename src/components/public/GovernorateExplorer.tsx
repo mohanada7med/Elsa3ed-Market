@@ -89,7 +89,7 @@ export const GovernorateExplorer: React.FC = () => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {UPPER_EGYPT_GOVERNORATES.map((gov) => {
           const govSellers = sellers.filter(
             (s) => s.governorate === gov.name && s.status !== 'rejected' && s.status !== 'suspended'
@@ -107,34 +107,29 @@ export const GovernorateExplorer: React.FC = () => {
               key={gov.name}
               id={`gov-card-${gov.name}`}
               onClick={() => handleSelectGov(gov.name)}
-              className="group cursor-pointer rounded-2xl bg-white border border-[#ebdccd] hover:border-[#943310] p-4 text-center transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between"
+              className="group cursor-pointer rounded-2xl bg-white border border-[#ebdccd] hover:border-[#943310] p-3 sm:p-4 text-center transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between"
             >
-              <div className="relative w-16 h-16 rounded-2xl overflow-hidden mb-3 border border-amber-900/10 shadow-xs group-hover:scale-105 transition-transform">
+              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden mb-2.5 sm:mb-3 border border-amber-900/10 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                 <img src={gov.iconImage} alt={gov.name} className="w-full h-full object-cover" />
               </div>
 
               <div>
-                <h3 className="font-bold text-gray-900 text-sm group-hover:text-[#943310] transition-colors">
+                <h3 className="font-bold text-gray-900 text-xs sm:text-sm group-hover:text-[#943310] transition-colors">
                   محافظة {gov.name}
                 </h3>
-                <p className="text-[11px] font-bold text-[#943310] mt-0.5">{gov.famousCraft}</p>
-                <p className="text-[10px] text-[#8c6b53] mt-1 leading-tight">{gov.famousItem}</p>
+                <p className="text-[10px] sm:text-[11px] font-bold text-[#943310] mt-0.5">{gov.famousCraft}</p>
+                <p className="text-[9px] sm:text-[10px] text-[#8c6b53] mt-1 leading-tight line-clamp-2">{gov.famousItem}</p>
               </div>
 
-              <div className="mt-3 pt-2 border-t border-[#f0e4d7] w-full text-[10px] text-gray-500 font-medium flex items-center justify-between gap-1 group-hover:text-[#943310]">
+              <div className="mt-2.5 pt-2 border-t border-[#f0e4d7] w-full text-[9px] sm:text-[10px] text-gray-500 font-medium flex flex-wrap items-center justify-between gap-0.5 group-hover:text-[#943310]">
                 <div className="flex items-center gap-1 truncate text-right">
                   <span className="font-bold text-[#943310]">
                     {sellersCount > 0
                       ? `${sellersCount} ${sellersCount === 1 ? 'مقدم خدمة' : 'مقدمي خدمات'}`
                       : 'بانتظار ورش'}
                   </span>
-                  {productsCount > 0 && (
-                    <span className="text-[9px] text-gray-400 font-normal">
-                      ({productsCount} منتج)
-                    </span>
-                  )}
                 </div>
-                <ArrowLeft className="w-2.5 h-2.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-[#943310]" />
+                <span>({productsCount} منتج)</span>
               </div>
             </div>
           );

@@ -29,7 +29,8 @@ export const BuyerAccountPage: React.FC = () => {
     addToast,
     uploadProfileImage,
     removeProfileImage,
-    switchRole
+    setIsAuthModalOpen,
+    setAuthModalTab
   } = useApp();
 
   const [name, setName] = useState(currentUser.name);
@@ -131,9 +132,9 @@ export const BuyerAccountPage: React.FC = () => {
       {/* Account Overview Header */}
       <div className="bg-white rounded-3xl border border-[#ebdccd] p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
             {/* User Avatar with Cloudinary Integration */}
-            <div className="relative group">
+            <div className="relative group shrink-0">
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#943310] text-white flex items-center justify-center font-black text-3xl font-heritage shadow-md border-2 border-[#ebdccd]">
                 {isUploadingImage || isRemovingImage ? (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
@@ -159,14 +160,14 @@ export const BuyerAccountPage: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage || isRemovingImage}
                 title="تغيير الصورة"
-                className="absolute -bottom-1 -left-1 p-2 bg-[#943310] hover:bg-[#78280b] text-white rounded-xl shadow-md transition-transform hover:scale-105"
+                className="absolute -bottom-1 -left-1 p-2 bg-[#943310] hover:bg-[#78280b] text-white rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center"
               >
                 <Camera className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center sm:justify-start gap-2">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{currentUser.name}</h1>
                 <span className="bg-amber-100 text-[#943310] text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                   {currentUser.role === 'admin'
@@ -179,7 +180,7 @@ export const BuyerAccountPage: React.FC = () => {
               <p className="text-xs text-gray-500 mt-1">{currentUser.email}</p>
 
               {/* Profile Image Management Controls */}
-              <div className="flex items-center gap-2 mt-3">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -262,6 +263,24 @@ export const BuyerAccountPage: React.FC = () => {
               البيانات الشخصية وعنوان التوصيل الافتراضي
             </h3>
 
+            {/* Username display (read-only for security) */}
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1">اسم المستخدم</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  readOnly
+                  disabled
+                  value={currentUser.username || 'غير محدد'}
+                  className="w-full pl-3 pr-10 py-3 bg-gray-100/80 border border-[#dfcebe] rounded-xl text-sm outline-none text-gray-600 min-h-[44px] cursor-not-allowed font-medium"
+                />
+                <User className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
+              </div>
+              <span className="text-[11px] text-gray-500 mt-1 block">
+                اسم المستخدم ثابت ومخصص لتسجيل الدخول بأمان لحسابك.
+              </span>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">الاسم الكامل</label>
@@ -271,23 +290,25 @@ export const BuyerAccountPage: React.FC = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full pl-3 pr-10 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
-                  <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                  <User className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  البريد الإلكتروني <span className="text-gray-400 font-normal">(اختياري)</span>
+                </label>
                 <div className="relative">
                   <input
                     type="email"
-                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    placeholder="name@example.com (اختياري)"
+                    className="w-full pl-3 pr-10 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
-                  <Mail className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                  <Mail className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
                 </div>
               </div>
             </div>
@@ -301,9 +322,9 @@ export const BuyerAccountPage: React.FC = () => {
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full pl-3 pr-10 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
-                  <Phone className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                  <Phone className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
                 </div>
               </div>
 
@@ -313,7 +334,7 @@ export const BuyerAccountPage: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full px-3.5 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px] cursor-pointer"
                   >
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
@@ -333,7 +354,7 @@ export const BuyerAccountPage: React.FC = () => {
 
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 transition-colors"
+              className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px]"
             >
               <Save className="w-4 h-4" />
               <span>حفظ التعديلات</span>
@@ -350,11 +371,18 @@ export const BuyerAccountPage: React.FC = () => {
             </p>
             <button
               type="button"
-              onClick={() => switchRole('seller')}
+              onClick={() => {
+                if (currentRole === 'seller') {
+                  setActivePage('seller-dashboard');
+                } else {
+                  setAuthModalTab('register');
+                  setIsAuthModalOpen(true);
+                }
+              }}
               className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors"
             >
               <Store className="w-4 h-4" />
-              <span>الدخول إلى لوحة البائع الحرفي</span>
+              <span>{currentRole === 'seller' ? 'الدخول إلى لوحة البائع الحرفي' : 'تسجيل حساب ورشة حرفية'}</span>
             </button>
           </div>
 

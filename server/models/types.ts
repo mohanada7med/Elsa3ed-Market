@@ -262,8 +262,10 @@ export interface UserAddress {
 
 export interface UserDocument {
   id: string;
+  username: string;
+  usernameNormalized?: string;
   name: string;
-  email: string;
+  email?: string;
   passwordHash?: string;
   phone: string;
   role: UserRole;

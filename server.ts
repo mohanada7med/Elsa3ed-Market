@@ -52,18 +52,23 @@ async function startServer() {
   app.use(authenticate);
 
   // 7. Initialize Database Connection Pool
-  await getDatabase();
+  const { db, isMongo } = await getDatabase();
+  if (env.NODE_ENV === 'production' && (!isMongo || !db)) {
+    Logger.error('[Server] FATAL: Production startup aborted. MongoDB connection is required.');
+    process.exit(1);
+  }
 
   // 8. Health check endpoint verifying database connectivity without exposing secrets
   app.get('/api/health', async (req, res) => {
     try {
-      const { db, isMongo } = await getDatabase();
-      let dbConnected = true;
-      if (isMongo && db) {
-        await db.command({ ping: 1 });
+      const { db: currentDb, isMongo: currentIsMongo } = await getDatabase();
+      let dbConnected = false;
+      if (currentIsMongo && currentDb) {
+        await currentDb.command({ ping: 1 });
+        dbConnected = true;
       }
-      res.json({
-        status: 'ok',
+      res.status(dbConnected ? 200 : (env.NODE_ENV === 'production' ? 503 : 200)).json({
+        status: dbConnected ? 'ok' : 'degraded',
         database: dbConnected ? 'connected' : 'disconnected'
       });
     } catch {

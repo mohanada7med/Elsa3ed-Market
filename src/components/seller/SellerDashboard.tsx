@@ -783,7 +783,7 @@ export const SellerDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#E8E1D9] overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 border-b border-[#E8E1D9] overflow-x-auto pb-2 no-scrollbar px-1">
         <button
           type="button"
           onClick={() => setActiveTab('overview')}
@@ -1049,7 +1049,7 @@ export const SellerDashboard: React.FC = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                    <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
                       {/* Quick stock adjustment button */}
                       <button
                         type="button"
@@ -1186,7 +1186,8 @@ export const SellerDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-right text-xs">
                 <thead>
                   <tr className="border-b border-[#E8E1D9] text-[#7A6F64] font-bold">
@@ -1247,7 +1248,7 @@ export const SellerDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => openStockModal(prod)}
-                            className="px-3 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 ml-auto"
+                            className="px-3 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-lg shadow-xs flex items-center gap-1.5 ml-auto min-h-[36px]"
                           >
                             <Sliders className="w-3.5 h-3.5" />
                             <span>تعديل الرصيد</span>
@@ -1258,6 +1259,54 @@ export const SellerDashboard: React.FC = () => {
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Cards View for Inventory */}
+            <div className="md:hidden space-y-3">
+              {sellerProducts.map((prod) => {
+                const isOutOfStock = prod.stockCount === 0;
+                const isLow = prod.stockCount > 0 && prod.stockCount <= 5;
+                return (
+                  <div key={prod.id} className="p-3.5 rounded-2xl bg-[#FDFBF7] border border-[#E8E1D9] space-y-3 shadow-2xs">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={prod.images[0]}
+                        alt={prod.title}
+                        className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className="font-bold text-xs text-[#2D2A26] block truncate">{prod.title}</span>
+                        <span className="text-[11px] text-[#7A6F64] block">
+                          {prod.categoryName} • <strong className="text-[#B45F42] font-mono">{prod.price} ج.م</strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E8E1D9]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-[#7A6F64]">الرصيد:</span>
+                        <span className="font-mono font-bold text-sm text-[#2D2A26]">{prod.stockCount} قطعة</span>
+                        {isOutOfStock ? (
+                          <span className="bg-rose-100 text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded-full">نفذ</span>
+                        ) : isLow ? (
+                          <span className="bg-amber-100 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">منخفض</span>
+                        ) : (
+                          <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">متوفر</span>
+                        )}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => openStockModal(prod)}
+                        className="px-3 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-2xs min-h-[38px] flex items-center gap-1"
+                      >
+                        <Sliders className="w-3 h-3" />
+                        <span>تعديل</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -1666,7 +1715,7 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#2D2A26] mb-1">السعر (ج.م) *</label>
                   <input

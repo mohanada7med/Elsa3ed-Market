@@ -1,19 +1,30 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { findUserByEmail, findUserById, createUser } from './userService.ts';
+import {
+  findUserByEmail,
+  findUserById,
+  findUserByUsername,
+  findUserByIdentifier,
+  validateUsername,
+  createUser
+} from './userService.ts';
 import { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
 import { Logger } from '../utils/logger.ts';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'elsa3ed-market-secret-jwt-key-2025';
+const JWT_SECRET = process.env.AUTH_SECRET || process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'elsa3ed-dev-jwt-key' : '');
+if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
+  throw new Error('[AuthService] FATAL: AUTH_SECRET or JWT_SECRET must be set in production.');
+}
 
 export interface AuthSession {
   token: string;
   user: {
     id: string;
+    username: string;
     name: string;
-    email: string;
+    email?: string;
     phone: string;
     role: UserRole;
     avatar?: string;
@@ -27,6 +38,7 @@ export interface AuthSession {
 export function generateToken(user: UserDocument): string {
   const payload = {
     sub: user.id,
+    username: user.username,
     email: user.email,
     role: user.role,
     sellerId: user.sellerId,
@@ -38,7 +50,7 @@ export function generateToken(user: UserDocument): string {
   return `${str}.${hmac}`;
 }
 
-export function verifyToken(token: string): { sub: string; email: string; role: UserRole; sellerId?: string; sellerStatus?: SellerStatus } | null {
+export function verifyToken(token: string): { sub: string; username?: string; email?: string; role: UserRole; sellerId?: string; sellerStatus?: SellerStatus } | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 2) return null;
@@ -63,8 +75,9 @@ export async function comparePassword(plainPassword: string, hash: string): Prom
 }
 
 export async function register(params: {
+  username: string;
   name: string;
-  email: string;
+  email?: string;
   password: string;
   phone: string;
   role: UserRole;
@@ -72,9 +85,24 @@ export async function register(params: {
   workshopName?: string;
   specialty?: string;
 }): Promise<AuthSession> {
-  const existingUser = await findUserByEmail(params.email);
-  if (existingUser) {
-    throw new Error('هذا البريد الإلكتروني مسجل بالفعل. يرجى تسجيل الدخول بدلاً من ذلك.');
+  // 1. Validate username
+  const usernameCheck = validateUsername(params.username);
+  if (!usernameCheck.valid) {
+    throw new Error(usernameCheck.message || 'اسم المستخدم غير صالح');
+  }
+
+  // 2. Enforce uniqueness of username across all roles
+  const existingUsername = await findUserByUsername(params.username);
+  if (existingUsername) {
+    throw new Error('اسم المستخدم مستخدم بالفعل، اختر اسمًا آخر');
+  }
+
+  // 3. Check optional email uniqueness if provided
+  if (params.email?.trim()) {
+    const existingEmail = await findUserByEmail(params.email);
+    if (existingEmail) {
+      throw new Error('هذا البريد الإلكتروني مسجل بالفعل. يرجى استخدام بريد آخر أو تسجيل الدخول.');
+    }
   }
 
   const passwordHash = await hashPassword(params.password);
@@ -102,7 +130,7 @@ export async function register(params: {
       verified: false,
       joinedDate: new Date().toISOString().split('T')[0],
       phone: params.phone,
-      email: params.email,
+      email: params.email || '',
       payoutMethod: 'vodafone_cash',
       payoutAccount: params.phone,
       status: 'pending' as SellerStatus,
@@ -110,17 +138,15 @@ export async function register(params: {
     };
 
     if (isMongo && db) {
-      try {
-        await db.collection('sellers').insertOne(newSeller as any);
-      } catch (e) {
-        Logger.error('[AuthService] Error creating seller record in MongoDB:', e);
-      }
+      await db.collection('sellers').insertOne(newSeller as any);
+    } else {
+      throw new Error('قاعدة البيانات غير متوفرة حالياً، تعذر تسجيل حساب البائع.');
     }
-    memoryDb.sellers.push(newSeller as any);
   }
 
   const createdUser = await createUser({
     id: userId,
+    username: params.username,
     name: params.name,
     email: params.email,
     passwordHash,
@@ -139,7 +165,7 @@ export async function register(params: {
     resource: 'users',
     resourceId: createdUser.id,
     status: 'نجاح',
-    details: `تم تسجيل حساب جديد بنجاح بصلاحية (${createdUser.role}) والبريد: ${createdUser.email}`
+    details: `تم تسجيل حساب جديد بنجاح باسم مستخدم: (${createdUser.username}) وصلاحية (${createdUser.role})`
   });
 
   const token = generateToken(createdUser);
@@ -147,6 +173,7 @@ export async function register(params: {
     token,
     user: {
       id: createdUser.id,
+      username: createdUser.username,
       name: createdUser.name,
       email: createdUser.email,
       phone: createdUser.phone,
@@ -160,18 +187,22 @@ export async function register(params: {
   };
 }
 
-export async function login(email: string, password: string): Promise<AuthSession> {
-  const user = await findUserByEmail(email);
-  if (!user) {
-    throw new Error('بيانات الدخول غير صحيحة. يرجى التأكد من البريد الإلكتروني وكلمة المرور.');
+export async function login(identifier: string, password: string): Promise<AuthSession> {
+  if (!identifier || typeof identifier !== 'string' || !identifier.trim()) {
+    throw new Error('من فضلك اكتب اسم المستخدم');
+  }
+  if (!password || typeof password !== 'string') {
+    throw new Error('من فضلك اكتب كلمة المرور');
   }
 
-  // Verify password if passwordHash exists
-  if (user.passwordHash) {
-    const isMatch = await comparePassword(password, user.passwordHash);
-    if (!isMatch) {
-      throw new Error('بيانات الدخول غير صحيحة. يرجى التأكد من البريد الإلكتروني وكلمة المرور.');
-    }
+  const user = await findUserByIdentifier(identifier);
+  if (!user || !user.passwordHash) {
+    throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
+  }
+
+  const isMatch = await comparePassword(password, user.passwordHash);
+  if (!isMatch) {
+    throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
   }
 
   // If role is seller, query latest status from sellers collection
@@ -189,9 +220,6 @@ export async function login(email: string, password: string): Promise<AuthSessio
         Logger.error('[AuthService] Error fetching seller status during login:', e);
       }
     }
-    if (!sellerDoc) {
-      sellerDoc = memoryDb.sellers.find((s) => s.id === sellerId || (s as any).userId === user.id);
-    }
     sellerStatus = sellerDoc?.status || user.sellerStatus || 'pending';
   }
 
@@ -203,11 +231,11 @@ export async function login(email: string, password: string): Promise<AuthSessio
   await createAuditLog({
     userName: user.name,
     userRole: user.role,
-    action: 'تسجيل دخول',
-    resource: 'auth',
+    action: 'تسجيل دخول ناجح',
+    resource: 'users',
     resourceId: user.id,
     status: 'نجاح',
-    details: `تسجيل دخول ناجح للمستخدم (${user.email}) بدور (${user.role})`
+    details: `تم تسجيل دخول المستخدم (${user.username || user.name}) بنجاح`
   });
 
   const token = generateToken(userWithStatus);
@@ -215,6 +243,7 @@ export async function login(email: string, password: string): Promise<AuthSessio
     token,
     user: {
       id: user.id,
+      username: user.username || user.name,
       name: user.name,
       email: user.email,
       phone: user.phone,
@@ -222,7 +251,7 @@ export async function login(email: string, password: string): Promise<AuthSessio
       avatar: user.avatar,
       governorate: user.governorate,
       sellerId: user.sellerId,
-      sellerStatus,
+      sellerStatus: userWithStatus.sellerStatus,
       savedAddresses: user.savedAddresses
     }
   };

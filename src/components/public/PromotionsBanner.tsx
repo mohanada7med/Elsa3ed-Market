@@ -53,7 +53,7 @@ export const PromotionsBanner: React.FC = () => {
                 type="button"
                 id="copy-coupon-btn"
                 onClick={handleCopyCoupon}
-                className="px-3.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-bold transition-colors flex items-center gap-1 shrink-0"
+                className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[38px]"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-900" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'تم التفعيل!' : 'نسخ وتفعيل'}</span>
@@ -64,7 +64,7 @@ export const PromotionsBanner: React.FC = () => {
               type="button"
               id="promo-shop-now-btn"
               onClick={() => setActivePage('products')}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-white hover:bg-amber-100 text-[#943310] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-amber-100 text-[#943310] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 min-h-[44px]"
             >
               <span>تسوق العروض المميزة</span>
               <ArrowLeft className="w-3.5 h-3.5" />

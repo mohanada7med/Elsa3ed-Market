@@ -281,12 +281,13 @@ export const ProductDetailsView: React.FC = () => {
 
           {/* Quantity and Add to Cart */}
           <div className="space-y-3 pt-2">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center border border-[#ebdccd] rounded-xl bg-white p-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="flex items-center justify-between sm:justify-start border border-[#ebdccd] rounded-xl bg-white p-1 min-h-[44px]">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg font-bold"
+                  className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center"
+                  aria-label="تقليل الكمية"
                 >
                   -
                 </button>
@@ -294,7 +295,8 @@ export const ProductDetailsView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setQuantity(quantity + 1)}
-                  className="px-3 py-1 text-gray-600 hover:bg-gray-100 rounded-lg font-bold"
+                  className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center"
+                  aria-label="زيادة الكمية"
                 >
                   +
                 </button>
@@ -305,7 +307,7 @@ export const ProductDetailsView: React.FC = () => {
                 id="details-add-cart-btn"
                 onClick={() => addToCart(product, quantity)}
                 disabled={!product.inStock}
-                className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
+                className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px]"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
@@ -328,8 +330,8 @@ export const ProductDetailsView: React.FC = () => {
       </div>
 
       {/* Tabs Section: Description, Specifications, Reviews, Shipping */}
-      <div className="bg-white rounded-2xl border border-[#ebdccd] p-6 sm:p-8 shadow-xs">
-        <div className="flex border-b border-[#f0e4d7] gap-2 sm:gap-6 overflow-x-auto pb-3 mb-6">
+      <div className="bg-white rounded-2xl border border-[#ebdccd] p-4 sm:p-8 shadow-xs">
+        <div className="flex border-b border-[#f0e4d7] gap-3 sm:gap-6 overflow-x-auto pb-3 mb-6 no-scrollbar">
           <button
             type="button"
             onClick={() => setActiveTab('desc')}

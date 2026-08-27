@@ -62,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               e.stopPropagation();
               toggleFavorite(product.id);
             }}
-            className={`p-2 rounded-md backdrop-blur-md transition-all shadow-xs ${
+            className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center ${
               favorite
                 ? 'bg-rose-500 text-white'
                 : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
@@ -151,7 +151,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               addToCart(product, 1);
             }}
             disabled={!product.inStock}
-            className="p-2.5 rounded-lg bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-all flex items-center justify-center shrink-0"
+            className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-all flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px]"
             title="إضافة إلى سلة المشتريات"
             aria-label="إضافة إلى سلة المشتريات"
           >

@@ -219,8 +219,9 @@ export interface AuditLog {
 
 export interface UserProfile {
   id: string;
+  username: string;
   name: string;
-  email: string;
+  email?: string;
   phone: string;
   role: UserRole;
   avatar: string;

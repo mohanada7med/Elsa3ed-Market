@@ -185,7 +185,7 @@ export const OrdersTrackingPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="flex -space-x-2 overflow-hidden">
+                      <div className="flex -space-x-2 space-x-reverse overflow-hidden">
                         {ord.items.slice(0, 3).map((it, idx) => (
                           <img
                             key={idx}
@@ -213,7 +213,7 @@ export const OrdersTrackingPage: React.FC = () => {
           {/* Active Order Tracking Timeline Detail */}
           {currentSelected && (
             <div className="lg:col-span-7 space-y-6">
-              <div className="bg-white rounded-3xl border border-[#ebdccd] p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="bg-white rounded-3xl border border-[#ebdccd] p-4 sm:p-8 shadow-xs space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#f0e4d7] pb-4">
                   <div>

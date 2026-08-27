@@ -208,11 +208,15 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <span dir="ltr">0100 000 8822</span>
+                <a href="tel:+201158969931">
+                  <span dir="ltr">01158969931</span>
+                </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>support@elsa3ed.eg</span>
+                <a href="mailto:[EMAIL_ADDRESS]">
+                  <span>ahmdmohanad28@gmail.com</span>
+                </a>
               </div>
             </div>
           </div>
@@ -222,7 +226,7 @@ export const Footer: React.FC = () => {
         <div className="mt-12 pt-6 border-t border-[#3D3732] flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-[#A89D91] font-bold">محافظات التراث المباشر:</span>
-            {['قنا (الفخار)', 'سوهاج (أخميم)', 'أسوان (التمور والخوص)', 'الأقصر (النحاس والخشب)', 'أسيوط (التلي والحرير)', 'المنيا (عسل السدر)', 'الوادي الجديد'].map(
+            {['أسوان (التمور والخوص)', 'الأقصر (النحاس والخشب)', 'قنا (الفخار)', 'سوهاج (أخميم)', 'أسيوط (التلي والحرير)', 'المنيا (عسل السدر)', 'الوادي الجديد'].map(
               (gov, idx) => (
                 <span
                   key={idx}
@@ -237,7 +241,7 @@ export const Footer: React.FC = () => {
           <button
             type="button"
             onClick={scrollToTop}
-            className="p-2 rounded-lg bg-[#2E2824] hover:bg-[#3D3732] text-white transition-colors flex items-center gap-1.5 text-xs font-semibold"
+            className="p-2.5 rounded-xl bg-[#2E2824] hover:bg-[#3D3732] text-white transition-colors flex items-center gap-1.5 text-xs font-semibold min-h-[40px]"
             aria-label="العودة لأعلى الصفحة"
           >
             <span>للأعلى</span>

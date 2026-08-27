@@ -92,10 +92,10 @@ export const SellerProfileView: React.FC = () => {
         </div>
 
         {/* Profile Details Bar */}
-        <div className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-16 sm:-mt-20 mb-6">
-            <div className="flex items-end gap-4">
-              <div className="relative">
+        <div className="p-4 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-14 sm:-mt-20 mb-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-end text-center sm:text-right gap-4">
+              <div className="relative shrink-0">
                 <img
                   src={seller.avatar}
                   alt={seller.name}
@@ -112,30 +112,30 @@ export const SellerProfileView: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-black text-gray-900 font-heritage">
                   {seller.brandName}
                 </h1>
-                <p className="text-xs sm:text-sm text-[#8c6b53] font-semibold">
+                <p className="text-xs sm:text-sm text-[#8c6b53] font-semibold mt-0.5">
                   الصانع: {seller.name} • تخصص: {seller.specialty}
                 </p>
               </div>
             </div>
 
             {/* Performance metrics */}
-            <div className="flex items-center gap-3">
-              <div className="bg-[#faf6f0] border border-[#ebdccd] px-4 py-2 rounded-2xl text-center">
-                <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-sm">
-                  <Star className="w-4 h-4 fill-amber-400" />
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
+              <div className="bg-[#faf6f0] border border-[#ebdccd] px-3 sm:px-4 py-2 rounded-2xl text-center">
+                <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
+                  <Star className="w-3.5 h-3.5 fill-amber-400" />
                   <span>{seller.rating}</span>
                 </div>
-                <span className="text-[10px] text-gray-400">تقييم المتسوقين</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">تقييم المتسوقين</span>
               </div>
 
-              <div className="bg-[#faf6f0] border border-[#ebdccd] px-4 py-2 rounded-2xl text-center">
-                <span className="font-bold text-sm text-[#943310] block">{seller.salesCount}+</span>
-                <span className="text-[10px] text-gray-400">قطعة تم شحنها</span>
+              <div className="bg-[#faf6f0] border border-[#ebdccd] px-3 sm:px-4 py-2 rounded-2xl text-center">
+                <span className="font-bold text-xs sm:text-sm text-[#943310] block">{seller.salesCount}+</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">قطعة تم شحنها</span>
               </div>
 
-              <div className="bg-[#faf6f0] border border-[#ebdccd] px-4 py-2 rounded-2xl text-center">
-                <span className="font-bold text-sm text-gray-900 block">{seller.productsCount}</span>
-                <span className="text-[10px] text-gray-400">منتجات معروضة</span>
+              <div className="bg-[#faf6f0] border border-[#ebdccd] px-3 sm:px-4 py-2 rounded-2xl text-center">
+                <span className="font-bold text-xs sm:text-sm text-gray-900 block">{seller.productsCount}</span>
+                <span className="text-[10px] text-gray-400 block mt-0.5">منتجات معروضة</span>
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Governorate } from '../../types';
-import { Filter, Sparkles, MapPin, Layers, ArrowUpDown, X } from 'lucide-react';
+import { Filter, Sparkles, MapPin, Layers, ArrowUpDown, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 const GOVERNORATES: (Governorate | 'all')[] = [
   'all',
@@ -30,6 +30,14 @@ export const ProductFilters: React.FC = () => {
     setSearchQuery
   } = useApp();
 
+  const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+
+  const activeCount =
+    (selectedGovernorateFilter !== 'all' ? 1 : 0) +
+    (selectedCategoryFilter !== 'all' ? 1 : 0) +
+    (selectedHandmadeOnly ? 1 : 0) +
+    (searchQuery.trim() !== '' ? 1 : 0);
+
   const hasActiveFilters =
     selectedGovernorateFilter !== 'all' ||
     selectedCategoryFilter !== 'all' ||
@@ -46,25 +54,60 @@ export const ProductFilters: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ebdccd] p-4 sm:p-5 shadow-xs space-y-4">
-      {/* Filter Header & Reset */}
-      <div className="flex items-center justify-between border-b border-[#f0e4d7] pb-3">
-        <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-          <Filter className="w-4 h-4 text-[#943310]" />
-          <span>تصفية واختيار المنتجات</span>
-        </div>
+    <div className="bg-white rounded-2xl border border-[#ebdccd] p-3 sm:p-5 shadow-xs space-y-3 sm:space-y-4">
+      {/* Mobile Toggle Button */}
+      <div className="flex sm:hidden items-center justify-between">
+        <button
+          type="button"
+          onClick={() => setIsMobileExpanded(!isMobileExpanded)}
+          className="flex items-center gap-2 text-xs font-bold text-[#943310] bg-[#faf6f0] hover:bg-[#ede0ca] px-3.5 py-2 rounded-xl border border-[#ebdccd] min-h-[42px] transition-colors"
+        >
+          <Filter className="w-4 h-4" />
+          <span>{isMobileExpanded ? 'إخفاء الفلاتر والتصنيفات' : 'تصفية وفرز المعروضات'}</span>
+          {activeCount > 0 && (
+            <span className="w-5 h-5 rounded-full bg-[#943310] text-white text-[10px] flex items-center justify-center font-black">
+              {activeCount}
+            </span>
+          )}
+          {isMobileExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+        </button>
 
         {hasActiveFilters && (
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-[#943310] hover:text-[#7c280a] flex items-center gap-1 font-semibold transition-colors"
+            className="text-xs text-[#943310] hover:text-[#7c280a] flex items-center gap-1 font-semibold p-2"
           >
             <X className="w-3.5 h-3.5" />
-            <span>إعادة ضبط الفلاتر</span>
+            <span>إعادة ضبط</span>
           </button>
         )}
       </div>
+
+      <div className={`${isMobileExpanded ? 'block' : 'hidden sm:block'} space-y-4 pt-1 sm:pt-0`}>
+        {/* Filter Header & Reset (Desktop) */}
+        <div className="hidden sm:flex items-center justify-between border-b border-[#f0e4d7] pb-3">
+          <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
+            <Filter className="w-4 h-4 text-[#943310]" />
+            <span>تصفية واختيار المنتجات</span>
+            {activeCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-[#943310] text-white text-[10px] flex items-center justify-center font-bold">
+                {activeCount}
+              </span>
+            )}
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="text-xs text-[#943310] hover:text-[#7c280a] flex items-center gap-1 font-semibold transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+              <span>إعادة ضبط الفلاتر</span>
+            </button>
+          )}
+        </div>
 
       {/* Governorate Pills (Upper Egypt) */}
       <div>
@@ -166,6 +209,7 @@ export const ProductFilters: React.FC = () => {
             <option value="newest">الترتيب: أحدث الإضافات</option>
           </select>
         </div>
+      </div>
       </div>
     </div>
   );

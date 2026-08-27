@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { MongoClient } from 'mongodb';
-import bcrypt from 'bcryptjs';
-import { INITIAL_CATEGORIES, INITIAL_CRAFT_STORIES } from '../src/data/mockData.ts';
+import { PLATFORM_CATEGORIES } from '../server/config/platformCategories.ts';
 
 /**
  * Task 1: Reset Development Database Script
@@ -24,7 +23,15 @@ async function resetDevelopmentDatabase() {
     process.exit(1);
   }
 
-  // 2. Safety Guard: Check database name
+  // 2. Safety Guard: Require explicit confirmation
+  const isConfirmed = process.env.CONFIRM_DEV_RESET === 'true' || process.argv.includes('--confirm');
+  if (!isConfirmed) {
+    console.error('⛔ Safety Guard: Destructive database reset requires explicit confirmation.');
+    console.error('   Run with: npx tsx scripts/reset-dev-db.ts --confirm');
+    process.exit(1);
+  }
+
+  // 3. Safety Guard: Check database name
   if (dbName !== 'Elsa3ed_market') {
     console.error(`⛔ FATAL: Unexpected database name "${dbName}". Reset is strictly restricted to "Elsa3ed_market".`);
     process.exit(1);
@@ -77,31 +84,13 @@ async function resetDevelopmentDatabase() {
     }
 
     // Handle Users Collection:
-    // Remove all regular buyers and sellers, and initialize single Platform Admin for administration
     console.log('\n👤 Resetting Users collection...');
     const usersExists = await db.listCollections({ name: 'users' }).hasNext();
     if (usersExists) {
       const deletedUsers = await db.collection('users').deleteMany({});
       console.log(` - Removed ${deletedUsers.deletedCount} users from [users].`);
     }
-
-    // Initialize single platform admin account so admin can log in and approve sellers/products
-    const adminPasswordHash = await bcrypt.hash('Sa3ed@2025', 10);
-    const adminUser = {
-      id: 'user-admin-1',
-      name: 'أ/ محمود الهواري (مدير المنصة)',
-      email: 'admin@elsa3ed.eg',
-      passwordHash: adminPasswordHash,
-      phone: '01000000000',
-      role: 'admin',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
-      governorate: 'قنا',
-      savedAddresses: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    await db.collection('users').insertOne(adminUser);
-    console.log('✅ Initialized platform admin: admin@elsa3ed.eg');
+    console.log('ℹ️ No test users created. Run `npm run db:bootstrap-admin` to securely initialize a platform admin.');
 
     // Handle Categories:
     // Re-seed the 8 standard heritage categories (taxonomies required for sellers to choose categories)
@@ -110,21 +99,23 @@ async function resetDevelopmentDatabase() {
     if (categoriesExists) {
       await db.collection('categories').deleteMany({});
     }
-    await db.collection('categories').insertMany(INITIAL_CATEGORIES as any[]);
-    console.log(`✅ Initialized ${INITIAL_CATEGORIES.length} standard heritage categories.`);
+    await db.collection('categories').insertMany(PLATFORM_CATEGORIES as any[]);
+    console.log(`✅ Initialized ${PLATFORM_CATEGORIES.length} standard heritage categories.`);
 
     // Handle Craft Stories:
-    console.log('\n🏺 Initializing heritage craft stories (قصص الصنعة وأسرار الأجداد)...');
     const craftStoriesExists = await db.listCollections({ name: 'craft_stories' }).hasNext();
     if (craftStoriesExists) {
       await db.collection('craft_stories').deleteMany({});
     }
-    await db.collection('craft_stories').insertMany(INITIAL_CRAFT_STORIES as any[]);
-    console.log(`✅ Initialized ${INITIAL_CRAFT_STORIES.length} heritage craft stories.`);
 
     // Re-verify production indexes
     console.log('\n⚙️ Re-verifying database indexes...');
-    await db.collection('users').createIndex({ email: 1 }, { unique: true });
+    await db.collection('users').createIndex({ usernameNormalized: 1 }, { unique: true });
+    await db.collection('users').createIndex({ username: 1 }, { unique: true });
+    await db.collection('users').createIndex(
+      { email: 1 },
+      { unique: true, partialFilterExpression: { email: { $type: 'string' } } }
+    );
     await db.collection('users').createIndex({ id: 1 }, { unique: true });
     await db.collection('users').createIndex({ role: 1 });
 

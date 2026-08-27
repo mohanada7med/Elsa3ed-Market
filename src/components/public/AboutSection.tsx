@@ -31,8 +31,8 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Floating Experience Box */}
-            <div className="absolute -bottom-5 -left-4 sm:left-6 bg-[#943310] text-white p-4 rounded-2xl shadow-xl border-2 border-amber-300/30 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-amber-300 text-lg">
+            <div className="absolute -bottom-5 left-2 sm:left-6 bg-[#943310] text-white p-3.5 sm:p-4 rounded-2xl shadow-xl border-2 border-amber-300/30 flex items-center gap-3 max-w-[calc(100%-1rem)]">
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-amber-300 text-lg shrink-0">
                 ص
               </div>
               <div className="text-right">
@@ -55,7 +55,7 @@ export const AboutSection: React.FC = () => {
             </h2>
 
             <p className="text-xs sm:text-sm text-[#614b3d] leading-relaxed">
-              تأسس <strong>سوق الصعيد</strong> كمنصة وطنية متخصصة لتمكين الحرفيين وشيوخ الصنعة والنساء المعيلات في قرى ونجوع محافظات الصعيد (قنا، سوهاج، أسوان، الأقصر، أسيوط، المنيا، والوادي الجديد). نهدف لتوثيق هذا التراث الثري، وتوفير حلول تغليف وشحن رقمية تضمن وصول المنتجات بأعلى معايير الجودة.
+              تأسس <strong>سوق الصعيد</strong> كمنصة وطنية متخصصة لتمكين الحرفيين وشيوخ الصنعة والنساء المعيلات في قرى ونجوع محافظات الصعيد (أسوان، الأقصر، قنا، سوهاج، أسيوط، المنيا، والوادي الجديد). نهدف لتوثيق هذا التراث الثري، وتوفير حلول تغليف وشحن رقمية تضمن وصول المنتجات بأعلى معايير الجودة.
             </p>
 
             {/* 3 Value Pillars */}
@@ -92,12 +92,12 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-wrap items-center gap-3 pt-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
               <button
                 type="button"
                 id="about-watch-film-btn"
                 onClick={() => setShowIntroVideo(true)}
-                className="px-5 py-3 rounded-xl bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold shadow-sm flex items-center gap-2 transition-colors"
+                className="px-5 py-3 rounded-xl bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-colors min-h-[44px]"
               >
                 <Film className="w-4 h-4" />
                 <span>مشاهدة الفيلم الوثائقي للمنصة</span>
@@ -107,7 +107,7 @@ export const AboutSection: React.FC = () => {
                 type="button"
                 id="about-explore-sellers-btn"
                 onClick={() => setActivePage('sellers')}
-                className="px-5 py-3 rounded-xl bg-white hover:bg-[#f3ebd9] text-gray-800 border border-[#dfcebe] text-xs font-bold shadow-xs transition-colors"
+                className="px-5 py-3 rounded-xl bg-white hover:bg-[#f3ebd9] text-gray-800 border border-[#dfcebe] text-xs font-bold shadow-xs transition-colors text-center min-h-[44px] flex items-center justify-center"
               >
                 دليل ورش الحرفيين
               </button>

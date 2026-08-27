@@ -55,10 +55,11 @@ interface AppContextType {
   currentUser: UserProfile;
   setCurrentUser: React.Dispatch<React.SetStateAction<UserProfile>>;
   switchRole: (role: UserRole) => void;
-  login: (email: string, password: string) => Promise<void>;
+  login: (identifier: string, password: string) => Promise<void>;
   register: (params: {
+    username: string;
     name: string;
-    email: string;
+    email?: string;
     password: string;
     phone: string;
     role: UserRole;
@@ -194,6 +195,7 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const GUEST_USER: UserProfile = {
   id: '',
+  username: '',
   name: 'زائر سوق الصعيد',
   email: '',
   phone: '',
@@ -202,28 +204,6 @@ export const GUEST_USER: UserProfile = {
   governorate: 'أخرى',
   savedAddresses: [],
   createdAt: ''
-};
-
-const DEFAULT_BUYER: UserProfile = {
-  id: 'user-buyer-1',
-  name: 'أحمد محمود الهاشمي',
-  email: 'ahmed.hashmi@gmail.com',
-  phone: '01019882233',
-  role: 'buyer',
-  avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
-  governorate: 'القاهرة',
-  savedAddresses: [
-    {
-      fullName: 'أحمد محمود الهاشمي',
-      phone: '01019882233',
-      governorate: 'القاهرة',
-      city: 'مدينة نصر',
-      streetAddress: 'شارع الطيران - بجوار مسجد رابعة',
-      buildingNo: 'عمارة 14 - الدور 4',
-      notes: 'التوصيل بعد الساعة 4 عصراً'
-    }
-  ],
-  createdAt: '2023-09-01'
 };
 
 export const normalizeOrder = (ord: any): Order => {
@@ -318,15 +298,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('saeed_intro_seen', 'true');
   };
 
-  // Roles & Auth: Unauthenticated visitors start as guest
-  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('saeed_token') : null;
-    return token ? 'buyer' : 'guest';
-  });
-  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('saeed_token') : null;
-    return token ? DEFAULT_BUYER : GUEST_USER;
-  });
+  // Roles & Auth: Visitors start cleanly as guest until verified by real MongoDB session
+  const [currentRole, setCurrentRole] = useState<UserRole>('guest');
+  const [currentUser, setCurrentUser] = useState<UserProfile>(GUEST_USER);
   const isAuthenticated = currentRole !== 'guest' && Boolean(currentUser?.id);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -647,8 +621,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Auth Operations (Database-backed)
-  const login = async (email: string, pass: string) => {
-    const data = await api.login(email, pass);
+  const login = async (identifier: string, pass: string) => {
+    const data = await api.login(identifier, pass);
     if (data && data.user) {
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
@@ -656,13 +630,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         localStorage.setItem('saeed_token', data.token);
       }
       setIsAuthModalOpen(false);
-      addToast('تسجيل الدخول', `مرحباً بك ${data.user.name} في سوق الصعيد!`, 'success');
+      addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في سوق الصعيد!`, 'success');
     }
   };
 
   const register = async (params: {
+    username: string;
     name: string;
-    email: string;
+    email?: string;
     password: string;
     phone: string;
     role: UserRole;
@@ -673,6 +648,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     let data;
     if (params.role === 'seller' && params.workshopName) {
       data = await api.registerSeller({
+        username: params.username,
         name: params.name,
         email: params.email,
         password: params.password,
@@ -695,8 +671,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addToast(
         'إنشاء الحساب',
         data.user.role === 'seller'
-          ? `تم تسجيل حساب ورشتكم بنجاح! مرحباً بك يا ${data.user.name}. طلبكم قيد المراجعة والاعتماد.`
-          : `تم تسجيل حسابك بنجاح! مرحباً بك يا ${data.user.name}.`,
+          ? `تم تسجيل حساب ورشتكم بنجاح! مرحباً بك يا ${data.user.username || data.user.name}. طلبكم قيد المراجعة والاعتماد.`
+          : `تم تسجيل حسابك بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
         'success'
       );
       refreshSellers();
@@ -915,41 +891,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Role Switcher for Fast Prototyping
+  // Role Navigation
   const switchRole = (newRole: UserRole) => {
-    setCurrentRole(newRole);
-    if (newRole === 'admin') {
-      setCurrentUser({
-        id: 'user-admin-1',
-        name: 'أ/ محمود الهواري (مدير المنصة)',
-        email: 'admin@elsa3ed.eg',
-        phone: '01000000000',
-        role: 'admin',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=200&q=80',
-        governorate: 'قنا',
-        savedAddresses: [],
-        createdAt: '2023-01-01'
-      });
-      setActivePage('admin-dashboard');
-      addToast('وضع الإدارة', 'تم الدخول كمدير منصة سوق الصعيد', 'info');
-    } else if (newRole === 'seller') {
-      setCurrentUser({
-        id: 'seller-1',
-        name: 'الأسطى سعيد القناوي',
-        email: 'saeed.pottery@elsa3ed.eg',
-        phone: '01012345678',
-        role: 'seller',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-        governorate: 'قنا',
-        savedAddresses: [],
-        createdAt: '2023-01-15'
-      });
-      setActivePage('seller-dashboard');
-      addToast('بوابة البائعين', 'مرحباً بك في لوحة تحكم ورشة عم سعيد', 'info');
+    if (newRole === 'guest') {
+      logout();
+      return;
+    }
+    if (!isAuthenticated) {
+      setAuthModalTab(newRole === 'seller' ? 'register' : 'login');
+      setIsAuthModalOpen(true);
+      return;
+    }
+    if (currentUser.role === newRole) {
+      setCurrentRole(newRole);
+      if (newRole === 'admin') setActivePage('admin-dashboard');
+      else if (newRole === 'seller') setActivePage('seller-dashboard');
+      else setActivePage('home');
     } else {
-      setCurrentUser(DEFAULT_BUYER);
-      setActivePage('home');
-      addToast('وضع المشتري', 'مرحباً بك في سوق الصعيد للتسوق الأصيل', 'info');
+      addToast('تنبيه الصلاحية', 'حسابك الحالي لا يمتلك هذه الصلاحية. يرجى تسجيل الدخول بالحساب المناسب.', 'warning');
+      setIsAuthModalOpen(true);
     }
   };
 

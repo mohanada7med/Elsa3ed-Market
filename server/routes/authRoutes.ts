@@ -18,9 +18,16 @@ function isValidEmail(email: string): boolean {
 // POST /api/auth/register (Standard registration - Buyer or Seller)
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, role, governorate, workshopName, specialty } = req.body;
+    const { username, name, email, password, phone, role, governorate, workshopName, specialty } = req.body;
 
     // Server-side validation
+    if (!username || typeof username !== 'string' || !username.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'من فضلك اكتب اسم المستخدم'
+      });
+    }
+
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return res.status(400).json({
         success: false,
@@ -28,10 +35,11 @@ router.post('/register', async (req: Request, res: Response) => {
       });
     }
 
-    if (!email || typeof email !== 'string' || !isValidEmail(email.trim())) {
+    // Email is optional, but if provided it must be valid
+    if (email && typeof email === 'string' && email.trim() && !isValidEmail(email.trim())) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال بريد إلكتروني صالح ومكتمل'
+        error: 'يرجى إدخال بريد إلكتروني صالح ومكتمل أو تركه فارغاً'
       });
     }
 
@@ -62,8 +70,9 @@ router.post('/register', async (req: Request, res: Response) => {
     }
 
     const session = await register({
+      username: username.trim(),
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: email?.trim() ? email.trim().toLowerCase() : undefined,
       password,
       phone: phone.trim(),
       role: assignedRole,
@@ -80,7 +89,7 @@ router.post('/register', async (req: Request, res: Response) => {
       data: session
     });
   } catch (error: any) {
-    const isConflict = error.message?.includes('مسجل بالفعل');
+    const isConflict = error.message?.includes('مستخدم بالفعل') || error.message?.includes('مسجل بالفعل');
     res.status(isConflict ? 409 : 400).json({
       success: false,
       error: error.message || 'فشل في إنشاء الحساب'
@@ -91,7 +100,14 @@ router.post('/register', async (req: Request, res: Response) => {
 // POST /api/auth/register/seller (Dedicated Seller Registration endpoint)
 router.post('/register/seller', async (req: Request, res: Response) => {
   try {
-    const { name, email, password, phone, governorate, workshopName, specialty } = req.body;
+    const { username, name, email, password, phone, governorate, workshopName, specialty } = req.body;
+
+    if (!username || typeof username !== 'string' || !username.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'من فضلك اكتب اسم المستخدم'
+      });
+    }
 
     if (!name || typeof name !== 'string' || name.trim().length < 2) {
       return res.status(400).json({
@@ -107,10 +123,10 @@ router.post('/register/seller', async (req: Request, res: Response) => {
       });
     }
 
-    if (!email || typeof email !== 'string' || !isValidEmail(email.trim())) {
+    if (email && typeof email === 'string' && email.trim() && !isValidEmail(email.trim())) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال بريد إلكتروني صالح'
+        error: 'يرجى إدخال بريد إلكتروني صالح أو تركه فارغاً'
       });
     }
 
@@ -130,8 +146,9 @@ router.post('/register/seller', async (req: Request, res: Response) => {
 
     // Role is strictly assigned server-side as 'seller'
     const session = await register({
+      username: username.trim(),
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: email?.trim() ? email.trim().toLowerCase() : undefined,
       password,
       phone: phone.trim(),
       role: 'seller',
@@ -146,7 +163,7 @@ router.post('/register/seller', async (req: Request, res: Response) => {
       data: session
     });
   } catch (error: any) {
-    const isConflict = error.message?.includes('مسجل بالفعل');
+    const isConflict = error.message?.includes('مستخدم بالفعل') || error.message?.includes('مسجل بالفعل');
     res.status(isConflict ? 409 : 400).json({
       success: false,
       error: error.message || 'فشل في تسجيل حساب البائع'
@@ -157,15 +174,24 @@ router.post('/register/seller', async (req: Request, res: Response) => {
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
+    const { username, email, identifier, password } = req.body;
+    const loginIdentifier = (username || identifier || email)?.trim();
+
+    if (!loginIdentifier) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال البريد الإلكتروني وكلمة المرور'
+        error: 'من فضلك اكتب اسم المستخدم'
       });
     }
 
-    const session = await login(email, password);
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        error: 'من فضلك اكتب كلمة المرور'
+      });
+    }
+
+    const session = await login(loginIdentifier, password);
     res.json({
       success: true,
       data: session
@@ -173,7 +199,7 @@ router.post('/login', async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(401).json({
       success: false,
-      error: error.message || 'فشل تسجيل الدخول'
+      error: error.message || 'اسم المستخدم أو كلمة المرور غير صحيحة'
     });
   }
 });

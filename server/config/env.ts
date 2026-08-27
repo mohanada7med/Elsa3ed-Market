@@ -29,9 +29,9 @@ export function validateAndGetEnv(): EnvConfig {
   const NODE_ENV = (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development';
   const PORT = 3000; // Hardcoded port required by infrastructure
   const APP_URL = process.env.APP_URL || 'http://localhost:3000';
-  const MONGODB_URI = process.env.MONGODB_URI?.trim() || 'mongodb+srv://ahmdmohanad28_db_user:012012012@cluster0.je3wwaw.mongodb.net/?appName=Cluster0';
+  const MONGODB_URI = process.env.MONGODB_URI?.trim();
   const MONGODB_DB = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
-  const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || 'elsa3ed-market-secure-session-key-2026';
+  const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || (NODE_ENV !== 'production' ? 'elsa3ed-dev-session-key-not-for-prod' : '');
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';
   const CACHE_TTL_SECONDS = Number(process.env.CACHE_TTL_SECONDS) || 300;
   const MAX_UPLOAD_SIZE_MB = Number(process.env.MAX_UPLOAD_SIZE_MB) || 5;
@@ -40,8 +40,11 @@ export function validateAndGetEnv(): EnvConfig {
   const missingConfigs: string[] = [];
 
   if (NODE_ENV === 'production') {
-    if (!process.env.AUTH_SECRET) {
-      console.warn('[Env Warning] AUTH_SECRET is not set in production; using fallback key.');
+    if (!MONGODB_URI) {
+      missingConfigs.push('MONGODB_URI is required in production');
+    }
+    if (!AUTH_SECRET) {
+      missingConfigs.push('AUTH_SECRET is required in production');
     }
   }
 

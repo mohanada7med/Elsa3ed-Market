@@ -22,6 +22,10 @@ export const RecommendationsSection: React.FC = () => {
   const displayedProducts =
     activeMood === 'decor' ? decorProducts : activeMood === 'food' ? foodProducts : giftProducts;
 
+  if (displayedProducts.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-14 max-w-7xl mx-auto px-4 sm:px-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
@@ -39,11 +43,11 @@ export const RecommendationsSection: React.FC = () => {
         </div>
 
         {/* Mood Selector Buttons */}
-        <div className="flex items-center gap-1.5 bg-[#f4ebe1] p-1.5 rounded-2xl border border-[#ebdccd]">
+        <div className="flex items-center gap-1.5 bg-[#f4ebe1] p-1.5 rounded-2xl border border-[#ebdccd] overflow-x-auto no-scrollbar max-w-full">
           <button
             type="button"
             onClick={() => setActiveMood('decor')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
               activeMood === 'decor'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'
@@ -56,7 +60,7 @@ export const RecommendationsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveMood('food')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
               activeMood === 'food'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'
@@ -69,7 +73,7 @@ export const RecommendationsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveMood('gifts')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
               activeMood === 'gifts'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'

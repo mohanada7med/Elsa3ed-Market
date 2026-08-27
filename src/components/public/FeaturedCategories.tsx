@@ -26,7 +26,7 @@ export const FeaturedCategories: React.FC = () => {
           type="button"
           id="view-all-cats-btn"
           onClick={() => setActivePage('categories')}
-          className="text-xs sm:text-sm font-bold text-[#B45F42] hover:text-[#9E4F36] flex items-center gap-1.5 self-start sm:self-auto hover:underline"
+          className="text-xs sm:text-sm font-bold text-[#B45F42] hover:text-[#9E4F36] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px]"
         >
           <span>عرض جميع التصنيفات</span>
           <ArrowLeft className="w-4 h-4" />
@@ -68,7 +68,7 @@ export const FeaturedCategories: React.FC = () => {
                   {cat.name}
                 </h3>
                 <span className="text-[11px] text-amber-200/90 font-medium">
-                  {cat.productsCount} منتج متوفر
+                  {cat.productsCount > 0 ? `${cat.productsCount} منتج متوفر` : 'حرف أصيلة'}
                 </span>
               </div>
             </div>

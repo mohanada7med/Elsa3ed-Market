@@ -340,7 +340,7 @@ export const AdminDashboard: React.FC = () => {
     refreshReviews();
   }, [refreshReviews]);
 
-  const totalMarketplaceSales = orders.reduce((sum, o) => sum + o.total, 0) + 145200;
+  const totalMarketplaceSales = orders.reduce((sum, o) => sum + o.total, 0);
 
   const handleApprove = async (id: string) => {
     setIsProcessing(true);
@@ -568,15 +568,14 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#E8E1D9] overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 border-b border-[#E8E1D9] overflow-x-auto pb-2 no-scrollbar px-1">
         <button
           type="button"
           onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'overview'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'overview'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <TrendingUp className="w-4 h-4" />
           <span>المؤشرات العامة</span>
@@ -585,11 +584,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('approvals')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap relative ${
-            activeTab === 'approvals'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap relative ${activeTab === 'approvals'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Package className="w-4 h-4" />
           <span>فحص واعتماد المنتجات</span>
@@ -603,11 +601,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('categories')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'categories'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'categories'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Layers className="w-4 h-4" />
           <span>التصنيفات التراثية ({categories.length})</span>
@@ -617,11 +614,10 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           id="admin-tab-craft-stories"
           onClick={() => setActiveTab('craft-stories')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'craft-stories'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'craft-stories'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Sparkles className="w-4 h-4 text-amber-500" />
           <span>قصص الصنعة وأسرار الأجداد ({craftStories.length})</span>
@@ -630,11 +626,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('reviews')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'reviews'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'reviews'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <MessageSquare className="w-4 h-4" />
           <span>مراجعات وتقييمات المشترين</span>
@@ -644,11 +639,10 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           id="admin-tab-sellers"
           onClick={() => setActiveTab('sellers')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'sellers'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'sellers'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Store className="w-4 h-4" />
           <span>الورش والحرفيون ({sellers.length})</span>
@@ -662,11 +656,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'orders'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'orders'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Truck className="w-4 h-4" />
           <span>مراقبة الشحنات والطلبات</span>
@@ -675,11 +668,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('coupons')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'coupons'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'coupons'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Tag className="w-4 h-4" />
           <span>أكواد الخصم</span>
@@ -688,11 +680,10 @@ export const AdminDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('audit')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'audit'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'audit'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <FileText className="w-4 h-4" />
           <span>سجل الرقابة (Audit)</span>
@@ -702,11 +693,10 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           id="admin-tab-users"
           onClick={() => setActiveTab('users')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'users'
-              ? 'bg-[#B45F42] text-white shadow-xs'
-              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
-          }`}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'users'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
         >
           <Users className="w-4 h-4" />
           <span>إدارة المستخدمين ({adminUsers.length || '...'})</span>
@@ -739,7 +729,7 @@ export const AdminDashboard: React.FC = () => {
 
             <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
               <span className="text-xs text-[#7A6F64] block mb-1">طلبات الشحن المنفذة</span>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">{orders.length + 840} شحنة</span>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">{orders.length} شحنة</span>
               <span className="text-[10px] text-[#7A6F64] block mt-1">نسبة كسر التغليف &lt; 0.2%</span>
             </div>
           </div>
@@ -822,22 +812,20 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 bg-[#F3EFE9] p-1 rounded-xl">
+            <div className="flex items-center gap-1.5 bg-[#F3EFE9] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
               <button
                 type="button"
                 onClick={() => setStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  statusFilter === 'all' ? 'bg-[#2D2A26] text-white' : 'text-[#7A6F64]'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'all' ? 'bg-[#2D2A26] text-white' : 'text-[#7A6F64]'
+                  }`}
               >
                 الكل ({adminProducts.length})
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter('pending')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-                  statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-[#7A6F64]'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-[#7A6F64]'
+                  }`}
               >
                 <span>قيد المراجعة</span>
                 <span className="bg-amber-400 text-amber-950 text-[10px] px-1 rounded-full font-black">
@@ -847,18 +835,16 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setStatusFilter('approved')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-[#7A6F64]'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-[#7A6F64]'
+                  }`}
               >
                 معتمد
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter('rejected')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-[#7A6F64]'
-                }`}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-[#7A6F64]'
+                  }`}
               >
                 مرفوض
               </button>
@@ -888,13 +874,12 @@ export const AdminDashboard: React.FC = () => {
               filteredProducts.map((prod) => (
                 <div
                   key={prod.id}
-                  className={`p-4 rounded-2xl border transition-all ${
-                    prod.approvalStatus === 'pending'
-                      ? 'bg-amber-50/50 border-amber-300'
-                      : prod.approvalStatus === 'rejected'
+                  className={`p-4 rounded-2xl border transition-all ${prod.approvalStatus === 'pending'
+                    ? 'bg-amber-50/50 border-amber-300'
+                    : prod.approvalStatus === 'rejected'
                       ? 'bg-rose-50/50 border-rose-200'
                       : 'bg-[#FDFBF7] border-[#E8E1D9]'
-                  }`}
+                    }`}
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-start gap-3.5">
@@ -921,7 +906,7 @@ export const AdminDashboard: React.FC = () => {
                     </div>
 
                     {/* Moderation Controls */}
-                    <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                    <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
                       {prod.approvalStatus !== 'approved' && (
                         <button
                           type="button"
@@ -1098,9 +1083,8 @@ export const AdminDashboard: React.FC = () => {
               {craftStories.map((story) => (
                 <div
                   key={story.id}
-                  className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${
-                    story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-[#E8E1D9] hover:border-amber-700/30'
-                  }`}
+                  className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-[#E8E1D9] hover:border-amber-700/30'
+                    }`}
                 >
                   <div className="p-5 space-y-4">
                     <div className="flex items-start gap-4">
@@ -1121,11 +1105,10 @@ export const AdminDashboard: React.FC = () => {
                             {story.governorate}
                           </span>
                           <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              story.active === false
-                                ? 'bg-gray-200 text-gray-600'
-                                : 'bg-emerald-100 text-emerald-800'
-                            }`}
+                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${story.active === false
+                              ? 'bg-gray-200 text-gray-600'
+                              : 'bg-emerald-100 text-emerald-800'
+                              }`}
                           >
                             {story.active === false ? 'مخفية بالواجهة' : 'نشطة وظاهرة'}
                           </span>
@@ -1169,11 +1152,10 @@ export const AdminDashboard: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleToggleCraftStoryActive(story)}
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all ${
-                        story.active === false
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                          : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                      }`}
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all ${story.active === false
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                        }`}
                     >
                       {story.active === false ? 'تفعيل وإظهار' : 'إخفاء من المتجر'}
                     </button>
@@ -1253,9 +1235,8 @@ export const AdminDashboard: React.FC = () => {
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star
                             key={i}
-                            className={`w-3.5 h-3.5 ${
-                              i < rev.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-                            }`}
+                            className={`w-3.5 h-3.5 ${i < rev.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
+                              }`}
                           />
                         ))}
                       </div>
@@ -1336,11 +1317,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="filter-sellers-all"
                 onClick={() => setSellerStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  sellerStatusFilter === 'all'
-                    ? 'bg-[#B45F42] text-white shadow-xs'
-                    : 'bg-[#F3EFE9] text-[#7A6F64] hover:bg-[#EDE7DF]'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'all'
+                  ? 'bg-[#B45F42] text-white shadow-xs'
+                  : 'bg-[#F3EFE9] text-[#7A6F64] hover:bg-[#EDE7DF]'
+                  }`}
               >
                 الكل ({sellers.length})
               </button>
@@ -1349,11 +1329,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="filter-sellers-pending"
                 onClick={() => setSellerStatusFilter('pending')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                  sellerStatusFilter === 'pending'
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${sellerStatusFilter === 'pending'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
+                  }`}
               >
                 <span>قيد المراجعة</span>
                 <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold">
@@ -1365,11 +1344,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="filter-sellers-approved"
                 onClick={() => setSellerStatusFilter('approved')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  sellerStatusFilter === 'approved'
-                    ? 'bg-emerald-700 text-white shadow-xs'
-                    : 'bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'approved'
+                  ? 'bg-emerald-700 text-white shadow-xs'
+                  : 'bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100'
+                  }`}
               >
                 معتمد وموثق ({sellers.filter((s) => s.status === 'approved').length})
               </button>
@@ -1378,11 +1356,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="filter-sellers-suspended"
                 onClick={() => setSellerStatusFilter('suspended')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  sellerStatusFilter === 'suspended'
-                    ? 'bg-orange-600 text-white shadow-xs'
-                    : 'bg-orange-50 text-orange-900 border border-orange-200 hover:bg-orange-100'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'suspended'
+                  ? 'bg-orange-600 text-white shadow-xs'
+                  : 'bg-orange-50 text-orange-900 border border-orange-200 hover:bg-orange-100'
+                  }`}
               >
                 معلق ({sellers.filter((s) => s.status === 'suspended').length})
               </button>
@@ -1391,11 +1368,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="filter-sellers-rejected"
                 onClick={() => setSellerStatusFilter('rejected')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  sellerStatusFilter === 'rejected'
-                    ? 'bg-rose-600 text-white shadow-xs'
-                    : 'bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'rejected'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100'
+                  }`}
               >
                 مرفوض ({sellers.filter((s) => s.status === 'rejected').length})
               </button>
@@ -1451,7 +1427,7 @@ export const AdminDashboard: React.FC = () => {
                     <div className="space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <h4 className="font-bold text-base text-[#2D2A26]">{s.brandName}</h4>
-                        
+
                         {/* Status Badge */}
                         {s.status === 'approved' && (
                           <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
@@ -1506,7 +1482,7 @@ export const AdminDashboard: React.FC = () => {
                   </div>
 
                   {/* Actions Column */}
-                  <div className="flex flex-wrap items-center gap-2 self-end md:self-center shrink-0">
+                  <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
                     {/* Action buttons based on current state */}
                     {s.status === 'pending' && (
                       <>
@@ -1614,39 +1590,38 @@ export const AdminDashboard: React.FC = () => {
                       {ord.paymentMethod === 'vodafone_cash'
                         ? 'فودافون كاش'
                         : ord.paymentMethod === 'instapay'
-                        ? 'إنستاباي'
-                        : ord.paymentMethod === 'credit_card'
-                        ? 'بطاقة بنكية'
-                        : 'عند الاستلام'}
+                          ? 'إنستاباي'
+                          : ord.paymentMethod === 'credit_card'
+                            ? 'بطاقة بنكية'
+                            : 'عند الاستلام'}
                     </td>
                     <td className="py-3 px-4 font-bold text-[#B45F42]">{ord.total} ج.م</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          ord.status === 'delivered'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : ord.status === 'shipped'
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${ord.status === 'delivered'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : ord.status === 'shipped'
                             ? 'bg-blue-100 text-blue-800'
                             : ord.status === 'processing'
-                            ? 'bg-amber-100 text-amber-800'
-                            : ord.status === 'confirmed'
-                            ? 'bg-indigo-100 text-indigo-800'
-                            : ord.status === 'cancelled'
-                            ? 'bg-rose-100 text-rose-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
+                              ? 'bg-amber-100 text-amber-800'
+                              : ord.status === 'confirmed'
+                                ? 'bg-indigo-100 text-indigo-800'
+                                : ord.status === 'cancelled'
+                                  ? 'bg-rose-100 text-rose-800'
+                                  : 'bg-gray-100 text-gray-800'
+                          }`}
                       >
                         {ord.status === 'cancelled'
                           ? 'ملغي'
                           : ord.status === 'delivered'
-                          ? 'تم الاستلام'
-                          : ord.status === 'shipped'
-                          ? 'تم الشحن'
-                          : ord.status === 'processing'
-                          ? 'قيد التجهيز'
-                          : ord.status === 'confirmed'
-                          ? 'معتمد ومؤكد'
-                          : 'طلب جديد'}
+                            ? 'تم الاستلام'
+                            : ord.status === 'shipped'
+                              ? 'تم الشحن'
+                              : ord.status === 'processing'
+                                ? 'قيد التجهيز'
+                                : ord.status === 'confirmed'
+                                  ? 'معتمد ومؤكد'
+                                  : 'طلب جديد'}
                       </span>
                     </td>
                     <td className="py-3 px-4">
@@ -1788,13 +1763,12 @@ export const AdminDashboard: React.FC = () => {
                     <td className="py-3 px-4 text-[#7A6F64] max-w-xs">{log.details}</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          log.status === 'نجاح'
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : log.status === 'تنبيه'
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${log.status === 'نجاح'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : log.status === 'تنبيه'
                             ? 'bg-amber-100 text-amber-800'
                             : 'bg-rose-100 text-rose-800'
-                        }`}
+                          }`}
                       >
                         {log.status}
                       </span>
@@ -1928,13 +1902,12 @@ export const AdminDashboard: React.FC = () => {
                           </td>
                           <td className="py-3 px-4">
                             <span
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                                u.role === 'admin'
-                                  ? 'bg-purple-100 text-purple-800'
-                                  : u.role === 'seller'
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${u.role === 'admin'
+                                ? 'bg-purple-100 text-purple-800'
+                                : u.role === 'seller'
                                   ? 'bg-amber-100 text-amber-800'
                                   : 'bg-blue-100 text-blue-800'
-                              }`}
+                                }`}
                             >
                               {u.role === 'admin' ? 'مدير منصة' : u.role === 'seller' ? 'بائع حرفي' : 'مشتري موثق'}
                             </span>
@@ -1988,8 +1961,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Category Add / Edit Modal (Phase 4) */}
       {isCategoryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-6 space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
               <h3 className="font-bold text-base text-[#2D2A26]">
                 {editingCategory ? 'تعديل التصنيف التراثي' : 'إضافة تصنيف تراثي جديد'}
@@ -2096,8 +2069,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Craft Story Add / Edit Modal (قصص الصنعة وأسرار الأجداد) */}
       {isCraftStoryModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-xl w-full p-6 space-y-4 shadow-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-xl w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-600" />
@@ -2264,8 +2237,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Reject Product Modal with Reason Requirement */}
       {rejectingProductId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-6 space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
               <h3 className="font-bold text-base text-rose-900 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-rose-600" />
@@ -2320,12 +2293,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Seller Action Modal (Reject or Suspend with Reason) */}
       {selectedSellerForAction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-6 space-y-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
-              <h3 className={`font-bold text-base flex items-center gap-2 ${
-                selectedSellerForAction.action === 'reject' ? 'text-rose-900' : 'text-orange-900'
-              }`}>
+              <h3 className={`font-bold text-base flex items-center gap-2 ${selectedSellerForAction.action === 'reject' ? 'text-rose-900' : 'text-orange-900'
+                }`}>
                 {selectedSellerForAction.action === 'reject' ? (
                   <>
                     <XCircle className="w-5 h-5 text-rose-600" />
@@ -2368,11 +2340,10 @@ export const AdminDashboard: React.FC = () => {
                       ? 'مثال: المشغولات المقدمة لا تتبع الحرف التراثية الصعيدية المعتمدة...'
                       : 'مثال: تكرار شكاوى المشترين بشأن مطابقة المنتج للمواصفات...'
                   }
-                  className={`w-full p-3 bg-[#FDFBF7] border rounded-xl text-xs outline-none ${
-                    selectedSellerForAction.action === 'reject'
-                      ? 'border-rose-200 focus:border-rose-500'
-                      : 'border-orange-200 focus:border-orange-500'
-                  }`}
+                  className={`w-full p-3 bg-[#FDFBF7] border rounded-xl text-xs outline-none ${selectedSellerForAction.action === 'reject'
+                    ? 'border-rose-200 focus:border-rose-500'
+                    : 'border-orange-200 focus:border-orange-500'
+                    }`}
                 />
               </div>
 
@@ -2388,17 +2359,16 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   id="confirm-seller-action-btn"
                   disabled={isProcessingSellerAction}
-                  className={`px-5 py-2.5 text-white text-xs font-bold rounded-xl shadow-md disabled:opacity-50 ${
-                    selectedSellerForAction.action === 'reject'
-                      ? 'bg-rose-600 hover:bg-rose-700'
-                      : 'bg-orange-600 hover:bg-orange-700'
-                  }`}
+                  className={`px-5 py-2.5 text-white text-xs font-bold rounded-xl shadow-md disabled:opacity-50 ${selectedSellerForAction.action === 'reject'
+                    ? 'bg-rose-600 hover:bg-rose-700'
+                    : 'bg-orange-600 hover:bg-orange-700'
+                    }`}
                 >
                   {isProcessingSellerAction
                     ? 'جاري التنفيذ...'
                     : selectedSellerForAction.action === 'reject'
-                    ? 'تأكيد رفض الطلب'
-                    : 'تأكيد تعليق الحساب'}
+                      ? 'تأكيد رفض الطلب'
+                      : 'تأكيد تعليق الحساب'}
                 </button>
               </div>
             </form>
@@ -2408,8 +2378,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* User Details Modal (Safe Display) */}
       {selectedUserForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-6 space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
               <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
                 <Users className="w-5 h-5 text-[#B45F42]" />
@@ -2487,8 +2457,8 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Delete User Confirmation Modal */}
       {selectedUserForDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white rounded-3xl border border-rose-200 max-w-md w-full p-6 space-y-5 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-rose-200 max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
             <div className="flex items-center gap-3 text-rose-700 border-b border-rose-100 pb-3">
               <div className="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
                 <AlertCircle className="w-6 h-6 text-rose-600" />

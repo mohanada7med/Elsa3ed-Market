@@ -18,6 +18,7 @@ import {
   Info,
   Layers,
   ArrowRight,
+  ArrowLeft,
   LogIn,
   UserPlus
 } from 'lucide-react';
@@ -64,18 +65,37 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8E1D9] shadow-xs">
       {/* Top Heritage Notice Bar */}
-      <div className="bg-[#B45F42] text-[#FDFBF7] text-xs sm:text-sm py-2 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="bg-amber-400/25 text-amber-100 text-xs font-bold px-2.5 py-0.5 rounded border border-amber-300/30">
-              حرف أصلية 100%
-            </span>
-            <p className="truncate font-medium">
-              شحن مباشر ومضمون من ورش الصعيد في قنا وسوهاج وأسوان وأسيوط لباب بيتك
-            </p>
+      <div className="bg-[#B45F42] text-[#FDFBF7] text-xs sm:text-sm py-2 px-4 overflow-hidden">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5 overflow-hidden flex-1 min-w-0">
+            {/* Seamless Moving Marquee Ticker */}
+            <div className="overflow-hidden whitespace-nowrap flex-1 min-w-0" dir="ltr">
+              <div className="animate-marquee cursor-default select-none">
+                <div className="flex items-center gap-4 px-4 shrink-0" dir="rtl">
+                  <span className="font-medium">
+                    شحن مباشر ومضمون من ورش الصعيد في قنا وسوهاج وأسوان وأسيوط لباب بيتك
+                  </span>
+                  <span className="text-amber-300/80 text-xs">✦</span>
+                  <span className="font-medium text-amber-100/90">
+                    دعم مباشر لأكثر من 15 ورشة وحرفي مصري أصيل
+                  </span>
+                  <span className="text-amber-300/80 text-xs">✦</span>
+                </div>
+                <div className="flex items-center gap-4 px-4 shrink-0" dir="rtl" aria-hidden="true">
+                  <span className="font-medium">
+                    شحن مباشر ومضمون من ورش الصعيد في قنا وسوهاج وأسوان وأسيوط لباب بيتك
+                  </span>
+                  <span className="text-amber-300/80 text-xs">✦</span>
+                  <span className="font-medium text-amber-100/90">
+                    دعم مباشر لأكثر من 15 ورشة وحرفي مصري أصيل
+                  </span>
+                  <span className="text-amber-300/80 text-xs">✦</span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-4 text-xs font-medium">
+          <div className="hidden md:flex items-center gap-4 text-xs font-medium shrink-0">
             <button
               type="button"
               id="header-play-intro-btn"
@@ -101,18 +121,22 @@ export const Header: React.FC = () => {
           <div
             id="brand-logo"
             onClick={() => setActivePage('home')}
-            className="flex items-center gap-3 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-20 h-20 flex items-center justify-center group-hover:scale-105">
-              <img src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png" alt="Logo" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform">
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
+                alt="سوق الصعيد"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-2xl sm:text-3xl font-black text-[#2D2A26] font-heritage tracking-tight">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2D2A26] font-heritage tracking-tight">
                   سوق الصعيد
                 </span>
               </div>
-              <span className="block text-xs text-[#7A6F64] font-medium tracking-wide">
+              <span className="hidden xs:block text-[10px] sm:text-xs text-[#7A6F64] font-medium tracking-wide">
                 أصالة الحرف والخيرات التراثية
               </span>
             </div>
@@ -170,12 +194,14 @@ export const Header: React.FC = () => {
               )}
             </button>
 
+
+
             {/* Shopping Cart Button */}
             <button
               type="button"
               id="nav-cart-btn"
               onClick={() => setIsCartDrawerOpen(true)}
-              className="relative flex items-center gap-2 px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all"
+              className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[44px] min-w-[44px]"
               aria-label="سلة المشتريات"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -233,8 +259,8 @@ export const Header: React.FC = () => {
                     className="w-8 h-8 rounded-lg object-cover border border-[#E8E1D9] shrink-0"
                   />
                   <div className="text-right hidden sm:block">
-                    <span className="text-xs sm:text-sm font-bold text-[#2D2A26] block leading-tight max-w-[130px] truncate">
-                      {currentUser.name}
+                    <span className="text-xs sm:text-sm font-bold text-[#2D2A26] block leading-tight max-w-[140px] truncate">
+                      مرحبًا، {currentUser.username || currentUser.name}
                     </span>
                     <span className="text-[11px] text-[#7A6F64] block font-medium">
                       {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'حرفي وورشة' : 'حسابي'}
@@ -249,8 +275,14 @@ export const Header: React.FC = () => {
                     className="absolute left-0 mt-2 w-64 bg-white border border-[#E8E1D9] rounded-2xl shadow-xl py-2 z-50 animate-in fade-in"
                   >
                     <div className="px-4 py-3 border-b border-[#F3EFE9]">
-                      <p className="text-sm font-bold text-[#2D2A26] truncate">{currentUser.name}</p>
-                      <p className="text-xs text-[#7A6F64] truncate">{currentUser.email}</p>
+                      <p className="text-sm font-bold text-[#2D2A26] truncate">
+                        مرحبًا، {currentUser.username || currentUser.name}
+                      </p>
+                      {currentUser.email ? (
+                        <p className="text-xs text-[#7A6F64] truncate">{currentUser.email}</p>
+                      ) : (
+                        <p className="text-xs text-[#7A6F64] truncate">@{currentUser.username}</p>
+                      )}
                       <span
                         className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
                           ? 'bg-purple-100 text-purple-800'
@@ -365,7 +397,7 @@ export const Header: React.FC = () => {
               type="button"
               id="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors"
+              className="md:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="القائمة الرئيسية"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -459,7 +491,7 @@ export const Header: React.FC = () => {
       {mobileMenuOpen && (
         <div
           id="mobile-drawer"
-          className="md:hidden bg-[#FDFBF7] border-b border-[#E8E1D9] px-4 py-4 space-y-3 animate-in slide-in-from-top-4"
+          className="md:hidden bg-[#FDFBF7] border-b border-[#E8E1D9] px-4 py-4 space-y-3 max-h-[calc(100vh-5rem)] overflow-y-auto animate-in slide-in-from-top-4"
         >
           {/* User Status Card on Mobile */}
           {isAuthenticated ? (
@@ -497,9 +529,10 @@ export const Header: React.FC = () => {
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="py-2.5 bg-white text-[#2D2A26] text-xs font-bold rounded-xl text-center shadow-2xs"
+                className="py-2.5 bg-white text-[#2D2A26] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5"
               >
-                تسجيل الدخول
+                <LogIn className="w-4 h-4 text-[#B45F42]" />
+                <span>تسجيل الدخول</span>
               </button>
               <button
                 type="button"
@@ -509,9 +542,10 @@ export const Header: React.FC = () => {
                   setAuthModalTab('register');
                   setIsAuthModalOpen(true);
                 }}
-                className="py-2.5 bg-[#B45F42] text-white text-xs font-bold rounded-xl text-center shadow-xs"
+                className="py-2.5 bg-[#B45F42] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5"
               >
-                إنشاء حساب
+                <UserPlus className="w-4 h-4" />
+                <span>إنشاء حساب</span>
               </button>
             </div>
           )}
@@ -529,14 +563,31 @@ export const Header: React.FC = () => {
                     setActivePage(link.id as any);
                     setMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors ${isActive ? 'bg-[#B45F42] text-white' : 'text-[#2D2A26] hover:bg-[#F3EFE9]'
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] ${isActive ? 'bg-[#B45F42] text-white' : 'text-[#2D2A26] hover:bg-[#F3EFE9]'
                     }`}
                 >
                   <span>{link.label}</span>
-                  <ArrowRight className="w-4 h-4 opacity-70" />
+                  <ArrowLeft className="w-4 h-4 opacity-70" />
                 </button>
               );
             })}
+
+            {/* Quick Documentary Trigger in Mobile Drawer */}
+            <button
+              type="button"
+              id="mobile-intro-btn"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setShowIntroVideo(true);
+              }}
+              className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100/80 transition-colors min-h-[44px]"
+            >
+              <div className="flex items-center gap-2">
+                <Film className="w-4 h-4 text-amber-700" />
+                <span>شاهد وثائقي الصعيد</span>
+              </div>
+              <ArrowLeft className="w-4 h-4 opacity-70" />
+            </button>
           </div>
 
           {/* Protected Links in Mobile Menu if Authenticated */}
@@ -549,13 +600,13 @@ export const Header: React.FC = () => {
                   setActivePage('buyer-account');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] hover:bg-[#F3EFE9]"
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] hover:bg-[#F3EFE9] min-h-[44px]"
               >
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-[#B45F42]" />
                   <span>الملف الشخصي وإعدادات الحساب</span>
                 </div>
-                <ArrowRight className="w-4 h-4 opacity-70" />
+                <ArrowLeft className="w-4 h-4 opacity-70" />
               </button>
 
               {currentRole === 'seller' && (
@@ -566,13 +617,13 @@ export const Header: React.FC = () => {
                     setActivePage('seller-dashboard');
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100"
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 min-h-[44px]"
                 >
                   <div className="flex items-center gap-2">
                     <Store className="w-4 h-4 text-amber-700" />
                     <span>لوحة تحكم الورشة</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 opacity-70" />
+                  <ArrowLeft className="w-4 h-4 opacity-70" />
                 </button>
               )}
 
@@ -584,13 +635,13 @@ export const Header: React.FC = () => {
                     setActivePage('admin-dashboard');
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100"
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100 min-h-[44px]"
                 >
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="w-4 h-4 text-purple-700" />
                     <span>لوحة إدارة المنصة</span>
                   </div>
-                  <ArrowRight className="w-4 h-4 opacity-70" />
+                  <ArrowLeft className="w-4 h-4 opacity-70" />
                 </button>
               )}
             </div>

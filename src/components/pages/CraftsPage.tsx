@@ -179,7 +179,7 @@ export const CraftsPage: React.FC = () => {
                       setSelectedCategoryFilter(story.categoryId);
                       setActivePage('products');
                     }}
-                    className="px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs inline-flex items-center gap-2 transition-all hover:scale-[1.01]"
+                    className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
                   >
                     <span>تصفح قطع {story.title.split('(')[0]}</span>
                     <ArrowLeft className="w-3.5 h-3.5" />

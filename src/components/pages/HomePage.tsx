@@ -44,7 +44,7 @@ export const HomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline"
+            className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px]"
           >
             <span>استعراض كل المنتجات</span>
             <ArrowLeft className="w-4 h-4" />

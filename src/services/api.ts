@@ -754,8 +754,9 @@ export const api = {
   },
 
   async registerSeller(params: {
+    username: string;
     name: string;
-    email: string;
+    email?: string;
     password: string;
     phone: string;
     workshopName: string;
@@ -823,11 +824,11 @@ export const api = {
   },
 
   // ==================== AUTH & PERSISTENCE API ====================
-  async login(email: string, password: string): Promise<{ user: any; token: string }> {
+  async login(identifier: string, password: string): Promise<{ user: any; token: string }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ username: identifier, email: identifier, password })
     });
     const json: ApiResponse<{ user: any; token: string }> = await res.json();
     if (!json.success || !json.data) {
@@ -850,8 +851,9 @@ export const api = {
   },
 
   async register(params: {
+    username: string;
     name: string;
-    email: string;
+    email?: string;
     password: string;
     phone: string;
     role: string;

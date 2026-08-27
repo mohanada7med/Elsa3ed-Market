@@ -248,7 +248,7 @@ export const CheckoutPage: React.FC = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله الهاشمي"
-                    className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full px-3.5 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
                 </div>
 
@@ -260,7 +260,7 @@ export const CheckoutPage: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="010XXXXXXXX"
-                    className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full px-3.5 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -271,7 +271,7 @@ export const CheckoutPage: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full px-3.5 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px] cursor-pointer"
                   >
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
@@ -301,7 +301,7 @@ export const CheckoutPage: React.FC = () => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="مثال: المعادي الجديدة / نجع حمادي"
-                    className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full px-3.5 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                   />
                 </div>
               </div>

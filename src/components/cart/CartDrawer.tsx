@@ -48,19 +48,19 @@ export const CartDrawer: React.FC = () => {
         className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
       />
 
-      <div className="fixed inset-y-0 left-0 max-w-full flex pl-0 sm:pl-10">
+      <div className="fixed inset-y-0 left-0 max-w-full flex pl-0 sm:pl-10 w-full sm:w-auto">
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           exit={{ x: '-100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           id="cart-drawer-panel"
-          className="w-screen max-w-md bg-[#fdfaf6] border-r border-[#dfcebe] shadow-2xl flex flex-col"
+          className="w-full sm:w-[420px] max-w-full bg-[#fdfaf6] border-r border-[#dfcebe] shadow-2xl flex flex-col h-full"
         >
           {/* Drawer Header */}
           <div className="p-4 sm:p-5 bg-white border-b border-[#ebdccd] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#943310]/10 text-[#943310] flex items-center justify-center">
+              <div className="w-9 h-9 rounded-xl bg-[#943310]/10 text-[#943310] flex items-center justify-center shrink-0">
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
@@ -73,7 +73,7 @@ export const CartDrawer: React.FC = () => {
               type="button"
               id="cart-drawer-close"
               onClick={() => setIsCartDrawerOpen(false)}
-              className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
               aria-label="إغلاق السلة"
             >
               <X className="w-5 h-5" />
@@ -161,24 +161,24 @@ export const CartDrawer: React.FC = () => {
                         </div>
 
                         {/* Quantity Stepper */}
-                        <div className="flex items-center border border-[#ebdccd] rounded-lg bg-[#faf6f0] overflow-hidden">
+                        <div className="flex items-center border border-[#ebdccd] rounded-xl bg-[#faf6f0] overflow-hidden">
                           <button
                             type="button"
                             id={`qty-minus-${prodId}`}
                             onClick={() => updateCartQuantity(prodId, qty - 1)}
-                            className="p-1 hover:bg-amber-200/50 text-gray-600 transition-colors"
+                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
                             aria-label="تقليل الكمية"
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="px-2.5 text-xs font-bold text-gray-800">
+                          <span className="px-2 text-xs font-bold text-gray-800">
                             {qty}
                           </span>
                           <button
                             type="button"
                             id={`qty-plus-${prodId}`}
                             onClick={() => updateCartQuantity(prodId, qty + 1)}
-                            className="p-1 hover:bg-amber-200/50 text-gray-600 transition-colors"
+                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
                             aria-label="زيادة الكمية"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -191,7 +191,7 @@ export const CartDrawer: React.FC = () => {
                       type="button"
                       id={`remove-cart-item-${prodId}`}
                       onClick={() => removeFromCart(prodId)}
-                      className="text-gray-400 hover:text-rose-600 p-1 transition-colors self-start"
+                      className="text-gray-400 hover:text-rose-600 p-1.5 transition-colors self-start min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg"
                       title="حذف من السلة"
                       aria-label="حذف من السلة"
                     >
@@ -232,7 +232,7 @@ export const CartDrawer: React.FC = () => {
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#f3ebd9] hover:bg-[#ede0ca] text-[#943310] text-xs font-bold rounded-xl transition-colors shrink-0"
+                    className="px-4 py-2 bg-[#f3ebd9] hover:bg-[#ede0ca] text-[#943310] text-xs font-bold rounded-xl transition-colors shrink-0 min-h-[38px]"
                   >
                     تطبيق
                   </button>
@@ -270,7 +270,7 @@ export const CartDrawer: React.FC = () => {
                 type="button"
                 id="cart-checkout-btn"
                 onClick={proceedToCheckout}
-                className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01]"
+                className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px]"
               >
                 <span>متابعة إتمام الطلب</span>
                 <ArrowLeft className="w-4 h-4" />

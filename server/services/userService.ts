@@ -18,6 +18,96 @@ export function extractCloudinaryPublicId(urlOrId: string): string | null {
   return match ? match[1] : null;
 }
 
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Normalizes username for consistent searching and uniqueness checks:
+ * - Trims whitespace at both ends
+ * - Applies Unicode Normalization Form KC (NFKC)
+ * - Converts Latin characters to lowercase (case-insensitive for English)
+ * - Leaves Arabic characters completely untouched without transliteration
+ * - Collapses consecutive spaces into a single space
+ */
+export function normalizeUsername(username: string): string {
+  if (!username || typeof username !== 'string') return '';
+  return username
+    .trim()
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+}
+
+/**
+ * Validates username:
+ * - Length between 2 and 30 characters
+ * - Supports Arabic Unicode letters (\u0600-\u06FF, \u0750-\u077F, \u08A0-\u08FF)
+ * - Supports Latin letters (a-z, A-Z)
+ * - Supports digits (0-9, Arabic-Indic digits \u0660-\u0669)
+ * - Supports underscores, hyphens, and single spaces
+ */
+export function validateUsername(username: string): { valid: boolean; message?: string } {
+  if (!username || typeof username !== 'string' || !username.trim()) {
+    return { valid: false, message: 'من فضلك اكتب اسم المستخدم' };
+  }
+  const trimmed = username.trim();
+  if (trimmed.length < 2) {
+    return { valid: false, message: 'اسم المستخدم قصير جداً (حرفان على الأقل)' };
+  }
+  if (trimmed.length > 30) {
+    return { valid: false, message: 'اسم المستخدم يجب ألا يتجاوز 30 حرفاً' };
+  }
+
+  const validRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FFa-zA-Z0-9_\- ]+$/;
+  if (!validRegex.test(trimmed)) {
+    return { valid: false, message: 'اسم المستخدم غير صالح. يمكن استخدام الحروف العربية أو الإنجليزية والأرقام فقط' };
+  }
+
+  return { valid: true };
+}
+
+export async function findUserByUsername(username: string): Promise<UserDocument | null> {
+  const norm = normalizeUsername(username);
+  if (!norm) return null;
+
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    try {
+      const user = await db.collection('users').findOne({
+        $or: [
+          { usernameNormalized: norm },
+          { username: { $regex: new RegExp(`^${escapeRegex(norm)}$`, 'i') } }
+        ]
+      });
+      return user as unknown as UserDocument | null;
+    } catch (e) {
+      Logger.error('[UserService] Error querying user by username in MongoDB:', e);
+    }
+  }
+
+  const memUser = memoryDb.users.find(
+    (u) => (u.username && normalizeUsername(u.username) === norm) || (u as any).usernameNormalized === norm
+  );
+  return (memUser as unknown as UserDocument) || null;
+}
+
+export async function findUserByIdentifier(identifier: string): Promise<UserDocument | null> {
+  if (!identifier || typeof identifier !== 'string') return null;
+  const trimmed = identifier.trim();
+
+  // 1. Primary lookup by username
+  const userByUsername = await findUserByUsername(trimmed);
+  if (userByUsername) return userByUsername;
+
+  // 2. Secondary fallback lookup by email if identifier contains '@'
+  if (trimmed.includes('@')) {
+    return findUserByEmail(trimmed);
+  }
+
+  return null;
+}
+
 export async function findUserByEmail(email: string): Promise<UserDocument | null> {
   const normalizedEmail = email.trim().toLowerCase();
   const { db, isMongo } = await getDatabase();
@@ -25,7 +115,7 @@ export async function findUserByEmail(email: string): Promise<UserDocument | nul
   if (isMongo && db) {
     try {
       const user = await db.collection('users').findOne({
-        email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') }
+        email: { $regex: new RegExp(`^${escapeRegex(normalizedEmail)}$`, 'i') }
       });
       return user as unknown as UserDocument | null;
     } catch (e) {
@@ -35,7 +125,7 @@ export async function findUserByEmail(email: string): Promise<UserDocument | nul
 
   // Memory fallback
   const memUser = memoryDb.users.find(
-    (u) => u.email.toLowerCase() === normalizedEmail
+    (u) => u.email && u.email.toLowerCase() === normalizedEmail
   );
   return (memUser as unknown as UserDocument) || null;
 }
@@ -58,8 +148,9 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
 
 export async function createUser(userData: {
   id?: string;
+  username: string;
   name: string;
-  email: string;
+  email?: string;
   passwordHash?: string;
   phone: string;
   role: UserRole;
@@ -71,10 +162,14 @@ export async function createUser(userData: {
 }): Promise<UserDocument> {
   const now = new Date().toISOString();
   const id = userData.id || `user-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const trimmedUsername = userData.username.trim();
+  const usernameNormalized = normalizeUsername(trimmedUsername);
+
   const newUser: UserDocument = {
     id,
+    username: trimmedUsername,
+    usernameNormalized,
     name: userData.name.trim(),
-    email: userData.email.trim().toLowerCase(),
     passwordHash: userData.passwordHash,
     phone: userData.phone.trim(),
     role: userData.role || 'buyer',
@@ -87,14 +182,19 @@ export async function createUser(userData: {
     updatedAt: now
   };
 
+  if (userData.email?.trim()) {
+    newUser.email = userData.email.trim().toLowerCase();
+  }
+
   const { db, isMongo } = await getDatabase();
 
   if (isMongo && db) {
     try {
       await db.collection('users').insertOne(newUser as any);
-      Logger.info(`[UserService] Created user in MongoDB: ${newUser.id} (${newUser.email})`);
+      Logger.info(`[UserService] Created user in MongoDB: ${newUser.id} (@${newUser.username})`);
     } catch (e) {
       Logger.error('[UserService] Error creating user in MongoDB:', e);
+      throw e;
     }
   }
 

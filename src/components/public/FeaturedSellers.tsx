@@ -5,6 +5,10 @@ import { Store, Star, MapPin, CheckCircle2, ArrowLeft } from 'lucide-react';
 export const FeaturedSellers: React.FC = () => {
   const { sellers, navigateToSeller, setActivePage } = useApp();
 
+  if (sellers.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-14 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Header */}
@@ -26,7 +30,7 @@ export const FeaturedSellers: React.FC = () => {
           type="button"
           id="view-all-sellers-btn"
           onClick={() => setActivePage('sellers')}
-          className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline"
+          className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px]"
         >
           <span>عرض كافة الورش والحرفيين</span>
           <ArrowLeft className="w-4 h-4" />

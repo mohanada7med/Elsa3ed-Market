@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Sparkles, MapPin, ArrowLeft, CheckCircle2, Heart, Award, Shield } from 'lucide-react';
 import { CraftStory } from '../../types.ts';
-import { INITIAL_CRAFT_STORIES } from '../../data/mockData.ts';
 import { api } from '../../services/api.ts';
 
 export const HeritageCraftsShowcase: React.FC = () => {
   const { navigateToCategory, setSelectedCategoryFilter, setActivePage } = useApp();
-  const [crafts, setCrafts] = useState<CraftStory[]>(INITIAL_CRAFT_STORIES);
+  const [crafts, setCrafts] = useState<CraftStory[]>([]);
   const [selectedCraftIndex, setSelectedCraftIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +20,7 @@ export const HeritageCraftsShowcase: React.FC = () => {
           setCrafts(data);
         }
       } catch (err) {
-        console.warn('[HeritageCraftsShowcase] Using fallback craft stories:', err);
+        console.warn('[HeritageCraftsShowcase] Could not fetch craft stories from API:', err);
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -32,7 +31,10 @@ export const HeritageCraftsShowcase: React.FC = () => {
     };
   }, []);
 
-  const craft = crafts[selectedCraftIndex] || crafts[0] || INITIAL_CRAFT_STORIES[0];
+  const craft = crafts[selectedCraftIndex] || crafts[0] || null;
+  if (!craft || crafts.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-14 bg-[#f3eadc] border-y border-[#ebdccd]">
@@ -52,29 +54,29 @@ export const HeritageCraftsShowcase: React.FC = () => {
         </div>
 
         {/* Craft Selector Tabs */}
-        <div className="flex items-center justify-center gap-2 overflow-x-auto pb-4 mb-8">
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-6 sm:mb-8 no-scrollbar px-1">
           {crafts.map((item, idx) => (
             <button
               key={item.id}
               type="button"
               id={`craft-tab-${item.id}`}
               onClick={() => setSelectedCraftIndex(idx)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-2 ${
+              className={`px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 min-h-[42px] ${
                 selectedCraftIndex === idx
                   ? 'bg-[#943310] text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-[#ede0ca] border border-[#ebdccd]'
               }`}
             >
-              <MapPin className="w-3.5 h-3.5 opacity-80" />
+              <MapPin className="w-3.5 h-3.5 opacity-80 shrink-0" />
               <span>{item.governorate}</span>
               <span className="opacity-40">|</span>
-              <span>{item.title.split('(')[0]}</span>
+              <span className="truncate max-w-[140px] sm:max-w-none">{item.title.split('(')[0]}</span>
             </button>
           ))}
         </div>
 
         {/* Featured Craft Interactive Card */}
-        <div className="bg-white rounded-3xl border border-[#ebdccd] shadow-xl overflow-hidden p-6 sm:p-10">
+        <div className="bg-white rounded-3xl border border-[#ebdccd] shadow-xl overflow-hidden p-4 sm:p-8 lg:p-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Image Column */}
             <div className="lg:col-span-5 relative">
@@ -127,7 +129,7 @@ export const HeritageCraftsShowcase: React.FC = () => {
                     setSelectedCategoryFilter(craft.categoryId);
                     setActivePage('products');
                   }}
-                  className="px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all hover:scale-[1.01]"
+                  className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
                 >
                   <span>تسوق منتجات {craft.title.split('(')[0]}</span>
                   <ArrowLeft className="w-4 h-4" />
