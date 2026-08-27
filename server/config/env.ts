@@ -29,7 +29,7 @@ export function validateAndGetEnv(): EnvConfig {
   const NODE_ENV = (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development';
   const PORT = 3000; // Hardcoded port required by infrastructure
   const APP_URL = process.env.APP_URL || 'http://localhost:3000';
-  const MONGODB_URI = process.env.MONGODB_URI?.trim() || 'mongodb+srv://ahmdmohanad28_db_user:<db_password>@cluster0.je3wwaw.mongodb.net/?appName=Cluster0';
+  const MONGODB_URI = process.env.MONGODB_URI?.trim() || 'mongodb+srv://ahmdmohanad28_db_user:012012012@cluster0.je3wwaw.mongodb.net/?appName=Cluster0';
   const MONGODB_DB = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
   const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || 'elsa3ed-market-secure-session-key-2026';
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';

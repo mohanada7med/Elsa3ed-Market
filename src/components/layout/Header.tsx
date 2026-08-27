@@ -103,8 +103,8 @@ export const Header: React.FC = () => {
             onClick={() => setActivePage('home')}
             className="flex items-center gap-3 cursor-pointer group shrink-0"
           >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#B45F42] to-[#9E4F36] flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform border border-[#8C5039]/30">
-              <span className="font-black text-2xl font-heritage">ص</span>
+            <div className="w-20 h-20 flex items-center justify-center group-hover:scale-105">
+              <img src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png" alt="Logo" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
@@ -253,10 +253,10 @@ export const Header: React.FC = () => {
                       <p className="text-xs text-[#7A6F64] truncate">{currentUser.email}</p>
                       <span
                         className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
-                            ? 'bg-purple-100 text-purple-800'
-                            : currentRole === 'seller'
-                              ? 'bg-amber-100 text-amber-800'
-                              : 'bg-blue-100 text-blue-800'
+                          ? 'bg-purple-100 text-purple-800'
+                          : currentRole === 'seller'
+                            ? 'bg-amber-100 text-amber-800'
+                            : 'bg-blue-100 text-blue-800'
                           }`}
                       >
                         {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'ورشة معتمدة' : 'مشتري موثق'}
@@ -407,8 +407,8 @@ export const Header: React.FC = () => {
                 id={`nav-link-${link.id}`}
                 onClick={() => setActivePage(link.id as any)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${isActive
-                    ? 'bg-[#B45F42] text-white shadow-xs'
-                    : 'text-[#54493F] hover:text-[#B45F42] hover:bg-[#F3EFE9]'
+                  ? 'bg-[#B45F42] text-white shadow-xs'
+                  : 'text-[#54493F] hover:text-[#B45F42] hover:bg-[#F3EFE9]'
                   }`}
               >
                 <span>{link.label}</span>
