@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, ShieldCheck, HeartHandshake, Truck, RefreshCcw, MapPin, Phone, Mail, Film, ArrowUp } from 'lucide-react';
+import { Sparkles, ShieldCheck, HeartHandshake, Truck, RefreshCcw, MapPin, Phone, Mail, Film, ArrowUp, MessageCircle, Building2 } from 'lucide-react';
+import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
 
 export const Footer: React.FC = () => {
   const { setActivePage, setShowIntroVideo } = useApp();
@@ -144,6 +145,17 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   type="button"
+                  onClick={() => setActivePage('wholesale')}
+                  className="text-amber-300 font-bold hover:text-white transition-colors text-right cursor-pointer flex items-center gap-1.5"
+                  aria-label="الانتقال إلى مبيعات الجملة وتوريدات الشركات"
+                >
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>البيع بالجملة والتوريدات (B2B)</span>
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
                   onClick={() => setActivePage('about')}
                   className="hover:text-amber-200 transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى قصة ورسالة المنصة"
@@ -220,6 +232,17 @@ export const Footer: React.FC = () => {
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
                 <a href="tel:+201158969931" aria-label="الاتصال عبر الهاتف: 01158969931" className="hover:underline">
                   <span dir="ltr">01158969931</span>
+                </a>
+              </div>
+              <div className="pt-1">
+                <a
+                  href={getWhatsAppUrl('السلام عليكم، أود التواصل مع إدارة سوق الصعيد.')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold shadow-xs transition-colors"
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                  <span>تواصل واتساب: {WHATSAPP_NUMBER}</span>
                 </a>
               </div>
               <div className="flex items-center gap-2">

@@ -27,7 +27,9 @@ import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
 import { SellerDashboard } from './components/seller/SellerDashboard';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AboutSection } from './components/public/AboutSection';
+import { WholesalePage } from './components/pages/WholesalePage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
+import { WhatsAppButton } from './components/common/WhatsAppButton';
 
 const MainContent: React.FC = () => {
   const {
@@ -287,6 +289,9 @@ const MainContent: React.FC = () => {
                 <AboutSection />
               </div>
             )}
+
+            {activePage === 'wholesale' && <WholesalePage />}
+
             {![
               'home',
               'products',
@@ -301,13 +306,17 @@ const MainContent: React.FC = () => {
               'buyer-account',
               'seller-dashboard',
               'admin-dashboard',
-              'about'
+              'about',
+              'wholesale'
             ].includes(activePage) && <NotFoundPage />}
           </motion.div>
         </AnimatePresence>
       </div>
 
       <Footer />
+
+      {/* Floating Direct WhatsApp Support & Inquiries */}
+      <WhatsAppButton />
 
       {/* Persistent Mobile Bottom Navigation Bar (Phones & Small Tablets) */}
       <MobileBottomBar />

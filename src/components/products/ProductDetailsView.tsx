@@ -17,8 +17,11 @@ import {
   Layers,
   Send,
   CheckCircle2,
-  Share2
+  Share2,
+  MessageCircle,
+  Building2
 } from 'lucide-react';
+import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
 
 export const ProductDetailsView: React.FC = () => {
   const {
@@ -307,10 +310,64 @@ export const ProductDetailsView: React.FC = () => {
                 id="details-add-cart-btn"
                 onClick={() => addToCart(product, quantity)}
                 disabled={!product.inStock}
-                className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px]"
+                className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
+              </button>
+            </div>
+
+            {/* Direct WhatsApp Instant Order Button */}
+            <a
+              href={getWhatsAppUrl(
+                `السلام عليكم، أود طلب أو الاستفسار عن منتج: "${product.title}" (سعر: ${product.price} ج.م، كمية: ${quantity}، صانع: ${product.sellerName} من ${product.sellerGovernorate})`
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>طلب سريع عبر واتساب ({WHATSAPP_NUMBER})</span>
+            </a>
+          </div>
+
+          {/* Wholesale & Bulk Orders Banner */}
+          <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-300/60 dark:border-amber-700/40 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-amber-700 dark:text-amber-400" />
+                <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                  متوفر للبيع بالجملة وتوريدات الفنادق والشركات (B2B)
+                </span>
+              </div>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
+                خصم حتى 35%
+              </span>
+            </div>
+
+            <p className="text-xs text-amber-800/90 dark:text-amber-300/80 leading-relaxed">
+              نوفر أسعار جملة تصاعدية تبدأ من 5 قطع مع إمكانية حفر الشعار وطلب عينات قبل التوريد.
+            </p>
+
+            <div className="flex items-center gap-2 pt-1">
+              <a
+                href={getWhatsAppUrl(
+                  `السلام عليكم، نود طلب عرض أسعار جملة لمنتج: "${product.title}" (كود: ${product.id}) لـ (اسم المنشأة/الفندق)...`
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2 px-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>طلب تسعير جملة فوري</span>
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setActivePage('wholesale')}
+                className="py-2 px-3 bg-white dark:bg-[#1B1613] hover:bg-amber-100 text-amber-900 dark:text-amber-300 border border-amber-300 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+              >
+                تفاصيل التوريد
               </button>
             </div>
           </div>

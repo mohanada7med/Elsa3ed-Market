@@ -305,6 +305,7 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   sellers: '/sellers',
   'seller-details': '/sellers',
   about: '/about',
+  wholesale: '/wholesale',
   search: '/search',
   cart: '/cart',
   checkout: '/checkout',

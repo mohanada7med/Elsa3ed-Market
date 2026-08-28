@@ -50,6 +50,8 @@ export interface Product {
   isHeritage: boolean;
   isFeatured?: boolean;
   isNewArrival?: boolean;
+  wholesalePrice?: number;
+  wholesaleMinQty?: number;
   createdAt: string;
   updatedAt?: string;
   approvalStatus: ProductStatus;
@@ -263,6 +265,7 @@ export type ActivePage =
   | 'sellers'
   | 'seller-details'
   | 'about'
+  | 'wholesale'
   | 'crafts'
   | 'search'
   | 'cart'
