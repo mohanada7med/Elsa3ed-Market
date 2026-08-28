@@ -47,7 +47,6 @@ export const WhatsAppButton: React.FC = () => {
   ];
 
   return (
-    {/* مكان وارتفاع زر الواتساب */}
     <div className="fixed bottom-28 md:bottom-12 left-4 sm:left-6 z-40" dir="rtl">
       <AnimatePresence>
       {isOpen && (
