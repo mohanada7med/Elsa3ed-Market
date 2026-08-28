@@ -29,7 +29,7 @@ export interface ToastNotification {
 interface AppContextType {
   // Navigation & Page State
   activePage: ActivePage;
-  setActivePage: (page: ActivePage) => void;
+  setActivePage: (page: ActivePage | ((prev: ActivePage) => ActivePage)) => void;
   selectedProductId: string | null;
   setSelectedProductId: (id: string | null) => void;
   selectedCategoryId: string | null;
@@ -210,42 +210,42 @@ export const normalizeOrder = (ord: any): Order => {
   if (!ord) return ord;
   const items = Array.isArray(ord.items)
     ? ord.items.map((it: any) => {
-        const product = it.product
-          ? {
-              ...it.product,
-              id: it.product.id || it.productId || 'prod-item',
-              images: Array.isArray(it.product.images) && it.product.images.length > 0
-                ? it.product.images
-                : [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
-            }
-          : {
-              id: it.productId || 'prod-item',
-              title: it.productTitle || 'منتج تراثي أصيل',
-              price: it.unitPrice || 0,
-              originalPrice: it.unitPrice || 0,
-              images: [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
-              sellerId: it.sellerId || '',
-              sellerName: it.sellerName || 'ورشة الصعيد التراثية',
-              sellerGovernorate: it.sellerGovernorate || 'قنا',
-              categoryId: 'cat-pottery',
-              categoryName: 'الفخار والخزف',
-              inStock: true,
-              stockCount: 10,
-              rating: 5,
-              reviewCount: 1,
-              isHandmade: true,
-              heritageGovernorate: it.sellerGovernorate || 'قنا',
-              approvalStatus: 'approved' as const,
-              description: it.productTitle || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
-            };
-
-        return {
-          product,
-          quantity: it.quantity || 1,
-          selectedColor: it.selectedColor,
-          customNote: it.customNote
+      const product = it.product
+        ? {
+          ...it.product,
+          id: it.product.id || it.productId || 'prod-item',
+          images: Array.isArray(it.product.images) && it.product.images.length > 0
+            ? it.product.images
+            : [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
+        }
+        : {
+          id: it.productId || 'prod-item',
+          title: it.productTitle || 'منتج تراثي أصيل',
+          price: it.unitPrice || 0,
+          originalPrice: it.unitPrice || 0,
+          images: [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
+          sellerId: it.sellerId || '',
+          sellerName: it.sellerName || 'ورشة الصعيد التراثية',
+          sellerGovernorate: it.sellerGovernorate || 'قنا',
+          categoryId: 'cat-pottery',
+          categoryName: 'الفخار والخزف',
+          inStock: true,
+          stockCount: 10,
+          rating: 5,
+          reviewCount: 1,
+          isHandmade: true,
+          heritageGovernorate: it.sellerGovernorate || 'قنا',
+          approvalStatus: 'approved' as const,
+          description: it.productTitle || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
         };
-      })
+
+      return {
+        product,
+        quantity: it.quantity || 1,
+        selectedColor: it.selectedColor,
+        customNote: it.customNote
+      };
+    })
     : [];
 
   return {
@@ -282,13 +282,206 @@ export const normalizeOrder = (ord: any): Order => {
   };
 };
 
+const PAGE_ROUTES: Record<ActivePage, string> = {
+  home: '/',
+  products: '/products',
+  'product-details': '/products',
+  categories: '/categories',
+  'category-details': '/categories',
+  crafts: '/crafts',
+  sellers: '/sellers',
+  'seller-details': '/sellers',
+  about: '/about',
+  search: '/search',
+  cart: '/cart',
+  checkout: '/checkout',
+  orders: '/orders',
+  'order-details': '/orders',
+  favorites: '/favorites',
+  'buyer-account': '/buyer-account',
+  'seller-dashboard': '/seller-dashboard',
+  'seller-products': '/seller-products',
+  'seller-inventory': '/seller-inventory',
+  'seller-orders': '/seller-orders',
+  'seller-analytics': '/seller-analytics',
+  'seller-account': '/seller-account',
+  'admin-dashboard': '/admin-dashboard',
+  'admin-sellers': '/admin-sellers',
+  'admin-products': '/admin-products',
+  'admin-buyers': '/admin-buyers',
+  'admin-orders': '',
+  'admin-categories': '',
+  'admin-discounts': '',
+  'admin-reports': '',
+  'admin-audit-logs': '',
+  'admin-settings': ''
+};
+
+function getInitialNavigationState(): {
+  page: ActivePage;
+  productId: string | null;
+  categoryId: string | null;
+  sellerId: string | null;
+  orderId: string | null;
+} {
+  if (typeof window === 'undefined') {
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const params = new URLSearchParams(window.location.search);
+  const idFromQuery = params.get('id');
+
+  if (path === '/' || path === '') {
+    const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
+    if (saved && PAGE_ROUTES[saved] && saved !== 'home') {
+      return {
+        page: saved,
+        productId: sessionStorage.getItem('elsa3ed_selected_product_id'),
+        categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
+        sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
+        orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
+      };
+    }
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path === '/products') {
+    if (idFromQuery) {
+      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null };
+    }
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path.startsWith('/products/')) {
+    const prodId = path.split('/')[2];
+    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path === '/categories') {
+    if (idFromQuery) {
+      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null };
+    }
+    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path.startsWith('/categories/')) {
+    const catId = path.split('/')[2];
+    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null };
+  }
+
+  if (path === '/sellers') {
+    if (idFromQuery) {
+      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null };
+    }
+    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path.startsWith('/sellers/')) {
+    const sId = path.split('/')[2];
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null };
+  }
+
+  if (path === '/orders') {
+    if (idFromQuery) {
+      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery };
+    }
+    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null };
+  }
+
+  if (path.startsWith('/orders/')) {
+    const ordId = path.split('/')[2];
+    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId };
+  }
+
+  const simplePages: ActivePage[] = [
+    'crafts',
+    'about',
+    'cart',
+    'checkout',
+    'favorites',
+    'buyer-account',
+    'seller-dashboard',
+    'seller-products',
+    'seller-inventory',
+    'seller-orders',
+    'seller-analytics',
+    'seller-account',
+    'admin-dashboard',
+    'admin-sellers',
+    'admin-products',
+    'admin-buyers'
+  ];
+
+  for (const p of simplePages) {
+    if (path === `/${p}`) {
+      return { page: p, productId: null, categoryId: null, sellerId: null, orderId: null };
+    }
+  }
+
+  const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
+  if (saved && PAGE_ROUTES[saved]) {
+    return {
+      page: saved,
+      productId: sessionStorage.getItem('elsa3ed_selected_product_id'),
+      categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
+      sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
+      orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
+    };
+  }
+
+  return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+}
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Navigation
-  const [activePage, setActivePage] = useState<ActivePage>('home');
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [selectedSellerId, setSelectedSellerId] = useState<string | null>(null);
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  // Navigation initialized from browser URL and session storage
+  const initialNav = useMemo(() => getInitialNavigationState(), []);
+  const [activePage, setActivePageState] = useState<ActivePage>(initialNav.page);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(initialNav.productId);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
+  const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
+
+  // Sync activePage with browser URL and history
+  const setActivePage = useCallback((pageOrUpdater: ActivePage | ((prev: ActivePage) => ActivePage)) => {
+    setActivePageState((prev) => {
+      const nextPage = typeof pageOrUpdater === 'function' ? pageOrUpdater(prev) : pageOrUpdater;
+      try {
+        sessionStorage.setItem('elsa3ed_active_page', nextPage);
+        const targetPath = PAGE_ROUTES[nextPage] || (nextPage === 'home' ? '/' : `/${nextPage}`);
+        if (window.location.pathname !== targetPath) {
+          window.history.pushState({ page: nextPage }, '', targetPath);
+        }
+      } catch { }
+      return nextPage;
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Update navigation state on browser back/forward buttons (popstate)
+  useEffect(() => {
+    const onPopState = () => {
+      const nav = getInitialNavigationState();
+      setActivePageState(nav.page);
+      if (nav.productId !== undefined) setSelectedProductId(nav.productId);
+      if (nav.categoryId !== undefined) setSelectedCategoryId(nav.categoryId);
+      if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
+      if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // On mount / page change: ensure URL reflects active page
+  useEffect(() => {
+    try {
+      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      const expectedPath = PAGE_ROUTES[activePage] || (activePage === 'home' ? '/' : `/${activePage}`);
+      if (currentPath === '/' && activePage !== 'home') {
+        window.history.replaceState({ page: activePage }, '', expectedPath);
+      }
+    } catch { }
+  }, [activePage]);
 
   // Intro Video: Opt-in only via explicit click to prevent blocking visitors
   const [showIntroVideo, setShowIntroVideo] = useState<boolean>(false);
@@ -298,9 +491,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('saeed_intro_seen', 'true');
   };
 
-  // Roles & Auth: Visitors start cleanly as guest until verified by real MongoDB session
-  const [currentRole, setCurrentRole] = useState<UserRole>('guest');
-  const [currentUser, setCurrentUser] = useState<UserProfile>(GUEST_USER);
+  // Roles & Auth: Synchronously restore cached user for zero-latency UI on refresh
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
+    try {
+      const token = localStorage.getItem('saeed_token');
+      const savedUser = localStorage.getItem('saeed_user');
+      if (token && savedUser) {
+        return JSON.parse(savedUser);
+      }
+    } catch { }
+    return GUEST_USER;
+  });
+
+  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
+    try {
+      const token = localStorage.getItem('saeed_token');
+      const savedUser = localStorage.getItem('saeed_user');
+      if (token && savedUser) {
+        const u = JSON.parse(savedUser);
+        if (u && u.role) return u.role;
+      }
+    } catch { }
+    return 'guest';
+  });
+
   const isAuthenticated = currentRole !== 'guest' && Boolean(currentUser?.id);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -629,6 +843,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (data.token) {
         localStorage.setItem('saeed_token', data.token);
       }
+      localStorage.setItem('saeed_user', JSON.stringify(data.user));
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في سوق الصعيد!`, 'success');
     }
@@ -667,6 +882,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (data.token) {
         localStorage.setItem('saeed_token', data.token);
       }
+      localStorage.setItem('saeed_user', JSON.stringify(data.user));
       setIsAuthModalOpen(false);
       addToast(
         'إنشاء الحساب',
@@ -689,6 +905,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.warn('[AppContext] Logout server call error:', err);
     } finally {
       localStorage.removeItem('saeed_token');
+      localStorage.removeItem('saeed_user');
       setCurrentUser(GUEST_USER);
       setCurrentRole('guest');
       // If the user is on a protected page, navigate to public homepage
@@ -710,11 +927,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .then((userData) => {
           if (userData && userData.id) {
             setCurrentUser(userData);
+            localStorage.setItem('saeed_user', JSON.stringify(userData));
             if (userData.role) {
               setCurrentRole(userData.role);
             }
           } else {
             localStorage.removeItem('saeed_token');
+            localStorage.removeItem('saeed_user');
             setCurrentUser(GUEST_USER);
             setCurrentRole('guest');
           }
@@ -722,6 +941,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         .catch((err) => {
           console.warn('[AppContext] Could not restore session on startup:', err);
           localStorage.removeItem('saeed_token');
+          localStorage.removeItem('saeed_user');
           setCurrentUser(GUEST_USER);
           setCurrentRole('guest');
         });
@@ -868,26 +1088,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Navigation helpers
   const navigateToProduct = (productId: string) => {
     setSelectedProductId(productId);
-    setActivePage('product-details');
+    setActivePageState('product-details');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'product-details');
+      sessionStorage.setItem('elsa3ed_selected_product_id', productId);
+      const targetUrl = `/products?id=${encodeURIComponent(productId)}`;
+      window.history.pushState({ page: 'product-details', productId }, '', targetUrl);
+    } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToCategory = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     setSelectedCategoryFilter(categoryId);
-    setActivePage('category-details');
+    setActivePageState('category-details');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'category-details');
+      sessionStorage.setItem('elsa3ed_selected_category_id', categoryId);
+      const targetUrl = `/categories?id=${encodeURIComponent(categoryId)}`;
+      window.history.pushState({ page: 'category-details', categoryId }, '', targetUrl);
+    } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToSeller = (sellerId: string) => {
     setSelectedSellerId(sellerId);
-    setActivePage('seller-details');
+    setActivePageState('seller-details');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'seller-details');
+      sessionStorage.setItem('elsa3ed_selected_seller_id', sellerId);
+      const targetUrl = `/sellers?id=${encodeURIComponent(sellerId)}`;
+      window.history.pushState({ page: 'seller-details', sellerId }, '', targetUrl);
+    } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToOrder = (orderId: string) => {
     setSelectedOrderId(orderId);
-    setActivePage('order-details');
+    setActivePageState('order-details');
+    try {
+      sessionStorage.setItem('elsa3ed_active_page', 'order-details');
+      sessionStorage.setItem('elsa3ed_selected_order_id', orderId);
+      const targetUrl = `/orders?id=${encodeURIComponent(orderId)}`;
+      window.history.pushState({ page: 'order-details', orderId }, '', targetUrl);
+    } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -937,8 +1181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       addToast(
         initialStatus === 'pending' ? 'تم إرسال المنتج للمراجعة بنجاح' : 'تم حفظ المسودة بنجاح',
-        `المنتج "${created.title}" مسجل الآن بحالة: ${
-          created.approvalStatus === 'pending' ? 'قيد المراجعة من إدارة المنصة' : 'مسودة'
+        `المنتج "${created.title}" مسجل الآن بحالة: ${created.approvalStatus === 'pending' ? 'قيد المراجعة من إدارة المنصة' : 'مسودة'
         }`,
         'success'
       );
