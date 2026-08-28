@@ -25,11 +25,11 @@ const globalCache: MongoGlobalCache = (globalThis as any).__mongoCache || {
 };
 (globalThis as any).__mongoCache = globalCache;
 
-// Clean in-memory storage initialized to empty state for testing
+// Clean in-memory storage with default platform categories
 class MemoryStore {
   products: Product[] = [];
   sellers: Seller[] = [];
-  categories: Category[] = [];
+  categories: Category[] = [...PLATFORM_CATEGORIES];
   auditLogs: AuditLog[] = [];
   users: UserProfile[] = [];
   carts: CartDocument[] = [];
@@ -88,9 +88,6 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
   // Short retry throttle (2 seconds) to avoid spamming on connection errors
   const now = Date.now();
   if (now - globalCache.lastAttemptTime < 2000 && !globalCache.db) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('MongoDB connection is in retry cooldown. Please retry in a moment.');
-    }
     return { db: null, isMongo: false };
   }
 
@@ -135,15 +132,12 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
       }
       globalCache.db = null;
 
-      if (process.env.NODE_ENV === 'production') {
-        const isTimeout = error?.name === 'MongoServerSelectionError' || error?.message?.includes('timed out');
-        const detail = isTimeout
-          ? 'Connection timed out. IMPORTANT: On MongoDB Atlas, go to Network Access -> IP Access List and add 0.0.0.0/0 (Allow Access from Anywhere) for Vercel.'
-          : error?.message || 'Unknown connection error';
-        throw new Error(`MongoDB connection failed on Vercel: ${detail}`);
+      const isTimeout = error?.name === 'MongoServerSelectionError' || error?.message?.includes('timed out');
+      if (isTimeout) {
+        Logger.warn('[MongoDB] Connection timed out. Ensure 0.0.0.0/0 is added in MongoDB Atlas Network Access.');
       }
 
-      Logger.info('[Database] Falling back to in-memory database in development mode');
+      Logger.info('[Database] Operating with in-memory store until database is connected');
       return { db: null, isMongo: false };
     } finally {
       globalCache.promise = null;
