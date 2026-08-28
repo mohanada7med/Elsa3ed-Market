@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "tsx server.ts",
+    "next:dev": "next dev",
     "build": "next build",
     "start": "next start",
     "server:dev": "tsx server.ts",
