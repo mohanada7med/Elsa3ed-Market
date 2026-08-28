@@ -105,6 +105,7 @@ interface AppContextType {
   refreshCategories: () => Promise<void>;
   refreshSellers: () => Promise<void>;
   refreshReviews: () => Promise<void>;
+  refreshCart: () => Promise<void>;
 
   // Cart
   cart: CartItem[];
@@ -552,6 +553,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentRole, setCurrentRole] = useState<UserRole>('guest');
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
+  // Restore authenticated session from secure HTTP-only cookie on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function restoreSession() {
+      try {
+        const user = await api.getMe();
+        if (isMounted && user && user.id) {
+          setCurrentUser(user);
+          setCurrentRole(user.role || 'buyer');
+        }
+      } catch (err) {
+        console.warn('[AppContext] Session verification check failed:', err);
+      } finally {
+        if (isMounted) {
+          setIsAuthChecking(false);
+        }
+      }
+    }
+    restoreSession();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const isAuthenticated = currentRole !== 'guest' && Boolean(currentUser?.id);
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -627,14 +652,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  // Sync cart & favorites to localStorage
+  // Sync cart & favorites to localStorage (Buyers and guests only)
   useEffect(() => {
-    localStorage.setItem('saeed_cart', JSON.stringify(cart));
-  }, [cart]);
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      try {
+        localStorage.removeItem('saeed_cart');
+        localStorage.removeItem('saeed_favorites');
+      } catch {}
+      return;
+    }
+    try {
+      localStorage.setItem('saeed_cart', JSON.stringify(cart));
+    } catch {}
+  }, [cart, currentRole]);
 
   useEffect(() => {
-    localStorage.setItem('saeed_favorites', JSON.stringify(favorites));
-  }, [favorites]);
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      return;
+    }
+    try {
+      localStorage.setItem('saeed_favorites', JSON.stringify(favorites));
+    } catch {}
+  }, [favorites, currentRole]);
 
   // Fetch Public Products from backend
   const refreshPublicProducts = useCallback(async () => {
@@ -816,6 +855,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentUser.id, currentRole]);
 
+  // Fetch Buyer Cart from backend
+  const refreshCart = useCallback(async () => {
+    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
+      try {
+        const remoteCart = await api.getCart({ id: currentUser.id, role: 'buyer' });
+        if (remoteCart && Array.isArray(remoteCart.items)) {
+          const mappedItems: CartItem[] = remoteCart.items.map((it: any) => ({
+            product: it.product,
+            quantity: it.quantity,
+            selectedColor: it.selectedColor,
+            customNote: it.customNote
+          }));
+          setCart(mappedItems);
+        }
+      } catch (e) {
+        console.warn('[AppContext] Could not fetch remote cart:', e);
+      }
+    } else if (currentRole === 'seller' || currentRole === 'admin') {
+      setCart([]);
+      setIsCartDrawerOpen(false);
+      try {
+        localStorage.removeItem('saeed_cart');
+      } catch {}
+    }
+  }, [currentRole, currentUser.id]);
+
   // Initial load from Database APIs
   useEffect(() => {
     refreshPublicProducts();
@@ -828,11 +893,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     refreshOrders();
     if (currentRole === 'seller') {
+      setCart([]);
+      setIsCartDrawerOpen(false);
       refreshSellerProducts();
       refreshSellerInventory();
       refreshStockMovements();
       refreshSellerStats();
     } else if (currentRole === 'admin') {
+      setCart([]);
+      setIsCartDrawerOpen(false);
       refreshAdminProducts();
       refreshAuditLogs();
       refreshReviews();
@@ -840,6 +909,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshSellers();
     } else {
       refreshPublicProducts();
+      if (currentRole === 'buyer') {
+        refreshCart();
+      }
     }
   }, [
     currentRole,
@@ -853,7 +925,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshReviews,
     refreshCategories,
     refreshSellers,
-    refreshPublicProducts
+    refreshPublicProducts,
+    refreshCart
   ]);
 
   // Log helper
@@ -1044,37 +1117,110 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [cartSubtotal, shippingFee, cartDiscountAmount]);
 
   // Cart operations
-  const addToCart = (product: Product, quantity = 1) => {
+  const addToCart = async (product: Product, quantity = 1) => {
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      addToast('غير مصرح', 'عفواً، سلة المشتريات والتسوق مخصصة لحسابات المشترين فقط', 'error');
+      return;
+    }
+
+    if (!product.inStock || product.stockCount <= 0) {
+      addToast('نفد المخزون', 'عفواً، نفدت الكمية المتوفرة من هذا المنتج بالورشة', 'warning');
+      return;
+    }
+
+    const safeQty = Math.max(1, Math.floor(quantity));
+    const existing = cart.find((item) => item.product.id === product.id);
+    const existingQty = existing ? existing.quantity : 0;
+    const newQty = existingQty + safeQty;
+
+    if (newQty > product.stockCount) {
+      addToast(
+        'الكمية غير متاحة',
+        `الكمية المتاحة بالورشة هي ${product.stockCount} قطع فقط. لديك ${existingQty} بالسلة`,
+        'warning'
+      );
+      return;
+    }
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
+      const existingItem = prev.find((item) => item.product.id === product.id);
+      if (existingItem) {
         return prev.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+          item.product.id === product.id ? { ...item, quantity: item.quantity + safeQty } : item
         );
       }
-      return [...prev, { product, quantity }];
+      return [...prev, { product, quantity: safeQty }];
     });
-    addToast('تمت الإضافة إلى سلة المشتريات', `${product.title} (${quantity} قطعة)`, 'success');
+
+    addToast('تمت الإضافة إلى سلة المشتريات', `${product.title} (${safeQty} قطعة)`, 'success');
+
+    if (isAuthenticated && currentRole === 'buyer') {
+      try {
+        await api.addToCart({ id: currentUser.id, role: 'buyer' }, product.id, safeQty);
+      } catch (err: any) {
+        console.warn('[AppContext] Could not sync addToCart to backend:', err?.message);
+      }
+    }
   };
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = async (productId: string) => {
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      return;
+    }
+
     setCart((prev) => prev.filter((item) => item.product.id !== productId));
     addToast('تم الحذف', 'تم حذف المنتج من سلة المشتريات', 'info');
+
+    if (isAuthenticated && currentRole === 'buyer') {
+      try {
+        await api.removeCartItem({ id: currentUser.id, role: 'buyer' }, productId);
+      } catch (err: any) {
+        console.warn('[AppContext] Could not sync removeCartItem to backend:', err?.message);
+      }
+    }
   };
 
-  const updateCartQuantity = (productId: string, quantity: number) => {
+  const updateCartQuantity = async (productId: string, quantity: number) => {
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      return;
+    }
+
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
     }
+
+    const safeQty = Math.floor(quantity);
+    const item = cart.find((it) => it.product.id === productId);
+    if (item && safeQty > item.product.stockCount) {
+      addToast('الكمية غير متاحة', `الكمية المتاحة بالورشة هي ${item.product.stockCount} قطع فقط`, 'warning');
+      return;
+    }
+
     setCart((prev) =>
-      prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item))
+      prev.map((it) => (it.product.id === productId ? { ...it, quantity: safeQty } : it))
     );
+
+    if (isAuthenticated && currentRole === 'buyer') {
+      try {
+        await api.updateCartItem({ id: currentUser.id, role: 'buyer' }, productId, safeQty);
+      } catch (err: any) {
+        console.warn('[AppContext] Could not sync updateCartItem to backend:', err?.message);
+      }
+    }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setCart([]);
     setAppliedDiscount(null);
+
+    if (isAuthenticated && currentRole === 'buyer') {
+      try {
+        await api.clearCart({ id: currentUser.id, role: 'buyer' });
+      } catch (err: any) {
+        console.warn('[AppContext] Could not sync clearCart to backend:', err?.message);
+      }
+    }
   };
 
   const applyDiscountCode = async (code: string) => {
@@ -1102,6 +1248,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Favorites (Syncs with Database)
   const toggleFavorite = async (productId: string) => {
+    if (currentRole === 'seller' || currentRole === 'admin') {
+      addToast('غير مصرح', 'عفواً، قائمة المفضلة مخصصة لحسابات المشترين فقط', 'error');
+      return;
+    }
+
     const exists = favorites.includes(productId);
     if (exists) {
       setFavorites((prev) => prev.filter((id) => id !== productId));
@@ -1727,6 +1878,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         refreshCategories,
         refreshSellers,
         refreshReviews,
+        refreshCart,
 
         cart,
         addToCart,

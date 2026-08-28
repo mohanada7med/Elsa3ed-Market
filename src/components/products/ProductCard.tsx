@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
-import { Heart, ShoppingBag, Star, Sparkles, MapPin, Eye } from 'lucide-react';
+import { Heart, ShoppingBag, Star, Sparkles, MapPin, Eye, Edit3, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface ProductCardProps {
@@ -14,7 +14,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     addToCart,
     toggleFavorite,
     isFavorite,
-    navigateToSeller
+    navigateToSeller,
+    currentRole,
+    isAuthenticated,
+    setActivePage,
+    setSelectedProductId
   } = useApp();
 
   if (!product || !product.id) {
@@ -61,25 +65,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Favorite & Quick View Buttons */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-          <motion.button
-            type="button"
-            id={`fav-btn-${product.id}`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleFavorite(product.id);
-            }}
-            className={`p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer ${
-              favorite
-                ? 'bg-rose-500 text-white'
-                : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
-            }`}
-            title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
-            aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
-          >
-            <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
-          </motion.button>
+          {(currentRole === 'buyer' || !isAuthenticated) && (
+            <motion.button
+              type="button"
+              id={`fav-btn-${product.id}`}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavorite(product.id);
+              }}
+              className={`p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer ${
+                favorite
+                  ? 'bg-rose-500 text-white'
+                  : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
+              }`}
+              title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
+              aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
+            >
+              <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
+            </motion.button>
+          )}
 
           <motion.button
             type="button"
@@ -163,22 +169,57 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           </div>
 
-          <motion.button
-            type="button"
-            id={`add-cart-btn-${product.id}`}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(product, 1);
-            }}
-            disabled={!product.inStock}
-            className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
-            title={`إضافة ${product.title} إلى سلة المشتريات`}
-            aria-label={`إضافة ${product.title} إلى سلة المشتريات`}
-          >
-            <ShoppingBag className="w-4 h-4" />
-          </motion.button>
+          {/* Action button according to role: Only buyer/guest gets Add to Cart */}
+          {currentRole === 'buyer' || !isAuthenticated ? (
+            <motion.button
+              type="button"
+              id={`add-cart-btn-${product.id}`}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product, 1);
+              }}
+              disabled={!product.inStock}
+              className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              title={`إضافة ${product.title} إلى سلة المشتريات`}
+              aria-label={`إضافة ${product.title} إلى سلة المشتريات`}
+            >
+              <ShoppingBag className="w-4 h-4" />
+            </motion.button>
+          ) : currentRole === 'seller' ? (
+            <motion.button
+              type="button"
+              id={`seller-view-btn-${product.id}`}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToProduct(product.id);
+              }}
+              className="p-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              title="عرض تفاصيل القطعة"
+              aria-label="عرض تفاصيل القطعة"
+            >
+              <Eye className="w-4 h-4" />
+            </motion.button>
+          ) : (
+            <motion.button
+              type="button"
+              id={`admin-view-btn-${product.id}`}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToProduct(product.id);
+              }}
+              className="p-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              title="إدارة القطعة التراثية"
+              aria-label="إدارة القطعة التراثية"
+            >
+              <Settings className="w-4 h-4" />
+            </motion.button>
+          )}
         </div>
       </div>
     </motion.div>

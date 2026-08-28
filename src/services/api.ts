@@ -264,6 +264,7 @@ export const api = {
     const query = params.toString() ? `?${params.toString()}` : '';
 
     const res = await fetch(`${API_BASE}/cart${query}`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -279,6 +280,7 @@ export const api = {
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/cart/items`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({ productId, quantity, selectedColor, customNote })
     });
@@ -296,6 +298,7 @@ export const api = {
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/cart/items/${productId}`, {
       method: 'PUT',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({ quantity })
     });
@@ -312,6 +315,7 @@ export const api = {
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/cart/items/${productId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -324,6 +328,7 @@ export const api = {
   async clearCart(user: { id?: string; role?: string }): Promise<any> {
     const res = await fetch(`${API_BASE}/cart`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -341,9 +346,9 @@ export const api = {
       notes?: string;
     }
   ): Promise<any> {
-
     const res = await fetch(`${API_BASE}/orders`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify(orderData)
     });
@@ -356,6 +361,7 @@ export const api = {
 
   async getBuyerOrders(user: { id?: string; role?: string }): Promise<any[]> {
     const res = await fetch(`${API_BASE}/orders`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any[]> = await res.json();
@@ -364,6 +370,7 @@ export const api = {
 
   async getBuyerOrderById(user: { id?: string; role?: string }, orderId: string): Promise<any | null> {
     const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     if (!res.ok) return null;
@@ -378,6 +385,7 @@ export const api = {
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/orders/${orderId}/cancel`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({ reason })
     });

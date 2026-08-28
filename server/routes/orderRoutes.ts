@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { requireAuth, AuthenticatedRequest } from '../middleware/auth.ts';
+import { requireBuyer, AuthenticatedRequest } from '../middleware/auth.ts';
 import {
   createOrder,
   getBuyerOrders,
@@ -9,13 +9,13 @@ import {
 
 const router = Router();
 
-// Apply requireAuth for all order endpoints
-router.use(requireAuth);
+// Strictly enforce buyer-only role for customer order placement and tracking
+router.use(requireBuyer);
 
 // POST /api/orders - Place a new order
 router.post('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { shippingAddress, paymentMethod, discountCode, notes } = req.body;
+    const { shippingAddress, paymentMethod, discountCode, notes, paymentReference } = req.body;
 
     if (!shippingAddress) {
       return res.status(400).json({
@@ -37,7 +37,8 @@ router.post('/', async (req: AuthenticatedRequest, res: Response) => {
       shippingAddress,
       paymentMethod,
       discountCode,
-      notes
+      notes,
+      paymentReference
     });
 
     res.status(201).json({

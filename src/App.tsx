@@ -24,12 +24,30 @@ import { CheckoutPage } from './components/pages/CheckoutPage';
 import { OrdersTrackingPage } from './components/pages/OrdersTrackingPage';
 import { FavoritesPage } from './components/pages/FavoritesPage';
 import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
-import { SellerDashboard } from './components/seller/SellerDashboard';
-import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AboutSection } from './components/public/AboutSection';
-import { WholesalePage } from './components/pages/WholesalePage';
+import { CartPage } from './components/pages/CartPage';
+import { ForbiddenPage } from './components/pages/ForbiddenPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
+
+// Dynamic code-splitting for heavy non-public dashboard bundles
+const SellerDashboard = React.lazy(() =>
+  import('./components/seller/SellerDashboard').then((m) => ({ default: m.SellerDashboard }))
+);
+const AdminDashboard = React.lazy(() =>
+  import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
+);
+const WholesalePage = React.lazy(() =>
+  import('./components/pages/WholesalePage').then((m) => ({ default: m.WholesalePage }))
+);
+
+const LazySectionFallback: React.FC = () => (
+  <div className="min-h-[420px] flex flex-col items-center justify-center p-8 text-center">
+    <div className="w-12 h-12 border-4 border-[#E8E1D9] border-t-[#B45F42] rounded-full animate-spin mb-4" />
+    <p className="text-sm font-bold text-[#2D2A26]">جاري تحميل لوحة التحكم...</p>
+    <p className="text-xs text-[#7A6F64] mt-1">سوق الصعيد — منصة التراث والحرف الأصيلة</p>
+  </div>
+);
 
 const MainContent: React.FC = () => {
   const {
@@ -69,6 +87,7 @@ const MainContent: React.FC = () => {
   }
 
   // Dynamic SEO meta updates on page transition
+  // Move SEO effect before any conditional returns to maintain hook order
   useEffect(() => {
     switch (activePage) {
       case 'home':
@@ -101,6 +120,12 @@ const MainContent: React.FC = () => {
           description: 'تواصل مع كبار شيوخ الصنعة وأصحاب الورش المعتمدة في قنا وأسوان وسوهاج وأسيوط.'
         });
         break;
+      case 'cart':
+        updatePageSEO({
+          title: 'سلة المشتريات التراثية',
+          description: 'استعرض مشترياتك من المنتجات التراثية والحرفية من ورش الصعيد.'
+        });
+        break;
       case 'checkout':
         updatePageSEO({
           title: 'إتمام الطلب والدفع الآمن',
@@ -130,9 +155,51 @@ const MainContent: React.FC = () => {
     }
   }, [activePage, selectedProduct, selectedSellerId]);
 
+  // Initial Auth Verification State (Prevents flash of logged-out or unauthorized screens on refresh)
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
+        <div className="text-center space-y-4 max-w-sm mx-auto">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto relative flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
+            <img
+              src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
+              alt="سوق الصعيد"
+              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+            />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">سوق الصعيد</h2>
+            <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[#faf6f0]">
+      {isAuthChecking && (
+        <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
+          <div className="text-center space-y-4 max-w-sm mx-auto">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto relative flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
+                alt="سوق الصعيد"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">سوق الصعيد</h2>
+              <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
+            </div>
+          </div>
+        </div>
+      )}
       <div>
+    
+      
         <Header />
 
         <AnimatePresence mode="wait">
@@ -148,13 +215,25 @@ const MainContent: React.FC = () => {
             {activePage === 'products' && <ProductsPage />}
             {activePage === 'product-details' && <ProductDetailsView />}
             {activePage === 'categories' && <CategoriesPage />}
+            {activePage === 'category-details' && <ProductsPage />}
             {activePage === 'crafts' && <CraftsPage />}
             {activePage === 'sellers' && <SellersDirectoryPage />}
             {activePage === 'seller-details' && <SellerProfileView />}
 
-            {/* Checkout: Requires Authentication */}
+            {/* Cart: Buyer/Guest only. Forbidden for Seller and Admin */}
+            {activePage === 'cart' && (
+              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                <ForbiddenPage />
+              ) : (
+                <CartPage />
+              )
+            )}
+
+            {/* Checkout: Buyer only. Forbidden for Seller and Admin. Prompt login for guest */}
             {activePage === 'checkout' && (
-              isAuthenticated ? (
+              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                <ForbiddenPage />
+              ) : isAuthenticated ? (
                 <CheckoutPage />
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-[#E8E1D9] shadow-xl text-center space-y-4">
@@ -172,14 +251,14 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all"
+                      className="w-full py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول للمتابعة
                     </button>
                     <button
                       type="button"
                       onClick={() => setActivePage('products')}
-                      className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-all"
+                      className="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition-all cursor-pointer"
                     >
                       متابعة التسوق أولاً
                     </button>
@@ -188,8 +267,14 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {activePage === 'orders' && <OrdersTrackingPage />}
-            {activePage === 'favorites' && <FavoritesPage />}
+            {(activePage === 'orders' || activePage === 'order-details') && <OrdersTrackingPage />}
+            {activePage === 'favorites' && (
+              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                <ForbiddenPage />
+              ) : (
+                <FavoritesPage />
+              )
+            )}
 
             {/* Buyer Account: Requires Authentication */}
             {activePage === 'buyer-account' && (
@@ -219,9 +304,11 @@ const MainContent: React.FC = () => {
             )}
 
             {/* Seller Dashboard: Requires Seller or Admin Role */}
-            {activePage === 'seller-dashboard' && (
+            {activePage.startsWith('seller-') && (
               isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
-                <SellerDashboard />
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <SellerDashboard />
+                </React.Suspense>
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-amber-200 shadow-xl text-center space-y-4">
                   <div className="w-16 h-16 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center mx-auto text-2xl">
@@ -258,9 +345,11 @@ const MainContent: React.FC = () => {
             )}
 
             {/* Admin Dashboard: Requires Admin Role */}
-            {activePage === 'admin-dashboard' && (
+            {activePage.startsWith('admin-') && (
               isAuthenticated && currentRole === 'admin' ? (
-                <AdminDashboard />
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <AdminDashboard />
+                </React.Suspense>
               ) : (
                 <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-purple-200 shadow-xl text-center space-y-4">
                   <div className="w-16 h-16 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center mx-auto text-2xl">
@@ -290,22 +379,43 @@ const MainContent: React.FC = () => {
               </div>
             )}
 
-            {activePage === 'wholesale' && <WholesalePage />}
+            {activePage === 'wholesale' && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <WholesalePage />
+              </React.Suspense>
+            )}
 
             {![
               'home',
               'products',
               'product-details',
               'categories',
+              'category-details',
               'crafts',
               'sellers',
               'seller-details',
+              'cart',
               'checkout',
               'orders',
+              'order-details',
               'favorites',
               'buyer-account',
               'seller-dashboard',
+              'seller-products',
+              'seller-inventory',
+              'seller-orders',
+              'seller-analytics',
+              'seller-account',
               'admin-dashboard',
+              'admin-sellers',
+              'admin-products',
+              'admin-buyers',
+              'admin-orders',
+              'admin-categories',
+              'admin-discounts',
+              'admin-reports',
+              'admin-audit-logs',
+              'admin-settings',
               'about',
               'wholesale'
             ].includes(activePage) && <NotFoundPage />}
@@ -322,7 +432,7 @@ const MainContent: React.FC = () => {
       <MobileBottomBar />
 
       {/* Global Modals & Drawers */}
-      <CartDrawer />
+      {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}
       <AuthModal />
       <ForceChangePasswordModal />
       <IntroExperience />

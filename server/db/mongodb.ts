@@ -196,6 +196,21 @@ async function seedMongoDatabase(database: Db) {
     await database.collection('craft_stories').createIndex({ id: 1 }, { unique: true });
     await database.collection('craft_stories').createIndex({ active: 1, displayOrder: 1 });
     await database.collection('craft_stories').createIndex({ categoryId: 1 });
+
+    // Carts, Discounts, Favorites & Operations Indexes
+    await database.collection('carts').createIndex({ buyerId: 1 }, { unique: true });
+    await database.collection('discounts').createIndex({ code: 1 }, { unique: true });
+    await database.collection('orders').createIndex({ orderNumber: 1 }, { unique: true });
+    await database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true });
+    await database.collection('notifications').createIndex({ userId: 1, createdAt: -1 });
+    await database.collection('stock_movements').createIndex({ sellerId: 1, createdAt: -1 });
+    await database.collection('password_resets').createIndex({ tokenHash: 1 });
+    await database.collection('password_resets').createIndex({ userId: 1 });
+    try {
+      await database.collection('password_resets').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    } catch {
+      // Ignore if index option differs
+    }
   } catch (err) {
     Logger.error('[MongoDB] Index creation error:', err);
   }

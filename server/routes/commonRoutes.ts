@@ -3,7 +3,7 @@ import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { validateAndCalculateDiscount } from '../services/discountService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
-import { AuthenticatedRequest } from '../middleware/auth.ts';
+import { AuthenticatedRequest, requireBuyer } from '../middleware/auth.ts';
 
 const router = Router();
 
@@ -97,14 +97,11 @@ router.get('/reviews', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/reviews
-router.post('/reviews', async (req: AuthenticatedRequest, res: Response) => {
+// POST /api/reviews - Buyer only
+router.post('/reviews', requireBuyer, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({ success: false, error: 'يجب تسجيل الدخول أولاً لكتابة تقييم' });
-    }
     const { productId, rating, comment } = req.body;
-    const result = await createProductReview(req.user, { productId, rating, comment });
+    const result = await createProductReview(req.user!, { productId, rating, comment });
     res.status(201).json({ success: true, data: result });
   } catch (error: any) {
     res.status(400).json({ success: false, error: error.message || 'فشل في إضافة التقييم' });

@@ -18,12 +18,14 @@ export const CartDrawer: React.FC = () => {
     cartDiscountAmount,
     cartTotal,
     setActivePage,
-    navigateToProduct
+    navigateToProduct,
+    currentRole,
+    isAuthenticated
   } = useApp();
 
   const [couponInput, setCouponInput] = useState('');
 
-  if (!isCartDrawerOpen) return null;
+  if (!isCartDrawerOpen || (isAuthenticated && (currentRole === 'seller' || currentRole === 'admin'))) return null;
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -287,17 +289,32 @@ export const CartDrawer: React.FC = () => {
                 </div>
               </div>
 
-              {/* Checkout CTA */}
-              <button
-                type="button"
-                id="cart-checkout-btn"
-                onClick={proceedToCheckout}
-                aria-label={`متابعة إتمام الطلب، المبلغ الإجمالي ${cartTotal} جنيه مصري`}
-                className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
-              >
-                <span>متابعة إتمام الطلب</span>
-                <ArrowLeft className="w-4 h-4" />
-              </button>
+              {/* Checkout & Full Cart CTAs */}
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  id="cart-checkout-btn"
+                  onClick={proceedToCheckout}
+                  aria-label={`متابعة إتمام الطلب، المبلغ الإجمالي ${cartTotal} جنيه مصري`}
+                  className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
+                >
+                  <span>متابعة إتمام الطلب</span>
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  id="cart-view-full-page-btn"
+                  onClick={() => {
+                    setIsCartDrawerOpen(false);
+                    setActivePage('cart');
+                  }}
+                  className="w-full py-2.5 bg-gray-100 dark:bg-[#25201D] hover:bg-gray-200 dark:hover:bg-[#2D2723] text-gray-800 dark:text-gray-200 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  <span>عرض سلة المشتريات بالكامل</span>
+                </button>
+              </div>
 
               <div className="flex items-center justify-center gap-3 text-[11px] text-gray-500">
                 <div className="flex items-center gap-1">

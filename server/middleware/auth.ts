@@ -19,22 +19,20 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export async function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  let userId = (req.headers['x-user-id'] as string) || (req.query.userId as string);
-  const userRoleHeader = (req.headers['x-user-role'] as UserRole) || (req.query.userRole as UserRole);
-
   // 1. Primary: Extract and verify authentication token from HTTP-only Cookie or Bearer header
   const token = getAuthTokenFromRequest(req);
-  if (token) {
-    const verified = verifyToken(token);
-    if (verified && verified.sub) {
-      userId = verified.sub;
-    }
-  }
-
-  if (!userId && !userRoleHeader) {
-    // Default to guest/unauthenticated
+  if (!token) {
+    // Unauthenticated visitor / guest
     return next();
   }
+
+  const verified = verifyToken(token);
+  if (!verified || !verified.sub) {
+    // Invalid or tampered token
+    return next();
+  }
+
+  const userId = verified.sub;
 
   // Look up user from database or memory
   const { db, isMongo } = await getDatabase();
@@ -52,63 +50,16 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     userProfile = memoryDb.users.find((u) => u.id === userId);
   }
 
-  // If user not found in DB, check standard default development accounts safely
-  if (!userProfile) {
-    if (userId === 'user-admin-1') {
-      userProfile = {
-        id: 'user-admin-1',
-        name: 'أ/ محمود الهواري (مدير المنصة)',
-        email: 'admin@elsa3ed.eg',
-        role: 'admin',
-        governorate: 'قنا'
-      };
-    } else if (userId === 'seller-1') {
-      userProfile = {
-        id: 'seller-1',
-        sellerId: 'seller-1',
-        name: 'الأسطى سعيد القناوي',
-        email: 'saeed.pottery@elsa3ed.eg',
-        role: 'seller',
-        sellerStatus: 'approved',
-        governorate: 'قنا'
-      };
-    } else if (userId === 'user-buyer-1') {
-      userProfile = {
-        id: 'user-buyer-1',
-        name: 'أحمد محمود الهاشمي',
-        email: 'ahmed.hashmi@gmail.com',
-        role: 'buyer',
-        governorate: 'القاهرة'
-      };
-    } else if (userRoleHeader === 'admin' && !userId) {
-      // Unspecified demo admin
-      userProfile = {
-        id: 'user-admin-1',
-        name: 'أ/ محمود الهواري (مدير المنصة)',
-        email: 'admin@elsa3ed.eg',
-        role: 'admin',
-        governorate: 'قنا'
-      };
-    } else if (userRoleHeader === 'seller' && !userId) {
-      // Unspecified demo seller
-      userProfile = {
-        id: 'seller-1',
-        sellerId: 'seller-1',
-        name: 'الأسطى سعيد القناوي',
-        email: 'saeed.pottery@elsa3ed.eg',
-        role: 'seller',
-        sellerStatus: 'approved',
-        governorate: 'قنا'
-      };
-    } else if (userRoleHeader === 'buyer' && !userId) {
-      userProfile = {
-        id: 'user-buyer-1',
-        name: 'أحمد محمود الهاشمي',
-        email: 'ahmed.hashmi@gmail.com',
-        role: 'buyer',
-        governorate: 'القاهرة'
-      };
-    }
+  // If user verified by token but DB sync is resolving, fall back safely to verified token claims
+  if (!userProfile && verified.role) {
+    userProfile = {
+      id: userId,
+      name: verified.username || 'مستخدم المنصة',
+      email: verified.email || '',
+      role: verified.role,
+      sellerId: verified.sellerId,
+      sellerStatus: verified.sellerStatus
+    };
   }
 
   if (!userProfile) {
@@ -174,6 +125,15 @@ export function requireBuyer(req: AuthenticatedRequest, res: Response, next: Nex
       code: 'UNAUTHORIZED'
     });
   }
+
+  if (req.user.role !== 'buyer') {
+    return res.status(403).json({
+      success: false,
+      error: 'عفواً، سلة المشتريات وإتمام الطلبات مخصصة لحسابات المشترين فقط',
+      code: 'FORBIDDEN_BUYER_ONLY'
+    });
+  }
+
   next();
 }
 

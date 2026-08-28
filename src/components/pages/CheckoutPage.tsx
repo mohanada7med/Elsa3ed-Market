@@ -31,14 +31,15 @@ export const CheckoutPage: React.FC = () => {
   } = useApp();
 
   // Form State
-  const [fullName, setFullName] = useState(currentUser.name || 'محمود عبد الرازق الصعيدي');
-  const [phone, setPhone] = useState(currentUser.phone || '01012345678');
+  const [fullName, setFullName] = useState(currentUser.name || '');
+  const [phone, setPhone] = useState(currentUser.phone || '');
   const [governorate, setGovernorate] = useState<Governorate>(
     (currentUser.governorate as Governorate) || 'القاهرة'
   );
-  const [city, setCity] = useState('المعادي');
-  const [address, setAddress] = useState('شارع النصر، عمارة 12، شقة 4');
+  const [city, setCity] = useState('');
+  const [address, setAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [paymentReference, setPaymentReference] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('vodafone_cash');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -82,7 +83,8 @@ export const CheckoutPage: React.FC = () => {
         city,
         addressText: address,
         notes,
-        paymentMethod
+        paymentMethod,
+        paymentReference: paymentReference.trim() || undefined
       });
 
       setCompletedOrder(newOrder);
@@ -459,6 +461,23 @@ export const CheckoutPage: React.FC = () => {
                     ميزة / Visa
                   </span>
                 </label>
+
+                {(paymentMethod === 'vodafone_cash' || paymentMethod === 'instapay') && (
+                  <div className="pt-2 animate-fadeIn">
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      {paymentMethod === 'vodafone_cash'
+                        ? 'رقم هاتف المحفظة المحول منها أو رقم العملية (اختياري لتسريع التأكيد):'
+                        : 'معرف الحساب المحول منه أو الرقم المرجعي للتحويل (اختياري):'}
+                    </label>
+                    <input
+                      type="text"
+                      value={paymentReference}
+                      onChange={(e) => setPaymentReference(e.target.value)}
+                      placeholder={paymentMethod === 'vodafone_cash' ? 'مثال: 010XXXXXXXX أو كود العملية' : 'مثال: username@instapay أو الرقم المرجعي'}
+                      className="w-full px-3.5 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

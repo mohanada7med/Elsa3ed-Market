@@ -13,8 +13,8 @@ class CacheService {
   private cache = new Map<string, CacheEntry<any>>();
 
   constructor() {
-    // Periodic garbage collection of expired keys
-    setInterval(() => {
+    // Periodic garbage collection of expired keys (unreferenced so it doesn't block process exit)
+    const timer = setInterval(() => {
       const now = Date.now();
       for (const [key, entry] of this.cache.entries()) {
         if (now > entry.expiresAt) {
@@ -22,6 +22,9 @@ class CacheService {
         }
       }
     }, 60 * 1000);
+    if (timer && typeof timer.unref === 'function') {
+      timer.unref();
+    }
   }
 
   get<T>(key: string): T | null {

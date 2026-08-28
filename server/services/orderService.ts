@@ -18,6 +18,7 @@ export interface CreateOrderInput {
   paymentMethod: PaymentMethod;
   discountCode?: string;
   notes?: string;
+  paymentReference?: string;
 }
 
 /**
@@ -27,7 +28,7 @@ export async function createOrder(
   buyer: AuthenticatedUser,
   input: CreateOrderInput
 ): Promise<OrderDocument> {
-  const { shippingAddress, paymentMethod, discountCode, notes } = input;
+  const { shippingAddress, paymentMethod, discountCode, notes, paymentReference } = input;
 
   // 1. Validate shipping address fields
   if (!shippingAddress.fullName || !shippingAddress.fullName.trim()) {
@@ -165,8 +166,8 @@ export async function createOrder(
     }
   ];
 
-  const initialPaymentStatus: PaymentStatus =
-    paymentMethod === 'cod' ? 'pending' : 'paid';
+  // All real orders start as 'pending' payment until verified by gateway/admin or collected (COD)
+  const initialPaymentStatus: PaymentStatus = 'pending';
 
   const orderDocument: OrderDocument = {
     id: orderId,
@@ -184,9 +185,10 @@ export async function createOrder(
     paymentMethod,
     paymentStatus: initialPaymentStatus,
     paymentReference:
-      paymentMethod !== 'cod'
-        ? `PAY-${Math.floor(100000 + Math.random() * 900000)}`
-        : undefined,
+      paymentReference?.trim() ||
+      (paymentMethod !== 'cod'
+        ? `REF-${Math.floor(100000 + Math.random() * 900000)}`
+        : undefined),
     subtotal: cartSummary.subtotal,
     shippingFee: cartSummary.shippingFee,
     discountAmount: cartSummary.discountAmount,

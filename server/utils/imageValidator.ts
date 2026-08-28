@@ -118,18 +118,6 @@ export function validateImage(
     };
   }
 
-  // ============================================================
-  // Debug Information
-  // ============================================================
-
-  console.log('IMAGE VALIDATION DEBUG:', {
-    filename,
-    declaredMimeType,
-    detectedMimeType: mimeType,
-    dataType: typeof data,
-    isDataUri:
-      typeof data === 'string' && data.startsWith('data:')
-  });
 
   // ============================================================
   // 4. Filename Validation

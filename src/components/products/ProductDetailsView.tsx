@@ -19,7 +19,10 @@ import {
   CheckCircle2,
   Share2,
   MessageCircle,
-  Building2
+  Building2,
+  Edit,
+  Settings,
+  Boxes
 } from 'lucide-react';
 import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
 
@@ -34,7 +37,9 @@ export const ProductDetailsView: React.FC = () => {
     navigateToSeller,
     reviews,
     addReview,
-    addToast
+    addToast,
+    currentRole,
+    isAuthenticated
   } = useApp();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
@@ -165,19 +170,21 @@ export const ProductDetailsView: React.FC = () => {
               >
                 <Share2 className="w-4 h-4" />
               </button>
-              <button
-                type="button"
-                id="details-fav-btn"
-                onClick={() => toggleFavorite(product.id)}
-                className={`p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all ${
-                  favorite
-                    ? 'bg-rose-500 text-white'
-                    : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500'
-                }`}
-                title="المفضلة"
-              >
-                <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
-              </button>
+              {(currentRole === 'buyer' || !isAuthenticated) && (
+                <button
+                  type="button"
+                  id="details-fav-btn"
+                  onClick={() => toggleFavorite(product.id)}
+                  className={`p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all ${
+                    favorite
+                      ? 'bg-rose-500 text-white'
+                      : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500'
+                  }`}
+                  title="المفضلة"
+                >
+                  <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -282,53 +289,114 @@ export const ProductDetailsView: React.FC = () => {
             </div>
           </div>
 
-          {/* Quantity and Add to Cart */}
+          {/* Role-Specific Actions: Buyer gets Cart, Seller gets Edit/Inventory, Admin gets Manage */}
           <div className="space-y-3 pt-2">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="flex items-center justify-between sm:justify-start border border-[#ebdccd] rounded-xl bg-white p-1 min-h-[44px]">
-                <button
-                  type="button"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center"
-                  aria-label="تقليل الكمية"
+            {currentRole === 'buyer' || !isAuthenticated ? (
+              <>
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div className="flex items-center justify-between sm:justify-start border border-[#ebdccd] rounded-xl bg-white p-1 min-h-[44px]">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
+                      aria-label="تقليل الكمية"
+                    >
+                      -
+                    </button>
+                    <span className="px-4 font-bold text-sm text-gray-900">{quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(Math.min(product.stockCount || 99, quantity + 1))}
+                      disabled={quantity >= (product.stockCount || 0)}
+                      className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 disabled:opacity-40 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
+                      aria-label="زيادة الكمية"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="details-add-cart-btn"
+                    onClick={() => addToCart(product, quantity)}
+                    disabled={!product.inStock}
+                    className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                    <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
+                  </button>
+                </div>
+
+                {/* Direct WhatsApp Instant Order Button */}
+                <a
+                  href={getWhatsAppUrl(
+                    `السلام عليكم، أود طلب أو الاستفسار عن منتج: "${product.title}" (سعر: ${product.price} ج.م، كمية: ${quantity}، صانع: ${product.sellerName} من ${product.sellerGovernorate})`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
                 >
-                  -
-                </button>
-                <span className="px-4 font-bold text-sm text-gray-900">{quantity}</span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-3.5 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg font-bold min-w-[40px] min-h-[40px] flex items-center justify-center"
-                  aria-label="زيادة الكمية"
-                >
-                  +
-                </button>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>طلب سريع عبر واتساب ({WHATSAPP_NUMBER})</span>
+                </a>
+              </>
+            ) : currentRole === 'seller' ? (
+              /* Seller Actions (No Cart / No Buy Now) */
+              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl space-y-3">
+                <p className="text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                  <Store className="w-4 h-4 text-amber-700" />
+                  <span>أنت مسجل كبائع وحرفي في سوق الصعيد</span>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2.5">
+                  <button
+                    type="button"
+                    id="details-seller-edit-btn"
+                    onClick={() => setActivePage('seller-products')}
+                    className="flex-1 py-3 px-4 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>تعديل بيانات المنتج</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="details-seller-inventory-btn"
+                    onClick={() => setActivePage('seller-inventory')}
+                    className="flex-1 py-3 px-4 bg-white dark:bg-[#201B18] hover:bg-amber-100 text-amber-900 dark:text-amber-200 font-bold text-xs sm:text-sm rounded-xl border border-amber-300 dark:border-amber-700 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Boxes className="w-4 h-4" />
+                    <span>إدارة المخزون والكميات</span>
+                  </button>
+                </div>
               </div>
-
-              <button
-                type="button"
-                id="details-add-cart-btn"
-                onClick={() => addToCart(product, quantity)}
-                disabled={!product.inStock}
-                className="flex-1 py-3.5 px-6 bg-[#943310] hover:bg-[#7c280a] disabled:bg-gray-300 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
-              </button>
-            </div>
-
-            {/* Direct WhatsApp Instant Order Button */}
-            <a
-              href={getWhatsAppUrl(
-                `السلام عليكم، أود طلب أو الاستفسار عن منتج: "${product.title}" (سعر: ${product.price} ج.م، كمية: ${quantity}، صانع: ${product.sellerName} من ${product.sellerGovernorate})`
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>طلب سريع عبر واتساب ({WHATSAPP_NUMBER})</span>
-            </a>
+            ) : (
+              /* Admin Actions (No Cart / No Buy Now) */
+              <div className="p-4 bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-2xl space-y-3">
+                <p className="text-xs font-bold text-purple-900 dark:text-purple-200 flex items-center gap-1.5">
+                  <Settings className="w-4 h-4 text-purple-700" />
+                  <span>إدارة ومراجعة المنتجات التراثية (الإدارة العليا)</span>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2.5">
+                  <button
+                    type="button"
+                    id="details-admin-manage-btn"
+                    onClick={() => setActivePage('admin-products')}
+                    className="flex-1 py-3 px-4 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Settings className="w-4 h-4" />
+                    <span>إدارة المنتج في المنصة</span>
+                  </button>
+                  <button
+                    type="button"
+                    id="details-admin-review-btn"
+                    onClick={() => setActivePage('admin-dashboard')}
+                    className="flex-1 py-3 px-4 bg-white dark:bg-[#201B18] hover:bg-purple-100 text-purple-900 dark:text-purple-200 font-bold text-xs sm:text-sm rounded-xl border border-purple-300 dark:border-purple-700 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>لوحة المراجعة والاعتماد</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Wholesale & Bulk Orders Banner */}

@@ -43,7 +43,10 @@ export interface AuthSession {
   };
 }
 
+export const TOKEN_EXPIRATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 export function generateToken(user: UserDocument): string {
+  const now = Date.now();
   const payload = {
     sub: user.id,
     username: user.username,
@@ -51,14 +54,23 @@ export function generateToken(user: UserDocument): string {
     role: user.role,
     sellerId: user.sellerId,
     sellerStatus: user.sellerStatus,
-    iat: Date.now()
+    iat: now,
+    exp: now + TOKEN_EXPIRATION_MS
   };
   const str = Buffer.from(JSON.stringify(payload)).toString('base64');
   const hmac = crypto.createHmac('sha256', JWT_SECRET).update(str).digest('hex');
   return `${str}.${hmac}`;
 }
 
-export function verifyToken(token: string): { sub: string; username?: string; email?: string; role: UserRole; sellerId?: string; sellerStatus?: SellerStatus } | null {
+export function verifyToken(token: string): {
+  sub: string;
+  username?: string;
+  email?: string;
+  role: UserRole;
+  sellerId?: string;
+  sellerStatus?: SellerStatus;
+  exp?: number;
+} | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 2) return null;
@@ -66,6 +78,12 @@ export function verifyToken(token: string): { sub: string; username?: string; em
     const expectedHmac = crypto.createHmac('sha256', JWT_SECRET).update(payloadB64).digest('hex');
     if (signature !== expectedHmac) return null;
     const decoded = JSON.parse(Buffer.from(payloadB64, 'base64').toString('utf8'));
+
+    // Reject expired tokens
+    if (decoded.exp && Date.now() > decoded.exp) {
+      return null;
+    }
+
     return decoded;
   } catch {
     return null;

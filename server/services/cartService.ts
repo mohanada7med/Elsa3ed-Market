@@ -304,8 +304,16 @@ export async function updateCartItemQuantity(
     product = (memoryDb.products.find((p) => p.id === productId) as ProductDocument) || null;
   }
 
-  if (product && quantity > product.stockCount) {
-    throw new Error(`الكمية المتاحة في الورشة هي ${product.stockCount} قطع فقط`);
+  if (product) {
+    if (product.approvalStatus !== 'approved') {
+      throw new Error('هذا المنتج غير متاح للشراء حالياً');
+    }
+    if (!product.inStock || product.stockCount <= 0) {
+      throw new Error('نفدت الكمية من هذا المنتج بالورشة');
+    }
+    if (quantity > product.stockCount) {
+      throw new Error(`الكمية المتاحة في الورشة هي ${product.stockCount} قطع فقط`);
+    }
   }
 
   const existingIndex = rawCart.items.findIndex((it) => it.productId === productId);

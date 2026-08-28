@@ -64,12 +64,25 @@ export const AdminDashboard: React.FC = () => {
     auditLogs,
     addToast,
     currentUser,
+    activePage,
     setActivePage
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
     'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets'
   >('overview');
+
+  // Synchronize activeTab when navigation changes via URL or Header links
+  useEffect(() => {
+    if (activePage === 'admin-sellers') setActiveTab('sellers');
+    else if (activePage === 'admin-products') setActiveTab('approvals');
+    else if (activePage === 'admin-buyers') setActiveTab('users');
+    else if (activePage === 'admin-orders') setActiveTab('orders');
+    else if (activePage === 'admin-categories') setActiveTab('categories');
+    else if (activePage === 'admin-discounts') setActiveTab('coupons');
+    else if (activePage === 'admin-audit-logs') setActiveTab('audit');
+    else if (activePage === 'admin-dashboard') setActiveTab('overview');
+  }, [activePage]);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 

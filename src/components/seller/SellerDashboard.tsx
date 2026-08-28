@@ -43,6 +43,7 @@ import {
 
 export const SellerDashboard: React.FC = () => {
   const {
+    activePage,
     currentUser,
     sellerProducts,
     addProduct,
@@ -65,6 +66,16 @@ export const SellerDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'payouts' | 'settings'>('overview');
+
+  // Synchronize activeTab when navigation changes via URL or Header links
+  useEffect(() => {
+    if (activePage === 'seller-products') setActiveTab('products');
+    else if (activePage === 'seller-inventory') setActiveTab('inventory');
+    else if (activePage === 'seller-orders') setActiveTab('orders');
+    else if (activePage === 'seller-analytics') setActiveTab('payouts');
+    else if (activePage === 'seller-account') setActiveTab('settings');
+    else if (activePage === 'seller-dashboard') setActiveTab('overview');
+  }, [activePage]);
 
   // Product Modal State (Add or Edit)
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);

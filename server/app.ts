@@ -131,9 +131,6 @@ export function createApp(): Express {
 
   for (const { prefix, router } of routeModules) {
     app.use(`/api${prefix}`, router);
-    if (prefix) {
-      app.use(prefix, router);
-    }
   }
 
   // 10. Centralized Error Handler for API

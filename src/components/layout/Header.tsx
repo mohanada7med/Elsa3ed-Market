@@ -90,15 +90,43 @@ export const Header: React.FC = () => {
     }
   };
 
-  // Public navigation links
-  const publicNavLinks = [
-    { id: 'home', label: 'الرئيسية' },
-    { id: 'products', label: 'كافة المنتجات' },
-    { id: 'categories', label: 'التصنيفات التراثية' },
-    { id: 'crafts', label: 'حكايات الحرف' },
-    { id: 'sellers', label: 'الورش والحرفيون' },
-    { id: 'about', label: 'عن سوق الصعيد' }
-  ];
+  // Navigation links tailored per authenticated role
+  const roleNavLinks = React.useMemo(() => {
+    if (isAuthenticated && currentRole === 'seller') {
+      return [
+        { id: 'seller-dashboard', label: 'لوحة التحكم' },
+        { id: 'seller-products', label: 'منتجات الورشة' },
+        { id: 'seller-inventory', label: 'إدارة المخزون' },
+        { id: 'seller-orders', label: 'طلبات الورشة' },
+        { id: 'seller-analytics', label: 'المبيعات' },
+        { id: 'seller-account', label: 'إعدادات الحساب' }
+      ];
+    }
+    if (isAuthenticated && currentRole === 'admin') {
+      return [
+        { id: 'admin-dashboard', label: 'لوحة الإدارة' },
+        { id: 'admin-buyers', label: 'المستخدمون' },
+        { id: 'admin-products', label: 'إدارة المنتجات' },
+        { id: 'admin-sellers', label: 'الورش والحرفيون' },
+        { id: 'admin-orders', label: 'إدارة الطلبات' },
+        { id: 'admin-reports', label: 'التقارير' },
+        { id: 'admin-audit-logs', label: 'سجل الرقابة' }
+      ];
+    }
+    return [
+      { id: 'home', label: 'الرئيسية' },
+      { id: 'products', label: 'كافة المنتجات' },
+      { id: 'categories', label: 'التصنيفات التراثية' },
+      { id: 'crafts', label: 'حكايات الحرف' },
+      { id: 'sellers', label: 'الورش والحرفيون' },
+      ...(isAuthenticated && currentRole === 'buyer'
+        ? [
+          { id: 'cart', label: 'سلة المشتريات' },
+          { id: 'orders', label: 'طلباتي' }
+        ]
+        : [{ id: 'about', label: 'عن سوق الصعيد' }])
+    ];
+  }, [isAuthenticated, currentRole]);
 
   return (
     <header className="sticky top-0 z-40 bg-[#FDFBF7]/95 dark:bg-[#1A1614]/95 backdrop-blur-md border-b border-[#E8E1D9] dark:border-[#382E27] shadow-xs transition-colors duration-200">
@@ -238,11 +266,10 @@ export const Header: React.FC = () => {
               type="button"
               id="mobile-search-toggle"
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className={`lg:hidden p-2 sm:p-2.5 rounded-xl transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center ${
-                mobileSearchOpen
-                  ? 'bg-[#B45F42] text-white'
-                  : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-transparent hover:border-[#E8E1D9] dark:hover:border-[#382E27]'
-              }`}
+              className={`lg:hidden p-2 sm:p-2.5 rounded-xl transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center ${mobileSearchOpen
+                ? 'bg-[#B45F42] text-white'
+                : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-transparent hover:border-[#E8E1D9] dark:hover:border-[#382E27]'
+                }`}
               aria-label={mobileSearchOpen ? 'إغلاق شريط البحث' : 'فتح شريط البحث'}
             >
               {mobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
@@ -264,39 +291,43 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Favorites Icon (Hidden on mobile < sm because MobileBottomBar has it) */}
-            <button
-              type="button"
-              id="nav-favorites-btn"
-              onClick={() => setActivePage('favorites')}
-              className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] min-h-[44px] min-w-[44px]"
-              title="المفضلة"
-              aria-label={`قائمة المفضلة، ${favorites.length} عناصر محفوظة`}
-            >
-              <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42]" />
-              {favorites.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B45F42] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
-                  {favorites.length}
-                </span>
-              )}
-            </button>
+            {/* Favorites Icon (Buyers and Guests only - Hidden for Seller & Admin) */}
+            {(currentRole === 'buyer' || !isAuthenticated) && (
+              <button
+                type="button"
+                id="nav-favorites-btn"
+                onClick={() => setActivePage('favorites')}
+                className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] min-h-[44px] min-w-[44px]"
+                title="المفضلة"
+                aria-label={`قائمة المفضلة، ${favorites.length} عناصر محفوظة`}
+              >
+                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42]" />
+                {favorites.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B45F42] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
+                    {favorites.length}
+                  </span>
+                )}
+              </button>
+            )}
 
-            {/* Shopping Cart Button */}
-            <button
-              type="button"
-              id="nav-cart-btn"
-              onClick={() => setIsCartDrawerOpen(true)}
-              className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer"
-              aria-label={`سلة المشتريات، ${cartCount} عناصر مضافة`}
-            >
-              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-xs sm:text-sm font-bold hidden md:inline">السلة</span>
-              {cartCount > 0 && (
-                <span className="bg-amber-300 text-[#2D2A26] text-[11px] sm:text-xs font-black px-1.5 sm:px-2 py-0.5 rounded-full min-w-[18px] sm:min-w-[20px] text-center leading-none">
-                  {cartCount}
-                </span>
-              )}
-            </button>
+            {/* Shopping Cart Button (Buyers and Guests only - Hidden for Seller & Admin) */}
+            {(currentRole === 'buyer' || !isAuthenticated) && (
+              <button
+                type="button"
+                id="nav-cart-btn"
+                onClick={() => setIsCartDrawerOpen(true)}
+                className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer"
+                aria-label={`سلة المشتريات، ${cartCount} عناصر مضافة`}
+              >
+                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm font-bold hidden md:inline">السلة</span>
+                {cartCount > 0 && (
+                  <span className="bg-amber-300 text-[#2D2A26] text-[11px] sm:text-xs font-black px-1.5 sm:px-2 py-0.5 rounded-full min-w-[18px] sm:min-w-[20px] text-center leading-none">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+            )}
 
             {/* Authentication States */}
             {!isAuthenticated ? (
@@ -306,7 +337,7 @@ export const Header: React.FC = () => {
                   type="button"
                   id="header-login-btn"
                   onClick={() => {
-                  
+
                     setAuthModalTab('login');
                     setIsAuthModalOpen(true);
                   }}
@@ -381,13 +412,12 @@ export const Header: React.FC = () => {
                           <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] truncate">@{currentUser.username}</p>
                         )}
                         <span
-                          className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                            currentRole === 'admin'
-                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
-                              : currentRole === 'seller'
-                                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
-                          }`}
+                          className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
+                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
+                            : currentRole === 'seller'
+                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+                              : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
+                            }`}
                         >
                           {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'ورشة معتمدة' : 'مشتري موثق'}
                         </span>
@@ -567,7 +597,7 @@ export const Header: React.FC = () => {
 
         {/* Desktop Secondary Navigation Bar (md+) */}
         <nav className="hidden md:flex items-center gap-1.5 pb-2.5 sm:pb-3 border-t border-[#E8E1D9]/70 dark:border-[#382E27]/70 pt-2.5 overflow-x-auto no-scrollbar" aria-label="روابط التنقل الرئيسية">
-          {publicNavLinks.map((link) => {
+          {roleNavLinks.map((link) => {
             const isActive = activePage === link.id;
             return (
               <button
@@ -577,11 +607,10 @@ export const Header: React.FC = () => {
                 onClick={() => setActivePage(link.id as any)}
                 aria-label={`الانتقال إلى صفحة ${link.label}`}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#B45F42] text-white shadow-xs'
-                    : 'text-[#54493F] dark:text-[#C5B8AC] hover:text-[#B45F42] dark:hover:text-[#FF855D] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
-                }`}
+                className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${isActive
+                  ? 'bg-[#B45F42] text-white shadow-xs'
+                  : 'text-[#54493F] dark:text-[#C5B8AC] hover:text-[#B45F42] dark:hover:text-[#FF855D] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
+                  }`}
               >
                 <span>{link.label}</span>
               </button>
@@ -640,7 +669,7 @@ export const Header: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="md:hidden fixed inset-0 top-16 sm:top-18 bg-black/50 z-30 backdrop-blur-xs"
+              className="top-10 sm:top-18 bg-black/50 z-30 backdrop-blur-xs"
               aria-hidden="true"
             />
 
@@ -757,7 +786,7 @@ export const Header: React.FC = () => {
 
               {/* Navigation Links in Drawer */}
               <div className="space-y-1">
-                {publicNavLinks.map((link) => {
+                {roleNavLinks.map((link) => {
                   const isActive = activePage === link.id;
                   return (
                     <button
@@ -770,11 +799,10 @@ export const Header: React.FC = () => {
                       }}
                       aria-label={`الانتقال إلى صفحة ${link.label}`}
                       aria-current={isActive ? 'page' : undefined}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${
-                        isActive
-                          ? 'bg-[#B45F42] text-white'
-                          : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
-                      }`}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${isActive
+                        ? 'bg-[#B45F42] text-white'
+                        : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
+                        }`}
                     >
                       <span>{link.label}</span>
                       <ArrowLeft className="w-4 h-4 opacity-70" />
