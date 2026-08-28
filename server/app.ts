@@ -77,18 +77,37 @@ export async function createApp(): Promise<Express> {
     try {
       const { db: currentDb, isMongo: currentIsMongo } = await getDatabase();
       let dbConnected = false;
+      let pingLatencyMs = 0;
+
       if (currentIsMongo && currentDb) {
+        const start = Date.now();
         await currentDb.command({ ping: 1 });
+        pingLatencyMs = Date.now() - start;
         dbConnected = true;
       }
-      res.status(dbConnected ? 200 : (env.NODE_ENV === 'production' ? 503 : 200)).json({
+
+      const isHealthy = dbConnected || env.NODE_ENV !== 'production';
+
+      res.status(isHealthy ? 200 : 503).json({
         status: dbConnected ? 'ok' : 'degraded',
-        database: dbConnected ? 'connected' : 'disconnected'
+        database: dbConnected ? 'connected' : 'disconnected',
+        pingMs: dbConnected ? pingLatencyMs : null,
+        environment: env.NODE_ENV,
+        databaseName: env.MONGODB_DB,
+        timestamp: new Date().toISOString(),
+        ...(!dbConnected && {
+          hint: 'Ensure MONGODB_URI is set in Vercel environment variables and 0.0.0.0/0 is added in MongoDB Atlas Network Access.'
+        })
       });
-    } catch {
+    } catch (err: any) {
+      const isTimeout = err?.name === 'MongoServerSelectionError' || err?.message?.includes('timed out');
       res.status(503).json({
         status: 'error',
-        database: 'disconnected'
+        database: 'disconnected',
+        error: err?.message || 'Database connection error',
+        hint: isTimeout
+          ? 'MongoDB Atlas Network Access blocked: Go to cloud.mongodb.com -> Network Access -> IP Access List -> Add 0.0.0.0/0 (Allow Access from Anywhere).'
+          : 'Check your MONGODB_URI credentials in Vercel project settings.'
       });
     }
   };

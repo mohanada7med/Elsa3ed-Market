@@ -7,14 +7,23 @@ import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 
 dotenv.config();
 
-let client: MongoClient | null = null;
-let db: Db | null = null;
-let isConnected = false;
-let connectionPromise: Promise<{ db: Db | null; isMongo: boolean }> | null = null;
-let lastAttemptTime = 0;
-let connectionFailed = false;
-let failureReason = '';
-const RETRY_COOLDOWN_MS = 60000; // Wait 1 minute before retrying a failed connection
+interface MongoGlobalCache {
+  client: MongoClient | null;
+  db: Db | null;
+  promise: Promise<{ db: Db | null; isMongo: boolean }> | null;
+  indexesSeeded: boolean;
+  lastAttemptTime: number;
+}
+
+// Global connection caching across serverless invocations on Vercel
+const globalCache: MongoGlobalCache = (globalThis as any).__mongoCache || {
+  client: null,
+  db: null,
+  promise: null,
+  indexesSeeded: false,
+  lastAttemptTime: 0,
+};
+(globalThis as any).__mongoCache = globalCache;
 
 // Clean in-memory storage initialized to empty state for testing
 class MemoryStore {
@@ -33,18 +42,22 @@ class MemoryStore {
 export const memoryDb = new MemoryStore();
 
 /**
- * Connect to MongoDB with circuit breaker pattern to prevent request stalling on SSL/TLS errors.
+ * Connect to MongoDB with serverless connection pooling and non-blocking background initialization.
+ * Optimized for Vercel Serverless Functions and container environments.
  */
 export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }> {
-  const uri = process.env.MONGODB_URI?.trim();
+  // Support standard MONGODB_URI and common aliases (e.g. MONGODB_CONNECTION_URL, DATABASE_URL)
+  const uri = (
+    process.env.MONGODB_URI ||
+    process.env.MONGODB_CONNECTION_URL ||
+    process.env.MONGO_URI ||
+    process.env.DATABASE_URL
+  )?.trim();
   const dbName = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
-
-  console.log('[MongoDB] URI configured:', !!uri);
-  console.log('[MongoDB] Database:', dbName);
 
   if (!uri) {
     if (process.env.NODE_ENV === 'production') {
-      throw new Error('MONGODB_URI is missing in production environment');
+      throw new Error('MONGODB_URI is missing in Vercel / production environment variables');
     }
 
     return { db: null, isMongo: false };
@@ -52,83 +65,92 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
 
   if (
     uri.includes('USERNAME:PASSWORD') ||
+    uri.includes('<db_password>') ||
     uri.includes('CLUSTER.mongodb.net')
   ) {
     if (process.env.NODE_ENV === 'production') {
-      throw new Error('MONGODB_URI still contains placeholder values');
+      throw new Error('MONGODB_URI still contains placeholder values (<db_password> or USERNAME:PASSWORD)');
     }
 
     return { db: null, isMongo: false };
   }
 
-  if (isConnected && db) {
-    return { db, isMongo: true };
+  // If already connected and client is active, return immediately (0ms latency)
+  if (globalCache.db && globalCache.client) {
+    return { db: globalCache.db, isMongo: true };
   }
 
-  // Circuit breaker: If connection failed recently, quickly return in-memory fallback without stalling
+  // If a connection attempt is already in progress, reuse the existing promise
+  if (globalCache.promise) {
+    return globalCache.promise;
+  }
+
+  // Short retry throttle (2 seconds) to avoid spamming on connection errors
   const now = Date.now();
-  if (connectionFailed && now - lastAttemptTime < RETRY_COOLDOWN_MS) {
+  if (now - globalCache.lastAttemptTime < 2000 && !globalCache.db) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MongoDB connection is in retry cooldown. Please retry in a moment.');
+    }
     return { db: null, isMongo: false };
   }
 
-  if (connectionPromise) {
-    return connectionPromise;
-  }
+  globalCache.lastAttemptTime = now;
 
-  lastAttemptTime = now;
-
-  connectionPromise = (async () => {
+  globalCache.promise = (async () => {
     try {
-      if (!client) {
-        client = new MongoClient(uri, {
-          connectTimeoutMS: 10000,
-          serverSelectionTimeoutMS: 10000,
+      if (!globalCache.client) {
+        globalCache.client = new MongoClient(uri, {
+          connectTimeoutMS: 8000,
+          serverSelectionTimeoutMS: 5000, // 5s timeout to fail before Vercel function timeout
           maxPoolSize: 10,
-          minPoolSize: 2,
+          minPoolSize: 0, // In serverless, minPoolSize must be 0 to avoid stale sockets
           maxIdleTimeMS: 30000,
           retryWrites: true,
         });
       }
 
-      await client.connect();
-      db = client.db(dbName);
-      isConnected = true;
-      connectionFailed = false;
-      failureReason = '';
+      await globalCache.client.connect();
+      globalCache.db = globalCache.client.db(dbName);
       Logger.info(`[MongoDB] Connected successfully to database: ${dbName}`);
 
-      // Build database indexes and seed essential platform taxonomies (no mock products or sellers)
-      await seedMongoDatabase(db);
+      // Seed indexes and categories in the background so cold start response is NOT blocked
+      if (!globalCache.indexesSeeded) {
+        globalCache.indexesSeeded = true;
+        seedMongoDatabase(globalCache.db).catch((seedErr) => {
+          Logger.error('[MongoDB] Background index/seed creation error:', seedErr);
+        });
+      }
 
-      return { db, isMongo: true };
+      return { db: globalCache.db, isMongo: true };
     } catch (error: any) {
-      connectionFailed = true;
-      failureReason = error?.message || 'Connection error';
+      Logger.error(`[MongoDB] Connection failed: ${error?.message || error}`);
 
-      Logger.error(`[MongoDB] Connection failed: ${failureReason}`);
-
-      if (client) {
+      if (globalCache.client) {
         try {
-          await client.close();
+          await globalCache.client.close();
         } catch {
           // ignore close error
         }
-        client = null;
+        globalCache.client = null;
       }
+      globalCache.db = null;
 
       if (process.env.NODE_ENV === 'production') {
-        throw new Error(`MongoDB connection failed: ${failureReason}`);
+        const isTimeout = error?.name === 'MongoServerSelectionError' || error?.message?.includes('timed out');
+        const detail = isTimeout
+          ? 'Connection timed out. IMPORTANT: On MongoDB Atlas, go to Network Access -> IP Access List and add 0.0.0.0/0 (Allow Access from Anywhere) for Vercel.'
+          : error?.message || 'Unknown connection error';
+        throw new Error(`MongoDB connection failed on Vercel: ${detail}`);
       }
 
-      Logger.info('[Database] Falling back to in-memory database');
-
+      Logger.info('[Database] Falling back to in-memory database in development mode');
       return { db: null, isMongo: false };
     } finally {
-      connectionPromise = null;
+      globalCache.promise = null;
     }
   })();
 
-  return connectionPromise;
+  return globalCache.promise;
 }
 
 async function seedMongoDatabase(database: Db) {

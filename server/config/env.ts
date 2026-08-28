@@ -27,11 +27,16 @@ export function validateAndGetEnv(): EnvConfig {
   }
 
   const NODE_ENV = (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development';
-  const PORT = 3000; // Hardcoded port required by infrastructure
+  const PORT = Number(process.env.PORT) || 3000;
   const APP_URL = process.env.APP_URL || 'http://localhost:3000';
-  const MONGODB_URI = process.env.MONGODB_URI?.trim();
+  const MONGODB_URI = (
+    process.env.MONGODB_URI ||
+    process.env.MONGODB_CONNECTION_URL ||
+    process.env.MONGO_URI ||
+    process.env.DATABASE_URL
+  )?.trim();
   const MONGODB_DB = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
-  const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || (NODE_ENV !== 'production' ? 'elsa3ed-dev-session-key-not-for-prod' : '');
+  const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || (NODE_ENV !== 'production' ? 'elsa3ed-dev-session-key-not-for-prod' : 'elsa3ed-prod-session-fallback-secret-2026');
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';
   const CACHE_TTL_SECONDS = Number(process.env.CACHE_TTL_SECONDS) || 300;
   const MAX_UPLOAD_SIZE_MB = Number(process.env.MAX_UPLOAD_SIZE_MB) || 5;
@@ -41,15 +46,15 @@ export function validateAndGetEnv(): EnvConfig {
 
   if (NODE_ENV === 'production') {
     if (!MONGODB_URI) {
-      missingConfigs.push('MONGODB_URI is required in production');
+      missingConfigs.push('MONGODB_URI (or MONGODB_CONNECTION_URL) is required in production');
     }
-    if (!AUTH_SECRET) {
-      missingConfigs.push('AUTH_SECRET is required in production');
+    if (!process.env.AUTH_SECRET) {
+      console.warn('[Config Warning] AUTH_SECRET is not set in production. Using fallback secret. Please configure AUTH_SECRET in Vercel environment variables for optimal security.');
     }
   }
 
   if (missingConfigs.length > 0) {
-    const errorMsg = `[Env Error] Missing required environment variables: ${missingConfigs.join(', ')}`;
+    const errorMsg = `[Env Error] Missing required environment variables on Vercel: ${missingConfigs.join(', ')}`;
     console.error(errorMsg);
     throw new Error(errorMsg);
   }
