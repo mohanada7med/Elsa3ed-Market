@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from '../products/ProductCard';
 import { Sparkles, ArrowLeft, Home, Utensils, Gift } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const RecommendationsSection: React.FC = () => {
   const { products, setActivePage, setSelectedCategoryFilter } = useApp();
@@ -47,7 +48,7 @@ export const RecommendationsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveMood('decor')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] cursor-pointer ${
               activeMood === 'decor'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'
@@ -60,7 +61,7 @@ export const RecommendationsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveMood('food')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] cursor-pointer ${
               activeMood === 'food'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'
@@ -73,7 +74,7 @@ export const RecommendationsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveMood('gifts')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 min-h-[38px] cursor-pointer ${
               activeMood === 'gifts'
                 ? 'bg-[#943310] text-white shadow-xs'
                 : 'text-gray-700 hover:text-gray-900'
@@ -85,12 +86,21 @@ export const RecommendationsSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Product Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {displayedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {/* Product Cards with AnimatePresence */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeMood}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
+        >
+          {displayedProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </motion.div>
+      </AnimatePresence>
     </section>
   );
 };

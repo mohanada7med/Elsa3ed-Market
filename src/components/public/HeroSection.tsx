@@ -1,9 +1,18 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Sparkles, ArrowLeft, Store, Film, MapPin, ShoppingBag } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export const HeroSection: React.FC = () => {
-  const { setActivePage, setShowIntroVideo, setSelectedGovernorateFilter, isAuthenticated, currentRole, setIsAuthModalOpen, setAuthModalTab } = useApp();
+  const {
+    setActivePage,
+    setShowIntroVideo,
+    setSelectedGovernorateFilter,
+    isAuthenticated,
+    currentRole,
+    setIsAuthModalOpen,
+    setAuthModalTab
+  } = useApp();
 
   const handleStartSelling = () => {
     if (isAuthenticated && currentRole === 'seller') {
@@ -16,93 +25,133 @@ export const HeroSection: React.FC = () => {
 
   return (
     <div className="relative bg-[#FDFBF7] border-b border-[#E8E1D9] overflow-hidden">
-      {/* Subtle Background Egyptian Clay Ambience */}
       <div className="absolute inset-0 bg-heritage-pattern pointer-events-none opacity-50" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Main Hero Content */}
-          <div className="lg:col-span-7 space-y-6 text-right">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="lg:col-span-7 space-y-6 text-right"
+          >
             {/* Top Heritage Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#B45F42]/10 border border-[#B45F42]/25 text-[#B45F42] text-xs sm:text-sm font-bold shadow-2xs">
-              <Sparkles className="w-4 h-4 text-amber-700" />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#B45F42]/10 border border-[#B45F42]/25 text-[#B45F42] text-xs sm:text-sm font-bold shadow-2xs"
+            >
+              <Sparkles className="w-4 h-4 text-amber-700 animate-pulse" />
               <span>اول منصه متخصصه لتجارة منتجات الصعيد الاصلية</span>
-            </div>
+            </motion.div>
 
             {/* Headline */}
-            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#2D2A26] font-heritage leading-[1.25] tracking-tight">
+            <motion.h1 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.45 }}
+              className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#2D2A26] font-heritage leading-[1.25] tracking-tight"
+            >
               سوق الصعيد.. <br className="hidden sm:inline" />
               <span className="text-[#B45F42]">من قلب الصعيد لحد بيتك</span>
-            </h1>
+            </motion.h1>
 
-            {/* Subheading (Clear Arabic Explanation) */}
-            <p className="text-xs sm:text-base lg:text-lg text-[#54493F] leading-relaxed max-w-xl font-medium">
+            {/* Subheading */}
+            <motion.p 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.45 }}
+              className="text-xs sm:text-base lg:text-lg text-[#54493F] leading-relaxed max-w-xl font-medium"
+            >
               تسوق روائع التراث الأصيل مباشرة من شيوخ الصنعة: فخار قنا المسامي، كليم أخميم اليدوي، تمور وكركديه أسوان البكر، وتلي أسيوط الفاخر. ندعم أكثر من 12 حرفي وعائلة منتجة في جنوب مصر.
-            </p>
+            </motion.p>
 
             {/* Clear Primary Actions */}
-            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 pt-2">
-              {/* Primary Action 1: Browse Marketplace */}
-              <button
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.45 }}
+              className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 pt-2"
+            >
+              <motion.button
                 type="button"
                 id="hero-explore-btn"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('products')}
-                className="w-full sm:w-auto px-7 sm:px-9 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-sm sm:text-base font-bold rounded-xl shadow-md flex items-center justify-center gap-2.5 transition-all transform active:scale-95 min-h-[44px]"
+                className="w-full sm:w-auto px-7 sm:px-9 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-sm sm:text-base font-bold rounded-xl shadow-md flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[44px]"
               >
                 <ShoppingBag className="w-5 h-5" />
                 <span>تصفح المنتجات</span>
-                <ArrowLeft className="w-4 h-4 mr-1" />
-              </button>
+                <ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />
+              </motion.button>
 
-              {/* Primary Action 2: Sell Your Products */}
-              <button
+              <motion.button
                 type="button"
                 id="hero-sell-btn"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleStartSelling}
-                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border-2 border-[#B45F42]/40 hover:border-[#B45F42] text-sm sm:text-base font-bold rounded-xl shadow-xs flex items-center justify-center gap-2.5 transition-all min-h-[44px]"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border-2 border-[#B45F42]/40 hover:border-[#B45F42] text-sm sm:text-base font-bold rounded-xl shadow-xs flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[44px]"
               >
                 <Store className="w-5 h-5 text-amber-700" />
                 <span>بيع منتجاتك معنا</span>
-              </button>
+              </motion.button>
 
-              {/* Tertiary Documentary Button */}
-              <button
+              <motion.button
                 type="button"
                 id="hero-intro-video-btn"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => setShowIntroVideo(true)}
-                className="w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm text-[#7A6F64] hover:text-[#B45F42] font-bold flex items-center justify-center gap-1.5 transition-colors min-h-[40px]"
+                className="w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm text-[#7A6F64] hover:text-[#B45F42] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer min-h-[40px]"
               >
                 <Film className="w-4 h-4 text-amber-700" />
                 <span>شاهد وثائقي الصعيد</span>
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
 
             {/* Live Metrics Strip */}
-            <div className="pt-6 border-t border-[#E8E1D9] grid grid-cols-3 gap-2 sm:gap-4 max-w-lg">
-              <div>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.45, duration: 0.5 }}
+              className="pt-6 border-t border-[#E8E1D9] grid grid-cols-3 gap-2 sm:gap-4 max-w-lg"
+            >
+              <div className="transition-transform hover:-translate-y-0.5">
                 <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">+12</span>
                 <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">ورشة وحرفي موثق</span>
               </div>
-              <div>
+              <div className="transition-transform hover:-translate-y-0.5">
                 <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">100%</span>
                 <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">خامات طبيعية وأصيلة</span>
               </div>
-              <div>
+              <div className="transition-transform hover:-translate-y-0.5">
                 <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">27</span>
                 <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">محافظة يشملها الشحن</span>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Hero Visual Collage */}
-          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
+            className="lg:col-span-5 relative mt-4 lg:mt-0"
+          >
             <div className="relative mx-auto max-w-md">
-              {/* Primary Large Card */}
-              <div className="geometric-card overflow-hidden shadow-lg bg-white rounded-3xl border border-[#E8E1D9]">
+              <motion.div 
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.25 }}
+                className="geometric-card overflow-hidden shadow-lg bg-white rounded-3xl border border-[#E8E1D9]"
+              >
                 <img
                   src="https://res.cloudinary.com/kuana1nl/image/upload/v1787856920/%D9%81%D8%AE%D8%A7%D8%B1.jpg"
                   alt="فخار قنا وأسيوط التراثي"
-                  className="w-full h-64 sm:h-80 object-cover"
+                  className="w-full h-64 sm:h-80 object-cover hover:scale-105 transition-transform duration-700"
                 />
                 <div className="p-3 sm:p-4 bg-white border-t border-[#E8E1D9]">
                   <div className="flex items-center justify-between">
@@ -111,10 +160,13 @@ export const HeroSection: React.FC = () => {
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Secondary Floating Card */}
-              <div
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 onClick={() => {
                   setSelectedGovernorateFilter('أسيوط');
                   setActivePage('products');
@@ -132,15 +184,19 @@ export const HeroSection: React.FC = () => {
                     <span className="text-xs sm:text-sm font-black text-[#2D2A26]">اسيوط</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Third Floating Badge */}
-              <div className="absolute -top-2 sm:-top-3 left-2 sm:-left-3 bg-[#231F1C] text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#B45F42]/40 shadow-md flex items-center gap-1.5 sm:gap-2 z-10">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+                className="absolute -top-2 sm:-top-3 left-2 sm:-left-3 bg-[#231F1C] text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl border border-[#B45F42]/40 shadow-md flex items-center gap-1.5 sm:gap-2 z-10"
+              >
                 <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />
                 <span className="text-[10px] sm:text-xs font-bold text-amber-100">صُنع بأيدي أهل الصعيد</span>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

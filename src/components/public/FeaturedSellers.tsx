@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Store, Star, MapPin, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export const FeaturedSellers: React.FC = () => {
   const { sellers, navigateToSeller, setActivePage } = useApp();
@@ -30,7 +31,7 @@ export const FeaturedSellers: React.FC = () => {
           type="button"
           id="view-all-sellers-btn"
           onClick={() => setActivePage('sellers')}
-          className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px]"
+          className="text-xs sm:text-sm font-bold text-[#943310] hover:text-[#7c280a] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
         >
           <span>عرض كافة الورش والحرفيين</span>
           <ArrowLeft className="w-4 h-4" />
@@ -39,10 +40,15 @@ export const FeaturedSellers: React.FC = () => {
 
       {/* Sellers Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sellers.slice(0, 6).map((seller) => (
-          <div
+        {sellers.slice(0, 6).map((seller, idx) => (
+          <motion.div
             key={seller.id}
             id={`seller-card-${seller.id}`}
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.35, delay: (idx % 3) * 0.08 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={() => navigateToSeller(seller.id)}
             className="clay-card overflow-hidden cursor-pointer group bg-white border border-[#ebdccd] flex flex-col"
           >
@@ -109,7 +115,7 @@ export const FeaturedSellers: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>

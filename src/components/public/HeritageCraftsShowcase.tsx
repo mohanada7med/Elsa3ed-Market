@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Sparkles, MapPin, ArrowLeft, CheckCircle2, Heart, Award, Shield } from 'lucide-react';
 import { CraftStory } from '../../types.ts';
 import { api } from '../../services/api.ts';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const HeritageCraftsShowcase: React.FC = () => {
   const { navigateToCategory, setSelectedCategoryFilter, setActivePage } = useApp();
@@ -76,68 +77,77 @@ export const HeritageCraftsShowcase: React.FC = () => {
         </div>
 
         {/* Featured Craft Interactive Card */}
-        <div className="bg-white rounded-3xl border border-[#ebdccd] shadow-xl overflow-hidden p-4 sm:p-8 lg:p-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Image Column */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative aspect-4/3 rounded-2xl overflow-hidden border border-amber-900/10 shadow-md">
-                <img
-                  src={craft.image}
-                  alt={craft.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute bottom-3 right-3 text-white">
-                  <span className="text-[11px] font-medium text-amber-300">عمر الحرفة التقديري:</span>
-                  <p className="font-bold text-sm">{craft.historyAge}</p>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={craft.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="bg-white rounded-3xl border border-[#ebdccd] shadow-xl overflow-hidden p-4 sm:p-8 lg:p-10"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              {/* Image Column */}
+              <div className="lg:col-span-5 relative">
+                <div className="relative aspect-4/3 rounded-2xl overflow-hidden border border-amber-900/10 shadow-md">
+                  <img
+                    src={craft.image}
+                    alt={craft.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-3 right-3 text-white">
+                    <span className="text-[11px] font-medium text-amber-300">عمر الحرفة التقديري:</span>
+                    <p className="font-bold text-sm">{craft.historyAge}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Content Column */}
+              <div className="lg:col-span-7 space-y-5 text-right">
+                <div>
+                  <span className="text-xs font-black text-[#943310] uppercase tracking-wider block mb-1">
+                    محافظة {craft.governorate}
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-black text-gray-900 font-heritage">
+                    {craft.title}
+                  </h3>
+                  <p className="text-sm font-semibold text-[#8c6b53] mt-1">{craft.subtitle}</p>
+                </div>
+
+                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
+                  {craft.description}
+                </p>
+
+                {/* Key Features Bullet Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+                  {craft.keyFeatures.map((feat, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs text-gray-800 bg-[#faf6f0] p-2.5 rounded-xl border border-[#ebdccd]">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span className="leading-snug">{feat}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Button to browse products in this craft */}
+                <div className="pt-3 flex items-center gap-3">
+                  <button
+                    type="button"
+                    id={`browse-craft-${craft.id}`}
+                    onClick={() => {
+                      setSelectedCategoryFilter(craft.categoryId);
+                      setActivePage('products');
+                    }}
+                    className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
+                  >
+                    <span>تسوق منتجات {craft.title.split('(')[0]}</span>
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
-
-            {/* Content Column */}
-            <div className="lg:col-span-7 space-y-5 text-right">
-              <div>
-                <span className="text-xs font-black text-[#943310] uppercase tracking-wider block mb-1">
-                  محافظة {craft.governorate}
-                </span>
-                <h3 className="text-2xl sm:text-3xl font-black text-gray-900 font-heritage">
-                  {craft.title}
-                </h3>
-                <p className="text-sm font-semibold text-[#8c6b53] mt-1">{craft.subtitle}</p>
-              </div>
-
-              <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                {craft.description}
-              </p>
-
-              {/* Key Features Bullet Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
-                {craft.keyFeatures.map((feat, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs text-gray-800 bg-[#faf6f0] p-2.5 rounded-xl border border-[#ebdccd]">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span className="leading-snug">{feat}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Action Button to browse products in this craft */}
-              <div className="pt-3 flex items-center gap-3">
-                <button
-                  type="button"
-                  id={`browse-craft-${craft.id}`}
-                  onClick={() => {
-                    setSelectedCategoryFilter(craft.categoryId);
-                    setActivePage('products');
-                  }}
-                  className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
-                >
-                  <span>تسوق منتجات {craft.title.split('(')[0]}</span>
-                  <ArrowLeft className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

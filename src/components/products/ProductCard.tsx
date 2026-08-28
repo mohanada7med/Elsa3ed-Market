@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Product } from '../../types';
 import { Heart, ShoppingBag, Star, Sparkles, MapPin, Eye } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface ProductCardProps {
   product: Product;
@@ -24,8 +25,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const primaryImage = product.images?.[0] || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div
+    <motion.div
       id={`product-card-${product.id}`}
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
       className="geometric-card flex flex-col overflow-hidden group relative bg-white"
     >
       {/* Product Image & Badges */}
@@ -55,14 +61,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Favorite & Quick View Buttons */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
-          <button
+          <motion.button
             type="button"
             id={`fav-btn-${product.id}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation();
               toggleFavorite(product.id);
             }}
-            className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center ${
+            className={`p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer ${
               favorite
                 ? 'bg-rose-500 text-white'
                 : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
@@ -71,18 +79,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             aria-label={favorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
           >
             <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
             type="button"
             id={`quick-view-btn-${product.id}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => navigateToProduct(product.id)}
-            className="p-2 rounded-md bg-white/90 hover:bg-white text-[#2D2A26] hover:text-[#B45F42] border border-[#E8E1D9] backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:block"
+            className="p-2 rounded-md bg-white/90 hover:bg-white text-[#2D2A26] hover:text-[#B45F42] border border-[#E8E1D9] backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:block cursor-pointer"
             title="معاينة التفاصيل"
             aria-label="معاينة التفاصيل"
           >
             <Eye className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
 
         {/* Governorate pill at bottom of image */}
@@ -103,7 +113,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               type="button"
               id={`seller-link-${product.sellerId}`}
               onClick={() => navigateToSeller(product.sellerId)}
-              className="text-[11px] font-medium text-[#7A6F64] hover:text-[#B45F42] transition-colors truncate text-right"
+              className="text-[11px] font-medium text-[#7A6F64] hover:text-[#B45F42] transition-colors truncate text-right cursor-pointer"
             >
               {product.sellerName}
             </button>
@@ -143,22 +153,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           </div>
 
-          <button
+          <motion.button
             type="button"
             id={`add-cart-btn-${product.id}`}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             onClick={(e) => {
               e.stopPropagation();
               addToCart(product, 1);
             }}
             disabled={!product.inStock}
-            className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-all flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px]"
+            className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
             title="إضافة إلى سلة المشتريات"
             aria-label="إضافة إلى سلة المشتريات"
           >
             <ShoppingBag className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

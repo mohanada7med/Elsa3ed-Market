@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Governorate } from '../../types';
 import { MapPin, Sparkles, ArrowLeft } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface GovItem {
   name: Governorate;
@@ -90,7 +91,7 @@ export const GovernorateExplorer: React.FC = () => {
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-        {UPPER_EGYPT_GOVERNORATES.map((gov) => {
+        {UPPER_EGYPT_GOVERNORATES.map((gov, idx) => {
           const govSellers = sellers.filter(
             (s) => s.governorate === gov.name && s.status !== 'rejected' && s.status !== 'suspended'
           );
@@ -103,11 +104,17 @@ export const GovernorateExplorer: React.FC = () => {
           const productsCount = govProducts.length;
 
           return (
-            <div
+            <motion.div
               key={gov.name}
               id={`gov-card-${gov.name}`}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.35, delay: idx * 0.06 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => handleSelectGov(gov.name)}
-              className="group cursor-pointer rounded-2xl bg-white border border-[#ebdccd] hover:border-[#943310] p-3 sm:p-4 text-center transition-all duration-300 shadow-xs hover:shadow-md flex flex-col items-center justify-between"
+              className="group cursor-pointer rounded-2xl bg-white border border-[#ebdccd] hover:border-[#943310] p-3 sm:p-4 text-center transition-colors shadow-xs hover:shadow-md flex flex-col items-center justify-between"
             >
               <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden mb-2.5 sm:mb-3 border border-amber-900/10 shadow-xs group-hover:scale-105 transition-transform shrink-0">
                 <img src={gov.iconImage} alt={gov.name} className="w-full h-full object-cover" />
@@ -131,7 +138,7 @@ export const GovernorateExplorer: React.FC = () => {
                 </div>
                 <span>({productsCount} منتج)</span>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>

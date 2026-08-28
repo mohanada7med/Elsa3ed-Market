@@ -22,6 +22,7 @@ import {
   LogIn,
   UserPlus
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 export const Header: React.FC = () => {
   const {
@@ -269,126 +270,132 @@ export const Header: React.FC = () => {
                   <ChevronDown className="w-4 h-4 text-[#2D2A26]" />
                 </button>
 
-                {userDropdownOpen && (
-                  <div
-                    id="user-dropdown-menu"
-                    className="absolute left-0 mt-2 w-64 bg-white border border-[#E8E1D9] rounded-2xl shadow-xl py-2 z-50 animate-in fade-in"
-                  >
-                    <div className="px-4 py-3 border-b border-[#F3EFE9]">
-                      <p className="text-sm font-bold text-[#2D2A26] truncate">
-                        مرحبًا، {currentUser.username || currentUser.name}
-                      </p>
-                      {currentUser.email ? (
-                        <p className="text-xs text-[#7A6F64] truncate">{currentUser.email}</p>
-                      ) : (
-                        <p className="text-xs text-[#7A6F64] truncate">@{currentUser.username}</p>
+                <AnimatePresence>
+                  {userDropdownOpen && (
+                    <motion.div
+                      id="user-dropdown-menu"
+                      initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute left-0 mt-2 w-64 bg-white border border-[#E8E1D9] rounded-2xl shadow-xl py-2 z-50 origin-top-left"
+                    >
+                      <div className="px-4 py-3 border-b border-[#F3EFE9]">
+                        <p className="text-sm font-bold text-[#2D2A26] truncate">
+                          مرحبًا، {currentUser.username || currentUser.name}
+                        </p>
+                        {currentUser.email ? (
+                          <p className="text-xs text-[#7A6F64] truncate">{currentUser.email}</p>
+                        ) : (
+                          <p className="text-xs text-[#7A6F64] truncate">@{currentUser.username}</p>
+                        )}
+                        <span
+                          className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
+                            ? 'bg-purple-100 text-purple-800'
+                            : currentRole === 'seller'
+                              ? 'bg-amber-100 text-amber-800'
+                              : 'bg-blue-100 text-blue-800'
+                            }`}
+                        >
+                          {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'ورشة معتمدة' : 'مشتري موثق'}
+                        </span>
+                      </div>
+
+                      {/* Universal Profile & Settings link */}
+                      <button
+                        type="button"
+                        id="user-profile-link"
+                        onClick={() => {
+                          setActivePage('buyer-account');
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
+                      >
+                        <User className="w-4 h-4 text-[#B45F42]" />
+                        <span>الملف الشخصي وإعدادات الحساب</span>
+                      </button>
+
+                      {/* Buyer Specific Links */}
+                      {currentRole === 'buyer' && (
+                        <>
+                          <button
+                            type="button"
+                            id="user-orders-link"
+                            onClick={() => {
+                              setActivePage('orders');
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
+                          >
+                            <PackageCheck className="w-4 h-4 text-[#B45F42]" />
+                            <span>طلباتي وتتبع الشحنات</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            id="user-favorites-link"
+                            onClick={() => {
+                              setActivePage('favorites');
+                              setUserDropdownOpen(false);
+                            }}
+                            className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
+                          >
+                            <Heart className="w-4 h-4 text-[#B45F42]" />
+                            <span>قائمة المفضلة ({favorites.length})</span>
+                          </button>
+                        </>
                       )}
-                      <span
-                        className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
-                          ? 'bg-purple-100 text-purple-800'
-                          : currentRole === 'seller'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-blue-100 text-blue-800'
-                          }`}
-                      >
-                        {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'ورشة معتمدة' : 'مشتري موثق'}
-                      </span>
-                    </div>
 
-                    {/* Universal Profile & Settings link */}
-                    <button
-                      type="button"
-                      id="user-profile-link"
-                      onClick={() => {
-                        setActivePage('buyer-account');
-                        setUserDropdownOpen(false);
-                      }}
-                      className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-bold transition-colors"
-                    >
-                      <User className="w-4 h-4 text-[#B45F42]" />
-                      <span>الملف الشخصي وإعدادات الحساب</span>
-                    </button>
-
-                    {/* Buyer Specific Links */}
-                    {currentRole === 'buyer' && (
-                      <>
+                      {/* Seller Specific Links */}
+                      {currentRole === 'seller' && (
                         <button
                           type="button"
-                          id="user-orders-link"
+                          id="seller-dash-link"
                           onClick={() => {
-                            setActivePage('orders');
+                            setActivePage('seller-dashboard');
                             setUserDropdownOpen(false);
                           }}
-                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors"
+                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-amber-900 font-bold hover:bg-amber-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                         >
-                          <PackageCheck className="w-4 h-4 text-[#B45F42]" />
-                          <span>طلباتي وتتبع الشحنات</span>
+                          <Store className="w-4 h-4 text-amber-700" />
+                          <span>لوحة تحكم الورشة والمنتجات</span>
                         </button>
+                      )}
 
+                      {/* Admin Specific Links */}
+                      {currentRole === 'admin' && (
                         <button
                           type="button"
-                          id="user-favorites-link"
+                          id="admin-dash-link"
                           onClick={() => {
-                            setActivePage('favorites');
+                            setActivePage('admin-dashboard');
                             setUserDropdownOpen(false);
                           }}
-                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors"
+                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-purple-900 font-bold hover:bg-purple-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                         >
-                          <Heart className="w-4 h-4 text-[#B45F42]" />
-                          <span>قائمة المفضلة ({favorites.length})</span>
+                          <ShieldAlert className="w-4 h-4 text-purple-700" />
+                          <span>لوحة إدارة المنصة والرقابة</span>
                         </button>
-                      </>
-                    )}
+                      )}
 
-                    {/* Seller Specific Links */}
-                    {currentRole === 'seller' && (
+                      <div className="border-t border-[#F3EFE9] my-1" />
+
+                      {/* Real Logout Action */}
                       <button
                         type="button"
-                        id="seller-dash-link"
+                        id="auth-logout-btn"
                         onClick={() => {
-                          setActivePage('seller-dashboard');
                           setUserDropdownOpen(false);
+                          logout();
                         }}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-amber-900 font-bold hover:bg-amber-50 flex items-center gap-2.5 transition-colors"
+                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
                       >
-                        <Store className="w-4 h-4 text-amber-700" />
-                        <span>لوحة تحكم الورشة والمنتجات</span>
+                        <LogOut className="w-4 h-4 text-rose-600" />
+                        <span>تسجيل الخروج</span>
                       </button>
-                    )}
-
-                    {/* Admin Specific Links */}
-                    {currentRole === 'admin' && (
-                      <button
-                        type="button"
-                        id="admin-dash-link"
-                        onClick={() => {
-                          setActivePage('admin-dashboard');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-purple-900 font-bold hover:bg-purple-50 flex items-center gap-2.5 transition-colors"
-                      >
-                        <ShieldAlert className="w-4 h-4 text-purple-700" />
-                        <span>لوحة إدارة المنصة والرقابة</span>
-                      </button>
-                    )}
-
-                    <div className="border-t border-[#F3EFE9] my-1" />
-
-                    {/* Real Logout Action */}
-                    <button
-                      type="button"
-                      id="auth-logout-btn"
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        logout();
-                      }}
-                      className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2.5 font-bold transition-colors"
-                    >
-                      <LogOut className="w-4 h-4 text-rose-600" />
-                      <span>تسجيل الخروج</span>
-                    </button>
-                  </div>
-                )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 
@@ -488,166 +495,172 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Mobile Drawer Menu */}
-      {mobileMenuOpen && (
-        <div
-          id="mobile-drawer"
-          className="md:hidden bg-[#FDFBF7] border-b border-[#E8E1D9] px-4 py-4 space-y-3 max-h-[calc(100vh-5rem)] overflow-y-auto animate-in slide-in-from-top-4"
-        >
-          {/* User Status Card on Mobile */}
-          {isAuthenticated ? (
-            <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E8E1D9] shadow-2xs">
-              <div className="flex items-center gap-3">
-                <img
-                  src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
-                  alt={currentUser.name}
-                  className="w-10 h-10 rounded-xl object-cover border border-[#E8E1D9]"
-                />
-                <div>
-                  <span className="text-sm font-bold text-[#2D2A26] block leading-tight">{currentUser.name}</span>
-                  <span className="text-xs text-[#7A6F64] block">{currentUser.email}</span>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            id="mobile-drawer"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.22, ease: "easeInOut" }}
+            className="md:hidden bg-[#FDFBF7] border-b border-[#E8E1D9] px-4 py-4 space-y-3 max-h-[calc(100vh-5rem)] overflow-y-auto overflow-hidden"
+          >
+            {/* User Status Card on Mobile */}
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-[#E8E1D9] shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
+                    alt={currentUser.name}
+                    className="w-10 h-10 rounded-xl object-cover border border-[#E8E1D9]"
+                  />
+                  <div>
+                    <span className="text-sm font-bold text-[#2D2A26] block leading-tight">{currentUser.name}</span>
+                    <span className="text-xs text-[#7A6F64] block">{currentUser.email}</span>
+                  </div>
                 </div>
-              </div>
-              <button
-                type="button"
-                id="mobile-logout-btn"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  logout();
-                }}
-                className="px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-xl border border-rose-200"
-              >
-                خروج
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2 p-2 bg-[#F3EFE9] rounded-2xl">
-              <button
-                type="button"
-                id="mobile-login-btn"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setAuthModalTab('login');
-                  setIsAuthModalOpen(true);
-                }}
-                className="py-2.5 bg-white text-[#2D2A26] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5"
-              >
-                <LogIn className="w-4 h-4 text-[#B45F42]" />
-                <span>تسجيل الدخول</span>
-              </button>
-              <button
-                type="button"
-                id="mobile-register-btn"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setAuthModalTab('register');
-                  setIsAuthModalOpen(true);
-                }}
-                className="py-2.5 bg-[#B45F42] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5"
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>إنشاء حساب</span>
-              </button>
-            </div>
-          )}
-
-          {/* Navigation Links */}
-          <div className="space-y-1">
-            {publicNavLinks.map((link) => {
-              const isActive = activePage === link.id;
-              return (
                 <button
-                  key={link.id}
                   type="button"
-                  id={`mobile-nav-${link.id}`}
+                  id="mobile-logout-btn"
                   onClick={() => {
-                    setActivePage(link.id as any);
                     setMobileMenuOpen(false);
+                    logout();
                   }}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] ${isActive ? 'bg-[#B45F42] text-white' : 'text-[#2D2A26] hover:bg-[#F3EFE9]'
-                    }`}
+                  className="px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 cursor-pointer"
                 >
-                  <span>{link.label}</span>
-                  <ArrowLeft className="w-4 h-4 opacity-70" />
+                  خروج
                 </button>
-              );
-            })}
-
-            {/* Quick Documentary Trigger in Mobile Drawer */}
-            <button
-              type="button"
-              id="mobile-intro-btn"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setShowIntroVideo(true);
-              }}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100/80 transition-colors min-h-[44px]"
-            >
-              <div className="flex items-center gap-2">
-                <Film className="w-4 h-4 text-amber-700" />
-                <span>شاهد وثائقي الصعيد</span>
               </div>
-              <ArrowLeft className="w-4 h-4 opacity-70" />
-            </button>
-          </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 p-2 bg-[#F3EFE9] rounded-2xl">
+                <button
+                  type="button"
+                  id="mobile-login-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAuthModalTab('login');
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="py-2.5 bg-white text-[#2D2A26] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <LogIn className="w-4 h-4 text-[#B45F42]" />
+                  <span>تسجيل الدخول</span>
+                </button>
+                <button
+                  type="button"
+                  id="mobile-register-btn"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAuthModalTab('register');
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="py-2.5 bg-[#B45F42] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>إنشاء حساب</span>
+                </button>
+              </div>
+            )}
 
-          {/* Protected Links in Mobile Menu if Authenticated */}
-          {isAuthenticated && (
-            <div className="border-t border-[#E8E1D9] pt-2 space-y-1">
+            {/* Navigation Links */}
+            <div className="space-y-1">
+              {publicNavLinks.map((link) => {
+                const isActive = activePage === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    type="button"
+                    id={`mobile-nav-${link.id}`}
+                    onClick={() => {
+                      setActivePage(link.id as any);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${isActive ? 'bg-[#B45F42] text-white' : 'text-[#2D2A26] hover:bg-[#F3EFE9]'
+                      }`}
+                  >
+                    <span>{link.label}</span>
+                    <ArrowLeft className="w-4 h-4 opacity-70" />
+                  </button>
+                );
+              })}
+
+              {/* Quick Documentary Trigger in Mobile Drawer */}
               <button
                 type="button"
-                id="mobile-account-link"
+                id="mobile-intro-btn"
                 onClick={() => {
-                  setActivePage('buyer-account');
                   setMobileMenuOpen(false);
+                  setShowIntroVideo(true);
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] hover:bg-[#F3EFE9] min-h-[44px]"
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100/80 transition-colors min-h-[44px] cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-[#B45F42]" />
-                  <span>الملف الشخصي وإعدادات الحساب</span>
+                  <Film className="w-4 h-4 text-amber-700" />
+                  <span>شاهد وثائقي الصعيد</span>
                 </div>
                 <ArrowLeft className="w-4 h-4 opacity-70" />
               </button>
-
-              {currentRole === 'seller' && (
-                <button
-                  type="button"
-                  id="mobile-seller-link"
-                  onClick={() => {
-                    setActivePage('seller-dashboard');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 min-h-[44px]"
-                >
-                  <div className="flex items-center gap-2">
-                    <Store className="w-4 h-4 text-amber-700" />
-                    <span>لوحة تحكم الورشة</span>
-                  </div>
-                  <ArrowLeft className="w-4 h-4 opacity-70" />
-                </button>
-              )}
-
-              {currentRole === 'admin' && (
-                <button
-                  type="button"
-                  id="mobile-admin-link"
-                  onClick={() => {
-                    setActivePage('admin-dashboard');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100 min-h-[44px]"
-                >
-                  <div className="flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-purple-700" />
-                    <span>لوحة إدارة المنصة</span>
-                  </div>
-                  <ArrowLeft className="w-4 h-4 opacity-70" />
-                </button>
-              )}
             </div>
-          )}
-        </div>
-      )}
+
+            {/* Protected Links in Mobile Menu if Authenticated */}
+            {isAuthenticated && (
+              <div className="border-t border-[#E8E1D9] pt-2 space-y-1">
+                <button
+                  type="button"
+                  id="mobile-account-link"
+                  onClick={() => {
+                    setActivePage('buyer-account');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] hover:bg-[#F3EFE9] min-h-[44px] cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-[#B45F42]" />
+                    <span>الملف الشخصي وإعدادات الحساب</span>
+                  </div>
+                  <ArrowLeft className="w-4 h-4 opacity-70" />
+                </button>
+
+                {currentRole === 'seller' && (
+                  <button
+                    type="button"
+                    id="mobile-seller-link"
+                    onClick={() => {
+                      setActivePage('seller-dashboard');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Store className="w-4 h-4 text-amber-700" />
+                      <span>لوحة تحكم الورشة</span>
+                    </div>
+                    <ArrowLeft className="w-4 h-4 opacity-70" />
+                  </button>
+                )}
+
+                {currentRole === 'admin' && (
+                  <button
+                    type="button"
+                    id="mobile-admin-link"
+                    onClick={() => {
+                      setActivePage('admin-dashboard');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100 min-h-[44px] cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <ShieldAlert className="w-4 h-4 text-purple-700" />
+                      <span>لوحة إدارة المنصة</span>
+                    </div>
+                    <ArrowLeft className="w-4 h-4 opacity-70" />
+                  </button>
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
