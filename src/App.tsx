@@ -9,6 +9,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { updatePageSEO } from './utils/seo';
+import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
 // Pages
 import { HomePage } from './components/pages/HomePage';
@@ -283,6 +284,9 @@ const MainContent: React.FC = () => {
       </div>
 
       <Footer />
+
+      {/* Persistent Mobile Bottom Navigation Bar (Phones & Small Tablets) */}
+      <MobileBottomBar />
 
       {/* Global Modals & Drawers */}
       <CartDrawer />

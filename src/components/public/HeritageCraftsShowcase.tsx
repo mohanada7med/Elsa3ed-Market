@@ -62,7 +62,10 @@ export const HeritageCraftsShowcase: React.FC = () => {
               type="button"
               id={`craft-tab-${item.id}`}
               onClick={() => setSelectedCraftIndex(idx)}
-              className={`px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 min-h-[42px] ${
+              aria-label={`عرض قصة حرفة ${item.title} في محافظة ${item.governorate}`}
+              aria-selected={selectedCraftIndex === idx}
+              role="tab"
+              className={`px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 min-h-[42px] cursor-pointer ${
                 selectedCraftIndex === idx
                   ? 'bg-[#943310] text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-[#ede0ca] border border-[#ebdccd]'
@@ -138,6 +141,7 @@ export const HeritageCraftsShowcase: React.FC = () => {
                       setSelectedCategoryFilter(craft.categoryId);
                       setActivePage('products');
                     }}
+                    aria-label={`تسوق منتجات ${craft.title.split('(')[0]} من محافظة ${craft.governorate}`}
                     className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
                   >
                     <span>تسوق منتجات {craft.title.split('(')[0]}</span>

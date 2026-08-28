@@ -20,7 +20,9 @@ import {
   ArrowRight,
   ArrowLeft,
   LogIn,
-  UserPlus
+  UserPlus,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -39,7 +41,9 @@ export const Header: React.FC = () => {
     logout,
     setIsAuthModalOpen,
     setAuthModalTab,
-    setShowIntroVideo
+    setShowIntroVideo,
+    theme,
+    toggleTheme
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -101,10 +105,31 @@ export const Header: React.FC = () => {
               type="button"
               id="header-play-intro-btn"
               onClick={() => setShowIntroVideo(true)}
-              className="flex items-center gap-1.5 hover:text-amber-200 transition-colors"
+              className="flex items-center gap-1.5 hover:text-amber-200 transition-colors cursor-pointer"
+              aria-label="شاهد وثائقي الصعيد وفنون الحرف اليدوية"
             >
               <Film className="w-4 h-4" />
               <span>شاهد وثائقي الصعيد</span>
+            </button>
+            <span className="text-white/30">|</span>
+            <button
+              type="button"
+              id="header-theme-toggle-top"
+              onClick={toggleTheme}
+              className="flex items-center gap-1.5 hover:text-amber-200 transition-colors cursor-pointer text-xs"
+              aria-label={theme === 'dark' ? 'التحويل إلى الوضع المضيء النهاري' : 'التحويل إلى الوضع الداكن الليلي'}
+            >
+              {theme === 'dark' ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-300" />
+                  <span>الوضع المضيء</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-amber-200" />
+                  <span>الوضع الداكن</span>
+                </>
+              )}
             </button>
             <span className="text-white/30">|</span>
             <div className="flex items-center gap-2">
@@ -121,13 +146,22 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <div
             id="brand-logo"
+            role="button"
+            tabIndex={0}
+            aria-label="سوق الصعيد - العودة إلى الصفحة الرئيسية"
             onClick={() => setActivePage('home')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setActivePage('home');
+              }
+            }}
             className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
           >
             <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform">
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-                alt="سوق الصعيد"
+                alt="شعار سوق الصعيد"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -145,20 +179,21 @@ export const Header: React.FC = () => {
 
           {/* Search Input (Desktop) */}
           <div className="hidden lg:flex flex-1 max-w-md mx-2">
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
+            <form onSubmit={handleSearchSubmit} className="relative w-full" role="search">
               <input
                 type="text"
                 id="desktop-search-input"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن: فخار قنا، كليم أخميم، عسل سدر، تلي..."
+                aria-label="البحث في سوق الصعيد"
                 className="w-full bg-[#F3EFE9] hover:bg-[#EDE7DF] focus:bg-white text-sm text-[#2D2A26] placeholder:text-[#8C7E72] rounded-xl pl-11 pr-4 py-2.5 border border-[#E8E1D9] focus:border-[#B45F42] focus:ring-2 focus:ring-[#B45F42]/20 outline-none transition-all"
               />
               <button
                 type="submit"
                 id="desktop-search-btn"
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B45F42] hover:text-[#9E4F36] rounded-lg hover:bg-amber-100/50 transition-colors"
-                aria-label="بحث"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B45F42] hover:text-[#9E4F36] rounded-lg hover:bg-amber-100/50 transition-colors cursor-pointer"
+                aria-label="تنفيذ البحث"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -172,8 +207,8 @@ export const Header: React.FC = () => {
               type="button"
               id="mobile-search-toggle"
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className="lg:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors"
-              aria-label="بحث في المنتجات"
+              className="lg:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors cursor-pointer"
+              aria-label={mobileSearchOpen ? "إغلاق شريط البحث" : "فتح شريط البحث في المنتجات"}
             >
               <Search className="w-5 h-5" />
             </button>
@@ -183,9 +218,9 @@ export const Header: React.FC = () => {
               type="button"
               id="nav-favorites-btn"
               onClick={() => setActivePage('favorites')}
-              className="relative p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors hidden sm:flex items-center justify-center"
+              className="relative p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer"
               title="المفضلة"
-              aria-label="المفضلة"
+              aria-label={`قائمة المفضلة، ${favorites.length} عناصر محفوظة`}
             >
               <Heart className="w-5 h-5 text-[#7A6F64] hover:text-[#B45F42]" />
               {favorites.length > 0 && (
@@ -195,15 +230,29 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-
+            {/* Theme Toggle Button (Light/Dark) */}
+            <button
+              type="button"
+              id="header-theme-toggle-btn"
+              onClick={toggleTheme}
+              className="p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E8E1D9] hover:border-[#B45F42] min-h-[44px] min-w-[44px]"
+              title={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
+              aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-5 h-5 text-amber-400 animate-spin-slow transition-transform hover:rotate-90" />
+              ) : (
+                <Moon className="w-5 h-5 text-[#7A6F64] hover:text-[#B45F42] transition-colors" />
+              )}
+            </button>
 
             {/* Shopping Cart Button */}
             <button
               type="button"
               id="nav-cart-btn"
               onClick={() => setIsCartDrawerOpen(true)}
-              className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[44px] min-w-[44px]"
-              aria-label="سلة المشتريات"
+              className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[44px] min-w-[44px] cursor-pointer"
+              aria-label={`سلة المشتريات، ${cartCount} عناصر مضافة`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="text-xs sm:text-sm font-bold hidden sm:inline">السلة</span>
@@ -225,7 +274,8 @@ export const Header: React.FC = () => {
                     setAuthModalTab('login');
                     setIsAuthModalOpen(true);
                   }}
-                  className="px-3.5 sm:px-4 py-2.5 bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E8E1D9] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all flex items-center gap-2"
+                  className="px-3.5 sm:px-4 py-2.5 bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E8E1D9] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all flex items-center gap-2 cursor-pointer"
+                  aria-label="تسجيل الدخول إلى حسابك"
                 >
                   <LogIn className="w-4 h-4 text-[#B45F42]" />
                   <span>تسجيل الدخول</span>
@@ -238,7 +288,8 @@ export const Header: React.FC = () => {
                     setAuthModalTab('register');
                     setIsAuthModalOpen(true);
                   }}
-                  className="hidden md:flex px-4 py-2.5 bg-[#F3EFE9] hover:bg-[#E8E1D9] text-[#B45F42] border border-[#B45F42]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5"
+                  className="hidden md:flex px-4 py-2.5 bg-[#F3EFE9] hover:bg-[#E8E1D9] text-[#B45F42] border border-[#B45F42]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5 cursor-pointer"
+                  aria-label="إنشاء حساب جديد في سوق الصعيد"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>إنشاء حساب</span>
@@ -251,8 +302,10 @@ export const Header: React.FC = () => {
                   type="button"
                   id="user-menu-btn"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-2 border border-[#E8E1D9] hover:border-[#B45F42] rounded-xl bg-white transition-colors"
-                  aria-label="قائمة حسابي"
+                  className="flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-2 border border-[#E8E1D9] hover:border-[#B45F42] rounded-xl bg-white transition-colors cursor-pointer"
+                  aria-label={`قائمة الحساب: ${currentUser.name || currentUser.username}`}
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="true"
                 >
                   <img
                     src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
@@ -310,6 +363,7 @@ export const Header: React.FC = () => {
                           setUserDropdownOpen(false);
                         }}
                         className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
+                        aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
                       >
                         <User className="w-4 h-4 text-[#B45F42]" />
                         <span>الملف الشخصي وإعدادات الحساب</span>
@@ -326,6 +380,7 @@ export const Header: React.FC = () => {
                               setUserDropdownOpen(false);
                             }}
                             className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
+                            aria-label="الانتقال إلى طلباتي وتتبع الشحنات"
                           >
                             <PackageCheck className="w-4 h-4 text-[#B45F42]" />
                             <span>طلباتي وتتبع الشحنات</span>
@@ -339,6 +394,7 @@ export const Header: React.FC = () => {
                               setUserDropdownOpen(false);
                             }}
                             className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
+                            aria-label={`الانتقال إلى قائمة المفضلة، ${favorites.length} عناصر`}
                           >
                             <Heart className="w-4 h-4 text-[#B45F42]" />
                             <span>قائمة المفضلة ({favorites.length})</span>
@@ -356,6 +412,7 @@ export const Header: React.FC = () => {
                             setUserDropdownOpen(false);
                           }}
                           className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-amber-900 font-bold hover:bg-amber-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                          aria-label="الانتقال إلى لوحة تحكم الورشة والمنتجات"
                         >
                           <Store className="w-4 h-4 text-amber-700" />
                           <span>لوحة تحكم الورشة والمنتجات</span>
@@ -372,11 +429,33 @@ export const Header: React.FC = () => {
                             setUserDropdownOpen(false);
                           }}
                           className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-purple-900 font-bold hover:bg-purple-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                          aria-label="الانتقال إلى لوحة إدارة المنصة والرقابة"
                         >
                           <ShieldAlert className="w-4 h-4 text-purple-700" />
                           <span>لوحة إدارة المنصة والرقابة</span>
                         </button>
                       )}
+
+                      {/* Theme switcher in user dropdown */}
+                      <button
+                        type="button"
+                        id="user-dropdown-theme-toggle"
+                        onClick={toggleTheme}
+                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] hover:bg-[#F3EFE9] flex items-center justify-between font-medium transition-colors cursor-pointer"
+                        aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري' : 'التبديل إلى الوضع الداكن'}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          {theme === 'dark' ? (
+                            <Sun className="w-4 h-4 text-amber-400" />
+                          ) : (
+                            <Moon className="w-4 h-4 text-[#B45F42]" />
+                          )}
+                          <span>مظهر المنصة: {theme === 'dark' ? 'الوضع الداكن' : 'الوضع النهاري'}</span>
+                        </div>
+                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#F3EFE9] border border-[#E8E1D9] text-[#7A6F64] font-bold">
+                          {theme === 'dark' ? 'ليلي 🌙' : 'نهاري ☀️'}
+                        </span>
+                      </button>
 
                       <div className="border-t border-[#F3EFE9] my-1" />
 
@@ -389,6 +468,7 @@ export const Header: React.FC = () => {
                           logout();
                         }}
                         className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-rose-700 hover:bg-rose-50 flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
+                        aria-label="تسجيل الخروج من الحساب"
                       >
                         <LogOut className="w-4 h-4 text-rose-600" />
                         <span>تسجيل الخروج</span>
@@ -404,8 +484,9 @@ export const Header: React.FC = () => {
               type="button"
               id="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="القائمة الرئيسية"
+              className="md:hidden p-2.5 text-[#2D2A26] hover:bg-[#F3EFE9] rounded-xl transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              aria-label={mobileMenuOpen ? "إغلاق القائمة الرئيسية" : "فتح القائمة الرئيسية"}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -415,19 +496,20 @@ export const Header: React.FC = () => {
         {/* Mobile Search Bar Expand */}
         {mobileSearchOpen && (
           <div className="lg:hidden pb-3">
-            <form onSubmit={handleSearchSubmit} className="relative w-full">
+            <form onSubmit={handleSearchSubmit} className="relative w-full" role="search">
               <input
                 type="text"
                 id="mobile-search-input"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن: فخار، كليم، عسل، تلي..."
+                aria-label="البحث عن منتجات الصعيد"
                 className="w-full bg-[#F3EFE9] text-sm text-[#2D2A26] rounded-xl pl-10 pr-4 py-2.5 border border-[#E8E1D9] outline-none"
               />
               <button
                 type="submit"
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B45F42]"
-                aria-label="بحث"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B45F42] cursor-pointer"
+                aria-label="تنفيذ البحث"
               >
                 <Search className="w-4 h-4" />
               </button>
@@ -436,7 +518,7 @@ export const Header: React.FC = () => {
         )}
 
         {/* Desktop Secondary Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1.5 pb-3 border-t border-[#E8E1D9]/70 pt-2.5">
+        <nav className="hidden md:flex items-center gap-1.5 pb-3 border-t border-[#E8E1D9]/70 pt-2.5" aria-label="روابط التنقل الرئيسية">
           {publicNavLinks.map((link) => {
             const isActive = activePage === link.id;
             return (
@@ -445,7 +527,9 @@ export const Header: React.FC = () => {
                 type="button"
                 id={`nav-link-${link.id}`}
                 onClick={() => setActivePage(link.id as any)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${isActive
+                aria-label={`الانتقال إلى صفحة ${link.label}`}
+                aria-current={isActive ? 'page' : undefined}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${isActive
                   ? 'bg-[#B45F42] text-white shadow-xs'
                   : 'text-[#54493F] hover:text-[#B45F42] hover:bg-[#F3EFE9]'
                   }`}
@@ -461,7 +545,8 @@ export const Header: React.FC = () => {
               type="button"
               id="nav-quick-seller"
               onClick={() => setActivePage('seller-dashboard')}
-              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700 shadow-xs transition-colors"
+              aria-label="الانتقال السريع إلى لوحة تحكم ورشتك"
+              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold hover:bg-amber-700 shadow-xs transition-colors cursor-pointer"
             >
               <Store className="w-4 h-4" />
               <span>لوحة تحكم ورشتك</span>
@@ -473,7 +558,8 @@ export const Header: React.FC = () => {
               type="button"
               id="nav-quick-admin"
               onClick={() => setActivePage('admin-dashboard')}
-              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-purple-700 text-white rounded-xl text-xs font-bold hover:bg-purple-800 shadow-xs transition-colors"
+              aria-label="الانتقال السريع إلى لوحة الإدارة العليا"
+              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-purple-700 text-white rounded-xl text-xs font-bold hover:bg-purple-800 shadow-xs transition-colors cursor-pointer"
             >
               <ShieldAlert className="w-4 h-4" />
               <span>لوحة الإدارة العليا</span>
@@ -485,7 +571,8 @@ export const Header: React.FC = () => {
               type="button"
               id="nav-quick-orders"
               onClick={() => setActivePage('orders')}
-              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-[#F3EFE9] text-[#2D2A26] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold border border-[#E8E1D9] transition-colors"
+              aria-label="الانتقال السريع إلى متابعة طلباتي"
+              className="mr-auto flex items-center gap-1.5 px-4 py-2 bg-[#F3EFE9] text-[#2D2A26] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold border border-[#E8E1D9] transition-colors cursor-pointer"
             >
               <PackageCheck className="w-4 h-4 text-[#B45F42]" />
               <span>متابعة طلباتي</span>
@@ -504,6 +591,8 @@ export const Header: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="md:hidden bg-[#FDFBF7] border-b border-[#E8E1D9] px-4 py-4 space-y-3 max-h-[calc(100vh-5rem)] overflow-y-auto overflow-hidden"
+            role="dialog"
+            aria-label="قائمة التنقل للهواتف"
           >
             {/* User Status Card on Mobile */}
             {isAuthenticated ? (
@@ -526,6 +615,7 @@ export const Header: React.FC = () => {
                     setMobileMenuOpen(false);
                     logout();
                   }}
+                  aria-label="تسجيل الخروج من الحساب"
                   className="px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 cursor-pointer"
                 >
                   خروج
@@ -541,6 +631,7 @@ export const Header: React.FC = () => {
                     setAuthModalTab('login');
                     setIsAuthModalOpen(true);
                   }}
+                  aria-label="تسجيل الدخول إلى حسابك"
                   className="py-2.5 bg-white text-[#2D2A26] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <LogIn className="w-4 h-4 text-[#B45F42]" />
@@ -554,6 +645,7 @@ export const Header: React.FC = () => {
                     setAuthModalTab('register');
                     setIsAuthModalOpen(true);
                   }}
+                  aria-label="إنشاء حساب جديد في سوق الصعيد"
                   className="py-2.5 bg-[#B45F42] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <UserPlus className="w-4 h-4" />
@@ -561,6 +653,42 @@ export const Header: React.FC = () => {
                 </button>
               </div>
             )}
+
+            {/* Theme Switcher in Mobile Drawer */}
+            <div className="p-3 bg-[#F3EFE9] border border-[#E8E1D9] rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                {theme === 'dark' ? (
+                  <Moon className="w-5 h-5 text-amber-400" />
+                ) : (
+                  <Sun className="w-5 h-5 text-amber-600" />
+                )}
+                <div className="text-right">
+                  <span className="text-xs font-bold text-[#2D2A26] block">مظهر المنصة</span>
+                  <span className="text-[11px] text-[#7A6F64] block">
+                    {theme === 'dark' ? 'الوضع الداكن (الليلي)' : 'الوضع المضيء (النهاري)'}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                id="mobile-theme-toggle-btn"
+                onClick={toggleTheme}
+                aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري' : 'التبديل إلى الوضع الداكن'}
+                className="px-3 py-1.5 bg-white text-[#2D2A26] border border-[#E8E1D9] hover:border-[#B45F42] rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    <span>نهاري</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-[#B45F42]" />
+                    <span>داكن</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             {/* Navigation Links */}
             <div className="space-y-1">
@@ -575,6 +703,8 @@ export const Header: React.FC = () => {
                       setActivePage(link.id as any);
                       setMobileMenuOpen(false);
                     }}
+                    aria-label={`الانتقال إلى صفحة ${link.label}`}
+                    aria-current={isActive ? 'page' : undefined}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${isActive ? 'bg-[#B45F42] text-white' : 'text-[#2D2A26] hover:bg-[#F3EFE9]'
                       }`}
                   >
@@ -592,6 +722,7 @@ export const Header: React.FC = () => {
                   setMobileMenuOpen(false);
                   setShowIntroVideo(true);
                 }}
+                aria-label="مشاهدة الفيلم الوثائقي عن تراث وحرف الصعيد"
                 className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100/80 transition-colors min-h-[44px] cursor-pointer"
               >
                 <div className="flex items-center gap-2">
@@ -612,6 +743,7 @@ export const Header: React.FC = () => {
                     setActivePage('buyer-account');
                     setMobileMenuOpen(false);
                   }}
+                  aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
                   className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] hover:bg-[#F3EFE9] min-h-[44px] cursor-pointer"
                 >
                   <div className="flex items-center gap-2">
@@ -629,6 +761,7 @@ export const Header: React.FC = () => {
                       setActivePage('seller-dashboard');
                       setMobileMenuOpen(false);
                     }}
+                    aria-label="الانتقال إلى لوحة تحكم الورشة"
                     className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
@@ -647,6 +780,7 @@ export const Header: React.FC = () => {
                       setActivePage('admin-dashboard');
                       setMobileMenuOpen(false);
                     }}
+                    aria-label="الانتقال إلى لوحة إدارة المنصة والرقابة"
                     className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 bg-purple-50 hover:bg-purple-100 min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">

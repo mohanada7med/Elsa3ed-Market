@@ -14,7 +14,8 @@ import {
   Review,
   Seller,
   UserProfile,
-  UserRole
+  UserRole,
+  ThemeMode
 } from '../types.ts';
 import { api } from '../services/api.ts';
 
@@ -47,6 +48,11 @@ interface AppContextType {
   showIntroVideo: boolean;
   setShowIntroVideo: (show: boolean) => void;
   dismissIntroVideo: () => void;
+
+  // Theme (Dark / Light Mode)
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
+  toggleTheme: () => void;
 
   // Auth & Roles
   isAuthenticated: boolean;
@@ -490,6 +496,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setShowIntroVideo(false);
     localStorage.setItem('saeed_intro_seen', 'true');
   };
+
+  // Dark / Light Theme Mode
+  const [theme, setThemeState] = useState<ThemeMode>(() => {
+    try {
+      const savedTheme = localStorage.getItem('elsa3ed_theme') as ThemeMode;
+      if (savedTheme === 'dark' || savedTheme === 'light') return savedTheme;
+      if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch { }
+    return 'light';
+  });
+
+  const setTheme = useCallback((newTheme: ThemeMode) => {
+    setThemeState(newTheme);
+    try {
+      localStorage.setItem('elsa3ed_theme', newTheme);
+    } catch { }
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => {
+      const next: ThemeMode = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem('elsa3ed_theme', next);
+      } catch { }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.setAttribute('data-theme', 'dark');
+      document.body.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
+      document.body.classList.remove('dark');
+    }
+  }, [theme]);
 
   // Roles & Auth: Synchronously restore cached user for zero-latency UI on refresh
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
@@ -1645,6 +1693,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         showIntroVideo,
         setShowIntroVideo,
         dismissIntroVideo,
+
+        theme,
+        setTheme,
+        toggleTheme,
 
         isAuthenticated,
         currentRole,

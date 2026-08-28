@@ -73,8 +73,8 @@ export const CartDrawer: React.FC = () => {
               type="button"
               id="cart-drawer-close"
               onClick={() => setIsCartDrawerOpen(false)}
-              className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center"
-              aria-label="إغلاق السلة"
+              className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
+              aria-label="إغلاق سلة المشتريات والعودة للتسوق"
             >
               <X className="w-5 h-5" />
             </button>
@@ -98,7 +98,8 @@ export const CartDrawer: React.FC = () => {
                     setIsCartDrawerOpen(false);
                     setActivePage('products');
                   }}
-                  className="mt-6 px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md transition-colors"
+                  aria-label="استكشف جميع منتجات سوق الصعيد الآن"
+                  className="mt-6 px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
                 >
                   استكشف سوق الصعيد الآن
                 </button>
@@ -122,6 +123,15 @@ export const CartDrawer: React.FC = () => {
                     <img
                       src={img}
                       alt={title}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`عرض تفاصيل ${title}`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setIsCartDrawerOpen(false);
+                          navigateToProduct(prodId);
+                        }
+                      }}
                       onClick={() => {
                         setIsCartDrawerOpen(false);
                         navigateToProduct(prodId);
@@ -131,6 +141,15 @@ export const CartDrawer: React.FC = () => {
 
                     <div className="flex-1 min-w-0">
                       <h4
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`عرض تفاصيل المنتج: ${title}`}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            setIsCartDrawerOpen(false);
+                            navigateToProduct(prodId);
+                          }
+                        }}
                         onClick={() => {
                           setIsCartDrawerOpen(false);
                           navigateToProduct(prodId);
@@ -166,20 +185,20 @@ export const CartDrawer: React.FC = () => {
                             type="button"
                             id={`qty-minus-${prodId}`}
                             onClick={() => updateCartQuantity(prodId, qty - 1)}
-                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-                            aria-label="تقليل الكمية"
+                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer"
+                            aria-label={`تقليل كمية ${title}، الكمية الحالية ${qty}`}
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
-                          <span className="px-2 text-xs font-bold text-gray-800">
+                          <span className="px-2 text-xs font-bold text-gray-800" aria-label={`الكمية ${qty}`}>
                             {qty}
                           </span>
                           <button
                             type="button"
                             id={`qty-plus-${prodId}`}
                             onClick={() => updateCartQuantity(prodId, qty + 1)}
-                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
-                            aria-label="زيادة الكمية"
+                            className="p-1.5 hover:bg-amber-200/50 text-gray-600 transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer"
+                            aria-label={`زيادة كمية ${title}، الكمية الحالية ${qty}`}
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
@@ -191,9 +210,9 @@ export const CartDrawer: React.FC = () => {
                       type="button"
                       id={`remove-cart-item-${prodId}`}
                       onClick={() => removeFromCart(prodId)}
-                      className="text-gray-400 hover:text-rose-600 p-1.5 transition-colors self-start min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg"
-                      title="حذف من السلة"
-                      aria-label="حذف من السلة"
+                      className="text-gray-400 hover:text-rose-600 p-1.5 transition-colors self-start min-w-[36px] min-h-[36px] flex items-center justify-center rounded-lg cursor-pointer"
+                      title={`حذف ${title} من السلة`}
+                      aria-label={`حذف ${title} من سلة المشتريات`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -216,7 +235,8 @@ export const CartDrawer: React.FC = () => {
                   <button
                     type="button"
                     onClick={removeDiscountCode}
-                    className="text-xs text-rose-600 hover:underline font-semibold"
+                    aria-label={`إلغاء كود الخصم ${appliedDiscount.code}`}
+                    className="text-xs text-rose-600 hover:underline font-semibold cursor-pointer"
                   >
                     إلغاء
                   </button>
@@ -228,11 +248,13 @@ export const CartDrawer: React.FC = () => {
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value)}
                     placeholder="كود الخصم (جرب SAEED100)"
+                    aria-label="أدخل كود قسيمة الخصم الترويجية"
                     className="flex-1 px-3 py-2 text-xs bg-[#faf6f0] border border-[#ebdccd] rounded-xl outline-none focus:border-[#943310]"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#f3ebd9] hover:bg-[#ede0ca] text-[#943310] text-xs font-bold rounded-xl transition-colors shrink-0 min-h-[38px]"
+                    aria-label="تطبيق كود الخصم"
+                    className="px-4 py-2 bg-[#f3ebd9] hover:bg-[#ede0ca] text-[#943310] text-xs font-bold rounded-xl transition-colors shrink-0 min-h-[38px] cursor-pointer"
                   >
                     تطبيق
                   </button>
@@ -270,7 +292,8 @@ export const CartDrawer: React.FC = () => {
                 type="button"
                 id="cart-checkout-btn"
                 onClick={proceedToCheckout}
-                className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px]"
+                aria-label={`متابعة إتمام الطلب، المبلغ الإجمالي ${cartTotal} جنيه مصري`}
+                className="w-full py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-900/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
               >
                 <span>متابعة إتمام الطلب</span>
                 <ArrowLeft className="w-4 h-4" />

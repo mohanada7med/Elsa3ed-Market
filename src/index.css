@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   html, body {
     overflow-x: hidden;
@@ -13,6 +15,13 @@
     font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: #FDFBF7;
     color: #2D2A26;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.dark, body.dark, [data-theme="dark"] {
+    background-color: #12100E;
+    color: #F5EFEB;
+    color-scheme: dark;
   }
 
   h1, h2, h3, h4, .font-heritage {
@@ -35,10 +44,27 @@
   min-width: 44px;
 }
 
+/* Safe area insets for mobile devices (notch & home indicator) */
+.safe-area-pb {
+  padding-bottom: max(0.375rem, env(safe-area-inset-bottom));
+}
+
+.safe-area-pt {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
 /* Geometric Balance theme utilities and crisp structured cards */
 .bg-heritage-pattern {
   background-color: #FDFBF7;
   background-image: radial-gradient(#B45F42 0.75px, transparent 0.75px), radial-gradient(#8C5039 0.75px, #FDFBF7 0.75px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+  transition: background-color 0.25s ease;
+}
+
+.dark .bg-heritage-pattern {
+  background-color: #12100E;
+  background-image: radial-gradient(#C86548 0.75px, transparent 0.75px), radial-gradient(#8C5039 0.75px, #12100E 0.75px);
   background-size: 28px 28px;
   background-position: 0 0, 14px 14px;
 }
@@ -72,6 +98,20 @@
   transform: translateY(-2px);
 }
 
+/* Dark mode cards */
+.dark .geometric-card,
+.dark .clay-card {
+  background: #1B1715;
+  border-color: #352E28;
+  color: #F5EFEB;
+}
+
+.dark .geometric-card:hover,
+.dark .clay-card:hover {
+  border-color: #C86548;
+  box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.5);
+}
+
 /* Custom scrollbar matching Geometric Balance */
 ::-webkit-scrollbar {
   width: 7px;
@@ -86,6 +126,16 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #B45F42;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #181513;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #3D352E;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #C86548;
 }
 
 /* Seamless Marquee Animation */
@@ -107,5 +157,259 @@
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* =========================================================================
+   COMPREHENSIVE HIGH-CONTRAST DARK MODE PALETTE & THEME OVERRIDES
+   ========================================================================= */
+
+/* Dark Mode Canvas & Base Elements */
+.dark,
+.dark body,
+.dark main,
+html.dark,
+body.dark {
+  background-color: #12100E !important;
+  color: #FAF6F2 !important;
+  color-scheme: dark;
+}
+
+/* Surfaces & Containers */
+.dark .bg-white,
+.dark .geometric-card,
+.dark .clay-card {
+  background-color: #1B1613 !important;
+  border-color: #382E27 !important;
+  color: #FAF6F2 !important;
+}
+
+.dark .geometric-card:hover,
+.dark .clay-card:hover {
+  border-color: #FF7E54 !important;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .bg-\[\#FDFBF7\],
+.dark .bg-\[\#faf6f0\],
+.dark .bg-\[\#fdfaf6\] {
+  background-color: #12100E !important;
+}
+
+.dark .bg-\[\#FDFBF7\]\/95 {
+  background-color: rgba(18, 16, 14, 0.96) !important;
+}
+
+.dark .bg-\[\#F3EFE9\],
+.dark .bg-\[\#f3eadc\],
+.dark .bg-\[\#f3ebd9\],
+.dark .bg-\[\#ede0ca\],
+.dark .bg-\[\#EDE7DF\],
+.dark .bg-\[\#E8E1D9\] {
+  background-color: #221C18 !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #201A16 !important;
+}
+
+/* High-Contrast Typography & Headers */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark .font-heritage,
+.dark .text-\[\#2D2A26\],
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-black {
+  color: #FAF6F2 !important;
+}
+
+/* Clear Body Text & Secondary Headings */
+.dark .text-\[\#54493F\],
+.dark .text-\[\#4a3e35\],
+.dark .text-gray-700 {
+  color: #DDD2C7 !important;
+}
+
+/* Readable Subtitles & Meta Details */
+.dark .text-\[\#7A6F64\],
+.dark .text-\[\#8C7E72\],
+.dark .text-\[\#8c6b53\],
+.dark .text-\[\#7a5e4a\],
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #BCB0A3 !important;
+}
+
+.dark .text-gray-400,
+.dark .text-\[\#A89C90\] {
+  color: #9C8F82 !important;
+}
+
+/* Luminous Terracotta & Brand Accents (Stands out sharply in dark mode) */
+.dark .text-\[\#943310\],
+.dark .text-\[\#B45F42\],
+.dark .text-\[\#7c280a\],
+.dark .text-\[\#8C5039\] {
+  color: #FF855D !important;
+}
+
+.dark .text-\[\#943310\]:hover,
+.dark .text-\[\#B45F42\]:hover,
+.dark .text-\[\#7c280a\]:hover {
+  color: #FFA585 !important;
+}
+
+/* Amber & Gold accents */
+.dark .text-amber-800,
+.dark .text-amber-900,
+.dark .text-amber-700 {
+  color: #FCD34D !important;
+}
+
+.dark .text-amber-600 {
+  color: #FBBF24 !important;
+}
+
+/* Emerald Green (Stock, In-stock, Success) */
+.dark .text-emerald-700,
+.dark .text-emerald-800 {
+  color: #4ADE80 !important;
+}
+
+.dark .text-emerald-600 {
+  color: #34D399 !important;
+}
+
+/* Rose / Red (Favorites, Discounts, Alerts) */
+.dark .text-rose-700,
+.dark .text-rose-600,
+.dark .text-red-600,
+.dark .text-red-700 {
+  color: #FB7185 !important;
+}
+
+/* Crisply Defined Borders & Dividers */
+.dark .border-\[\#E8E1D9\],
+.dark .border-\[\#dfcebe\],
+.dark .border-\[\#ebdccd\],
+.dark .border-\[\#CBBDB0\],
+.dark .border-\[\#F3EFE9\],
+.dark .border-\[\#f0e4d7\],
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #3A3028 !important;
+}
+
+.dark .border-amber-400\/25,
+.dark .border-amber-300,
+.dark .border-amber-300\/40,
+.dark .border-amber-300\/30 {
+  border-color: rgba(251, 191, 36, 0.4) !important;
+}
+
+.dark .border-\[\#B45F42\]\/25 {
+  border-color: rgba(255, 133, 93, 0.35) !important;
+}
+
+/* Badges, Tags, and Pill Highlights */
+.dark .bg-amber-100,
+.dark .bg-amber-100\/95,
+.dark .bg-amber-100\/70,
+.dark .bg-amber-100\/80,
+.dark .bg-amber-100\/50,
+.dark .bg-amber-50,
+.dark .bg-amber-50\/60,
+.dark .bg-\[\#B45F42\]\/10,
+.dark .bg-\[\#943310\]\/10 {
+  background-color: rgba(255, 133, 93, 0.14) !important;
+  color: #FFA585 !important;
+  border-color: rgba(255, 133, 93, 0.3) !important;
+}
+
+/* Interactive Form Controls: Inputs, Selects, Textareas */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.dark select,
+.dark textarea {
+  background-color: #1F1916 !important;
+  color: #FAF6F2 !important;
+  border-color: #483C32 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9C8F82 !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #FF855D !important;
+  background-color: #261F1B !important;
+  box-shadow: 0 0 0 2px rgba(255, 133, 93, 0.25) !important;
+}
+
+/* Hover States for Dropdowns & Lists */
+.dark .hover\:bg-\[\#F3EFE9\]:hover,
+.dark .hover\:bg-\[\#EDE7DF\]:hover,
+.dark .hover\:bg-\[\#E8E1D9\]:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-\[\#ede0ca\]:hover,
+.dark .hover\:bg-\[\#faf6f0\]:hover {
+  background-color: #2D2520 !important;
+}
+
+/* Floating Modals, Drawers & Popups */
+.dark #cart-drawer-panel,
+.dark [role="dialog"],
+.dark .shadow-2xl,
+.dark .shadow-xl {
+  background-color: #1C1714 !important;
+  border-color: #3A3028 !important;
+}
+
+/* Tables & Data Grids in Dark Mode */
+.dark table {
+  color: #FAF6F2 !important;
+}
+
+.dark thead,
+.dark th {
+  background-color: #261F1B !important;
+  color: #FAF6F2 !important;
+  border-color: #3A3028 !important;
+}
+
+.dark tbody tr {
+  border-color: #3A3028 !important;
+}
+
+.dark tbody tr:hover {
+  background-color: #251E19 !important;
+}
+
+.dark td {
+  border-color: #3A3028 !important;
+  color: #DDD2C7 !important;
+}
+
+/* Quick View / Action floating icon buttons */
+.dark .bg-white\/90,
+.dark .bg-white\/95 {
+  background-color: rgba(28, 23, 20, 0.92) !important;
+  border-color: #483C32 !important;
+  color: #FAF6F2 !important;
+}
+
+.dark .bg-white\/90:hover,
+.dark .bg-white\/95:hover {
+  background-color: #2A221D !important;
+  color: #FF855D !important;
 }
 

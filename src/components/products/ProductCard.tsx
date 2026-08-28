@@ -75,8 +75,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 ? 'bg-rose-500 text-white'
                 : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
             }`}
-            title={favorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
-            aria-label={favorite ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}
+            title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
+            aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
           >
             <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
           </motion.button>
@@ -88,8 +88,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             whileTap={{ scale: 0.9 }}
             onClick={() => navigateToProduct(product.id)}
             className="p-2 rounded-md bg-white/90 hover:bg-white text-[#2D2A26] hover:text-[#B45F42] border border-[#E8E1D9] backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:block cursor-pointer"
-            title="معاينة التفاصيل"
-            aria-label="معاينة التفاصيل"
+            title={`معاينة تفاصيل ${product.title}`}
+            aria-label={`معاينة تفاصيل ${product.title}`}
           >
             <Eye className="w-4 h-4" />
           </motion.button>
@@ -113,13 +113,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               type="button"
               id={`seller-link-${product.sellerId}`}
               onClick={() => navigateToSeller(product.sellerId)}
+              aria-label={`زيارة ورشة الحرفي ${product.sellerName}`}
               className="text-[11px] font-medium text-[#7A6F64] hover:text-[#B45F42] transition-colors truncate text-right cursor-pointer"
             >
               {product.sellerName}
             </button>
 
             {/* Rating Stars */}
-            <div className="flex items-center gap-1 text-xs shrink-0">
+            <div className="flex items-center gap-1 text-xs shrink-0" aria-label={`التقييم ${product.rating} من 5 نجوم بناء على ${product.reviewCount} تقييم`}>
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
               <span className="font-bold text-[#2D2A26] text-[11px]">{product.rating}</span>
               <span className="text-[10px] text-gray-400">({product.reviewCount})</span>
@@ -129,6 +130,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           {/* Product Title */}
           <h3
             onClick={() => navigateToProduct(product.id)}
+            role="button"
+            tabIndex={0}
+            aria-label={`عرض تفاصيل المنتج: ${product.title}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigateToProduct(product.id);
+              }
+            }}
             className="font-bold text-[#2D2A26] text-sm leading-snug hover:text-[#B45F42] transition-colors cursor-pointer line-clamp-2 mb-2"
           >
             {product.title}
@@ -164,8 +174,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             }}
             disabled={!product.inStock}
             className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
-            title="إضافة إلى سلة المشتريات"
-            aria-label="إضافة إلى سلة المشتريات"
+            title={`إضافة ${product.title} إلى سلة المشتريات`}
+            aria-label={`إضافة ${product.title} إلى سلة المشتريات`}
           >
             <ShoppingBag className="w-4 h-4" />
           </motion.button>

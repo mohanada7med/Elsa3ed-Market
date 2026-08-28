@@ -26,6 +26,7 @@ export const FeaturedCategories: React.FC = () => {
           type="button"
           id="view-all-cats-btn"
           onClick={() => setActivePage('categories')}
+          aria-label="عرض جميع التصنيفات التراثية والحرفية"
           className="text-xs sm:text-sm font-bold text-[#B45F42] hover:text-[#9E4F36] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
         >
           <span>عرض جميع التصنيفات</span>
@@ -38,6 +39,15 @@ export const FeaturedCategories: React.FC = () => {
           <motion.div
             key={cat.id}
             id={`category-card-${cat.id}`}
+            role="button"
+            tabIndex={0}
+            aria-label={`تصفح منتجات تصنيف ${cat.name}، ${cat.productsCount > 0 ? cat.productsCount + ' منتج متوفر' : ''}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigateToCategory(cat.id);
+              }
+            }}
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}

@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#231F1C] text-[#E8E1D9] border-t-4 border-[#B45F42] relative overflow-hidden">
+    <footer className="bg-[#231F1C] text-[#E8E1D9] border-t-4 border-[#B45F42] relative overflow-hidden pb-20 md:pb-0">
       {/* Upper Egyptian Heritage Features Banner */}
       <div className="bg-[#2D2824] border-b border-[#3D3732] py-8 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -86,7 +86,8 @@ export const Footer: React.FC = () => {
                 type="button"
                 id="footer-intro-btn"
                 onClick={() => setShowIntroVideo(true)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#2E2824] hover:bg-[#3D3732] text-amber-200 text-xs font-semibold border border-amber-400/25 transition-colors"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#2E2824] hover:bg-[#3D3732] text-amber-200 text-xs font-semibold border border-amber-400/25 transition-colors cursor-pointer"
+                aria-label="مشاهدة الفيلم التعريفي والوثائقي عن سوق الصعيد"
               >
                 <Film className="w-4 h-4" />
                 <span>مشاهدة الفيلم التعريفي</span>
@@ -104,7 +105,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('products')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى صفحة جميع المنتجات اليدوية"
                 >
                   جميع المنتجات اليدوية
                 </button>
@@ -113,7 +115,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('categories')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى صفحة التصنيفات التراثية"
                 >
                   التصنيفات التراثية
                 </button>
@@ -122,7 +125,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('crafts')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى أطلس حرف الصعيد"
                 >
                   أطلس حرف الصعيد
                 </button>
@@ -131,7 +135,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('sellers')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى دليل الورش والحرفيين"
                 >
                   دليل الورش والحرفيين
                 </button>
@@ -140,7 +145,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('about')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى قصة ورسالة المنصة"
                 >
                   قصة ورسالة المنصة
                 </button>
@@ -158,7 +164,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('orders')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى تتبع طلبي وشحنتي"
                 >
                   تتبع طلبي وشحنتي
                 </button>
@@ -167,7 +174,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('favorites')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى قائمة الرغبات والمفضلة"
                 >
                   قائمة الرغبات والمفضلة
                 </button>
@@ -176,7 +184,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('cart')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى سلة المشتريات"
                 >
                   سلة المشتريات
                 </button>
@@ -185,7 +194,8 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('buyer-account')}
-                  className="hover:text-amber-200 transition-colors text-right"
+                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  aria-label="الانتقال إلى إدارة العناوين والحساب"
                 >
                   إدارة العناوين والحساب
                 </button>
@@ -208,13 +218,13 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="tel:+201158969931">
+                <a href="tel:+201158969931" aria-label="الاتصال عبر الهاتف: 01158969931" className="hover:underline">
                   <span dir="ltr">01158969931</span>
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="mailto:[EMAIL_ADDRESS]">
+                <a href="mailto:[EMAIL_ADDRESS]" aria-label="مراسلتنا عبر البريد الإلكتروني: ahmdmohanad28@gmail.com" className="hover:underline">
                   <span>ahmdmohanad28@gmail.com</span>
                 </a>
               </div>
@@ -241,7 +251,7 @@ export const Footer: React.FC = () => {
           <button
             type="button"
             onClick={scrollToTop}
-            className="p-2.5 rounded-xl bg-[#2E2824] hover:bg-[#3D3732] text-white transition-colors flex items-center gap-1.5 text-xs font-semibold min-h-[40px]"
+            className="p-2.5 rounded-xl bg-[#2E2824] hover:bg-[#3D3732] text-white transition-colors flex items-center gap-1.5 text-xs font-semibold min-h-[40px] cursor-pointer"
             aria-label="العودة لأعلى الصفحة"
           >
             <span>للأعلى</span>

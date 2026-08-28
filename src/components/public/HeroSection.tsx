@@ -81,6 +81,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('products')}
+                aria-label="تصفح جميع المنتجات التراثية في سوق الصعيد"
                 className="w-full sm:w-auto px-7 sm:px-9 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-sm sm:text-base font-bold rounded-xl shadow-md flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[44px]"
               >
                 <ShoppingBag className="w-5 h-5" />
@@ -94,6 +95,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleStartSelling}
+                aria-label="بيع منتجاتك معنا والانضمام كحرفي صعيدي"
                 className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border-2 border-[#B45F42]/40 hover:border-[#B45F42] text-sm sm:text-base font-bold rounded-xl shadow-xs flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[44px]"
               >
                 <Store className="w-5 h-5 text-amber-700" />
@@ -106,6 +108,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setShowIntroVideo(true)}
+                aria-label="مشاهدة الفيلم الوثائقي عن سوق الصعيد وأهل الحرف"
                 className="w-full sm:w-auto px-4 py-2.5 text-xs sm:text-sm text-[#7A6F64] hover:text-[#B45F42] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer min-h-[40px]"
               >
                 <Film className="w-4 h-4 text-amber-700" />
@@ -150,7 +153,7 @@ export const HeroSection: React.FC = () => {
               >
                 <img
                   src="https://res.cloudinary.com/kuana1nl/image/upload/v1787856920/%D9%81%D8%AE%D8%A7%D8%B1.jpg"
-                  alt="فخار قنا وأسيوط التراثي"
+                  alt="فخار قنا وأسيوط التراثي الأصيل"
                   className="w-full h-64 sm:h-80 object-cover hover:scale-105 transition-transform duration-700"
                 />
                 <div className="p-3 sm:p-4 bg-white border-t border-[#E8E1D9]">
@@ -163,6 +166,16 @@ export const HeroSection: React.FC = () => {
               </motion.div>
 
               <motion.div
+                role="button"
+                tabIndex={0}
+                aria-label="تصفح منتجات فخار أسيوط"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedGovernorateFilter('أسيوط');
+                    setActivePage('products');
+                  }
+                }}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.4 }}

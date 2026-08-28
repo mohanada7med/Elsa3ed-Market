@@ -1,4 +1,5 @@
 export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin';
+export type ThemeMode = 'light' | 'dark';
 
 export type Governorate =
   | 'أسوان'

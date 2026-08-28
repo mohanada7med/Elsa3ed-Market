@@ -181,7 +181,8 @@ export const AuthModal: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors min-h-[48px]"
+                    aria-label="إرسال رابط استعادة كلمة المرور"
+                    className="w-full py-3 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors min-h-[48px] cursor-pointer"
                   >
                     إرسال رابط الاستعادة
                   </button>
@@ -189,7 +190,8 @@ export const AuthModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsForgotPassword(false)}
-                    className="w-full text-center text-xs sm:text-sm text-gray-600 hover:text-[#943310] font-medium py-2"
+                    aria-label="الرجوع إلى نموذج تسجيل الدخول"
+                    className="w-full text-center text-xs sm:text-sm text-gray-600 hover:text-[#943310] font-medium py-2 cursor-pointer"
                   >
                     العودة لتسجيل الدخول
                   </button>
@@ -203,6 +205,9 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   id="tab-login"
+                  role="tab"
+                  aria-selected={authModalTab === 'login'}
+                  aria-label="تبويب تسجيل الدخول"
                   onClick={() => {
                     setAuthModalTab('login');
                     setErrorMessage(null);
@@ -218,6 +223,9 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="button"
                   id="tab-register"
+                  role="tab"
+                  aria-selected={authModalTab === 'register'}
+                  aria-label="تبويب إنشاء حساب جديد"
                   onClick={() => {
                     setAuthModalTab('register');
                     setErrorMessage(null);
@@ -261,6 +269,7 @@ export const AuthModal: React.FC = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="اكتب اسم المستخدم"
+                        aria-label="أدخل اسم المستخدم لتسجيل الدخول"
                         autoComplete="username"
                         className="w-full pl-3 pr-11 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] focus:bg-white min-h-[48px] text-gray-900 transition-colors"
                       />
@@ -284,6 +293,7 @@ export const AuthModal: React.FC = () => {
                           setForgotSubmitted(false);
                           setErrorMessage(null);
                         }}
+                        aria-label="استعادة كلمة المرور المنسية"
                         className="text-xs sm:text-sm text-[#943310] hover:underline font-medium cursor-pointer"
                       >
                         نسيت كلمة المرور؟
@@ -297,6 +307,7 @@ export const AuthModal: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="اكتب كلمة المرور"
+                        aria-label="أدخل كلمة المرور الخاصة بحسابك"
                         autoComplete="current-password"
                         className="w-full pl-3 pr-11 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] focus:bg-white min-h-[48px] text-gray-900 transition-colors"
                       />
@@ -309,6 +320,7 @@ export const AuthModal: React.FC = () => {
                     type="submit"
                     id="auth-submit-btn"
                     disabled={isSubmitting}
+                    aria-label="تأكيد تسجيل الدخول إلى سوق الصعيد"
                     className="w-full py-3.5 mt-2 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-base font-bold shadow-md transition-colors flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
                   >
                     <span>{isSubmitting ? 'جاري التحقق...' : 'تسجيل الدخول'}</span>
@@ -325,6 +337,7 @@ export const AuthModal: React.FC = () => {
                           setAuthModalTab('register');
                           setErrorMessage(null);
                         }}
+                        aria-label="الانتقال إلى نموذج إنشاء حساب جديد"
                         className="font-bold text-[#943310] hover:underline cursor-pointer"
                       >
                         إنشاء حساب جديد
@@ -345,6 +358,7 @@ export const AuthModal: React.FC = () => {
                       type="button"
                       id="role-buyer-select"
                       onClick={() => setRoleType('buyer')}
+                      aria-label="اختيار نوع الحساب: مشتري ومتسوق"
                       className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         roleType === 'buyer'
                           ? 'bg-[#943310] text-white shadow-xs'
@@ -358,6 +372,7 @@ export const AuthModal: React.FC = () => {
                       type="button"
                       id="role-seller-select"
                       onClick={() => setRoleType('seller')}
+                      aria-label="اختيار نوع الحساب: بائع وورشة صعيدية"
                       className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         roleType === 'seller'
                           ? 'bg-amber-600 text-white shadow-xs'
@@ -385,6 +400,7 @@ export const AuthModal: React.FC = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         placeholder="اكتب اسم المستخدم (مثال: محمد أو أحمد123)"
+                        aria-label="اسم المستخدم الجديد"
                         autoComplete="username"
                         className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                       />
@@ -408,6 +424,7 @@ export const AuthModal: React.FC = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="اكتب اسمك بالكامل"
+                        aria-label="الاسم الكامل للشخص"
                         autoComplete="name"
                         className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                       />
@@ -432,6 +449,7 @@ export const AuthModal: React.FC = () => {
                           value={workshopName}
                           onChange={(e) => setWorkshopName(e.target.value)}
                           placeholder="مثال: فواخير قنا الأصيلة"
+                          aria-label="اسم الورشة أو البراند الحرفي الصعيدي"
                           className="w-full pl-3 pr-10 py-2.5 bg-amber-50/60 border border-amber-300 rounded-xl text-sm outline-none focus:border-amber-600 min-h-[44px]"
                         />
                         <Store className="w-4 h-4 text-amber-600 absolute right-3 top-3" />
@@ -456,6 +474,7 @@ export const AuthModal: React.FC = () => {
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="010XXXXXXXX"
+                          aria-label="رقم الهاتف للتواصل والطلبات"
                           autoComplete="tel"
                           className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                         />
@@ -473,6 +492,7 @@ export const AuthModal: React.FC = () => {
                       <select
                         id="register-governorate-select"
                         value={governorate}
+                        aria-label="اختر محافظتك في صعيد مصر"
                         onChange={(e) => setGovernorate(e.target.value)}
                         className="w-full py-2.5 px-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px] cursor-pointer"
                       >
@@ -506,6 +526,7 @@ export const AuthModal: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="name@example.com (اختياري)"
+                        aria-label="البريد الإلكتروني (اختياري)"
                         autoComplete="email"
                         className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                       />
@@ -529,6 +550,7 @@ export const AuthModal: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="اكتب كلمة المرور (6 خانات على الأقل)"
+                        aria-label="أنشئ كلمة مرور مكونة من 6 خانات على الأقل"
                         autoComplete="new-password"
                         className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
                       />
@@ -541,6 +563,7 @@ export const AuthModal: React.FC = () => {
                     type="submit"
                     id="auth-submit-btn"
                     disabled={isSubmitting}
+                    aria-label={roleType === 'seller' ? 'تأكيد تسجيل ورشة حرفية جديدة' : 'تأكيد إنشاء حساب مشتري جديد'}
                     className="w-full py-3.5 mt-2 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
                   >
                     <span>
@@ -563,6 +586,7 @@ export const AuthModal: React.FC = () => {
                           setAuthModalTab('login');
                           setErrorMessage(null);
                         }}
+                        aria-label="الانتقال إلى تسجيل الدخول"
                         className="font-bold text-[#943310] hover:underline cursor-pointer"
                       >
                         تسجيل الدخول
