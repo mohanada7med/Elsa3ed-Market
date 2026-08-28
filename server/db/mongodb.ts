@@ -29,7 +29,7 @@ class MemoryStore {
   reviews: ReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
-      }
+}
 export const memoryDb = new MemoryStore();
 
 /**
@@ -42,7 +42,22 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
   console.log('[MongoDB] URI configured:', !!uri);
   console.log('[MongoDB] Database:', dbName);
 
-  if (!uri || uri.includes('USERNAME:PASSWORD') || uri.includes('CLUSTER.mongodb.net')) {
+  if (!uri) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MONGODB_URI is missing in production environment');
+    }
+
+    return { db: null, isMongo: false };
+  }
+
+  if (
+    uri.includes('USERNAME:PASSWORD') ||
+    uri.includes('CLUSTER.mongodb.net')
+  ) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('MONGODB_URI still contains placeholder values');
+    }
+
     return { db: null, isMongo: false };
   }
 
@@ -99,6 +114,10 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
           // ignore close error
         }
         client = null;
+      }
+
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error(`MongoDB connection failed: ${failureReason}`);
       }
 
       Logger.info('[Database] Falling back to in-memory database');
