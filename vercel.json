@@ -3,23 +3,23 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.ts"
+      "source": "/api/:path*",
+      "destination": "/api"
     },
     {
-      "source": "/uploads/(.*)",
-      "destination": "/api/index.ts"
+      "source": "/uploads/:path*",
+      "destination": "/api"
     },
     {
       "source": "/sitemap.xml",
-      "destination": "/api/index.ts"
+      "destination": "/api"
     },
     {
       "source": "/robots.txt",
-      "destination": "/api/index.ts"
+      "destination": "/api"
     },
     {
-      "source": "/(.*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
