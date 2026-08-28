@@ -28,14 +28,14 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrdersTrackingPage: React.FC = () => {
-  const { orders, cancelOrder, refreshOrders, setActivePage, addToast } = useApp();
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(orders[0] || null);
+  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId } = useApp();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Sync selectedOrder when orders update
+  // Sync selectedOrder when orders or selectedOrderId update
   const currentSelected = selectedOrder
     ? orders.find((o) => o.id === selectedOrder.id) || orders[0] || null
-    : orders[0] || null;
+    : (selectedOrderId ? orders.find((o) => o.id === selectedOrderId || o.orderNumber === selectedOrderId) : null) || orders[0] || null;
 
   const getStepIndex = (status: OrderStatus) => {
     switch (status) {

@@ -159,7 +159,7 @@ export const CraftsPage: React.FC = () => {
                 <div className="space-y-2 pt-2">
                   <h4 className="text-xs font-bold text-[#943310]">مراحل الصنعة اليدوية المتوارثة:</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {story.steps.map((step, sIdx) => (
+                    {(story.steps || []).map((step, sIdx) => (
                       <div
                         key={sIdx}
                         className="p-2.5 bg-[#faf6f0] rounded-xl border border-[#ebdccd] text-[11px] text-gray-800 flex items-start gap-2"

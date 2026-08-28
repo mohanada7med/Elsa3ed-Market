@@ -64,30 +64,7 @@ const MainContent: React.FC = () => {
   } = useApp();
   const selectedProduct = products.find((p) => p.id === selectedProductId);
 
-  // Initial Auth Verification State (Prevents flash of logged-out or unauthorized screens on refresh)
-  if (isAuthChecking) {
-    return (
-      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
-        <div className="text-center space-y-4 max-w-sm mx-auto">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto relative flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
-            <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-              alt="سوق الصعيد"
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-            />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">سوق الصعيد</h2>
-            <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Dynamic SEO meta updates on page transition
-  // Move SEO effect before any conditional returns to maintain hook order
+  // Dynamic SEO meta updates on page transition (called unconditionally at top of component)
   useEffect(() => {
     switch (activePage) {
       case 'home':
@@ -155,7 +132,7 @@ const MainContent: React.FC = () => {
     }
   }, [activePage, selectedProduct, selectedSellerId]);
 
-  // Initial Auth Verification State (Prevents flash of logged-out or unauthorized screens on refresh)
+  // Initial Auth Verification State (rendered after all hooks)
   if (isAuthChecking) {
     return (
       <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
@@ -179,24 +156,6 @@ const MainContent: React.FC = () => {
 
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[#faf6f0]">
-      {isAuthChecking && (
-        <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
-          <div className="text-center space-y-4 max-w-sm mx-auto">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto relative flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
-              <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-                alt="سوق الصعيد"
-                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-              />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">سوق الصعيد</h2>
-              <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
-            </div>
-          </div>
-        </div>
-      )}
       <div>
     
       
@@ -212,7 +171,7 @@ const MainContent: React.FC = () => {
             id="main-route-container"
           >
             {activePage === 'home' && <HomePage />}
-            {activePage === 'products' && <ProductsPage />}
+            {(activePage === 'products' || activePage === 'search') && <ProductsPage />}
             {activePage === 'product-details' && <ProductDetailsView />}
             {activePage === 'categories' && <CategoriesPage />}
             {activePage === 'category-details' && <ProductsPage />}
@@ -388,6 +347,7 @@ const MainContent: React.FC = () => {
             {![
               'home',
               'products',
+              'search',
               'product-details',
               'categories',
               'category-details',

@@ -47,28 +47,38 @@ export const ProductDetailsView: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews' | 'shipping'>('desc');
 
+  const productImages = product?.images && Array.isArray(product.images) && product.images.length > 0
+    ? product.images
+    : ['https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png'];
+  const productTags = Array.isArray(product?.tags) ? product.tags : [];
+  const productSpecs = product?.specifications || {
+    material: 'خامات طبيعية تراثية',
+    originGovernorate: product?.sellerGovernorate || 'قنا',
+    craftsmanship: 'صناعة يدوية أصيلة'
+  };
+
   // Inject Product SEO and Schema.org Structured Data
   useEffect(() => {
     if (product) {
       updatePageSEO({
-        title: product.title,
-        description: product.description.slice(0, 160),
-        image: product.images[0],
+        title: product.title || 'منتج تراثي',
+        description: (product.description || '').slice(0, 160),
+        image: productImages[0],
         type: 'product',
         schema: generateProductSchema({
           id: product.id,
-          title: product.title,
-          description: product.description,
-          images: product.images,
-          price: product.price,
-          rating: product.rating,
-          reviewCount: product.reviewCount,
-          sellerName: product.sellerName,
-          inStock: product.inStock
+          title: product.title || '',
+          description: product.description || '',
+          images: productImages,
+          price: product.price || 0,
+          rating: product.rating || 5,
+          reviewCount: product.reviewCount || 0,
+          sellerName: product.sellerName || 'حرفي من الصعيد',
+          inStock: product.inStock !== false
         })
       });
     }
-  }, [product]);
+  }, [product, productImages]);
 
   // Review form state
   const [newRating, setNewRating] = useState(5);
@@ -91,8 +101,8 @@ export const ProductDetailsView: React.FC = () => {
   }
 
   const favorite = isFavorite(product?.id || '');
-  const productReviews = reviews.filter((r) => r.productId === product.id);
-  const relatedProducts = products
+  const productReviews = (reviews || []).filter((r) => r.productId === product.id);
+  const relatedProducts = (products || [])
     .filter((p) => p.categoryId === product.categoryId && p.id !== product.id && p.approvalStatus === 'approved')
     .slice(0, 4);
 
@@ -139,7 +149,7 @@ export const ProductDetailsView: React.FC = () => {
         <div className="lg:col-span-6 space-y-4">
           <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-white border border-[#ebdccd] shadow-xs">
             <img
-              src={product.images[selectedImageIndex] || product.images[0]}
+              src={productImages[selectedImageIndex] || productImages[0]}
               alt={product.title}
               className="w-full h-full object-cover"
             />
@@ -189,9 +199,9 @@ export const ProductDetailsView: React.FC = () => {
           </div>
 
           {/* Thumbnail list */}
-          {product.images.length > 1 && (
+          {productImages.length > 1 && (
             <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              {product.images.map((img, idx) => (
+              {productImages.map((img, idx) => (
                 <button
                   key={idx}
                   type="button"
@@ -517,7 +527,7 @@ export const ProductDetailsView: React.FC = () => {
               </p>
             </div>
             <div className="flex flex-wrap gap-2 pt-2">
-              {product.tags.map((tag, i) => (
+              {productTags.map((tag, i) => (
                 <span key={i} className="text-xs bg-[#f4ebe1] text-[#8c6b53] px-2.5 py-1 rounded-lg">
                   #{tag}
                 </span>
@@ -533,38 +543,38 @@ export const ProductDetailsView: React.FC = () => {
               <tbody className="divide-y divide-[#f0e4d7]">
                 <tr>
                   <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0] w-1/3">الخامات والمواد الأساسية</td>
-                  <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.material}</td>
+                  <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.material || 'خامات طبيعية'}</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">محافظة ومكان المنشأ</td>
-                  <td className="py-3 px-4 font-semibold text-gray-800">صعيد مصر - محافظة {product.specifications.originGovernorate}</td>
+                  <td className="py-3 px-4 font-semibold text-gray-800">صعيد مصر - محافظة {productSpecs.originGovernorate || product.sellerGovernorate || 'قنا'}</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">طريقة التصنيع والصنعة</td>
-                  <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.craftsmanship}</td>
+                  <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.craftsmanship || 'صناعة يدوية'}</td>
                 </tr>
-                {product.specifications.dimensions && (
+                {productSpecs.dimensions && (
                   <tr>
                     <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">الأبعاد والمقاسات</td>
-                    <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.dimensions}</td>
+                    <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.dimensions}</td>
                   </tr>
                 )}
-                {product.specifications.weight && (
+                {productSpecs.weight && (
                   <tr>
                     <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">الوزن التقريبي</td>
-                    <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.weight}</td>
+                    <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.weight}</td>
                   </tr>
                 )}
-                {product.specifications.estimatedMakingTime && (
+                {productSpecs.estimatedMakingTime && (
                   <tr>
                     <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">وقت الصنع اليدوي للقطعة</td>
-                    <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.estimatedMakingTime}</td>
+                    <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.estimatedMakingTime}</td>
                   </tr>
                 )}
-                {product.specifications.careInstructions && (
+                {productSpecs.careInstructions && (
                   <tr>
                     <td className="py-3 px-4 font-bold text-[#8c6b53] bg-[#faf6f0]">تعليمات العناية والتنظيف</td>
-                    <td className="py-3 px-4 font-semibold text-gray-800">{product.specifications.careInstructions}</td>
+                    <td className="py-3 px-4 font-semibold text-gray-800">{productSpecs.careInstructions}</td>
                   </tr>
                 )}
               </tbody>

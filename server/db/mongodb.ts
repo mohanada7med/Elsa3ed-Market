@@ -57,10 +57,7 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
   const dbName = process.env.MONGODB_DB?.trim() || 'Elsa3ed_market';
 
   if (!uri) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('MONGODB_URI is missing in Vercel / production environment variables');
-    }
-
+    Logger.info('[Database] Operating with in-memory store (MONGODB_URI not provided)');
     return { db: null, isMongo: false };
   }
 
@@ -69,10 +66,7 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
     uri.includes('<db_password>') ||
     uri.includes('CLUSTER.mongodb.net')
   ) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('MONGODB_URI still contains placeholder values (<db_password> or USERNAME:PASSWORD)');
-    }
-
+    Logger.warn('[Database] MONGODB_URI contains placeholder values; operating with in-memory store');
     return { db: null, isMongo: false };
   }
 

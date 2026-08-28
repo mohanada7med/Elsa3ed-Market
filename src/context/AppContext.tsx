@@ -324,12 +324,12 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-sellers': '/admin-sellers',
   'admin-products': '/admin-products',
   'admin-buyers': '/admin-buyers',
-  'admin-orders': '',
-  'admin-categories': '',
-  'admin-discounts': '',
-  'admin-reports': '',
-  'admin-audit-logs': '',
-  'admin-settings': ''
+  'admin-orders': '/admin-orders',
+  'admin-categories': '/admin-categories',
+  'admin-discounts': '/admin-discounts',
+  'admin-reports': '/admin-reports',
+  'admin-audit-logs': '/admin-audit-logs',
+  'admin-settings': '/admin-settings'
 };
 
 function getInitialNavigationState(): {
@@ -338,14 +338,16 @@ function getInitialNavigationState(): {
   categoryId: string | null;
   sellerId: string | null;
   orderId: string | null;
+  searchQuery: string;
 } {
   if (typeof window === 'undefined') {
-    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: '' };
   }
 
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
   const params = new URLSearchParams(window.location.search);
   const idFromQuery = params.get('id');
+  const queryTerm = params.get('q') || params.get('search') || '';
 
   if (path === '/' || path === '') {
     const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
@@ -356,62 +358,69 @@ function getInitialNavigationState(): {
         categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
         sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
         orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
+        searchQuery: queryTerm
       };
     }
-    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/search') {
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path === '/products') {
     if (idFromQuery) {
-      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null };
+      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
     }
-    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path.startsWith('/products/')) {
     const prodId = path.split('/')[2];
-    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path === '/categories') {
     if (idFromQuery) {
-      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null };
+      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null, searchQuery: queryTerm };
     }
-    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path.startsWith('/categories/')) {
     const catId = path.split('/')[2];
-    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null };
+    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path === '/sellers') {
     if (idFromQuery) {
-      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null };
+      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null, searchQuery: queryTerm };
     }
-    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path.startsWith('/sellers/')) {
     const sId = path.split('/')[2];
-    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null };
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null, searchQuery: queryTerm };
   }
 
   if (path === '/orders') {
     if (idFromQuery) {
-      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery };
+      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery, searchQuery: queryTerm };
     }
-    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null };
+    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path.startsWith('/orders/')) {
     const ordId = path.split('/')[2];
-    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId };
+    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId, searchQuery: queryTerm };
   }
 
   const simplePages: ActivePage[] = [
     'crafts',
     'about',
+    'wholesale',
+    'search',
     'cart',
     'checkout',
     'favorites',
@@ -425,12 +434,18 @@ function getInitialNavigationState(): {
     'admin-dashboard',
     'admin-sellers',
     'admin-products',
-    'admin-buyers'
+    'admin-buyers',
+    'admin-orders',
+    'admin-categories',
+    'admin-discounts',
+    'admin-reports',
+    'admin-audit-logs',
+    'admin-settings'
   ];
 
   for (const p of simplePages) {
     if (path === `/${p}`) {
-      return { page: p, productId: null, categoryId: null, sellerId: null, orderId: null };
+      return { page: p, productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
     }
   }
 
@@ -442,10 +457,11 @@ function getInitialNavigationState(): {
       categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
       sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
       orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
+      searchQuery: queryTerm
     };
   }
 
-  return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null };
+  return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
 }
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -460,17 +476,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Sync activePage with browser URL and history
   const setActivePage = useCallback((pageOrUpdater: ActivePage | ((prev: ActivePage) => ActivePage)) => {
     setActivePageState((prev) => {
-      const nextPage = typeof pageOrUpdater === 'function' ? pageOrUpdater(prev) : pageOrUpdater;
-      try {
-        sessionStorage.setItem('elsa3ed_active_page', nextPage);
-        const targetPath = PAGE_ROUTES[nextPage] || (nextPage === 'home' ? '/' : `/${nextPage}`);
-        if (window.location.pathname !== targetPath) {
-          window.history.pushState({ page: nextPage }, '', targetPath);
-        }
-      } catch { }
-      return nextPage;
+      return typeof pageOrUpdater === 'function' ? pageOrUpdater(prev) : pageOrUpdater;
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   // Update navigation state on browser back/forward buttons (popstate)
@@ -487,14 +494,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // On mount / page change: ensure URL reflects active page
+  // On mount / page change: ensure URL and sessionStorage reflect active page without executing side effects during render
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     try {
-      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
-      const expectedPath = PAGE_ROUTES[activePage] || (activePage === 'home' ? '/' : `/${activePage}`);
-      if (currentPath === '/' && activePage !== 'home') {
-        window.history.replaceState({ page: activePage }, '', expectedPath);
+      sessionStorage.setItem('elsa3ed_active_page', activePage);
+      const isDynamicRoute = ['product-details', 'category-details', 'seller-details', 'order-details'].includes(activePage);
+      if (!isDynamicRoute) {
+        const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+        const expectedPath = PAGE_ROUTES[activePage] || (activePage === 'home' ? '/' : `/${activePage}`);
+        if (currentPath !== expectedPath) {
+          window.history.pushState({ page: activePage }, '', expectedPath);
+        }
       }
+    } catch { }
+    try {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch { }
   }, [activePage]);
 
@@ -624,7 +639,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   // Search & Filter
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialNav.searchQuery || '');
   const [selectedGovernorateFilter, setSelectedGovernorateFilter] = useState<Governorate | 'all'>('all');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | 'all'>('all');
   const [selectedHandmadeOnly, setSelectedHandmadeOnly] = useState(false);
@@ -1030,41 +1045,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCurrentUser((prev) => ({ ...prev, mustChangePassword: false }));
     addToast('تغيير كلمة المرور', 'تم تعيين كلمة المرور الشخصية وتأكيد حسابك بنجاح!', 'success');
   };
-
-  // Restore authenticated session on initial mount via secure HTTP-only cookie
-  useEffect(() => {
-    let isMounted = true;
-    setIsAuthChecking(true);
-
-    api.getMe()
-      .then((userData) => {
-        if (!isMounted) return;
-        if (userData && userData.id) {
-          setCurrentUser(userData);
-          if (userData.role) {
-            setCurrentRole(userData.role);
-          }
-        } else {
-          setCurrentUser(GUEST_USER);
-          setCurrentRole('guest');
-        }
-      })
-      .catch((err) => {
-        console.warn('[AppContext] Session restoration info:', err);
-        if (!isMounted) return;
-        setCurrentUser(GUEST_USER);
-        setCurrentRole('guest');
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsAuthChecking(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   // Upload Profile Image to Cloudinary & update MongoDB
   const uploadProfileImage = async (imageDataUri: string, filename?: string) => {
