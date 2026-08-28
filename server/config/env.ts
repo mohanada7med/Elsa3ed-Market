@@ -46,17 +46,16 @@ export function validateAndGetEnv(): EnvConfig {
 
   if (NODE_ENV === 'production') {
     if (!MONGODB_URI) {
-      missingConfigs.push('MONGODB_URI (or MONGODB_CONNECTION_URL) is required in production');
+      missingConfigs.push('MONGODB_URI (or MONGODB_CONNECTION_URL) is missing');
     }
     if (!process.env.AUTH_SECRET) {
-      console.warn('[Config Warning] AUTH_SECRET is not set in production. Using fallback secret. Please configure AUTH_SECRET in Vercel environment variables for optimal security.');
+      console.warn('[Config Warning] AUTH_SECRET is not set in production. Using fallback secret.');
     }
   }
 
   if (missingConfigs.length > 0) {
-    const errorMsg = `[Env Error] Missing required environment variables on Vercel: ${missingConfigs.join(', ')}`;
-    console.error(errorMsg);
-    throw new Error(errorMsg);
+    const warnMsg = `[Env Warning] Missing configuration on Vercel: ${missingConfigs.join(', ')}. Set this in Vercel Project Settings -> Environment Variables.`;
+    console.warn(warnMsg);
   }
 
   cachedConfig = {

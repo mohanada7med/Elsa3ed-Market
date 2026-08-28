@@ -22,7 +22,7 @@ import craftStoryRoutes from './routes/craftStoryRoutes.ts';
 import uploadRoutes from './routes/uploadRoutes.ts';
 import seoRoutes from './routes/seoRoutes.ts';
 
-export async function createApp(): Promise<Express> {
+export function createApp(): Express {
   const env = validateAndGetEnv();
   const app = express();
 
@@ -62,15 +62,10 @@ export async function createApp(): Promise<Express> {
   // 6. Authentication Context
   app.use(authenticate);
 
-  // 7. Initialize Database Connection Pool
-  try {
-    const { db, isMongo } = await getDatabase();
-    if (env.NODE_ENV === 'production' && (!isMongo || !db)) {
-      Logger.error('[App] Warning: MongoDB connection is not established yet in production.');
-    }
-  } catch (err: any) {
-    Logger.error('[App] Database connection error during startup:', err);
-  }
+  // 7. Initialize Database Connection Pool asynchronously
+  getDatabase().catch((err: any) => {
+    Logger.error('[App] Database startup error:', err?.message || err);
+  });
 
   // 8. Health check endpoint verifying database connectivity
   const healthHandler = async (req: express.Request, res: express.Response) => {
