@@ -762,6 +762,7 @@ export const api = {
     workshopName: string;
     governorate?: string;
     specialty?: string;
+    avatar?: string;
   }): Promise<{ user: any; token: string }> {
     const res = await fetch(`${API_BASE}/auth/register/seller`, {
       method: 'POST',
@@ -827,6 +828,164 @@ export const api = {
     return json.data || json;
   },
 
+  async createAdminUser(
+    user: { id: string; role: string },
+    data: any
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/users`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إنشاء حساب المستخدم');
+    }
+    return json.data;
+  },
+
+  async updateAdminUser(
+    user: { id: string; role: string },
+    userId: string,
+    data: any
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/users/${userId}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث بيانات المستخدم');
+    }
+    return json.data;
+  },
+
+  async toggleAdminUserStatus(
+    user: { id: string; role: string },
+    userId: string,
+    status: 'active' | 'suspended' | 'blocked'
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/users/${userId}/status`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في تغيير حالة الحساب');
+    }
+    return json.data || json;
+  },
+
+  async resetAdminUserPassword(
+    user: { id: string; role: string },
+    userId: string,
+    newPassword: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/users/${userId}/reset-password`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ newPassword })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في إعادة تعيين كلمة المرور');
+    }
+    return json;
+  },
+
+  // ==================== FORGOT & RESET PASSWORD WORKFLOW API ====================
+
+  async requestPasswordReset(username: string): Promise<{ success: boolean; message: string; data?: { requestId: string } }> {
+    const res = await fetch(`${API_BASE}/auth/forgot-password`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في إرسال طلب استعادة كلمة المرور');
+    }
+    return json;
+  },
+
+  async changePersonalPassword(
+    user: { id: string; role: string },
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في تغيير كلمة المرور');
+    }
+    return json;
+  },
+
+  async getAdminPasswordResets(
+    user: { id: string; role: string },
+    status?: string
+  ): Promise<any[]> {
+    const query = status && status !== 'all' ? `?status=${encodeURIComponent(status)}` : '';
+    const res = await fetch(`${API_BASE}/admin/password-resets${query}`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any[]> = await res.json();
+    return json.data || [];
+  },
+
+  async completeAdminPasswordReset(
+    user: { id: string; role: string },
+    requestId: string,
+    temporaryPassword: string
+  ): Promise<{ success: boolean; message: string; temporaryPassword: string }> {
+    const res = await fetch(`${API_BASE}/admin/password-resets/${requestId}/complete`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ temporaryPassword })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في تعيين كلمة المرور المؤقتة');
+    }
+    return {
+      success: true,
+      message: json.message,
+      temporaryPassword: json.data?.temporaryPassword
+    };
+  },
+
+  async rejectAdminPasswordReset(
+    user: { id: string; role: string },
+    requestId: string,
+    reason?: string
+  ): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/admin/password-resets/${requestId}/reject`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { ...getAuthHeaders(user), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في رفض الطلب');
+    }
+    return json;
+  },
+
   // ==================== AUTH & PERSISTENCE API ====================
   async login(identifier: string, password: string): Promise<{ user: any; token?: string }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
@@ -866,6 +1025,7 @@ export const api = {
     governorate?: string;
     workshopName?: string;
     specialty?: string;
+    avatar?: string;
   }): Promise<{ user: any; token?: string }> {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',

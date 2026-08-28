@@ -29,7 +29,15 @@ import {
   Trash2,
   BadgeCheck,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Key,
+  UserCheck,
+  UserX,
+  Lock,
+  UserPlus,
+  Eye,
+  Copy,
+  KeyRound
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -60,19 +68,69 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'orders' | 'coupons' | 'audit' | 'users'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets'
   >('overview');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // User Management State
+  // User Management Full Control State
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [userStatusFilter, setUserStatusFilter] = useState('all');
+  const [userGovernorateFilter, setUserGovernorateFilter] = useState('all');
   const [selectedUserForDetails, setSelectedUserForDetails] = useState<any | null>(null);
   const [selectedUserForDelete, setSelectedUserForDelete] = useState<any | null>(null);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+
+  // Edit User State
+  const [selectedUserForEdit, setSelectedUserForEdit] = useState<any | null>(null);
+  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editUsername, setEditUsername] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editGovernorate, setEditGovernorate] = useState('قنا');
+  const [editRole, setEditRole] = useState<'buyer' | 'seller' | 'admin'>('buyer');
+  const [editStatus, setEditStatus] = useState<'active' | 'suspended'>('active');
+  const [editWorkshopName, setEditWorkshopName] = useState('');
+  const [editSpecialty, setEditSpecialty] = useState('');
+
+  // Reset Password State
+  const [selectedUserForResetPassword, setSelectedUserForResetPassword] = useState<any | null>(null);
+  const [newPasswordInput, setNewPasswordInput] = useState('');
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+
+  // Create User State
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserUsername, setNewUserUsername] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserPhone, setNewUserPhone] = useState('');
+  const [newUserPassword, setNewUserPassword] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'buyer' | 'seller' | 'admin'>('buyer');
+  const [newUserGovernorate, setNewUserGovernorate] = useState('قنا');
+  const [newUserWorkshopName, setNewUserWorkshopName] = useState('');
+  const [newUserSpecialty, setNewUserSpecialty] = useState('');
+  const [isTogglingStatus, setIsTogglingStatus] = useState<string | null>(null);
+
+  // Password Resets State
+  const [passwordResets, setPasswordResets] = useState<any[]>([]);
+  const [isLoadingPasswordResets, setIsLoadingPasswordResets] = useState(false);
+  const [passwordResetFilter, setPasswordResetFilter] = useState<'all' | 'pending' | 'completed' | 'rejected'>('all');
+  const [selectedResetForAction, setSelectedResetForAction] = useState<any | null>(null);
+  const [isCreateTempPasswordModalOpen, setIsCreateTempPasswordModalOpen] = useState(false);
+  const [tempPasswordInput, setTempPasswordInput] = useState('');
+  const [isSubmittingTempPassword, setIsSubmittingTempPassword] = useState(false);
+  const [completedTempPasswordInfo, setCompletedTempPasswordInfo] = useState<{
+    username: string;
+    name?: string;
+    phone?: string;
+    temporaryPassword: string;
+  } | null>(null);
+  const [isCopiedTempPassword, setIsCopiedTempPassword] = useState(false);
 
   // Seller Management State
   const [sellerStatusFilter, setSellerStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'suspended'>('all');
@@ -129,7 +187,12 @@ export const AdminDashboard: React.FC = () => {
     try {
       const users = await api.getAdminUsers(
         { id: currentUser.id, role: currentUser.role },
-        { search: userSearchTerm, role: userRoleFilter }
+        {
+          search: userSearchTerm,
+          role: userRoleFilter,
+          status: userStatusFilter,
+          governorate: userGovernorateFilter
+        }
       );
       setAdminUsers(users);
     } catch (err: any) {
@@ -149,6 +212,168 @@ export const AdminDashboard: React.FC = () => {
       setSelectedUserForDetails(details);
     } catch (err: any) {
       addToast('خطأ', err?.message || 'تعذر جلب تفاصيل الحساب', 'error');
+    }
+  };
+
+  const handleToggleUserStatus = async (u: any) => {
+    if (currentUser.id === u.id) {
+      addToast('محظور', 'لا يمكنك تعليق أو تجميد حسابك الشخصي كمدير للمنصة', 'warning');
+      return;
+    }
+    const newStatus = u.status === 'suspended' ? 'active' : 'suspended';
+    setIsTogglingStatus(u.id);
+    try {
+      const res = await api.toggleAdminUserStatus(
+        { id: currentUser.id, role: currentUser.role },
+        u.id,
+        newStatus
+      );
+      addToast(
+        'حالة الحساب',
+        res?.message || (newStatus === 'active' ? 'تم تنشيط وتفعيل الحساب بنجاح' : 'تم تعليق الحساب بنجاح'),
+        'success'
+      );
+      setAdminUsers((prev) =>
+        prev.map((item) => (item.id === u.id ? { ...item, status: newStatus } : item))
+      );
+      if (selectedUserForDetails?.id === u.id) {
+        setSelectedUserForDetails((prev: any) => (prev ? { ...prev, status: newStatus } : null));
+      }
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'فشل في تغيير حالة الحساب', 'error');
+    } finally {
+      setIsTogglingStatus(null);
+    }
+  };
+
+  const handleOpenEditUser = (u: any) => {
+    setEditName(u.name || '');
+    setEditUsername(u.username || '');
+    setEditEmail(u.email || '');
+    setEditPhone(u.phone || '');
+    setEditGovernorate(u.governorate || 'قنا');
+    setEditRole(u.role || 'buyer');
+    setEditStatus(u.status || 'active');
+    setEditWorkshopName(u.seller?.brandName || u.workshopName || '');
+    setEditSpecialty(u.seller?.specialty || u.specialty || '');
+    setSelectedUserForEdit(u);
+  };
+
+  const handleSaveEditUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserForEdit) return;
+    if (!editName.trim()) {
+      addToast('خطأ', 'الاسم الكامل مطلوب', 'error');
+      return;
+    }
+    if (!editPhone.trim()) {
+      addToast('خطأ', 'رقم الهاتف مطلوب', 'error');
+      return;
+    }
+    setIsUpdatingUser(true);
+    try {
+      await api.updateAdminUser(
+        { id: currentUser.id, role: currentUser.role },
+        selectedUserForEdit.id,
+        {
+          name: editName.trim(),
+          username: editUsername.trim() || undefined,
+          email: editEmail.trim() || undefined,
+          phone: editPhone.trim(),
+          governorate: editGovernorate,
+          role: editRole,
+          status: editStatus,
+          workshopName: editRole === 'seller' ? editWorkshopName.trim() : undefined,
+          specialty: editRole === 'seller' ? editSpecialty.trim() : undefined
+        }
+      );
+      addToast('تم التحديث', 'تم حفظ وتحديث بيانات المستخدم بنجاح', 'success');
+      setSelectedUserForEdit(null);
+      fetchAdminUsers();
+      if (selectedUserForDetails?.id === selectedUserForEdit.id) {
+        openUserDetails(selectedUserForEdit.id);
+      }
+    } catch (err: any) {
+      addToast('خطأ في التحديث', err?.message || 'تعذر تحديث بيانات المستخدم', 'error');
+    } finally {
+      setIsUpdatingUser(false);
+    }
+  };
+
+  const handleOpenResetPassword = (u: any) => {
+    setSelectedUserForResetPassword(u);
+    setNewPasswordInput('');
+  };
+
+  const handleConfirmResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserForResetPassword) return;
+    if (!newPasswordInput || newPasswordInput.length < 6) {
+      addToast('تنبيه', 'كلمة المرور الجديدة يجب ألا تقل عن 6 خانات', 'warning');
+      return;
+    }
+    setIsResettingPassword(true);
+    try {
+      const res = await api.resetAdminUserPassword(
+        { id: currentUser.id, role: currentUser.role },
+        selectedUserForResetPassword.id,
+        newPasswordInput
+      );
+      addToast('نجاح العملية', res?.message || 'تم إعادة تعيين كلمة المرور بنجاح', 'success');
+      setSelectedUserForResetPassword(null);
+      setNewPasswordInput('');
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'فشل في إعادة تعيين كلمة المرور', 'error');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  const handleCreateNewUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserUsername.trim() || !newUserName.trim() || !newUserPhone.trim() || !newUserPassword) {
+      addToast('بيانات ناقصة', 'يرجى ملء جميع الحقول المطلوبة لإنشاء الحساب', 'warning');
+      return;
+    }
+    if (newUserPassword.length < 6) {
+      addToast('كلمة المرور', 'كلمة المرور يجب ألا تقل عن 6 خانات', 'warning');
+      return;
+    }
+    if (newUserRole === 'seller' && !newUserWorkshopName.trim()) {
+      addToast('بيانات الورشة', 'اسم الورشة مطلوب لحسابات البائعين', 'warning');
+      return;
+    }
+    setIsCreatingUser(true);
+    try {
+      const created = await api.createAdminUser(
+        { id: currentUser.id, role: currentUser.role },
+        {
+          username: newUserUsername.trim(),
+          name: newUserName.trim(),
+          email: newUserEmail.trim() || undefined,
+          phone: newUserPhone.trim(),
+          password: newUserPassword,
+          role: newUserRole,
+          governorate: newUserGovernorate,
+          workshopName: newUserRole === 'seller' ? newUserWorkshopName.trim() : undefined,
+          specialty: newUserRole === 'seller' ? newUserSpecialty.trim() : undefined
+        }
+      );
+      addToast('تم إنشاء الحساب', `تم إنشاء حساب ${created.name} (@${created.username}) بنجاح`, 'success');
+      setIsCreateUserModalOpen(false);
+      setNewUserName('');
+      setNewUserUsername('');
+      setNewUserEmail('');
+      setNewUserPhone('');
+      setNewUserPassword('');
+      setNewUserRole('buyer');
+      setNewUserWorkshopName('');
+      setNewUserSpecialty('');
+      fetchAdminUsers();
+    } catch (err: any) {
+      addToast('خطأ في الإنشاء', err?.message || 'فشل في إنشاء الحساب', 'error');
+    } finally {
+      setIsCreatingUser(false);
     }
   };
 
@@ -175,7 +400,7 @@ export const AdminDashboard: React.FC = () => {
     if (activeTab === 'users') {
       fetchAdminUsers();
     }
-  }, [activeTab, userRoleFilter]);
+  }, [activeTab, userRoleFilter, userStatusFilter, userGovernorateFilter]);
 
   // Debounced search for users
   useEffect(() => {
@@ -186,6 +411,93 @@ export const AdminDashboard: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [userSearchTerm]);
+
+  const fetchPasswordResets = async () => {
+    setIsLoadingPasswordResets(true);
+    try {
+      const data = await api.getAdminPasswordResets(
+        { id: currentUser.id, role: currentUser.role },
+        passwordResetFilter
+      );
+      setPasswordResets(data || []);
+    } catch (err: any) {
+      console.error('Failed fetching password resets:', err);
+    } finally {
+      setIsLoadingPasswordResets(false);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      fetchPasswordResets();
+    }
+  }, [passwordResetFilter, currentUser?.role]);
+
+  const openCreateTempPasswordModal = (request: any) => {
+    setSelectedResetForAction(request);
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$';
+    let generated = '';
+    for (let i = 0; i < 10; i++) {
+      generated += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setTempPasswordInput(generated);
+    setIsCreateTempPasswordModalOpen(true);
+  };
+
+  const handleConfirmCompleteReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedResetForAction || !tempPasswordInput || tempPasswordInput.length < 6) {
+      addToast('تنبيه', 'كلمة المرور المؤقتة يجب ألا تقل عن 6 خانات', 'warning');
+      return;
+    }
+
+    setIsSubmittingTempPassword(true);
+    try {
+      const result = await api.completeAdminPasswordReset(
+        { id: currentUser.id, role: currentUser.role },
+        selectedResetForAction.id,
+        tempPasswordInput
+      );
+      setIsCreateTempPasswordModalOpen(false);
+      setCompletedTempPasswordInfo({
+        username: selectedResetForAction.username,
+        name: selectedResetForAction.name,
+        phone: selectedResetForAction.phone,
+        temporaryPassword: result.temporaryPassword
+      });
+      setIsCopiedTempPassword(false);
+      addToast('تمت المعالجة بنجاح', result.message, 'success');
+      fetchPasswordResets();
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'فشل في تعيين كلمة المرور المؤقتة', 'error');
+    } finally {
+      setIsSubmittingTempPassword(false);
+    }
+  };
+
+  const handleRejectReset = async (request: any) => {
+    const reason = prompt('يرجى كتابة سبب رفض طلب استعادة كلمة المرور:', 'طلب غير مؤكد أو تم التواصل مع المستخدم مسبقاً');
+    if (reason === null) return;
+
+    try {
+      await api.rejectAdminPasswordReset(
+        { id: currentUser.id, role: currentUser.role },
+        request.id,
+        reason
+      );
+      addToast('تم الرفض', 'تم رفض طلب استعادة كلمة المرور', 'info');
+      fetchPasswordResets();
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'فشل في رفض الطلب', 'error');
+    }
+  };
+
+  const copyTempPassword = () => {
+    if (!completedTempPasswordInfo) return;
+    navigator.clipboard.writeText(completedTempPasswordInfo.temporaryPassword);
+    setIsCopiedTempPassword(true);
+    addToast('تم النسخ', 'تم نسخ كلمة المرور المؤقتة إلى الحافظة بنجاح', 'info');
+  };
 
   const fetchCraftStories = async () => {
     setIsLoadingCraftStories(true);
@@ -700,6 +1012,24 @@ export const AdminDashboard: React.FC = () => {
         >
           <Users className="w-4 h-4" />
           <span>إدارة المستخدمين ({adminUsers.length || '...'})</span>
+        </button>
+
+        <button
+          type="button"
+          id="admin-tab-password-resets"
+          onClick={() => setActiveTab('password-resets')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap relative ${activeTab === 'password-resets'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
+        >
+          <KeyRound className="w-4 h-4 text-amber-500" />
+          <span>طلبات استعادة كلمة المرور</span>
+          {passwordResets.filter((r) => r.status === 'pending').length > 0 && (
+            <span className="bg-rose-600 text-white font-black text-[10px] px-1.5 py-0.2 rounded-full animate-pulse">
+              {passwordResets.filter((r) => r.status === 'pending').length}
+            </span>
+          )}
         </button>
       </div>
 
@@ -1781,75 +2111,138 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 9: USERS MANAGEMENT */}
+      {/* TAB 9: USERS MANAGEMENT (FULL CONTROL) */}
       {activeTab === 'users' && (
         <div className="space-y-6">
           {/* Quick Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
-              <span className="text-xs text-[#7A6F64] block mb-1">إجمالي الحسابات المسجلة</span>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">إجمالي المستخدمين</span>
               <span className="text-2xl font-black text-[#2D2A26] font-mono">{adminUsers.length}</span>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
-              <span className="text-xs text-[#7A6F64] block mb-1">حسابات المشترين (Buyers)</span>
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">المشترون (Buyers)</span>
               <span className="text-2xl font-black text-blue-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'buyer').length}
               </span>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
-              <span className="text-xs text-[#7A6F64] block mb-1">ورش وحرفيو الصعيد (Sellers)</span>
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">الورش الحرفية (Sellers)</span>
               <span className="text-2xl font-black text-amber-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'seller').length}
               </span>
             </div>
-            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
-              <span className="text-xs text-[#7A6F64] block mb-1">مديرو المنصة (Admins)</span>
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">المديرون (Admins)</span>
               <span className="text-2xl font-black text-purple-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'admin').length}
               </span>
             </div>
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">حسابات نشطة</span>
+              <span className="text-2xl font-black text-emerald-700 font-mono">
+                {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
+              </span>
+            </div>
+            <div className="bg-white p-4 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <span className="text-[11px] text-[#7A6F64] block mb-1">حسابات معلقة</span>
+              <span className="text-2xl font-black text-rose-700 font-mono">
+                {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
+              </span>
+            </div>
           </div>
 
-          {/* Search & Filters */}
-          <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="relative w-full sm:w-96">
+          {/* Search, Filters & Action Bar */}
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#E8E1D9] shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
               <input
                 type="text"
                 id="admin-users-search-input"
                 value={userSearchTerm}
                 onChange={(e) => setUserSearchTerm(e.target.value)}
-                placeholder="بحث بالاسم، البريد الإلكتروني، أو الهاتف..."
-                className="w-full pl-3 pr-10 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                placeholder="بحث بالاسم، اسم المستخدم، البريد، أو الهاتف..."
+                className="w-full pl-3 pr-10 py-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
               />
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4 text-[#7A6F64]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Role filter */}
+              <div className="flex items-center gap-1.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl px-2 py-1">
+                <Filter className="w-3.5 h-3.5 text-[#7A6F64]" />
                 <select
                   id="admin-users-role-filter"
                   value={userRoleFilter}
                   onChange={(e) => setUserRoleFilter(e.target.value)}
-                  className="p-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-medium"
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
                 >
                   <option value="all">جميع الأدوار</option>
-                  <option value="buyer">المشترون فقط</option>
-                  <option value="seller">الحرفيون والورش فقط</option>
-                  <option value="admin">المديرون فقط</option>
+                  <option value="buyer">المشترون</option>
+                  <option value="seller">الورش والحرفيون</option>
+                  <option value="admin">المديرون</option>
                 </select>
               </div>
 
+              {/* Status filter */}
+              <div className="flex items-center gap-1.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl px-2 py-1">
+                <select
+                  id="admin-users-status-filter"
+                  value={userStatusFilter}
+                  onChange={(e) => setUserStatusFilter(e.target.value)}
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                >
+                  <option value="all">جميع الحالات</option>
+                  <option value="active">الحسابات النشطة فقط</option>
+                  <option value="suspended">الحسابات المعلقة فقط</option>
+                </select>
+              </div>
+
+              {/* Governorate filter */}
+              <div className="flex items-center gap-1.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl px-2 py-1">
+                <select
+                  id="admin-users-gov-filter"
+                  value={userGovernorateFilter}
+                  onChange={(e) => setUserGovernorateFilter(e.target.value)}
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                >
+                  <option value="all">جميع المحافظات</option>
+                  <option value="قنا">قنا</option>
+                  <option value="سوهاج">سوهاج</option>
+                  <option value="أسوان">أسوان</option>
+                  <option value="الأقصر">الأقصر</option>
+                  <option value="أسيوط">أسيوط</option>
+                  <option value="المنيا">المنيا</option>
+                  <option value="بني سويف">بني سويف</option>
+                  <option value="الوادي الجديد">الوادي الجديد</option>
+                  <option value="القاهرة">القاهرة</option>
+                  <option value="الجيزة">الجيزة</option>
+                  <option value="الإسكندرية">الإسكندرية</option>
+                  <option value="أخرى">أخرى</option>
+                </select>
+              </div>
+
+              {/* Refresh button */}
               <button
                 type="button"
                 id="admin-users-refresh-btn"
                 onClick={fetchAdminUsers}
                 disabled={isLoadingUsers}
-                className="p-2 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] rounded-xl border border-[#E8E1D9] text-xs font-bold transition-all flex items-center gap-1.5"
-                title="تحديث القائمة"
+                className="p-2.5 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] rounded-xl border border-[#E8E1D9] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                title="تحديث البيانات"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} />
-                <span>تحديث</span>
+                <span className="hidden sm:inline">تحديث</span>
+              </button>
+
+              {/* Add User button */}
+              <button
+                type="button"
+                id="admin-add-user-btn"
+                onClick={() => setIsCreateUserModalOpen(true)}
+                className="px-3.5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>إضافة مستخدم جديد</span>
               </button>
             </div>
           </div>
@@ -1860,56 +2253,88 @@ export const AdminDashboard: React.FC = () => {
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#FDFBF7] border-b border-[#E8E1D9] text-[#7A6F64]">
                   <tr>
-                    <th className="py-3 px-4 font-bold">المستخدم</th>
-                    <th className="py-3 px-4 font-bold">الدور</th>
-                    <th className="py-3 px-4 font-bold">المحافظة</th>
-                    <th className="py-3 px-4 font-bold">الهاتف</th>
-                    <th className="py-3 px-4 font-bold">تاريخ الانضمام</th>
-                    <th className="py-3 px-4 font-bold text-center">الإجراءات</th>
+                    <th className="py-3.5 px-4 font-bold">المستخدم</th>
+                    <th className="py-3.5 px-4 font-bold">الدور</th>
+                    <th className="py-3.5 px-4 font-bold">الحالة</th>
+                    <th className="py-3.5 px-4 font-bold">المحافظة</th>
+                    <th className="py-3.5 px-4 font-bold">الهاتف</th>
+                    <th className="py-3.5 px-4 font-bold">تاريخ الانضمام</th>
+                    <th className="py-3.5 px-4 font-bold text-center">التحكم والإجراءات</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E8E1D9]">
                   {isLoadingUsers ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-gray-500">
+                      <td colSpan={7} className="py-12 text-center text-gray-500">
                         <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#B45F42]" />
                         <span>جاري تحميل بيانات المستخدمين من قاعدة البيانات...</span>
                       </td>
                     </tr>
                   ) : adminUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-gray-500">
+                      <td colSpan={7} className="py-12 text-center text-gray-500">
                         لا توجد حسابات تطابق معايير البحث والفلترة.
                       </td>
                     </tr>
                   ) : (
                     adminUsers.map((u) => {
                       const isCurrentAdmin = currentUser.id === u.id;
+                      const isSuspended = u.status === 'suspended' || u.status === 'blocked';
                       return (
-                        <tr key={u.id} className="hover:bg-[#FDFBF7]/50 transition-colors">
+                        <tr key={u.id} className="hover:bg-[#FDFBF7]/60 transition-colors">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <img
-                                src={u.profileImage?.secureUrl || u.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
-                                alt={u.name}
-                                className="w-9 h-9 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
-                              />
-                              <div>
-                                <span className="font-bold text-[#2D2A26] block">{u.name}</span>
-                                <span className="text-[11px] text-gray-500">{u.email}</span>
+                              <div className="relative shrink-0">
+                                <img
+                                  src={u.profileImage?.secureUrl || u.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
+                                  alt={u.name}
+                                  className="w-10 h-10 rounded-xl object-cover border border-[#E8E1D9]"
+                                />
+                                <span
+                                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${
+                                    isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
+                                  }`}
+                                  title={isSuspended ? 'حساب معلق' : 'حساب نشط'}
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="font-bold text-[#2D2A26] truncate">{u.name}</span>
+                                  {isCurrentAdmin && (
+                                    <span className="bg-amber-100 text-[#B45F42] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                                      أنت
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-[11px] text-gray-500 block truncate">
+                                  {u.username ? `@${u.username}` : ''} {u.email ? `• ${u.email}` : ''}
+                                </span>
                               </div>
                             </div>
                           </td>
                           <td className="py-3 px-4">
                             <span
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${u.role === 'admin'
-                                ? 'bg-purple-100 text-purple-800'
-                                : u.role === 'seller'
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : 'bg-blue-100 text-blue-800'
-                                }`}
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                                u.role === 'admin'
+                                  ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                  : u.role === 'seller'
+                                    ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                    : 'bg-blue-100 text-blue-800 border border-blue-200'
+                              }`}
                             >
-                              {u.role === 'admin' ? 'مدير منصة' : u.role === 'seller' ? 'بائع حرفي' : 'مشتري موثق'}
+                              {u.role === 'admin' ? 'مدير منصة' : u.role === 'seller' ? 'ورشة وبائع' : 'مشتري موثق'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <span
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                                isSuspended
+                                  ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              }`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${isSuspended ? 'bg-rose-600' : 'bg-emerald-600'}`} />
+                              <span>{isSuspended ? 'معلق / مجمد' : 'نشط'}</span>
                             </span>
                           </td>
                           <td className="py-3 px-4 font-medium text-[#2D2A26]">{u.governorate || 'غير محدد'}</td>
@@ -1918,33 +2343,258 @@ export const AdminDashboard: React.FC = () => {
                             {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
                           </td>
                           <td className="py-3 px-4 text-center">
-                            <div className="flex items-center justify-center gap-2">
+                            <div className="flex items-center justify-center gap-1.5">
+                              {/* View Details */}
                               <button
                                 type="button"
                                 id={`view-user-${u.id}`}
                                 onClick={() => openUserDetails(u.id)}
-                                className="px-3 py-1.5 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] border border-[#E8E1D9] rounded-xl text-xs font-bold transition-all"
+                                title="عرض بيانات الحساب بالكامل"
+                                className="p-2 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] border border-[#E8E1D9] rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                               >
-                                عرض الحساب
+                                <Eye className="w-3.5 h-3.5 text-gray-600" />
+                                <span className="hidden xl:inline">عرض</span>
                               </button>
 
+                              {/* Edit Profile */}
+                              <button
+                                type="button"
+                                id={`edit-user-${u.id}`}
+                                onClick={() => handleOpenEditUser(u)}
+                                title="تعديل بيانات الحساب"
+                                className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                              >
+                                <Edit2 className="w-3.5 h-3.5 text-blue-600" />
+                                <span className="hidden xl:inline">تعديل</span>
+                              </button>
+
+                              {/* Reset Password */}
+                              <button
+                                type="button"
+                                id={`reset-pwd-${u.id}`}
+                                onClick={() => handleOpenResetPassword(u)}
+                                title="إعادة تعيين كلمة المرور"
+                                className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                              >
+                                <Key className="w-3.5 h-3.5 text-amber-600" />
+                                <span className="hidden xl:inline">كلمة المرور</span>
+                              </button>
+
+                              {/* Toggle Suspension (Suspend / Activate) */}
+                              {!isCurrentAdmin && (
+                                <button
+                                  type="button"
+                                  id={`toggle-status-${u.id}`}
+                                  onClick={() => handleToggleUserStatus(u)}
+                                  disabled={isTogglingStatus === u.id}
+                                  title={isSuspended ? 'إعادة تنشيط الحساب' : 'تعليق وتجميد الحساب'}
+                                  className={`p-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                                    isSuspended
+                                      ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
+                                      : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
+                                  }`}
+                                >
+                                  {isTogglingStatus === u.id ? (
+                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                  ) : isSuspended ? (
+                                    <UserCheck className="w-3.5 h-3.5" />
+                                  ) : (
+                                    <UserX className="w-3.5 h-3.5" />
+                                  )}
+                                  <span className="hidden xl:inline">{isSuspended ? 'تنشيط' : 'تجميد'}</span>
+                                </button>
+                              )}
+
+                              {/* Delete User */}
                               {isCurrentAdmin ? (
                                 <span
-                                  title="حسابك الشخصي (الحذف الذاتي محظور)"
-                                  className="px-3 py-1.5 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed"
+                                  title="حسابك الشخصي (محمي من الحذف الذاتي)"
+                                  className="p-2 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed"
                                 >
-                                  حسابك
+                                  <Lock className="w-3.5 h-3.5" />
                                 </span>
                               ) : (
                                 <button
                                   type="button"
                                   id={`delete-user-${u.id}`}
                                   onClick={() => setSelectedUserForDelete(u)}
-                                  className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1"
+                                  title="حذف الحساب نهائياً مع كافة الأصول"
+                                  className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
-                                  <span>حذف</span>
+                                  <span className="hidden xl:inline">حذف</span>
                                 </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 10: PASSWORD RESET REQUESTS */}
+      {activeTab === 'password-resets' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Header & Metrics Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+            <div>
+              <h2 className="text-base sm:text-lg font-black text-[#2D2A26] flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-[#B45F42]" />
+                <span>طلبات إعادة تعيين كلمات المرور</span>
+              </h2>
+              <p className="text-xs text-[#7A6F64] mt-1">
+                استعراض ومراجعة طلبات المستخدمين الذين نسوا كلمات مرورهم، وإنشاء كلمات مرور مؤقتة وتزويدهم بها لمتابعة الدخول.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl text-xs font-bold text-amber-800">
+                <Clock className="w-4 h-4 text-amber-600" />
+                <span>طلبات معلقة: {passwordResets.filter((r) => r.status === 'pending').length}</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl px-2 py-1">
+                <Filter className="w-3.5 h-3.5 text-gray-400" />
+                <select
+                  id="admin-password-resets-filter"
+                  value={passwordResetFilter}
+                  onChange={(e) => setPasswordResetFilter(e.target.value as any)}
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                >
+                  <option value="all">جميع الطلبات ({passwordResets.length})</option>
+                  <option value="pending">طلبات معلقة ({passwordResets.filter((r) => r.status === 'pending').length})</option>
+                  <option value="completed">تمت المعالجة ({passwordResets.filter((r) => r.status === 'completed').length})</option>
+                  <option value="rejected">مرفوضة ({passwordResets.filter((r) => r.status === 'rejected').length})</option>
+                </select>
+              </div>
+
+              <button
+                type="button"
+                id="admin-password-resets-refresh-btn"
+                onClick={fetchPasswordResets}
+                disabled={isLoadingPasswordResets}
+                className="p-2.5 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] rounded-xl border border-[#E8E1D9] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                title="تحديث قائمة الطلبات"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingPasswordResets ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">تحديث</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="bg-white rounded-2xl border border-[#E8E1D9] shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-[#FDFBF7] border-b border-[#E8E1D9] text-[#7A6F64]">
+                  <tr>
+                    <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
+                    <th className="py-3.5 px-4 font-bold">رقم الهاتف</th>
+                    <th className="py-3.5 px-4 font-bold">تاريخ الطلب</th>
+                    <th className="py-3.5 px-4 font-bold">الحالة</th>
+                    <th className="py-3.5 px-4 font-bold">المسؤول الذي قام بالمعالجة</th>
+                    <th className="py-3.5 px-4 font-bold">تاريخ المعالجة</th>
+                    <th className="py-3.5 px-4 font-bold text-center">الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E8E1D9]">
+                  {isLoadingPasswordResets ? (
+                    <tr>
+                      <td colSpan={7} className="py-12 text-center text-gray-500">
+                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#B45F42]" />
+                        <span>جاري تحميل طلبات استعادة كلمة المرور...</span>
+                      </td>
+                    </tr>
+                  ) : passwordResets.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="py-12 text-center text-gray-500">
+                        لا توجد طلبات إعادة تعيين تطابق الفلترة المحددة.
+                      </td>
+                    </tr>
+                  ) : (
+                    passwordResets.map((r) => {
+                      const isPending = r.status === 'pending';
+                      const isCompleted = r.status === 'completed';
+                      return (
+                        <tr key={r.id} className="hover:bg-[#FDFBF7]/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <div>
+                              <span className="font-bold text-[#2D2A26] block">
+                                {r.name || r.username}
+                              </span>
+                              <span className="text-[11px] text-gray-500 font-mono">
+                                @{r.username}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4 font-mono">
+                            {r.phone || 'غير مسجل'}
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">
+                            {r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '-'}
+                          </td>
+                          <td className="py-3 px-4">
+                            {isPending ? (
+                              <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                <Clock className="w-3 h-3 text-amber-600" />
+                                <span>طلبات معلقة</span>
+                              </span>
+                            ) : isCompleted ? (
+                              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span>تمت المعالجة</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                <XCircle className="w-3 h-3 text-rose-600" />
+                                <span>مرفوض</span>
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 font-medium text-[#2D2A26]">
+                            {r.handledByAdminName ? (
+                              <span className="inline-flex items-center gap-1">
+                                <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                                <span>{r.handledByAdminName}</span>
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">-</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-gray-500">
+                            {r.handledAt ? new Date(r.handledAt).toLocaleString('ar-EG') : '-'}
+                          </td>
+                          <td className="py-3 px-4">
+                            <div className="flex items-center justify-center gap-2">
+                              {isPending ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    id={`complete-reset-btn-${r.id}`}
+                                    onClick={() => openCreateTempPasswordModal(r)}
+                                    className="px-3 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Key className="w-3.5 h-3.5" />
+                                    <span>إنشاء كلمة مرور جديدة</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRejectReset(r)}
+                                    className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                    title="رفض الطلب"
+                                  >
+                                    <X className="w-3.5 h-3.5" />
+                                    <span>رفض</span>
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-xs text-gray-400 font-medium">مكتمل</span>
                               )}
                             </div>
                           </td>
@@ -2376,7 +3026,7 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* User Details Modal (Safe Display) */}
+      {/* User Details Modal (Safe Display with Quick Actions) */}
       {selectedUserForDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
           <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
@@ -2388,24 +3038,44 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedUserForDetails(null)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600"
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="flex items-center gap-4 p-4 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9]">
-              <img
-                src={selectedUserForDetails.profileImage?.secureUrl || selectedUserForDetails.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
-                alt={selectedUserForDetails.name}
-                className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
-              />
-              <div>
-                <h4 className="font-bold text-base text-[#2D2A26]">{selectedUserForDetails.name}</h4>
-                <p className="text-xs text-gray-500">{selectedUserForDetails.email}</p>
-                <span className="inline-block mt-1 bg-amber-100 text-[#B45F42] text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                  {selectedUserForDetails.role === 'admin' ? 'مدير المنصة' : selectedUserForDetails.role === 'seller' ? 'ورشة معتمدة' : 'متسوق موثق'}
-                </span>
+              <div className="relative shrink-0">
+                <img
+                  src={selectedUserForDetails.profileImage?.secureUrl || selectedUserForDetails.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
+                  alt={selectedUserForDetails.name}
+                  className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
+                />
+                <span
+                  className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-white ${
+                    selectedUserForDetails.status === 'suspended' ? 'bg-rose-500' : 'bg-emerald-500'
+                  }`}
+                  title={selectedUserForDetails.status === 'suspended' ? 'حساب معلق' : 'حساب نشط'}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-bold text-base text-[#2D2A26] truncate">{selectedUserForDetails.name}</h4>
+                <p className="text-xs text-gray-500 font-mono">@{selectedUserForDetails.username || 'بدون اسم مستخدم'}</p>
+                <p className="text-xs text-gray-500 truncate">{selectedUserForDetails.email || 'البريد الإلكتروني غير مسجل'}</p>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {selectedUserForDetails.role === 'admin' ? 'مدير المنصة' : selectedUserForDetails.role === 'seller' ? 'ورشة وبائع' : 'متسوق موثق'}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      selectedUserForDetails.status === 'suspended'
+                        ? 'bg-rose-100 text-rose-800'
+                        : 'bg-emerald-100 text-emerald-800'
+                    }`}
+                  >
+                    {selectedUserForDetails.status === 'suspended' ? 'معلق / مجمد' : 'نشط'}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -2442,15 +3112,528 @@ export const AdminDashboard: React.FC = () => {
               </div>
             )}
 
-            <div className="flex justify-end pt-2">
+            {/* Quick Action Buttons inside Details Modal */}
+            <div className="pt-2 border-t border-[#E8E1D9] flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleOpenEditUser(selectedUserForDetails);
+                  }}
+                  className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>تعديل الحساب</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleOpenResetPassword(selectedUserForDetails);
+                  }}
+                  className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <Key className="w-3.5 h-3.5" />
+                  <span>كلمة المرور</span>
+                </button>
+
+                {currentUser.id !== selectedUserForDetails.id && (
+                  <button
+                    type="button"
+                    onClick={() => handleToggleUserStatus(selectedUserForDetails)}
+                    disabled={isTogglingStatus === selectedUserForDetails.id}
+                    className={`px-3 py-1.5 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      selectedUserForDetails.status === 'suspended'
+                        ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
+                        : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
+                    }`}
+                  >
+                    {isTogglingStatus === selectedUserForDetails.id ? (
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    ) : selectedUserForDetails.status === 'suspended' ? (
+                      <UserCheck className="w-3.5 h-3.5" />
+                    ) : (
+                      <UserX className="w-3.5 h-3.5" />
+                    )}
+                    <span>{selectedUserForDetails.status === 'suspended' ? 'تنشيط' : 'تجميد'}</span>
+                  </button>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={() => setSelectedUserForDetails(null)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all"
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all cursor-pointer"
               >
                 إغلاق
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {selectedUserForEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
+              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+                <Edit2 className="w-5 h-5 text-blue-600" />
+                <span>تعديل بيانات الحساب: {selectedUserForEdit.name}</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setSelectedUserForEdit(null)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditUser} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">الاسم الكامل *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">اسم المستخدم (@Username) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">رقم الهاتف *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">البريد الإلكتروني</label>
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">الدور والصلاحية *</label>
+                  <select
+                    value={editRole}
+                    disabled={currentUser.id === selectedUserForEdit.id}
+                    onChange={(e) => setEditRole(e.target.value as any)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-bold"
+                  >
+                    <option value="buyer">مشتري (Buyer)</option>
+                    <option value="seller">ورشة وبائع (Seller)</option>
+                    <option value="admin">مدير منصة (Admin)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">حالة الحساب *</label>
+                  <select
+                    value={editStatus}
+                    disabled={currentUser.id === selectedUserForEdit.id}
+                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-bold"
+                  >
+                    <option value="active">نشط (Active)</option>
+                    <option value="suspended">معلق / مجمد (Suspended)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">المحافظة *</label>
+                  <select
+                    value={editGovernorate}
+                    onChange={(e) => setEditGovernorate(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42]"
+                  >
+                    <option value="قنا">قنا</option>
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="أسوان">أسوان</option>
+                    <option value="الأقصر">الأقصر</option>
+                    <option value="أسيوط">أسيوط</option>
+                    <option value="المنيا">المنيا</option>
+                    <option value="بني سويف">بني سويف</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الجيزة">الجيزة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                  </select>
+                </div>
+              </div>
+
+              {editRole === 'seller' && (
+                <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 space-y-3">
+                  <span className="font-bold text-amber-900 block">بيانات ورشة الحرفي:</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-bold text-amber-950 mb-1">اسم الورشة أو العلامة *</label>
+                      <input
+                        type="text"
+                        value={editWorkshopName}
+                        onChange={(e) => setEditWorkshopName(e.target.value)}
+                        placeholder="مثال: ورشة الفخار الأصيل"
+                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-amber-950 mb-1">التخصص الحرفي</label>
+                      <input
+                        type="text"
+                        value={editSpecialty}
+                        onChange={(e) => setEditSpecialty(e.target.value)}
+                        placeholder="مثال: الفخار والجريد"
+                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setSelectedUserForEdit(null)}
+                  disabled={isUpdatingUser}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  id="save-edit-user-btn"
+                  disabled={isUpdatingUser}
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isUpdatingUser ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري حفظ التعديلات...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>حفظ التعديلات</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {selectedUserForResetPassword && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
+              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+                <Key className="w-5 h-5 text-amber-600" />
+                <span>تعيين كلمة مرور جديدة</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setSelectedUserForResetPassword(null)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-3 bg-[#FDFBF7] rounded-xl border border-[#E8E1D9] text-xs">
+              <span className="text-gray-500 block mb-0.5">الحساب المستهدف:</span>
+              <span className="font-bold text-[#2D2A26]">{selectedUserForResetPassword.name}</span>
+              <span className="text-gray-500 font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
+            </div>
+
+            <form onSubmit={handleConfirmResetPassword} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-[#2D2A26] mb-1">كلمة المرور الجديدة (6 خانات على الأقل) *</label>
+                <input
+                  type="text"
+                  required
+                  value={newPasswordInput}
+                  onChange={(e) => setNewPasswordInput(e.target.value)}
+                  placeholder="أدخل كلمة المرور الجديدة..."
+                  className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                  dir="ltr"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const randomPass = `Sa3ed@${Math.floor(1000 + Math.random() * 9000)}`;
+                    setNewPasswordInput(randomPass);
+                  }}
+                  className="text-[11px] text-[#B45F42] hover:underline font-bold"
+                >
+                  ⚡ توليد كلمة مرور قوية تلقائياً
+                </button>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setSelectedUserForResetPassword(null)}
+                  disabled={isResettingPassword}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  id="confirm-reset-pwd-btn"
+                  disabled={isResettingPassword}
+                  className="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isResettingPassword ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري التعيين...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Key className="w-3.5 h-3.5" />
+                      <span>تأكيد تعيين كلمة المرور</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create User Directly by Admin Modal */}
+      {isCreateUserModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
+              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-[#B45F42]" />
+                <span>إضافة مستخدم جديد إلى المنصة</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsCreateUserModalOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateNewUser} className="space-y-3 text-xs">
+              <div>
+                <label className="block font-bold text-[#2D2A26] mb-1">نوع الحساب والصلاحية *</label>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewUserRole('buyer')}
+                    className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${
+                      newUserRole === 'buyer'
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        : 'bg-[#FDFBF7] text-[#7A6F64] border-[#E8E1D9]'
+                    }`}
+                  >
+                    مشتري موثق
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewUserRole('seller')}
+                    className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${
+                      newUserRole === 'seller'
+                        ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                        : 'bg-[#FDFBF7] text-[#7A6F64] border-[#E8E1D9]'
+                    }`}
+                  >
+                    ورشة وبائع
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewUserRole('admin')}
+                    className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${
+                      newUserRole === 'admin'
+                        ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
+                        : 'bg-[#FDFBF7] text-[#7A6F64] border-[#E8E1D9]'
+                    }`}
+                  >
+                    مدير منصة
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">الاسم الكامل *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newUserName}
+                    onChange={(e) => setNewUserName(e.target.value)}
+                    placeholder="مثال: أحمد عبد الله"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">اسم المستخدم (@Username) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newUserUsername}
+                    onChange={(e) => setNewUserUsername(e.target.value)}
+                    placeholder="ahmed_abdallah"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">رقم الهاتف *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newUserPhone}
+                    onChange={(e) => setNewUserPhone(e.target.value)}
+                    placeholder="01012345678"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">البريد الإلكتروني (اختياري)</label>
+                  <input
+                    type="email"
+                    value={newUserEmail}
+                    onChange={(e) => setNewUserEmail(e.target.value)}
+                    placeholder="user@example.com"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">كلمة المرور *</label>
+                  <input
+                    type="password"
+                    required
+                    value={newUserPassword}
+                    onChange={(e) => setNewUserPassword(e.target.value)}
+                    placeholder="لا تقل عن 6 خانات..."
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2D2A26] mb-1">المحافظة *</label>
+                  <select
+                    value={newUserGovernorate}
+                    onChange={(e) => setNewUserGovernorate(e.target.value)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42]"
+                  >
+                    <option value="قنا">قنا</option>
+                    <option value="سوهاج">سوهاج</option>
+                    <option value="أسوان">أسوان</option>
+                    <option value="الأقصر">الأقصر</option>
+                    <option value="أسيوط">أسيوط</option>
+                    <option value="المنيا">المنيا</option>
+                    <option value="بني سويف">بني سويف</option>
+                    <option value="الوادي الجديد">الوادي الجديد</option>
+                    <option value="القاهرة">القاهرة</option>
+                    <option value="الجيزة">الجيزة</option>
+                    <option value="الإسكندرية">الإسكندرية</option>
+                  </select>
+                </div>
+              </div>
+
+              {newUserRole === 'seller' && (
+                <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 space-y-2.5">
+                  <span className="font-bold text-amber-900 block">بيانات ورشة البائع:</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[11px] font-bold text-amber-950 mb-1">اسم الورشة *</label>
+                      <input
+                        type="text"
+                        required
+                        value={newUserWorkshopName}
+                        onChange={(e) => setNewUserWorkshopName(e.target.value)}
+                        placeholder="مثال: ورشة النوبية للأعمال اليدوية"
+                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-amber-950 mb-1">التخصص الحرفي</label>
+                      <input
+                        type="text"
+                        value={newUserSpecialty}
+                        onChange={(e) => setNewUserSpecialty(e.target.value)}
+                        placeholder="مثال: خزف، خوص، نول"
+                        className="w-full p-2 bg-white border border-amber-200 rounded-xl outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateUserModalOpen(false)}
+                  disabled={isCreatingUser}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl cursor-pointer"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  id="submit-create-user-btn"
+                  disabled={isCreatingUser}
+                  className="px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {isCreatingUser ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري إنشاء الحساب...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-3.5 h-3.5" />
+                      <span>إنشاء الحساب</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -2520,6 +3703,202 @@ export const AdminDashboard: React.FC = () => {
                     <span>تأكيد حذف الحساب</span>
                   </>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 1: Create New Temporary Password Modal */}
+      {isCreateTempPasswordModalOpen && selectedResetForAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
+              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-[#B45F42]" />
+                <span>إنشاء كلمة مرور جديدة</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsCreateTempPasswordModalOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Target User Info */}
+            <div className="p-3 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9] text-xs space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500">اسم المستخدم:</span>
+                <span className="font-bold font-mono text-[#2D2A26]">@{selectedResetForAction.username}</span>
+              </div>
+              {selectedResetForAction.name && (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">الاسم الكامل:</span>
+                  <span className="font-bold text-[#2D2A26]">{selectedResetForAction.name}</span>
+                </div>
+              )}
+              {selectedResetForAction.phone && (
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">رقم الهاتف:</span>
+                  <span className="font-bold font-mono text-[#2D2A26]">{selectedResetForAction.phone}</span>
+                </div>
+              )}
+            </div>
+
+            <form onSubmit={handleConfirmCompleteReset} className="space-y-4 text-xs">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="font-bold text-[#2D2A26]">
+                    كلمة المرور المؤقتة *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$';
+                      let generated = '';
+                      for (let i = 0; i < 10; i++) {
+                        generated += chars.charAt(Math.floor(Math.random() * chars.length));
+                      }
+                      setTempPasswordInput(generated);
+                    }}
+                    className="text-[11px] text-[#B45F42] hover:underline font-bold cursor-pointer"
+                  >
+                    ⚡ توليد كلمة مرور قوية تلقائياً
+                  </button>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    value={tempPasswordInput}
+                    onChange={(e) => setTempPasswordInput(e.target.value)}
+                    placeholder="اكتب أو ولد كلمة المرور المؤقتة"
+                    className="w-full pl-3 pr-10 py-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                  <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+                ℹ️ ستُعرض كلمة المرور المؤقتة لك في الخطوة التالية لنسخها وتزويد المستخدم بها. سيتم إجبار المستخدم على تغييرها عند أول تسجيل دخول.
+              </div>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateTempPasswordModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl"
+                >
+                  إلغاء
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingTempPassword}
+                  id="confirm-submit-temp-password-btn"
+                  className="px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isSubmittingTempPassword ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري الحفظ والتشفير...</span>
+                    </>
+                  ) : (
+                    <span>تأكيد وإنشاء كلمة المرور</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 2: "Show Once" Temporary Password Display */}
+      {completedTempPasswordInfo && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
+            {/* Header */}
+            <div className="flex items-center gap-3 border-b border-[#E8E1D9] pb-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="font-black text-base text-[#2D2A26]">تم إنشاء كلمة المرور المؤقتة</h3>
+                <p className="text-xs text-emerald-700 font-medium">تم تحديث الحساب وتشفير كلمة المرور بنجاح</p>
+              </div>
+            </div>
+
+            {/* Security Alert Banner */}
+            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-900 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold">
+                <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>تنبيه أمني هام: تُعرض كلمة المرور لمرة واحدة فقط!</span>
+              </div>
+              <p className="text-[11px] text-rose-800 leading-relaxed">
+                لن تتمكن من رؤية كلمة المرور المؤقتة مرة أخرى بعد إغلاق هذه النافذة لحماية أمان الحساب. يرجى نسخها الآن وتزويد المستخدم بها عبر الهاتف أو وسيلة التواصل المعتمدة.
+              </p>
+            </div>
+
+            {/* User & Password Box */}
+            <div className="p-4 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9] space-y-2.5 text-xs">
+              <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                <span className="text-gray-500">اسم المستخدم:</span>
+                <span className="font-bold font-mono text-base text-[#2D2A26]">@{completedTempPasswordInfo.username}</span>
+              </div>
+
+              {completedTempPasswordInfo.phone && (
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                  <span className="text-gray-500">رقم الهاتف للتواصل:</span>
+                  <span className="font-bold font-mono text-sm text-[#2D2A26]">{completedTempPasswordInfo.phone}</span>
+                </div>
+              )}
+
+              <div>
+                <span className="text-gray-500 block mb-1">كلمة المرور المؤقتة الجديدة:</span>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="flex-1 p-3 bg-white border-2 border-dashed border-[#B45F42] rounded-xl font-mono text-center text-base sm:text-lg font-black tracking-wider text-[#2D2A26] select-all select-text"
+                    dir="ltr"
+                  >
+                    {completedTempPasswordInfo.temporaryPassword}
+                  </div>
+                  <button
+                    type="button"
+                    id="copy-temp-password-btn"
+                    onClick={copyTempPassword}
+                    className={`p-3 rounded-xl border transition-all flex items-center justify-center shrink-0 cursor-pointer ${
+                      isCopiedTempPassword
+                        ? 'bg-emerald-600 border-emerald-600 text-white'
+                        : 'bg-[#B45F42] hover:bg-[#9E4F36] border-[#B45F42] text-white'
+                    }`}
+                    title="نسخ كلمة المرور"
+                  >
+                    {isCopiedTempPassword ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Force change note */}
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 text-[11px] leading-relaxed flex items-start gap-2">
+              <KeyRound className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+              <span>
+                عندما يقوم المستخدم بتسجيل الدخول بهذه الكلمة، ستظهر له شاشة إجبارية تطالبه بتعيين كلمة مرور شخصية جديدة ولن يتمكن من استخدام الحساب إلا بعد تغييرها.
+              </span>
+            </div>
+
+            {/* Action buttons */}
+            <div className="pt-2">
+              <button
+                type="button"
+                id="close-temp-password-modal-btn"
+                onClick={() => setCompletedTempPasswordInfo(null)}
+                className="w-full py-3 bg-[#2D2A26] hover:bg-[#443E38] text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span>تم النسخ والتزويد - إغلاق النافذة</span>
               </button>
             </div>
           </div>

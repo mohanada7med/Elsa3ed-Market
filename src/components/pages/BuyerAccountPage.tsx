@@ -109,9 +109,14 @@ export const BuyerAccountPage: React.FC = () => {
     addToast('تم حفظ البيانات', 'تم تحديث بيانات حسابك وعنوانك بنجاح', 'success');
   };
 
+  const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg';
   const hasCustomImage = Boolean(
     currentUser.profileImage?.secureUrl ||
-    (currentUser.avatar && !currentUser.avatar.includes('photo-1535713875002') && !currentUser.avatar.includes('photo-1472099645785'))
+    (currentUser.avatar &&
+      currentUser.avatar !== DEFAULT_USER_AVATAR &&
+      !currentUser.avatar.includes('v1787924812/user.jpg') &&
+      !currentUser.avatar.includes('photo-1535713875002') &&
+      !currentUser.avatar.includes('photo-1472099645785'))
   );
 
   return (

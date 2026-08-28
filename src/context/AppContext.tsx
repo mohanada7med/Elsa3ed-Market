@@ -70,6 +70,7 @@ interface AppContextType {
     password: string;
     phone: string;
     role: UserRole;
+    avatar?: string;
     governorate?: string;
     workshopName?: string;
     specialty?: string;
@@ -192,6 +193,9 @@ interface AppContextType {
   sellerStats: any;
   refreshSellerStats: () => Promise<void>;
 
+  // Auth
+  changePersonalPassword: (currentPassword: string, newPassword: string) => Promise<void>;
+
   // Notifications / Toast
   toasts: ToastNotification[];
   addToast: (title: string, message: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
@@ -200,6 +204,8 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
+export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg';
+
 export const GUEST_USER: UserProfile = {
   id: '',
   username: '',
@@ -207,7 +213,7 @@ export const GUEST_USER: UserProfile = {
   email: '',
   phone: '',
   role: 'guest',
-  avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+  avatar: DEFAULT_USER_AVATAR,
   governorate: 'أخرى',
   savedAddresses: [],
   createdAt: ''
@@ -882,6 +888,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     password: string;
     phone: string;
     role: UserRole;
+    avatar?: string;
     governorate?: string;
     workshopName?: string;
     specialty?: string;
@@ -896,7 +903,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         phone: params.phone,
         workshopName: params.workshopName,
         governorate: params.governorate,
-        specialty: params.specialty
+        specialty: params.specialty,
+        avatar: params.avatar
       });
     } else {
       data = await api.register(params);
@@ -937,6 +945,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
       addToast('تسجيل الخروج', 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في سوق الصعيد.', 'info');
     }
+  };
+
+  const changePersonalPassword = async (currentPassword: string, newPassword: string) => {
+    await api.changePersonalPassword(
+      { id: currentUser.id, role: currentRole },
+      currentPassword,
+      newPassword
+    );
+    setCurrentUser((prev) => ({ ...prev, mustChangePassword: false }));
+    addToast('تغيير كلمة المرور', 'تم تعيين كلمة المرور الشخصية وتأكيد حسابك بنجاح!', 'success');
   };
 
   // Restore authenticated session on initial mount via secure HTTP-only cookie
@@ -1778,6 +1796,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         uploadProfileImage,
         removeProfileImage,
+        changePersonalPassword,
         toasts,
         addToast,
         removeToast

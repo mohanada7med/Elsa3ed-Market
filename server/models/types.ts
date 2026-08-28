@@ -270,6 +270,7 @@ export interface UserDocument {
   phone: string;
   role: UserRole;
   avatar?: string;
+  status?: 'active' | 'suspended' | 'blocked';
   profileImage?: {
     secureUrl: string;
     publicId: string;
@@ -278,8 +279,24 @@ export interface UserDocument {
   sellerId?: string;
   sellerStatus?: SellerStatus;
   savedAddresses?: UserAddress[];
+  mustChangePassword?: boolean;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface PasswordResetRequestDocument {
+  id: string;
+  userId: string;
+  username: string;
+  name?: string;
+  phone?: string;
+  role?: UserRole;
+  status: 'pending' | 'completed' | 'rejected';
+  createdAt: string;
+  handledByAdminId?: string;
+  handledByAdminName?: string;
+  handledAt?: string;
+  adminNotes?: string;
 }
 
 export interface FavoriteDocument {

@@ -29,8 +29,17 @@ import { adminUpdateSellerStatus } from '../services/sellerService.ts';
 import {
   getUsersWithFilters,
   getUserDetailsForAdmin,
-  deleteUserCascade
+  deleteUserCascade,
+  updateUserByAdmin,
+  resetUserPasswordByAdmin,
+  adminCreateNewUser,
+  toggleUserStatusByAdmin
 } from '../services/userService.ts';
+import {
+  getPasswordResetRequests,
+  completePasswordResetRequest,
+  rejectPasswordResetRequest
+} from '../services/passwordResetService.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 
 const router = Router();
@@ -643,6 +652,167 @@ router.get('/users/:userId', async (req: AuthenticatedRequest, res: Response) =>
       success: false,
       error: error?.message || 'فشل في استعراض تفاصيل المستخدم',
       code: 'USER_DETAILS_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/users - Admin Create New User
+router.post('/users', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const newUser = await adminCreateNewUser(req.user!, req.body);
+    res.status(201).json({
+      success: true,
+      message: `تم إنشاء حساب ${newUser.name} (@${newUser.username}) بنجاح`,
+      data: newUser
+    });
+  } catch (error: any) {
+    console.error('Error creating user by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في إنشاء الحساب',
+      code: 'USER_CREATE_ERROR'
+    });
+  }
+});
+
+// PUT /api/admin/users/:userId - Admin Update User Details, Role, Governorate, Status
+router.put('/users/:userId', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const updated = await updateUserByAdmin(req.user!, userId, req.body);
+    res.json({
+      success: true,
+      message: 'تم تحديث بيانات المستخدم بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('Error updating user by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في تحديث بيانات المستخدم',
+      code: 'USER_UPDATE_ERROR'
+    });
+  }
+});
+
+// PATCH /api/admin/users/:userId/status - Quick Toggle / Set Account Status
+router.patch('/users/:userId/status', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { status } = req.body;
+    if (!status || !['active', 'suspended', 'blocked'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'حالة الحساب غير صالحة. يجب أن تكون active أو suspended',
+        code: 'INVALID_STATUS'
+      });
+    }
+    const updated = await toggleUserStatusByAdmin(req.user!, userId, status);
+    res.json({
+      success: true,
+      message: status === 'active' ? 'تم تنشيط وتفعيل الحساب بنجاح' : 'تم تعليق وتجميد الحساب بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('Error toggling user status:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في تغيير حالة الحساب',
+      code: 'USER_STATUS_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/users/:userId/reset-password - Admin Reset User Password
+router.post('/users/:userId/reset-password', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { newPassword } = req.body;
+    const result = await resetUserPasswordByAdmin(req.user!, userId, newPassword);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error: any) {
+    console.error('Error resetting password by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في إعادة تعيين كلمة المرور',
+      code: 'PASSWORD_RESET_ERROR'
+    });
+  }
+});
+
+// ==================== PASSWORD RESET REQUESTS (ADMIN) ====================
+
+// GET /api/admin/password-resets - List all password reset requests with optional status filter
+router.get('/password-resets', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const status = req.query.status as any;
+    const requests = await getPasswordResetRequests(status);
+    res.json({
+      success: true,
+      data: requests
+    });
+  } catch (error: any) {
+    console.error('Error fetching password reset requests:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في استعراض طلبات استعادة كلمة المرور',
+      code: 'PASSWORD_RESETS_FETCH_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/password-resets/:requestId/complete - Admin assigns temporary password
+router.post('/password-resets/:requestId/complete', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { requestId } = req.params;
+    const { temporaryPassword } = req.body;
+
+    if (!temporaryPassword || typeof temporaryPassword !== 'string' || temporaryPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'كلمة المرور المؤقتة يجب ألا تقل عن 6 خانات',
+        code: 'INVALID_TEMP_PASSWORD'
+      });
+    }
+
+    const result = await completePasswordResetRequest(req.user!, requestId, temporaryPassword);
+    res.json({
+      success: true,
+      message: result.message,
+      data: {
+        temporaryPassword: result.temporaryPassword
+      }
+    });
+  } catch (error: any) {
+    console.error('Error completing password reset request:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في معالجة طلب استعادة كلمة المرور',
+      code: 'PASSWORD_RESET_COMPLETE_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/password-resets/:requestId/reject - Admin rejects reset request
+router.post('/password-resets/:requestId/reject', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { requestId } = req.params;
+    const { reason } = req.body;
+
+    const result = await rejectPasswordResetRequest(req.user!, requestId, reason);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error: any) {
+    console.error('Error rejecting password reset request:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في رفض طلب استعادة كلمة المرور',
+      code: 'PASSWORD_RESET_REJECT_ERROR'
     });
   }
 });

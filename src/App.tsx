@@ -7,6 +7,7 @@ import { ToastContainer } from './components/layout/ToastContainer';
 import { IntroExperience } from './components/layout/IntroExperience';
 import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
+import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { updatePageSEO } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
@@ -314,6 +315,7 @@ const MainContent: React.FC = () => {
       {/* Global Modals & Drawers */}
       <CartDrawer />
       <AuthModal />
+      <ForceChangePasswordModal />
       <IntroExperience />
       <ToastContainer />
     </main>

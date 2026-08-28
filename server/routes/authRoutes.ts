@@ -1,12 +1,13 @@
 import { Router, Request, Response } from 'express';
 import { register, login, verifyToken } from '../services/authService.ts';
-import { findUserById, updateUser } from '../services/userService.ts';
+import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword } from '../services/userService.ts';
+import { createPasswordResetRequest } from '../services/passwordResetService.ts';
 import { getUserFavorites, toggleFavorite } from '../services/favoriteService.ts';
 import { getUserNotifications, markNotificationAsRead } from '../services/notificationService.ts';
 import { AuthenticatedRequest, requireAuth } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
-import { uploadLimiter } from '../middleware/rateLimiter.ts';
+import { uploadLimiter, forgotPasswordLimiter } from '../middleware/rateLimiter.ts';
 import { setAuthCookie, clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
 
 const router = Router();
@@ -19,7 +20,7 @@ function isValidEmail(email: string): boolean {
 // POST /api/auth/register (Standard registration - Buyer or Seller)
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    const { username, name, email, password, phone, role, governorate, workshopName, specialty } = req.body;
+    const { username, name, email, password, phone, role, governorate, workshopName, specialty, avatar } = req.body;
 
     // Server-side validation
     if (!username || typeof username !== 'string' || !username.trim()) {
@@ -77,6 +78,7 @@ router.post('/register', async (req: Request, res: Response) => {
       password,
       phone: phone.trim(),
       role: assignedRole,
+      avatar: typeof avatar === 'string' && avatar.trim() ? avatar.trim() : undefined,
       governorate: governorate || 'قنا',
       workshopName: workshopName?.trim(),
       specialty: specialty?.trim()
@@ -104,7 +106,7 @@ router.post('/register', async (req: Request, res: Response) => {
 // POST /api/auth/register/seller (Dedicated Seller Registration endpoint)
 router.post('/register/seller', async (req: Request, res: Response) => {
   try {
-    const { username, name, email, password, phone, governorate, workshopName, specialty } = req.body;
+    const { username, name, email, password, phone, governorate, workshopName, specialty, avatar } = req.body;
 
     if (!username || typeof username !== 'string' || !username.trim()) {
       return res.status(400).json({
@@ -156,6 +158,7 @@ router.post('/register/seller', async (req: Request, res: Response) => {
       password,
       phone: phone.trim(),
       role: 'seller',
+      avatar: typeof avatar === 'string' && avatar.trim() ? avatar.trim() : undefined,
       governorate: governorate || 'قنا',
       workshopName: workshopName.trim(),
       specialty: specialty?.trim() || 'مشغولات وحرف تراثية'
@@ -277,10 +280,71 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
     success: true,
     data: {
       ...sanitized,
+      mustChangePassword: Boolean(user.mustChangePassword),
       sellerStatus: sellerStatus || 'pending',
       seller: sellerDetails
     }
   });
+});
+
+// POST /api/auth/forgot-password - Submit forgot password request by username
+router.post('/forgot-password', forgotPasswordLimiter, async (req: Request, res: Response) => {
+  try {
+    const { username } = req.body;
+    if (!username || typeof username !== 'string' || !username.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'من فضلك اكتب اسم المستخدم'
+      });
+    }
+
+    const result = await createPasswordResetRequest(username.trim());
+    res.json({
+      success: true,
+      message: result.message,
+      data: { requestId: result.requestId }
+    });
+  } catch (error: any) {
+    console.error('[authRoutes] Error in forgot-password:', error?.message || error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في تقديم طلب استعادة كلمة المرور'
+    });
+  }
+});
+
+// POST /api/auth/change-password - Change temporary password to new personal password
+router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || typeof currentPassword !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'كلمة المرور الحالية أو المؤقتة مطلوبة'
+      });
+    }
+
+    if (!newPassword || typeof newPassword !== 'string' || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'كلمة المرور الجديدة يجب ألا تقل عن 6 خانات'
+      });
+    }
+
+    const result = await changeUserPersonalPassword(userId, currentPassword, newPassword);
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error: any) {
+    console.error('[authRoutes] Error changing password:', error?.message || error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في تغيير كلمة المرور'
+    });
+  }
 });
 
 // POST /api/auth/logout - Invalidate server session & clear auth cookie
@@ -368,7 +432,7 @@ router.post('/profile/image', uploadLimiter, requireAuth, async (req: Authentica
         await db.collection('sellers').updateOne(
           { $or: [{ id: sellerId }, { userId: userId }] },
           { $set: { avatar: result.url, updatedAt: new Date().toISOString() } }
-        ).catch(() => {});
+        ).catch(() => { });
       }
     }
 
@@ -418,7 +482,7 @@ router.delete('/profile/image', requireAuth, async (req: AuthenticatedRequest, r
     }
 
     // 2. Restore default avatar and reset profileImage
-    const defaultAvatar = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
+    const defaultAvatar = DEFAULT_USER_AVATAR;
     const updated = await updateUser(userId, {
       profileImage: null,
       avatar: defaultAvatar
@@ -432,7 +496,7 @@ router.delete('/profile/image', requireAuth, async (req: AuthenticatedRequest, r
         await db.collection('sellers').updateOne(
           { $or: [{ id: sellerId }, { userId: userId }] },
           { $set: { avatar: defaultAvatar, updatedAt: new Date().toISOString() } }
-        ).catch(() => {});
+        ).catch(() => { });
       }
     }
 

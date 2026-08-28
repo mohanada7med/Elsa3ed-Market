@@ -6,8 +6,10 @@ import {
   findUserByUsername,
   findUserByIdentifier,
   validateUsername,
-  createUser
+  createUser,
+  DEFAULT_USER_AVATAR
 } from './userService.ts';
+import { storageService } from './storage/storageProvider.ts';
 import { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
@@ -28,6 +30,12 @@ export interface AuthSession {
     phone: string;
     role: UserRole;
     avatar?: string;
+    status?: 'active' | 'suspended' | 'blocked';
+    mustChangePassword?: boolean;
+    profileImage?: {
+      secureUrl: string;
+      publicId: string;
+    } | null;
     governorate?: string;
     sellerId?: string;
     sellerStatus?: SellerStatus;
@@ -81,6 +89,7 @@ export async function register(params: {
   password: string;
   phone: string;
   role: UserRole;
+  avatar?: string;
   governorate?: string;
   workshopName?: string;
   specialty?: string;
@@ -109,6 +118,36 @@ export async function register(params: {
   const userId = `user-${params.role}-${Date.now()}`;
   let sellerId: string | undefined = undefined;
 
+  // Handle avatar (dataURI upload to Cloudinary or fallback to DEFAULT_USER_AVATAR)
+  let finalAvatar = DEFAULT_USER_AVATAR;
+  let profileImageObj: { secureUrl: string; publicId: string } | null = null;
+
+  if (params.avatar?.trim()) {
+    const trimmedAvatar = params.avatar.trim();
+    if (trimmedAvatar.startsWith('data:image/')) {
+      try {
+        const uploadRes = await storageService.upload({
+          data: trimmedAvatar,
+          filename: 'profile.jpg',
+          folder: 'users',
+          userId,
+          customPublicId: 'profile',
+          overwrite: true
+        });
+        finalAvatar = uploadRes.url;
+        profileImageObj = {
+          secureUrl: uploadRes.url,
+          publicId: uploadRes.fileKey
+        };
+      } catch (uploadErr) {
+        Logger.warn('[AuthService] Could not upload initial avatar dataUri, using default:', uploadErr);
+        finalAvatar = DEFAULT_USER_AVATAR;
+      }
+    } else {
+      finalAvatar = trimmedAvatar;
+    }
+  }
+
   // If role is seller, create seller profile in MongoDB `sellers` collection
   if (params.role === 'seller') {
     sellerId = `seller-${Date.now()}`;
@@ -123,7 +162,7 @@ export async function register(params: {
       salesCount: 0,
       productsCount: 0,
       badge: 'حرفي جديد',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+      avatar: finalAvatar,
       coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80',
       bio: `ورشة متخصصة في صناعة المشغولات الصعيدية والتراثية الأصيلة في محافظة ${params.governorate || 'قنا'}.`,
       story: `بدأنا بحرفة الأجداد وتوارثناها جيلاً بعد جيل لنقدم لكم أروع ما أبدعت أيادي الصعيد.`,
@@ -152,6 +191,8 @@ export async function register(params: {
     passwordHash,
     phone: params.phone,
     role: params.role,
+    avatar: finalAvatar,
+    profileImage: profileImageObj,
     governorate: params.governorate || 'قنا',
     sellerId,
     sellerStatus: params.role === 'seller' ? 'pending' : undefined,
@@ -179,6 +220,7 @@ export async function register(params: {
       phone: createdUser.phone,
       role: createdUser.role,
       avatar: createdUser.avatar,
+      profileImage: createdUser.profileImage || profileImageObj || null,
       governorate: createdUser.governorate,
       sellerId: createdUser.sellerId,
       sellerStatus: createdUser.sellerStatus,
@@ -203,6 +245,10 @@ export async function login(identifier: string, password: string): Promise<AuthS
   const isMatch = await comparePassword(password, user.passwordHash);
   if (!isMatch) {
     throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
+  }
+
+  if (user.status === 'suspended' || user.status === 'blocked') {
+    throw new Error('تم تعليق هذا الحساب من قبل إدارة المنصة. يرجى التواصل مع الإدارة.');
   }
 
   // If role is seller, query latest status from sellers collection
@@ -249,6 +295,9 @@ export async function login(identifier: string, password: string): Promise<AuthS
       phone: user.phone,
       role: user.role,
       avatar: user.avatar,
+      status: user.status || 'active',
+      mustChangePassword: Boolean(user.mustChangePassword),
+      profileImage: user.profileImage || null,
       governorate: user.governorate,
       sellerId: user.sellerId,
       sellerStatus: userWithStatus.sellerStatus,

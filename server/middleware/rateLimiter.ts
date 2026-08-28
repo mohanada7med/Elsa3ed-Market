@@ -101,3 +101,10 @@ export const authLimiter = createRateLimiter({
   keyPrefix: 'auth',
   message: 'تم تجاوز محاولات تسجيل الدخول، يرجى الانتظار دقيقة لحماية الحساب'
 });
+
+export const forgotPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // max 5 requests per 15 minutes
+  keyPrefix: 'forgot_pwd',
+  message: 'تم تجاوز الحد المسموح لطلبات استعادة كلمة المرور، يرجى الانتظار 15 دقيقة قبل المحاولة مرة أخرى'
+});

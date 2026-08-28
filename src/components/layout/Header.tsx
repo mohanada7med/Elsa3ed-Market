@@ -345,7 +345,7 @@ export const Header: React.FC = () => {
                   aria-haspopup="true"
                 >
                   <img
-                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
+                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
                     alt={currentUser.name || currentUser.username}
                     className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover border border-[#E8E1D9] dark:border-[#382E27] shrink-0"
                   />
@@ -660,7 +660,7 @@ export const Header: React.FC = () => {
                 <div className="flex items-center justify-between p-3.5 bg-white dark:bg-[#201B18] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-2xs">
                   <div className="flex items-center gap-3 min-w-0">
                     <img
-                      src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'}
+                      src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
                       alt={currentUser.name || currentUser.username}
                       className="w-10 h-10 rounded-xl object-cover border border-[#E8E1D9] dark:border-[#382E27] shrink-0"
                     />

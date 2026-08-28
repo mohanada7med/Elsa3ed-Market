@@ -226,6 +226,7 @@ export interface UserProfile {
   phone: string;
   role: UserRole;
   avatar: string;
+  status?: 'active' | 'suspended' | 'blocked';
   profileImage?: {
     secureUrl: string;
     publicId: string;
@@ -235,6 +236,22 @@ export interface UserProfile {
   createdAt: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;
+  mustChangePassword?: boolean;
+}
+
+export interface PasswordResetRequest {
+  id: string;
+  userId: string;
+  username: string;
+  name?: string;
+  phone?: string;
+  role?: UserRole;
+  status: 'pending' | 'completed' | 'rejected';
+  createdAt: string;
+  handledByAdminId?: string;
+  handledByAdminName?: string;
+  handledAt?: string;
+  adminNotes?: string;
 }
 
 export type ActivePage =

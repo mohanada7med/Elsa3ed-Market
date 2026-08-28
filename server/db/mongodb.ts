@@ -38,6 +38,7 @@ class MemoryStore {
   reviews: ReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
+  passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
 }
 export const memoryDb = new MemoryStore();
 

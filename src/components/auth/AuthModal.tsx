@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
-import { X, Lock, Mail, User, Phone, Store, ShieldAlert, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { useApp, DEFAULT_USER_AVATAR } from '../../context/AppContext';
+import { api } from '../../services/api';
+import { X, Lock, Mail, User, Phone, Store, ShieldAlert, ArrowLeft, CheckCircle2, Camera, RefreshCw } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
   const {
@@ -26,6 +27,29 @@ export const AuthModal: React.FC = () => {
   const [forgotIdentifier, setForgotIdentifier] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage('يرجى اختيار ملف صورة صالح (JPG أو PNG أو WebP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage('حجم الصورة يجب ألا يتجاوز 5 ميجابايت');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setAvatarPreview(event.target?.result as string);
+      setErrorMessage(null);
+    };
+    reader.readAsDataURL(file);
+  };
 
   if (!isAuthModalOpen) return null;
 
@@ -35,11 +59,19 @@ export const AuthModal: React.FC = () => {
 
     if (isForgotPassword) {
       if (!forgotIdentifier.trim()) {
-        setErrorMessage('من فضلك اكتب اسم المستخدم أو البريد الإلكتروني');
+        setErrorMessage('من فضلك اكتب اسم المستخدم');
         return;
       }
-      setForgotSubmitted(true);
-      addToast('استعادة كلمة المرور', 'تم إرسال تعليمات استعادة كلمة المرور إلى حسابكم المسجل', 'info');
+      setIsSubmitting(true);
+      try {
+        await api.requestPasswordReset(forgotIdentifier.trim());
+        setForgotSubmitted(true);
+        addToast('طلب إعادة تعيين كلمة المرور', 'تم إرسال طلبك إلى الإدارة بنجاح', 'success');
+      } catch (err: any) {
+        setErrorMessage(err?.message || 'فشل في إرسال طلب استعادة كلمة المرور');
+      } finally {
+        setIsSubmitting(false);
+      }
       return;
     }
 
@@ -77,6 +109,7 @@ export const AuthModal: React.FC = () => {
           password,
           phone: phone.trim(),
           role: roleType,
+          avatar: avatarPreview || undefined,
           governorate,
           workshopName: roleType === 'seller' ? workshopName.trim() : undefined
         });
@@ -93,6 +126,7 @@ export const AuthModal: React.FC = () => {
     setIsForgotPassword(false);
     setForgotSubmitted(false);
     setErrorMessage(null);
+    setAvatarPreview(null);
   };
 
   return (
@@ -138,23 +172,31 @@ export const AuthModal: React.FC = () => {
               {forgotSubmitted ? (
                 <div className="text-center py-6 space-y-4">
                   <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto" />
-                  <h3 className="font-bold text-base text-gray-800">تم إرسال التعليمات بنجاح</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                    إذا كان هذا الحساب مسجلاً لدينا، فستصلكم تعليمات إعادة تعيين كلمة المرور فوراً.
+                  <h3 className="font-bold text-base text-gray-800">تم إرسال طلبك إلى الإدارة.</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
+                    سيقوم المسؤول بمراجعة الطلب وإنشاء كلمة مرور جديدة لك.
                   </p>
                   <button
                     type="button"
                     onClick={() => {
                       setIsForgotPassword(false);
                       setForgotSubmitted(false);
+                      setForgotIdentifier('');
                     }}
-                    className="mt-4 px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm font-bold shadow-md transition-colors"
+                    className="mt-4 px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm font-bold shadow-md transition-colors cursor-pointer"
                   >
                     العودة لتسجيل الدخول
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="mb-2">
+                    <h3 className="font-bold text-sm sm:text-base text-gray-800">نسيت كلمة المرور؟</h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      أدخل اسم المستخدم المسجل في المنصة وسيقوم فريق الإدارة بمراجعة الطلب وإنشاء كلمة مرور جديدة لحسابك.
+                    </p>
+                  </div>
+
                   {errorMessage && (
                     <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm flex items-center gap-2">
                       <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
@@ -164,7 +206,7 @@ export const AuthModal: React.FC = () => {
 
                   <div>
                     <label className="block text-sm font-bold text-gray-800 mb-1.5">
-                      اسم المستخدم أو البريد الإلكتروني
+                      اسم المستخدم
                     </label>
                     <div className="relative">
                       <input
@@ -172,7 +214,8 @@ export const AuthModal: React.FC = () => {
                         required
                         value={forgotIdentifier}
                         onChange={(e) => setForgotIdentifier(e.target.value)}
-                        placeholder="اكتب اسم المستخدم أو بريدك المسجل"
+                        placeholder="اكتب اسم المستخدم"
+                        autoComplete="username"
                         className="w-full pl-3 pr-10 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] min-h-[48px]"
                       />
                       <User className="w-5 h-5 text-gray-400 absolute right-3 top-3.5" />
@@ -181,15 +224,26 @@ export const AuthModal: React.FC = () => {
 
                   <button
                     type="submit"
-                    aria-label="إرسال رابط استعادة كلمة المرور"
-                    className="w-full py-3 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors min-h-[48px] cursor-pointer"
+                    disabled={isSubmitting}
+                    aria-label="إرسال طلب إعادة تعيين كلمة المرور"
+                    className="w-full py-3 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    إرسال رابط الاستعادة
+                    {isSubmitting ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>جاري إرسال الطلب...</span>
+                      </>
+                    ) : (
+                      <span>إرسال طلب إعادة تعيين كلمة المرور</span>
+                    )}
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setIsForgotPassword(false)}
+                    onClick={() => {
+                      setIsForgotPassword(false);
+                      setErrorMessage(null);
+                    }}
                     aria-label="الرجوع إلى نموذج تسجيل الدخول"
                     className="w-full text-center text-xs sm:text-sm text-gray-600 hover:text-[#943310] font-medium py-2 cursor-pointer"
                   >
@@ -382,6 +436,59 @@ export const AuthModal: React.FC = () => {
                       <Store className="w-4 h-4" />
                       <span>بائع / ورشة صعيدية</span>
                     </button>
+                  </div>
+
+                  {/* Profile Picture Selection (Optional) with Default Preview */}
+                  <div className="flex flex-col items-center justify-center p-3 bg-[#faf6f0] rounded-2xl border border-[#ebdccd] text-center">
+                    <div className="relative group">
+                      <img
+                        src={avatarPreview || DEFAULT_USER_AVATAR}
+                        alt="صورة الملف الشخصي"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-[#943310]/40 shadow-xs bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => avatarInputRef.current?.click()}
+                        title="اختيار صورة شخصية"
+                        className="absolute bottom-0 right-0 p-1.5 bg-[#943310] hover:bg-[#78280b] text-white rounded-full shadow-md transition-transform hover:scale-110 cursor-pointer"
+                      >
+                        <Camera className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <input
+                      type="file"
+                      ref={avatarInputRef}
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                      id="register-avatar-input"
+                    />
+
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => avatarInputRef.current?.click()}
+                        className="text-xs font-bold text-[#943310] hover:underline cursor-pointer"
+                      >
+                        {avatarPreview ? 'تغيير الصورة' : 'اختيار صورة شخصية (اختياري)'}
+                      </button>
+                      {avatarPreview && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAvatarPreview(null);
+                            if (avatarInputRef.current) avatarInputRef.current.value = '';
+                          }}
+                          className="text-xs text-rose-600 hover:underline cursor-pointer"
+                        >
+                          استعادة الافتراضية
+                        </button>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-gray-500 mt-0.5">
+                      {avatarPreview ? 'تم تحديد صورة مخصصة' : 'إذا لم تختر صورة، سيتم استخدام الصورة الافتراضية للمنصة'}
+                    </span>
                   </div>
 
                   {/* Field: Username (Supports Arabic) */}
