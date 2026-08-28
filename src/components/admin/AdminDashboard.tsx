@@ -427,7 +427,7 @@ export const AdminDashboard: React.FC = () => {
     setEditingCategory(cat);
     setCategoryName(cat.name);
     setCategoryNameEn(cat.nameEn || '');
-    setCategorySlug(cat.slug);
+    setCategorySlug(cat.slug || '');
     setCategoryIcon(cat.icon || '🏺');
     setCategoryDesc(cat.description || '');
     setCategoryImage(cat.image || '');

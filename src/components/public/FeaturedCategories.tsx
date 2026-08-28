@@ -69,7 +69,7 @@ export const FeaturedCategories: React.FC = () => {
                   {cat.name}
                 </h3>
                 <span className="text-[11px] text-amber-200/90 font-medium">
-                  {cat.productsCount > 0 ? `${cat.productsCount} منتج متوفر` : 'حرف أصيلة'}
+                  {(cat.productsCount ?? 0) > 0 ? `${cat.productsCount} منتج متوفر` : 'حرف أصيلة'}
                 </span>
               </div>
             </div>

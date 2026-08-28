@@ -71,7 +71,7 @@ export const CategoriesPage: React.FC = () => {
                     {cat.name}
                   </h3>
                   <span className="bg-[#f4ebe1] text-[#943310] text-xs font-bold px-2.5 py-0.5 rounded-full shrink-0">
-                    {cat.productsCount > 0 ? `${cat.productsCount} منتجات` : 'حرف أصيلة'}
+                    {(cat.productsCount ?? 0) > 0 ? `${cat.productsCount} منتجات` : 'حرف أصيلة'}
                   </span>
                 </div>
 

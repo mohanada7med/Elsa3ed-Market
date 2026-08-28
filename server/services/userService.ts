@@ -309,7 +309,7 @@ export async function getUsersWithFilters(filters: {
       const term = filters.search.trim().toLowerCase();
       return (
         u.name.toLowerCase().includes(term) ||
-        u.email.toLowerCase().includes(term) ||
+        (u.email ? u.email.toLowerCase().includes(term) : false) ||
         u.phone.includes(term)
       );
     }

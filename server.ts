@@ -1,6 +1,4 @@
-import express from 'express';
-import path from 'path';
-import { createServer as createViteServer } from 'vite';
+import next from 'next';
 import { validateAndGetEnv } from './server/config/env.ts';
 import { Logger } from './server/utils/logger.ts';
 import { createApp } from './server/app.ts';
@@ -8,30 +6,22 @@ import { createApp } from './server/app.ts';
 async function startServer() {
   const env = validateAndGetEnv();
   const PORT = env.PORT || 3000;
-  const app = await createApp();
+  const dev = env.NODE_ENV !== 'production';
 
-  // Frontend Serving (Vite in Dev / Static in Prod)
-  if (process.env.NODE_ENV !== 'production') {
-    const isHmrDisabled = process.env.DISABLE_HMR === 'true';
-    const vite = await createViteServer({
-      server: {
-        middlewareMode: true,
-        hmr: isHmrDisabled ? false : undefined
-      },
-      appType: 'spa'
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath, { maxAge: '1d' }));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
-  }
+  const nextApp = next({ dev });
+  const handle = nextApp.getRequestHandler();
+
+  await nextApp.prepare();
+  const app = createApp();
+
+  // Next.js handles all frontend pages and assets
+  app.all('*', (req, res) => {
+    return handle(req, res);
+  });
 
   // Graceful shutdown handling
   const server = app.listen(PORT, '0.0.0.0', () => {
-    Logger.info(`[Elsa3ed Market] Production-ready server running at http://0.0.0.0:${PORT} in [${env.NODE_ENV}] mode`);
+    Logger.info(`[Elsa3ed Market] Next.js + Node.js server running at http://0.0.0.0:${PORT} in [${env.NODE_ENV}] mode`);
   });
 
   const shutdown = () => {
