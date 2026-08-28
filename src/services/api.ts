@@ -1,4 +1,4 @@
-import { Product, ProductStatus, Category, Seller, AuditLog, CraftStory } from '../types.ts';
+import { Product, ProductStatus, Category, Seller, AuditLog, CraftStory, DiscountCoupon } from '../types.ts';
 
 const API_BASE = '/api';
 
@@ -765,6 +765,7 @@ export const api = {
   }): Promise<{ user: any; token: string }> {
     const res = await fetch(`${API_BASE}/auth/register/seller`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
@@ -788,6 +789,7 @@ export const api = {
     const query = params.toString() ? `?${params.toString()}` : '';
 
     const res = await fetch(`${API_BASE}/admin/users${query}`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any[]> = await res.json();
@@ -799,6 +801,7 @@ export const api = {
     userId: string
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/users/${userId}`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -814,6 +817,7 @@ export const api = {
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/users/${userId}`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -824,13 +828,14 @@ export const api = {
   },
 
   // ==================== AUTH & PERSISTENCE API ====================
-  async login(identifier: string, password: string): Promise<{ user: any; token: string }> {
+  async login(identifier: string, password: string): Promise<{ user: any; token?: string }> {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: identifier, email: identifier, password })
     });
-    const json: ApiResponse<{ user: any; token: string }> = await res.json();
+    const json: ApiResponse<{ user: any; token?: string }> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل تسجيل الدخول');
     }
@@ -841,6 +846,7 @@ export const api = {
     try {
       const res = await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' }
       });
       const json = await res.json();
@@ -860,30 +866,41 @@ export const api = {
     governorate?: string;
     workshopName?: string;
     specialty?: string;
-  }): Promise<{ user: any; token: string }> {
+  }): Promise<{ user: any; token?: string }> {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params)
     });
-    const json: ApiResponse<{ user: any; token: string }> = await res.json();
+    const json: ApiResponse<{ user: any; token?: string }> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل إنشاء الحساب');
     }
     return json.data;
   },
 
-  async getMe(user?: { id: string; role: string }): Promise<any> {
-    const res = await fetch(`${API_BASE}/auth/me`, {
-      headers: getAuthHeaders(user)
-    });
-    const json: ApiResponse<any> = await res.json();
-    return json.data || null;
+
+  async getMe(user?: { id?: string; role?: string }): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/auth/me`, {
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (!res.ok) {
+        return null;
+      }
+      const json: ApiResponse<any> = await res.json();
+      return (json && json.success && json.data) ? json.data : null;
+    } catch {
+      return null;
+    }
   },
 
   async updateProfile(user: { id: string; role: string }, data: any): Promise<any> {
     const res = await fetch(`${API_BASE}/auth/profile`, {
       method: 'PUT',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify(data)
     });
@@ -901,6 +918,7 @@ export const api = {
   ): Promise<{ url: string; fileKey: string; user: any }> {
     const res = await fetch(`${API_BASE}/auth/profile/image`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({
         image: imageDataUri,
@@ -923,6 +941,7 @@ export const api = {
   ): Promise<{ user: any }> {
     const res = await fetch(`${API_BASE}/auth/profile/image`, {
       method: 'DELETE',
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json = await res.json();
@@ -936,6 +955,7 @@ export const api = {
 
   async getFavorites(user: { id: string; role: string }): Promise<string[]> {
     const res = await fetch(`${API_BASE}/auth/favorites`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<string[]> = await res.json();
@@ -945,6 +965,7 @@ export const api = {
   async toggleFavorite(user: { id: string; role: string }, productId: string): Promise<string[]> {
     const res = await fetch(`${API_BASE}/auth/favorites/toggle`, {
       method: 'POST',
+      credentials: 'include',
       headers: getAuthHeaders(user),
       body: JSON.stringify({ productId })
     });
@@ -954,6 +975,7 @@ export const api = {
 
   async getNotifications(user: { id: string; role: string }): Promise<any[]> {
     const res = await fetch(`${API_BASE}/auth/notifications`, {
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any[]> = await res.json();
@@ -963,6 +985,7 @@ export const api = {
   async markNotificationRead(user: { id: string; role: string }, notificationId: string): Promise<boolean> {
     const res = await fetch(`${API_BASE}/auth/notifications/${notificationId}/read`, {
       method: 'PATCH',
+      credentials: 'include',
       headers: getAuthHeaders(user)
     });
     const json: ApiResponse<any> = await res.json();
@@ -997,6 +1020,91 @@ export const api = {
   async getHealth(): Promise<{ status: string; database: string }> {
     const res = await fetch(`${API_BASE}/health`);
     return res.json();
+  },
+
+  // ==================== ADMIN DISCOUNTS MANAGEMENT ====================
+  async getAdminDiscounts(user: { id: string; role: string }): Promise<DiscountCoupon[]> {
+    const res = await fetch(`${API_BASE}/admin/discounts`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<DiscountCoupon[]> = await res.json();
+    return json.data || [];
+  },
+
+  async createAdminDiscount(
+    user: { id: string; role: string },
+    data: {
+      code: string;
+      discountPercent: number;
+      maxDiscount?: number;
+      minOrderValue: number;
+      active?: boolean;
+      validUntil?: string;
+      description?: string;
+    }
+  ): Promise<DiscountCoupon> {
+    const res = await fetch(`${API_BASE}/admin/discounts`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<DiscountCoupon> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إنشاء كود الخصم');
+    }
+    return json.data;
+  },
+
+  async updateAdminDiscount(
+    user: { id: string; role: string },
+    id: string,
+    data: Partial<DiscountCoupon>
+  ): Promise<DiscountCoupon> {
+    const res = await fetch(`${API_BASE}/admin/discounts/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<DiscountCoupon> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تعديل كود الخصم');
+    }
+    return json.data;
+  },
+
+  async deleteAdminDiscount(
+    user: { id: string; role: string },
+    id: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/discounts/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف كود الخصم');
+    }
+    return true;
+  },
+
+  async toggleAdminDiscount(
+    user: { id: string; role: string },
+    id: string
+  ): Promise<DiscountCoupon> {
+    const res = await fetch(`${API_BASE}/admin/discounts/${id}/toggle`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<DiscountCoupon> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تغيير حالة كود الخصم');
+    }
+    return json.data;
   }
 };
 

@@ -682,10 +682,10 @@ router.delete('/users/:userId', async (req: AuthenticatedRequest, res: Response)
       error?.message?.includes('غير مصرح')
         ? 403
         : error?.message?.includes('غير موجود')
-        ? 404
-        : error?.message?.includes('حذف حسابه الشخصي')
-        ? 400
-        : 500;
+          ? 404
+          : error?.message?.includes('حذف حسابه الشخصي')
+            ? 400
+            : 500;
 
     res.status(statusCode).json({
       success: false,

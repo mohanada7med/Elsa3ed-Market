@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserRole, SellerStatus } from '../models/types.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { verifyToken } from '../services/authService.ts';
+import { getAuthTokenFromRequest } from '../config/authCookie.ts';
 
 export interface AuthenticatedUser {
   id: string;
@@ -21,12 +22,11 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   let userId = (req.headers['x-user-id'] as string) || (req.query.userId as string);
   const userRoleHeader = (req.headers['x-user-role'] as UserRole) || (req.query.userRole as UserRole);
 
-  // Support Bearer Token authentication
-  const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7);
+  // 1. Primary: Extract and verify authentication token from HTTP-only Cookie or Bearer header
+  const token = getAuthTokenFromRequest(req);
+  if (token) {
     const verified = verifyToken(token);
-    if (verified) {
+    if (verified && verified.sub) {
       userId = verified.sub;
     }
   }

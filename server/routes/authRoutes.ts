@@ -7,6 +7,7 @@ import { AuthenticatedRequest, requireAuth } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
 import { uploadLimiter } from '../middleware/rateLimiter.ts';
+import { setAuthCookie, clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
 
 const router = Router();
 
@@ -80,6 +81,9 @@ router.post('/register', async (req: Request, res: Response) => {
       workshopName: workshopName?.trim(),
       specialty: specialty?.trim()
     });
+
+    // Set secure HTTP-only authentication cookie
+    setAuthCookie(res, session.token);
 
     res.status(201).json({
       success: true,
@@ -157,6 +161,9 @@ router.post('/register/seller', async (req: Request, res: Response) => {
       specialty: specialty?.trim() || 'مشغولات وحرف تراثية'
     });
 
+    // Set secure HTTP-only authentication cookie
+    setAuthCookie(res, session.token);
+
     res.status(201).json({
       success: true,
       message: 'تم تسجيل ورشتكم بنجاح في سوق الصعيد! طلبكم قيد الفحص والاعتماد من قبل إدارة المنصة.',
@@ -192,6 +199,10 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     const session = await login(loginIdentifier, password);
+
+    // Set secure HTTP-only authentication cookie
+    setAuthCookie(res, session.token);
+
     res.json({
       success: true,
       data: session
@@ -204,26 +215,29 @@ router.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/auth/me
+// GET /api/auth/me (Restore and validate session)
 router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
-  const authHeader = req.headers.authorization;
   let userId = req.user?.id;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.substring(7);
-    const verified = verifyToken(token);
-    if (verified) {
-      userId = verified.sub;
+  // Fallback: Check HTTP-only cookie or Bearer header directly if middleware didn't populate user
+  if (!userId) {
+    const token = getAuthTokenFromRequest(req);
+    if (token) {
+      const verified = verifyToken(token);
+      if (verified && verified.sub) {
+        userId = verified.sub;
+      }
     }
   }
 
   if (!userId) {
-    return res.status(401).json({ success: false, error: 'غير مصرح' });
+    return res.status(401).json({ success: false, error: 'غير مصرح. لا توجد جلسة نشطة' });
   }
 
   const user = await findUserById(userId);
   if (!user) {
-    return res.status(404).json({ success: false, error: 'المستخدم غير موجود' });
+    clearAuthCookie(res);
+    return res.status(401).json({ success: false, error: 'المستخدم غير موجود أو تم إلغاء حسابه' });
   }
 
   const { passwordHash, ...sanitized } = user;
@@ -269,9 +283,9 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
   });
 });
 
-// POST /api/auth/logout - Invalidate server session & confirm client cleanup
+// POST /api/auth/logout - Invalidate server session & clear auth cookie
 router.post('/logout', (req: Request, res: Response) => {
-  // Stateless JWT session logout confirms termination
+  clearAuthCookie(res);
   res.json({
     success: true,
     message: 'تم تسجيل الخروج بنجاح من منصة سوق الصعيد'

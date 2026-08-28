@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cookieParser from 'cookie-parser';
 import path from 'path';
 import { validateAndGetEnv } from './config/env.ts';
 import { getDatabase } from './db/mongodb.ts';
@@ -31,14 +32,12 @@ export function createApp(): Express {
   app.use(securityHeadersMiddleware);
   app.use(requestIdMiddleware);
 
-  // 2. CORS Handling for Vercel & custom origins
+  // 2. CORS Handling for Vercel, localhost & custom origins with credentials
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     if (origin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Access-Control-Allow-Credentials', 'true');
-    } else {
-      res.setHeader('Access-Control-Allow-Origin', '*');
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,x-user-id,x-user-role,x-request-id');
@@ -48,7 +47,10 @@ export function createApp(): Express {
     next();
   });
 
-  // 3. Body parsers
+  // 3. Cookie parser for secure HTTP-only authentication tokens
+  app.use(cookieParser());
+
+  // 4. Body parsers
   app.use(express.json({ limit: `${env.MAX_UPLOAD_SIZE_MB + 2}mb` }));
   app.use(express.urlencoded({ extended: true, limit: `${env.MAX_UPLOAD_SIZE_MB + 2}mb` }));
 

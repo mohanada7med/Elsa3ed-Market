@@ -55,6 +55,7 @@ interface AppContextType {
   toggleTheme: () => void;
 
   // Auth & Roles
+  isAuthChecking: boolean;
   isAuthenticated: boolean;
   currentRole: UserRole;
   setCurrentRole: (role: UserRole) => void;
@@ -539,29 +540,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [theme]);
 
-  // Roles & Auth: Synchronously restore cached user for zero-latency UI on refresh
-  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
-    try {
-      const token = localStorage.getItem('saeed_token');
-      const savedUser = localStorage.getItem('saeed_user');
-      if (token && savedUser) {
-        return JSON.parse(savedUser);
-      }
-    } catch { }
-    return GUEST_USER;
-  });
-
-  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
-    try {
-      const token = localStorage.getItem('saeed_token');
-      const savedUser = localStorage.getItem('saeed_user');
-      if (token && savedUser) {
-        const u = JSON.parse(savedUser);
-        if (u && u.role) return u.role;
-      }
-    } catch { }
-    return 'guest';
-  });
+  // Roles & Auth: Synchronously check cached user preference, and verify with server
+  const [currentUser, setCurrentUser] = useState<UserProfile>(GUEST_USER);
+  const [currentRole, setCurrentRole] = useState<UserRole>('guest');
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
   const isAuthenticated = currentRole !== 'guest' && Boolean(currentUser?.id);
 
@@ -882,16 +864,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAuditLogs((prev) => [newLog, ...prev]);
   };
 
-  // Auth Operations (Database-backed)
+  // Auth Operations (Database-backed with Secure HTTP-Only Cookies)
   const login = async (identifier: string, pass: string) => {
     const data = await api.login(identifier, pass);
     if (data && data.user) {
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
-      if (data.token) {
-        localStorage.setItem('saeed_token', data.token);
-      }
-      localStorage.setItem('saeed_user', JSON.stringify(data.user));
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في سوق الصعيد!`, 'success');
     }
@@ -927,10 +905,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (data && data.user) {
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
-      if (data.token) {
-        localStorage.setItem('saeed_token', data.token);
-      }
-      localStorage.setItem('saeed_user', JSON.stringify(data.user));
       setIsAuthModalOpen(false);
       addToast(
         'إنشاء الحساب',
@@ -952,8 +926,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err) {
       console.warn('[AppContext] Logout server call error:', err);
     } finally {
-      localStorage.removeItem('saeed_token');
-      localStorage.removeItem('saeed_user');
       setCurrentUser(GUEST_USER);
       setCurrentRole('guest');
       // If the user is on a protected page, navigate to public homepage
@@ -967,36 +939,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Restore authenticated session on initial mount
+  // Restore authenticated session on initial mount via secure HTTP-only cookie
   useEffect(() => {
-    const token = localStorage.getItem('saeed_token');
-    if (token) {
-      api.getMe()
-        .then((userData) => {
-          if (userData && userData.id) {
-            setCurrentUser(userData);
-            localStorage.setItem('saeed_user', JSON.stringify(userData));
-            if (userData.role) {
-              setCurrentRole(userData.role);
-            }
-          } else {
-            localStorage.removeItem('saeed_token');
-            localStorage.removeItem('saeed_user');
-            setCurrentUser(GUEST_USER);
-            setCurrentRole('guest');
+    let isMounted = true;
+    setIsAuthChecking(true);
+
+    api.getMe()
+      .then((userData) => {
+        if (!isMounted) return;
+        if (userData && userData.id) {
+          setCurrentUser(userData);
+          if (userData.role) {
+            setCurrentRole(userData.role);
           }
-        })
-        .catch((err) => {
-          console.warn('[AppContext] Could not restore session on startup:', err);
-          localStorage.removeItem('saeed_token');
-          localStorage.removeItem('saeed_user');
+        } else {
           setCurrentUser(GUEST_USER);
           setCurrentRole('guest');
-        });
-    } else {
-      setCurrentUser(GUEST_USER);
-      setCurrentRole('guest');
-    }
+        }
+      })
+      .catch((err) => {
+        console.warn('[AppContext] Session restoration info:', err);
+        if (!isMounted) return;
+        setCurrentUser(GUEST_USER);
+        setCurrentRole('guest');
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsAuthChecking(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Upload Profile Image to Cloudinary & update MongoDB
@@ -1698,6 +1673,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTheme,
         toggleTheme,
 
+        isAuthChecking,
         isAuthenticated,
         currentRole,
         setCurrentRole,

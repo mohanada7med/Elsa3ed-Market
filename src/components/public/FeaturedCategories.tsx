@@ -41,7 +41,7 @@ export const FeaturedCategories: React.FC = () => {
             id={`category-card-${cat.id}`}
             role="button"
             tabIndex={0}
-            aria-label={`تصفح منتجات تصنيف ${cat.name}، ${cat.productsCount > 0 ? cat.productsCount + ' منتج متوفر' : ''}`}
+            aria-label={`تصفح منتجات تصنيف ${cat.name}، ${(cat.productsCount || 0) > 0 ? cat.productsCount + ' منتج متوفر' : ''}`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
