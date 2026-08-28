@@ -1,7 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
-import { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
-import { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument } from '../models/types.ts';
+import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
+import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 
@@ -98,8 +98,8 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
     try {
       if (!globalCache.client) {
         globalCache.client = new MongoClient(uri, {
-          connectTimeoutMS: 8000,
-          serverSelectionTimeoutMS: 5000, // 5s timeout to fail before Vercel function timeout
+          connectTimeoutMS: 10000,
+          serverSelectionTimeoutMS: 10000, // 10s timeout to allow cold starts to resolve cleanly
           maxPoolSize: 10,
           minPoolSize: 0, // In serverless, minPoolSize must be 0 to avoid stale sockets
           maxIdleTimeMS: 30000,

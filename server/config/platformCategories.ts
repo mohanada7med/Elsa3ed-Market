@@ -1,4 +1,4 @@
-import { Category } from '../../src/types.ts';
+import type { Category } from '../../src/types.ts';
 
 export const PLATFORM_CATEGORIES: Category[] = [
   {
