@@ -20,7 +20,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'تمور مجدول وكركديه وبخور',
     count: 0,
     bgGradient: 'from-[#78350f] to-[#d97706]',
-    iconImage: 'https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D8%A7%D8%B3%D9%88%D8%A7%D9%86.jpg'
   },
   {
     name: 'الأقصر',
@@ -28,7 +28,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'صواني النحاس وأواني الخشب',
     count: 0,
     bgGradient: 'from-[#652b19] to-[#9a3412]',
-    iconImage: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D8%A7%D9%84%D8%A7%D9%82%D8%B5%D8%B1.jpg'
   },
   {
     name: 'قنا',
@@ -36,7 +36,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'القِلال وقواديس الفخار',
     count: 0,
     bgGradient: 'from-[#8c3512] to-[#b45309]',
-    iconImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D9%82%D9%86%D8%A7.jpg'
   },
   {
     name: 'سوهاج',
@@ -44,7 +44,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'كليم الصوف والحرير',
     count: 0,
     bgGradient: 'from-[#9a3412] to-[#c2410c]',
-    iconImage: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015790/%D8%B3%D9%88%D9%87%D8%A7%D8%AC.jpg'
   },
   {
     name: 'أسيوط',
@@ -52,7 +52,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'تطريز الفضة وطواجن الفخار',
     count: 0,
     bgGradient: 'from-[#831843] to-[#9f1239]',
-    iconImage: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015789/%D8%A7%D8%B3%D9%8A%D9%88%D8%B7.jpg'
   },
   {
     name: 'المنيا',
@@ -60,7 +60,7 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     famousItem: 'عسل جبلي وأعشاب برية',
     count: 0,
     bgGradient: 'from-[#14532d] to-[#15803d]',
-    iconImage: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=300&q=80'
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A7%D9%84%D9%85%D9%86%D9%8A%D8%A7.jpg'
   }
 ];
 
