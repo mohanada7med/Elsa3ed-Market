@@ -121,7 +121,22 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
-export type PaymentMethod = 'vodafone_cash' | 'instapay' | 'cod' | 'credit_card';
+export type PaymentMethod =
+  | 'vodafone_cash'
+  | 'instapay'
+  | 'cod'
+  | 'cash_on_delivery'
+  | 'online_gateway'
+  | 'credit_card';
+
+export type PaymentStatus =
+  | 'pending'
+  | 'payment_pending_verification'
+  | 'paid'
+  | 'payment_rejected'
+  | 'failed'
+  | 'refunded'
+  | 'cash_on_delivery';
 
 export interface OrderAddress {
   fullName: string;
@@ -152,7 +167,7 @@ export interface Order {
   items: CartItem[];
   status: OrderStatus;
   paymentMethod: PaymentMethod;
-  paymentStatus: 'pending' | 'paid' | 'refunded';
+  paymentStatus: PaymentStatus;
   paymentReference?: string;
   paymentReceiptUrl?: string;
   subtotal: number;
@@ -371,5 +386,13 @@ export interface AdminPayoutSummary {
   totalPaidCount: number;
   totalPaidAmount: number;
   totalRejectedCount: number;
+}
+
+export interface PaymentConfig {
+  instaPayAccount: string;
+  vodafoneCashNumber: string;
+  instaPayInstructions?: string;
+  vodafoneCashInstructions?: string;
+  updatedAt?: string;
 }
 

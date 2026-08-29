@@ -234,17 +234,6 @@ export const Footer: React.FC = () => {
                   <span dir="ltr">01158969931</span>
                 </a>
               </div>
-              <div className="pt-1">
-                <a
-                  href={getWhatsAppUrl('السلام عليكم، أود التواصل مع إدارة سوق الصعيد.')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold shadow-xs transition-colors"
-                >
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <span>تواصل واتساب: {WHATSAPP_NUMBER}</span>
-                </a>
-              </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
                 <a href="mailto:[EMAIL_ADDRESS]" aria-label="مراسلتنا عبر البريد الإلكتروني: ahmdmohanad28@gmail.com" className="hover:underline">

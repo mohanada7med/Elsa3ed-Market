@@ -40,7 +40,8 @@ import {
   Copy,
   KeyRound,
   CreditCard,
-  DollarSign
+  DollarSign,
+  Wallet
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -56,6 +57,7 @@ export const AdminDashboard: React.FC = () => {
     suspendSeller,
     refreshSellers,
     orders,
+    refreshOrders,
     updateOrderStatus,
     categories,
     addCategory,
@@ -72,7 +74,7 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings'
   >('overview');
 
   // Synchronize activeTab when navigation changes via URL or Header links
@@ -198,6 +200,98 @@ export const AdminDashboard: React.FC = () => {
   const [craftDisplayOrder, setCraftDisplayOrder] = useState(1);
   const [craftActive, setCraftActive] = useState(true);
   const [isSubmittingCraftStory, setIsSubmittingCraftStory] = useState(false);
+
+  // Orders Payment Filtering & Verification State
+  const [orderPaymentFilter, setOrderPaymentFilter] = useState<'all' | 'pending_verification' | 'paid' | 'payment_rejected' | 'cod'>('all');
+  const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
+  const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
+
+  // Payment Accounts Configuration State
+  const [adminPaymentSettings, setAdminPaymentSettings] = useState<{
+    instaPayAccount: string;
+    vodafoneCashNumber: string;
+    instaPayInstructions?: string;
+    vodafoneCashInstructions?: string;
+    isInstaPayActive: boolean;
+    isVodafoneCashActive: boolean;
+    isCashOnDeliveryActive: boolean;
+  }>({
+    instaPayAccount: 'elsa3ed@instapay',
+    vodafoneCashNumber: '01158969931',
+    instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تأكيد الطلب".',
+    vodafoneCashInstructions: 'قم بتحويل المبلغ إلى رقم فودافون كاش الموضح أعلاه واضغط على "تأكيد الطلب".',
+    isInstaPayActive: true,
+    isVodafoneCashActive: true,
+    isCashOnDeliveryActive: true
+  });
+  const [isLoadingPaymentSettings, setIsLoadingPaymentSettings] = useState(false);
+  const [isSavingPaymentSettings, setIsSavingPaymentSettings] = useState(false);
+
+  const fetchAdminPaymentSettings = async () => {
+    setIsLoadingPaymentSettings(true);
+    try {
+      const cfg = await api.getAdminPaymentConfig(currentUser);
+      if (cfg) {
+        setAdminPaymentSettings({
+          instaPayAccount: cfg.instaPayAccount || 'elsa3ed@instapay',
+          vodafoneCashNumber: cfg.vodafoneCashNumber || '01158969931',
+          instaPayInstructions: cfg.instaPayInstructions || '',
+          vodafoneCashInstructions: cfg.vodafoneCashInstructions || '',
+          isInstaPayActive: cfg.isInstaPayActive ?? true,
+          isVodafoneCashActive: cfg.isVodafoneCashActive ?? true,
+          isCashOnDeliveryActive: cfg.isCashOnDeliveryActive ?? true
+        });
+      }
+    } catch (err: any) {
+      console.warn('Failed to load payment settings:', err);
+    } finally {
+      setIsLoadingPaymentSettings(false);
+    }
+  };
+
+  const handleSaveAdminPaymentSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingPaymentSettings(true);
+    try {
+      const updated = await api.updateAdminPaymentConfig(currentUser, adminPaymentSettings);
+      if (updated) {
+        setAdminPaymentSettings(updated);
+      }
+      addToast('تم الحفظ بنجاح', 'تم تحديث حسابات وتعليمات الدفع الرسمية للمنصة بنجاح', 'success');
+    } catch (err: any) {
+      addToast('فشل حفظ الإعدادات', err?.message || 'تعذر تحديث إعدادات الدفع', 'error');
+    } finally {
+      setIsSavingPaymentSettings(false);
+    }
+  };
+
+  const handleAdminVerifyPayment = async (orderId: string) => {
+    setVerifyingOrderId(orderId);
+    try {
+      await api.adminVerifyOrderPayment(currentUser, orderId);
+      addToast('تم تأكيد الدفع', 'تم التحقق من استلام التحويل وتأكيد الطلب للشحن بنجاح', 'success');
+      await refreshOrders();
+    } catch (err: any) {
+      addToast('خطأ في التأكيد', err?.message || 'تعذر تأكيد استلام الدفعة', 'error');
+    } finally {
+      setVerifyingOrderId(null);
+    }
+  };
+
+  const handleAdminRejectPayment = async (orderId: string) => {
+    const reason = window.prompt('يرجى كتابة سبب رفض التحويل (اختياري - سيظهر للمشتري):');
+    if (reason === null) return;
+    setRejectingOrderId(orderId);
+    try {
+      await api.adminRejectOrderPayment(currentUser, orderId, reason || undefined);
+      addToast('تم رفض التحويل', 'تم تغيير حالة الدفع إلى "مرفوض" وإشعار المشتري', 'info');
+      await refreshOrders();
+    } catch (err: any) {
+      addToast('خطأ في الرفض', err?.message || 'تعذر رفض عملية التحويل', 'error');
+    } finally {
+      setRejectingOrderId(null);
+    }
+  };
 
   const fetchAdminUsers = async () => {
     setIsLoadingUsers(true);
@@ -1017,6 +1111,21 @@ export const AdminDashboard: React.FC = () => {
         >
           <Tag className="w-4 h-4" />
           <span>أكواد الخصم</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setActiveTab('payment-settings');
+            fetchAdminPaymentSettings();
+          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'payment-settings'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
+        >
+          <CreditCard className="w-4 h-4 text-emerald-500" />
+          <span>إعدادات الدفع الرقمي (InstaPay & كاش)</span>
         </button>
 
         <button
@@ -1916,10 +2025,53 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 4: ORDERS */}
       {activeTab === 'orders' && (
-        <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-4">
-          <div>
-            <h3 className="font-bold text-base text-[#2D2A26]">سجل طلبات وشحنات المنصة</h3>
-            <p className="text-xs text-[#7A6F64]">متابعة كافة المعاملات وحالات التسليم بمختلف المحافظات</p>
+        <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E1D9] pb-4">
+            <div>
+              <h3 className="font-bold text-base text-[#2D2A26]">سجل طلبات وشحنات المنصة</h3>
+              <p className="text-xs text-[#7A6F64]">متابعة المعاملات ومطابقة وتأكيد التحويلات المالية (InstaPay / فودافون كاش)</p>
+            </div>
+
+            {/* Summary Counters */}
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                <span>
+                  {orders.filter((o) => o.paymentStatus === 'payment_pending_verification').length} بانتظار تأكيد التحويل
+                </span>
+              </span>
+              <span className="px-3 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>
+                  {orders.filter((o) => o.paymentStatus === 'paid').length} تم سدادها
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Payment Status Filter Buttons */}
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-gray-500 font-bold ml-1">تصفية حسب حالة الدفع:</span>
+            {[
+              { id: 'all', label: 'كافة الطلبات' },
+              { id: 'pending_verification', label: '⚠️ بانتظار تأكيد التحويل' },
+              { id: 'paid', label: '✅ تم تأكيد الدفع' },
+              { id: 'payment_rejected', label: '❌ تحويلات مرفوضة' },
+              { id: 'cod', label: '💵 الدفع عند الاستلام' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setOrderPaymentFilter(tab.id as any)}
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                  orderPaymentFilter === tab.id
+                    ? 'bg-[#943310] text-white'
+                    : 'bg-[#faf6f0] text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
 
           <div className="overflow-x-auto">
@@ -1928,86 +2080,287 @@ export const AdminDashboard: React.FC = () => {
                 <tr>
                   <th className="py-3 px-4 font-bold">رقم الطلب</th>
                   <th className="py-3 px-4 font-bold">المشتري</th>
-                  <th className="py-3 px-4 font-bold">وجهة التوصيل</th>
                   <th className="py-3 px-4 font-bold">وسيلة الدفع</th>
+                  <th className="py-3 px-4 font-bold">بيانات التحويل</th>
                   <th className="py-3 px-4 font-bold">المبلغ</th>
-                  <th className="py-3 px-4 font-bold">الحالة الإدارية</th>
-                  <th className="py-3 px-4 font-bold">إجراءات</th>
+                  <th className="py-3 px-4 font-bold">حالة الدفع</th>
+                  <th className="py-3 px-4 font-bold">حالة الطلب</th>
+                  <th className="py-3 px-4 font-bold text-center">إجراءات التحقق والشحن</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E8E1D9]">
-                {orders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-[#FDFBF7]">
-                    <td className="py-3 px-4 font-mono font-bold text-[#B45F42]">
-                      {ord.orderNumber || ord.id}
-                    </td>
-                    <td className="py-3 px-4 font-bold text-[#2D2A26]">
-                      {ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}
-                      <span className="block text-[10px] text-gray-500 font-normal">
-                        {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      {ord.shippingAddress?.governorate || 'المحافظة'} ({ord.shippingAddress?.city || 'المدينة'})
-                    </td>
-                    <td className="py-3 px-4 font-medium text-gray-700">
-                      {ord.paymentMethod === 'vodafone_cash'
-                        ? 'فودافون كاش'
-                        : ord.paymentMethod === 'instapay'
-                          ? 'إنستاباي'
-                          : ord.paymentMethod === 'credit_card'
-                            ? 'بطاقة بنكية'
-                            : 'عند الاستلام'}
-                    </td>
-                    <td className="py-3 px-4 font-bold text-[#B45F42]">{ord.total} ج.م</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${ord.status === 'delivered'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : ord.status === 'shipped'
-                            ? 'bg-blue-100 text-blue-800'
-                            : ord.status === 'processing'
-                              ? 'bg-amber-100 text-amber-800'
-                              : ord.status === 'confirmed'
-                                ? 'bg-indigo-100 text-indigo-800'
-                                : ord.status === 'cancelled'
-                                  ? 'bg-rose-100 text-rose-800'
-                                  : 'bg-gray-100 text-gray-800'
-                          }`}
-                      >
-                        {ord.status === 'cancelled'
-                          ? 'ملغي'
-                          : ord.status === 'delivered'
-                            ? 'تم الاستلام'
-                            : ord.status === 'shipped'
-                              ? 'تم الشحن'
-                              : ord.status === 'processing'
-                                ? 'قيد التجهيز'
-                                : ord.status === 'confirmed'
-                                  ? 'معتمد ومؤكد'
-                                  : 'طلب جديد'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <select
-                        value={ord.status}
-                        onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
-                        className="px-2 py-1 bg-white border border-[#E8E1D9] rounded-lg text-[11px] font-bold text-gray-700 outline-none"
-                      >
-                        <option value="pending">جديد (Pending)</option>
-                        <option value="confirmed">تأكيد (Confirmed)</option>
-                        <option value="processing">تجهيز (Processing)</option>
-                        <option value="shipped">شحن (Shipped)</option>
-                        <option value="delivered">تسليم (Delivered)</option>
-                        <option value="cancelled">إلغاء (Cancelled)</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
+                {orders
+                  .filter((ord) => {
+                    if (orderPaymentFilter === 'all') return true;
+                    if (orderPaymentFilter === 'pending_verification') return ord.paymentStatus === 'payment_pending_verification';
+                    if (orderPaymentFilter === 'paid') return ord.paymentStatus === 'paid';
+                    if (orderPaymentFilter === 'payment_rejected') return ord.paymentStatus === 'payment_rejected';
+                    if (orderPaymentFilter === 'cod') return ord.paymentMethod === 'cod';
+                    return true;
+                  })
+                  .map((ord) => {
+                    const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
+                    return (
+                      <tr key={ord.id} className={`hover:bg-[#FDFBF7] ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
+                        <td className="py-3 px-4 font-mono font-bold text-[#B45F42]">
+                          #{ord.orderNumber || ord.id}
+                        </td>
+                        <td className="py-3 px-4 font-bold text-[#2D2A26]">
+                          {ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}
+                          <span className="block text-[10px] text-gray-500 font-normal">
+                            {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone} • {ord.shippingAddress?.governorate || 'المحافظة'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 font-bold">
+                          {ord.paymentMethod === 'vodafone_cash' ? (
+                            <span className="text-red-700 flex items-center gap-1">
+                              <Wallet className="w-3.5 h-3.5" />
+                              فودافون كاش
+                            </span>
+                          ) : ord.paymentMethod === 'instapay' ? (
+                            <span className="text-blue-700 flex items-center gap-1">
+                              <CreditCard className="w-3.5 h-3.5" />
+                              إنستاباي
+                            </span>
+                          ) : ord.paymentMethod === 'credit_card' ? (
+                            <span className="text-amber-800">بطاقة بنكية</span>
+                          ) : (
+                            <span className="text-emerald-700 flex items-center gap-1">
+                              <Truck className="w-3.5 h-3.5" />
+                              عند الاستلام
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {ord.paymentReference ? (
+                            <div className="bg-[#faf6f0] p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
+                              <span className="text-[10px] text-gray-500 block">المرجع / الحساب:</span>
+                              {ord.paymentReference}
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-gray-400">غير مدخل</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 font-black text-[#B45F42] text-sm">{ord.total} ج.م</td>
+                        <td className="py-3 px-4">
+                          {ord.paymentStatus === 'payment_pending_verification' ? (
+                            <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-[10px] font-bold inline-flex items-center gap-1 animate-pulse">
+                              <Clock className="w-3 h-3 text-amber-700" />
+                              <span>بانتظار تأكيد التحويل</span>
+                            </span>
+                          ) : ord.paymentStatus === 'paid' ? (
+                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                              <span>تم تأكيد الدفع</span>
+                            </span>
+                          ) : ord.paymentStatus === 'payment_rejected' ? (
+                            <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                              <XCircle className="w-3 h-3 text-rose-700" />
+                              <span>تحويل مرفوض</span>
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-[10px] font-bold">
+                              {ord.paymentMethod === 'cod' ? 'تحصيل عند الاستلام' : 'معلق'}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <select
+                            value={ord.status}
+                            onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
+                            className="px-2 py-1 bg-white border border-[#E8E1D9] rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
+                          >
+                            <option value="pending">جديد (Pending)</option>
+                            <option value="confirmed">تأكيد (Confirmed)</option>
+                            <option value="processing">تجهيز (Processing)</option>
+                            <option value="shipped">شحن (Shipped)</option>
+                            <option value="delivered">تسليم (Delivered)</option>
+                            <option value="cancelled">إلغاء (Cancelled)</option>
+                          </select>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center justify-center gap-1.5">
+                            {isPendingVerification && (
+                              <>
+                                <button
+                                  type="button"
+                                  disabled={verifyingOrderId === ord.id}
+                                  onClick={() => handleAdminVerifyPayment(ord.id)}
+                                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+                                  title="تأكيد استلام التحويل واعتماد الطلب"
+                                >
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>{verifyingOrderId === ord.id ? 'جاري التأكيد...' : 'تأكيد واستلام'}</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  disabled={rejectingOrderId === ord.id}
+                                  onClick={() => handleAdminRejectPayment(ord.id)}
+                                  className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                                  title="رفض التحويل وإشعار المشتري"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                  <span>رفض</span>
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
+        </div>
+      )}
 
+      {/* TAB: PAYMENT SETTINGS */}
+      {activeTab === 'payment-settings' && (
+        <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="border-b border-[#E8E1D9] pb-4">
+            <h3 className="font-bold text-base sm:text-lg text-[#2D2A26] flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-[#943310]" />
+              <span>إعدادات وسائل الدفع وحسابات المنصة (InstaPay & المحافظ)</span>
+            </h3>
+            <p className="text-xs text-[#7A6F64] mt-1">
+              قم بضبط معرفات وحسابات استلام أموال الطلبات التي تظهر للعملاء في صفحة إتمام الشراء.
+            </p>
+          </div>
+
+          <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
+            {/* InstaPay Section */}
+            <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/30 space-y-4">
+              <div className="flex items-center justify-between border-b border-blue-100 pb-2">
+                <h4 className="font-bold text-sm text-blue-950 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-blue-600" />
+                  <span>حساب إنستاباي (InstaPay Egypt)</span>
+                </h4>
+                <label className="flex items-center gap-2 text-xs font-bold text-blue-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={adminPaymentSettings.isInstaPayActive}
+                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
+                    className="w-4 h-4 text-blue-600 rounded"
+                  />
+                  <span>مفعل في الشراء</span>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  معرف إنستاباي الرسمي للمنصة (IPA):
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={adminPaymentSettings.instaPayAccount}
+                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
+                  placeholder="مثال: elsa3ed@instapay"
+                  className="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-blue-500"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  تعليمات إضافية للمشتري عند اختيار إنستاباي:
+                </label>
+                <textarea
+                  value={adminPaymentSettings.instaPayInstructions || ''}
+                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayInstructions: e.target.value })}
+                  placeholder="تعليمات الدفع والتحويل..."
+                  rows={2}
+                  className="w-full px-3.5 py-2 bg-white border border-blue-200 rounded-xl text-xs text-gray-800 outline-none focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Vodafone Cash Section */}
+            <div className="p-5 rounded-2xl border border-red-200 bg-red-50/30 space-y-4">
+              <div className="flex items-center justify-between border-b border-red-100 pb-2">
+                <h4 className="font-bold text-sm text-red-950 flex items-center gap-2">
+                  <Wallet className="w-4 h-4 text-red-600" />
+                  <span>محفظة فودافون كاش (Vodafone Cash)</span>
+                </h4>
+                <label className="flex items-center gap-2 text-xs font-bold text-red-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={adminPaymentSettings.isVodafoneCashActive}
+                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
+                    className="w-4 h-4 text-red-600 rounded"
+                  />
+                  <span>مفعل في الشراء</span>
+                </label>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  رقم محفظة فودافون كاش المعتمد للمنصة:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={adminPaymentSettings.vodafoneCashNumber}
+                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
+                  placeholder="مثال: 01158969931"
+                  className="w-full px-3.5 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-red-500"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  تعليمات إضافية للمشتري عند اختيار فودافون كاش:
+                </label>
+                <textarea
+                  value={adminPaymentSettings.vodafoneCashInstructions || ''}
+                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashInstructions: e.target.value })}
+                  placeholder="تعليمات الدفع والتحويل..."
+                  rows={2}
+                  className="w-full px-3.5 py-2 bg-white border border-red-200 rounded-xl text-xs text-gray-800 outline-none focus:border-red-500"
+                />
+              </div>
+            </div>
+
+            {/* Cash on Delivery Section */}
+            <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-emerald-600" />
+                  <span>الدفع نقداً عند الاستلام (COD)</span>
+                </h4>
+                <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={adminPaymentSettings.isCashOnDeliveryActive}
+                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isCashOnDeliveryActive: e.target.checked })}
+                    className="w-4 h-4 text-emerald-600 rounded"
+                  />
+                  <span>مفعل في الشراء</span>
+                </label>
+              </div>
+              <p className="text-xs text-emerald-800">
+                إتاحة خيار تحصيل المبلغ نقداً بواسطة مندوب الشحن والتوزيع عند باب العميل.
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSavingPaymentSettings}
+              className="px-8 py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+            >
+              {isSavingPaymentSettings ? (
+                <span>جاري حفظ الإعدادات...</span>
+              ) : (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>حفظ وتطبيق إعدادات الدفع</span>
+                </>
+              )}
+            </button>
+          </form>
         </div>
       )}
 

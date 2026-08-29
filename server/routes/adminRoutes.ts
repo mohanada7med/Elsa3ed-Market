@@ -10,7 +10,13 @@ import {
   deleteProduct
 } from '../services/productService.ts';
 import { getAuditLogs } from '../services/auditService.ts';
-import { getAdminOrders, updateAdminOrderStatus } from '../services/orderService.ts';
+import {
+  getAdminOrders,
+  updateAdminOrderStatus,
+  adminVerifyOrderPayment,
+  adminRejectOrderPayment
+} from '../services/orderService.ts';
+import { getPaymentConfig, updatePaymentConfig } from '../services/paymentConfigService.ts';
 import {
   getAllCategories,
   createCategory,
@@ -454,6 +460,50 @@ router.put('/orders/:id/status', async (req: AuthenticatedRequest, res: Response
       success: false,
       error: (error as Error).message || 'تعذر تحديث الطلب',
       code: 'UPDATE_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/orders/:id/verify-payment - Confirm receipt of transfer payment
+router.post('/orders/:id/verify-payment', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const orderId = req.params.id;
+    const { adminNote } = req.body;
+    const verifiedOrder = await adminVerifyOrderPayment(req.user!, orderId, adminNote);
+
+    res.json({
+      success: true,
+      message: 'تم تأكيد استلام دفعة الطلب بنجاح وتحديث حالته',
+      data: verifiedOrder
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error verifying order payment:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'فشل تأكيد استلام الدفعة',
+      code: 'VERIFY_PAYMENT_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/orders/:id/reject-payment - Reject transfer payment claim
+router.post('/orders/:id/reject-payment', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const orderId = req.params.id;
+    const { reason } = req.body;
+    const rejectedOrder = await adminRejectOrderPayment(req.user!, orderId, reason);
+
+    res.json({
+      success: true,
+      message: 'تم تسجيل رفض تحويل الدفعة وإشعار العميل',
+      data: rejectedOrder
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error rejecting order payment:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'فشل رفض دفعة الطلب',
+      code: 'REJECT_PAYMENT_ERROR'
     });
   }
 });
@@ -1149,6 +1199,59 @@ router.patch('/payouts/:id/paid', async (req: AuthenticatedRequest, res: Respons
       success: false,
       error: (error as Error).message || 'تعذر تأكيد صرف المبلغ',
       code: 'PAYOUT_PAID_ERROR'
+    });
+  }
+});
+
+// GET /api/admin/settings/payment - Get platform payment accounts configuration
+router.get('/settings/payment', async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const config = await getPaymentConfig();
+    res.json({
+      success: true,
+      data: config
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error getting payment config:', error);
+    res.status(500).json({
+      success: false,
+      error: (error as Error).message || 'فشل في جلب إعدادات الدفع',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// PUT /api/admin/settings/payment - Update platform payment accounts configuration
+router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { instaPayAccount, vodafoneCashNumber, instaPayInstructions, vodafoneCashInstructions } = req.body;
+
+    if (!instaPayAccount && !vodafoneCashNumber) {
+      return res.status(400).json({
+        success: false,
+        error: 'يجب توفير حساب إنستاباي أو رقم فودافون كاش على الأقل',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updated = await updatePaymentConfig(req.user!, {
+      instaPayAccount,
+      vodafoneCashNumber,
+      instaPayInstructions,
+      vodafoneCashInstructions
+    });
+
+    res.json({
+      success: true,
+      message: 'تم تحديث إعدادات حسابات الدفع بنجاح',
+      data: updated
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error updating payment config:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'فشل تحديث إعدادات الدفع',
+      code: 'UPDATE_PAYMENT_CONFIG_ERROR'
     });
   }
 });

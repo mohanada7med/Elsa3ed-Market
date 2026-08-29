@@ -153,29 +153,47 @@ export class LocalStorageProvider implements IStorageProvider {
   }
 }
 
-import { cloudinaryStorage } from './cloudinaryProvider.ts';
+import { cloudinaryStorage, isCloudinaryAvailable } from './cloudinaryProvider.ts';
 
-const localStorageProvider = new LocalStorageProvider();
+export const localStorageProvider = new LocalStorageProvider();
 
 class DelegatingStorageProvider implements IStorageProvider {
-  private getProvider(): IStorageProvider {
-    const hasCloudinary = Boolean(
-      process.env.CLOUDINARY_URL ||
-      (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY)
-    );
-    return hasCloudinary ? cloudinaryStorage : localStorageProvider;
-  }
-
   async upload(options: UploadFileOptions): Promise<UploadResult> {
-    return this.getProvider().upload(options);
+    if (isCloudinaryAvailable()) {
+      try {
+        return await cloudinaryStorage.upload(options);
+      } catch (err: any) {
+        Logger.warn(
+          `[StorageProvider] Cloudinary upload encountered an issue (${err?.message || err}). Seamlessly falling back to LocalStorageProvider...`
+        );
+        return await localStorageProvider.upload(options);
+      }
+    }
+    return await localStorageProvider.upload(options);
   }
 
   async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
-    return this.getProvider().delete(fileKey, requestingUser);
+    if (!fileKey) return false;
+
+    if (fileKey.startsWith('Elsa3ed-Market/') && isCloudinaryAvailable()) {
+      try {
+        return await cloudinaryStorage.delete(fileKey, requestingUser);
+      } catch (err) {
+        Logger.warn('[StorageProvider] Cloudinary delete failed:', err);
+      }
+    }
+    return await localStorageProvider.delete(fileKey, requestingUser);
   }
 
   getUrl(fileKey: string): string {
-    return this.getProvider().getUrl(fileKey);
+    if (!fileKey) return '';
+    if (fileKey.startsWith('http://') || fileKey.startsWith('https://') || fileKey.startsWith('data:')) {
+      return fileKey;
+    }
+    if (fileKey.startsWith('Elsa3ed-Market/')) {
+      return isCloudinaryAvailable() ? cloudinaryStorage.getUrl(fileKey) : fileKey;
+    }
+    return localStorageProvider.getUrl(fileKey);
   }
 }
 

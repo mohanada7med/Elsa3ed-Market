@@ -12,6 +12,7 @@ import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { getCart, clearCart } from './cartService.ts';
 import { incrementCouponUsage } from './discountService.ts';
 import { addAuditLog } from './auditService.ts';
+import { createNotification } from './notificationService.ts';
 
 export interface CreateOrderInput {
   shippingAddress: OrderAddressDocument;
@@ -166,8 +167,12 @@ export async function createOrder(
     }
   ];
 
-  // All real orders start as 'pending' payment until verified by gateway/admin or collected (COD)
-  const initialPaymentStatus: PaymentStatus = 'pending';
+  // Orders via InstaPay and Vodafone Cash are placed with 'payment_pending_verification' until manually verified by Admin
+  // Cash on Delivery orders remain 'pending' until delivered/collected
+  const initialPaymentStatus: PaymentStatus =
+    paymentMethod === 'instapay' || paymentMethod === 'vodafone_cash'
+      ? 'payment_pending_verification'
+      : 'pending';
 
   const orderDocument: OrderDocument = {
     id: orderId,
@@ -636,3 +641,185 @@ export async function updateAdminOrderStatus(
 
   return order;
 }
+
+/**
+ * Admin: Confirms receipt of customer payment transfer (InstaPay or Vodafone Cash)
+ */
+export async function adminVerifyOrderPayment(
+  admin: AuthenticatedUser,
+  orderId: string,
+  adminNote?: string
+): Promise<OrderDocument> {
+  const { db, isMongo } = await getDatabase();
+
+  let order: OrderDocument | null = null;
+  if (isMongo && db) {
+    try {
+      order = (await db.collection('orders').findOne({ id: orderId })) as unknown as OrderDocument | null;
+    } catch (e) {
+      console.error('[OrderService] Mongo find order error:', e);
+    }
+  }
+
+  if (!order) {
+    order = memoryDb.orders.find((o) => o.id === orderId) || null;
+  }
+
+  if (!order) {
+    throw new Error('الطلب غير موجود');
+  }
+
+  if (order.paymentStatus === 'paid') {
+    throw new Error('تم تأكيد دفع هذا الطلب بالفعل مسبقاً');
+  }
+
+  const now = new Date().toISOString();
+  order.paymentStatus = 'paid';
+  order.updatedAt = now;
+
+  // If order was in pending review, move to confirmed
+  if (order.status === 'pending' || order.status === 'review') {
+    order.status = 'confirmed';
+  }
+
+  order.timeline = order.timeline.map((step) => {
+    if (step.status === 'confirmed') {
+      return {
+        ...step,
+        done: true,
+        time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+      };
+    }
+    return step;
+  });
+
+  if (isMongo && db) {
+    try {
+      await db.collection('orders').updateOne(
+        { id: orderId },
+        {
+          $set: {
+            status: order.status,
+            paymentStatus: 'paid',
+            updatedAt: now,
+            timeline: order.timeline
+          }
+        }
+      );
+    } catch (e) {
+      console.error('[OrderService] Mongo verify payment error:', e);
+    }
+  }
+
+  const memIdx = memoryDb.orders.findIndex((o) => o.id === orderId);
+  if (memIdx >= 0) {
+    memoryDb.orders[memIdx] = order;
+  }
+
+  // Notify customer
+  let methodLabel = order.paymentMethod === 'vodafone_cash' ? 'فودافون كاش' : order.paymentMethod === 'instapay' ? 'InstaPay' : 'التحويل';
+  await createNotification({
+    userId: order.buyerId,
+    title: 'تم تأكيد استلام دفعتك بنجاح',
+    message: `تم تأكيد استلام دفعتك للطلب #${order.orderNumber} بقيمة ${order.total.toLocaleString('ar-EG')} ج.م عبر ${methodLabel}، وجاري تجهيز الشحنة من الورش.`,
+    type: 'system',
+    link: 'buyer-orders'
+  });
+
+  // Audit log
+  await addAuditLog({
+    actorId: admin.id,
+    userName: admin.name,
+    userRole: 'admin',
+    action: 'تأكيد استلام دفعة الطلب',
+    resource: 'الطلبات',
+    resourceId: order.id,
+    status: 'نجاح',
+    details: `أكد المدير ${admin.name} استلام تحويل الدفع للطلب #${order.orderNumber} بقيمة ${order.total} ج.م عبر ${order.paymentMethod}${adminNote ? ` (ملاحظة: ${adminNote})` : ''}`
+  });
+
+  return order;
+}
+
+/**
+ * Admin: Rejects a customer payment transfer claim (invalid transfer / not received)
+ */
+export async function adminRejectOrderPayment(
+  admin: AuthenticatedUser,
+  orderId: string,
+  reason: string
+): Promise<OrderDocument> {
+  const { db, isMongo } = await getDatabase();
+
+  let order: OrderDocument | null = null;
+  if (isMongo && db) {
+    try {
+      order = (await db.collection('orders').findOne({ id: orderId })) as unknown as OrderDocument | null;
+    } catch (e) {
+      console.error('[OrderService] Mongo find order error:', e);
+    }
+  }
+
+  if (!order) {
+    order = memoryDb.orders.find((o) => o.id === orderId) || null;
+  }
+
+  if (!order) {
+    throw new Error('الطلب غير موجود');
+  }
+
+  if (order.paymentStatus === 'paid') {
+    throw new Error('لا يمكن رفض دفعة تم تأكيدها مسبقاً');
+  }
+
+  const now = new Date().toISOString();
+  order.paymentStatus = 'payment_rejected';
+  order.updatedAt = now;
+
+  if (isMongo && db) {
+    try {
+      await db.collection('orders').updateOne(
+        { id: orderId },
+        {
+          $set: {
+            paymentStatus: 'payment_rejected',
+            updatedAt: now
+          }
+        }
+      );
+    } catch (e) {
+      console.error('[OrderService] Mongo reject payment error:', e);
+    }
+  }
+
+  const memIdx = memoryDb.orders.findIndex((o) => o.id === orderId);
+  if (memIdx >= 0) {
+    memoryDb.orders[memIdx] = order;
+  }
+
+  const rejectReason = reason?.trim() || 'لم يتم استلام المبلغ أو بيانات التحويل غير مطابقة';
+
+  // Notify customer
+  await createNotification({
+    userId: order.buyerId,
+    title: 'تنبيه بخصوص تحويل قيمة الطلب',
+    message: `تعذر تأكيد تحويل الدفع للطلب #${order.orderNumber}. السبب: ${rejectReason}. يرجى مراجعة إدارة المنصة.`,
+    type: 'system',
+    link: 'buyer-orders'
+  });
+
+  // Audit log
+  await addAuditLog({
+    actorId: admin.id,
+    userName: admin.name,
+    userRole: 'admin',
+    action: 'رفض تحويل دفعة الطلب',
+    resource: 'الطلبات',
+    resourceId: order.id,
+    status: 'تنبيه',
+    details: `رفض المدير ${admin.name} تحويل الدفع للطلب #${order.orderNumber} - السبب: ${rejectReason}`
+  });
+
+  return order;
+}
+

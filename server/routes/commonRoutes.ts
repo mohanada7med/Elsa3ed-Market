@@ -4,6 +4,7 @@ import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { validateAndCalculateDiscount } from '../services/discountService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
+import { getPaymentConfig } from '../services/paymentConfigService.ts';
 import { requireBuyer } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
@@ -120,6 +121,25 @@ router.get('/recommendations', async (req: Request, res: Response) => {
     res.json({ success: true, data: prods });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message || 'فشل في جلب الترشيحات' });
+  }
+});
+
+// GET /api/payment-config & /api/payment/config - Public configuration for customer checkout
+router.get(['/payment-config', '/payment/config'], async (_req: Request, res: Response) => {
+  try {
+    const config = await getPaymentConfig();
+    res.json({
+      success: true,
+      data: {
+        instaPayAccount: config.instaPayAccount,
+        vodafoneCashNumber: config.vodafoneCashNumber,
+        instaPayInstructions: config.instaPayInstructions,
+        vodafoneCashInstructions: config.vodafoneCashInstructions,
+        updatedAt: config.updatedAt
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message || 'فشل في جلب إعدادات الدفع' });
   }
 });
 

@@ -507,6 +507,97 @@ export const api = {
     return json.data;
   },
 
+  async adminVerifyOrderPayment(
+    user: { id?: string; role?: string },
+    orderId: string,
+    adminNote?: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/orders/${orderId}/verify-payment`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ adminNote })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تأكيد استلام الدفعة');
+    }
+    return json.data;
+  },
+
+  async adminRejectOrderPayment(
+    user: { id?: string; role?: string },
+    orderId: string,
+    reason?: string
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/orders/${orderId}/reject-payment`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ reason })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في رفض دفعة الطلب');
+    }
+    return json.data;
+  },
+
+  async getPublicPaymentConfig(): Promise<{
+    instaPayAccount: string;
+    vodafoneCashNumber: string;
+    instaPayInstructions?: string;
+    vodafoneCashInstructions?: string;
+  }> {
+    try {
+      const res = await fetch(`${API_BASE}/payment-config`);
+      const json = await res.json();
+      if (json.success && json.data) {
+        return json.data;
+      }
+    } catch (e) {
+      console.warn('Failed to fetch public payment config, using fallback defaults', e);
+    }
+    return {
+      instaPayAccount: 'elsa3ed@instapay',
+      vodafoneCashNumber: '01158969931',
+      instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تم التحويل".',
+      vodafoneCashInstructions: 'قم بتحويل المبلغ إلى رقم فودافون كاش الموضح أعلاه واضغط على "تم التحويل".'
+    };
+  },
+
+  async getAdminPaymentConfig(user: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/settings/payment`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب إعدادات الدفع');
+    }
+    return json.data;
+  },
+
+  async updateAdminPaymentConfig(
+    user: { id?: string; role?: string },
+    payload: {
+      instaPayAccount?: string;
+      vodafoneCashNumber?: string;
+      instaPayInstructions?: string;
+      vodafoneCashInstructions?: string;
+    }
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/admin/settings/payment`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث إعدادات الدفع');
+    }
+    return json.data;
+  },
+
   // ==================== PHASE 4: SELLER DASHBOARD, INVENTORY & ANALYTICS ====================
   async getSellerDashboardStats(user: { id: string; role: string; sellerId?: string }): Promise<any> {
     const res = await fetch(`${API_BASE}/seller/dashboard-stats`, {

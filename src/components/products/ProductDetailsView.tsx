@@ -336,19 +336,6 @@ export const ProductDetailsView: React.FC = () => {
                     <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
                   </button>
                 </div>
-
-                {/* Direct WhatsApp Instant Order Button */}
-                <a
-                  href={getWhatsAppUrl(
-                    `السلام عليكم، أود طلب أو الاستفسار عن منتج: "${product.title}" (سعر: ${product.price} ج.م، كمية: ${quantity}، صانع: ${product.sellerName} من ${product.sellerGovernorate})`
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px]"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>طلب سريع عبر واتساب ({WHATSAPP_NUMBER})</span>
-                </a>
               </>
             ) : currentRole === 'seller' ? (
               /* Seller Actions (No Cart / No Buy Now) */

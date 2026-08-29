@@ -8,39 +8,89 @@ import { Logger } from '../../utils/logger.ts';
 import type { IStorageProvider, UploadFileOptions, UploadResult } from './storageProvider.ts';
 
 /**
+ * Check if a credential value is an unconfigured template placeholder or invalid string.
+ */
+function isPlaceholderValue(val?: string): boolean {
+  if (!val || typeof val !== 'string') return true;
+  const trimmed = val.trim();
+  if (!trimmed) return true;
+  if (
+    trimmed.includes('<') ||
+    trimmed.includes('>') ||
+    trimmed.includes('%3C') ||
+    trimmed.includes('%3E') ||
+    trimmed.toLowerCase().includes('your_api_key') ||
+    trimmed.toLowerCase().includes('your_cloud_name') ||
+    trimmed.toLowerCase().includes('your_api_secret') ||
+    trimmed.toLowerCase().includes('your_api') ||
+    trimmed.toLowerCase().includes('placeholder') ||
+    trimmed.toLowerCase().includes('dummy') ||
+    trimmed === 'undefined' ||
+    trimmed === 'null'
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Validates whether real, non-placeholder Cloudinary credentials exist in the environment.
+ */
+export function isCloudinaryAvailable(): boolean {
+  const url = process.env.CLOUDINARY_URL;
+  if (url && !isPlaceholderValue(url) && url.trim().startsWith('cloudinary://')) {
+    return true;
+  }
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const apiKey = process.env.CLOUDINARY_API_KEY;
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!isPlaceholderValue(cloudName) && !isPlaceholderValue(apiKey) && !isPlaceholderValue(apiSecret)) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Cloudinary Storage Provider
  * Official image storage system for Elsa3ed Market.
  * Strictly configured via server-side environment variables.
  */
-class CloudinaryStorageProvider implements IStorageProvider {
+export class CloudinaryStorageProvider implements IStorageProvider {
   private isConfigured = false;
 
   constructor() {
     this.configure();
   }
 
+  public isAvailable(): boolean {
+    return isCloudinaryAvailable();
+  }
+
   private configure() {
     if (this.isConfigured) return;
 
-    if (process.env.CLOUDINARY_URL) {
+    if (!isCloudinaryAvailable()) {
+      Logger.info('[Cloudinary] Cloudinary credentials not configured or placeholder detected; will use local storage provider');
+      return;
+    }
+
+    if (process.env.CLOUDINARY_URL && !isPlaceholderValue(process.env.CLOUDINARY_URL)) {
       cloudinary.config();
       this.isConfigured = true;
       Logger.info('[Cloudinary] Configured via CLOUDINARY_URL');
     } else if (
-      process.env.CLOUDINARY_CLOUD_NAME &&
-      process.env.CLOUDINARY_API_KEY &&
-      process.env.CLOUDINARY_API_SECRET
+      !isPlaceholderValue(process.env.CLOUDINARY_CLOUD_NAME) &&
+      !isPlaceholderValue(process.env.CLOUDINARY_API_KEY) &&
+      !isPlaceholderValue(process.env.CLOUDINARY_API_SECRET)
     ) {
       cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME!.trim(),
+        api_key: process.env.CLOUDINARY_API_KEY!.trim(),
+        api_secret: process.env.CLOUDINARY_API_SECRET!.trim(),
         secure: true
       });
       this.isConfigured = true;
       Logger.info('[Cloudinary] Configured via individual credentials');
-    } else {
-      Logger.warn('[Cloudinary] Missing CLOUDINARY_URL or credentials in environment');
     }
   }
 
@@ -50,6 +100,10 @@ class CloudinaryStorageProvider implements IStorageProvider {
    */
   async upload(options: UploadFileOptions): Promise<UploadResult> {
     this.configure();
+
+    if (!this.isConfigured || !isCloudinaryAvailable()) {
+      throw new Error('خدمة التخزين السحابي Cloudinary غير مهيأة أو مفاتيح الربط غير صالحة');
+    }
 
     const {
       data,
@@ -142,7 +196,7 @@ class CloudinaryStorageProvider implements IStorageProvider {
   async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
     this.configure();
 
-    if (!fileKey) return false;
+    if (!fileKey || !this.isConfigured) return false;
 
     // Security check: only allow deletion of Elsa3ed-Market assets
     if (!fileKey.startsWith('Elsa3ed-Market/')) {
@@ -177,3 +231,4 @@ class CloudinaryStorageProvider implements IStorageProvider {
 }
 
 export const cloudinaryStorage = new CloudinaryStorageProvider();
+

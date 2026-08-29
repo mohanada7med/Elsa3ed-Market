@@ -13,7 +13,7 @@ export const AboutSection: React.FC = () => {
           <div className="lg:col-span-5 relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
               <img
-                src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
                 alt="شيوخ الصنعة في صعيد مصر"
                 className="w-full h-96 object-cover"
               />

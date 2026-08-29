@@ -14,9 +14,22 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
-export type PaymentMethod = 'vodafone_cash' | 'instapay' | 'cod' | 'credit_card';
+export type PaymentMethod =
+  | 'vodafone_cash'
+  | 'instapay'
+  | 'cod'
+  | 'cash_on_delivery'
+  | 'online_gateway'
+  | 'credit_card';
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+export type PaymentStatus =
+  | 'pending'
+  | 'payment_pending_verification'
+  | 'paid'
+  | 'payment_rejected'
+  | 'failed'
+  | 'refunded'
+  | 'cash_on_delivery';
 
 export interface ProductDocument {
   id: string;
@@ -425,6 +438,16 @@ export interface AdminPayoutSummary {
   totalPaidCount: number;
   totalPaidAmount: number;
   totalRejectedCount: number;
+}
+
+export interface PaymentConfigDocument {
+  id: string;
+  instaPayAccount: string;
+  vodafoneCashNumber: string;
+  instaPayInstructions?: string;
+  vodafoneCashInstructions?: string;
+  updatedAt: string;
+  updatedBy?: string;
 }
 
 
