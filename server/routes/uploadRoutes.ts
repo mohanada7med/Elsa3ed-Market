@@ -1,10 +1,12 @@
-import { Router, Response } from 'express';
-import { requireAuth, AuthenticatedRequest } from '../middleware/auth.ts';
+import express from 'express';
+import type { Response } from 'express';
+import { requireAuth } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
 import { uploadLimiter } from '../middleware/rateLimiter.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 
-const router = Router();
+const router = express.Router();
 
 const MAX_PRODUCT_IMAGES = 5;
 

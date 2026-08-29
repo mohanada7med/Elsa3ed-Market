@@ -1,9 +1,11 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { getPublicProducts, getProductById } from '../services/productService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
-import { AuthenticatedRequest, requireBuyer } from '../middleware/auth.ts';
+import { requireBuyer } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /api/products - Public query: Returns ONLY approved products
 router.get('/', async (req: Request, res: Response) => {

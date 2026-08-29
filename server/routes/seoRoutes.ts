@@ -1,8 +1,9 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { ProductDocument } from '../models/types.ts';
+import type { ProductDocument } from '../models/types.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /sitemap.xml - Dynamic XML Sitemap
 router.get('/sitemap.xml', async (req: Request, res: Response) => {

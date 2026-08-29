@@ -10,7 +10,7 @@ import {
   DEFAULT_USER_AVATAR
 } from './userService.ts';
 import { storageService } from './storage/storageProvider.ts';
-import { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
+import type { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
 import { Logger } from '../utils/logger.ts';

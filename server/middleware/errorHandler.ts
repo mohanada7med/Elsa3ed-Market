@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { Logger } from '../utils/logger.ts';
-import { RequestWithId } from './requestId.ts';
+import type { RequestWithId } from './requestId.ts';
 
 export function errorHandler(
   err: any,

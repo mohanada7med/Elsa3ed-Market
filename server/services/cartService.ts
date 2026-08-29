@@ -1,5 +1,5 @@
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
-import {
+import type {
   CartDocument,
   CartItemDocument,
   PopulatedCartItem,

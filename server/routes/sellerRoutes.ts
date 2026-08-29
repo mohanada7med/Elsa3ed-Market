@@ -1,5 +1,7 @@
-import { Router, Response } from 'express';
-import { requireSeller, requireAuth, AuthenticatedRequest } from '../middleware/auth.ts';
+import express from 'express';
+import type { Response } from 'express';
+import { requireSeller, requireAuth } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import {
   getSellerProducts,
@@ -19,8 +21,14 @@ import {
   getSellerAnalytics,
   updateSellerProfile
 } from '../services/sellerService.ts';
+import {
+  createSellerPayoutRequest,
+  getSellerPayouts,
+  getSellerPayoutById,
+  cancelSellerPayout
+} from '../services/payoutService.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /api/seller/status - Accessible to any authenticated seller to check their review status
 router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
@@ -426,6 +434,97 @@ router.delete('/products/:id', async (req: AuthenticatedRequest, res: Response) 
       success: false,
       error: (error as Error).message || 'تعذر حذف المنتج',
       code: 'DELETE_ERROR'
+    });
+  }
+});
+
+// ==================== SELLER PAYOUT REQUESTS ====================
+
+// POST /api/seller/payouts - Create payout request
+router.post('/payouts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { amount, notes } = req.body;
+    const payout = await createSellerPayoutRequest(req.user!, amount, notes);
+
+    res.status(201).json({
+      success: true,
+      message: 'تم إرسال طلب صرف المستحقات بنجاح وهو قيد المراجعة',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Error creating payout request:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر إنشاء طلب صرف المستحقات',
+      code: 'PAYOUT_REQUEST_ERROR'
+    });
+  }
+});
+
+// GET /api/seller/payouts - Get all payouts and financial balance summary
+router.get('/payouts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = await getSellerPayouts(req.user!);
+    res.json({
+      success: true,
+      data: result.payouts,
+      summary: result.summary
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Error fetching seller payouts:', error);
+    res.status(500).json({
+      success: false,
+      error: (error as Error).message || 'فشل في جلب طلبات صرف المستحقات',
+      code: 'PAYOUT_FETCH_ERROR'
+    });
+  }
+});
+
+// GET /api/seller/payouts/:id - Get single payout details
+router.get('/payouts/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const payout = await getSellerPayoutById(req.user!, req.params.id);
+    if (!payout) {
+      return res.status(404).json({
+        success: false,
+        error: 'طلب الصرف غير موجود',
+        code: 'PAYOUT_NOT_FOUND'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: payout
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Error fetching payout by ID:', error);
+    const msg = (error as Error).message;
+    const status = msg.includes('غير مصرح') ? 403 : 400;
+    res.status(status).json({
+      success: false,
+      error: msg || 'تعذر جلب تفاصيل طلب الصرف',
+      code: 'PAYOUT_ERROR'
+    });
+  }
+});
+
+// PATCH /api/seller/payouts/:id/cancel - Cancel pending payout
+router.patch('/payouts/:id/cancel', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const payout = await cancelSellerPayout(req.user!, req.params.id);
+    res.json({
+      success: true,
+      message: 'تم إلغاء طلب صرف المستحقات بنجاح',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[SellerRoutes] Error cancelling payout:', error);
+    const msg = (error as Error).message;
+    const status = msg.includes('غير مصرح') ? 403 : 400;
+    res.status(status).json({
+      success: false,
+      error: msg || 'تعذر إلغاء طلب صرف المستحقات',
+      code: 'PAYOUT_CANCEL_ERROR'
     });
   }
 });

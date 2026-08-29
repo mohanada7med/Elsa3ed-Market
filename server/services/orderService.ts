@@ -1,5 +1,5 @@
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
-import {
+import type {
   OrderDocument,
   OrderItemSnapshot,
   OrderAddressDocument,
@@ -8,7 +8,7 @@ import {
   PaymentStatus,
   ProductDocument
 } from '../models/types.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { getCart, clearCart } from './cartService.ts';
 import { incrementCouponUsage } from './discountService.ts';
 import { addAuditLog } from './auditService.ts';

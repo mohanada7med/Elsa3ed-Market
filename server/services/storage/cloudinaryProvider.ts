@@ -1,10 +1,11 @@
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
+import type { UploadApiResponse } from 'cloudinary';
 import dotenv from 'dotenv';
 dotenv.config();
 
 import { validateImage } from '../../utils/imageValidator.ts';
 import { Logger } from '../../utils/logger.ts';
-import { IStorageProvider, UploadFileOptions, UploadResult } from './storageProvider.ts';
+import type { IStorageProvider, UploadFileOptions, UploadResult } from './storageProvider.ts';
 
 /**
  * Cloudinary Storage Provider

@@ -1,5 +1,7 @@
-import { Router, Response } from 'express';
-import { requireAdmin, AuthenticatedRequest } from '../middleware/auth.ts';
+import express from 'express';
+import type { Response } from 'express';
+import { requireAdmin } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import {
   getPendingProducts,
   getAllAdminProducts,
@@ -40,9 +42,24 @@ import {
   completePasswordResetRequest,
   rejectPasswordResetRequest
 } from '../services/passwordResetService.ts';
+import {
+  getAllDiscounts,
+  createDiscount,
+  updateDiscount,
+  deleteDiscount,
+  toggleDiscountStatus
+} from '../services/discountService.ts';
+import {
+  getAdminPayouts,
+  getAdminPayoutById,
+  adminApprovePayout,
+  adminRejectPayout,
+  adminMarkProcessing,
+  adminMarkPaid
+} from '../services/payoutService.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 
-const router = Router();
+const router = express.Router();
 
 // Apply requireAdmin to all /api/admin routes
 router.use(requireAdmin);
@@ -861,6 +878,277 @@ router.delete('/users/:userId', async (req: AuthenticatedRequest, res: Response)
       success: false,
       error: error?.message || 'تعذر إتمام عملية حذف الحساب',
       code: 'USER_DELETE_ERROR'
+    });
+  }
+});
+
+// ==================== DISCOUNTS & COUPONS MANAGEMENT ====================
+
+// GET /api/admin/discounts - List all discounts
+router.get('/discounts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const discounts = await getAllDiscounts();
+    res.json({
+      success: true,
+      count: discounts.length,
+      data: discounts
+    });
+  } catch (error: any) {
+    console.error('Error fetching discounts:', error);
+    res.status(500).json({
+      success: false,
+      error: 'حدث خطأ أثناء جلب كوبونات الخصم'
+    });
+  }
+});
+
+// POST /api/admin/discounts - Create a new discount
+router.post('/discounts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { code, discountPercent, maxDiscount, minOrderValue, active, validUntil, description } = req.body;
+    if (!code || !discountPercent) {
+      return res.status(400).json({
+        success: false,
+        error: 'كود الخصم ونسبة الخصم حقول إلزامية'
+      });
+    }
+
+    const newDiscount = await createDiscount({
+      code,
+      discountPercent: Number(discountPercent),
+      maxDiscount: maxDiscount !== undefined ? Number(maxDiscount) : undefined,
+      minOrderValue: Number(minOrderValue || 0),
+      active: active !== undefined ? Boolean(active) : true,
+      validUntil,
+      description
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'تم إنشاء كود الخصم بنجاح',
+      data: newDiscount
+    });
+  } catch (error: any) {
+    console.error('Error creating discount:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل إنشاء كود الخصم'
+    });
+  }
+});
+
+// PUT /api/admin/discounts/:id - Update discount
+router.put('/discounts/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const updated = await updateDiscount(req.params.id, req.body);
+    res.json({
+      success: true,
+      message: 'تم تحديث كود الخصم بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    console.error('Error updating discount:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل تعديل كود الخصم'
+    });
+  }
+});
+
+// DELETE /api/admin/discounts/:id - Delete discount
+router.delete('/discounts/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const success = await deleteDiscount(req.params.id);
+    if (!success) {
+      return res.status(404).json({
+        success: false,
+        error: 'كود الخصم غير موجود'
+      });
+    }
+    res.json({
+      success: true,
+      message: 'تم حذف كود الخصم بنجاح'
+    });
+  } catch (error: any) {
+    console.error('Error deleting discount:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل حذف كود الخصم'
+    });
+  }
+});
+
+// PATCH & PUT /api/admin/discounts/:id/toggle - Toggle discount active state
+const handleToggleDiscount = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const toggled = await toggleDiscountStatus(req.params.id);
+    res.json({
+      success: true,
+      message: `تم ${toggled.active ? 'تفعيل' : 'تعطيل'} كود الخصم بنجاح`,
+      data: toggled
+    });
+  } catch (error: any) {
+    console.error('Error toggling discount:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل تغيير حالة كود الخصم'
+    });
+  }
+};
+
+router.patch('/discounts/:id/toggle', handleToggleDiscount);
+router.put('/discounts/:id/toggle', handleToggleDiscount);
+
+// ==================== ADMIN PAYOUTS MANAGEMENT ====================
+
+// GET /api/admin/payouts - Get all platform payout requests with summary metrics
+router.get('/payouts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const filters = {
+      status: req.query.status as string,
+      search: req.query.search as string
+    };
+    const result = await getAdminPayouts(filters);
+    res.json({
+      success: true,
+      data: result.payouts,
+      summary: result.summary
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error fetching payouts:', error);
+    res.status(500).json({
+      success: false,
+      error: (error as Error).message || 'فشل في جلب طلبات صرف المستحقات',
+      code: 'ADMIN_PAYOUTS_ERROR'
+    });
+  }
+});
+
+// GET /api/admin/payouts/:id - Get single payout request with seller history
+router.get('/payouts/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const details = await getAdminPayoutById(req.params.id);
+    if (!details) {
+      return res.status(404).json({
+        success: false,
+        error: 'طلب الصرف غير موجود',
+        code: 'PAYOUT_NOT_FOUND'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: details
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error fetching payout details:', error);
+    res.status(500).json({
+      success: false,
+      error: (error as Error).message || 'فشل في جلب تفاصيل طلب الصرف',
+      code: 'PAYOUT_DETAILS_ERROR'
+    });
+  }
+});
+
+// PATCH /api/admin/payouts/:id/approve - Approve payout request
+router.patch('/payouts/:id/approve', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { note } = req.body;
+    const payout = await adminApprovePayout(req.user!, req.params.id, note);
+    res.json({
+      success: true,
+      message: 'تمت الموافقة على طلب صرف المستحقات بنجاح',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error approving payout:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر الموافقة على طلب الصرف',
+      code: 'PAYOUT_APPROVE_ERROR'
+    });
+  }
+});
+
+// PATCH /api/admin/payouts/:id/reject - Reject payout request
+router.patch('/payouts/:id/reject', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { reason } = req.body;
+    if (!reason || !reason.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى كتابة سبب رفض طلب الصرف بشكل واضح',
+        code: 'REJECTION_REASON_REQUIRED'
+      });
+    }
+
+    const payout = await adminRejectPayout(req.user!, req.params.id, reason);
+    res.json({
+      success: true,
+      message: 'تم رفض طلب صرف المستحقات بنجاح وإشعار البائع بالسبب',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error rejecting payout:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر رفض طلب الصرف',
+      code: 'PAYOUT_REJECT_ERROR'
+    });
+  }
+});
+
+// PATCH /api/admin/payouts/:id/processing - Mark payout request as processing
+router.patch('/payouts/:id/processing', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const payout = await adminMarkProcessing(req.user!, req.params.id);
+    res.json({
+      success: true,
+      message: 'تم تحديث حالة الطلب إلى قيد التنفيذ والتحويل',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error marking payout processing:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر تحديث حالة طلب الصرف',
+      code: 'PAYOUT_PROCESSING_ERROR'
+    });
+  }
+});
+
+// PATCH /api/admin/payouts/:id/paid - Mark payout as paid with permanent transaction details
+router.patch('/payouts/:id/paid', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { transactionReference, paymentMethod, paidAmount, paymentDate, adminNote } = req.body;
+
+    if (!transactionReference || !transactionReference.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'رقم المعاملة / إيصال التحويل مطلوب لتأكيد التحويل',
+        code: 'TRANSACTION_REFERENCE_REQUIRED'
+      });
+    }
+
+    const payout = await adminMarkPaid(req.user!, req.params.id, {
+      transactionReference,
+      paymentMethod,
+      paidAmount,
+      paymentDate,
+      adminNote
+    });
+
+    res.json({
+      success: true,
+      message: 'تم تسجيل تحويل المبلغ وتأكيد الصرف بنجاح وإشعار الحرفي',
+      data: payout
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error marking payout paid:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر تأكيد صرف المبلغ',
+      code: 'PAYOUT_PAID_ERROR'
     });
   }
 });

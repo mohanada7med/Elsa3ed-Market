@@ -1,5 +1,5 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { AuditLogDocument, UserRole } from '../models/types.ts';
+import type { AuditLogDocument, UserRole } from '../models/types.ts';
 
 export async function createAuditLog(entry: {
   actorId?: string;

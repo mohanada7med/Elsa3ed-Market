@@ -1,5 +1,5 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { FavoriteDocument } from '../models/types.ts';
+import type { FavoriteDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 
 const memoryFavorites: FavoriteDocument[] = [

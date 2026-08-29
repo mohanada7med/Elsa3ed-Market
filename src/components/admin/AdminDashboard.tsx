@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory } from '../../types.ts';
 import { api } from '../../services/api.ts';
+import { AdminPayouts } from './AdminPayouts.tsx';
 import {
   ShieldAlert,
   TrendingUp,
@@ -37,7 +38,9 @@ import {
   UserPlus,
   Eye,
   Copy,
-  KeyRound
+  KeyRound,
+  CreditCard,
+  DollarSign
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -69,7 +72,7 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets'
   >('overview');
 
   // Synchronize activeTab when navigation changes via URL or Header links
@@ -78,6 +81,7 @@ export const AdminDashboard: React.FC = () => {
     else if (activePage === 'admin-products') setActiveTab('approvals');
     else if (activePage === 'admin-buyers') setActiveTab('users');
     else if (activePage === 'admin-orders') setActiveTab('orders');
+    else if (activePage === 'admin-payouts') setActiveTab('payouts');
     else if (activePage === 'admin-categories') setActiveTab('categories');
     else if (activePage === 'admin-discounts') setActiveTab('coupons');
     else if (activePage === 'admin-audit-logs') setActiveTab('audit');
@@ -992,6 +996,19 @@ export const AdminDashboard: React.FC = () => {
 
         <button
           type="button"
+          id="admin-tab-payouts"
+          onClick={() => setActiveTab('payouts')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'payouts'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
+        >
+          <CreditCard className="w-4 h-4" />
+          <span>طلبات صرف المستحقات</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab('coupons')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'coupons'
             ? 'bg-[#B45F42] text-white shadow-xs'
@@ -1103,14 +1120,18 @@ export const AdminDashboard: React.FC = () => {
                     className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={prod.images[0]} alt="" className="w-14 h-14 rounded-xl object-cover border border-[#E8E1D9]" />
+                      <img
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                        alt=""
+                        className="w-14 h-14 rounded-xl object-cover border border-[#E8E1D9]"
+                      />
                       <div>
                         <h4 className="font-bold text-sm text-[#2D2A26]">{prod.title}</h4>
                         <p className="text-xs text-[#7A6F64]">
                           الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: {prod.price} ج.م
                         </p>
                         <p className="text-[11px] text-[#B45F42] mt-0.5">
-                          الخامات: {prod.specifications.material} • الصنعة: {prod.specifications.craftsmanship}
+                          الخامات: {prod.specifications?.material || 'خامات طبيعية'} • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
                         </p>
                       </div>
                     </div>
@@ -1227,7 +1248,7 @@ export const AdminDashboard: React.FC = () => {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-start gap-3.5">
                       <img
-                        src={prod.images[0]}
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                         alt={prod.title}
                         className="w-16 h-16 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
                       />
@@ -1243,7 +1264,7 @@ export const AdminDashboard: React.FC = () => {
                           الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: <strong className="text-[#B45F42]">{prod.price} ج.م</strong>
                         </p>
                         <p className="text-[11px] text-[#7A6F64]">
-                          الخامات: {prod.specifications.material} • أسلوب الصنع: {prod.specifications.craftsmanship}
+                          الخامات: {prod.specifications?.material || 'خامات طبيعية'} • أسلوب الصنع: {prod.specifications?.craftsmanship || 'يدوية'}
                         </p>
                       </div>
                     </div>
@@ -2621,6 +2642,9 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
+      {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
 
       {/* Category Add / Edit Modal (Phase 4) */}
       {isCategoryModalOpen && (

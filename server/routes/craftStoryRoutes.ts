@@ -1,7 +1,8 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { getAllCraftStories, getCraftStoryById } from '../services/craftStoryService.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /api/craft-stories - Public list of active craft stories
 router.get('/', async (req: Request, res: Response) => {

@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { PasswordResetRequestDocument, UserDocument } from '../models/types.ts';
+import type { PasswordResetRequestDocument, UserDocument } from '../models/types.ts';
 import { findUserByUsername, normalizeUsername } from './userService.ts';
 import { createNotification } from './notificationService.ts';
 import { createAuditLog } from './auditService.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { Logger } from '../utils/logger.ts';
 
 /**

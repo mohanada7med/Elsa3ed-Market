@@ -1,6 +1,6 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { ReviewDocument, ProductDocument, OrderDocument } from '../models/types.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { ReviewDocument, ProductDocument, OrderDocument } from '../models/types.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { createAuditLog } from './auditService.ts';
 
 /**

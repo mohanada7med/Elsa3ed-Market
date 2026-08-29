@@ -1,16 +1,18 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { register, login, verifyToken } from '../services/authService.ts';
 import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword } from '../services/userService.ts';
 import { createPasswordResetRequest } from '../services/passwordResetService.ts';
 import { getUserFavorites, toggleFavorite } from '../services/favoriteService.ts';
 import { getUserNotifications, markNotificationAsRead } from '../services/notificationService.ts';
-import { AuthenticatedRequest, requireAuth } from '../middleware/auth.ts';
+import { requireAuth } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
 import { uploadLimiter, forgotPasswordLimiter } from '../middleware/rateLimiter.ts';
 import { setAuthCookie, clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
 
-const router = Router();
+const router = express.Router();
 
 // Helper: Validate email format
 function isValidEmail(email: string): boolean {

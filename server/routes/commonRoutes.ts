@@ -1,11 +1,13 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { validateAndCalculateDiscount } from '../services/discountService.ts';
 import { getProductReviews, createProductReview } from '../services/reviewService.ts';
 import { getRecommendedProducts } from '../services/recommendationService.ts';
-import { AuthenticatedRequest, requireBuyer } from '../middleware/auth.ts';
+import { requireBuyer } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /api/categories
 router.get('/categories', async (req: Request, res: Response) => {

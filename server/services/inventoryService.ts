@@ -1,6 +1,6 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { ProductDocument, StockMovementDocument } from '../models/types.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { ProductDocument, StockMovementDocument } from '../models/types.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { createAuditLog } from './auditService.ts';
 
 export interface InventoryItemDTO {

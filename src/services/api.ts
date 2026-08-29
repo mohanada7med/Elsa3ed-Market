@@ -1,6 +1,44 @@
-import { Product, ProductStatus, Category, Seller, AuditLog, CraftStory, DiscountCoupon } from '../types.ts';
+import {
+  Product,
+  ProductStatus,
+  Category,
+  Seller,
+  AuditLog,
+  CraftStory,
+  DiscountCoupon,
+  PayoutRequest,
+  SellerPayoutSummary,
+  AdminPayoutSummary,
+  PayoutMethod
+} from '../types.ts';
 
 const API_BASE = '/api';
+const TOKEN_KEY = 'saeed_auth_token';
+
+export function getStoredToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredToken(token: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+  } catch {}
+}
+
+export function clearStoredToken(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch {}
+}
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -11,15 +49,26 @@ export interface ApiResponse<T> {
   count?: number;
 }
 
-function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string }): HeadersInit {
+function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string }, extraHeaders?: Record<string, string>): HeadersInit {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    ...(extraHeaders || {})
   };
+
+  const token = getStoredToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+    headers['x-auth-token'] = token;
+  }
+
   if (user?.id) {
     headers['x-user-id'] = user.id;
   }
   if (user?.role) {
     headers['x-user-role'] = user.role;
+  }
+  if (user?.sellerId) {
+    headers['x-seller-id'] = user.sellerId;
   }
   return headers;
 }
@@ -782,6 +831,9 @@ export const api = {
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تسجيل حساب الورشة');
     }
+    if (json.data.token) {
+      setStoredToken(json.data.token);
+    }
     return json.data;
   },
 
@@ -1006,15 +1058,19 @@ export const api = {
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل تسجيل الدخول');
     }
+    if (json.data.token) {
+      setStoredToken(json.data.token);
+    }
     return json.data;
   },
 
   async logout(): Promise<{ success: boolean; message: string }> {
+    clearStoredToken();
     try {
       const res = await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
+        headers: getAuthHeaders()
       });
       const json = await res.json();
       return json;
@@ -1044,6 +1100,9 @@ export const api = {
     const json: ApiResponse<{ user: any; token?: string }> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل إنشاء الحساب');
+    }
+    if (json.data.token) {
+      setStoredToken(json.data.token);
     }
     return json.data;
   },
@@ -1271,6 +1330,210 @@ export const api = {
     const json: ApiResponse<DiscountCoupon> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تغيير حالة كود الخصم');
+    }
+    return json.data;
+  },
+
+  // ==================== SELLER PAYOUT API ====================
+
+  async createSellerPayout(
+    user: { id: string; role: string; sellerId?: string },
+    data: { amount: number; notes?: string }
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/seller/payouts`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إرسال طلب صرف المستحقات');
+    }
+    return json.data;
+  },
+
+  async getSellerPayouts(
+    user: { id: string; role: string; sellerId?: string }
+  ): Promise<{ payouts: PayoutRequest[]; summary: SellerPayoutSummary }> {
+    const res = await fetch(`${API_BASE}/seller/payouts`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<PayoutRequest[]> & { summary?: SellerPayoutSummary } = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في جلب طلبات صرف المستحقات');
+    }
+    return {
+      payouts: json.data || [],
+      summary: json.summary || {
+        totalEarnings: 0,
+        totalSalesCount: 0,
+        totalPaid: 0,
+        pendingProcessing: 0,
+        availableBalance: 0,
+        hasPayoutInfo: false
+      }
+    };
+  },
+
+  async getSellerPayoutById(
+    user: { id: string; role: string; sellerId?: string },
+    id: string
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/seller/payouts/${id}`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'طلب الصرف غير موجود');
+    }
+    return json.data;
+  },
+
+  async cancelSellerPayout(
+    user: { id: string; role: string; sellerId?: string },
+    id: string
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/seller/payouts/${id}/cancel`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إلغاء طلب صرف المستحقات');
+    }
+    return json.data;
+  },
+
+  // ==================== ADMIN PAYOUT API ====================
+
+  async getAdminPayouts(
+    user: { id: string; role: string },
+    filters?: { status?: string; search?: string }
+  ): Promise<{ payouts: PayoutRequest[]; summary: AdminPayoutSummary }> {
+    const params = new URLSearchParams();
+    if (filters?.status && filters.status !== 'all') params.append('status', filters.status);
+    if (filters?.search) params.append('search', filters.search);
+
+    const queryStr = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${API_BASE}/admin/payouts${queryStr}`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<PayoutRequest[]> & { summary?: AdminPayoutSummary } = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في جلب طلبات صرف المستحقات');
+    }
+    return {
+      payouts: json.data || [],
+      summary: json.summary || {
+        totalPendingCount: 0,
+        totalPendingAmount: 0,
+        totalApprovedProcessingCount: 0,
+        totalApprovedProcessingAmount: 0,
+        totalPaidCount: 0,
+        totalPaidAmount: 0,
+        totalRejectedCount: 0
+      }
+    };
+  },
+
+  async getAdminPayoutById(
+    user: { id: string; role: string },
+    id: string
+  ): Promise<{
+    payout: PayoutRequest;
+    seller: Seller | null;
+    currentAvailableBalance: number;
+    sellerPreviousPayouts: PayoutRequest[];
+    totalSellerEarnings: number;
+  }> {
+    const res = await fetch(`${API_BASE}/admin/payouts/${id}`, {
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب تفاصيل طلب الصرف');
+    }
+    return json.data;
+  },
+
+  async approveAdminPayout(
+    user: { id: string; role: string },
+    id: string,
+    note?: string
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/admin/payouts/${id}/approve`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ note })
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في الموافقة على طلب الصرف');
+    }
+    return json.data;
+  },
+
+  async rejectAdminPayout(
+    user: { id: string; role: string },
+    id: string,
+    reason: string
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/admin/payouts/${id}/reject`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ reason })
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في رفض طلب الصرف');
+    }
+    return json.data;
+  },
+
+  async markAdminPayoutProcessing(
+    user: { id: string; role: string },
+    id: string
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/admin/payouts/${id}/processing`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث حالة الطلب إلى قيد التنفيذ');
+    }
+    return json.data;
+  },
+
+  async markAdminPayoutPaid(
+    user: { id: string; role: string },
+    id: string,
+    data: {
+      transactionReference: string;
+      paymentMethod?: PayoutMethod;
+      paidAmount?: number;
+      paymentDate?: string;
+      adminNote?: string;
+    }
+  ): Promise<PayoutRequest> {
+    const res = await fetch(`${API_BASE}/admin/payouts/${id}/paid`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<PayoutRequest> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تأكيد تحويل المبلغ وتسجيل الدفع');
     }
     return json.data;
   }

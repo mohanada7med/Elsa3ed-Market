@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { UserRole, SellerStatus } from '../models/types.ts';
+import type { Request, Response, NextFunction } from 'express';
+import type { UserRole, SellerStatus } from '../models/types.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 import { verifyToken } from '../services/authService.ts';
 import { getAuthTokenFromRequest } from '../config/authCookie.ts';

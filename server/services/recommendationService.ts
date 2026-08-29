@@ -1,5 +1,5 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { ProductDocument } from '../models/types.ts';
+import type { ProductDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 
 export async function getRecommendedProducts(options: {

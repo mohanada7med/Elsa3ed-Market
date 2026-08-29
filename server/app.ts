@@ -1,4 +1,5 @@
-import express, { Express } from 'express';
+import express from 'express';
+import type { Express } from 'express';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import { validateAndGetEnv } from './config/env.ts';

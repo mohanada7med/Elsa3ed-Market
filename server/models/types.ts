@@ -244,9 +244,11 @@ export interface DiscountCouponDocument {
   maxDiscount?: number;
   minOrderValue: number;
   active: boolean;
-  validUntil: string;
+  validUntil?: string;
   usageCount: number;
-  description: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserAddress {
@@ -361,6 +363,68 @@ export interface CraftStoryDocument {
   active: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export type PayoutStatus = 'pending' | 'approved' | 'processing' | 'paid' | 'rejected' | 'cancelled';
+export type PayoutMethod = 'vodafone_cash' | 'instapay' | 'bank_transfer';
+
+export interface PayoutDocument {
+  id: string;
+  sellerId: string;
+  sellerName?: string;
+  sellerBrandName?: string;
+  sellerGovernorate?: string;
+  requestedAmount: number;
+  approvedAmount?: number;
+  paidAmount?: number;
+  currency: string;
+  status: PayoutStatus;
+  paymentMethod: PayoutMethod;
+  paymentDetailsSnapshot: {
+    method: PayoutMethod;
+    accountNumber: string;
+    accountHolderName?: string;
+    bankName?: string;
+  };
+  sellerBalanceAtRequest: number;
+  transactionReference?: string;
+  paymentDate?: string;
+  rejectionReason?: string | null;
+  adminNote?: string | null;
+  sellerNotes?: string | null;
+  requestedAt: string;
+  approvedAt?: string | null;
+  processingAt?: string | null;
+  paidAt?: string | null;
+  rejectedAt?: string | null;
+  cancelledAt?: string | null;
+  reviewedBy?: string | null;
+  paidBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SellerPayoutSummary {
+  totalEarnings: number;
+  totalSalesCount: number;
+  totalPaid: number;
+  pendingProcessing: number;
+  availableBalance: number;
+  hasPayoutInfo: boolean;
+  payoutInfo?: {
+    method: PayoutMethod;
+    account: string;
+  };
+}
+
+export interface AdminPayoutSummary {
+  totalPendingCount: number;
+  totalPendingAmount: number;
+  totalApprovedProcessingCount: number;
+  totalApprovedProcessingAmount: number;
+  totalPaidCount: number;
+  totalPaidAmount: number;
+  totalRejectedCount: number;
 }
 
 

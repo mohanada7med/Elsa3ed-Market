@@ -1,7 +1,8 @@
-import { Router, Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { getAllCategories, getCategoryById } from '../services/categoryService.ts';
 
-const router = Router();
+const router = express.Router();
 
 // GET /api/categories - Public list of active categories
 router.get('/', async (req: Request, res: Response) => {

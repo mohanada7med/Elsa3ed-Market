@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { UserDocument, UserRole, UserAddress, SellerStatus } from '../models/types.ts';
+import type { UserDocument, UserRole, UserAddress, SellerStatus } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { storageService } from './storage/storageProvider.ts';
 import { createAuditLog } from './auditService.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 
 /**
  * Extract Cloudinary public_id from Cloudinary URL or namespace key

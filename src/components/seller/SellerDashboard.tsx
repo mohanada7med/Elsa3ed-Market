@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { Product, Governorate, OrderStatus, ProductStatus } from '../../types.ts';
 import { api } from '../../services/api.ts';
+import { SellerPayouts } from './SellerPayouts.tsx';
 import {
   Store,
   Package,
@@ -72,7 +73,7 @@ export const SellerDashboard: React.FC = () => {
     if (activePage === 'seller-products') setActiveTab('products');
     else if (activePage === 'seller-inventory') setActiveTab('inventory');
     else if (activePage === 'seller-orders') setActiveTab('orders');
-    else if (activePage === 'seller-analytics') setActiveTab('payouts');
+    else if (activePage === 'seller-payouts' || activePage === 'seller-analytics') setActiveTab('payouts');
     else if (activePage === 'seller-account') setActiveTab('settings');
     else if (activePage === 'seller-dashboard') setActiveTab('overview');
   }, [activePage]);
@@ -194,11 +195,11 @@ export const SellerDashboard: React.FC = () => {
     setPrice(prod.price);
     setOriginalPrice(prod.originalPrice || prod.price);
     setStockCount(prod.stockCount);
-    setGovernorate(prod.specifications.originGovernorate || currentUser.governorate || 'قنا');
-    setIsHandmade(prod.isHandmade);
-    setDescription(prod.description);
-    setMaterial(prod.specifications.material);
-    setCraftsmanship(prod.specifications.craftsmanship);
+    setGovernorate(prod.specifications?.originGovernorate || currentUser.governorate || 'قنا');
+    setIsHandmade(prod.isHandmade ?? true);
+    setDescription(prod.description || '');
+    setMaterial(prod.specifications?.material || 'طمي نيلي معتق');
+    setCraftsmanship(prod.specifications?.craftsmanship || 'صناعة يدوية أصيلة');
     setSelectedImages([]);
     setExistingImages(prod.images || []);
     setUploadError(null);
@@ -311,7 +312,7 @@ export const SellerDashboard: React.FC = () => {
           description,
           images: finalImages,
           specifications: {
-            ...editingProduct.specifications,
+            ...(editingProduct.specifications || {}),
             material,
             originGovernorate: governorate,
             craftsmanship
@@ -857,7 +858,7 @@ export const SellerDashboard: React.FC = () => {
           }`}
         >
           <CreditCard className="w-4 h-4" />
-          <span>المستحقات والأرباح</span>
+          <span>طلب صرف المستحقات</span>
         </button>
 
         <button
@@ -1038,7 +1039,7 @@ export const SellerDashboard: React.FC = () => {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-start sm:items-center gap-3.5">
                       <img
-                        src={prod.images[0]}
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                         alt={prod.title}
                         className="w-16 h-16 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
                       />
@@ -1051,7 +1052,7 @@ export const SellerDashboard: React.FC = () => {
                           </span>
                         </div>
                         <p className="text-xs text-[#7A6F64]">
-                          السعر: <strong className="text-[#B45F42]">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 font-bold' : 'text-emerald-700 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications.craftsmanship}
+                          السعر: <strong className="text-[#B45F42]">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 font-bold' : 'text-emerald-700 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
                         </p>
                         <p className="text-[11px] text-[#7A6F64]">
                           تاريخ الإدراج: {prod.createdAt} • المحافظة: {prod.sellerGovernorate}
@@ -1219,13 +1220,13 @@ export const SellerDashboard: React.FC = () => {
                         <td className="py-3.5 pr-2">
                           <div className="flex items-center gap-3">
                             <img
-                              src={prod.images[0]}
+                              src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                               alt={prod.title}
                               className="w-10 h-10 rounded-lg object-cover border border-[#E8E1D9]"
                             />
                             <div>
                               <span className="font-bold text-[#2D2A26] block">{prod.title}</span>
-                              <span className="text-[10px] text-[#7A6F64]">{prod.specifications.material}</span>
+                              <span className="text-[10px] text-[#7A6F64]">{prod.specifications?.material || 'خامات طبيعية'}</span>
                             </div>
                           </div>
                         </td>
@@ -1281,7 +1282,7 @@ export const SellerDashboard: React.FC = () => {
                   <div key={prod.id} className="p-3.5 rounded-2xl bg-[#FDFBF7] border border-[#E8E1D9] space-y-3 shadow-2xs">
                     <div className="flex items-center gap-3">
                       <img
-                        src={prod.images[0]}
+                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                         alt={prod.title}
                         className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
                       />
@@ -1438,37 +1439,10 @@ export const SellerDashboard: React.FC = () => {
 
       {/* TAB 4: PAYOUTS */}
       {activeTab === 'payouts' && (
-        <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">المستحقات والأرباح</h3>
-              <p className="text-xs text-[#7A6F64]">سحب الأرباح فورياً إلى محفظة فودافون كاش أو حساب إنستاباي</p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsPayoutModalOpen(true)}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold"
-            >
-              طلب تحويل أرباح
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-              <span className="text-xs text-emerald-800 font-bold block mb-1">الرصيد المتاح للسحب</span>
-              <span className="text-2xl font-black text-emerald-950 font-mono">4,850 ج.م</span>
-            </div>
-            <div className="p-4 rounded-xl bg-[#F3EFE9] border border-[#E8E1D9]">
-              <span className="text-xs text-[#7A6F64] block mb-1">أرباح معلقة (طلبات قيد التوصيل)</span>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">1,200 ج.م</span>
-            </div>
-            <div className="p-4 rounded-xl bg-[#F3EFE9] border border-[#E8E1D9]">
-              <span className="text-xs text-[#7A6F64] block mb-1">إجمالي ما تم سحبه</span>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">18,600 ج.م</span>
-            </div>
-          </div>
-        </div>
+        <SellerPayouts
+          user={currentUser}
+          onNavigateToAccount={() => setActiveTab('settings')}
+        />
       )}
 
       {/* TAB 5: WORKSHOP SETTINGS & PROFILE */}

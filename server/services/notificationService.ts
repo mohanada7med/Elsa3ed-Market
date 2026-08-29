@@ -1,5 +1,5 @@
 import { getDatabase } from '../db/mongodb.ts';
-import { NotificationDocument } from '../models/types.ts';
+import type { NotificationDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 
 const memoryNotifications: NotificationDocument[] = [

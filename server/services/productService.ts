@@ -1,7 +1,7 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { ProductDocument, ProductStatus } from '../models/types.ts';
+import type { ProductDocument, ProductStatus } from '../models/types.ts';
 import { createAuditLog } from './auditService.ts';
-import { AuthenticatedUser } from '../middleware/auth.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { cacheService } from './cacheService.ts';
 import { Logger } from '../utils/logger.ts';
 

@@ -1,5 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
 import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
@@ -39,6 +40,7 @@ class MemoryStore {
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
+  payouts: import('../models/types.ts').PayoutDocument[] = [];
 }
 export const memoryDb = new MemoryStore();
 
@@ -151,6 +153,83 @@ async function seedMongoDatabase(database: Db) {
       Logger.info('[MongoDB] Initialized standard platform categories collection');
     }
 
+    // Seed default baseline admin and seller accounts if missing
+    try {
+      const defaultPasswordHash = await bcrypt.hash('password123', 10);
+      
+      const adminExists = await database.collection('users').findOne({ usernameNormalized: 'admin' });
+      if (!adminExists) {
+        await database.collection('users').insertOne({
+          id: 'user-admin-1',
+          username: 'admin',
+          usernameNormalized: 'admin',
+          name: 'أ/ محمود الهواري (مدير المنصة)',
+          email: 'admin@elsa3ed.eg',
+          phone: '01000000000',
+          role: 'admin',
+          passwordHash: defaultPasswordHash,
+          governorate: 'قنا',
+          savedAddresses: [],
+          status: 'active',
+          avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        Logger.info('[MongoDB] Seeded default platform admin user (@admin)');
+      }
+
+      const sellerExists = await database.collection('users').findOne({ usernameNormalized: 'seller1' });
+      if (!sellerExists) {
+        await database.collection('users').insertOne({
+          id: 'user-seller-1',
+          username: 'seller1',
+          usernameNormalized: 'seller1',
+          name: 'عم حمزة القناوي',
+          email: 'seller1@elsa3ed.eg',
+          phone: '01011111111',
+          role: 'seller',
+          passwordHash: defaultPasswordHash,
+          sellerId: 'seller-1',
+          sellerStatus: 'approved',
+          governorate: 'قنا',
+          savedAddresses: [],
+          status: 'active',
+          avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+
+        await database.collection('sellers').updateOne(
+          { id: 'seller-1' },
+          {
+            $setOnInsert: {
+              id: 'seller-1',
+              userId: 'user-seller-1',
+              name: 'عم حمزة القناوي',
+              workshopName: 'ورشة الفخار القناوي الأصيل',
+              phone: '01011111111',
+              email: 'seller1@elsa3ed.eg',
+              governorate: 'قنا',
+              city: 'قنا',
+              address: 'حي القناوية، مركز قنا',
+              specialty: 'صناعة الفخار والقلل القناوي',
+              status: 'approved',
+              story: 'حرفة ورثتها أباً عن جد منذ أكثر من 40 عاماً',
+              rating: 4.9,
+              reviewCount: 28,
+              totalSales: 154,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          },
+          { upsert: true }
+        );
+        Logger.info('[MongoDB] Seeded default seller user (@seller1)');
+      }
+    } catch (userSeedErr) {
+      Logger.error('[MongoDB] Error seeding default users:', userSeedErr);
+    }
+
     // Comprehensive production indexes for high-throughput queries
     try {
       await database.collection('users').updateMany({ email: null }, { $unset: { email: "" } });
@@ -198,6 +277,9 @@ async function seedMongoDatabase(database: Db) {
     await database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true });
     await database.collection('notifications').createIndex({ userId: 1, createdAt: -1 });
     await database.collection('stock_movements').createIndex({ sellerId: 1, createdAt: -1 });
+    await database.collection('payouts').createIndex({ sellerId: 1, createdAt: -1 });
+    await database.collection('payouts').createIndex({ status: 1, createdAt: -1 });
+    await database.collection('payouts').createIndex({ id: 1 }, { unique: true });
     await database.collection('password_resets').createIndex({ tokenHash: 1 });
     await database.collection('password_resets').createIndex({ userId: 1 });
     try {

@@ -1,5 +1,7 @@
-import { Router, Response } from 'express';
-import { requireBuyer, AuthenticatedRequest } from '../middleware/auth.ts';
+import express from 'express';
+import type { Response } from 'express';
+import { requireBuyer } from '../middleware/auth.ts';
+import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import {
   getCart,
   addToCart,
@@ -8,7 +10,7 @@ import {
   clearCart
 } from '../services/cartService.ts';
 
-const router = Router();
+const router = express.Router();
 
 // Strictly enforce buyer-only role on all cart endpoints
 router.use(requireBuyer);
