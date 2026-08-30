@@ -7,7 +7,9 @@ import {
   getAllAdminProducts,
   approveProduct,
   rejectProduct,
-  deleteProduct
+  deleteProduct,
+  updateProduct,
+  createProduct
 } from '../services/productService.ts';
 import { getAuditLogs } from '../services/auditService.ts';
 import {
@@ -33,7 +35,7 @@ import {
   getAdminReviews,
   moderateReview
 } from '../services/reviewService.ts';
-import { adminUpdateSellerStatus } from '../services/sellerService.ts';
+import { adminUpdateSellerStatus, adminUpdateSellerProfile } from '../services/sellerService.ts';
 import {
   getUsersWithFilters,
   getUserDetailsForAdmin,
@@ -408,6 +410,36 @@ router.put('/sellers/:id/status', async (req: AuthenticatedRequest, res: Respons
   }
 });
 
+// PUT /api/admin/sellers/:id - Admin update any seller's profile, cover image, and details
+router.put('/sellers/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const sellerId = req.params.id;
+    if (!sellerId || !sellerId.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'معرف الورشة/البائع مطلوب',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const updated = await adminUpdateSellerProfile(req.user!, sellerId, req.body);
+    const { passwordHash, ...sanitized } = updated as any;
+
+    res.json({
+      success: true,
+      message: 'تم تحديث بيانات وغلاف الورشة بواسطة الإدارة بنجاح',
+      data: sanitized
+    });
+  } catch (error: any) {
+    console.error('Error updating seller profile by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message || 'فشل في تحديث بيانات الورشة',
+      code: 'UPDATE_SELLER_ERROR'
+    });
+  }
+});
+
 // ==================== ORDERS MANAGEMENT ====================
 
 // GET /api/admin/orders - List all orders with filters
@@ -616,6 +648,100 @@ router.delete('/products/:id', async (req: AuthenticatedRequest, res: Response) 
       success: false,
       error: (error as Error).message || 'تعذر حذف المنتج',
       code: 'DELETE_ERROR'
+    });
+  }
+});
+
+// POST /api/admin/products - Create product by admin
+router.post('/products', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      title,
+      titleEn,
+      price,
+      originalPrice,
+      discountPercent,
+      description,
+      categoryId,
+      categoryName,
+      stockCount,
+      specifications,
+      images,
+      tags,
+      isHandmade,
+      isHeritage,
+      sellerId,
+      sellerName,
+      sellerGovernorate,
+      approvalStatus
+    } = req.body;
+
+    if (!title || !price || !categoryId) {
+      return res.status(400).json({
+        success: false,
+        error: 'اسم المنتج، السعر، والتصنيف حقول مطلوبة',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const created = await createProduct(
+      req.user!,
+      {
+        title,
+        titleEn,
+        price: Number(price),
+        originalPrice: originalPrice ? Number(originalPrice) : undefined,
+        discountPercent: discountPercent ? Number(discountPercent) : undefined,
+        description: description || '',
+        categoryId,
+        categoryName: categoryName || 'حرف صعيدية',
+        stockCount: Number(stockCount || 0),
+        inStock: Number(stockCount || 0) > 0,
+        specifications: specifications || {},
+        images: images || [],
+        tags: tags || [],
+        isHandmade: isHandmade !== undefined ? Boolean(isHandmade) : true,
+        isHeritage: isHeritage !== undefined ? Boolean(isHeritage) : true,
+        sellerId: sellerId || req.user!.id,
+        sellerName: sellerName || 'إدارة المنصة',
+        sellerGovernorate: sellerGovernorate || 'أسيوط',
+        approvalStatus: approvalStatus || 'approved'
+      },
+      'approved'
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'تم إضافة ونشر المنتج بواسطة الإدارة بنجاح',
+      data: created
+    });
+  } catch (error) {
+    console.error('Error creating product by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر إضافة المنتج',
+      code: 'CREATE_ERROR'
+    });
+  }
+});
+
+// PUT /api/admin/products/:id - Update product by admin
+router.put('/products/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const productId = req.params.id;
+    const updated = await updateProduct(req.user!, productId, req.body);
+
+    res.json({
+      success: true,
+      message: 'تم تحديث بيانات المنتج بواسطة الإدارة بنجاح',
+      data: updated
+    });
+  } catch (error) {
+    console.error('Error updating product by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر تحديث بيانات المنتج',
+      code: 'UPDATE_ERROR'
     });
   }
 });

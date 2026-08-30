@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory } from '../../types.ts';
+import { Product, OrderStatus, ProductStatus, Category, Review, CraftStory, Seller, Governorate, CraftReel } from '../../types.ts';
 import { api } from '../../services/api.ts';
+import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
+import { NotificationsManager } from '../common/NotificationsManager.tsx';
+import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
+import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import {
   ShieldAlert,
   TrendingUp,
@@ -41,8 +45,75 @@ import {
   KeyRound,
   CreditCard,
   DollarSign,
-  Wallet
+  Wallet,
+  Upload,
+  Image as ImageIcon,
+  ExternalLink,
+  Film,
+  Play,
+  Heart,
+  Music,
+  Bell
 } from 'lucide-react';
+
+const HERITAGE_COVER_PRESETS = [
+  {
+    id: 'pottery-qena',
+    title: 'فخار وقناطر قنا ونقادة التراثية',
+    region: 'قنا',
+    craft: 'فخار طمي النيل خزفي وحرف يدوية',
+    url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'rugs-sohag',
+    title: 'سجاد وكليم صوف أخميم التراثي',
+    region: 'سوهاج',
+    craft: 'نول يدوي ومنسوجات صوف وحرير',
+    url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'tally-asyut',
+    title: 'تلي وتطريز خيوط الفضة التراثي',
+    region: 'أسيوط',
+    craft: 'تطريز تلي صعيدي أصيل',
+    url: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'brass-luxor',
+    title: 'صواني ونقوش النحاس الأقصري',
+    region: 'الأقصر',
+    craft: 'نقش وتشكيل نحاس وزخارف عربية',
+    url: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'palm-aswan',
+    title: 'خوص ونخيل وتمور أسوان النوبية',
+    region: 'أسوان',
+    craft: 'جدل خوص وسلال نخيل نوبية',
+    url: 'https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'wood-craft',
+    title: 'أخشاب السرسوع والمشغولات الخشبية',
+    region: 'قنا / سوهاج',
+    craft: 'نجارة تقليدية وتطعيم صدف',
+    url: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'alabaster-luxor',
+    title: 'نحت الألباستر ومحاجر القرنة',
+    region: 'الأقصر',
+    craft: 'نحت يدوي على الألباستر والأحجار',
+    url: 'https://images.unsplash.com/photo-1599818817351-40995772654c?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'honey-herbs-minya',
+    title: 'عسل جبلي وأعشاب برية بالمنيا',
+    region: 'المنيا',
+    craft: 'مناحل طبيعية ومقطرات عشبية',
+    url: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=1200&q=80'
+  }
+];
 
 export const AdminDashboard: React.FC = () => {
   const {
@@ -51,10 +122,13 @@ export const AdminDashboard: React.FC = () => {
     approveProduct,
     rejectProduct,
     deleteProduct,
+    addProduct,
+    updateProduct,
     sellers,
     approveSeller,
     rejectSeller,
     suspendSeller,
+    updateSeller,
     refreshSellers,
     orders,
     refreshOrders,
@@ -74,8 +148,33 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'notifications'
   >('overview');
+
+  // Reels Management State for Admin
+  const [adminReels, setAdminReels] = useState<CraftReel[]>([]);
+  const [isAdminReelUploadOpen, setIsAdminReelUploadOpen] = useState(false);
+  const [adminSelectedReelPreviewId, setAdminSelectedReelPreviewId] = useState<string | null>(null);
+  const [isAdminReelPreviewOpen, setIsAdminReelPreviewOpen] = useState(false);
+  const [adminReelSearchTerm, setAdminReelSearchTerm] = useState('');
+  const [adminReelGovFilter, setAdminReelGovFilter] = useState('all');
+
+  useEffect(() => {
+    setAdminReels(craftReelsService.getReels());
+  }, []);
+
+  const handleAdminReelUploaded = (newReel: CraftReel) => {
+    setAdminReels(craftReelsService.getReels());
+    addToast('تم نشر الفيديو بنجاح', `تمت إضافة مقطع "${newReel.title}" إلى المنصة`, 'success');
+  };
+
+  const handleAdminDeleteReel = (reelId: string, reelTitle: string) => {
+    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" من المنصة؟`)) {
+      craftReelsService.deleteReel(reelId);
+      setAdminReels(craftReelsService.getReels());
+      addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح`, 'info');
+    }
+  };
 
   // Synchronize activeTab when navigation changes via URL or Header links
   useEffect(() => {
@@ -157,6 +256,49 @@ export const AdminDashboard: React.FC = () => {
   const [selectedSellerForAction, setSelectedSellerForAction] = useState<{ id: string; name: string; action: 'reject' | 'suspend' } | null>(null);
   const [sellerActionReason, setSellerActionReason] = useState('');
   const [isProcessingSellerAction, setIsProcessingSellerAction] = useState(false);
+
+  // Admin Edit Seller Modal State
+  const [selectedSellerForEditProfile, setSelectedSellerForEditProfile] = useState<Seller | null>(null);
+  const [isUpdatingSellerProfile, setIsUpdatingSellerProfile] = useState(false);
+  const [sellerEditBrandName, setSellerEditBrandName] = useState('');
+  const [sellerEditName, setSellerEditName] = useState('');
+  const [sellerEditPhone, setSellerEditPhone] = useState('');
+  const [sellerEditEmail, setSellerEditEmail] = useState('');
+  const [sellerEditGovernorate, setSellerEditGovernorate] = useState<Governorate>('قنا');
+  const [sellerEditSpecialty, setSellerEditSpecialty] = useState('');
+  const [sellerEditBio, setSellerEditBio] = useState('');
+  const [sellerEditAvatar, setSellerEditAvatar] = useState('');
+  const [sellerEditCoverImage, setSellerEditCoverImage] = useState('');
+  const [sellerEditCoverMode, setSellerEditCoverMode] = useState<'preset' | 'url' | 'upload'>('preset');
+  const [sellerEditSelectedPresetId, setSellerEditSelectedPresetId] = useState<string>('pottery-qena');
+  const [sellerEditCustomUrl, setSellerEditCustomUrl] = useState('');
+  const [sellerEditPayoutMethod, setSellerEditPayoutMethod] = useState<'instapay' | 'vodafone_cash' | 'bank_transfer'>('instapay');
+  const [sellerEditPayoutAccount, setSellerEditPayoutAccount] = useState('');
+  const [sellerEditStatus, setSellerEditStatus] = useState<string>('approved');
+  const [sellerEditVerified, setSellerEditVerified] = useState<boolean>(true);
+
+  // Admin Product Edit & Add State
+  const [adminProductModalOpen, setAdminProductModalOpen] = useState(false);
+  const [editingAdminProduct, setEditingAdminProduct] = useState<Product | null>(null);
+  const [isAdminSubmittingProduct, setIsAdminSubmittingProduct] = useState(false);
+  const [prodTitle, setProdTitle] = useState('');
+  const [prodTitleEn, setProdTitleEn] = useState('');
+  const [prodCategoryId, setProdCategoryId] = useState('cat-pottery');
+  const [prodCategoryName, setProdCategoryName] = useState('');
+  const [prodSellerId, setProdSellerId] = useState('');
+  const [prodPrice, setProdPrice] = useState(250);
+  const [prodOriginalPrice, setProdOriginalPrice] = useState<number | undefined>(undefined);
+  const [prodStockCount, setProdStockCount] = useState(10);
+  const [prodDescription, setProdDescription] = useState('');
+  const [prodImageUrl, setProdImageUrl] = useState('');
+  const [prodMaterial, setProdMaterial] = useState('طين نيل طبيعي');
+  const [prodCraftsmanship, setProdCraftsmanship] = useState('صناعة يدوية على الدولاب التقليدي');
+  const [prodDimensions, setProdDimensions] = useState('25 × 15 سم');
+  const [prodWeight, setProdWeight] = useState('800 جرام');
+  const [prodOriginGovernorate, setProdOriginGovernorate] = useState<Governorate>('قنا');
+  const [prodApprovalStatus, setProdApprovalStatus] = useState<ProductStatus>('approved');
+  const [prodIsHandmade, setProdIsHandmade] = useState(true);
+  const [prodIsHeritage, setProdIsHeritage] = useState(true);
 
   // Rejection Modal State for Products
   const [rejectingProductId, setRejectingProductId] = useState<string | null>(null);
@@ -504,6 +646,175 @@ export const AdminDashboard: React.FC = () => {
       addToast('خطأ في الحذف', err?.message || 'تعذر حذف الحساب', 'error');
     } finally {
       setIsDeletingUser(false);
+    }
+  };
+
+  // Seller Profile and Cover Editor Handlers (Admin Control)
+  const openEditSellerModal = (seller: Seller) => {
+    setSelectedSellerForEditProfile(seller);
+    setSellerEditBrandName(seller.brandName || seller.name || '');
+    setSellerEditName(seller.name || '');
+    setSellerEditPhone(seller.phone || '');
+    setSellerEditEmail(seller.email || '');
+    setSellerEditGovernorate(seller.governorate || 'قنا');
+    setSellerEditSpecialty(seller.specialty || '');
+    setSellerEditBio(seller.bio || seller.story || '');
+    setSellerEditAvatar(seller.avatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80');
+
+    const existingCover = seller.coverImage || HERITAGE_COVER_PRESETS[0].url;
+    setSellerEditCoverImage(existingCover);
+    const matchedPreset = HERITAGE_COVER_PRESETS.find((p) => p.url === existingCover);
+    if (matchedPreset) {
+      setSellerEditCoverMode('preset');
+      setSellerEditSelectedPresetId(matchedPreset.id);
+    } else {
+      setSellerEditCoverMode('url');
+      setSellerEditCustomUrl(existingCover);
+    }
+    setSellerEditPayoutMethod((seller.payoutMethod as any) || 'instapay');
+    setSellerEditPayoutAccount(seller.payoutAccount || '');
+    setSellerEditStatus(seller.status || 'approved');
+    setSellerEditVerified(Boolean(seller.verified));
+  };
+
+  const handleSaveAdminSellerProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSellerForEditProfile) return;
+    setIsUpdatingSellerProfile(true);
+    try {
+      let finalCover = sellerEditCoverImage;
+      if (sellerEditCoverMode === 'preset') {
+        const p = HERITAGE_COVER_PRESETS.find((preset) => preset.id === sellerEditSelectedPresetId);
+        if (p) finalCover = p.url;
+      } else if (sellerEditCoverMode === 'url' && sellerEditCustomUrl.trim()) {
+        finalCover = sellerEditCustomUrl.trim();
+      }
+
+      await updateSeller(selectedSellerForEditProfile.id, {
+        brandName: sellerEditBrandName.trim(),
+        name: sellerEditName.trim(),
+        phone: sellerEditPhone.trim(),
+        email: sellerEditEmail.trim(),
+        governorate: sellerEditGovernorate,
+        specialty: sellerEditSpecialty.trim(),
+        bio: sellerEditBio.trim(),
+        story: sellerEditBio.trim(),
+        avatar: sellerEditAvatar.trim(),
+        coverImage: finalCover,
+        payoutMethod: sellerEditPayoutMethod,
+        payoutAccount: sellerEditPayoutAccount.trim(),
+        status: sellerEditStatus as any,
+        verified: sellerEditVerified
+      });
+
+      setSelectedSellerForEditProfile(null);
+    } catch (err: any) {
+      console.error('Error in handleSaveAdminSellerProfile:', err);
+    } finally {
+      setIsUpdatingSellerProfile(false);
+    }
+  };
+
+  // Product Add & Edit Handlers (Admin Control)
+  const openAdminAddProductModal = () => {
+    setEditingAdminProduct(null);
+    setProdTitle('');
+    setProdTitleEn('');
+    setProdCategoryId(categories[0]?.id || 'cat-pottery');
+    setProdCategoryName(categories[0]?.name || 'فخار وخزف قناوي');
+    setProdSellerId(sellers[0]?.id || currentUser.id);
+    setProdPrice(250);
+    setProdOriginalPrice(undefined);
+    setProdStockCount(15);
+    setProdDescription('');
+    setProdImageUrl('https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
+    setProdMaterial('طمي نيل طبيعي وأصباغ نباتية');
+    setProdCraftsmanship('يدوي أصيل بالكامل');
+    setProdDimensions('30 × 20 سم');
+    setProdWeight('1 كجم');
+    setProdOriginGovernorate(sellers[0]?.governorate || 'قنا');
+    setProdApprovalStatus('approved');
+    setProdIsHandmade(true);
+    setProdIsHeritage(true);
+    setAdminProductModalOpen(true);
+  };
+
+  const openAdminEditProductModal = (product: Product) => {
+    setEditingAdminProduct(product);
+    setProdTitle(product.title || '');
+    setProdTitleEn(product.titleEn || '');
+    setProdCategoryId(product.categoryId || 'cat-pottery');
+    setProdCategoryName(product.categoryName || '');
+    setProdSellerId(product.sellerId || '');
+    setProdPrice(product.price || 0);
+    setProdOriginalPrice(product.originalPrice);
+    setProdStockCount(product.stockCount || 0);
+    setProdDescription(product.description || '');
+    setProdImageUrl(product.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80');
+    setProdMaterial(product.specifications?.material || 'خامات طبيعية');
+    setProdCraftsmanship(product.specifications?.craftsmanship || 'صناعة يدوية');
+    setProdDimensions(product.specifications?.dimensions || '');
+    setProdWeight(product.specifications?.weight || '');
+    setProdOriginGovernorate(product.sellerGovernorate || product.specifications?.originGovernorate || 'قنا');
+    setProdApprovalStatus(product.approvalStatus || 'approved');
+    setProdIsHandmade(product.isHandmade !== undefined ? product.isHandmade : true);
+    setProdIsHeritage(product.isHeritage !== undefined ? product.isHeritage : true);
+    setAdminProductModalOpen(true);
+  };
+
+  const handleAdminSaveProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!prodTitle.trim()) {
+      addToast('بيانات ناقصة', 'يرجى كتابة عنوان المنتج', 'warning');
+      return;
+    }
+    setIsAdminSubmittingProduct(true);
+    try {
+      const selectedCat = categories.find((c) => c.id === prodCategoryId);
+      const targetSeller = sellers.find((s) => s.id === prodSellerId);
+
+      const productPayload: Partial<Product> = {
+        title: prodTitle.trim(),
+        titleEn: prodTitleEn.trim() || undefined,
+        categoryId: prodCategoryId,
+        categoryName: selectedCat?.name || prodCategoryName,
+        sellerId: prodSellerId || currentUser.id,
+        sellerName: targetSeller?.brandName || targetSeller?.name || 'إدارة منصة سوق الصعيد',
+        sellerGovernorate: (prodOriginGovernorate || targetSeller?.governorate || 'قنا') as any,
+        price: Number(prodPrice),
+        originalPrice: prodOriginalPrice ? Number(prodOriginalPrice) : undefined,
+        discountPercent:
+          prodOriginalPrice && prodOriginalPrice > prodPrice
+            ? Math.round(((prodOriginalPrice - prodPrice) / prodOriginalPrice) * 100)
+            : undefined,
+        stockCount: Number(prodStockCount),
+        inStock: Number(prodStockCount) > 0,
+        description: prodDescription.trim(),
+        images: [prodImageUrl.trim() || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80'],
+        specifications: {
+          material: prodMaterial.trim(),
+          craftsmanship: prodCraftsmanship.trim(),
+          dimensions: prodDimensions.trim(),
+          weight: prodWeight.trim(),
+          originGovernorate: prodOriginGovernorate
+        },
+        isHandmade: prodIsHandmade,
+        isHeritage: prodIsHeritage,
+        approvalStatus: prodApprovalStatus
+      };
+
+      if (editingAdminProduct) {
+        await updateProduct(editingAdminProduct.id, productPayload);
+      } else {
+        await addProduct(productPayload, prodApprovalStatus);
+      }
+
+      setAdminProductModalOpen(false);
+      setEditingAdminProduct(null);
+    } catch (err: any) {
+      console.error('Error saving product by admin:', err);
+    } finally {
+      setIsAdminSubmittingProduct(false);
     }
   };
 
@@ -1048,6 +1359,22 @@ export const AdminDashboard: React.FC = () => {
 
         <button
           type="button"
+          id="admin-tab-craft-reels"
+          onClick={() => {
+            setActiveTab('craft-reels');
+            setAdminReels(craftReelsService.getReels());
+          }}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'craft-reels'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
+        >
+          <Film className="w-4 h-4 text-amber-500" />
+          <span>فيديوهات الحرفيين (Craft Reels) ({adminReels.length})</span>
+        </button>
+
+        <button
+          type="button"
           onClick={() => setActiveTab('reviews')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'reviews'
             ? 'bg-[#B45F42] text-white shadow-xs'
@@ -1170,6 +1497,19 @@ export const AdminDashboard: React.FC = () => {
             </span>
           )}
         </button>
+
+        <button
+          type="button"
+          id="admin-tab-notifications"
+          onClick={() => setActiveTab('notifications')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === 'notifications'
+            ? 'bg-[#B45F42] text-white shadow-xs'
+            : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+            }`}
+        >
+          <Bell className="w-4 h-4 text-amber-500" />
+          <span>مركز الإشعارات والتنبيهات العامة</span>
+        </button>
       </div>
 
       {/* TAB 1: OVERVIEW */}
@@ -1284,43 +1624,55 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 bg-[#F3EFE9] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
+            {/* Filter Tabs & Add Product Button */}
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
-                onClick={() => setStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'all' ? 'bg-[#2D2A26] text-white' : 'text-[#7A6F64]'
-                  }`}
+                id="admin-add-new-product-btn"
+                onClick={openAdminAddProductModal}
+                className="px-4 py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                الكل ({adminProducts.length})
+                <Plus className="w-4 h-4" />
+                <span>إضافة منتج كمدير</span>
               </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('pending')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-[#7A6F64]'
-                  }`}
-              >
-                <span>قيد المراجعة</span>
-                <span className="bg-amber-400 text-amber-950 text-[10px] px-1 rounded-full font-black">
-                  {pendingProducts.length}
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('approved')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-[#7A6F64]'
-                  }`}
-              >
-                معتمد
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('rejected')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-[#7A6F64]'
-                  }`}
-              >
-                مرفوض
-              </button>
+
+              <div className="flex items-center gap-1.5 bg-[#F3EFE9] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'all' ? 'bg-[#2D2A26] text-white' : 'text-[#7A6F64]'
+                    }`}
+                >
+                  الكل ({adminProducts.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('pending')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-[#7A6F64]'
+                    }`}
+                >
+                  <span>قيد المراجعة</span>
+                  <span className="bg-amber-400 text-amber-950 text-[10px] px-1 rounded-full font-black">
+                    {pendingProducts.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('approved')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-[#7A6F64]'
+                    }`}
+                >
+                  معتمد
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('rejected')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-[#7A6F64]'
+                    }`}
+                >
+                  مرفوض
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1380,12 +1732,38 @@ export const AdminDashboard: React.FC = () => {
 
                     {/* Moderation Controls */}
                     <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
+                      <button
+                        type="button"
+                        id={`admin-edit-prod-${prod.id}`}
+                        onClick={() => openAdminEditProductModal(prod)}
+                        className="px-3.5 py-2 bg-[#F3EFE9] hover:bg-[#EDE7DF] text-[#2D2A26] border border-[#E8E1D9] text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                        title="تعديل بيانات المنتج كمدير"
+                      >
+                        <Edit2 className="w-3.5 h-3.5 text-[#B45F42]" />
+                        <span>تعديل</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        id={`admin-delete-prod-${prod.id}`}
+                        onClick={() => {
+                          if (window.confirm(`هل أنت متأكد من رغبتك في حذف المنتج "${prod.title}" نهائياً من المنصة؟`)) {
+                            deleteProduct(prod.id);
+                          }
+                        }}
+                        className="px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                        title="حذف المنتج نهائياً"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>حذف</span>
+                      </button>
+
                       {prod.approvalStatus !== 'approved' && (
                         <button
                           type="button"
                           onClick={() => handleApprove(prod.id)}
                           disabled={isProcessing}
-                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
                         >
                           <CheckCircle2 className="w-4 h-4" />
                           <span>موافقة ونشر</span>
@@ -1397,7 +1775,7 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           onClick={() => openRejectModal(prod.id)}
                           disabled={isProcessing}
-                          className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                          className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                         >
                           <XCircle className="w-4 h-4" />
                           <span>رفض المنتج</span>
@@ -1654,6 +2032,294 @@ export const AdminDashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB: CRAFT REELS (VIDEOS) MANAGEMENT */}
+      {activeTab === 'craft-reels' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Header Banner */}
+          <div className="relative rounded-3xl bg-gradient-to-r from-[#2D2A26] via-[#382E27] to-[#2D2A26] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-[#4A3E35]">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-[#B45F42]/20 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-amber-300 text-xs font-bold border border-white/15">
+                  <Film className="w-4 h-4 text-amber-400" />
+                  <span>الإشراف على محتوى الفيديو القصير (Craft Reels)</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black font-heritage">
+                  إدارة فيديوهات كواليس الصنع والتفاعل المباشر
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                  مراقبة الفيديوهات القصيرة المرفوعة من الورش، اعتماد مقاطع جديدة منسوبة للحرفيين، والربط بالمنتجات المعتمدة لضمان تجربة تسوق تفاعلية ممتازة.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setAdminReels(craftReelsService.getReels())}
+                  className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs font-bold transition-all flex items-center gap-2 border border-white/15 cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>تحديث القائمة</span>
+                </button>
+
+                <button
+                  type="button"
+                  id="admin-upload-reel-btn"
+                  onClick={() => setIsAdminReelUploadOpen(true)}
+                  className="px-5 py-3 bg-gradient-to-r from-[#B45F42] to-[#9E4F36] hover:from-[#9E4F36] hover:to-[#863F28] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>إضافة فيديو كحرفي/إدارة</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>إجمالي مقاطع الفيديو</span>
+                <Film className="w-4 h-4 text-[#B45F42]" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">{adminReels.length} مقطع</span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">تغطي 7 محافظات صعيدية</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>إجمالي المشاهدات</span>
+                <Eye className="w-4 h-4 text-amber-600" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {adminReels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات كاملة وتفاعلية</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>إجمالي الإعجابات</span>
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {adminReels.reduce((acc, r) => acc + r.likesCount, 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-[#7A6F64] block mt-1">تفاعل جمهور المنصة</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>الورش الممثلة بالفيديو</span>
+                <Store className="w-4 h-4 text-indigo-600" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {new Set(adminReels.map((r) => r.artisanName)).size} ورشة
+              </span>
+              <span className="text-[10px] text-indigo-700 font-bold block mt-1">حرفيون موثقون</span>
+            </div>
+          </div>
+
+          {/* Search and Filters Bar */}
+          <div className="bg-white rounded-2xl border border-[#E8E1D9] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+            {/* Governorate Filter */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+              <button
+                type="button"
+                onClick={() => setAdminReelGovFilter('all')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  adminReelGovFilter === 'all'
+                    ? 'bg-[#B45F42] text-white shadow-xs'
+                    : 'bg-[#F3EFE9] text-[#7A6F64] hover:bg-[#EDE7DF]'
+                }`}
+              >
+                كل المحافظات ({adminReels.length})
+              </button>
+              {(['قنا', 'سوهاج', 'أسوان', 'أسيوط', 'الأقصر', 'الوادي الجديد', 'الفيوم'] as Governorate[]).map((gov) => {
+                const count = adminReels.filter((r) => r.governorate === gov).length;
+                if (count === 0) return null;
+                return (
+                  <button
+                    key={gov}
+                    type="button"
+                    onClick={() => setAdminReelGovFilter(gov)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                      adminReelGovFilter === gov
+                        ? 'bg-[#B45F42] text-white shadow-xs'
+                        : 'bg-[#F3EFE9] text-[#7A6F64] hover:bg-[#EDE7DF]'
+                    }`}
+                  >
+                    {gov} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative min-w-[240px]">
+              <Search className="w-4 h-4 text-[#7A6F64] absolute right-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={adminReelSearchTerm}
+                onChange={(e) => setAdminReelSearchTerm(e.target.value)}
+                placeholder="ابحث بالفيديو، الحرفي، المنتج..."
+                className="w-full pl-8 pr-9 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] transition-colors"
+              />
+              {adminReelSearchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setAdminReelSearchTerm('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Reels Grid */}
+          {adminReels.filter((r) => {
+            const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+            const matchesSearch =
+              adminReelSearchTerm.trim() === '' ||
+              r.title.includes(adminReelSearchTerm) ||
+              r.artisanName.includes(adminReelSearchTerm) ||
+              r.craftType.includes(adminReelSearchTerm) ||
+              r.productTitle.includes(adminReelSearchTerm);
+            return matchesGov && matchesSearch;
+          }).length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {adminReels
+                .filter((r) => {
+                  const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+                  const matchesSearch =
+                    adminReelSearchTerm.trim() === '' ||
+                    r.title.includes(adminReelSearchTerm) ||
+                    r.artisanName.includes(adminReelSearchTerm) ||
+                    r.craftType.includes(adminReelSearchTerm) ||
+                    r.productTitle.includes(adminReelSearchTerm);
+                  return matchesGov && matchesSearch;
+                })
+                .map((reel) => (
+                  <div
+                    key={reel.id}
+                    className="bg-white rounded-3xl border border-[#E8E1D9] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                  >
+                    {/* 9:16 Video Thumbnail Container */}
+                    <div
+                      onClick={() => {
+                        setAdminSelectedReelPreviewId(reel.id);
+                        setIsAdminReelPreviewOpen(true);
+                      }}
+                      className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
+                    >
+                      <img
+                        src={reel.posterUrl}
+                        alt={reel.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
+                          <Play className="w-5 h-5 fill-white mr-0.5" />
+                        </div>
+                      </div>
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                        <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                          {reel.duration}
+                        </span>
+                        <span className="bg-[#B45F42] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          {reel.governorate}
+                        </span>
+                      </div>
+
+                      {/* Bottom Info on Poster */}
+                      <div className="absolute bottom-3 inset-x-3 z-10 space-y-1">
+                        <p className="text-xs font-bold text-white line-clamp-2 drop-shadow-md">
+                          {reel.title}
+                        </p>
+                        <p className="text-[10px] text-amber-300 truncate">
+                          {reel.artisanName} • {reel.craftType}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bottom Metadata & Actions */}
+                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-[#FAF6F0]/40">
+                      {/* Linked Product */}
+                      <div className="p-2.5 bg-white rounded-2xl border border-[#E8E1D9] flex items-center justify-between gap-2 shadow-2xs">
+                        <img
+                          src={reel.productImage}
+                          alt={reel.productTitle}
+                          className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[11px] font-bold text-[#2D2A26] truncate">{reel.productTitle}</p>
+                          <span className="text-xs font-black text-[#B45F42]">{reel.productPrice} ج.م</span>
+                        </div>
+                      </div>
+
+                      {/* Engagement Stats */}
+                      <div className="flex items-center justify-between text-xs text-[#7A6F64] pt-1">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 text-[11px]">
+                            <Eye className="w-3.5 h-3.5 text-gray-500" />
+                            <span>{reel.viewsCount}</span>
+                          </span>
+                          <span className="flex items-center gap-1 text-[11px] text-rose-600 font-bold">
+                            <Heart className="w-3.5 h-3.5 fill-rose-600" />
+                            <span>{reel.likesCount}</span>
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-gray-400">
+                          {new Date(reel.createdAt).toLocaleDateString('ar-EG')}
+                        </span>
+                      </div>
+
+                      {/* Actions Buttons */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#E8E1D9]">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAdminSelectedReelPreviewId(reel.id);
+                            setIsAdminReelPreviewOpen(true);
+                          }}
+                          className="flex-1 py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                        >
+                          <Play className="w-3.5 h-3.5 fill-white" />
+                          <span>معاينة وتشغيل</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleAdminDeleteReel(reel.id, reel.title)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+                          title="حذف الفيديو من المنصة"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E8E1D9] space-y-4">
+              <Film className="w-16 h-16 text-gray-300 mx-auto" />
+              <h4 className="text-base font-bold text-[#2D2A26]">لا توجد مقاطع فيديو مطابقة للبحث</h4>
+              <p className="text-xs text-[#7A6F64] max-w-md mx-auto">
+                يمكنك رفع مقطع فيديو جديد لأي حرفي أو مسح كلمة البحث لرؤية كافة مقاطع الورش.
+              </p>
             </div>
           )}
         </div>
@@ -1956,6 +2622,17 @@ export const AdminDashboard: React.FC = () => {
 
                   {/* Actions Column */}
                   <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
+                    <button
+                      type="button"
+                      id={`admin-edit-seller-${s.id}`}
+                      onClick={() => openEditSellerModal(s)}
+                      className="px-3.5 py-2 bg-[#F3EFE9] hover:bg-[#EDE7DF] text-[#2D2A26] border border-[#E8E1D9] rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                      title="تعديل بيانات الورشة والغلاف كمدير"
+                    >
+                      <Edit2 className="w-3.5 h-3.5 text-[#B45F42]" />
+                      <span>تعديل الورشة والغلاف</span>
+                    </button>
+
                     {/* Action buttons based on current state */}
                     {s.status === 'pending' && (
                       <>
@@ -1963,7 +2640,7 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={`admin-approve-seller-${s.id}`}
                           onClick={() => approveSeller(s.id)}
-                          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+                          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <Check className="w-4 h-4" />
                           <span>اعتماد الورشة</span>
@@ -1978,7 +2655,7 @@ export const AdminDashboard: React.FC = () => {
                               action: 'reject'
                             })
                           }
-                          className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1"
+                          className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                           <span>رفض الطلب</span>
@@ -1997,7 +2674,7 @@ export const AdminDashboard: React.FC = () => {
                             action: 'suspend'
                           })
                         }
-                        className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1"
+                        className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <ShieldAlert className="w-3.5 h-3.5" />
                         <span>تعليق الحساب</span>
@@ -2009,7 +2686,7 @@ export const AdminDashboard: React.FC = () => {
                         type="button"
                         id={`admin-reactivate-seller-${s.id}`}
                         onClick={() => approveSeller(s.id)}
-                        className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors"
+                        className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <ShieldCheck className="w-4 h-4" />
                         <span>إعادة الاعتماد والتفعيل</span>
@@ -2998,6 +3675,21 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
       {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
+
+      {/* TAB 12: PLATFORM NOTIFICATIONS (مركز الإشعارات والتنبيهات العامة) */}
+      {activeTab === 'notifications' && (
+        <NotificationsManager
+          viewMode="admin"
+          onNavigateTab={(tab) => {
+            if (tab === 'orders') setActiveTab('orders');
+            else if (tab === 'products' || tab === 'approvals') setActiveTab('approvals');
+            else if (tab === 'payouts') setActiveTab('payouts');
+            else if (tab === 'sellers') setActiveTab('sellers');
+            else if (tab === 'users') setActiveTab('users');
+            else if (tab === 'password-resets') setActiveTab('password-resets');
+          }}
+        />
+      )}
 
       {/* Category Add / Edit Modal (Phase 4) */}
       {isCategoryModalOpen && (
@@ -4293,6 +4985,702 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal 3: Admin Workshop Profile & Cover Image Editor */}
+      {selectedSellerForEditProfile && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
+                  <Store className="w-5 h-5 text-[#B45F42]" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-[#2D2A26]">تعديل بيانات وغلاف الورشة (تحكم الإدارة)</h3>
+                  <p className="text-xs text-[#7A6F64]">تعديل ملف الورشة، هوية الحرفي، غلاف المعرض، وصلاحيات الحساب</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSellerForEditProfile(null)}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveAdminSellerProfile} className="space-y-4">
+              {/* Cover Image Customizer Section */}
+              <div className="space-y-3 p-4 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-[#B45F42]" />
+                    <span className="text-xs font-bold text-[#2D2A26]">صورة غلاف الورشة في قسم الحرف المعتمدة:</span>
+                  </div>
+                  <span className="text-[11px] text-[#7A6F64]">تظهر كخلفية لبطاقة الورشة وصفحتها</span>
+                </div>
+
+                {/* Live Preview Card */}
+                <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden border border-[#E8E1D9] shadow-inner group">
+                  <img
+                    src={
+                      sellerEditCoverMode === 'preset'
+                        ? HERITAGE_COVER_PRESETS.find((p) => p.id === sellerEditSelectedPresetId)?.url || sellerEditCoverImage
+                        : sellerEditCoverMode === 'url' && sellerEditCustomUrl.trim()
+                          ? sellerEditCustomUrl.trim()
+                          : sellerEditCoverImage || HERITAGE_COVER_PRESETS[0].url
+                    }
+                    alt="معاينة الغلاف"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = HERITAGE_COVER_PRESETS[0].url;
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end p-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={sellerEditAvatar || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=80'}
+                        alt=""
+                        className="w-12 h-12 rounded-xl object-cover border-2 border-white shadow-md shrink-0"
+                      />
+                      <div className="text-white space-y-0.5">
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="font-bold text-sm leading-tight text-white drop-shadow-xs">
+                            {sellerEditBrandName || 'اسم الورشة'}
+                          </h4>
+                          {sellerEditVerified && <BadgeCheck className="w-4 h-4 text-amber-400 shrink-0" />}
+                        </div>
+                        <p className="text-[11px] text-amber-200">
+                          {sellerEditName} • محافظة {sellerEditGovernorate}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cover Mode Selector */}
+                <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-[#E8E1D9] text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setSellerEditCoverMode('preset')}
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${
+                      sellerEditCoverMode === 'preset' ? 'bg-[#B45F42] text-white shadow-xs' : 'text-[#7A6F64] hover:bg-gray-50'
+                    }`}
+                  >
+                    نماذج التراث الصعيدي (8)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSellerEditCoverMode('url')}
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${
+                      sellerEditCoverMode === 'url' ? 'bg-[#B45F42] text-white shadow-xs' : 'text-[#7A6F64] hover:bg-gray-50'
+                    }`}
+                  >
+                    رابط صورة مخصص (URL)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSellerEditCoverMode('upload')}
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${
+                      sellerEditCoverMode === 'upload' ? 'bg-[#B45F42] text-white shadow-xs' : 'text-[#7A6F64] hover:bg-gray-50'
+                    }`}
+                  >
+                    رفع من الجهاز
+                  </button>
+                </div>
+
+                {/* Mode 1: Presets Gallery */}
+                {sellerEditCoverMode === 'preset' && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 max-h-48 overflow-y-auto p-1">
+                    {HERITAGE_COVER_PRESETS.map((preset) => {
+                      const isSelected = sellerEditSelectedPresetId === preset.id;
+                      return (
+                        <div
+                          key={preset.id}
+                          onClick={() => {
+                            setSellerEditSelectedPresetId(preset.id);
+                            setSellerEditCoverImage(preset.url);
+                          }}
+                          className={`cursor-pointer relative rounded-xl overflow-hidden border-2 transition-all group/preset ${
+                            isSelected
+                              ? 'border-[#B45F42] ring-2 ring-[#B45F42]/30 shadow-md scale-[1.02]'
+                              : 'border-[#E8E1D9] hover:border-[#B45F42]/60'
+                          }`}
+                        >
+                          <img src={preset.url} alt={preset.title} className="w-full h-16 object-cover" />
+                          <div className="p-1.5 bg-white space-y-0.5">
+                            <p className="text-[10px] font-bold text-[#2D2A26] truncate">{preset.title}</p>
+                            <span className="text-[9px] text-[#B45F42] bg-amber-50 px-1 py-0.2 rounded inline-block font-semibold">
+                              {preset.region}
+                            </span>
+                          </div>
+                          {isSelected && (
+                            <div className="absolute top-1 left-1 bg-[#B45F42] text-white p-0.5 rounded-full shadow-xs">
+                              <Check className="w-3 h-3" />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Mode 2: Custom URL */}
+                {sellerEditCoverMode === 'url' && (
+                  <div className="space-y-1.5 pt-1">
+                    <label className="text-[11px] text-[#7A6F64] block font-bold">رابط صورة الغلاف المباشر (Direct Image URL):</label>
+                    <input
+                      type="url"
+                      value={sellerEditCustomUrl}
+                      onChange={(e) => {
+                        setSellerEditCustomUrl(e.target.value);
+                        setSellerEditCoverImage(e.target.value);
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full px-3 py-2 bg-white border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-mono text-left"
+                      dir="ltr"
+                    />
+                  </div>
+                )}
+
+                {/* Mode 3: Upload from Device */}
+                {sellerEditCoverMode === 'upload' && (
+                  <div className="space-y-2 pt-1">
+                    <label className="text-[11px] text-[#7A6F64] block font-bold">اختر صورة من جهازك لرفعها كغلاف للورشة:</label>
+                    <div className="border-2 border-dashed border-[#E8E1D9] hover:border-[#B45F42] rounded-2xl p-4 text-center bg-white transition-colors">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="admin-upload-seller-cover"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (uploadEvent) => {
+                              const result = uploadEvent.target?.result as string;
+                              if (result) {
+                                setSellerEditCoverImage(result);
+                                addToast('تم تجهيز الصورة', 'تم تحميل الصورة وجاهزة للحفظ كغلاف للورشة', 'info');
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="admin-upload-seller-cover" className="cursor-pointer space-y-1 block">
+                        <Upload className="w-6 h-6 text-[#B45F42] mx-auto mb-1" />
+                        <span className="text-xs font-bold text-[#2D2A26] block">انقر لاختيار صورة من جهازك</span>
+                        <span className="text-[10px] text-[#7A6F64] block">يدعم JPG, PNG, WEBP حتى 5 ميجابايت</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Form Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">اسم الورشة / المتجر:</label>
+                  <input
+                    type="text"
+                    required
+                    value={sellerEditBrandName}
+                    onChange={(e) => setSellerEditBrandName(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">اسم الصانع / الحرفي المسئول:</label>
+                  <input
+                    type="text"
+                    required
+                    value={sellerEditName}
+                    onChange={(e) => setSellerEditName(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">المحافظة:</label>
+                  <select
+                    value={sellerEditGovernorate}
+                    onChange={(e) => setSellerEditGovernorate(e.target.value as Governorate)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  >
+                    {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
+                      <option key={gov} value={gov}>
+                        محافظة {gov}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الحرفة التراثية والتخصص:</label>
+                  <input
+                    type="text"
+                    value={sellerEditSpecialty}
+                    onChange={(e) => setSellerEditSpecialty(e.target.value)}
+                    placeholder="مثال: فخار وخزف طمي نيل، تلي أسيوطي..."
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">رقم الهاتف:</label>
+                  <input
+                    type="text"
+                    value={sellerEditPhone}
+                    onChange={(e) => setSellerEditPhone(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">البريد الإلكتروني:</label>
+                  <input
+                    type="email"
+                    value={sellerEditEmail}
+                    onChange={(e) => setSellerEditEmail(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">حالة الورشة في المنصة:</label>
+                  <select
+                    value={sellerEditStatus}
+                    onChange={(e) => setSellerEditStatus(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-bold"
+                  >
+                    <option value="approved">معتمد ومفعل (Approved)</option>
+                    <option value="pending">قيد المراجعة (Pending)</option>
+                    <option value="suspended">معلق / مجمد (Suspended)</option>
+                    <option value="rejected">مرفوض (Rejected)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">رابط الصورة الرمزية (Avatar):</label>
+                  <input
+                    type="url"
+                    value={sellerEditAvatar}
+                    onChange={(e) => setSellerEditAvatar(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              {/* Story & Bio */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#2D2A26]">قصة الورشة ونبذة عن الحرفة:</label>
+                <textarea
+                  rows={3}
+                  value={sellerEditBio}
+                  onChange={(e) => setSellerEditBio(e.target.value)}
+                  placeholder="اكتب نبذة عن تاريخ الورشة والتقنيات التراثية المستخدمة..."
+                  className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] resize-none"
+                />
+              </div>
+
+              {/* Payout Details */}
+              <div className="p-3 bg-[#FDFBF7] rounded-xl border border-[#E8E1D9] space-y-2">
+                <span className="text-xs font-bold text-[#2D2A26] block">بيانات تحويل المستحقات والأرباح:</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] text-[#7A6F64] block mb-1">طريقة التحويل:</label>
+                    <select
+                      value={sellerEditPayoutMethod}
+                      onChange={(e) => setSellerEditPayoutMethod(e.target.value as 'instapay' | 'vodafone_cash' | 'bank_transfer')}
+                      className="w-full px-3 py-1.5 bg-white border border-[#E8E1D9] rounded-lg text-xs outline-none focus:border-[#B45F42]"
+                    >
+                      <option value="instapay">انستاباي (InstaPay)</option>
+                      <option value="vodafone_cash">فودافون كاش / محافظ إلكترونية</option>
+                      <option value="bank_transfer">حساب بنكي (IBAN)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-[#7A6F64] block mb-1">عنوان / رقم الحساب:</label>
+                    <input
+                      type="text"
+                      value={sellerEditPayoutAccount}
+                      onChange={(e) => setSellerEditPayoutAccount(e.target.value)}
+                      placeholder="اسم المستخدم أو رقم المحفظة أو الآيبان"
+                      className="w-full px-3 py-1.5 bg-white border border-[#E8E1D9] rounded-lg text-xs outline-none focus:border-[#B45F42] font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Verified Badge Toggle */}
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="admin-seller-verified-toggle"
+                  checked={sellerEditVerified}
+                  onChange={(e) => setSellerEditVerified(e.target.checked)}
+                  className="w-4 h-4 rounded text-[#B45F42] focus:ring-[#B45F42]"
+                />
+                <label htmlFor="admin-seller-verified-toggle" className="text-xs font-bold text-[#2D2A26] cursor-pointer flex items-center gap-1">
+                  <BadgeCheck className="w-4 h-4 text-emerald-600" />
+                  <span>ورشة معتمدة رسمياً وموثقة من إدارة منصة سوق الصعيد</span>
+                </label>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setSelectedSellerForEditProfile(null)}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl cursor-pointer"
+                >
+                  إلغاء
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isUpdatingSellerProfile}
+                  id="confirm-admin-save-seller-btn"
+                  className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isUpdatingSellerProfile ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري حفظ التعديلات...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>حفظ وتحديث بيانات وغلاف الورشة</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal 4: Admin Product Add & Edit Modal */}
+      {adminProductModalOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
+                  <Package className="w-5 h-5 text-[#B45F42]" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-[#2D2A26]">
+                    {editingAdminProduct ? 'تعديل بيانات المنتج كمدير' : 'إضافة منتج تراثي جديد كمدير'}
+                  </h3>
+                  <p className="text-xs text-[#7A6F64]">تحكم كامل بأسعار ومواصفات وتصنيف وحالة نشر المنتج</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAdminProductModalOpen(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAdminSaveProduct} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">عنوان المنتج بالعربية:</label>
+                  <input
+                    type="text"
+                    required
+                    value={prodTitle}
+                    onChange={(e) => setProdTitle(e.target.value)}
+                    placeholder="مثال: قلة قناوية فخار مسامي أصيل"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">العنوان بالإنجليزية (اختياري):</label>
+                  <input
+                    type="text"
+                    value={prodTitleEn}
+                    onChange={(e) => setProdTitleEn(e.target.value)}
+                    placeholder="Authentic Qena Clay Pot"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] text-left"
+                    dir="ltr"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">القسم والتصنيف:</label>
+                  <select
+                    value={prodCategoryId}
+                    onChange={(e) => {
+                      setProdCategoryId(e.target.value);
+                      const cat = categories.find((c) => c.id === e.target.value);
+                      if (cat) setProdCategoryName(cat.name);
+                    }}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  >
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الورشة / الحرفي التابع له المنتج:</label>
+                  <select
+                    value={prodSellerId}
+                    onChange={(e) => setProdSellerId(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  >
+                    {sellers.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.brandName || s.name} (محافظة {s.governorate})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">السعر الحالي (ج.م):</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={prodPrice}
+                    onChange={(e) => setProdPrice(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-bold"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">السعر قبل الخصم (اختياري):</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={prodOriginalPrice || ''}
+                    onChange={(e) => setProdOriginalPrice(e.target.value ? Number(e.target.value) : undefined)}
+                    placeholder="اتركه فارغاً إن لم يكن هناك خصم"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الكمية المتوفرة في المخزون:</label>
+                  <input
+                    type="number"
+                    min="0"
+                    required
+                    value={prodStockCount}
+                    onChange={(e) => setProdStockCount(Number(e.target.value))}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">محافظة المنشأ الأصلي:</label>
+                  <select
+                    value={prodOriginGovernorate}
+                    onChange={(e) => setProdOriginGovernorate(e.target.value as Governorate)}
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  >
+                    {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
+                      <option key={gov} value={gov}>
+                        محافظة {gov}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Image Input & Preview */}
+              <div className="space-y-2 p-3 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9]">
+                <label className="text-xs font-bold text-[#2D2A26] block">رابط صورة المنتج الرئيسية:</label>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={prodImageUrl || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                    alt="معاينة"
+                    className="w-14 h-14 rounded-xl object-cover border border-[#E8E1D9] shrink-0 bg-white"
+                  />
+                  <input
+                    type="url"
+                    value={prodImageUrl}
+                    onChange={(e) => setProdImageUrl(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="flex-1 px-3 py-2 bg-white border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] font-mono text-left"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              {/* Specifications */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الخامات والمكونات:</label>
+                  <input
+                    type="text"
+                    value={prodMaterial}
+                    onChange={(e) => setProdMaterial(e.target.value)}
+                    placeholder="مثال: طمي نيل طبيعي، صوف غنم يدوي..."
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">أسلوب الصنعة والتقنية:</label>
+                  <input
+                    type="text"
+                    value={prodCraftsmanship}
+                    onChange={(e) => setProdCraftsmanship(e.target.value)}
+                    placeholder="مثال: تشكيل يدوي على الدولاب وحرق أفران حطب"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الأبعاد والمقاسات:</label>
+                  <input
+                    type="text"
+                    value={prodDimensions}
+                    onChange={(e) => setProdDimensions(e.target.value)}
+                    placeholder="مثال: 30 × 20 سم"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#2D2A26]">الوزن التقريبي:</label>
+                  <input
+                    type="text"
+                    value={prodWeight}
+                    onChange={(e) => setProdWeight(e.target.value)}
+                    placeholder="مثال: 1.2 كجم"
+                    className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-[#2D2A26]">وصف وتفاصيل المنتج التراثي:</label>
+                <textarea
+                  rows={3}
+                  value={prodDescription}
+                  onChange={(e) => setProdDescription(e.target.value)}
+                  placeholder="اكتب وصفاً دقيقاً للمنتج وأصالته واستخداماته..."
+                  className="w-full px-3 py-2 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] resize-none"
+                />
+              </div>
+
+              {/* Status and Flags */}
+              <div className="p-3.5 bg-[#FDFBF7] rounded-2xl border border-[#E8E1D9] space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#2D2A26]">حالة الاعتماد والنشر:</label>
+                  <select
+                    value={prodApprovalStatus}
+                    onChange={(e) => setProdApprovalStatus(e.target.value as any)}
+                    className="px-3 py-1.5 bg-white border border-[#E8E1D9] rounded-xl text-xs font-bold outline-none focus:border-[#B45F42]"
+                  >
+                    <option value="approved">معتمد ومتاح للمشترين (Approved)</option>
+                    <option value="pending">قيد المراجعة (Pending)</option>
+                    <option value="rejected">مرفوض (Rejected)</option>
+                    <option value="draft">مسودة خاصة (Draft)</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 pt-1 border-t border-[#E8E1D9]">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#2D2A26] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={prodIsHandmade}
+                      onChange={(e) => setProdIsHandmade(e.target.checked)}
+                      className="w-4 h-4 rounded text-[#B45F42] focus:ring-[#B45F42]"
+                    />
+                    <span>صناعة يدوية 100% (Handmade)</span>
+                  </label>
+
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#2D2A26] cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={prodIsHeritage}
+                      onChange={(e) => setProdIsHeritage(e.target.checked)}
+                      className="w-4 h-4 rounded text-[#B45F42] focus:ring-[#B45F42]"
+                    />
+                    <span>منتج صعيدي أصيل موثق (Heritage)</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E8E1D9]">
+                <button
+                  type="button"
+                  onClick={() => setAdminProductModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-[#7A6F64] hover:bg-gray-100 rounded-xl cursor-pointer"
+                >
+                  إلغاء
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isAdminSubmittingProduct}
+                  id="confirm-admin-save-product-btn"
+                  className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isAdminSubmittingProduct ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>جاري الحفظ...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>{editingAdminProduct ? 'حفظ تعديلات المنتج' : 'إضافة ونشر المنتج'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Reel Upload Modal */}
+      <ReelUploadModal
+        isOpen={isAdminReelUploadOpen}
+        onClose={() => setIsAdminReelUploadOpen(false)}
+        onSuccess={handleAdminReelUploaded}
+        sellerId={currentUser?.sellerId || 'seller-admin'}
+        sellerName={currentUser?.name || 'إدارة منصة سوق الصعيد'}
+        artisanName="أسطى الحرفة الصعيدي"
+        defaultGovernorate="قنا"
+        sellerProducts={adminProducts}
+      />
+
+      {/* Admin Reel Preview Modal */}
+      {adminSelectedReelPreviewId && (
+        <CraftReelsModal
+          reels={adminReels}
+          initialReelId={adminSelectedReelPreviewId}
+          isOpen={isAdminReelPreviewOpen}
+          onClose={() => {
+            setIsAdminReelPreviewOpen(false);
+            setAdminSelectedReelPreviewId(null);
+          }}
+        />
       )}
     </div>
   );

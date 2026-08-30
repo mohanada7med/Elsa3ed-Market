@@ -18,6 +18,7 @@ import { ProductsPage } from './components/pages/ProductsPage';
 import { ProductDetailsView } from './components/products/ProductDetailsView';
 import { CategoriesPage } from './components/pages/CategoriesPage';
 import { CraftsPage } from './components/pages/CraftsPage';
+import { CraftReelsPage } from './components/pages/CraftReelsPage';
 import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
 import { SellerProfileView } from './components/pages/SellerProfileView';
 import { CheckoutPage } from './components/pages/CheckoutPage';
@@ -89,6 +90,12 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'قصص الحرفيين وموسوعة التراث',
           description: 'تعرف على حكايات الأسطوات وتاريخ صناعة الفخار القناوي وسجاد أخميم والفضة النوبية.'
+        });
+        break;
+      case 'reels':
+        updatePageSEO({
+          title: 'فيديوهات الحرفيين التفاعلية (Craft Reels)',
+          description: 'شاهد مقاطع فيديو حية للحرفيين وهم يصنعون الفخار والكليم والنحاس واشترِ القطعة فوراً من الورشة.'
         });
         break;
       case 'sellers':
@@ -176,6 +183,7 @@ const MainContent: React.FC = () => {
             {activePage === 'categories' && <CategoriesPage />}
             {activePage === 'category-details' && <ProductsPage />}
             {activePage === 'crafts' && <CraftsPage />}
+            {activePage === 'reels' && <CraftReelsPage />}
             {activePage === 'sellers' && <SellersDirectoryPage />}
             {activePage === 'seller-details' && <SellerProfileView />}
 
@@ -352,6 +360,7 @@ const MainContent: React.FC = () => {
               'categories',
               'category-details',
               'crafts',
+              'reels',
               'sellers',
               'seller-details',
               'cart',

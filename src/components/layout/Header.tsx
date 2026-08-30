@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { NotificationCenter } from '../common/NotificationCenter';
 import {
   ShoppingBag,
   Heart,
@@ -118,6 +119,7 @@ export const Header: React.FC = () => {
       { id: 'products', label: 'كافة المنتجات' },
       { id: 'categories', label: 'التصنيفات التراثية' },
       { id: 'crafts', label: 'حكايات الحرف' },
+      { id: 'reels', label: 'فيديوهات الحرف', isNew: true },
       { id: 'sellers', label: 'الورش والحرفيون' },
       ...(isAuthenticated && currentRole === 'buyer'
         ? [
@@ -290,6 +292,11 @@ export const Header: React.FC = () => {
                 <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] hover:text-[#B45F42] transition-colors" />
               )}
             </button>
+
+            {/* Notification Center (Active for Seller, Admin and logged-in Buyers) */}
+            {isAuthenticated && (
+              <NotificationCenter />
+            )}
 
             {/* Favorites Icon (Buyers and Guests only - Hidden for Seller & Admin) */}
             {(currentRole === 'buyer' || !isAuthenticated) && (
@@ -613,6 +620,13 @@ export const Header: React.FC = () => {
                   }`}
               >
                 <span>{link.label}</span>
+                {'isNew' in link && (link as any).isNew && (
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse ${
+                    isActive ? 'bg-amber-300 text-[#2D2A26]' : 'bg-[#B45F42] text-white'
+                  }`}>
+                    جديد
+                  </span>
+                )}
               </button>
             );
           })}

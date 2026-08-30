@@ -239,6 +239,100 @@ export async function updateSellerProfile(
 }
 
 /**
+ * Admin: Update any seller's profile, cover image, and store information directly.
+ */
+export async function adminUpdateSellerProfile(
+  adminUser: AuthenticatedUser,
+  sellerId: string,
+  updates: Partial<SellerDocument>
+): Promise<SellerDocument> {
+  if (adminUser.role !== 'admin') {
+    throw new Error('فقط مدير المنصة يملك صلاحية تعديل بيانات ورش الحرفيين');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let seller: SellerDocument | null = null;
+
+  if (isMongo && db) {
+    try {
+      seller = (await db.collection('sellers').findOne({ id: sellerId })) as unknown as SellerDocument | null;
+    } catch (e) {
+      console.error('[SellerService] MongoDB find seller error:', e);
+    }
+  }
+  if (!seller) {
+    seller = (memoryDb.sellers.find((s) => s.id === sellerId) as unknown as SellerDocument) || null;
+  }
+
+  if (!seller) {
+    throw new Error('بيانات الورشة/البائع غير موجودة');
+  }
+
+  const safeUpdates: Partial<SellerDocument> = {};
+  if (updates.brandName !== undefined) safeUpdates.brandName = updates.brandName.trim();
+  if (updates.name !== undefined) safeUpdates.name = updates.name.trim();
+  if (updates.bio !== undefined) safeUpdates.bio = updates.bio.trim();
+  if (updates.story !== undefined) safeUpdates.story = updates.story.trim();
+  if (updates.avatar !== undefined) safeUpdates.avatar = updates.avatar.trim();
+  if (updates.coverImage !== undefined) safeUpdates.coverImage = updates.coverImage.trim();
+  if (updates.phone !== undefined) safeUpdates.phone = updates.phone.trim();
+  if (updates.email !== undefined) safeUpdates.email = updates.email.trim();
+  if (updates.governorate !== undefined) safeUpdates.governorate = updates.governorate;
+  if (updates.specialty !== undefined) safeUpdates.specialty = updates.specialty.trim();
+  if (updates.payoutMethod !== undefined) safeUpdates.payoutMethod = updates.payoutMethod;
+  if (updates.payoutAccount !== undefined) safeUpdates.payoutAccount = updates.payoutAccount.trim();
+  if (updates.verified !== undefined) safeUpdates.verified = Boolean(updates.verified);
+  if (updates.status !== undefined) safeUpdates.status = updates.status;
+
+  if (isMongo && db) {
+    try {
+      await db.collection('sellers').updateOne({ id: sellerId }, { $set: safeUpdates });
+      // Also sync linked user profile
+      const userUpdate: any = {};
+      if (safeUpdates.name) userUpdate.name = safeUpdates.name;
+      if (safeUpdates.governorate) userUpdate.governorate = safeUpdates.governorate;
+      if (safeUpdates.avatar) userUpdate.avatar = safeUpdates.avatar;
+      if (safeUpdates.status) userUpdate.sellerStatus = safeUpdates.status;
+
+      if (Object.keys(userUpdate).length > 0) {
+        await db.collection('users').updateMany(
+          { $or: [{ sellerId: sellerId }, { id: seller.userId }, { email: seller.email }] },
+          { $set: userUpdate }
+        );
+      }
+
+      seller = (await db.collection('sellers').findOne({ id: sellerId })) as unknown as SellerDocument | null;
+    } catch (e) {
+      console.error('[SellerService] MongoDB admin update seller error:', e);
+    }
+  }
+
+  const memSeller = memoryDb.sellers.find((s) => s.id === sellerId);
+  if (memSeller) {
+    Object.assign(memSeller, safeUpdates);
+  }
+
+  if (!seller) {
+    seller = (memSeller as unknown as SellerDocument) || null;
+  }
+
+  cacheService.invalidateSellers(sellerId);
+
+  await createAuditLog({
+    actorId: adminUser.id,
+    userName: adminUser.name,
+    userRole: 'admin',
+    action: 'ADMIN_UPDATED_SELLER_PROFILE',
+    resource: 'حساب ورشة',
+    resourceId: sellerId,
+    status: 'نجاح',
+    details: `قام المدير ${adminUser.name} بتعديل وتحديث بيانات وغلاف ورشة "${seller?.brandName || sellerId}"`
+  });
+
+  return seller!;
+}
+
+/**
  * Admin: Update seller status (e.g. approve, reject, suspend, reactivate).
  */
 export async function adminUpdateSellerStatus(

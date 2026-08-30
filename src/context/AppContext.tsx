@@ -18,6 +18,7 @@ import {
   ThemeMode
 } from '../types.ts';
 import { api } from '../services/api.ts';
+import { notificationService } from '../services/notificationService.ts';
 
 export interface ToastNotification {
   id: string;
@@ -303,6 +304,7 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   categories: '/categories',
   'category-details': '/categories',
   crafts: '/crafts',
+  reels: '/reels',
   sellers: '/sellers',
   'seller-details': '/sellers',
   about: '/about',
@@ -1340,11 +1342,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     initialStatus: ProductStatus = 'pending'
   ): Promise<Product> => {
     try {
-      const created = await api.createSellerProduct(
-        { id: currentUser.id, role: currentRole, sellerId: currentUser.id },
-        productData,
-        initialStatus
-      );
+      let created: Product;
+      if (currentRole === 'admin' || currentUser.role === 'admin') {
+        created = await api.createAdminProduct(
+          { id: currentUser.id, role: 'admin' },
+          { ...productData, approvalStatus: initialStatus || 'approved' }
+        );
+      } else {
+        created = await api.createSellerProduct(
+          { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
+          productData,
+          initialStatus
+        );
+      }
 
       // Update local state
       setSellerProducts((prev) => [created, ...prev]);
@@ -1357,9 +1367,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       addToast(
-        initialStatus === 'pending' ? 'تم إرسال المنتج للمراجعة بنجاح' : 'تم حفظ المسودة بنجاح',
-        `المنتج "${created.title}" مسجل الآن بحالة: ${created.approvalStatus === 'pending' ? 'قيد المراجعة من إدارة المنصة' : 'مسودة'
-        }`,
+        created.approvalStatus === 'pending' ? 'تم إرسال المنتج للمراجعة بنجاح' : 'تم حفظ ونشر المنتج بنجاح',
+        `المنتج "${created.title}" مسجل الآن بنجاح`,
         'success'
       );
 
@@ -1374,7 +1383,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const submitProductForReview = async (productId: string): Promise<Product> => {
     try {
       const updated = await api.submitSellerProduct(
-        { id: currentUser.id, role: currentRole, sellerId: currentUser.id },
+        { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
         productId
       );
 
@@ -1398,31 +1407,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateProduct = async (id: string, updates: Partial<Product>) => {
     try {
-      const updated = await api.updateSellerProduct(
-        { id: currentUser.id, role: currentRole, sellerId: currentUser.id },
-        id,
-        updates
-      );
+      let updated: Product;
+      if (currentRole === 'admin' || currentUser.role === 'admin') {
+        updated = await api.updateAdminProduct(
+          { id: currentUser.id, role: 'admin' },
+          id,
+          updates
+        );
+      } else {
+        updated = await api.updateSellerProduct(
+          { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
+          id,
+          updates
+        );
+      }
 
       setSellerProducts((prev) => prev.map((prod) => (prod.id === id ? updated : prod)));
       setAdminProducts((prev) => prev.map((prod) => (prod.id === id ? updated : prod)));
       if (updated.approvalStatus === 'approved') {
-        setProducts((prev) => prev.map((prod) => (prod.id === id ? updated : prod)));
+        setProducts((prev) => {
+          const exists = prev.some((p) => p.id === id);
+          return exists ? prev.map((prod) => (prod.id === id ? updated : prod)) : [updated, ...prev];
+        });
+      } else {
+        setProducts((prev) => prev.filter((prod) => prod.id !== id));
       }
 
       addToast('تم التحديث', 'تم حفظ تعديلات المنتج بنجاح', 'success');
       return updated;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error updating product:', err);
+      addToast('خطأ في التعديل', err?.message || 'فشل في حفظ تعديلات المنتج', 'error');
+      throw err;
     }
   };
 
   const deleteProduct = async (id: string) => {
     try {
-      await api.deleteSellerProduct(
-        { id: currentUser.id, role: currentRole, sellerId: currentUser.id },
-        id
-      );
+      if (currentRole === 'admin' || currentUser.role === 'admin') {
+        await api.deleteAdminProduct(
+          { id: currentUser.id, role: 'admin' },
+          id
+        );
+      } else {
+        await api.deleteSellerProduct(
+          { id: currentUser.id, role: currentRole, sellerId: currentUser.sellerId || currentUser.id },
+          id
+        );
+      }
     } catch (e) {
       console.warn('API delete error:', e);
     }
@@ -1448,6 +1480,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       addToast('تمت الموافقة بنجاح', `تم اعتماد المنتج "${approved.title}" ونشره بالسوق العام للجمهور`, 'success');
+      try {
+        notificationService.notifyProductApprovalStatus({
+          productId: approved.id,
+          productTitle: approved.title,
+          status: 'approved',
+          sellerId: approved.sellerId
+        });
+      } catch (errNotif) {
+        console.warn('Notification trigger error:', errNotif);
+      }
       refreshAuditLogs();
     } catch (err) {
       console.error('Error approving product:', err);
@@ -1464,6 +1506,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setProducts((prev) => prev.filter((p) => p.id !== id));
 
       addToast('تم رفض المنتج', `تم رفض إدراج المنتج وإرسال سبب الرفض للورشة: "${reason}"`, 'warning');
+      try {
+        notificationService.notifyProductApprovalStatus({
+          productId: rejected.id,
+          productTitle: rejected.title,
+          status: 'rejected',
+          reason,
+          sellerId: rejected.sellerId
+        });
+      } catch (errNotif) {
+        console.warn('Notification trigger error:', errNotif);
+      }
       refreshAuditLogs();
     } catch (err) {
       console.error('Error rejecting product:', err);
@@ -1534,22 +1587,57 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateSellerProfile = async (updates: Partial<Seller>) => {
     try {
+      const targetSellerId = currentUser.sellerId || currentUser.id;
       const updated = await api.updateSellerProfile(
-        { id: currentUser.id, role: 'seller', sellerId: currentUser.id },
+        { id: currentUser.id, role: 'seller', sellerId: targetSellerId },
         updates
       );
-      setSellers((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
-      addToast('تم التحديث', 'تم حفظ بيانات الورشة والمتجر بنجاح', 'success');
+      if (updated) {
+        setSellers((prev) => {
+          const exists = prev.some((s) => s.id === updated.id || s.id === targetSellerId);
+          if (exists) {
+            return prev.map((s) => (s.id === updated.id || s.id === targetSellerId ? { ...s, ...updated } : s));
+          } else {
+            return [...prev, updated];
+          }
+        });
+        setCurrentUser((prev) => ({
+          ...prev,
+          name: updated.brandName || updated.name || prev.name,
+          governorate: updated.governorate || prev.governorate,
+          avatar: updated.avatar || prev.avatar
+        }));
+      }
+      addToast('تم التحديث', 'تم حفظ بيانات الورشة وصورة الغلاف بنجاح', 'success');
     } catch (err: any) {
       console.error('Error updating seller profile:', err);
+      addToast('خطأ', err?.message || 'فشل تحديث بيانات الورشة', 'error');
+      throw err;
     }
   };
 
-  const updateSeller = (sellerId: string, updates: Partial<Seller>) => {
-    setSellers((prev) =>
-      prev.map((s) => (s.id === sellerId ? { ...s, ...updates } : s))
-    );
-    addToast('تم التحديث', 'تم حفظ تعديلات الحساب والورشة بنجاح', 'success');
+  const updateSeller = async (sellerId: string, updates: Partial<Seller>) => {
+    try {
+      if (currentRole === 'admin' || currentUser.role === 'admin') {
+        const updated = await api.updateAdminSellerProfile(
+          { id: currentUser.id, role: 'admin' },
+          sellerId,
+          updates
+        );
+        setSellers((prev) =>
+          prev.map((s) => (s.id === sellerId ? { ...s, ...updated } : s))
+        );
+      } else {
+        setSellers((prev) =>
+          prev.map((s) => (s.id === sellerId ? { ...s, ...updates } : s))
+        );
+      }
+      addToast('تم التحديث', 'تم حفظ وتحديث بيانات وغلاف الورشة بنجاح', 'success');
+      refreshSellers();
+    } catch (err: any) {
+      console.error('Error updating seller:', err);
+      addToast('خطأ', err?.message || 'تعذر تحديث بيانات الورشة', 'error');
+    }
   };
 
   // Inventory Management
@@ -1637,6 +1725,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
       );
 
+      // Trigger Platform Notification to Admin & Sellers
+      try {
+        notificationService.notifyNewOrder({
+          orderId: createdOrder.id,
+          orderNumber: createdOrder.orderNumber || createdOrder.id,
+          total: createdOrder.total,
+          itemsCount: normalized.items.length,
+          governorate: resolvedAddress.governorate,
+          sellerIds: normalized.items.map((i: any) => i.product?.sellerId).filter(Boolean)
+        });
+      } catch (errNotif) {
+        console.warn('Could not trigger notification for new order:', errNotif);
+      }
+
       addToast(
         'تم تسجيل الطلب بنجاح',
         `رقم الطلب: ${createdOrder.orderNumber || createdOrder.id} - إجمالي الفاتورة: ${createdOrder.total} ج.م`,
@@ -1661,6 +1763,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           note
         );
         setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+        try {
+          notificationService.notifyOrderStatus({
+            orderId,
+            orderNumber: updated.orderNumber || orderId,
+            newStatus,
+            buyerId: updated.buyerId,
+            sellerId: currentUser.sellerId || currentUser.id
+          });
+        } catch (eN) {
+          console.warn('Notification error on order status:', eN);
+        }
       } else if (currentRole === 'admin') {
         const updated = await api.updateAdminOrderStatus(
           { id: currentUser.id, role: 'admin' },
@@ -1669,6 +1782,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           note
         );
         setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+        try {
+          notificationService.notifyOrderStatus({
+            orderId,
+            orderNumber: updated.orderNumber || orderId,
+            newStatus,
+            buyerId: updated.buyerId
+          });
+        } catch (eN) {
+          console.warn('Notification error on order status:', eN);
+        }
       }
       addToast('تحديث حالة الطلب', `تم تغيير حالة الطلب بنجاح إلى: "${newStatus}"`, 'success');
       refreshAuditLogs();

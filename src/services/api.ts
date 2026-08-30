@@ -672,6 +672,27 @@ export const api = {
     return json.data;
   },
 
+  async uploadSellerCoverImage(
+    user: { id: string; role: string; sellerId?: string },
+    imageDataUri: string,
+    filename?: string
+  ): Promise<{ url: string; fileKey: string }> {
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({
+        image: imageDataUri,
+        filename: filename || 'workshop-cover',
+        folder: 'sellers'
+      })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في رفع صورة الغلاف إلى خدمة التخزين');
+    }
+    return json.data;
+  },
+
   // ==================== PHASE 4: REVIEWS ====================
   async getProductReviews(productId: string): Promise<any[]> {
     const res = await fetch(`${API_BASE}/products/${productId}/reviews`);
@@ -891,6 +912,71 @@ export const api = {
       throw new Error(json.error || 'فشل في تحديث حالة البائع');
     }
     return json.data;
+  },
+
+  async updateAdminSellerProfile(
+    user: { id: string; role: string },
+    sellerId: string,
+    updates: Partial<Seller>
+  ): Promise<Seller> {
+    const res = await fetch(`${API_BASE}/admin/sellers/${sellerId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(updates)
+    });
+    const json: ApiResponse<Seller> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث بيانات وغلاف الورشة بواسطة الإدارة');
+    }
+    return json.data;
+  },
+
+  async createAdminProduct(
+    user: { id: string; role: string },
+    productData: any
+  ): Promise<Product> {
+    const res = await fetch(`${API_BASE}/admin/products`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(productData)
+    });
+    const json: ApiResponse<Product> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إضافة المنتج بواسطة الإدارة');
+    }
+    return json.data;
+  },
+
+  async updateAdminProduct(
+    user: { id: string; role: string },
+    productId: string,
+    updates: Partial<Product>
+  ): Promise<Product> {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(updates)
+    });
+    const json: ApiResponse<Product> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تعديل بيانات المنتج بواسطة الإدارة');
+    }
+    return json.data;
+  },
+
+  async deleteAdminProduct(
+    user: { id: string; role: string },
+    productId: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/products/${productId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف المنتج بواسطة الإدارة');
+    }
+    return true;
   },
 
   async getSellerStatus(user: { id: string; role: string; sellerId?: string }): Promise<any> {

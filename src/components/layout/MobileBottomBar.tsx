@@ -6,6 +6,7 @@ import {
   Grid,
   Heart,
   User,
+  Film,
   Store,
   ShieldAlert,
   LogIn,
@@ -248,7 +249,7 @@ export const MobileBottomBar: React.FC = () => {
               type="button"
               id="mobile-bar-products"
               onClick={() => setActivePage('products')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
                 activePage === 'products' || activePage === 'product-details'
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -265,25 +266,57 @@ export const MobileBottomBar: React.FC = () => {
               <span className="text-[10px] mt-1 tracking-tight">المنتجات</span>
             </button>
 
-            {/* Cart Trigger (Center Action Highlight - ONLY FOR BUYER/GUEST) */}
+            {/* Craft Reels Button (NEW FEATURE) */}
+            <button
+              type="button"
+              id="mobile-bar-reels"
+              onClick={() => setActivePage('reels')}
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+                activePage === 'reels'
+                  ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
+                  : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
+              }`}
+              aria-label="فيديوهات الحرف"
+              aria-current={activePage === 'reels' ? 'page' : undefined}
+            >
+              <div className="relative">
+                <Film className="w-5 h-5 transition-transform active:scale-90" />
+                <span className="absolute -top-1 -right-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[8px] font-black px-1 rounded-full animate-pulse">
+                  Reels
+                </span>
+                {activePage === 'reels' && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
+                )}
+              </div>
+              <span className="text-[10px] mt-1 tracking-tight">الفيديوهات</span>
+            </button>
+
+            {/* Cart Trigger (Action Highlight - ONLY FOR BUYER/GUEST) */}
             <button
               type="button"
               id="mobile-bar-cart"
               onClick={() => {
                 setActivePage('cart');
               }}
-              className="relative -top-2 flex flex-col items-center justify-center cursor-pointer group"
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+                activePage === 'cart'
+                  ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
+                  : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
+              }`}
               aria-label={`سلة المشتريات، ${cartCount} عناصر`}
             >
-              <div className="w-12 h-12 rounded-full bg-[#B45F42] dark:bg-[#FF855D] text-white flex items-center justify-center shadow-lg shadow-[#B45F42]/30 group-hover:scale-105 active:scale-95 transition-all">
-                <ShoppingBag className="w-5 h-5" />
+              <div className="relative">
+                <ShoppingBag className="w-5 h-5 transition-transform active:scale-90" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-300 text-[#2D2A26] text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow-xs border-2 border-white dark:border-[#151210]">
+                  <span className="absolute -top-1 -right-2 bg-[#B45F42] dark:bg-[#FF855D] text-white text-[9px] font-black px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
+                {activePage === 'cart' && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
+                )}
               </div>
-              <span className="text-[10px] mt-0.5 font-bold text-[#B45F42] dark:text-[#FF855D]">السلة</span>
+              <span className="text-[10px] mt-1 tracking-tight font-medium">السلة</span>
             </button>
 
             {/* Favorites Button */}

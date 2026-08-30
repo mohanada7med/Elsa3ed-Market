@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { HeroSection } from '../public/HeroSection';
 import { FeaturedCategories } from '../public/FeaturedCategories';
 import { HeritageCraftsShowcase } from '../public/HeritageCraftsShowcase';
+import { CraftReelsSection } from '../public/CraftReelsSection';
 import { ProductGrid } from '../products/ProductGrid';
 import { GovernorateExplorer } from '../public/GovernorateExplorer';
 import { PromotionsBanner } from '../public/PromotionsBanner';
@@ -25,7 +26,10 @@ export const HomePage: React.FC = () => {
       {/* 3. Upper Egypt Heritage Crafts Showcase (Deep Interactive Atlas) */}
       <HeritageCraftsShowcase />
 
-      {/* 4. Featured & Best-Selling Products Section */}
+      {/* 4. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
+      <CraftReelsSection />
+
+      {/* 5. Featured & Best-Selling Products Section */}
       <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>

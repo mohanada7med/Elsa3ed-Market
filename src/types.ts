@@ -284,6 +284,7 @@ export type ActivePage =
   | 'about'
   | 'wholesale'
   | 'crafts'
+  | 'reels'
   | 'search'
   | 'cart'
   | 'checkout'
@@ -395,4 +396,45 @@ export interface PaymentConfig {
   vodafoneCashInstructions?: string;
   updatedAt?: string;
 }
+
+export interface CraftReelComment {
+  id: string;
+  userName: string;
+  userAvatar?: string;
+  governorate?: string;
+  comment: string;
+  createdAt: string;
+  likesCount: number;
+}
+
+export interface CraftReel {
+  id: string;
+  title: string;
+  artisanName: string;
+  artisanAvatar: string;
+  workshopName: string;
+  sellerId: string;
+  governorate: Governorate;
+  craftType: string;
+  videoUrl: string;
+  posterUrl: string;
+  duration: string;
+  likesCount: number;
+  viewsCount: number;
+  sharesCount: number;
+  productId: string;
+  productTitle: string;
+  productPrice: number;
+  productOriginalPrice?: number;
+  productImage: string;
+  productRating: number;
+  inStock: boolean;
+  description: string;
+  hashtags: string[];
+  musicTrack: string;
+  isVerifiedArtisan?: boolean;
+  createdAt: string;
+  comments?: CraftReelComment[];
+}
+
 

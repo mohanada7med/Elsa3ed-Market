@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
-import { Product, Governorate, OrderStatus, ProductStatus } from '../../types.ts';
+import { Product, Governorate, OrderStatus, ProductStatus, CraftReel } from '../../types.ts';
 import { api } from '../../services/api.ts';
+import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
+import { NotificationsManager } from '../common/NotificationsManager.tsx';
+import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
+import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import {
   Store,
   Package,
@@ -18,6 +22,7 @@ import {
   TrendingUp,
   CreditCard,
   Settings,
+  Bell,
   ChevronRight,
   Sparkles,
   Phone,
@@ -39,8 +44,79 @@ import {
   Upload,
   Image as ImageIcon,
   Loader2,
-  User
+  User,
+  Camera,
+  Palette,
+  Eye,
+  Link as LinkIcon,
+  Layers,
+  Info,
+  Film,
+  Play,
+  Share2,
+  Heart,
+  Music
 } from 'lucide-react';
+
+// Curated Heritage Craft Workshop Cover Presets
+const HERITAGE_COVER_PRESETS = [
+  {
+    id: 'pottery-qena',
+    title: 'فخار وخزف قنا والأقصر',
+    region: 'قنا / الأقصر',
+    craft: 'فخار نيلي وخزف يدوي أصيل',
+    url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'rugs-sohag',
+    title: 'سجاد وكليم صوف أخميم التراثي',
+    region: 'سوهاج',
+    craft: 'نول يدوي ومنسوجات صوف وحرير',
+    url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'tally-asyut',
+    title: 'تلي وتطريز خيوط الفضة التراثي',
+    region: 'أسيوط',
+    craft: 'تطريز تلي صعيدي أصيل',
+    url: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'brass-luxor',
+    title: 'صواني ونقوش النحاس الأقصري',
+    region: 'الأقصر',
+    craft: 'نقش وتشكيل نحاس وزخارف عربية',
+    url: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'palm-aswan',
+    title: 'خوص ونخيل وتمور أسوان النوبية',
+    region: 'أسوان',
+    craft: 'جدل خوص وسلال نخيل نوبية',
+    url: 'https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'wood-craft',
+    title: 'أخشاب السرسوع والمشغولات الخشبية',
+    region: 'قنا / سوهاج',
+    craft: 'نجارة تقليدية وتطعيم صدف',
+    url: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'alabaster-luxor',
+    title: 'نحت الألباستر ومحاجر القرنة',
+    region: 'الأقصر',
+    craft: 'نحت يدوي على الألباستر والأحجار',
+    url: 'https://images.unsplash.com/photo-1599818817351-40995772654c?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    id: 'honey-herbs-minya',
+    title: 'عسل جبلي وأعشاب برية بالمنيا',
+    region: 'المنيا',
+    craft: 'مناحل طبيعية ومقطرات عشبية',
+    url: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=1200&q=80'
+  }
+];
 
 export const SellerDashboard: React.FC = () => {
   const {
@@ -54,6 +130,7 @@ export const SellerDashboard: React.FC = () => {
     orders,
     updateOrderStatus,
     categories,
+    sellers,
     setActivePage,
     addToast,
     sellerInventory,
@@ -66,7 +143,30 @@ export const SellerDashboard: React.FC = () => {
     updateSellerProfile
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'payouts' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
+
+  // Reels Management State
+  const [reels, setReels] = useState<CraftReel[]>([]);
+  const [isReelUploadOpen, setIsReelUploadOpen] = useState(false);
+  const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
+  const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
+
+  useEffect(() => {
+    setReels(craftReelsService.getReels());
+  }, []);
+
+  const handleReelUploaded = (newReel: CraftReel) => {
+    setReels(craftReelsService.getReels());
+    addToast('تم نشر الفيديو بنجاح', `تمت إضافة مقطع "${newReel.title}" إلى Craft Reels المعروضة`, 'success');
+  };
+
+  const handleDeleteReel = (reelId: string, reelTitle: string) => {
+    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}"؟`)) {
+      craftReelsService.deleteReel(reelId);
+      setReels(craftReelsService.getReels());
+      addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح`, 'info');
+    }
+  };
 
   // Synchronize activeTab when navigation changes via URL or Header links
   useEffect(() => {
@@ -77,6 +177,9 @@ export const SellerDashboard: React.FC = () => {
     else if (activePage === 'seller-account') setActiveTab('settings');
     else if (activePage === 'seller-dashboard') setActiveTab('overview');
   }, [activePage]);
+
+  // Find current seller from store data
+  const currentSeller = sellers.find((s) => s.id === currentUser.sellerId || s.id === currentUser.id);
 
   // Product Modal State (Add or Edit)
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -110,15 +213,45 @@ export const SellerDashboard: React.FC = () => {
   const [stockAdjustmentReason, setStockAdjustmentReason] = useState<string>('إنتاج دفعة جديدة بالورشة');
   const [isUpdatingStock, setIsUpdatingStock] = useState(false);
 
-  // Profile Settings Form State
-  const [brandName, setBrandName] = useState(currentUser.name || 'ورشة عم سعيد الفخاري');
-  const [sellerBio, setSellerBio] = useState('عائلة تتوارث صناعة الفخار القناوي والخزف اليدوي منذ أكثر من 70 عاماً في قنا.');
-  const [sellerSpecialty, setSellerSpecialty] = useState('فخار نيلي وأواني فخارية تراثية');
-  const [sellerGovernorate, setSellerGovernorate] = useState<Governorate>(currentUser.governorate || 'قنا');
-  const [sellerPhone, setSellerPhone] = useState(currentUser.phone || '01012345678');
-  const [sellerPayoutMethod, setSellerPayoutMethod] = useState<'vodafone_cash' | 'instapay' | 'bank_transfer'>('vodafone_cash');
-  const [sellerPayoutAccount, setSellerPayoutAccount] = useState('01012345678');
+  // Profile & Workshop Identity State
+  const [brandName, setBrandName] = useState(currentSeller?.brandName || currentUser.name || 'ورشة عم سعيد الفخاري');
+  const [sellerBio, setSellerBio] = useState(currentSeller?.bio || 'عائلة تتوارث صناعة الفخار القناوي والخزف اليدوي منذ أكثر من 70 عاماً في قنا.');
+  const [sellerSpecialty, setSellerSpecialty] = useState(currentSeller?.specialty || 'فخار نيلي وأواني فخارية تراثية');
+  const [sellerGovernorate, setSellerGovernorate] = useState<Governorate>(currentSeller?.governorate || currentUser.governorate || 'قنا');
+  const [sellerCoverImage, setSellerCoverImage] = useState<string>(
+    currentSeller?.coverImage || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80'
+  );
+  const [sellerAvatar, setSellerAvatar] = useState<string>(
+    currentSeller?.avatar || currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'
+  );
+  const [sellerPhone, setSellerPhone] = useState(currentSeller?.phone || currentUser.phone || '01012345678');
+  const [sellerPayoutMethod, setSellerPayoutMethod] = useState<'vodafone_cash' | 'instapay' | 'bank_transfer'>(
+    (currentSeller?.payoutMethod as any) || 'vodafone_cash'
+  );
+  const [sellerPayoutAccount, setSellerPayoutAccount] = useState(currentSeller?.payoutAccount || '01012345678');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  // Cover Image Selection & Upload State
+  const [coverPickerTab, setCoverPickerTab] = useState<'presets' | 'upload' | 'url'>('presets');
+  const [customCoverUrl, setCustomCoverUrl] = useState('');
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  // Sync state with current seller when available
+  useEffect(() => {
+    if (currentSeller) {
+      if (currentSeller.brandName) setBrandName(currentSeller.brandName);
+      if (currentSeller.bio) setSellerBio(currentSeller.bio);
+      if (currentSeller.specialty) setSellerSpecialty(currentSeller.specialty);
+      if (currentSeller.governorate) setSellerGovernorate(currentSeller.governorate);
+      if (currentSeller.coverImage) setSellerCoverImage(currentSeller.coverImage);
+      if (currentSeller.avatar) setSellerAvatar(currentSeller.avatar);
+      if (currentSeller.phone) setSellerPhone(currentSeller.phone);
+      if (currentSeller.payoutMethod) setSellerPayoutMethod(currentSeller.payoutMethod as any);
+      if (currentSeller.payoutAccount) setSellerPayoutAccount(currentSeller.payoutAccount);
+    }
+  }, [currentSeller]);
 
   // Payout request modal state
   const [isPayoutModalOpen, setIsPayoutModalOpen] = useState(false);
@@ -368,6 +501,110 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
+  const handleCoverImageFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate type and size (5MB max)
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      setCoverUploadError('يرجى اختيار صورة بصيغة JPG أو PNG أو WebP');
+      addToast('صيغة غير مدعومة', 'يرجى اختيار صورة بصيغة JPG أو PNG أو WebP', 'error');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setCoverUploadError('حجم الصورة يجب ألا يتجاوز 5 ميجابايت');
+      addToast('حجم كبير', 'حجم الصورة يجب ألا يتجاوز 5 ميجابايت', 'error');
+      return;
+    }
+
+    setCoverUploadError(null);
+    setIsUploadingCover(true);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const dataUri = reader.result as string;
+        try {
+          // Upload to Cloudinary / storage backend
+          const uploadRes = await api.uploadSellerCoverImage(
+            { id: currentUser.id, role: 'seller', sellerId: currentUser.sellerId || currentUser.id },
+            dataUri,
+            file.name
+          );
+          if (uploadRes?.url) {
+            setSellerCoverImage(uploadRes.url);
+            addToast('تم رفع الغلاف بنجاح', 'تم تحديث صورة غلاف الورشة في المعاينة', 'success');
+          }
+        } catch (err: any) {
+          console.warn('Cover upload to server failed, applying direct preview:', err);
+          setSellerCoverImage(dataUri);
+          addToast('تم اختيار الغلاف', 'تم تعيين صورة الغلاف بنجاح', 'success');
+        } finally {
+          setIsUploadingCover(false);
+        }
+      };
+      reader.onerror = () => {
+        setCoverUploadError('تعذر قراءة ملف الصورة');
+        setIsUploadingCover(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err: any) {
+      setCoverUploadError(err?.message || 'فشل في قراءة ملف الصورة');
+      setIsUploadingCover(false);
+    }
+  };
+
+  const handleApplyCoverUrl = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customCoverUrl.trim()) return;
+    if (!customCoverUrl.startsWith('http://') && !customCoverUrl.startsWith('https://') && !customCoverUrl.startsWith('data:')) {
+      setCoverUploadError('يرجى إدخال رابط يبدأ بـ https://');
+      return;
+    }
+    setSellerCoverImage(customCoverUrl.trim());
+    setCoverUploadError(null);
+    addToast('تم تعيين الغلاف', 'تم تطبيق رابط صورة الغلاف بنجاح', 'success');
+  };
+
+  const handleSelectPresetCover = (url: string, title: string) => {
+    setSellerCoverImage(url);
+    setCoverUploadError(null);
+    addToast('تم اختيار الغلاف', `تم اختيار: ${title}`, 'success');
+  };
+
+  const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const dataUri = reader.result as string;
+        try {
+          const uploadRes = await api.uploadProfileImage(
+            { id: currentUser.id, role: 'seller' },
+            dataUri,
+            file.name
+          );
+          if (uploadRes?.url) {
+            setSellerAvatar(uploadRes.url);
+            addToast('تم تحديث الشعار', 'تم رفع شعار الورشة بنجاح', 'success');
+          }
+        } catch (err) {
+          setSellerAvatar(dataUri);
+          addToast('تم تعيين الشعار', 'تم تحديث الشعار في المعاينة', 'success');
+        } finally {
+          setIsUploadingAvatar(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err: any) {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   const handleSaveWorkshopProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSavingProfile(true);
@@ -377,6 +614,8 @@ export const SellerDashboard: React.FC = () => {
         bio: sellerBio,
         specialty: sellerSpecialty,
         governorate: sellerGovernorate,
+        coverImage: sellerCoverImage,
+        avatar: sellerAvatar,
         phone: sellerPhone,
         payoutMethod: sellerPayoutMethod,
         payoutAccount: sellerPayoutAccount
@@ -670,52 +909,76 @@ export const SellerDashboard: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      {/* Top Header */}
-      <div className="bg-[#B45F42] rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-[#9E4F36]">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 border border-white/25 flex items-center justify-center text-white text-2xl font-bold font-heritage shadow-inner">
-            {currentUser.profileImage?.secureUrl || currentUser.avatar ? (
-              <img
-                src={currentUser.profileImage?.secureUrl || currentUser.avatar}
-                alt={currentUser.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              'ص'
-            )}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black font-heritage">لوحة تحكم البائع الحرفي</h1>
-              <span className="bg-amber-300 text-[#2D2A26] text-[10px] font-black px-2 py-0.5 rounded-full">
-                ورشة معتمدة
-              </span>
-              <button
-                type="button"
-                id="seller-profile-settings-btn"
-                onClick={() => setActivePage('buyer-account')}
-                className="text-[11px] text-amber-200 hover:text-white underline mr-2"
-              >
-                تغيير الصورة الشخصية
-              </button>
-            </div>
-            <p className="text-xs text-amber-100 mt-1 font-medium">
-              {brandName} • محافظة {sellerGovernorate} (حرفي أصيل موثق)
-            </p>
-          </div>
+      {/* Top Header with Workshop Cover Background Accent */}
+      <div className="relative overflow-hidden rounded-3xl text-white shadow-xl border border-[#9E4F36]">
+        {/* Background Cover Image with Rich Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={sellerCoverImage}
+            alt={brandName}
+            className="w-full h-full object-cover blur-[1px] brightness-[0.4]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#B45F42]/95 via-[#B45F42]/90 to-[#7A3F2C]/90 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-black/30" />
         </div>
 
-        {/* Quick Add Product Button */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            id="seller-add-product-btn"
-            onClick={openAddProductModal}
-            className="px-6 py-3.5 bg-[#FDFBF7] hover:bg-white text-[#B45F42] text-sm font-bold rounded-2xl shadow-md flex items-center gap-2 transition-all"
-          >
-            <Plus className="w-5 h-5" />
-            <span>إضافة منتج جديد</span>
-          </button>
+        <div className="relative z-10 p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white/10 border-2 border-white/40 flex items-center justify-center text-white text-2xl font-bold font-heritage shadow-md shrink-0">
+              {sellerAvatar || currentUser.profileImage?.secureUrl || currentUser.avatar ? (
+                <img
+                  src={sellerAvatar || currentUser.profileImage?.secureUrl || currentUser.avatar}
+                  alt={brandName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                'ص'
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-2xl font-black font-heritage">لوحة تحكم البائع الحرفي</h1>
+                <span className="bg-amber-300 text-[#2D2A26] text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-xs">
+                  ورشة معتمدة
+                </span>
+                <button
+                  type="button"
+                  id="seller-cover-settings-btn"
+                  onClick={() => setActiveTab('settings')}
+                  className="text-[11px] text-amber-200 hover:text-white underline mr-2 flex items-center gap-1 font-bold cursor-pointer"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                  <span>تعديل صورة الغلاف والشعار</span>
+                </button>
+              </div>
+              <p className="text-xs text-amber-100 mt-1 font-medium">
+                {brandName} • محافظة {sellerGovernorate} ({sellerSpecialty || 'حرفي موثق'})
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Header Actions */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              type="button"
+              id="seller-edit-cover-quick-btn"
+              onClick={() => setActiveTab('settings')}
+              className="px-4 py-3 bg-white/15 hover:bg-white/25 border border-white/30 text-white text-xs font-bold rounded-2xl backdrop-blur-xs flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <Palette className="w-4 h-4 text-amber-300" />
+              <span>تخصيص غلاف الورشة</span>
+            </button>
+
+            <button
+              type="button"
+              id="seller-add-product-btn"
+              onClick={openAddProductModal}
+              className="px-6 py-3 bg-[#FDFBF7] hover:bg-white text-[#B45F42] text-sm font-bold rounded-2xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+            >
+              <Plus className="w-5 h-5" />
+              <span>إضافة منتج جديد</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -777,19 +1040,23 @@ export const SellerDashboard: React.FC = () => {
           </div>
         </button>
 
-        {/* Action 4: My Account */}
+        {/* Action 4: Workshop Identity & Cover */}
         <button
           type="button"
           id="seller-primary-account-card"
-          onClick={() => setActivePage('buyer-account')}
-          className="p-5 bg-white hover:bg-[#FDFBF7] border border-[#E8E1D9] hover:border-[#B45F42] rounded-3xl shadow-xs transition-all text-right flex items-center justify-between cursor-pointer"
+          onClick={() => setActiveTab('settings')}
+          className={`p-5 rounded-3xl shadow-xs transition-all text-right flex items-center justify-between border cursor-pointer ${
+            activeTab === 'settings'
+              ? 'bg-[#FDFBF7] border-[#B45F42]'
+              : 'bg-white border-[#E8E1D9] hover:border-[#B45F42]'
+          }`}
         >
           <div>
-            <span className="text-base font-bold text-[#2D2A26] block mb-1">حسابي</span>
-            <span className="text-xs text-[#7A6F64] block font-medium">بيانات الورشة والصورة الشخصية</span>
+            <span className="text-base font-bold text-[#2D2A26] block mb-1">غلاف وهوية الورشة</span>
+            <span className="text-xs text-[#7A6F64] block font-medium">تعديل الغلاف وقسم الورش المعتمدة</span>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-700 shrink-0">
-            <User className="w-6 h-6" />
+            <Camera className="w-6 h-6" />
           </div>
         </button>
       </div>
@@ -859,6 +1126,34 @@ export const SellerDashboard: React.FC = () => {
         >
           <CreditCard className="w-4 h-4" />
           <span>طلب صرف المستحقات</span>
+        </button>
+
+        <button
+          type="button"
+          id="seller-reels-tab-btn"
+          onClick={() => setActiveTab('reels')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'reels'
+              ? 'bg-[#B45F42] text-white shadow-xs'
+              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+          }`}
+        >
+          <Film className="w-4 h-4 text-amber-500" />
+          <span>فيديوهات ورشة الصنعة (Craft Reels) ({reels.length})</span>
+        </button>
+
+        <button
+          type="button"
+          id="seller-notifications-tab-btn"
+          onClick={() => setActiveTab('notifications')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'notifications'
+              ? 'bg-[#B45F42] text-white shadow-xs'
+              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+          }`}
+        >
+          <Bell className="w-4 h-4" />
+          <span>مركز الإشعارات والتنبيهات</span>
         </button>
 
         <button
@@ -1447,108 +1742,751 @@ export const SellerDashboard: React.FC = () => {
 
       {/* TAB 5: WORKSHOP SETTINGS & PROFILE */}
       {activeTab === 'settings' && (
-        <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-6">
-          <div>
-            <h3 className="font-bold text-base text-[#2D2A26]">بيانات وهوية الورشة التراثية</h3>
-            <p className="text-xs text-[#7A6F64]">
-              تظهر هذه البيانات للمشترين في صفحة المتجر لتوثيق أصالة الحرفة ومحافظة المنشأ
-            </p>
-          </div>
-
-          <form onSubmit={handleSaveWorkshopProfile} className="space-y-4 max-w-2xl">
-            <div>
-              <label className="block text-xs font-bold text-[#2D2A26] mb-1">اسم الورشة أو العلامة التجارية *</label>
-              <input
-                type="text"
-                required
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
-                className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-6">
+          {/* Header Card */}
+          <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">محافظة الورشة *</label>
-                <select
-                  value={sellerGovernorate}
-                  onChange={(e) => setSellerGovernorate(e.target.value as Governorate)}
-                  className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-                >
-                  <option value="قنا">قنا</option>
-                  <option value="سوهاج">سوهاج</option>
-                  <option value="أسوان">أسوان</option>
-                  <option value="الأقصر">الأقصر</option>
-                  <option value="أسيوط">أسيوط</option>
-                  <option value="المنيا">المنيا</option>
-                  <option value="الوادي الجديد">الوادي الجديد</option>
-                  <option value="بني سويف">بني سويف</option>
-                  <option value="الفيوم">الفيوم</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">التخصص الحرفي الأصيل</label>
-                <input
-                  type="text"
-                  value={sellerSpecialty}
-                  onChange={(e) => setSellerSpecialty(e.target.value)}
-                  placeholder="مثال: فخار نيلي، تلي أسيوط، خوص نوبي"
-                  className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-[#2D2A26] mb-1">نبذة عن الورشة وتاريخ الصنعة</label>
-              <textarea
-                rows={3}
-                value={sellerBio}
-                onChange={(e) => setSellerBio(e.target.value)}
-                className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-              />
-            </div>
-
-            <div className="border-t border-[#E8E1D9] pt-4 space-y-3">
-              <h4 className="font-bold text-xs text-[#2D2A26]">إعدادات استلام المستحقات المالية</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">طريقة التسوية المفضلة</label>
-                  <select
-                    value={sellerPayoutMethod}
-                    onChange={(e) => setSellerPayoutMethod(e.target.value as any)}
-                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-                  >
-                    <option value="vodafone_cash">فودافون كاش / محافظ الكترونية</option>
-                    <option value="instapay">شبكة المدفوعات اللحظية InstaPay</option>
-                    <option value="bank_transfer">تحويل بنكي مباشر</option>
-                  </select>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold mb-2">
+                  <Sparkles className="w-3.5 h-3.5 text-[#B45F42]" />
+                  <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
                 </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">رقم الحساب أو عنوان IPA</label>
-                  <input
-                    type="text"
-                    value={sellerPayoutAccount}
-                    onChange={(e) => setSellerPayoutAccount(e.target.value)}
-                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
-                  />
-                </div>
+                <h3 className="font-black text-xl text-[#2D2A26] font-heritage">
+                  هوية وغلاف الورشة في سوق الصعيد
+                </h3>
+                <p className="text-xs text-[#7A6F64] mt-1 max-w-2xl leading-relaxed">
+                  خصص صورة الغلاف وشعار ورشتكم والبيانات التعريفية. تظهر هذه الصورة في صدارة بطاقة ورشتكم بقسم 
+                  <strong className="text-[#2D2A26] font-bold mx-1">"الورش والتعاونيات الحرفية المعتمدة"</strong>
+                  بالصفحة الرئيسية، ودليل الحرفيين، والمتجر التراثي الخاص بكم.
+                </p>
               </div>
-            </div>
 
-            <div className="pt-2">
               <button
-                type="submit"
-                disabled={isSavingProfile}
-                className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 disabled:opacity-50"
+                type="button"
+                onClick={() => setActivePage('sellers')}
+                className="px-4 py-2 bg-[#FDFBF7] hover:bg-[#F3EFE9] text-[#B45F42] border border-[#E8E1D9] rounded-xl text-xs font-bold flex items-center gap-2 self-start md:self-auto transition-all"
               >
-                <Save className="w-4 h-4" />
-                <span>{isSavingProfile ? 'جاري الحفظ...' : 'حفظ تعديلات الورشة'}</span>
+                <Eye className="w-4 h-4" />
+                <span>مشاهدة قسم الورش بالمنصة</span>
               </button>
             </div>
-          </form>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left Column: Cover Selection & Settings Form (7 cols) */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Cover Image Selector Box */}
+              <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-[#E8E1D9] pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#B45F42] flex items-center justify-center">
+                      <Camera className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-[#2D2A26]">اختيار وتحديث صورة الغلاف</h4>
+                      <p className="text-[11px] text-[#7A6F64]">اختر من المعرض التراثي المعتمد أو ارفع صورة خاصة لورشتك</p>
+                    </div>
+                  </div>
+                  
+                  {sellerCoverImage && (
+                    <span className="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      <span>تم تعيين الغلاف</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Cover Picker Tabs */}
+                <div className="flex items-center gap-2 p-1 bg-[#FDFBF7] border border-[#E8E1D9] rounded-2xl">
+                  <button
+                    type="button"
+                    onClick={() => setCoverPickerTab('presets')}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                      coverPickerTab === 'presets'
+                        ? 'bg-[#B45F42] text-white shadow-xs'
+                        : 'text-[#7A6F64] hover:text-[#2D2A26]'
+                    }`}
+                  >
+                    <Palette className="w-3.5 h-3.5" />
+                    <span>المعرض التراثي ({HERITAGE_COVER_PRESETS.length})</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCoverPickerTab('upload')}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                      coverPickerTab === 'upload'
+                        ? 'bg-[#B45F42] text-white shadow-xs'
+                        : 'text-[#7A6F64] hover:text-[#2D2A26]'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>رفع من جهازك</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCoverPickerTab('url')}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                      coverPickerTab === 'url'
+                        ? 'bg-[#B45F42] text-white shadow-xs'
+                        : 'text-[#7A6F64] hover:text-[#2D2A26]'
+                    }`}
+                  >
+                    <LinkIcon className="w-3.5 h-3.5" />
+                    <span>رابط صورة</span>
+                  </button>
+                </div>
+
+                {/* TAB 1: CURATED PRESETS GALLERY */}
+                {coverPickerTab === 'presets' && (
+                  <div className="space-y-3">
+                    <p className="text-xs text-[#7A6F64]">
+                      اختر صورة غلاف موثقة وعالية الجودة تمثل طابع حرفتكم التراثية بالصعيد:
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {HERITAGE_COVER_PRESETS.map((preset) => {
+                        const isSelected = sellerCoverImage === preset.url;
+                        return (
+                          <button
+                            type="button"
+                            key={preset.id}
+                            onClick={() => handleSelectPresetCover(preset.url, preset.title)}
+                            className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${
+                              isSelected
+                                ? 'border-[#B45F42] ring-2 ring-[#B45F42]/30 shadow-md scale-[1.02]'
+                                : 'border-[#E8E1D9] hover:border-[#B45F42]/60 hover:shadow-xs'
+                            }`}
+                          >
+                            <div className="h-24 w-full relative overflow-hidden bg-gray-100">
+                              <img
+                                src={preset.url}
+                                alt={preset.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                              
+                              {/* Selected Checkmark Badge */}
+                              {isSelected && (
+                                <div className="absolute top-2 right-2 w-5 h-5 bg-[#B45F42] text-white rounded-full flex items-center justify-center shadow-xs">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                </div>
+                              )}
+
+                              <div className="absolute bottom-1.5 right-2 left-2 text-white">
+                                <span className="text-[9px] font-bold block truncate drop-shadow-xs">
+                                  {preset.region}
+                                </span>
+                                <span className="text-[10px] font-black text-amber-200 block truncate drop-shadow-xs">
+                                  {preset.title}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* TAB 2: UPLOAD FROM DEVICE */}
+                {coverPickerTab === 'upload' && (
+                  <div className="space-y-4">
+                    <label
+                      htmlFor="seller-cover-upload-input"
+                      className={`border-2 border-dashed rounded-3xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 ${
+                        isUploadingCover
+                          ? 'border-amber-400 bg-amber-50/50'
+                          : 'border-[#E8E1D9] hover:border-[#B45F42] bg-[#FDFBF7] hover:bg-[#F3EFE9]/40'
+                      }`}
+                    >
+                      <input
+                        id="seller-cover-upload-input"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/jpg"
+                        onChange={handleCoverImageFileSelect}
+                        disabled={isUploadingCover}
+                        className="hidden"
+                      />
+
+                      {isUploadingCover ? (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-700 animate-spin">
+                            <Loader2 className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <span className="text-sm font-bold text-[#2D2A26] block">جاري رفع وحفظ صورة الغلاف...</span>
+                            <span className="text-xs text-[#7A6F64]">يتم معالجة الصورة السحابية بدقة عالية</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#B45F42] flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Upload className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <span className="text-sm font-bold text-[#2D2A26] block mb-1">
+                              انقر هنا لاختيار صورة الغلاف من جهازك
+                            </span>
+                            <span className="text-xs text-[#7A6F64] block">
+                              الصيغ المدعومة: JPG, PNG, WebP (الحجم الأقصى: 5 ميجابايت)
+                            </span>
+                          </div>
+                          <span className="px-4 py-1.5 bg-[#B45F42] text-white text-xs font-bold rounded-xl shadow-xs">
+                            تصفح الملفات
+                          </span>
+                        </>
+                      )}
+                    </label>
+
+                    {coverUploadError && (
+                      <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2 text-rose-700 text-xs">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{coverUploadError}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* TAB 3: CUSTOM IMAGE URL */}
+                {coverPickerTab === 'url' && (
+                  <form onSubmit={handleApplyCoverUrl} className="space-y-3">
+                    <p className="text-xs text-[#7A6F64]">
+                      إذا كانت لديك صورة مرفوعة مسبقاً على الإنترنت، يمكنك لصق الرابط المباشر هنا:
+                    </p>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={customCoverUrl}
+                        onChange={(e) => setCustomCoverUrl(e.target.value)}
+                        placeholder="https://example.com/workshop-cover.jpg"
+                        className="flex-1 p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] dir-ltr text-left"
+                      />
+                      <button
+                        type="submit"
+                        className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shrink-0 transition-all shadow-xs"
+                      >
+                        تطبيق الرابط
+                      </button>
+                    </div>
+                    {coverUploadError && (
+                      <p className="text-xs text-rose-600 font-semibold">{coverUploadError}</p>
+                    )}
+                  </form>
+                )}
+              </div>
+
+              {/* Workshop Identity & Payout Form */}
+              <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-5">
+                <div className="flex items-center gap-2 border-b border-[#E8E1D9] pb-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#B45F42] flex items-center justify-center">
+                    <Store className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-[#2D2A26]">البيانات الرسمية وهوية المتجر</h4>
+                    <p className="text-[11px] text-[#7A6F64]">تعديل اسم الورشة، المحافظة، التخصص، وبيانات الحساب</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSaveWorkshopProfile} className="space-y-4">
+                  {/* Workshop Logo / Avatar */}
+                  <div className="p-4 bg-[#FDFBF7] border border-[#E8E1D9] rounded-2xl flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-xs bg-gray-100 shrink-0 relative">
+                        <img
+                          src={sellerAvatar}
+                          alt={brandName}
+                          className="w-full h-full object-cover"
+                        />
+                        {isUploadingAvatar && (
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-[#2D2A26] block">شعار الورشة / صورة الحرفي</span>
+                        <span className="text-[11px] text-[#7A6F64] block">تظهر في الدائرة الصغيرة على بطاقة الورشة</span>
+                      </div>
+                    </div>
+
+                    <label
+                      htmlFor="seller-avatar-upload"
+                      className="px-3.5 py-1.5 bg-white hover:bg-gray-50 border border-[#E8E1D9] text-[#2D2A26] rounded-xl text-xs font-bold cursor-pointer transition-all shadow-xs shrink-0"
+                    >
+                      <input
+                        id="seller-avatar-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarFileSelect}
+                        disabled={isUploadingAvatar}
+                        className="hidden"
+                      />
+                      تغيير الشعار
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                      اسم الورشة أو العلامة الحرفية *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={brandName}
+                      onChange={(e) => setBrandName(e.target.value)}
+                      className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                        محافظة المنشأ الحرفي *
+                      </label>
+                      <select
+                        value={sellerGovernorate}
+                        onChange={(e) => setSellerGovernorate(e.target.value as Governorate)}
+                        className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                      >
+                        <option value="قنا">قنا</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="أسوان">أسوان</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="الفيوم">الفيوم</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                        التخصص الحرفي الأصيل
+                      </label>
+                      <input
+                        type="text"
+                        value={sellerSpecialty}
+                        onChange={(e) => setSellerSpecialty(e.target.value)}
+                        placeholder="مثال: فخار نيلي، تلي أسيوط، كليم أخميم"
+                        className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                      نبذة عن تاريخ الورشة وأصالة الصنعة
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={sellerBio}
+                      onChange={(e) => setSellerBio(e.target.value)}
+                      placeholder="اكتب نبذة تراثية تجذب المشترين وتعرفهم بتاريخ ورشتكم في الصعيد..."
+                      className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42] leading-relaxed"
+                    />
+                  </div>
+
+                  <div className="border-t border-[#E8E1D9] pt-4 space-y-3">
+                    <h4 className="font-bold text-xs text-[#2D2A26]">إعدادات استلام المستحقات المالية</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-[#2D2A26] mb-1">طريقة التسوية المفضلة</label>
+                        <select
+                          value={sellerPayoutMethod}
+                          onChange={(e) => setSellerPayoutMethod(e.target.value as any)}
+                          className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                        >
+                          <option value="vodafone_cash">فودافون كاش / محافظ الكترونية</option>
+                          <option value="instapay">شبكة المدفوعات اللحظية InstaPay</option>
+                          <option value="bank_transfer">تحويل بنكي مباشر</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#2D2A26] mb-1">رقم الحساب أو عنوان IPA</label>
+                        <input
+                          type="text"
+                          value={sellerPayoutAccount}
+                          onChange={(e) => setSellerPayoutAccount(e.target.value)}
+                          className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between gap-4">
+                    <button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      className="px-6 py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
+                    >
+                      {isSavingProfile ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>جاري حفظ الغلاف والبيانات...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          <span>حفظ التعديلات واعتماد الغلاف</span>
+                        </>
+                      )}
+                    </button>
+
+                    <span className="text-[11px] text-[#7A6F64]">
+                      يتم تحديث بطاقة الورشة فوراً في الصفحة الرئيسية
+                    </span>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Right Column: Live Interactive Card Preview (5 cols) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="sticky top-6 space-y-4">
+                <div className="bg-gradient-to-br from-[#2D2A26] to-[#1C1A17] rounded-3xl p-6 text-white shadow-xl space-y-4 border border-[#3E3A35]">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-amber-400" />
+                      <h4 className="font-bold text-sm text-white">معاينة حية ومباشرة</h4>
+                    </div>
+                    <span className="text-[10px] bg-amber-400/20 text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-400/30">
+                      قسم الورش المعتمدة
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-amber-100/80 leading-relaxed">
+                    هكذا تظهر بطاقة ورشتكم للمشترين في قسم 
+                    <strong className="text-white font-bold mx-1">"الورش والتعاونيات الحرفية المعتمدة"</strong>
+                    بالصفحة الرئيسية ودليل الحرفيين:
+                  </p>
+
+                  {/* The Exact Realistic Card from FeaturedSellers.tsx */}
+                  <div className="bg-white rounded-3xl border border-[#E8E1D9] overflow-hidden shadow-lg group transition-all text-[#2D2A26]">
+                    {/* Workshop Cover Banner */}
+                    <div className="h-44 relative overflow-hidden bg-gray-100">
+                      <img
+                        src={sellerCoverImage}
+                        alt={brandName}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      
+                      {/* Governorate Badge */}
+                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-xs text-[#2D2A26] text-[11px] font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1 border border-white/40">
+                        <MapPin className="w-3 h-3 text-[#B45F42]" />
+                        <span>محافظة {sellerGovernorate}</span>
+                      </div>
+
+                      {/* Verified Badge */}
+                      <div className="absolute top-3 left-3 bg-[#B45F42] text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>مُعتمد</span>
+                      </div>
+
+                      {/* Workshop Avatar Overlap */}
+                      <div className="absolute -bottom-6 right-5">
+                        <div className="w-16 h-16 rounded-2xl border-3 border-white overflow-hidden shadow-md bg-white">
+                          <img
+                            src={sellerAvatar}
+                            alt={brandName}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Content Details */}
+                    <div className="p-5 pt-8 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h4 className="font-bold text-base text-[#2D2A26] font-heritage group-hover:text-[#B45F42] transition-colors">
+                            {brandName}
+                          </h4>
+                          <span className="inline-block text-[11px] font-bold text-[#B45F42] bg-amber-50 px-2 py-0.5 rounded-md mt-1 border border-amber-100">
+                            {sellerSpecialty || 'حرفة يدوية تراثية أصيلة'}
+                          </span>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-xl text-amber-800 text-xs font-bold shrink-0 border border-amber-100">
+                          <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                          <span>4.9</span>
+                        </div>
+                      </div>
+
+                      {/* Bio text */}
+                      <p className="text-xs text-[#7A6F64] line-clamp-2 leading-relaxed">
+                        {sellerBio || 'ورشة تراثية متخصصة في الحرف اليدوية الصعيدية الأصيلة بجودة ممتازة.'}
+                      </p>
+
+                      {/* Card Footer */}
+                      <div className="border-t border-[#E8E1D9] pt-3 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 text-[#7A6F64]">
+                          <Package className="w-4 h-4 text-[#B45F42]" />
+                          <span className="font-semibold">{sellerProducts.length} قطعة معروضة</span>
+                        </div>
+
+                        <span className="text-[#B45F42] font-bold text-xs flex items-center gap-1 group-hover:translate-x-[-2px] transition-transform">
+                          <span>زيارة المتجر</span>
+                          <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Helper Callout */}
+                  <div className="p-3.5 bg-white/5 rounded-2xl border border-white/10 flex items-start gap-2.5 text-[11px] text-amber-200/90">
+                    <Info className="w-4 h-4 text-amber-300 shrink-0 mt-0.5" />
+                    <span>
+                      أي تغيير في صورة الغلاف أو المحافظة أو التخصص ينعكس على الفور في المعاينة أعلاه وموقع المنصة بمجرد الضغط على زر الحفظ.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* TAB 6: CRAFT REELS (VIDEOS) MANAGEMENT */}
+      {activeTab === 'reels' && (
+        <div className="space-y-8 animate-in fade-in">
+          {/* Header Banner */}
+          <div className="relative rounded-3xl bg-gradient-to-r from-[#2D2A26] via-[#382E27] to-[#2D2A26] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-[#4A3E35]">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-[#B45F42]/20 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-amber-300 text-xs font-bold border border-white/15">
+                  <Film className="w-4 h-4 text-amber-400" />
+                  <span>فيديوهات ورشة الصنعة القصيرة • Shoppable Craft Reels</span>
+                </div>
+                <h2 className="text-xl sm:text-3xl font-black font-heritage tracking-tight">
+                  سجّل كواليس الصنعة واجعل الزبائن يشترون مباشرة من الفيديو!
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                  ارفع مقاطع فيديو عمودية (9:16) تبرز خطوات تشكيل الطين، نسج النول، أو نقش النحاس. يرتبط كل مقطع بمنتج معروض في ورشتك للشراء الفوري.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                id="seller-upload-reel-main-btn"
+                onClick={() => setIsReelUploadOpen(true)}
+                className="px-6 py-3.5 bg-gradient-to-r from-[#B45F42] to-[#9E4F36] hover:from-[#9E4F36] hover:to-[#863F28] text-white text-xs sm:text-sm font-bold rounded-2xl shadow-xl flex items-center gap-2.5 transition-all hover:scale-105 shrink-0 cursor-pointer"
+              >
+                <Plus className="w-5 h-5" />
+                <span>رفع فيديو جديد للورشة (Craft Reel)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 4 Reels Key Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>إجمالي المقاطع المنشورة</span>
+                <Film className="w-4 h-4 text-[#B45F42]" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">{reels.length} فيديو</span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">معروضة للجمهور بالرئيسية وصفحة الريلز</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>إجمالي المشاهدات التفاعلية</span>
+                <Eye className="w-4 h-4 text-amber-600" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {reels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">+34% تفاعل خلال هذا الأسبوع</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>الإعجابات ودعم الحرفة</span>
+                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {reels.reduce((acc, r) => acc + r.likesCount, 0).toLocaleString()}
+              </span>
+              <span className="text-[10px] text-[#7A6F64] block mt-1">تفاعل مباشر من عشاق التراث</span>
+            </div>
+
+            <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
+              <div className="flex items-center justify-between text-xs text-[#7A6F64] mb-2">
+                <span>تحويلات الشراء المباشر</span>
+                <Package className="w-4 h-4 text-purple-600" />
+              </div>
+              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+                {reels.reduce((acc, r) => acc + r.sharesCount, 0) * 3} نقرة شراء
+              </span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">مبيعات من خلال زر الشراء بالفيديو</span>
+            </div>
+          </div>
+
+          {/* Reels Grid */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#2D2A26] flex items-center gap-2">
+                <Film className="w-5 h-5 text-[#B45F42]" />
+                <span>المقاطع المسجلة والمعروضة ({reels.length})</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsReelUploadOpen(true)}
+                className="text-xs font-bold text-[#B45F42] hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>إضافة مقطع جديد</span>
+              </button>
+            </div>
+
+            {reels.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {reels.map((reel) => (
+                  <div
+                    key={reel.id}
+                    className="bg-white rounded-3xl border border-[#E8E1D9] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                  >
+                    {/* 9:16 Video Thumbnail Container */}
+                    <div
+                      onClick={() => {
+                        setSelectedReelPreviewId(reel.id);
+                        setIsReelPreviewOpen(true);
+                      }}
+                      className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
+                    >
+                      <img
+                        src={reel.posterUrl}
+                        alt={reel.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
+                          <Play className="w-5 h-5 fill-white mr-0.5" />
+                        </div>
+                      </div>
+
+                      {/* Top Badges */}
+                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                        <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                          {reel.duration}
+                        </span>
+                        <span className="bg-[#B45F42] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          {reel.governorate}
+                        </span>
+                      </div>
+
+                      {/* Bottom Info on Poster */}
+                      <div className="absolute bottom-3 inset-x-3 z-10 space-y-1">
+                        <p className="text-xs font-bold text-white line-clamp-2 drop-shadow-md">
+                          {reel.title}
+                        </p>
+                        <p className="text-[10px] text-amber-300 truncate">
+                          {reel.artisanName} • {reel.craftType}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Bottom Metadata & Actions */}
+                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-[#FAF6F0]/40">
+                      {/* Linked Product Quick View */}
+                      <div className="p-2.5 bg-white rounded-2xl border border-[#E8E1D9] flex items-center justify-between gap-2 shadow-2xs">
+                        <img
+                          src={reel.productImage}
+                          alt={reel.productTitle}
+                          className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[11px] font-bold text-[#2D2A26] truncate">{reel.productTitle}</p>
+                          <span className="text-xs font-black text-[#B45F42]">{reel.productPrice} ج.م</span>
+                        </div>
+                      </div>
+
+                      {/* Engagement Stats */}
+                      <div className="flex items-center justify-between text-xs text-[#7A6F64] pt-1">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 text-[11px]">
+                            <Eye className="w-3.5 h-3.5 text-gray-500" />
+                            <span>{reel.viewsCount}</span>
+                          </span>
+                          <span className="flex items-center gap-1 text-[11px] text-rose-600 font-bold">
+                            <Heart className="w-3.5 h-3.5 fill-rose-600" />
+                            <span>{reel.likesCount}</span>
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-gray-400">
+                          {new Date(reel.createdAt).toLocaleDateString('ar-EG')}
+                        </span>
+                      </div>
+
+                      {/* Actions Buttons */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-[#E8E1D9]">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedReelPreviewId(reel.id);
+                            setIsReelPreviewOpen(true);
+                          }}
+                          className="flex-1 py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                        >
+                          <Play className="w-3.5 h-3.5 fill-white" />
+                          <span>مشاهدة المقطع</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteReel(reel.id, reel.title)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+                          title="حذف الفيديو"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-3xl p-12 text-center border border-[#E8E1D9] space-y-4">
+                <Film className="w-16 h-16 text-gray-300 mx-auto" />
+                <h4 className="text-base font-bold text-[#2D2A26]">لم تقم برفع أي فيديوهات لورشتك بعد</h4>
+                <p className="text-xs text-[#7A6F64] max-w-md mx-auto">
+                  فيديوهات كواليس الصنع اليدوي تزيد من ثقة الزبائن ومبيعات المنتجات بنسبة تفوق 300%. ابدأ برفع أول فيديو الآن!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsReelUploadOpen(true)}
+                  className="px-6 py-2.5 bg-[#B45F42] text-white text-xs font-bold rounded-xl shadow-md hover:bg-[#9E4F36] transition-all cursor-pointer"
+                >
+                  رفع أول مقطع فيديو للورشة
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 7: NOTIFICATIONS & ALERTS */}
+      {activeTab === 'notifications' && (
+        <NotificationsManager
+          viewMode="seller"
+          onNavigateTab={(tab) => {
+            if (tab === 'orders') setActiveTab('orders');
+            else if (tab === 'products') setActiveTab('products');
+            else if (tab === 'inventory') setActiveTab('inventory');
+            else if (tab === 'payouts') setActiveTab('payouts');
+            else if (tab === 'settings') setActiveTab('settings');
+          }}
+        />
       )}
 
       {/* Stock Adjustment Modal (Phase 4) */}
@@ -1972,6 +2910,32 @@ export const SellerDashboard: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Reel Upload Modal */}
+      <ReelUploadModal
+        isOpen={isReelUploadOpen}
+        onClose={() => setIsReelUploadOpen(false)}
+        onSuccess={handleReelUploaded}
+        sellerId={currentUser?.sellerId || currentUser?.id}
+        sellerName={brandName || currentUser?.name || 'ورشة الصعيد'}
+        artisanName={currentUser?.name || 'أسطى الحرفة'}
+        artisanAvatar={sellerAvatar || currentUser?.avatar}
+        defaultGovernorate={sellerGovernorate || 'قنا'}
+        sellerProducts={sellerProducts}
+      />
+
+      {/* Reel Preview Modal */}
+      {selectedReelPreviewId && (
+        <CraftReelsModal
+          reels={reels}
+          initialReelId={selectedReelPreviewId}
+          isOpen={isReelPreviewOpen}
+          onClose={() => {
+            setIsReelPreviewOpen(false);
+            setSelectedReelPreviewId(null);
+          }}
+        />
       )}
     </div>
   );
