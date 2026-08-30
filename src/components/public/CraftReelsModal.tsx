@@ -61,6 +61,8 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const commentInputRef = useRef<HTMLInputElement>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
 
   // Initialize active reel based on initialReelId
   useEffect(() => {
@@ -145,6 +147,31 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
       setCurrentIndex((prev) => prev - 1);
       setIsPlaying(true);
     }
+  };
+
+  // Mobile Touch Gestures for Swiping Reels Up/Down
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartY.current === null || touchEndY.current === null) return;
+    const distance = touchStartY.current - touchEndY.current;
+    const isSwipeUp = distance > 45;
+    const isSwipeDown = distance < -45;
+
+    if (isSwipeUp) {
+      goToNext();
+    } else if (isSwipeDown) {
+      goToPrev();
+    }
+
+    touchStartY.current = null;
+    touchEndY.current = null;
   };
 
   // Handle Like Action
@@ -338,9 +365,12 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
 
         {/* Central Video Player Canvas */}
         <div
-          className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#1A1614] overflow-hidden"
+          className="relative w-full h-full flex items-center justify-center cursor-pointer bg-[#1A1614] overflow-hidden touch-pan-y"
           onClick={togglePlay}
           onDoubleClick={handleDoubleTap}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <video
             ref={videoRef}
