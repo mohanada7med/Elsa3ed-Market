@@ -9,7 +9,9 @@ import {
   PayoutRequest,
   SellerPayoutSummary,
   AdminPayoutSummary,
-  PayoutMethod
+  PayoutMethod,
+  CraftReel,
+  CraftReelComment
 } from '../types.ts';
 
 const API_BASE = '/api';
@@ -1711,6 +1713,126 @@ export const api = {
     const json: ApiResponse<PayoutRequest> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تأكيد تحويل المبلغ وتسجيل الدفع');
+    }
+    return json.data;
+  },
+
+  // ==================== CRAFT REELS API (DATABASE-POWERED) ====================
+  async getReels(filters?: {
+    sellerId?: string;
+    governorate?: string;
+    craftType?: string;
+    search?: string;
+    featuredOnly?: boolean;
+  }): Promise<CraftReel[]> {
+    const params = new URLSearchParams();
+    if (filters?.sellerId && filters.sellerId !== 'all') params.append('sellerId', filters.sellerId);
+    if (filters?.governorate && filters.governorate !== 'all') params.append('governorate', filters.governorate);
+    if (filters?.craftType && filters.craftType !== 'all') params.append('craftType', filters.craftType);
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.featuredOnly) params.append('featuredOnly', 'true');
+
+    const queryStr = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${API_BASE}/reels${queryStr}`);
+    const json: ApiResponse<CraftReel[]> = await res.json();
+    return json.data || [];
+  },
+
+  async getReelById(id: string): Promise<CraftReel | null> {
+    const res = await fetch(`${API_BASE}/reels/${id}`);
+    const json: ApiResponse<CraftReel> = await res.json();
+    return json.data || null;
+  },
+
+  async createReel(
+    user: { id?: string; role?: string; sellerId?: string },
+    data: Partial<CraftReel>
+  ): Promise<CraftReel> {
+    const res = await fetch(`${API_BASE}/reels`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<CraftReel> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في حفظ مقطع الفيديو في قاعدة البيانات');
+    }
+    return json.data;
+  },
+
+  async updateReel(
+    user: { id?: string; role?: string; sellerId?: string },
+    id: string,
+    data: Partial<CraftReel>
+  ): Promise<CraftReel> {
+    const res = await fetch(`${API_BASE}/reels/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<CraftReel> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث مقطع الفيديو');
+    }
+    return json.data;
+  },
+
+  async deleteReel(
+    user: { id?: string; role?: string; sellerId?: string },
+    id: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/reels/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف مقطع الفيديو');
+    }
+    return true;
+  },
+
+  async likeReel(id: string, isLiked: boolean): Promise<number> {
+    const res = await fetch(`${API_BASE}/reels/${id}/like`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isLiked })
+    });
+    const json = await res.json();
+    return json.likesCount || 0;
+  },
+
+  async incrementReelView(id: string): Promise<number> {
+    const res = await fetch(`${API_BASE}/reels/${id}/view`, {
+      method: 'POST'
+    });
+    const json = await res.json();
+    return json.viewsCount || 0;
+  },
+
+  async incrementReelShare(id: string): Promise<number> {
+    const res = await fetch(`${API_BASE}/reels/${id}/share`, {
+      method: 'POST'
+    });
+    const json = await res.json();
+    return json.sharesCount || 0;
+  },
+
+  async addReelComment(
+    id: string,
+    commentData: { userName: string; comment: string; userAvatar?: string; governorate?: string }
+  ): Promise<CraftReelComment> {
+    const res = await fetch(`${API_BASE}/reels/${id}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(commentData)
+    });
+    const json: ApiResponse<CraftReelComment> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إضافة التعليق');
     }
     return json.data;
   }

@@ -27,9 +27,10 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 export const CraftReelsPage: React.FC = () => {
-  const { setActivePage, addToCart, addToast, navigateToProduct, navigateToSeller, currentUser, sellerProducts } = useApp();
+  const { setActivePage, addToCart, addToast, navigateToProduct, navigateToSeller, currentUser, sellerProducts, sellers } = useApp();
 
   const [reels, setReels] = useState<CraftReel[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
   const [selectedCraftType, setSelectedCraftType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,8 +38,20 @@ export const CraftReelsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
+  const loadReelsFromDb = async () => {
+    setIsLoading(true);
+    try {
+      const dbReels = await craftReelsService.fetchReelsFromDb();
+      setReels(dbReels);
+    } catch {
+      setReels(craftReelsService.getReels());
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setReels(craftReelsService.getReels());
+    loadReelsFromDb();
   }, []);
 
   const governoratesList = ['قنا', 'سوهاج', 'الأقصر', 'أسوان', 'أسيوط'];
@@ -77,8 +90,8 @@ export const CraftReelsPage: React.FC = () => {
   };
 
   const handleReelUploaded = (newReel: CraftReel) => {
-    setReels(craftReelsService.getReels());
-    addToast('تم نشر الفيديو بنجاح', `تمت إضافة مقطع "${newReel.title}" إلى Craft Reels`, 'success');
+    loadReelsFromDb();
+    addToast('تم نشر الفيديو بنجاح', `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وإتاحته للجمهور`, 'success');
   };
 
   const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {
@@ -362,6 +375,8 @@ export const CraftReelsPage: React.FC = () => {
         artisanAvatar={currentUser?.avatar}
         defaultGovernorate={(currentUser?.governorate as Governorate) || 'قنا'}
         sellerProducts={sellerProducts}
+        currentUser={currentUser}
+        allSellers={sellers}
       />
     </div>
   );

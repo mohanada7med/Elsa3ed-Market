@@ -9,6 +9,11 @@ export interface AuthenticatedUser {
   name: string;
   email: string;
   role: UserRole;
+  avatar?: string;
+  profileImage?: {
+    secureUrl: string;
+    publicId: string;
+  } | null;
   governorate?: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;

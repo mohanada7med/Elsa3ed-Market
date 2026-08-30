@@ -6,6 +6,7 @@ import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
+import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import {
   ShieldAlert,
@@ -151,28 +152,48 @@ export const AdminDashboard: React.FC = () => {
     'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'notifications'
   >('overview');
 
-  // Reels Management State for Admin
+  // Reels Management State for Admin (Full Database & Cloud Control)
   const [adminReels, setAdminReels] = useState<CraftReel[]>([]);
   const [isAdminReelUploadOpen, setIsAdminReelUploadOpen] = useState(false);
+  const [adminEditingReel, setAdminEditingReel] = useState<CraftReel | null>(null);
+  const [isAdminReelEditOpen, setIsAdminReelEditOpen] = useState(false);
   const [adminSelectedReelPreviewId, setAdminSelectedReelPreviewId] = useState<string | null>(null);
   const [isAdminReelPreviewOpen, setIsAdminReelPreviewOpen] = useState(false);
   const [adminReelSearchTerm, setAdminReelSearchTerm] = useState('');
   const [adminReelGovFilter, setAdminReelGovFilter] = useState('all');
 
+  const refreshAdminReelsFromDb = async () => {
+    try {
+      const dbReels = await craftReelsService.fetchReelsFromDb();
+      setAdminReels(dbReels);
+    } catch {
+      setAdminReels(craftReelsService.getReels());
+    }
+  };
+
   useEffect(() => {
-    setAdminReels(craftReelsService.getReels());
+    refreshAdminReelsFromDb();
   }, []);
 
   const handleAdminReelUploaded = (newReel: CraftReel) => {
-    setAdminReels(craftReelsService.getReels());
-    addToast('تم نشر الفيديو بنجاح', `تمت إضافة مقطع "${newReel.title}" إلى المنصة`, 'success');
+    refreshAdminReelsFromDb();
+    addToast('تم نشر الفيديو بنجاح', `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وربطه بالورشة`, 'success');
   };
 
-  const handleAdminDeleteReel = (reelId: string, reelTitle: string) => {
-    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" من المنصة؟`)) {
-      craftReelsService.deleteReel(reelId);
-      setAdminReels(craftReelsService.getReels());
-      addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح`, 'info');
+  const handleAdminReelUpdated = (updatedReel: CraftReel) => {
+    refreshAdminReelsFromDb();
+    addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها في قاعدة البيانات`, 'success');
+  };
+
+  const handleAdminDeleteReel = async (reelId: string, reelTitle: string) => {
+    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات والمنصة؟`)) {
+      try {
+        await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reelId);
+        await refreshAdminReelsFromDb();
+        addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات`, 'info');
+      } catch (err: any) {
+        addToast('خطأ في الحذف', err?.message || 'فشل حذف الفيديو من قاعدة البيانات', 'error');
+      }
     }
   };
 
@@ -2235,9 +2256,21 @@ export const AdminDashboard: React.FC = () => {
 
                       {/* Top Badges */}
                       <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                        <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                          {reel.duration}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                            {reel.duration}
+                          </span>
+                          {(reel as any).isFeatured && (
+                            <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
+                              مميز ★
+                            </span>
+                          )}
+                          {(reel as any).isPinned && (
+                            <span className="bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
+                              مثبت 📌
+                            </span>
+                          )}
+                        </div>
                         <span className="bg-[#B45F42] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                           {reel.governorate}
                         </span>
@@ -2249,7 +2282,7 @@ export const AdminDashboard: React.FC = () => {
                           {reel.title}
                         </p>
                         <p className="text-[10px] text-amber-300 truncate">
-                          {reel.artisanName} • {reel.craftType}
+                          {reel.artisanName} ({reel.workshopName || 'ورشة تراثية'}) • {reel.craftType}
                         </p>
                       </div>
                     </div>
@@ -2269,7 +2302,7 @@ export const AdminDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Engagement Stats */}
+                      {/* Engagement Stats & Database Sync Badge */}
                       <div className="flex items-center justify-between text-xs text-[#7A6F64] pt-1">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1 text-[11px]">
@@ -2281,12 +2314,12 @@ export const AdminDashboard: React.FC = () => {
                             <span>{reel.likesCount}</span>
                           </span>
                         </div>
-                        <span className="text-[10px] text-gray-400">
-                          {new Date(reel.createdAt).toLocaleDateString('ar-EG')}
+                        <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                          قاعدة البيانات ✓
                         </span>
                       </div>
 
-                      {/* Actions Buttons */}
+                      {/* Actions Buttons: View, Edit, Delete (Full Admin Control) */}
                       <div className="flex items-center gap-2 pt-2 border-t border-[#E8E1D9]">
                         <button
                           type="button"
@@ -2302,9 +2335,21 @@ export const AdminDashboard: React.FC = () => {
 
                         <button
                           type="button"
+                          onClick={() => {
+                            setAdminEditingReel(reel);
+                            setIsAdminReelEditOpen(true);
+                          }}
+                          className="p-2 text-gray-600 hover:text-[#B45F42] hover:bg-[#FAF6F0] rounded-xl transition-colors cursor-pointer border border-[#E8E1D9]"
+                          title="تعديل الفيديو والمنتج والورشة بالكامل (أدمن)"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => handleAdminDeleteReel(reel.id, reel.title)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
-                          title="حذف الفيديو من المنصة"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-transparent"
+                          title="حذف الفيديو نهائياً من قاعدة البيانات والمنصة"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -5668,6 +5713,22 @@ export const AdminDashboard: React.FC = () => {
         artisanName="أسطى الحرفة الصعيدي"
         defaultGovernorate="قنا"
         sellerProducts={adminProducts}
+        currentUser={currentUser}
+        allSellers={sellers}
+      />
+
+      {/* Admin Reel Edit Modal (Full Control) */}
+      <ReelEditModal
+        isOpen={isAdminReelEditOpen}
+        onClose={() => {
+          setIsAdminReelEditOpen(false);
+          setAdminEditingReel(null);
+        }}
+        reel={adminEditingReel}
+        onSuccess={handleAdminReelUpdated}
+        currentUser={currentUser}
+        sellerProducts={adminProducts}
+        allSellers={sellers}
       />
 
       {/* Admin Reel Preview Modal */}

@@ -34,6 +34,8 @@ interface ReelUploadModalProps {
   artisanAvatar?: string;
   defaultGovernorate?: Governorate;
   sellerProducts?: Product[];
+  currentUser?: { id?: string; role?: string; sellerId?: string; name?: string; avatar?: string };
+  allSellers?: any[];
 }
 
 export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
@@ -45,7 +47,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   artisanName: initialArtisanName,
   artisanAvatar: initialArtisanAvatar,
   defaultGovernorate = 'قنا',
-  sellerProducts = []
+  sellerProducts = [],
+  currentUser,
+  allSellers = []
 }) => {
   const [sourceType, setSourceType] = useState<'upload' | 'url' | 'preset'>('upload');
   
@@ -190,7 +194,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
     setVideoBlobUrl(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!videoUrl) {
       setErrorMsg('يرجى تحديد أو رفع فيديو للصنعة الحرفية');
@@ -220,12 +224,19 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
     try {
-      const createdReel = craftReelsService.addReel({
+      const userParam = (currentUser as any) || {
+        id: sellerId || 'seller-current',
+        role: (currentUser as any)?.role || 'seller',
+        sellerId: sellerId || (currentUser as any)?.sellerId,
+        name: artisanName
+      };
+
+      const createdReel = await craftReelsService.addReelAsync(userParam, {
         title,
         artisanName,
         artisanAvatar,
         workshopName,
-        sellerId: sellerId || `seller-${Date.now()}`,
+        sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
         governorate,
         craftType,
         videoUrl,
@@ -247,9 +258,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       setIsSubmitting(false);
       onSuccess(createdReel);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       setIsSubmitting(false);
-      setErrorMsg('حدث خطأ أثناء حفظ الفيديو، يرجى المحاولة مرة أخرى.');
+      setErrorMsg(err?.message || 'حدث خطأ أثناء حفظ الفيديو، يرجى المحاولة مرة أخرى.');
     }
   };
 

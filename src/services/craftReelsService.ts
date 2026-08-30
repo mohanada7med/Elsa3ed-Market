@@ -1,4 +1,5 @@
 import { CraftReel, CraftReelComment } from '../types.ts';
+import { api } from './api.ts';
 
 const REELS_STORAGE_KEY = 'saeed_craft_reels_data';
 const REEL_LIKES_KEY = 'saeed_user_liked_reels';
@@ -303,6 +304,7 @@ export const HERITAGE_VIDEO_PRESETS = [
 ];
 
 export const craftReelsService = {
+  // Synchronous cached getter
   getReels(): CraftReel[] {
     if (typeof window === 'undefined') return INITIAL_CRAFT_REELS;
     try {
@@ -317,6 +319,28 @@ export const craftReelsService = {
     }
   },
 
+  // Direct database query with cache refresh
+  async fetchReelsFromDb(filters?: {
+    sellerId?: string;
+    governorate?: string;
+    craftType?: string;
+    search?: string;
+    featuredOnly?: boolean;
+  }): Promise<CraftReel[]> {
+    try {
+      const reels = await api.getReels(filters);
+      if (reels && reels.length > 0) {
+        if (!filters || (!filters.sellerId && !filters.governorate && !filters.craftType && !filters.search)) {
+          this.saveReels(reels);
+        }
+        return reels;
+      }
+    } catch (err) {
+      console.warn('[CraftReels] Failed to fetch from DB, using cached reels:', err);
+    }
+    return this.getReels();
+  },
+
   saveReels(reels: CraftReel[]): void {
     if (typeof window === 'undefined') return;
     try {
@@ -327,6 +351,21 @@ export const craftReelsService = {
   getReelsBySeller(sellerId: string): CraftReel[] {
     const reels = this.getReels();
     return reels.filter((r) => r.sellerId === sellerId);
+  },
+
+  async addReelAsync(
+    user: { id?: string; role?: string; sellerId?: string; name?: string },
+    newReelData: Omit<CraftReel, 'id' | 'likesCount' | 'viewsCount' | 'sharesCount' | 'comments' | 'createdAt'>
+  ): Promise<CraftReel> {
+    try {
+      const created = await api.createReel(user, newReelData);
+      const current = this.getReels();
+      this.saveReels([created, ...current.filter((r) => r.id !== created.id)]);
+      return created;
+    } catch (err: any) {
+      console.warn('[CraftReels] API creation failed, falling back to local store:', err);
+      return this.addReel(newReelData);
+    }
   },
 
   addReel(newReelData: Omit<CraftReel, 'id' | 'likesCount' | 'viewsCount' | 'sharesCount' | 'comments' | 'createdAt'>): CraftReel {
@@ -346,6 +385,23 @@ export const craftReelsService = {
     return newReel;
   },
 
+  async updateReelAsync(
+    user: { id?: string; role?: string; sellerId?: string },
+    reelId: string,
+    updates: Partial<CraftReel>
+  ): Promise<CraftReel | null> {
+    try {
+      const updated = await api.updateReel(user, reelId, updates);
+      const current = this.getReels();
+      const newReels = current.map((r) => (r.id === reelId ? updated : r));
+      this.saveReels(newReels);
+      return updated;
+    } catch (err: any) {
+      console.warn('[CraftReels] API update failed, falling back to local store:', err);
+      return this.updateReel(reelId, updates);
+    }
+  },
+
   updateReel(reelId: string, updates: Partial<CraftReel>): CraftReel | null {
     const reels = this.getReels();
     let updatedItem: CraftReel | null = null;
@@ -361,6 +417,18 @@ export const craftReelsService = {
       this.saveReels(updated);
     }
     return updatedItem;
+  },
+
+  async deleteReelAsync(
+    user: { id?: string; role?: string; sellerId?: string },
+    reelId: string
+  ): Promise<boolean> {
+    try {
+      await api.deleteReel(user, reelId);
+    } catch (err) {
+      console.warn('[CraftReels] API delete failed, applying local delete:', err);
+    }
+    return this.deleteReel(reelId);
   },
 
   deleteReel(reelId: string): boolean {
@@ -412,6 +480,9 @@ export const craftReelsService = {
 
     this.saveReels(updatedReels);
 
+    // Call API in background
+    api.likeReel(reelId, !isCurrentlyLiked).catch(() => {});
+
     return {
       isLiked: !isCurrentlyLiked,
       newLikesCount
@@ -427,6 +498,9 @@ export const craftReelsService = {
       return reel;
     });
     this.saveReels(updatedReels);
+
+    // Call API in background
+    api.incrementReelView(reelId).catch(() => {});
   },
 
   incrementShares(reelId: string): void {
@@ -438,9 +512,15 @@ export const craftReelsService = {
       return reel;
     });
     this.saveReels(updatedReels);
+
+    // Call API in background
+    api.incrementReelShare(reelId).catch(() => {});
   },
 
-  addComment(reelId: string, params: { userName: string; comment: string; userAvatar?: string; governorate?: string }): CraftReelComment {
+  addComment(
+    reelId: string,
+    params: { userName: string; comment: string; userAvatar?: string; governorate?: string }
+  ): CraftReelComment {
     const reels = this.getReels();
     const newComment: CraftReelComment = {
       id: `comm-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
@@ -464,6 +544,10 @@ export const craftReelsService = {
     });
 
     this.saveReels(updatedReels);
+
+    // Call API in background
+    api.addReelComment(reelId, params).catch(() => {});
+
     return newComment;
   }
 };

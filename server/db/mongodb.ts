@@ -2,9 +2,10 @@ import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
-import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument } from '../models/types.ts';
+import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument, CraftReelDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
+import { INITIAL_CRAFT_REELS_DB } from '../config/initialReels.ts';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ class MemoryStore {
   reviews: ReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
+  reels: CraftReelDocument[] = [...INITIAL_CRAFT_REELS_DB];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {
@@ -295,6 +297,21 @@ async function seedMongoDatabase(database: Db) {
       await database.collection('password_resets').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
     } catch {
       // Ignore if index option differs
+    }
+    // Reels Collection Indexes & Initial Seed
+    await database.collection('reels').createIndex({ id: 1 }, { unique: true });
+    await database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 });
+    await database.collection('reels').createIndex({ governorate: 1 });
+    await database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 });
+
+    try {
+      const reelsCount = await database.collection('reels').countDocuments();
+      if (reelsCount === 0) {
+        await database.collection('reels').insertMany(INITIAL_CRAFT_REELS_DB);
+        Logger.info('[MongoDB] Seeded initial craft reels into database');
+      }
+    } catch (seedErr) {
+      Logger.warn('[MongoDB] Error checking/seeding reels:', seedErr);
     }
   } catch (err) {
     Logger.error('[MongoDB] Index creation error:', err);

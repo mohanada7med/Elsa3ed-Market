@@ -6,6 +6,7 @@ import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
+import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import {
   Store,
@@ -145,26 +146,54 @@ export const SellerDashboard: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
 
-  // Reels Management State
+  // Reels Management State (Seller Workshop Control)
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [isReelUploadOpen, setIsReelUploadOpen] = useState(false);
+  const [sellerEditingReel, setSellerEditingReel] = useState<CraftReel | null>(null);
+  const [isSellerReelEditOpen, setIsSellerReelEditOpen] = useState(false);
   const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
   const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
 
-  useEffect(() => {
-    setReels(craftReelsService.getReels());
-  }, []);
+  const effectiveSellerId = currentUser?.sellerId || currentUser?.id;
 
-  const handleReelUploaded = (newReel: CraftReel) => {
-    setReels(craftReelsService.getReels());
-    addToast('تم نشر الفيديو بنجاح', `تمت إضافة مقطع "${newReel.title}" إلى Craft Reels المعروضة`, 'success');
+  const refreshSellerReelsFromDb = async () => {
+    try {
+      const allDbReels = await craftReelsService.fetchReelsFromDb({
+        sellerId: effectiveSellerId
+      });
+      // Ensure only videos belonging to this seller are shown in their dashboard
+      const myReels = allDbReels.filter(
+        (r) => r.sellerId === effectiveSellerId || r.sellerId === currentUser?.sellerId || r.sellerId === currentUser?.id
+      );
+      setReels(myReels.length > 0 ? myReels : craftReelsService.getReelsBySeller(effectiveSellerId || ''));
+    } catch {
+      setReels(craftReelsService.getReelsBySeller(effectiveSellerId || ''));
+    }
   };
 
-  const handleDeleteReel = (reelId: string, reelTitle: string) => {
-    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}"؟`)) {
-      craftReelsService.deleteReel(reelId);
-      setReels(craftReelsService.getReels());
-      addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح`, 'info');
+  useEffect(() => {
+    refreshSellerReelsFromDb();
+  }, [effectiveSellerId]);
+
+  const handleReelUploaded = (newReel: CraftReel) => {
+    refreshSellerReelsFromDb();
+    addToast('تم نشر الفيديو بنجاح', `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وربطه بورشة عملك`, 'success');
+  };
+
+  const handleSellerReelUpdated = (updatedReel: CraftReel) => {
+    refreshSellerReelsFromDb();
+    addToast('تم تحديث الفيديو', `تم تحديث بيانات الفيديو "${updatedReel.title}" وحفظها في قاعدة البيانات`, 'success');
+  };
+
+  const handleDeleteReel = async (reelId: string, reelTitle: string) => {
+    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" من ورشتك؟`)) {
+      try {
+        await craftReelsService.deleteReelAsync(currentUser || { role: 'seller', sellerId: effectiveSellerId }, reelId);
+        await refreshSellerReelsFromDb();
+        addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح من قاعدة البيانات`, 'info');
+      } catch (err: any) {
+        addToast('خطأ في الحذف', err?.message || 'فشل حذف مقطع الفيديو', 'error');
+      }
     }
   };
 
@@ -2411,7 +2440,7 @@ export const SellerDashboard: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Engagement Stats */}
+                      {/* Engagement Stats & Cloud DB Status */}
                       <div className="flex items-center justify-between text-xs text-[#7A6F64] pt-1">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1 text-[11px]">
@@ -2423,12 +2452,12 @@ export const SellerDashboard: React.FC = () => {
                             <span>{reel.likesCount}</span>
                           </span>
                         </div>
-                        <span className="text-[10px] text-gray-400">
-                          {new Date(reel.createdAt).toLocaleDateString('ar-EG')}
+                        <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                          قاعدة البيانات ✓
                         </span>
                       </div>
 
-                      {/* Actions Buttons */}
+                      {/* Actions Buttons (Seller Full Control over own video) */}
                       <div className="flex items-center gap-2 pt-2 border-t border-[#E8E1D9]">
                         <button
                           type="button"
@@ -2444,9 +2473,21 @@ export const SellerDashboard: React.FC = () => {
 
                         <button
                           type="button"
+                          onClick={() => {
+                            setSellerEditingReel(reel);
+                            setIsSellerReelEditOpen(true);
+                          }}
+                          className="p-2 text-gray-600 hover:text-[#B45F42] hover:bg-[#FAF6F0] rounded-xl transition-colors cursor-pointer border border-[#E8E1D9]"
+                          title="تعديل بيانات الفيديو والمنتج المربوط"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          type="button"
                           onClick={() => handleDeleteReel(reel.id, reel.title)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
-                          title="حذف الفيديو"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-transparent"
+                          title="حذف الفيديو من ورشتك"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -2922,6 +2963,20 @@ export const SellerDashboard: React.FC = () => {
         artisanName={currentUser?.name || 'أسطى الحرفة'}
         artisanAvatar={sellerAvatar || currentUser?.avatar}
         defaultGovernorate={sellerGovernorate || 'قنا'}
+        sellerProducts={sellerProducts}
+        currentUser={currentUser}
+      />
+
+      {/* Reel Edit Modal (Seller Workshop Control) */}
+      <ReelEditModal
+        isOpen={isSellerReelEditOpen}
+        onClose={() => {
+          setIsSellerReelEditOpen(false);
+          setSellerEditingReel(null);
+        }}
+        reel={sellerEditingReel}
+        onSuccess={handleSellerReelUpdated}
+        currentUser={currentUser}
         sellerProducts={sellerProducts}
       />
 

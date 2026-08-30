@@ -23,6 +23,7 @@ import categoryRoutes from './routes/categoryRoutes.ts';
 import craftStoryRoutes from './routes/craftStoryRoutes.ts';
 import uploadRoutes from './routes/uploadRoutes.ts';
 import seoRoutes from './routes/seoRoutes.ts';
+import reelRoutes from './routes/reelRoutes.ts';
 
 export function createApp(): Express {
   const env = validateAndGetEnv();
@@ -122,6 +123,7 @@ export function createApp(): Express {
     { prefix: '/upload', router: uploadRoutes },
     { prefix: '/categories', router: categoryRoutes },
     { prefix: '/craft-stories', router: craftStoryRoutes },
+    { prefix: '/reels', router: reelRoutes },
     { prefix: '/products', router: productRoutes },
     { prefix: '/cart', router: cartRoutes },
     { prefix: '/orders', router: orderRoutes },

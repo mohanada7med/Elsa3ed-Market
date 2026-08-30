@@ -450,4 +450,47 @@ export interface PaymentConfigDocument {
   updatedBy?: string;
 }
 
+export interface CraftReelCommentDocument {
+  id: string;
+  userName: string;
+  userAvatar?: string;
+  governorate?: string;
+  comment: string;
+  createdAt: string;
+  likesCount: number;
+}
+
+export interface CraftReelDocument {
+  id: string;
+  title: string;
+  artisanName: string;
+  artisanAvatar: string;
+  workshopName: string;
+  sellerId: string;
+  governorate: string;
+  craftType: string;
+  videoUrl: string;
+  posterUrl: string;
+  duration: string;
+  likesCount: number;
+  viewsCount: number;
+  sharesCount: number;
+  productId: string;
+  productTitle: string;
+  productPrice: number;
+  productOriginalPrice?: number;
+  productImage: string;
+  productRating: number;
+  inStock: boolean;
+  description: string;
+  hashtags: string[];
+  musicTrack: string;
+  isVerifiedArtisan?: boolean;
+  isFeatured?: boolean;
+  isPinned?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  comments?: CraftReelCommentDocument[];
+}
+
 
