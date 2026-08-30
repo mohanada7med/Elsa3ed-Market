@@ -5,8 +5,9 @@ import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPasswo
 import { createPasswordResetRequest } from '../services/passwordResetService.ts';
 import { getUserFavorites, toggleFavorite } from '../services/favoriteService.ts';
 import { getUserNotifications, markNotificationAsRead } from '../services/notificationService.ts';
-import { requireAuth } from '../middleware/auth.ts';
+import { requireAuth, invalidateAuthSession } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
+
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
 import { uploadLimiter, forgotPasswordLimiter } from '../middleware/rateLimiter.ts';
@@ -222,16 +223,34 @@ router.post('/login', async (req: Request, res: Response) => {
 
 // GET /api/auth/me (Restore and validate session)
 router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
-  let userId = req.user?.id;
-
-  // Fallback: Check HTTP-only cookie or Bearer header directly if middleware didn't populate user
-  if (!userId) {
-    const token = getAuthTokenFromRequest(req);
-    if (token) {
-      const verified = verifyToken(token);
-      if (verified && verified.sub) {
-        userId = verified.sub;
+  // Fast path: if middleware already authenticated the user, return immediately without extra DB queries
+  if (req.user && req.user.id) {
+    const user = req.user;
+    return res.json({
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        role: user.role,
+        governorate: user.governorate,
+        avatar: user.avatar,
+        profileImage: user.profileImage,
+        mustChangePassword: Boolean(user.mustChangePassword),
+        sellerStatus: user.sellerStatus || (user.role === 'seller' ? 'pending' : undefined),
+        seller: user.seller || null
       }
+    });
+  }
+
+  let userId: string | undefined;
+  const token = getAuthTokenFromRequest(req);
+  if (token) {
+    const verified = verifyToken(token);
+    if (verified && verified.sub) {
+      userId = verified.sub;
     }
   }
 
@@ -269,7 +288,8 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
       sellerStatus = sellerDoc.status;
       sellerDetails = {
         id: sellerDoc.id,
-        brandName: sellerDoc.brandName,
+        brandName: sellerDoc.brandName || sellerDoc.name,
+        name: sellerDoc.name,
         status: sellerDoc.status,
         verified: sellerDoc.verified,
         rejectionReason: sellerDoc.rejectionReason,
@@ -288,6 +308,7 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
     }
   });
 });
+
 
 // POST /api/auth/forgot-password - Submit forgot password request by username
 router.post('/forgot-password', forgotPasswordLimiter, async (req: Request, res: Response) => {
@@ -351,6 +372,13 @@ router.post('/change-password', requireAuth, async (req: AuthenticatedRequest, r
 
 // POST /api/auth/logout - Invalidate server session & clear auth cookie
 router.post('/logout', (req: Request, res: Response) => {
+  const token = getAuthTokenFromRequest(req);
+  if (token) {
+    const verified = verifyToken(token);
+    if (verified?.sub) {
+      invalidateAuthSession(verified.sub);
+    }
+  }
   clearAuthCookie(res);
   res.json({
     success: true,
@@ -365,7 +393,9 @@ router.put('/profile', requireAuth, async (req: AuthenticatedRequest, res: Respo
     return res.status(401).json({ success: false, error: 'غير مصرح' });
   }
 
+  invalidateAuthSession(userId);
   const { name, phone, governorate, avatar, profileImage, savedAddresses } = req.body;
+
   const updated = await updateUser(userId, {
     ...(name && { name: name.trim() }),
     ...(phone && { phone: phone.trim() }),

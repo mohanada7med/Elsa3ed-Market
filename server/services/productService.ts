@@ -67,7 +67,7 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
         ];
       }
 
-      let cursor = db.collection('products').find(query);
+      let cursor = db.collection('products').find(query, { projection: { _id: 0 } });
       if (filters?.sortBy === 'price-low') {
         cursor = cursor.sort({ price: 1 });
       } else if (filters?.sortBy === 'price-high') {
@@ -78,7 +78,8 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
         cursor = cursor.sort({ createdAt: -1 });
       }
 
-      products = (await cursor.toArray()) as unknown as ProductDocument[];
+      products = (await cursor.limit(limit).toArray()) as unknown as ProductDocument[];
+
       cacheService.set(cacheKey, products, 180, ['products']);
       return products;
     } catch (e) {

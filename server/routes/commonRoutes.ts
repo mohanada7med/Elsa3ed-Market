@@ -10,39 +10,45 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
 const router = express.Router();
 
-// GET /api/categories
-router.get('/categories', async (req: Request, res: Response) => {
-  const { db, isMongo } = await getDatabase();
-  if (isMongo && db) {
-    try {
-      const cats = await db.collection('categories').find({ active: { $ne: false } }).sort({ displayOrder: 1 }).toArray();
-      if (cats.length > 0) {
-        return res.json({ success: true, data: cats });
-      }
-    } catch (e) {
-      console.error('Error fetching categories from Mongo:', e);
-    }
-  }
-  res.json({ success: true, data: memoryDb.categories });
-});
+import { cacheService } from '../services/cacheService.ts';
 
-// GET /api/sellers
+// GET /api/sellers - Cached public list of verified/active sellers
 router.get('/sellers', async (req: Request, res: Response) => {
+  const cacheKey = 'sellers:active';
+  const cached = cacheService.get<any[]>(cacheKey);
+  if (cached) {
+    return res.json({ success: true, count: cached.length, data: cached });
+  }
+
   const { db, isMongo } = await getDatabase();
+  let sellers: any[] = [];
+
   if (isMongo && db) {
     try {
-      const sellers = await db.collection('sellers').find({ status: { $ne: 'suspended' } }).toArray();
-      return res.json({ success: true, data: sellers });
+      sellers = await db.collection('sellers').find({ status: { $ne: 'suspended' } }).toArray();
+      if (sellers.length > 0) {
+        cacheService.set(cacheKey, sellers, 300, ['sellers']);
+        return res.json({ success: true, count: sellers.length, data: sellers });
+      }
     } catch (e) {
       console.error('Error fetching sellers from Mongo:', e);
     }
   }
-  res.json({ success: true, data: memoryDb.sellers });
+
+  sellers = memoryDb.sellers.filter((s) => s.status !== 'suspended');
+  cacheService.set(cacheKey, sellers, 300, ['sellers']);
+  res.json({ success: true, count: sellers.length, data: sellers });
 });
 
-// GET /api/sellers/:id
+// GET /api/sellers/:id - Cached single seller details
 router.get('/sellers/:id', async (req: Request, res: Response) => {
   const sellerId = req.params.id;
+  const cacheKey = `seller:${sellerId}`;
+  const cached = cacheService.get<any>(cacheKey);
+  if (cached) {
+    return res.json({ success: true, data: cached });
+  }
+
   const { db, isMongo } = await getDatabase();
   let seller: any = null;
 
@@ -50,6 +56,7 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
     try {
       seller = await db.collection('sellers').findOne({ id: sellerId });
       if (seller) {
+        cacheService.set(cacheKey, seller, 300, ['sellers']);
         return res.json({ success: true, data: seller });
       }
       return res.status(404).json({ success: false, error: 'الورشة غير موجودة' });
@@ -66,8 +73,10 @@ router.get('/sellers/:id', async (req: Request, res: Response) => {
     return res.status(404).json({ success: false, error: 'الورشة غير موجودة' });
   }
 
+  cacheService.set(cacheKey, seller, 300, ['sellers']);
   res.json({ success: true, data: seller });
 });
+
 
 // POST /api/discounts/validate
 router.post('/discounts/validate', async (req: Request, res: Response) => {

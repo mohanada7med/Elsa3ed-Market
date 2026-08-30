@@ -234,7 +234,14 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {(activePage === 'orders' || activePage === 'order-details') && <OrdersTrackingPage />}
+            {(activePage === 'orders' || activePage === 'order-details') && (
+              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                <ForbiddenPage />
+              ) : (
+                <OrdersTrackingPage />
+              )
+            )}
+
             {activePage === 'favorites' && (
               isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
                 <ForbiddenPage />

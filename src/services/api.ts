@@ -75,6 +75,56 @@ function getAuthHeaders(user?: { id?: string; role?: string; sellerId?: string }
   return headers;
 }
 
+// Request deduplication and client-side micro-cache to eliminate duplicate network calls
+
+const inFlightRequests = new Map<string, Promise<any>>();
+const clientCache = new Map<string, { data: any; expiresAt: number }>();
+
+export function clearClientCache() {
+  clientCache.clear();
+}
+
+async function dedupedFetch<T>(
+  url: string,
+  options?: RequestInit,
+  cacheTtlMs = 0
+): Promise<T> {
+  const method = (options?.method || 'GET').toUpperCase();
+  if (method !== 'GET') {
+    const res = await fetch(url, options);
+    return res.json();
+  }
+
+  const key = `${url}:${JSON.stringify(options?.headers || {})}`;
+
+  if (cacheTtlMs > 0) {
+    const cached = clientCache.get(key);
+    if (cached && Date.now() < cached.expiresAt) {
+      return cached.data;
+    }
+  }
+
+  if (inFlightRequests.has(key)) {
+    return inFlightRequests.get(key)!;
+  }
+
+  const promise = (async () => {
+    try {
+      const res = await fetch(url, { ...options, credentials: options?.credentials || 'include' });
+      const data = await res.json();
+      if (cacheTtlMs > 0 && res.ok) {
+        clientCache.set(key, { data, expiresAt: Date.now() + cacheTtlMs });
+      }
+      return data;
+    } finally {
+      inFlightRequests.delete(key);
+    }
+  })();
+
+  inFlightRequests.set(key, promise);
+  return promise;
+}
+
 export const api = {
   // Public Products
   async getPublicProducts(filters?: {
@@ -94,10 +144,10 @@ export const api = {
     if (filters?.sortBy) params.append('sortBy', filters.sortBy);
 
     const queryStr = params.toString() ? `?${params.toString()}` : '';
-    const res = await fetch(`${API_BASE}/products${queryStr}`);
-    const json: ApiResponse<Product[]> = await res.json();
+    const json: ApiResponse<Product[]> = await dedupedFetch(`${API_BASE}/products${queryStr}`, undefined, 10000);
     return json.data || [];
   },
+
 
   async getProductById(id: string, user?: { id?: string; role?: string }): Promise<Product | null> {
     const res = await fetch(`${API_BASE}/products/${id}`, {
@@ -285,8 +335,7 @@ export const api = {
   // Common
   async getCategories(): Promise<Category[]> {
     try {
-      const res = await fetch(`${API_BASE}/categories`);
-      const json: ApiResponse<Category[]> = await res.json();
+      const json: ApiResponse<Category[]> = await dedupedFetch(`${API_BASE}/categories`, undefined, 60000);
       return json.data || [];
     } catch {
       return [];
@@ -295,8 +344,7 @@ export const api = {
 
   async getSellers(): Promise<Seller[]> {
     try {
-      const res = await fetch(`${API_BASE}/sellers`);
-      const json: ApiResponse<Seller[]> = await res.json();
+      const json: ApiResponse<Seller[]> = await dedupedFetch(`${API_BASE}/sellers`, undefined, 60000);
       return json.data || [];
     } catch {
       return [];
@@ -809,8 +857,7 @@ export const api = {
   // ==================== CRAFT STORIES (قصص الصنعة وأسرار الأجداد) ====================
   async getPublicCraftStories(): Promise<CraftStory[]> {
     try {
-      const res = await fetch(`${API_BASE}/craft-stories`);
-      const json: ApiResponse<CraftStory[]> = await res.json();
+      const json: ApiResponse<CraftStory[]> = await dedupedFetch(`${API_BASE}/craft-stories`, undefined, 60000);
       return json.data || [];
     } catch {
       return [];
@@ -1289,14 +1336,10 @@ export const api = {
 
   async getMe(user?: { id?: string; role?: string }): Promise<any> {
     try {
-      const res = await fetch(`${API_BASE}/auth/me`, {
+      const json: ApiResponse<any> = await dedupedFetch(`${API_BASE}/auth/me`, {
         credentials: 'include',
         headers: getAuthHeaders(user)
-      });
-      if (!res.ok) {
-        return null;
-      }
-      const json: ApiResponse<any> = await res.json();
+      }, 5000);
       return (json && json.success && json.data) ? json.data : null;
     } catch {
       return null;

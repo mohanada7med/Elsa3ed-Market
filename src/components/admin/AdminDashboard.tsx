@@ -172,8 +172,10 @@ export const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    refreshAdminReelsFromDb();
-  }, []);
+    if (activeTab === 'craft-reels') {
+      refreshAdminReelsFromDb();
+    }
+  }, [activeTab]);
 
   const handleAdminReelUploaded = (newReel: CraftReel) => {
     refreshAdminReelsFromDb();
@@ -956,10 +958,6 @@ export const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchCraftStories();
-  }, []);
-
-  useEffect(() => {
     if (activeTab === 'craft-stories') {
       fetchCraftStories();
     }
@@ -1092,8 +1090,10 @@ export const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    refreshReviews();
-  }, [refreshReviews]);
+    if (activeTab === 'reviews') {
+      refreshReviews();
+    }
+  }, [activeTab, refreshReviews]);
 
   const totalMarketplaceSales = orders.reduce((sum, o) => sum + o.total, 0);
 

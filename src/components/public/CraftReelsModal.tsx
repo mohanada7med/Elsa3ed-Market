@@ -47,7 +47,7 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [showHeartBurst, setShowHeartBurst] = useState(false);
   const [likedReelIds, setLikedReelIds] = useState<string[]>([]);
   const [currentReelLikes, setCurrentReelLikes] = useState<number>(0);

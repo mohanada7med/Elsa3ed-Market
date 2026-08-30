@@ -8,7 +8,6 @@ import { ProductGrid } from '../products/ProductGrid';
 import { GovernorateExplorer } from '../public/GovernorateExplorer';
 import { PromotionsBanner } from '../public/PromotionsBanner';
 import { FeaturedSellers } from '../public/FeaturedSellers';
-import { RecommendationsSection } from '../public/RecommendationsSection';
 import { AboutSection } from '../public/AboutSection';
 import { Sparkles, ArrowLeft, Flame, Award } from 'lucide-react';
 
@@ -66,9 +65,6 @@ export const HomePage: React.FC = () => {
 
       {/* 7. Featured Artisans & Master Workshops */}
       <FeaturedSellers />
-
-      {/* 8. Curated Recommendations (Home Decor, Food, Gifts) */}
-      <RecommendationsSection />
 
       {/* 9. About Elsa3ed Market, Story & Mission */}
       <AboutSection />

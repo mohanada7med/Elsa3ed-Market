@@ -9,21 +9,29 @@ interface CacheEntry<T> {
   tags: string[];
 }
 
+// Global cache persistence across serverless invocations and Next.js HMR
+const globalCacheMap: Map<string, CacheEntry<any>> =
+  (globalThis as any).__appCache || new Map<string, CacheEntry<any>>();
+(globalThis as any).__appCache = globalCacheMap;
+
 class CacheService {
-  private cache = new Map<string, CacheEntry<any>>();
+  private cache = globalCacheMap;
 
   constructor() {
-    // Periodic garbage collection of expired keys (unreferenced so it doesn't block process exit)
-    const timer = setInterval(() => {
-      const now = Date.now();
-      for (const [key, entry] of this.cache.entries()) {
-        if (now > entry.expiresAt) {
-          this.cache.delete(key);
+    // Only register timer once on globalThis
+    if (!(globalThis as any).__appCacheTimer) {
+      const timer = setInterval(() => {
+        const now = Date.now();
+        for (const [key, entry] of this.cache.entries()) {
+          if (now > entry.expiresAt) {
+            this.cache.delete(key);
+          }
         }
+      }, 60 * 1000);
+      if (timer && typeof timer.unref === 'function') {
+        timer.unref();
       }
-    }, 60 * 1000);
-    if (timer && typeof timer.unref === 'function') {
-      timer.unref();
+      (globalThis as any).__appCacheTimer = timer;
     }
   }
 
@@ -103,4 +111,10 @@ class CacheService {
   }
 }
 
-export const cacheService = new CacheService();
+export { CacheService };
+export const cacheService: CacheService =
+  ((globalThis as any).__cacheService as CacheService) || new CacheService();
+(globalThis as any).__cacheService = cacheService;
+
+
+

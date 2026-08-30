@@ -753,7 +753,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentUser.id, currentRole]);
 
-  // Fetch Orders based on active role
+  // Fetch Orders based on active role (Strictly role-separated)
   const refreshOrders = useCallback(async () => {
     try {
       let fetchedOrders: Order[] | null = null;
@@ -765,11 +765,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           role: 'seller',
           sellerId: currentUser.id
         });
-      } else {
+      } else if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
         fetchedOrders = await api.getBuyerOrders({
           id: currentUser.id,
           role: 'buyer'
         });
+      } else {
+        // Guest or unauthenticated visitors have no orders — do NOT call /api/orders
+        return;
       }
 
       if (fetchedOrders && Array.isArray(fetchedOrders)) {
@@ -902,20 +905,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentRole, currentUser.id]);
 
-  // Initial load from Database APIs
+  // Initial load: Only public catalog data (products, categories, sellers)
   useEffect(() => {
     refreshPublicProducts();
-    refreshOrders();
     refreshCategories();
     refreshSellers();
-  }, [refreshPublicProducts, refreshOrders, refreshCategories, refreshSellers]);
+  }, [refreshPublicProducts, refreshCategories, refreshSellers]);
 
-  // Refresh when role changes
+  // Role-specific load: Only triggered after session check resolves to prevent premature guest calls
   useEffect(() => {
-    refreshOrders();
+    if (isAuthChecking) return;
+
     if (currentRole === 'seller') {
       setCart([]);
       setIsCartDrawerOpen(false);
+      refreshOrders();
       refreshSellerProducts();
       refreshSellerInventory();
       refreshStockMovements();
@@ -923,18 +927,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else if (currentRole === 'admin') {
       setCart([]);
       setIsCartDrawerOpen(false);
+      refreshOrders();
       refreshAdminProducts();
       refreshAuditLogs();
       refreshReviews();
-      refreshCategories();
-      refreshSellers();
-    } else {
-      refreshPublicProducts();
-      if (currentRole === 'buyer') {
-        refreshCart();
-      }
+    } else if (currentRole === 'buyer') {
+      refreshOrders();
+      refreshCart();
     }
   }, [
+    isAuthChecking,
     currentRole,
     refreshOrders,
     refreshSellerProducts,
@@ -944,11 +946,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshAdminProducts,
     refreshAuditLogs,
     refreshReviews,
-    refreshCategories,
-    refreshSellers,
-    refreshPublicProducts,
     refreshCart
   ]);
+
 
   // Log helper
   const addAuditLog = (action: string, resource: string, details: string, status: 'نجاح' | 'تنبيه' | 'خطأ' = 'نجاح') => {

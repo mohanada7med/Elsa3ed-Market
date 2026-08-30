@@ -9,6 +9,8 @@ export interface AuthenticatedUser {
   name: string;
   email: string;
   role: UserRole;
+  username?: string;
+  phone?: string;
   avatar?: string;
   profileImage?: {
     secureUrl: string;
@@ -17,10 +19,26 @@ export interface AuthenticatedUser {
   governorate?: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;
+  mustChangePassword?: boolean;
+  seller?: any;
 }
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
+}
+
+// In-memory cache for authenticated sessions (15s TTL) to eliminate redundant Atlas lookups across concurrent requests
+interface CachedAuthSession {
+  user: AuthenticatedUser;
+  expiresAt: number;
+}
+
+const authSessionCache: Map<string, CachedAuthSession> =
+  (globalThis as any).__authSessionCache || new Map<string, CachedAuthSession>();
+(globalThis as any).__authSessionCache = authSessionCache;
+
+export function invalidateAuthSession(userId: string) {
+  authSessionCache.delete(userId);
 }
 
 export async function authenticate(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -39,7 +57,14 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
 
   const userId = verified.sub;
 
-  // Look up user from database or memory
+  // 2. Fast-path: Check short-term in-memory cache
+  const cached = authSessionCache.get(userId);
+  if (cached && Date.now() < cached.expiresAt) {
+    req.user = { ...cached.user };
+    return next();
+  }
+
+  // 3. Look up user from database or memory
   const { db, isMongo } = await getDatabase();
   let userProfile: any = null;
 
@@ -59,6 +84,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   if (!userProfile && verified.role) {
     userProfile = {
       id: userId,
+      username: verified.username || '',
       name: verified.username || 'مستخدم المنصة',
       email: verified.email || '',
       role: verified.role,
@@ -74,6 +100,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   // Resolve Seller Status and Seller ID accurately
   let sellerId = userProfile.sellerId || (userProfile.role === 'seller' ? userProfile.id : undefined);
   let sellerStatus: SellerStatus | undefined = userProfile.sellerStatus;
+  let sellerDetails: any = null;
 
   if (userProfile.role === 'seller') {
     let sellerDoc: any = null;
@@ -93,23 +120,46 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     if (sellerDoc) {
       sellerStatus = sellerDoc.status;
       sellerId = sellerDoc.id;
+      sellerDetails = {
+        id: sellerDoc.id,
+        brandName: sellerDoc.brandName || sellerDoc.name,
+        name: sellerDoc.name,
+        status: sellerDoc.status,
+        verified: sellerDoc.verified,
+        rejectionReason: sellerDoc.rejectionReason,
+        suspensionReason: sellerDoc.suspensionReason
+      };
     } else {
       sellerStatus = sellerStatus || 'pending';
     }
   }
 
-  req.user = {
+  const authenticatedUser: AuthenticatedUser = {
     id: userProfile.id,
     sellerId,
     sellerStatus,
     name: userProfile.name,
+    username: userProfile.username,
     email: userProfile.email,
+    phone: userProfile.phone,
     role: userProfile.role,
-    governorate: userProfile.governorate
+    governorate: userProfile.governorate,
+    avatar: userProfile.avatar,
+    profileImage: userProfile.profileImage,
+    mustChangePassword: Boolean(userProfile.mustChangePassword),
+    seller: sellerDetails
   };
 
+  // Cache resolved user session for 15 seconds
+  authSessionCache.set(userId, {
+    user: authenticatedUser,
+    expiresAt: Date.now() + 15 * 1000
+  });
+
+  req.user = authenticatedUser;
   next();
 }
+
 
 export function requireAuth(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   if (!req.user || !req.user.id) {

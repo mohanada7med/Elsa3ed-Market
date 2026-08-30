@@ -106,9 +106,9 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
       if (!globalCache.client) {
         globalCache.client = new MongoClient(uri, {
           connectTimeoutMS: 10000,
-          serverSelectionTimeoutMS: 10000, // 10s timeout to allow cold starts to resolve cleanly
-          maxPoolSize: 10,
-          minPoolSize: 0, // In serverless, minPoolSize must be 0 to avoid stale sockets
+          serverSelectionTimeoutMS: 10000,
+          maxPoolSize: 20, // Sufficient pool size for concurrent request handling
+          minPoolSize: 0,  // In serverless, minPoolSize must be 0 to avoid stale sockets
           maxIdleTimeMS: 30000,
           retryWrites: true,
         });
@@ -118,12 +118,16 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
       globalCache.db = globalCache.client.db(dbName);
       Logger.info(`[MongoDB] Connected successfully to database: ${dbName}`);
 
-      // Seed indexes and categories in the background so cold start response is NOT blocked
+      // Seed indexes and categories in background with slight delay so incoming user requests aren't queued behind index builds
       if (!globalCache.indexesSeeded) {
         globalCache.indexesSeeded = true;
-        seedMongoDatabase(globalCache.db).catch((seedErr) => {
-          Logger.error('[MongoDB] Background index/seed creation error:', seedErr);
-        });
+        setTimeout(() => {
+          if (globalCache.db) {
+            seedMongoDatabase(globalCache.db).catch((seedErr) => {
+              Logger.error('[MongoDB] Background index/seed creation error:', seedErr);
+            });
+          }
+        }, 100).unref?.();
       }
 
       return { db: globalCache.db, isMongo: true };
@@ -157,155 +161,158 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
 
 async function seedMongoDatabase(database: Db) {
   try {
-    // Only seed standard platform categories if none exist (essential for seller product categorization)
-    const categoriesCount = await database.collection('categories').countDocuments();
+    // Only seed standard platform categories if none exist
+    const categoriesCount = await database.collection('categories').countDocuments().catch(() => 1);
     if (categoriesCount === 0) {
       await database.collection('categories').insertMany(PLATFORM_CATEGORIES as any[]);
       Logger.info('[MongoDB] Initialized standard platform categories collection');
     }
 
-    // Seed default baseline admin and seller accounts if missing
+    // Seed default baseline admin and seller accounts ONLY if missing
     try {
-      const defaultPasswordHash = await bcrypt.hash('password123', 10);
-      
-      const adminExists = await database.collection('users').findOne({ usernameNormalized: 'admin' });
-      if (!adminExists) {
-        await database.collection('users').insertOne({
-          id: 'user-admin-1',
-          username: 'admin',
-          usernameNormalized: 'admin',
-          name: 'أ/ محمود الهواري (مدير المنصة)',
-          email: 'admin@elsa3ed.eg',
-          phone: '01000000000',
-          role: 'admin',
-          passwordHash: defaultPasswordHash,
-          governorate: 'قنا',
-          savedAddresses: [],
-          status: 'active',
-          avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
-        Logger.info('[MongoDB] Seeded default platform admin user (@admin)');
-      }
+      const [adminExists, sellerExists] = await Promise.all([
+        database.collection('users').findOne({ usernameNormalized: 'admin' }),
+        database.collection('users').findOne({ usernameNormalized: 'seller1' })
+      ]);
 
-      const sellerExists = await database.collection('users').findOne({ usernameNormalized: 'seller1' });
-      if (!sellerExists) {
-        await database.collection('users').insertOne({
-          id: 'user-seller-1',
-          username: 'seller1',
-          usernameNormalized: 'seller1',
-          name: 'عم حمزة القناوي',
-          email: 'seller1@elsa3ed.eg',
-          phone: '01011111111',
-          role: 'seller',
-          passwordHash: defaultPasswordHash,
-          sellerId: 'seller-1',
-          sellerStatus: 'approved',
-          governorate: 'قنا',
-          savedAddresses: [],
-          status: 'active',
-          avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
+      if (!adminExists || !sellerExists) {
+        const defaultPasswordHash = await bcrypt.hash('password123', 10);
 
-        await database.collection('sellers').updateOne(
-          { id: 'seller-1' },
-          {
-            $setOnInsert: {
-              id: 'seller-1',
-              userId: 'user-seller-1',
-              name: 'عم حمزة القناوي',
-              workshopName: 'ورشة الفخار القناوي الأصيل',
-              phone: '01011111111',
-              email: 'seller1@elsa3ed.eg',
-              governorate: 'قنا',
-              city: 'قنا',
-              address: 'حي القناوية، مركز قنا',
-              specialty: 'صناعة الفخار والقلل القناوي',
-              status: 'approved',
-              story: 'حرفة ورثتها أباً عن جد منذ أكثر من 40 عاماً',
-              rating: 4.9,
-              reviewCount: 28,
-              totalSales: 154,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }
-          },
-          { upsert: true }
-        );
-        Logger.info('[MongoDB] Seeded default seller user (@seller1)');
+        if (!adminExists) {
+          await database.collection('users').insertOne({
+            id: 'user-admin-1',
+            username: 'admin',
+            usernameNormalized: 'admin',
+            name: 'أ/ محمود الهواري (مدير المنصة)',
+            email: 'admin@elsa3ed.eg',
+            phone: '01000000000',
+            role: 'admin',
+            passwordHash: defaultPasswordHash,
+            governorate: 'قنا',
+            savedAddresses: [],
+            status: 'active',
+            avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+          Logger.info('[MongoDB] Seeded default platform admin user (@admin)');
+        }
+
+        if (!sellerExists) {
+          await database.collection('users').insertOne({
+            id: 'user-seller-1',
+            username: 'seller1',
+            usernameNormalized: 'seller1',
+            name: 'عم حمزة القناوي',
+            email: 'seller1@elsa3ed.eg',
+            phone: '01011111111',
+            role: 'seller',
+            passwordHash: defaultPasswordHash,
+            sellerId: 'seller-1',
+            sellerStatus: 'approved',
+            governorate: 'قنا',
+            savedAddresses: [],
+            status: 'active',
+            avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          });
+
+          await database.collection('sellers').updateOne(
+            { id: 'seller-1' },
+            {
+              $setOnInsert: {
+                id: 'seller-1',
+                userId: 'user-seller-1',
+                name: 'عم حمزة القناوي',
+                workshopName: 'ورشة الفخار القناوي الأصيل',
+                phone: '01011111111',
+                email: 'seller1@elsa3ed.eg',
+                governorate: 'قنا',
+                city: 'قنا',
+                address: 'حي القناوية، مركز قنا',
+                specialty: 'صناعة الفخار والقلل القناوي',
+                status: 'approved',
+                story: 'حرفة ورثتها أباً عن جد منذ أكثر من 40 عاماً',
+                rating: 4.9,
+                reviewCount: 28,
+                totalSales: 154,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              }
+            },
+            { upsert: true }
+          );
+          Logger.info('[MongoDB] Seeded default seller user (@seller1)');
+        }
       }
     } catch (userSeedErr) {
       Logger.error('[MongoDB] Error seeding default users:', userSeedErr);
     }
 
-    // Comprehensive production indexes for high-throughput queries
-    try {
-      await database.collection('users').updateMany({ email: null }, { $unset: { email: "" } });
-    } catch {
-      // ignore
-    }
-    try {
-      await database.collection('users').dropIndex('email_1');
-    } catch {
-      // ignore
-    }
-    await database.collection('users').createIndex({ usernameNormalized: 1 }, { unique: true });
-    await database.collection('users').createIndex({ username: 1 }, { unique: true });
-    await database.collection('users').createIndex(
-      { email: 1 },
-      { unique: true, partialFilterExpression: { email: { $type: 'string' } } }
-    );
-    await database.collection('users').createIndex({ id: 1 }, { unique: true });
-    await database.collection('users').createIndex({ role: 1 });
+    // Parallel index creation grouped by collection to avoid connection starvation
+    const indexOperations = [
+      // Users
+      database.collection('users').createIndex({ usernameNormalized: 1 }, { unique: true }),
+      database.collection('users').createIndex({ username: 1 }, { unique: true }),
+      database.collection('users').createIndex(
+        { email: 1 },
+        { unique: true, partialFilterExpression: { email: { $type: 'string' } } }
+      ),
+      database.collection('users').createIndex({ id: 1 }, { unique: true }),
+      database.collection('users').createIndex({ role: 1 }),
 
-    // Comprehensive production indexes for high-throughput queries
-    await database.collection('products').createIndex({ approvalStatus: 1, categoryId: 1, sellerGovernorate: 1, price: 1 });
-    await database.collection('products').createIndex({ sellerId: 1, createdAt: -1 });
-    await database.collection('products').createIndex({ id: 1 }, { unique: true });
-    await database.collection('orders').createIndex({ buyerId: 1, createdAt: -1 });
-    await database.collection('orders').createIndex({ sellerIds: 1, createdAt: -1 });
-    await database.collection('orders').createIndex({ status: 1, createdAt: -1 });
-    await database.collection('orders').createIndex({ id: 1 }, { unique: true });
-    await database.collection('reviews').createIndex({ productId: 1, status: 1, createdAt: -1 });
-    await database.collection('reviews').createIndex({ buyerId: 1, productId: 1 });
-    await database.collection('categories').createIndex({ slug: 1 }, { unique: true });
-    await database.collection('categories').createIndex({ active: 1, displayOrder: 1 });
-    await database.collection('sellers').createIndex({ id: 1 }, { unique: true });
-    await database.collection('sellers').createIndex({ status: 1, governorate: 1 });
-    await database.collection('audit_logs').createIndex({ timestamp: -1 });
-    await database.collection('audit_logs').createIndex({ actorId: 1, createdAt: -1 });
-    await database.collection('craft_stories').createIndex({ id: 1 }, { unique: true });
-    await database.collection('craft_stories').createIndex({ active: 1, displayOrder: 1 });
-    await database.collection('craft_stories').createIndex({ categoryId: 1 });
+      // Products
+      database.collection('products').createIndex({ approvalStatus: 1, categoryId: 1, sellerGovernorate: 1, price: 1 }),
+      database.collection('products').createIndex({ sellerId: 1, createdAt: -1 }),
+      database.collection('products').createIndex({ id: 1 }, { unique: true }),
 
-    // Carts, Discounts, Favorites & Operations Indexes
-    await database.collection('carts').createIndex({ buyerId: 1 }, { unique: true });
-    await database.collection('discounts').createIndex({ code: 1 }, { unique: true });
-    await database.collection('orders').createIndex({ orderNumber: 1 }, { unique: true });
-    await database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true });
-    await database.collection('notifications').createIndex({ userId: 1, createdAt: -1 });
-    await database.collection('stock_movements').createIndex({ sellerId: 1, createdAt: -1 });
-    await database.collection('payouts').createIndex({ sellerId: 1, createdAt: -1 });
-    await database.collection('payouts').createIndex({ status: 1, createdAt: -1 });
-    await database.collection('payouts').createIndex({ id: 1 }, { unique: true });
-    await database.collection('password_resets').createIndex({ tokenHash: 1 });
-    await database.collection('password_resets').createIndex({ userId: 1 });
-    try {
-      await database.collection('password_resets').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-    } catch {
-      // Ignore if index option differs
-    }
-    // Reels Collection Indexes & Initial Seed
-    await database.collection('reels').createIndex({ id: 1 }, { unique: true });
-    await database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 });
-    await database.collection('reels').createIndex({ governorate: 1 });
-    await database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 });
+      // Orders
+      database.collection('orders').createIndex({ buyerId: 1, createdAt: -1 }),
+      database.collection('orders').createIndex({ sellerIds: 1, createdAt: -1 }),
+      database.collection('orders').createIndex({ status: 1, createdAt: -1 }),
+      database.collection('orders').createIndex({ id: 1 }, { unique: true }),
+      database.collection('orders').createIndex({ orderNumber: 1 }, { unique: true }),
 
+      // Reviews
+      database.collection('reviews').createIndex({ productId: 1, status: 1, createdAt: -1 }),
+      database.collection('reviews').createIndex({ buyerId: 1, productId: 1 }),
+
+      // Categories
+      database.collection('categories').createIndex({ slug: 1 }, { unique: true }),
+      database.collection('categories').createIndex({ active: 1, displayOrder: 1 }),
+
+      // Sellers (including essential userId lookup index)
+      database.collection('sellers').createIndex({ id: 1 }, { unique: true }),
+      database.collection('sellers').createIndex({ userId: 1 }),
+      database.collection('sellers').createIndex({ status: 1, governorate: 1 }),
+
+      // Operations & Audit
+      database.collection('audit_logs').createIndex({ timestamp: -1 }),
+      database.collection('audit_logs').createIndex({ actorId: 1, createdAt: -1 }),
+      database.collection('craft_stories').createIndex({ id: 1 }, { unique: true }),
+      database.collection('craft_stories').createIndex({ active: 1, displayOrder: 1 }),
+      database.collection('carts').createIndex({ buyerId: 1 }, { unique: true }),
+      database.collection('discounts').createIndex({ code: 1 }, { unique: true }),
+      database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true }),
+      database.collection('notifications').createIndex({ userId: 1, createdAt: -1 }),
+      database.collection('stock_movements').createIndex({ sellerId: 1, createdAt: -1 }),
+      database.collection('payouts').createIndex({ sellerId: 1, createdAt: -1 }),
+      database.collection('payouts').createIndex({ status: 1, createdAt: -1 }),
+      database.collection('payouts').createIndex({ id: 1 }, { unique: true }),
+      database.collection('password_resets').createIndex({ tokenHash: 1 }),
+      database.collection('password_resets').createIndex({ userId: 1 }),
+      database.collection('reels').createIndex({ id: 1 }, { unique: true }),
+      database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 }),
+      database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 })
+    ];
+
+    // Execute non-blocking batch indexing in background without throwing on partial errors
+    await Promise.allSettled(indexOperations);
+
+    // Initial check for reels seed
     try {
-      const reelsCount = await database.collection('reels').countDocuments();
+      const reelsCount = await database.collection('reels').countDocuments().catch(() => 1);
       if (reelsCount === 0) {
         await database.collection('reels').insertMany(INITIAL_CRAFT_REELS_DB);
         Logger.info('[MongoDB] Seeded initial craft reels into database');
@@ -317,3 +324,4 @@ async function seedMongoDatabase(database: Db) {
     Logger.error('[MongoDB] Index creation error:', err);
   }
 }
+

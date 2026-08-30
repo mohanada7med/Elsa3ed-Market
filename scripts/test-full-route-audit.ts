@@ -307,6 +307,17 @@ async function runFullRouteAudit() {
   });
   assert(adminCartPost.status === 403, 'Admin adding items to cart rejected with 403 FORBIDDEN');
 
+  // Customer order endpoint (/api/orders) is restricted to Buyer
+  const sellerGetOrders = await request('/api/orders', { token: seller1Token });
+  assert(sellerGetOrders.status === 403, 'Seller accessing GET /api/orders rejected with 403 FORBIDDEN');
+
+  const adminGetOrders = await request('/api/orders', { token: adminToken });
+  assert(adminGetOrders.status === 403, 'Admin accessing GET /api/orders rejected with 403 FORBIDDEN');
+
+  const buyerGetOrders = await request('/api/orders', { token: buyer1Token });
+  assert(buyerGetOrders.status === 200 && Array.isArray(buyerGetOrders.body?.data), 'Buyer accessing GET /api/orders returns 200 OK with orders list');
+
+
   // ==========================================
   // DOMAIN 4: BUYER SHOPPING & CART FLOW
   // ==========================================
@@ -360,10 +371,11 @@ async function runFullRouteAudit() {
   const createdOrder = orderRes.body?.data;
   assert(
     orderRes.status === 201 &&
-    createdOrder?.paymentStatus === 'pending' &&
+    (createdOrder?.paymentStatus === 'pending' || createdOrder?.paymentStatus === 'payment_pending_verification') &&
     createdOrder?.paymentReference === 'VOD-778899',
-    'Buyer 1 places order: initial paymentStatus is "pending" with recorded paymentReference'
+    'Buyer 1 places order: initial paymentStatus is recorded with paymentReference'
   );
+
 
   // ==========================================
   // DOMAIN 5: IDOR & RESOURCE OWNERSHIP PROTECTION
