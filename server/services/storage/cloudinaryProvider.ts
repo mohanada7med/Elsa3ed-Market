@@ -107,9 +107,10 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     const {
       data,
-      filename = 'image',
+      filename = 'media',
       mimeType,
       folder = 'products',
+      resourceType,
       productId,
       ownerId,
       userId,
@@ -117,24 +118,45 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       overwrite
     } = options;
 
-    // 1. Server-side validation of file type, size, and magic bytes
-    const validation = validateImage(data, filename, mimeType);
-    if (!validation.valid) {
-      throw new Error(validation.error || 'فشل في التحقق من صحة ملف الصورة');
-    }
+    const isVideo =
+      resourceType === 'video' ||
+      folder === 'reels' ||
+      folder === 'videos' ||
+      Boolean(mimeType && mimeType.startsWith('video/')) ||
+      filename.endsWith('.mp4') ||
+      filename.endsWith('.webm') ||
+      filename.endsWith('.mov');
 
-    // 2. Format upload payload for Cloudinary (Data-URI or raw buffer)
     let uploadPayload: string;
-    if (typeof data === 'string') {
-      if (data.startsWith('data:')) {
+    let detectedMime = mimeType;
+    let sizeBytes = 0;
+
+    if (isVideo) {
+      // Video upload handling
+      if (typeof data === 'string') {
         uploadPayload = data;
       } else {
-        const detectedMime = validation.mimeType || 'image/jpeg';
-        uploadPayload = `data:${detectedMime};base64,${data}`;
+        detectedMime = detectedMime || 'video/mp4';
+        uploadPayload = `data:${detectedMime};base64,${data.toString('base64')}`;
       }
     } else {
-      const detectedMime = validation.mimeType || 'image/jpeg';
-      uploadPayload = `data:${detectedMime};base64,${data.toString('base64')}`;
+      // 1. Image validation
+      const validation = validateImage(data, filename, mimeType);
+      if (!validation.valid) {
+        throw new Error(validation.error || 'فشل في التحقق من صحة ملف الصورة');
+      }
+      detectedMime = validation.mimeType || 'image/jpeg';
+      sizeBytes = validation.sizeBytes || 0;
+
+      if (typeof data === 'string') {
+        if (data.startsWith('data:')) {
+          uploadPayload = data;
+        } else {
+          uploadPayload = `data:${detectedMime};base64,${data}`;
+        }
+      } else {
+        uploadPayload = `data:${detectedMime};base64,${data.toString('base64')}`;
+      }
     }
 
     // 3. Determine Cloudinary Folder & Public ID
@@ -142,7 +164,13 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     let publicId: string;
     let shouldOverwrite = false;
 
-    if (folder === 'products') {
+    if (isVideo || folder === 'reels' || folder === 'videos') {
+      cloudinaryFolder = 'Elsa3ed-Market/reels';
+      const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      publicId = `${cleanFilename}_${uniqueSuffix}`;
+      shouldOverwrite = false;
+    } else if (folder === 'products') {
       const prodId = productId || `prod-${Date.now()}`;
       cloudinaryFolder = `Elsa3ed-Market/products/${prodId}`;
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -163,30 +191,41 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
 
     try {
-      const uploadResult: UploadApiResponse = await cloudinary.uploader.upload(uploadPayload, {
+      const uploadOptions: any = {
         folder: cloudinaryFolder,
         public_id: publicId,
-        resource_type: 'image',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
         overwrite: shouldOverwrite,
-        invalidate: true,
-        transformation: [
-          { quality: 'auto', fetch_format: 'auto' }
-        ]
-      });
+        invalidate: true
+      };
 
-      Logger.info(`[Cloudinary] Image uploaded successfully: ${uploadResult.public_id}`);
+      let uploadResult: UploadApiResponse;
+
+      if (isVideo) {
+        uploadOptions.resource_type = 'video';
+        uploadOptions.chunk_size = 6000000; // 6MB chunk size for reliable video streaming uploads
+        uploadOptions.timeout = 180000;
+        uploadResult = await cloudinary.uploader.upload_large(uploadPayload, uploadOptions);
+      } else {
+        uploadOptions.resource_type = 'image';
+        uploadOptions.allowed_formats = ['jpg', 'jpeg', 'png', 'webp'];
+        uploadOptions.transformation = [{ quality: 'auto', fetch_format: 'auto' }];
+        uploadResult = await cloudinary.uploader.upload(uploadPayload, uploadOptions);
+      }
+
+
+      Logger.info(`[Cloudinary] ${isVideo ? 'Video' : 'Image'} uploaded successfully to ${cloudinaryFolder}: ${uploadResult.public_id}`);
 
       return {
         url: uploadResult.secure_url,
         fileKey: uploadResult.public_id,
         mimeType: `${uploadResult.resource_type}/${uploadResult.format}`,
-        sizeBytes: uploadResult.bytes || validation.sizeBytes || 0,
-        uploadedAt: uploadResult.created_at || new Date().toISOString()
+        sizeBytes: uploadResult.bytes || sizeBytes || 0,
+        uploadedAt: uploadResult.created_at || new Date().toISOString(),
+        duration: uploadResult.duration
       };
     } catch (err: any) {
-      Logger.error('[Cloudinary] Upload failed:', err?.message || err);
-      throw new Error(err?.message || 'فشل في رفع الصورة إلى خدمة التخزين السحابي');
+      Logger.error(`[Cloudinary] ${isVideo ? 'Video' : 'Image'} upload failed:`, err?.message || err);
+      throw new Error(err?.message || `فشل في رفع ${isVideo ? 'الفيديو' : 'الصورة'} إلى خدمة التخزين السحابي`);
     }
   }
 
@@ -204,8 +243,10 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       return false;
     }
 
+    const isVideo = fileKey.includes('/reels/') || fileKey.includes('/videos/');
+
     try {
-      const res = await cloudinary.uploader.destroy(fileKey);
+      const res = await cloudinary.uploader.destroy(fileKey, isVideo ? { resource_type: 'video' } : undefined);
       const isSuccess = res.result === 'ok';
       if (isSuccess) {
         Logger.info(`[Cloudinary] Deleted asset: ${fileKey}`);
@@ -218,6 +259,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       return false;
     }
   }
+
 
   /**
    * Return full delivery URL from fileKey or existing URL

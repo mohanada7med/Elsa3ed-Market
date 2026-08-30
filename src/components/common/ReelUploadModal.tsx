@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CraftReel, Governorate, Product } from '../../types.ts';
 import { craftReelsService, HERITAGE_VIDEO_PRESETS } from '../../services/craftReelsService.ts';
+import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
+
 import {
   Film,
   Upload,
@@ -25,8 +27,17 @@ import {
   Lock,
   LogIn,
   UserPlus
-} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+function readFileAsDataUri(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 
 interface ReelUploadModalProps {
   isOpen: boolean;
@@ -234,6 +245,29 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
     try {
+      let finalVideoUrl = videoUrl;
+
+      // If a local video file was selected, upload directly to Cloudinary Elsa3ed-Market/reels folder
+      if (videoFile) {
+        try {
+          const base64Data = await readFileAsDataUri(videoFile);
+          const userParam = (currentUser as any) || {
+            id: sellerId || 'seller-current',
+            role: (currentUser as any)?.role || 'seller',
+            sellerId: sellerId || (currentUser as any)?.sellerId,
+            name: artisanName
+          };
+          const uploadRes = await api.uploadReelVideo(userParam, base64Data, videoFile.name);
+          if (uploadRes?.url) {
+            finalVideoUrl = uploadRes.url;
+          }
+        } catch (uploadErr: any) {
+          setIsSubmitting(false);
+          setErrorMsg(`فشل في رفع الفيديو إلى Cloudinary: ${uploadErr?.message || uploadErr}`);
+          return;
+        }
+      }
+
       const userParam = (currentUser as any) || {
         id: sellerId || 'seller-current',
         role: (currentUser as any)?.role || 'seller',
@@ -249,8 +283,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
         governorate,
         craftType,
-        videoUrl,
+        videoUrl: finalVideoUrl,
         posterUrl: effectivePoster,
+
         duration: duration || '0:30',
         productId: selectedProductId === 'custom' ? `prod-${Date.now()}` : selectedProductId,
         productTitle,
@@ -830,7 +865,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>جاري حفظ ونشر الفيديو...</span>
+                      <span>{videoFile ? 'جاري رفع الفيديو إلى Cloudinary...' : 'جاري حفظ الفيديو...'}</span>
                     </>
                   ) : (
                     <>
@@ -838,6 +873,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       <span>نشر الفيديو في Craft Reels</span>
                     </>
                   )}
+
                 </button>
               </div>
             </form>

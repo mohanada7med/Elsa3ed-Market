@@ -6,7 +6,11 @@ import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { CraftReelDocument, CraftReelCommentDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 
+import { storageService } from '../services/storage/storageProvider.ts';
+import { uploadLimiter } from '../middleware/rateLimiter.ts';
+
 const router = express.Router();
+
 
 // GET /api/reels - Get all reels with optional filters
 router.get('/', async (req, res: Response) => {
@@ -129,8 +133,58 @@ router.get('/:id', async (req, res: Response) => {
   }
 });
 
+// POST /api/reels/upload-video - Upload Reel Video to Cloudinary Elsa3ed-Market/reels folder
+router.post('/upload-video', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
+      return res.status(403).json({
+        success: false,
+        error: 'فقط البائع المعتمد أو مدير المنصة يملك صلاحية رفع فيديوهات الريلز'
+      });
+    }
+
+    const { video, filename = 'reel_video.mp4', mimeType = 'video/mp4' } = req.body;
+    if (!video) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى تقديم بيانات ملف الفيديو لرفعه إلى Cloudinary'
+      });
+    }
+
+    const uploadResult = await storageService.upload({
+      data: video,
+      filename,
+      mimeType,
+      folder: 'reels',
+      resourceType: 'video',
+      ownerId: user.id
+    });
+
+    Logger.info(`[Reels] Video uploaded to Cloudinary: ${uploadResult.url}`);
+
+    res.status(201).json({
+      success: true,
+      message: 'تم رفع فيديو الريلز بنجاح وتخزينه في مجلد Elsa3ed-Market/reels على Cloudinary',
+      data: {
+        url: uploadResult.url,
+        fileKey: uploadResult.fileKey,
+        duration: uploadResult.duration,
+        format: uploadResult.mimeType
+      }
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Video upload error:', err?.message || err);
+    res.status(500).json({
+      success: false,
+      error: err?.message || 'فشل في رفع الفيديو إلى Cloudinary'
+    });
+  }
+});
+
 // POST /api/reels - Create new reel (Seller or Admin)
 router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+
   try {
     const user = req.user!;
     if (user.role !== 'seller' && user.role !== 'admin') {

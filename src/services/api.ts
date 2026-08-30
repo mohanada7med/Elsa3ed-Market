@@ -1787,6 +1787,29 @@ export const api = {
     return json.data || null;
   },
 
+  async uploadReelVideo(
+    user: { id?: string; role?: string; sellerId?: string },
+    videoDataUri: string,
+    filename = 'reel_video.mp4'
+  ): Promise<{ url: string; fileKey: string; duration?: number; format?: string }> {
+    const res = await fetch(`${API_BASE}/reels/upload-video`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({
+        video: videoDataUri,
+        filename,
+        mimeType: 'video/mp4'
+      })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في رفع الفيديو إلى Cloudinary');
+    }
+    return json.data;
+  },
+
+
   async createReel(
     user: { id?: string; role?: string; sellerId?: string },
     data: Partial<CraftReel>

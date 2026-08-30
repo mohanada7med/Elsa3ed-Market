@@ -7,7 +7,8 @@ export interface UploadFileOptions {
   data: string | Buffer; // Base64 data-uri or raw buffer
   filename?: string;
   mimeType?: string;
-  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users';
+  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos';
+  resourceType?: 'image' | 'video' | 'auto';
   productId?: string;
   userId?: string;
   ownerId?: string;
@@ -21,7 +22,9 @@ export interface UploadResult {
   mimeType: string;
   sizeBytes: number;
   uploadedAt: string;
+  duration?: number;
 }
+
 
 export interface IStorageProvider {
   upload(options: UploadFileOptions): Promise<UploadResult>;
@@ -54,23 +57,37 @@ export class LocalStorageProvider implements IStorageProvider {
   }
 
   async upload(options: UploadFileOptions): Promise<UploadResult> {
-    const { data, filename = 'image.jpg', mimeType, folder = 'products', ownerId } = options;
+    const { data, filename = 'image.jpg', mimeType, folder = 'products', resourceType, ownerId } = options;
 
-    // 1. Validation
-    const validation = validateImage(data, filename, mimeType);
-    if (!validation.valid) {
-      throw new Error(validation.error || 'فشل في التحقق من صحة الصورة');
+    const isVideo =
+      resourceType === 'video' ||
+      folder === 'reels' ||
+      folder === 'videos' ||
+      Boolean(mimeType && mimeType.startsWith('video/')) ||
+      filename.endsWith('.mp4') ||
+      filename.endsWith('.webm') ||
+      filename.endsWith('.mov');
+
+    let detectedMime = mimeType || (isVideo ? 'video/mp4' : 'image/jpeg');
+    let ext = isVideo ? '.mp4' : '.jpg';
+
+    if (!isVideo) {
+      // 1. Image Validation
+      const validation = validateImage(data, filename, mimeType);
+      if (!validation.valid) {
+        throw new Error(validation.error || 'فشل في التحقق من صحة الصورة');
+      }
+      detectedMime = validation.mimeType || 'image/jpeg';
+      ext = detectedMime === 'image/png' ? '.png' : detectedMime === 'image/webp' ? '.webp' : detectedMime === 'image/svg+xml' ? '.svg' : '.jpg';
     }
 
-    const detectedMime = validation.mimeType || 'image/jpeg';
-    const ext = detectedMime === 'image/png' ? '.png' : detectedMime === 'image/webp' ? '.webp' : detectedMime === 'image/svg+xml' ? '.svg' : '.jpg';
-    
     // Generate safe unique key
     const cleanOwner = ownerId ? ownerId.replace(/[^a-zA-Z0-9_-]/g, '') : 'gen';
     const timestamp = Date.now();
     const randomSalt = Math.random().toString(36).substring(2, 7);
     const safeKey = `${folder}/${cleanOwner}_${timestamp}_${randomSalt}${ext}`;
     const filePath = path.join(this.uploadDir, safeKey);
+
 
     let buffer: Buffer;
     if (typeof data === 'string') {

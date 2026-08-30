@@ -52,9 +52,11 @@ export function createApp(): Express {
   // 3. Cookie parser for secure HTTP-only authentication tokens
   app.use(cookieParser());
 
-  // 4. Body parsers
-  app.use(express.json({ limit: `${env.MAX_UPLOAD_SIZE_MB + 2}mb` }));
-  app.use(express.urlencoded({ extended: true, limit: `${env.MAX_UPLOAD_SIZE_MB + 2}mb` }));
+  // 4. Body parsers (Support images and high-definition craft reels video uploads up to 60MB)
+  const bodyLimit = `${Math.max(env.MAX_UPLOAD_SIZE_MB + 2, 60)}mb`;
+  app.use(express.json({ limit: bodyLimit }));
+  app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
+
 
   // 4. Static Uploads folder serving
   const uploadsPath = path.join(process.cwd(), 'public', 'uploads');
