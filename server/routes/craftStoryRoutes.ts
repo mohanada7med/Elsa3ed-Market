@@ -4,11 +4,20 @@ import { getAllCraftStories, getCraftStoryById } from '../services/craftStorySer
 
 const router = express.Router();
 
-// GET /api/craft-stories - Public list of active craft stories
+// GET /api/craft-stories - Public list of active craft stories / heritage crafts atlas
 router.get('/', async (req: Request, res: Response) => {
   try {
     const includeInactive = req.query.all === 'true';
-    const stories = await getAllCraftStories(includeInactive);
+    const governorate = typeof req.query.governorate === 'string' ? req.query.governorate : undefined;
+    const categoryId = typeof req.query.categoryId === 'string' ? req.query.categoryId : undefined;
+    const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+
+    const stories = await getAllCraftStories(includeInactive, {
+      governorate,
+      categoryId,
+      search
+    });
+
     res.json({
       success: true,
       count: stories.length,
@@ -18,7 +27,7 @@ router.get('/', async (req: Request, res: Response) => {
     console.error('Error fetching craft stories:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب قصص الصنعة وأسرار الأجداد',
+      error: 'حدث خطأ أثناء جلب سجلات الحرف التراثية من قاعدة البيانات',
       code: 'SERVER_ERROR'
     });
   }

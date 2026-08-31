@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import {
   Wallet,
   CheckCircle2,
@@ -339,14 +340,11 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={fetchPayouts}
-            disabled={loading}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium rounded-xl border border-gray-200 transition"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>تحديث الطلبات</span>
-          </button>
+          <RefreshDataButton
+            onRefresh={fetchPayouts}
+            isLoading={loading}
+            label="تحديث الطلبات"
+          />
         </div>
       </div>
 

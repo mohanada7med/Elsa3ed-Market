@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
+import { RefreshDataButton } from './RefreshDataButton.tsx';
 import {
   notificationService,
   AppNotification,
@@ -192,6 +193,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           </div>
 
           <div className="flex items-center gap-3 shrink-0 flex-wrap">
+            <RefreshDataButton
+              onRefresh={refreshList}
+              label="تحديث الإشعارات"
+              variant="outline"
+              className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+            />
+
             {unreadCount > 0 && (
               <button
                 type="button"

@@ -854,10 +854,16 @@ export const api = {
     return true;
   },
 
-  // ==================== CRAFT STORIES (قصص الصنعة وأسرار الأجداد) ====================
-  async getPublicCraftStories(): Promise<CraftStory[]> {
+  // ==================== CRAFT STORIES (أطلس الحرف وقصص الصنعة) ====================
+  async getPublicCraftStories(filters?: { governorate?: string; categoryId?: string; search?: string }): Promise<CraftStory[]> {
     try {
-      const json: ApiResponse<CraftStory[]> = await dedupedFetch(`${API_BASE}/craft-stories`, undefined, 60000);
+      const params = new URLSearchParams();
+      if (filters?.governorate) params.set('governorate', filters.governorate);
+      if (filters?.categoryId) params.set('categoryId', filters.categoryId);
+      if (filters?.search) params.set('search', filters.search);
+      const queryString = params.toString() ? `?${params.toString()}` : '';
+
+      const json: ApiResponse<CraftStory[]> = await dedupedFetch(`${API_BASE}/craft-stories${queryString}`, undefined, 60000);
       return json.data || [];
     } catch {
       return [];

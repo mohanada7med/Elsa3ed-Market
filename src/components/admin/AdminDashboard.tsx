@@ -5,6 +5,7 @@ import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { AdminPayouts } from './AdminPayouts.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
+import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
@@ -119,6 +120,7 @@ const HERITAGE_COVER_PRESETS = [
 export const AdminDashboard: React.FC = () => {
   const {
     adminProducts,
+    refreshAdminProducts,
     pendingProducts,
     approveProduct,
     rejectProduct,
@@ -135,6 +137,7 @@ export const AdminDashboard: React.FC = () => {
     refreshOrders,
     updateOrderStatus,
     categories,
+    refreshCategories,
     addCategory,
     updateCategory,
     deleteCategory,
@@ -142,6 +145,7 @@ export const AdminDashboard: React.FC = () => {
     refreshReviews,
     moderateReview,
     auditLogs,
+    refreshAuditLogs,
     addToast,
     currentUser,
     activePage,
@@ -349,7 +353,7 @@ export const AdminDashboard: React.FC = () => {
   const [newDiscount, setNewDiscount] = useState(15);
   const [newMinOrder, setNewMinOrder] = useState(300);
 
-  // Craft Stories (قصص الصنعة وأسرار الأجداد) State
+  // Craft Stories & Heritage Atlas (توثيق الحرف التراثية وقصص الصنعة) State
   const [craftStories, setCraftStories] = useState<CraftStory[]>([]);
   const [isLoadingCraftStories, setIsLoadingCraftStories] = useState(false);
   const [isCraftStoryModalOpen, setIsCraftStoryModalOpen] = useState(false);
@@ -357,9 +361,18 @@ export const AdminDashboard: React.FC = () => {
   const [craftTitle, setCraftTitle] = useState('');
   const [craftSubtitle, setCraftSubtitle] = useState('');
   const [craftGovernorate, setCraftGovernorate] = useState('قنا');
+  const [craftCity, setCraftCity] = useState('');
+  const [craftVillage, setCraftVillage] = useState('');
   const [craftHistoryAge, setCraftHistoryAge] = useState('');
   const [craftImage, setCraftImage] = useState('');
   const [craftDescription, setCraftDescription] = useState('');
+  const [craftMaterialsText, setCraftMaterialsText] = useState('');
+  const [craftTechniquesText, setCraftTechniquesText] = useState('');
+  const [craftHeritageSignificance, setCraftHeritageSignificance] = useState('');
+  const [craftArtisan, setCraftArtisan] = useState('');
+  const [craftSourcesText, setCraftSourcesText] = useState('');
+  const [craftCoordinatesText, setCraftCoordinatesText] = useState('');
+  const [craftVerificationStatus, setCraftVerificationStatus] = useState<'verified' | 'pending_review' | 'draft'>('verified');
   const [craftKeyFeaturesText, setCraftKeyFeaturesText] = useState('');
   const [craftCategoryId, setCraftCategoryId] = useState('pottery');
   const [craftDisplayOrder, setCraftDisplayOrder] = useState(1);
@@ -968,10 +981,19 @@ export const AdminDashboard: React.FC = () => {
     setCraftTitle('');
     setCraftSubtitle('');
     setCraftGovernorate('قنا');
-    setCraftHistoryAge('متوارثة منذ أكثر من 5000 عام');
-    setCraftImage('https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80');
+    setCraftCity('');
+    setCraftVillage('');
+    setCraftHistoryAge('');
+    setCraftImage('');
     setCraftDescription('');
-    setCraftKeyFeaturesText('تبريد طبيعي فوري عبر مسام الفخار النقية\nصناعة يدوية على دولاب الفخار الخشبي\nحرق في أفران بلدية تقليدية معالجة بالحرارة\nآمن وصحي 100% وخالٍ من الرصاص والكيماويات');
+    setCraftMaterialsText('');
+    setCraftTechniquesText('');
+    setCraftHeritageSignificance('');
+    setCraftArtisan('');
+    setCraftSourcesText('');
+    setCraftCoordinatesText('');
+    setCraftVerificationStatus('verified');
+    setCraftKeyFeaturesText('');
     setCraftCategoryId(categories[0]?.id || 'pottery');
     setCraftDisplayOrder(craftStories.length + 1);
     setCraftActive(true);
@@ -982,10 +1004,30 @@ export const AdminDashboard: React.FC = () => {
     setEditingCraftStory(story);
     setCraftTitle(story.title);
     setCraftSubtitle(story.subtitle || '');
-    setCraftGovernorate(story.governorate || '');
+    setCraftGovernorate(story.governorate || 'قنا');
+    setCraftCity(story.city || '');
+    setCraftVillage(story.village || '');
     setCraftHistoryAge(story.historyAge || '');
     setCraftImage(story.image || '');
     setCraftDescription(story.description || '');
+    setCraftMaterialsText(Array.isArray(story.materials) ? story.materials.join('\n') : '');
+    setCraftTechniquesText(Array.isArray(story.techniques) ? story.techniques.join('\n') : '');
+    setCraftHeritageSignificance(story.heritageSignificance || '');
+    setCraftArtisan(story.artisan || '');
+    setCraftSourcesText(
+      Array.isArray(story.sources)
+        ? story.sources
+            .map((s) => (s.sourceUrl ? `${s.sourceName || ''} | ${s.sourceUrl}` : s.sourceName || ''))
+            .filter(Boolean)
+            .join('\n')
+        : ''
+    );
+    setCraftCoordinatesText(
+      story.coordinates && typeof story.coordinates.lat === 'number' && typeof story.coordinates.lng === 'number'
+        ? `${story.coordinates.lat}, ${story.coordinates.lng}`
+        : ''
+    );
+    setCraftVerificationStatus((story.verificationStatus as any) || 'verified');
     setCraftKeyFeaturesText(Array.isArray(story.keyFeatures) ? story.keyFeatures.join('\n') : '');
     setCraftCategoryId(story.categoryId || categories[0]?.id || 'pottery');
     setCraftDisplayOrder(story.displayOrder ?? 1);
@@ -1003,55 +1045,91 @@ export const AdminDashboard: React.FC = () => {
       addToast('بيانات ناقصة', 'قصة ووصف الحرفة التراثية مطلوب', 'error');
       return;
     }
+    if (!craftGovernorate.trim()) {
+      addToast('بيانات ناقصة', 'المحافظة مطلوبة', 'error');
+      return;
+    }
 
     const keyFeatures = craftKeyFeaturesText
       .split('\n')
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const materials = craftMaterialsText
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const techniques = craftTechniquesText
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const sources = craftSourcesText
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((line) => {
+        if (line.includes('|')) {
+          const [name, url] = line.split('|').map((part) => part.trim());
+          return { sourceName: name, sourceUrl: url };
+        }
+        return { sourceName: line };
+      });
+
+    let coordinates: { lat: number; lng: number } | undefined;
+    if (craftCoordinatesText.includes(',')) {
+      const [latStr, lngStr] = craftCoordinatesText.split(',').map((part) => part.trim());
+      const lat = parseFloat(latStr);
+      const lng = parseFloat(lngStr);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        coordinates = { lat, lng };
+      }
+    }
+
     setIsSubmittingCraftStory(true);
     try {
+      const payload: Partial<CraftStory> = {
+        title: craftTitle.trim(),
+        subtitle: craftSubtitle.trim(),
+        governorate: craftGovernorate.trim(),
+        city: craftCity.trim() || undefined,
+        village: craftVillage.trim() || undefined,
+        historyAge: craftHistoryAge.trim(),
+        image: craftImage.trim(),
+        description: craftDescription.trim(),
+        materials,
+        techniques,
+        heritageSignificance: craftHeritageSignificance.trim() || undefined,
+        artisan: craftArtisan.trim() || undefined,
+        sources,
+        coordinates,
+        verificationStatus: craftVerificationStatus,
+        keyFeatures,
+        categoryId: craftCategoryId,
+        displayOrder: Number(craftDisplayOrder) || 1,
+        active: craftActive
+      };
+
       if (editingCraftStory) {
         const updated = await api.updateAdminCraftStory(
           { id: currentUser.id, role: 'admin' },
           editingCraftStory.id,
-          {
-            title: craftTitle,
-            subtitle: craftSubtitle,
-            governorate: craftGovernorate,
-            historyAge: craftHistoryAge,
-            image: craftImage,
-            description: craftDescription,
-            keyFeatures,
-            categoryId: craftCategoryId,
-            displayOrder: Number(craftDisplayOrder) || 1,
-            active: craftActive
-          }
+          payload
         );
         setCraftStories((prev) => prev.map((s) => (s.id === editingCraftStory.id ? updated : s)));
-        addToast('تم التحديث', `تم تحديث قصة "${updated.title}" بنجاح في قاعدة البيانات`, 'success');
+        addToast('تم التحديث', `تم تحديث توثيق "${updated.title}" بنجاح في قاعدة البيانات`, 'success');
       } else {
         const created = await api.createAdminCraftStory(
           { id: currentUser.id, role: 'admin' },
-          {
-            title: craftTitle,
-            subtitle: craftSubtitle,
-            governorate: craftGovernorate,
-            historyAge: craftHistoryAge,
-            image: craftImage,
-            description: craftDescription,
-            keyFeatures,
-            categoryId: craftCategoryId,
-            displayOrder: Number(craftDisplayOrder) || 1,
-            active: craftActive
-          }
+          payload
         );
         setCraftStories((prev) => [...prev, created]);
-        addToast('تمت الإضافة', `تم حفظ قصة الصنعة "${created.title}" في قاعدة البيانات بنجاح`, 'success');
+        addToast('تمت الإضافة', `تم حفظ توثيق الحرفة "${created.title}" في قاعدة البيانات بنجاح`, 'success');
       }
       setIsCraftStoryModalOpen(false);
     } catch (err: any) {
-      addToast('خطأ في الحفظ', err?.message || 'تعذر حفظ قصة الصنعة', 'error');
+      addToast('خطأ في الحفظ', err?.message || 'تعذر حفظ الحرفة التراثية', 'error');
     } finally {
       setIsSubmittingCraftStory(false);
     }
@@ -1536,6 +1614,26 @@ export const AdminDashboard: React.FC = () => {
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
+          {/* Overview Top Header with Refresh Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E8E1D9] shadow-xs">
+            <div>
+              <h2 className="font-black text-lg text-[#2D2A26]">نظرة عامة على أداء منصة سوق الصعيد</h2>
+              <p className="text-xs text-[#7A6F64] mt-0.5">
+                مؤشرات حية للمبيعات، الورش الحرفية، طابور الاعتماد وشحنات الصعيد
+              </p>
+            </div>
+            <RefreshDataButton
+              onRefresh={async () => {
+                await Promise.all([
+                  refreshAdminProducts(),
+                  refreshSellers(),
+                  refreshOrders()
+                ]);
+              }}
+              label="تحديث المؤشرات"
+            />
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
               <span className="text-xs text-[#7A6F64] block mb-1">إجمالي حجم مبيعات المنصة (GMV)</span>
@@ -1647,6 +1745,11 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Filter Tabs & Add Product Button */}
             <div className="flex flex-wrap items-center gap-2">
+              <RefreshDataButton
+                onRefresh={refreshAdminProducts}
+                label="تحديث المنتجات"
+              />
+
               <button
                 type="button"
                 id="admin-add-new-product-btn"
@@ -1830,14 +1933,21 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={openAddCategoryModal}
-              className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>إضافة تصنيف تراثي جديد</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <RefreshDataButton
+                onRefresh={refreshCategories}
+                label="تحديث التصنيفات"
+              />
+
+              <button
+                type="button"
+                onClick={openAddCategoryModal}
+                className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
+              >
+                <Plus className="w-4 h-4" />
+                <span>إضافة تصنيف تراثي جديد</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1909,17 +2019,12 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={fetchCraftStories}
-                disabled={isLoadingCraftStories}
-                className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center gap-1.5 transition-all"
-                title="تحديث من قاعدة البيانات"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingCraftStories ? 'animate-spin' : ''}`} />
-                <span>تحديث</span>
-              </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              <RefreshDataButton
+                onRefresh={fetchCraftStories}
+                isLoading={isLoadingCraftStories}
+                label="تحديث القصص"
+              />
 
               <button
                 type="button"
@@ -2079,15 +2184,13 @@ export const AdminDashboard: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setAdminReels(craftReelsService.getReels())}
-                  className="px-4 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-xs font-bold transition-all flex items-center gap-2 border border-white/15 cursor-pointer"
-                >
-                  <RefreshCw className="w-4 h-4" />
-                  <span>تحديث القائمة</span>
-                </button>
+              <div className="flex items-center gap-3 shrink-0 flex-wrap">
+                <RefreshDataButton
+                  onRefresh={refreshAdminReelsFromDb}
+                  label="تحديث الفيديوهات"
+                  variant="outline"
+                  className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+                />
 
                 <button
                   type="button"
@@ -2381,17 +2484,10 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                refreshReviews();
-                addToast('تحديث', 'تم تحديث قائمة المراجعات', 'info');
-              }}
-              className="px-3.5 py-2 bg-[#FDFBF7] hover:bg-[#F3EFE9] border border-[#E8E1D9] text-xs font-bold text-[#2D2A26] rounded-xl flex items-center gap-2 self-start sm:self-auto"
-            >
-              <RefreshCw className="w-3.5 h-3.5 text-[#B45F42]" />
-              <span>مزامنة التقييمات</span>
-            </button>
+            <RefreshDataButton
+              onRefresh={refreshReviews}
+              label="تحديث التقييمات"
+            />
           </div>
 
           <div className="space-y-3">
@@ -2481,15 +2577,11 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Quick Action / Refresh */}
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <RefreshDataButton
                 id="admin-refresh-sellers-btn"
-                onClick={() => refreshSellers()}
-                className="px-4 py-2 bg-[#F3EFE9] hover:bg-[#EDE7DF] text-[#2D2A26] text-xs font-bold rounded-xl border border-[#E8E1D9] flex items-center gap-2 transition-colors"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>تحديث القائمة</span>
-              </button>
+                onRefresh={refreshSellers}
+                label="تحديث قائمة الورش"
+              />
             </div>
           </div>
 
@@ -2754,8 +2846,13 @@ export const AdminDashboard: React.FC = () => {
               <p className="text-xs text-[#7A6F64]">متابعة المعاملات ومطابقة وتأكيد التحويلات المالية (InstaPay / فودافون كاش)</p>
             </div>
 
-            {/* Summary Counters */}
-            <div className="flex items-center gap-2">
+            {/* Summary Counters & Refresh */}
+            <div className="flex flex-wrap items-center gap-2">
+              <RefreshDataButton
+                onRefresh={refreshOrders}
+                label="تحديث الطلبات"
+              />
+
               <span className="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-600" />
                 <span>
@@ -2941,14 +3038,20 @@ export const AdminDashboard: React.FC = () => {
       {/* TAB: PAYMENT SETTINGS */}
       {activeTab === 'payment-settings' && (
         <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="border-b border-[#E8E1D9] pb-4">
-            <h3 className="font-bold text-base sm:text-lg text-[#2D2A26] flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-[#943310]" />
-              <span>إعدادات وسائل الدفع وحسابات المنصة (InstaPay & المحافظ)</span>
-            </h3>
-            <p className="text-xs text-[#7A6F64] mt-1">
-              قم بضبط معرفات وحسابات استلام أموال الطلبات التي تظهر للعملاء في صفحة إتمام الشراء.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E1D9] pb-4">
+            <div>
+              <h3 className="font-bold text-base sm:text-lg text-[#2D2A26] flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-[#943310]" />
+                <span>إعدادات وسائل الدفع وحسابات المنصة (InstaPay & المحافظ)</span>
+              </h3>
+              <p className="text-xs text-[#7A6F64] mt-1">
+                قم بضبط معرفات وحسابات استلام أموال الطلبات التي تظهر للعملاء في صفحة إتمام الشراء.
+              </p>
+            </div>
+            <RefreshDataButton
+              onRefresh={fetchAdminPaymentSettings}
+              label="تحديث الإعدادات"
+            />
           </div>
 
           <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
@@ -3088,7 +3191,23 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 5: COUPONS */}
       {activeTab === 'coupons' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E8E1D9] shadow-xs">
+            <div>
+              <h3 className="font-bold text-base text-[#2D2A26]">إدارة قسائم وأكواد الخصم</h3>
+              <p className="text-xs text-[#7A6F64] mt-0.5">
+                توليد ومتابعة كوبونات الخصم الترويجية، فترات الصلاحية، وشروط الحد الأدنى
+              </p>
+            </div>
+            <RefreshDataButton
+              onRefresh={async () => {
+                // Re-sync coupons
+              }}
+              label="تحديث الكوبونات"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-5">
             <form onSubmit={handleCreateCoupon} className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-4">
               <h3 className="font-bold text-base text-[#2D2A26]">إنشاء كود خصم ترويجي جديد</h3>
@@ -3165,16 +3284,23 @@ export const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
       )}
 
       {/* TAB 6: AUDIT LOGS */}
       {activeTab === 'audit' && (
         <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-4">
-          <div>
-            <h3 className="font-bold text-base text-[#2D2A26]">سجل العمليات والرقابة الأمنية (Audit Logs)</h3>
-            <p className="text-xs text-[#7A6F64]">
-              سجل تفصيلي لجميع إجراءات الاعتماد، الرفض، ونشر المنتجات موثق بالوقت والمستخدم
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-base text-[#2D2A26]">سجل العمليات والرقابة الأمنية (Audit Logs)</h3>
+              <p className="text-xs text-[#7A6F64]">
+                سجل تفصيلي لجميع إجراءات الاعتماد، الرفض، ونشر المنتجات موثق بالوقت والمستخدم
+              </p>
+            </div>
+            <RefreshDataButton
+              onRefresh={refreshAuditLogs}
+              label="تحديث سجل الرقابة"
+            />
           </div>
 
           <div className="overflow-x-auto">
@@ -3276,6 +3402,11 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5">
+              <RefreshDataButton
+                onRefresh={fetchAdminUsers}
+                label="تحديث المستخدمين"
+              />
+
               {/* Role filter */}
               <div className="flex items-center gap-1.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl px-2 py-1">
                 <Filter className="w-3.5 h-3.5 text-[#7A6F64]" />
@@ -3583,17 +3714,12 @@ export const AdminDashboard: React.FC = () => {
                 </select>
               </div>
 
-              <button
-                type="button"
+              <RefreshDataButton
                 id="admin-password-resets-refresh-btn"
-                onClick={fetchPasswordResets}
-                disabled={isLoadingPasswordResets}
-                className="p-2.5 bg-[#FDFBF7] hover:bg-[#E8E1D9] text-[#2D2A26] rounded-xl border border-[#E8E1D9] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-                title="تحديث قائمة الطلبات"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingPasswordResets ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">تحديث</span>
-              </button>
+                onRefresh={fetchPasswordResets}
+                isLoading={isLoadingPasswordResets}
+                label="تحديث الطلبات"
+              />
             </div>
           </div>
 
@@ -3888,19 +4014,43 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المحافظة أو الموطن *</label>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المحافظة *</label>
                   <input
                     type="text"
                     required
                     value={craftGovernorate}
                     onChange={(e) => setCraftGovernorate(e.target.value)}
-                    placeholder="مثال: قنا وأسيوط"
+                    placeholder="مثال: قنا"
                     className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
                   />
                 </div>
 
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المركز / المدينة</label>
+                  <input
+                    type="text"
+                    value={craftCity}
+                    onChange={(e) => setCraftCity(e.target.value)}
+                    placeholder="مثال: نقادة أو أخميم"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">القرية التراثية</label>
+                  <input
+                    type="text"
+                    value={craftVillage}
+                    onChange={(e) => setCraftVillage(e.target.value)}
+                    placeholder="مثال: قرية الجرنة أو طوخ"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#2D2A26] mb-1">عمر الحرفة التقديري</label>
                   <input
@@ -3910,6 +4060,19 @@ export const AdminDashboard: React.FC = () => {
                     placeholder="مثال: أكثر من 5000 عام"
                     className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">حالة التوثيق المعتمد</label>
+                  <select
+                    value={craftVerificationStatus}
+                    onChange={(e) => setCraftVerificationStatus(e.target.value as any)}
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  >
+                    <option value="verified">توثيق معتمد (Verified)</option>
+                    <option value="pending_review">قيد المراجعة (Pending Review)</option>
+                    <option value="draft">مسودة داخلية (Draft)</option>
+                  </select>
                 </div>
               </div>
 
@@ -3947,21 +4110,49 @@ export const AdminDashboard: React.FC = () => {
                   type="url"
                   value={craftImage}
                   onChange={(e) => setCraftImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
+                  placeholder="https://res.cloudinary.com/..."
                   className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">قصة الحرفة وسر الأجداد *</label>
+                <label className="block text-xs font-bold text-[#2D2A26] mb-1">قصة وتوثيق الحرفة التراثية *</label>
                 <textarea
                   required
                   rows={3}
                   value={craftDescription}
                   onChange={(e) => setCraftDescription(e.target.value)}
-                  placeholder="اكتب بالتفصيل قصة الصنعة وأسرار توارثها بين الأجيال..."
+                  placeholder="اكتب بالتفصيل قصة الصنعة وأسرار توارثها التاريخي بين الأجيال..."
                   className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                    الخامات الطبيعية والبيئية (خامة في كل سطر)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={craftMaterialsText}
+                    onChange={(e) => setCraftMaterialsText(e.target.value)}
+                    placeholder="طمي النيل العذب&#10;رمال الصحراء الشرقية&#10;سعف النخيل"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                    مراحل وتقنيات الصنعة اليدوية (مرحلة في كل سطر)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={craftTechniquesText}
+                    onChange={(e) => setCraftTechniquesText(e.target.value)}
+                    placeholder="التشكيل على الدولاب الخشبي&#10;التجفيف الشمسي البطيء&#10;الحرق في أفران بلدي"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
               </div>
 
               <div>
@@ -3969,12 +4160,40 @@ export const AdminDashboard: React.FC = () => {
                   أسرار ومميزات الحرفة (ميزة واحدة في كل سطر)
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={craftKeyFeaturesText}
                   onChange={(e) => setCraftKeyFeaturesText(e.target.value)}
-                  placeholder="تبريد طبيعي فوري عبر مسام الفخار&#10;صناعة يدوية على دولاب خشبي&#10;آمن وصحي 100%"
+                  placeholder="تبريد طبيعي فوري عبر مسام الفخار&#10;صناعة يدوية 100%&#10;آمن وصحي وخالٍ من الرصاص"
                   className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
                 />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                    المصادر والمراجع التاريخية (اسم المصدر | الرابط)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={craftSourcesText}
+                    onChange={(e) => setCraftSourcesText(e.target.value)}
+                    placeholder="أطلس المأثورات الشعبية المصرية | https://...&#10;سجلات اليونسكو لحصر التراث"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                    الإحداثيات الجغرافية (خط العرض , خط الطول)
+                  </label>
+                  <input
+                    type="text"
+                    value={craftCoordinatesText}
+                    onChange={(e) => setCraftCoordinatesText(e.target.value)}
+                    placeholder="مثال: 26.155, 32.716"
+                    className="w-full p-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  />
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-1">

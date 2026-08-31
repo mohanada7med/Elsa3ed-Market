@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import {
   Wallet,
   ArrowUpRight,
@@ -235,15 +236,12 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          <RefreshDataButton
             id="refresh-payouts-btn"
-            onClick={fetchPayoutData}
-            disabled={loading}
-            className="p-2.5 text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-xl transition border border-gray-200"
-            title="تحديث البيانات"
-          >
-            <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-          </button>
+            onRefresh={fetchPayoutData}
+            isLoading={loading}
+            label="تحديث المستحقات"
+          />
           <button
             id="open-payout-request-btn"
             onClick={handleOpenModal}

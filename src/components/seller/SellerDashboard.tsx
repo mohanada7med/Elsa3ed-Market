@@ -5,6 +5,7 @@ import { api } from '../../services/api.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { SellerPayouts } from './SellerPayouts.tsx';
 import { NotificationsManager } from '../common/NotificationsManager.tsx';
+import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
@@ -124,14 +125,17 @@ export const SellerDashboard: React.FC = () => {
     activePage,
     currentUser,
     sellerProducts,
+    refreshSellerProducts,
     addProduct,
     submitProductForReview,
     updateProduct,
     deleteProduct,
     orders,
+    refreshOrders,
     updateOrderStatus,
     categories,
     sellers,
+    refreshSellers,
     setActivePage,
     addToast,
     sellerInventory,
@@ -1202,6 +1206,27 @@ export const SellerDashboard: React.FC = () => {
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-8">
+          {/* Overview Top Header with Refresh Button */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E8E1D9] shadow-xs">
+            <div>
+              <h2 className="font-black text-lg text-[#2D2A26]">لوحة أداء ومبيعات الورشة</h2>
+              <p className="text-xs text-[#7A6F64] mt-0.5">
+                متابعة حركة الإيرادات، حالة الطلبات، والقطع المعتمدة في ورشتكم
+              </p>
+            </div>
+            <RefreshDataButton
+              onRefresh={async () => {
+                await Promise.all([
+                  refreshSellerStats(),
+                  refreshSellerProducts(),
+                  refreshOrders(),
+                  refreshSellerInventory()
+                ]);
+              }}
+              label="تحديث المؤشرات"
+            />
+          </div>
+
           {/* 4 KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white p-5 rounded-2xl border border-[#E8E1D9] shadow-xs">
@@ -1322,15 +1347,22 @@ export const SellerDashboard: React.FC = () => {
               </p>
             </div>
 
-            <button
-              type="button"
-              id="seller-tab-add-product"
-              onClick={openAddProductModal}
-              className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
-            >
-              <Plus className="w-4 h-4" />
-              <span>إضافة قطعة جديدة</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <RefreshDataButton
+                onRefresh={refreshSellerProducts}
+                label="تحديث المنتجات"
+              />
+
+              <button
+                type="button"
+                id="seller-tab-add-product"
+                onClick={openAddProductModal}
+                className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>إضافة قطعة جديدة</span>
+              </button>
+            </div>
           </div>
 
           {/* Products List with Full Moderation Lifecycle */}
@@ -1508,18 +1540,15 @@ export const SellerDashboard: React.FC = () => {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  refreshSellerInventory();
-                  refreshStockMovements();
-                  addToast('تحديث البيانات', 'تم تحديث رصيد المخزن وحركات الجرد', 'info');
+              <RefreshDataButton
+                onRefresh={async () => {
+                  await Promise.all([
+                    refreshSellerInventory(),
+                    refreshStockMovements()
+                  ]);
                 }}
-                className="px-3.5 py-2 bg-[#FDFBF7] hover:bg-[#F3EFE9] border border-[#E8E1D9] text-xs font-bold text-[#2D2A26] rounded-xl flex items-center gap-2 self-start sm:self-auto"
-              >
-                <RefreshCw className="w-3.5 h-3.5 text-[#B45F42]" />
-                <span>مزامنة المخزن</span>
-              </button>
+                label="مزامنة وتحديث المخزن"
+              />
             </div>
 
             {/* Desktop Table View */}
@@ -1705,9 +1734,15 @@ export const SellerDashboard: React.FC = () => {
       {/* TAB 3: ORDERS */}
       {activeTab === 'orders' && (
         <div className="bg-white rounded-3xl border border-[#E8E1D9] p-6 shadow-xs space-y-6">
-          <div>
-            <h3 className="font-bold text-base text-[#2D2A26]">إدارة وشحن طلبات العملاء</h3>
-            <p className="text-xs text-[#7A6F64]">قم بتحديث حالة الشحنة فور تجهيز الطرد بالورشة</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E1D9] pb-4">
+            <div>
+              <h3 className="font-bold text-base text-[#2D2A26]">إدارة وشحن طلبات العملاء</h3>
+              <p className="text-xs text-[#7A6F64]">قم بتحديث حالة الشحنة فور تجهيز الطرد بالورشة</p>
+            </div>
+            <RefreshDataButton
+              onRefresh={refreshOrders}
+              label="تحديث الطلبات"
+            />
           </div>
 
           <div className="space-y-4">
@@ -1790,14 +1825,20 @@ export const SellerDashboard: React.FC = () => {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setActivePage('sellers')}
-                className="px-4 py-2 bg-[#FDFBF7] hover:bg-[#F3EFE9] text-[#B45F42] border border-[#E8E1D9] rounded-xl text-xs font-bold flex items-center gap-2 self-start md:self-auto transition-all"
-              >
-                <Eye className="w-4 h-4" />
-                <span>مشاهدة قسم الورش بالمنصة</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                <RefreshDataButton
+                  onRefresh={refreshSellers}
+                  label="تحديث بيانات الورشة"
+                />
+                <button
+                  type="button"
+                  onClick={() => setActivePage('sellers')}
+                  className="px-4 py-2 bg-[#FDFBF7] hover:bg-[#F3EFE9] text-[#B45F42] border border-[#E8E1D9] rounded-xl text-xs font-bold flex items-center gap-2 transition-all"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>مشاهدة قسم الورش بالمنصة</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2360,19 +2401,25 @@ export const SellerDashboard: React.FC = () => {
 
           {/* Reels Grid */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <h3 className="text-base font-bold text-[#2D2A26] flex items-center gap-2">
                 <Film className="w-5 h-5 text-[#B45F42]" />
                 <span>المقاطع المسجلة والمعروضة ({reels.length})</span>
               </h3>
-              <button
-                type="button"
-                onClick={() => setIsReelUploadOpen(true)}
-                className="text-xs font-bold text-[#B45F42] hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>إضافة مقطع جديد</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <RefreshDataButton
+                  onRefresh={refreshSellerReelsFromDb}
+                  label="تحديث المقاطع"
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsReelUploadOpen(true)}
+                  className="text-xs font-bold text-[#B45F42] hover:underline flex items-center gap-1 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إضافة مقطع جديد</span>
+                </button>
+              </div>
             </div>
 
             {reels.length > 0 ? (

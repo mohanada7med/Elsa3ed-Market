@@ -311,16 +311,42 @@ export type ActivePage =
   | 'admin-audit-logs'
   | 'admin-settings';
 
+export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';
+
+export interface CraftSource {
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  sourceDate?: string;
+}
+
+export interface CraftCoordinates {
+  lat?: number;
+  lng?: number;
+}
+
 export interface CraftStory {
   id: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   governorate: string;
-  historyAge: string;
-  image: string;
+  city?: string;
+  village?: string;
+  location?: string;
+  historyAge?: string;
+  image?: string;
+  images?: string[];
   description: string;
-  keyFeatures: string[];
+  materials?: string[];
+  techniques?: string[];
+  heritageSignificance?: string;
+  artisan?: string;
+  sources?: CraftSource[];
+  coordinates?: CraftCoordinates;
+  keyFeatures?: string[];
   categoryId: string;
+  subCategory?: string;
+  verificationStatus?: CraftVerificationStatus;
   displayOrder?: number;
   active?: boolean;
   createdAt?: string;
