@@ -237,7 +237,7 @@ export const MobileBottomBar: React.FC = () => {
             >
               <div className="relative">
                 <Home className="w-5 h-5 transition-transform active:scale-90" />
-                {activePage === 'home' && (
+                {isAuthenticated && activePage === 'home' && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
@@ -259,7 +259,7 @@ export const MobileBottomBar: React.FC = () => {
             >
               <div className="relative">
                 <Grid className="w-5 h-5 transition-transform active:scale-90" />
-                {(activePage === 'products' || activePage === 'product-details') && (
+                {isAuthenticated && (activePage === 'products' || activePage === 'product-details') && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
@@ -284,7 +284,7 @@ export const MobileBottomBar: React.FC = () => {
                 <span className="absolute -top-1 -right-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[8px] font-black px-1 rounded-full animate-pulse">
                   Reels
                 </span>
-                {activePage === 'reels' && (
+                {isAuthenticated && activePage === 'reels' && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
@@ -312,7 +312,7 @@ export const MobileBottomBar: React.FC = () => {
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
-                {activePage === 'cart' && (
+                {isAuthenticated && activePage === 'cart' && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
@@ -339,6 +339,9 @@ export const MobileBottomBar: React.FC = () => {
                     {favorites.length}
                   </span>
                 )}
+                {isAuthenticated && activePage === 'favorites' && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
+                )}
               </div>
               <span className="text-[10px] mt-1 tracking-tight">المفضلة</span>
             </button>
@@ -361,6 +364,9 @@ export const MobileBottomBar: React.FC = () => {
                   <LogIn className="w-5 h-5 transition-transform active:scale-90" />
                 ) : (
                   <User className="w-5 h-5 transition-transform active:scale-90" />
+                )}
+                {isAuthenticated && isAccountActive && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
               <span className="text-[10px] mt-1 tracking-tight">
