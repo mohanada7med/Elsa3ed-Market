@@ -164,8 +164,21 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     let publicId: string;
     let shouldOverwrite = false;
 
-    if (isVideo || folder === 'reels' || folder === 'videos') {
-      cloudinaryFolder = 'Elsa3ed-Market/reels';
+    if (isVideo || (folder as string) === 'reels' || (folder as string) === 'videos') {
+      if (options.role === 'admin' && !options.sellerId) {
+        // Admin video uploads go to dedicated admin folder
+        cloudinaryFolder = 'Elsa3ed-Market/admin/videos';
+      } else if (options.sellerId) {
+        // Seller video uploads go to isolated seller folder
+        const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
+        cloudinaryFolder = `Elsa3ed-Market/sellers/${cleanSellerId}/videos`;
+      } else if (ownerId) {
+        const cleanOwnerId = ownerId.replace(/[^a-zA-Z0-9_-]/g, '_');
+        cloudinaryFolder = `Elsa3ed-Market/sellers/${cleanOwnerId}/videos`;
+      } else {
+        cloudinaryFolder = 'Elsa3ed-Market/videos';
+      }
+
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
       const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       publicId = `${cleanFilename}_${uniqueSuffix}`;
@@ -182,6 +195,13 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       cloudinaryFolder = `Elsa3ed-Market/users/${targetUserId}`;
       publicId = customPublicId || 'profile';
       shouldOverwrite = overwrite ?? true;
+    } else if (folder === 'sellers') {
+      const targetSellerId = (options.sellerId || ownerId || 'seller').replace(/[^a-zA-Z0-9_-]/g, '_');
+      cloudinaryFolder = `Elsa3ed-Market/sellers/${targetSellerId}`;
+      const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      publicId = `${cleanFilename}_${uniqueSuffix}`;
+      shouldOverwrite = overwrite ?? false;
     } else {
       cloudinaryFolder = `Elsa3ed-Market/${folder}`;
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -204,7 +224,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
         uploadOptions.resource_type = 'video';
         uploadOptions.chunk_size = 6000000; // 6MB chunk size for reliable video streaming uploads
         uploadOptions.timeout = 180000;
-        uploadResult = await cloudinary.uploader.upload_large(uploadPayload, uploadOptions);
+        uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
       } else {
         uploadOptions.resource_type = 'image';
         uploadOptions.allowed_formats = ['jpg', 'jpeg', 'png', 'webp'];
@@ -230,12 +250,14 @@ export class CloudinaryStorageProvider implements IStorageProvider {
   }
 
   /**
-   * Delete asset from Cloudinary by public_id
+   * Delete asset from Cloudinary by public_id or full Cloudinary URL
    */
-  async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
+  async delete(fileKeyOrUrl: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
     this.configure();
 
-    if (!fileKey || !this.isConfigured) return false;
+    if (!fileKeyOrUrl || !this.isConfigured) return false;
+
+    const fileKey = extractCloudinaryPublicId(fileKeyOrUrl) || fileKeyOrUrl;
 
     // Security check: only allow deletion of Elsa3ed-Market assets
     if (!fileKey.startsWith('Elsa3ed-Market/')) {
@@ -260,7 +282,6 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
   }
 
-
   /**
    * Return full delivery URL from fileKey or existing URL
    */
@@ -270,6 +291,25 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
     return cloudinary.url(fileKey, { secure: true });
   }
+}
+
+/**
+ * Extracts Cloudinary public_id from a Cloudinary URL or returns the key if already a publicId.
+ * Example: https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/Elsa3ed-Market/sellers/seller_1/videos/vid.mp4
+ * -> Elsa3ed-Market/sellers/seller_1/videos/vid
+ */
+export function extractCloudinaryPublicId(urlOrKey: string): string | null {
+  if (!urlOrKey || typeof urlOrKey !== 'string') return null;
+  const trimmed = urlOrKey.trim();
+  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?(Elsa3ed-Market/[^.?#]+)
+  const match = trimmed.match(/\/upload\/(?:v\d+\/)?(Elsa3ed-Market\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return null;
 }
 
 export const cloudinaryStorage = new CloudinaryStorageProvider();

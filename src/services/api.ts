@@ -1790,7 +1790,8 @@ export const api = {
   async uploadReelVideo(
     user: { id?: string; role?: string; sellerId?: string },
     videoDataUri: string,
-    filename = 'reel_video.mp4'
+    filename = 'reel_video.mp4',
+    targetSellerId?: string
   ): Promise<{ url: string; fileKey: string; duration?: number; format?: string }> {
     const res = await fetch(`${API_BASE}/reels/upload-video`, {
       method: 'POST',
@@ -1799,7 +1800,8 @@ export const api = {
       body: JSON.stringify({
         video: videoDataUri,
         filename,
-        mimeType: 'video/mp4'
+        mimeType: 'video/mp4',
+        targetSellerId
       })
     });
     const json = await res.json();
@@ -1859,6 +1861,23 @@ export const api = {
       throw new Error(json.error || 'فشل في حذف مقطع الفيديو');
     }
     return true;
+  },
+
+  async bulkDeleteReels(
+    user: { id?: string; role?: string; sellerId?: string },
+    ids: string[]
+  ): Promise<number> {
+    const res = await fetch(`${API_BASE}/reels/bulk-delete`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ ids })
+    });
+    const json: any = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في الحذف الجماعي لمقاطع الفيديو');
+    }
+    return json.deletedCount || ids.length;
   },
 
   async likeReel(id: string, isLiked: boolean): Promise<number> {

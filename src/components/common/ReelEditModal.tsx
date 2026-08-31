@@ -149,6 +149,10 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       setErrorMsg('يرجى تحديد رابط الفيديو السحابي');
       return;
     }
+    if (videoUrl.trim().startsWith('blob:')) {
+      setErrorMsg('لا يمكن حفظ رابط مؤقت (blob:). يرجى إدخال رابط فيديو دائم على Cloudinary.');
+      return;
+    }
 
     setIsSubmitting(true);
     setErrorMsg(null);

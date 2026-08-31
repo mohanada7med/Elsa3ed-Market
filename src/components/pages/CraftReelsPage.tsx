@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext.tsx';
 import { CraftReel, Governorate } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
+import { ReelFeed } from '../public/reels/ReelFeed.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import {
   Film,
@@ -28,7 +29,10 @@ import {
   UserCheck,
   X,
   Lock,
-  ChevronLeft
+  ChevronLeft,
+  Trash2,
+  Grid,
+  Tv
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -49,6 +53,7 @@ export const CraftReelsPage: React.FC = () => {
 
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('grid');
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
   const [selectedCraftType, setSelectedCraftType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,6 +73,22 @@ export const CraftReelsPage: React.FC = () => {
     message: '',
     type: 'unauthenticated'
   });
+
+  const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
+    e.stopPropagation();
+    const confirmed = window.confirm(
+      `هل أنت متأكد من حذف مقطع "${reel.title}" من ورشة "${reel.workshopName}" نهائياً من المنصة بصفتك مديراً؟`
+    );
+    if (!confirmed) return;
+
+    try {
+      await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
+      setReels((prev) => prev.filter((r) => r.id !== reel.id));
+      addToast('تم حذف الفيديو بنجاح', `تم حذف فيديو "${reel.title}" من المنصة وقاعدة البيانات`, 'info');
+    } catch (err: any) {
+      addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
+    }
+  };
 
   const loadReelsFromDb = async () => {
     setIsLoading(true);
@@ -99,7 +120,8 @@ export const CraftReelsPage: React.FC = () => {
   // Filtered Reels
   const filteredReels = useMemo(() => {
     return reels.filter((reel) => {
-      const matchGov = selectedGovernorate === 'all' || reel.governorate === selectedGovernorate;
+      const matchGov =
+        selectedGovernorate === 'all' || reel.governorate === selectedGovernorate;
       const matchCraft =
         selectedCraftType === 'all' ||
         reel.craftType.toLowerCase().includes(selectedCraftType.toLowerCase()) ||
@@ -126,7 +148,8 @@ export const CraftReelsPage: React.FC = () => {
       setPermissionAlert({
         isOpen: true,
         title: 'تسجيل الدخول مطلوب لنشر الفيديوهات',
-        message: 'ميزة رفع ونشر فيديوهات الورش الحرفية (Craft Reels) مخصصة للحرفيين والبائعين المسجلين فقط. يرجى تسجيل الدخول بحساب بائعك أو إنشاء حساب جديد.',
+        message:
+          'ميزة رفع ونشر فيديوهات الورش الحرفية (Craft Reels) مخصصة للحرفيين والبائعين المسجلين فقط. يرجى تسجيل الدخول بحساب بائعك أو إنشاء حساب جديد.',
         type: 'unauthenticated'
       });
       return;
@@ -136,7 +159,8 @@ export const CraftReelsPage: React.FC = () => {
       setPermissionAlert({
         isOpen: true,
         title: 'خاص بالورش الحرفية والبائعين فقط',
-        message: 'حسابك الحالي مسجل كـ "مشتري". لنشر مقاطع كواليس الصنعة الصعيدية وربطها بمنتجاتك، يرجى التقديم لفتح ورشة بائع معتمدة أو ترقية حسابك.',
+        message:
+          'حسابك الحالي مسجل كـ "مشتري". لنشر مقاطع كواليس الصنعة الصعيدية وربطها بمنتجاتك، يرجى التقديم لفتح ورشة بائع معتمدة أو ترقية حسابك.',
         type: 'buyer'
       });
       return;
@@ -148,7 +172,11 @@ export const CraftReelsPage: React.FC = () => {
 
   const handleReelUploaded = (newReel: CraftReel) => {
     loadReelsFromDb();
-    addToast('تم نشر الفيديو بنجاح', `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وإتاحته للجمهور`, 'success');
+    addToast(
+      'تم نشر الفيديو بنجاح',
+      `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وإتاحته للجمهور`,
+      'success'
+    );
   };
 
   const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {
@@ -187,228 +215,264 @@ export const CraftReelsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#1A1614] py-4 sm:py-8 px-3 sm:px-6 max-w-7xl mx-auto space-y-6 sm:space-y-8">
-      {/* Top Breadcrumb & Hero Header */}
-      <div className="relative rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#2D2A26] via-[#3D352F] to-[#2D2A26] text-white p-5 sm:p-8 md:p-10 overflow-hidden shadow-xl border border-white/10">
-        {/* Ambient Glow */}
-        <div className="absolute top-0 right-0 w-72 sm:w-96 h-72 sm:h-96 bg-[#B45F42]/20 rounded-full blur-3xl pointer-events-none -mr-24 -mt-24 sm:-mr-32 sm:-mt-32" />
-
-        <div className="relative z-10 max-w-3xl space-y-3 sm:space-y-4">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-[11px] sm:text-xs font-bold border border-white/15">
-            <Film className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-            <span>معرض مقاطع الحرفيين الصعيدية • Craft Reels</span>
+    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#1A1614] py-4 sm:py-6 px-3 sm:px-6 max-w-7xl mx-auto space-y-6">
+      {/* 1. Header with Clean Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#221B17] p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B45F42]/10 dark:bg-[#B45F42]/20 text-[#B45F42] dark:text-[#E07A5F] text-xs font-bold mb-2">
+            <Film className="w-3.5 h-3.5" />
+            <span>ريلز ورش الصعيد • Craft Reels</span>
           </div>
-
-          <h1 className="text-xl sm:text-3xl md:text-4xl font-black font-heritage tracking-tight leading-snug sm:leading-tight">
-            استكشف حكايات وإبداعات الصنعة الصعيدية بالصوت والصورة
+          <h1 className="text-xl sm:text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
+            شاهد الصنعة على أصولها واشترِ فوراً
           </h1>
-
-          <p className="text-xs sm:text-sm text-gray-300 leading-relaxed max-w-2xl">
-            فيديوهات تفاعلية قصيرة تسافر بك لقلب ورش قنا، سوهاج، أسوان، والأقصر. شاهد دقة تشكيل الطين، وعقد خيوط النول، ونقش النحاس واشترِ القطعة مباشرة من صانعها!
+          <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#A89C90] mt-1">
+            مقاطع فيديو حية من قلب ورش قنا وسوهاج وأسوان تكشف أسرار الحرفة وتفاصيل المنتجات.
           </p>
-
-          <div className="pt-2 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => openReelModal(filteredReels[0]?.id || reels[0]?.id)}
-              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer min-h-[44px]"
-            >
-              <Play className="w-4 h-4 fill-white" />
-              <span>مشاهدة شاشة كاملة (Feed)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleOpenUpload}
-              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-amber-500 hover:bg-amber-600 text-amber-950 font-black text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer min-h-[44px]"
-            >
-              <Plus className="w-4 h-4 text-amber-950" />
-              <span>إضافة فيديو لورشتك (Upload Reel)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActivePage('sellers')}
-              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm rounded-xl backdrop-blur-xs border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px]"
-            >
-              <Store className="w-4 h-4 text-amber-400" />
-              <span>دليل الورش والحرفيين</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Filter & Search Bar */}
-      <div className="bg-white dark:bg-[#261E19] rounded-2xl p-3.5 sm:p-4 border border-[#E8E1D9] dark:border-[#382E27] shadow-xs space-y-3.5">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
-          {/* Search Input */}
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ابحث عن أسطى، محافظة، أو حرفة..."
-              className="w-full pl-3 pr-9 py-2.5 bg-[#FDFBF7] dark:bg-[#1A1614] border border-[#E8E1D9] dark:border-[#4A3E35] rounded-xl text-xs sm:text-sm outline-none focus:border-[#B45F42] text-[#2D2A26] dark:text-white"
-            />
-          </div>
-
-          {/* Governorate Dropdown */}
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs font-bold text-[#7A6F64] dark:text-[#A89F91] whitespace-nowrap flex items-center gap-1 shrink-0">
-              <MapPin className="w-3.5 h-3.5 text-[#B45F42]" />
-              المحافظة:
-            </span>
-            <select
-              value={selectedGovernorate}
-              onChange={(e) => setSelectedGovernorate(e.target.value)}
-              className="w-full sm:w-44 px-3 py-2.5 bg-[#FDFBF7] dark:bg-[#1A1614] border border-[#E8E1D9] dark:border-[#4A3E35] rounded-xl text-xs outline-none focus:border-[#B45F42] font-medium text-[#2D2A26] dark:text-white cursor-pointer"
-            >
-              <option value="all">كل المحافظات الصعيدية</option>
-              {governoratesList.map((gov) => (
-                <option key={gov} value={gov}>
-                  {gov}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
-        {/* Craft Categories Pills (Horizontal Scroll) */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none -mx-2 px-2 sm:mx-0 sm:px-0">
-          {craftTypesList.map((craft) => (
+        {/* Action Buttons & View Mode Toggle */}
+        <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-auto">
+          {/* Toggle View Mode */}
+          <div className="flex items-center p-1 bg-[#F5EFE6] dark:bg-[#17120F] rounded-xl border border-[#E8E1D9] dark:border-[#382E27]">
             <button
-              key={craft.id}
               type="button"
-              onClick={() => setSelectedCraftType(craft.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer min-h-[36px] ${
-                selectedCraftType === craft.id
-                  ? 'bg-[#B45F42] text-white shadow-xs'
-                  : 'bg-[#F5EFE6] dark:bg-[#1A1614] text-[#7A6F64] dark:text-[#A89F91] hover:bg-[#E8E1D9] dark:hover:bg-[#382E27]'
+              id="reels-view-grid"
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-white dark:bg-[#2D2723] text-[#2D2A26] dark:text-white shadow-xs'
+                  : 'text-[#7A6F64] dark:text-[#A89C90]'
               }`}
             >
-              {craft.label}
+              <Grid className="w-3.5 h-3.5" />
+              <span>الشبكة</span>
             </button>
-          ))}
+
+            <button
+              type="button"
+              id="reels-view-feed"
+              onClick={() => setViewMode('feed')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewMode === 'feed'
+                  ? 'bg-[#B45F42] text-white shadow-xs'
+                  : 'text-[#7A6F64] dark:text-[#A89C90]'
+              }`}
+            >
+              <Tv className="w-3.5 h-3.5" />
+              <span>مشاهدة ريلز</span>
+            </button>
+          </div>
+
+          {/* Upload Reel Button */}
+          <button
+            type="button"
+            id="reels-upload-btn"
+            onClick={handleOpenUpload}
+            className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-amber-950 text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-xs transition-all cursor-pointer active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>نشر فيديو للورشة</span>
+          </button>
         </div>
       </div>
 
-      {/* Reels Grid Feed */}
-      {filteredReels.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
-          {filteredReels.map((reel) => (
-            <div
-              key={reel.id}
-              onClick={() => openReelModal(reel.id)}
-              className="group bg-white dark:bg-[#261E19] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#E8E1D9] dark:border-[#382E27] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
-            >
-              {/* 9:16 Video Thumbnail Container */}
-              <div className="relative aspect-9/14 bg-black overflow-hidden">
-                <img
-                  src={reel.posterUrl}
-                  alt={reel.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-
-                {/* Dark Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40" />
-
-                {/* Top Badges */}
-                <div className="absolute top-2.5 inset-x-2.5 sm:top-3 sm:inset-x-3 flex items-center justify-between z-10">
-                  <span className="bg-black/60 backdrop-blur-xs text-white text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                    {reel.duration}
-                  </span>
-
-                  <span className="bg-amber-950/80 border border-amber-500/40 text-amber-300 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {reel.governorate}
-                  </span>
-                </div>
-
-                {/* Center Play Button Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                    <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-white mr-0.5" />
-                  </div>
-                </div>
-
-                {/* Overlay Artisan Info */}
-                <div className="absolute bottom-2.5 inset-x-2.5 sm:bottom-3 sm:inset-x-3 z-10 flex items-center gap-1.5 sm:gap-2">
-                  <img
-                    src={reel.artisanAvatar}
-                    alt={reel.artisanName}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-white shadow-md shrink-0"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] sm:text-xs font-bold text-white truncate drop-shadow-sm">
-                      {reel.artisanName}
-                    </p>
-                    <p className="text-[9px] sm:text-[10px] text-amber-200 truncate">
-                      {reel.workshopName}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card Footer Details */}
-              <div className="p-2.5 sm:p-4 space-y-2 sm:space-y-3 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-[#2D2A26] dark:text-[#FDFBF7] leading-snug line-clamp-2">
-                    {reel.title}
-                  </h3>
-                  <p className="hidden sm:block text-xs text-[#7A6F64] dark:text-[#A89F91] line-clamp-2 mt-1 leading-relaxed">
-                    {reel.description}
-                  </p>
-                </div>
-
-                {/* Bottom Product Bar */}
-                <div className="pt-2 sm:pt-3 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-1.5 sm:gap-2">
-                  <div className="min-w-0">
-                    <span className="text-[9px] sm:text-[10px] text-[#7A6F64] dark:text-[#A89F91] block truncate">
-                      السعر:
-                    </span>
-                    <span className="text-xs sm:text-sm font-black text-[#B45F42] dark:text-[#E07A5F] block">
-                      {reel.productPrice} ج.م
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => handleQuickAdd(e, reel)}
-                    className="px-2.5 sm:px-3 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-[11px] sm:text-xs font-bold rounded-xl flex items-center gap-1 shadow-xs transition-transform active:scale-95 cursor-pointer shrink-0"
-                    title="شراء فوري"
-                  >
-                    <ShoppingBag className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                    <span>شراء</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+      {/* 2. Mode: Immersive Feed Mode */}
+      {viewMode === 'feed' ? (
+        <div className="w-full flex justify-center py-2 sm:py-4">
+          <div className="w-full max-w-[420px] h-[calc(100dvh-180px)] min-h-[580px] max-h-[820px] rounded-3xl overflow-hidden shadow-2xl bg-black border border-white/10">
+            <ReelFeed
+              reels={filteredReels.length > 0 ? filteredReels : reels}
+              initialReelId={selectedReelId || undefined}
+              onSelectProduct={(pId) => navigateToProduct(pId)}
+              onSelectSeller={(sId) => navigateToSeller(sId)}
+              onDeleteReel={(deletedId) => {
+                setReels((prev) => prev.filter((r) => r.id !== deletedId));
+              }}
+              showCloseButton={false}
+              hasBottomNav={true}
+            />
+          </div>
         </div>
       ) : (
-        <div className="bg-white dark:bg-[#261E19] rounded-2xl sm:rounded-3xl p-8 sm:p-12 text-center border border-[#E8E1D9] dark:border-[#382E27] space-y-3">
-          <Film className="w-10 sm:w-12 h-10 sm:h-12 text-gray-400 mx-auto" />
-          <h3 className="text-sm sm:text-base font-bold text-[#2D2A26] dark:text-white">
-            لا توجد فيديوهات مطابقة للبحث
-          </h3>
-          <p className="text-xs text-[#7A6F64] dark:text-gray-400 max-w-md mx-auto">
-            جرب اختيار محافظة أخرى أو إزالة كلمات البحث لاستعراض كافة مقاطع ورش الصعيد.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedGovernorate('all');
-              setSelectedCraftType('all');
-              setSearchQuery('');
-            }}
-            className="px-4 py-2 bg-[#B45F42] text-white text-xs font-bold rounded-xl cursor-pointer"
-          >
-            إعادة تعيين الفلاتر
-          </button>
+        /* 3. Mode: Grid & Explorer Mode */
+        <div className="space-y-6">
+          {/* Filters Bar */}
+          <div className="bg-white dark:bg-[#221B17] rounded-2xl p-3.5 sm:p-4 border border-[#E8E1D9] dark:border-[#382E27] shadow-xs space-y-3.5">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="ابحث عن أسطى، ورشة، أو منتج في الفيديو..."
+                  className="w-full pl-3 pr-9 py-2 bg-[#FDFBF7] dark:bg-[#1A1614] border border-[#E8E1D9] dark:border-[#4A3E35] rounded-xl text-xs sm:text-sm outline-none focus:border-[#B45F42] text-[#2D2A26] dark:text-white"
+                />
+              </div>
+
+              {/* Governorate Dropdown */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#7A6F64] dark:text-[#A89F91] whitespace-nowrap flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#B45F42]" />
+                  المحافظة:
+                </span>
+                <select
+                  value={selectedGovernorate}
+                  onChange={(e) => setSelectedGovernorate(e.target.value)}
+                  className="px-3 py-2 bg-[#FDFBF7] dark:bg-[#1A1614] border border-[#E8E1D9] dark:border-[#4A3E35] rounded-xl text-xs outline-none focus:border-[#B45F42] font-medium text-[#2D2A26] dark:text-white cursor-pointer"
+                >
+                  <option value="all">كل محافظات الصعيد</option>
+                  {governoratesList.map((gov) => (
+                    <option key={gov} value={gov}>
+                      {gov}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Craft Categories Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {craftTypesList.map((craft) => (
+                <button
+                  key={craft.id}
+                  type="button"
+                  onClick={() => setSelectedCraftType(craft.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    selectedCraftType === craft.id
+                      ? 'bg-[#B45F42] text-white shadow-xs'
+                      : 'bg-[#F5EFE6] dark:bg-[#1A1614] text-[#7A6F64] dark:text-[#A89F91] hover:bg-[#E8E1D9] dark:hover:bg-[#382E27]'
+                  }`}
+                >
+                  {craft.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Grid Layout */}
+          {filteredReels.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+              {filteredReels.map((reel) => (
+                <div
+                  key={reel.id}
+                  id={`reel-card-${reel.id}`}
+                  onClick={() => openReelModal(reel.id)}
+                  className="group bg-white dark:bg-[#221B17] rounded-2xl overflow-hidden border border-[#E8E1D9] dark:border-[#382E27] shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
+                >
+                  {/* Thumbnail */}
+                  <div className="relative aspect-9/14 bg-neutral-900 overflow-hidden">
+                    <img
+                      src={reel.posterUrl}
+                      alt={reel.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+
+                    {/* Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
+
+                    {/* Top Badges */}
+                    <div className="absolute top-2 inset-x-2 flex items-center justify-between z-10 pointer-events-none">
+                      <span className="bg-black/60 backdrop-blur-xs text-white text-[9px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                        {reel.duration}
+                      </span>
+
+                      <div className="flex items-center gap-1">
+                        {currentUser?.role === 'admin' && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleAdminDeleteReel(e, reel)}
+                            className="p-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-400/50 shadow-md transition-transform active:scale-95 pointer-events-auto cursor-pointer"
+                            title="حذف الفيديو"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+                        <span className="bg-amber-950/80 border border-amber-500/40 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                          {reel.governorate}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Center Play Icon */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-11 h-11 rounded-full bg-black/40 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                        <Play className="w-5 h-5 fill-white mr-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Bottom Seller Info inside card image */}
+                    <div className="absolute bottom-2 inset-x-2 z-10 flex items-center gap-1.5 pointer-events-none">
+                      <img
+                        src={reel.artisanAvatar}
+                        alt={reel.artisanName}
+                        className="w-6 h-6 rounded-full object-cover border border-white/60 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] font-bold text-white truncate drop-shadow-sm">
+                          {reel.artisanName}
+                        </p>
+                        <p className="text-[9px] text-amber-200 truncate">
+                          {reel.workshopName}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card Content & Quick Action */}
+                  <div className="p-3 space-y-2 flex-1 flex flex-col justify-between">
+                    <h3 className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] leading-snug line-clamp-2">
+                      {reel.title}
+                    </h3>
+
+                    {/* Price and Instant Buy */}
+                    <div className="pt-2 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-1">
+                      <span className="text-xs font-black text-[#B45F42] dark:text-[#E07A5F]">
+                        {reel.productPrice} ج.م
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={(e) => handleQuickAdd(e, reel)}
+                        className="px-2.5 py-1 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-[11px] font-bold rounded-lg flex items-center gap-1 cursor-pointer transition-all active:scale-95 shrink-0"
+                      >
+                        <ShoppingBag className="w-3 h-3" />
+                        <span>شراء</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white dark:bg-[#221B17] rounded-3xl p-10 text-center border border-[#E8E1D9] dark:border-[#382E27] space-y-3">
+              <Film className="w-10 h-10 text-gray-400 mx-auto" />
+              <h3 className="text-sm font-bold text-[#2D2A26] dark:text-white">
+                لا توجد فيديوهات مطابقة للبحث
+              </h3>
+              <p className="text-xs text-[#7A6F64] dark:text-gray-400">
+                جرب اختيار محافظة أخرى أو إعادة تعيين الفلاتر.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedGovernorate('all');
+                  setSelectedCraftType('all');
+                  setSearchQuery('');
+                }}
+                className="px-4 py-2 bg-[#B45F42] text-white text-xs font-bold rounded-xl cursor-pointer"
+              >
+                إعادة تعيين الفلاتر
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Full-Screen Interactive Craft Reels Modal */}
+      {/* Full-Screen Modal Viewer */}
       {selectedReelId && (
         <CraftReelsModal
           reels={filteredReels.length > 0 ? filteredReels : reels}
@@ -417,6 +481,9 @@ export const CraftReelsPage: React.FC = () => {
           onClose={() => {
             setIsModalOpen(false);
             setSelectedReelId(null);
+          }}
+          onDeleteReel={(deletedId) => {
+            setReels((prev) => prev.filter((r) => r.id !== deletedId));
           }}
         />
       )}
@@ -525,4 +592,3 @@ export const CraftReelsPage: React.FC = () => {
     </div>
   );
 };
-

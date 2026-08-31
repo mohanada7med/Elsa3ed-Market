@@ -14,12 +14,13 @@ import {
   Store,
   Flame,
   BadgeCheck,
-  Compass
+  Compass,
+  Trash2
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const CraftReelsSection: React.FC = () => {
-  const { setActivePage, addToCart, addToast } = useApp();
+  const { setActivePage, addToCart, addToast, currentUser } = useApp();
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [selectedReelId, setSelectedReelId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,6 +33,20 @@ export const CraftReelsSection: React.FC = () => {
   const openReelModal = (reelId: string) => {
     setSelectedReelId(reelId);
     setIsModalOpen(true);
+  };
+
+  const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
+    e.stopPropagation();
+    const confirmed = window.confirm(`هل أنت متأكد من حذف مقطع "${reel.title}" من ورشة "${reel.workshopName}" نهائياً من المنصة؟`);
+    if (!confirmed) return;
+
+    try {
+      await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
+      setReels((prev) => prev.filter((r) => r.id !== reel.id));
+      addToast('تم حذف الفيديو', `تم حذف فيديو "${reel.title}" بنجاح من المنصة وقاعدة البيانات`, 'info');
+    } catch (err: any) {
+      addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
+    }
   };
 
   const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {
@@ -159,9 +174,21 @@ export const CraftReelsSection: React.FC = () => {
                   {reel.duration}
                 </span>
 
-                <div className="flex items-center gap-1 bg-[#B45F42]/80 backdrop-blur-xs text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
-                  <Flame className="w-3 h-3 text-amber-300" />
-                  <span>{reel.likesCount}</span>
+                <div className="flex items-center gap-1.5">
+                  {currentUser?.role === 'admin' && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleAdminDeleteReel(e, reel)}
+                      className="p-1 rounded-full bg-rose-600/90 hover:bg-rose-700 text-white border border-rose-400/50 shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+                      title="حذف الفيديو بصلاحيات المدير"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
+                  <div className="flex items-center gap-1 bg-[#B45F42]/80 backdrop-blur-xs text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                    <Flame className="w-3 h-3 text-amber-300" />
+                    <span>{reel.likesCount}</span>
+                  </div>
                 </div>
               </div>
 
@@ -225,6 +252,9 @@ export const CraftReelsSection: React.FC = () => {
           onClose={() => {
             setIsModalOpen(false);
             setSelectedReelId(null);
+          }}
+          onDeleteReel={(deletedId) => {
+            setReels((prev) => prev.filter((r) => r.id !== deletedId));
           }}
         />
       )}

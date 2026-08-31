@@ -7,10 +7,12 @@ export interface UploadFileOptions {
   data: string | Buffer; // Base64 data-uri or raw buffer
   filename?: string;
   mimeType?: string;
-  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos';
+  folder?: 'products' | 'sellers' | 'categories' | 'receipts' | 'users' | 'reels' | 'videos' | 'admin';
   resourceType?: 'image' | 'video' | 'auto';
   productId?: string;
   userId?: string;
+  sellerId?: string;
+  role?: 'admin' | 'seller' | 'buyer' | string;
   ownerId?: string;
   customPublicId?: string;
   overwrite?: boolean;
@@ -109,13 +111,13 @@ export class LocalStorageProvider implements IStorageProvider {
       fs.writeFileSync(filePath, buffer);
 
       const publicUrl = `/uploads/${safeKey}`;
-      Logger.info(`[Storage] File stored successfully: ${publicUrl} (${validation.sizeBytes} bytes)`);
+      Logger.info(`[Storage] File stored successfully: ${publicUrl} (${buffer.length} bytes)`);
 
       return {
         url: publicUrl,
         fileKey: safeKey,
         mimeType: detectedMime,
-        sizeBytes: validation.sizeBytes || buffer.length,
+        sizeBytes: buffer.length,
         uploadedAt: new Date().toISOString()
       };
     } catch (err) {
@@ -125,7 +127,7 @@ export class LocalStorageProvider implements IStorageProvider {
         url: dataUri,
         fileKey: safeKey,
         mimeType: detectedMime,
-        sizeBytes: validation.sizeBytes || buffer.length,
+        sizeBytes: buffer.length,
         uploadedAt: new Date().toISOString()
       };
     }

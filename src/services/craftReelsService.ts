@@ -441,6 +441,28 @@ export const craftReelsService = {
     return false;
   },
 
+  async bulkDeleteReelsAsync(
+    user: { id?: string; role?: string; sellerId?: string },
+    reelIds: string[]
+  ): Promise<boolean> {
+    try {
+      await api.bulkDeleteReels(user, reelIds);
+    } catch (err) {
+      console.warn('[CraftReels] API bulk delete failed, applying local delete:', err);
+    }
+    return this.bulkDeleteReels(reelIds);
+  },
+
+  bulkDeleteReels(reelIds: string[]): boolean {
+    const reels = this.getReels();
+    const filtered = reels.filter((r) => !reelIds.includes(r.id));
+    if (filtered.length !== reels.length) {
+      this.saveReels(filtered);
+      return true;
+    }
+    return false;
+  },
+
   getUserLikedReels(): string[] {
     if (typeof window === 'undefined') return [];
     try {

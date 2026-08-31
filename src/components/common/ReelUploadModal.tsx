@@ -27,6 +27,7 @@ import {
   Lock,
   LogIn,
   UserPlus
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 function readFileAsDataUri(file: File): Promise<string> {
@@ -246,8 +247,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
     try {
       let finalVideoUrl = videoUrl;
+      let finalCloudinaryPublicId: string | undefined;
 
-      // If a local video file was selected, upload directly to Cloudinary Elsa3ed-Market/reels folder
+      // If a local video file was selected, upload directly to Cloudinary
       if (videoFile) {
         try {
           const base64Data = await readFileAsDataUri(videoFile);
@@ -257,15 +259,23 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
             sellerId: sellerId || (currentUser as any)?.sellerId,
             name: artisanName
           };
-          const uploadRes = await api.uploadReelVideo(userParam, base64Data, videoFile.name);
+          const uploadRes = await api.uploadReelVideo(userParam, base64Data, videoFile.name, sellerId);
           if (uploadRes?.url) {
             finalVideoUrl = uploadRes.url;
+            finalCloudinaryPublicId = uploadRes.fileKey;
           }
         } catch (uploadErr: any) {
           setIsSubmitting(false);
           setErrorMsg(`فشل في رفع الفيديو إلى Cloudinary: ${uploadErr?.message || uploadErr}`);
           return;
         }
+      }
+
+      // Strict validation: NEVER allow saving temporary blob: URLs to database
+      if (finalVideoUrl.startsWith('blob:')) {
+        setIsSubmitting(false);
+        setErrorMsg('لا يمكن حفظ رابط مؤقت (blob:). يرجى التأكد من اختيار ملف الفيديو وإعادة المحاولة لرفعه إلى السحابة.');
+        return;
       }
 
       const userParam = (currentUser as any) || {
@@ -284,6 +294,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         governorate,
         craftType,
         videoUrl: finalVideoUrl,
+        cloudinaryPublicId: finalCloudinaryPublicId,
+        resourceType: 'video',
         posterUrl: effectivePoster,
 
         duration: duration || '0:30',

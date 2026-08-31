@@ -310,12 +310,38 @@ async function seedMongoDatabase(database: Db) {
     // Execute non-blocking batch indexing in background without throwing on partial errors
     await Promise.allSettled(indexOperations);
 
-    // Initial check for reels seed
+    // Initial check for reels seed and auto-sanitization of any legacy blob: URLs
     try {
       const reelsCount = await database.collection('reels').countDocuments().catch(() => 1);
       if (reelsCount === 0) {
         await database.collection('reels').insertMany(INITIAL_CRAFT_REELS_DB);
         Logger.info('[MongoDB] Seeded initial craft reels into database');
+      } else {
+        // Auto-sanitize legacy blob: URLs in database if any exist
+        const invalidReels = await database.collection('reels').find({
+          $or: [
+            { videoUrl: { $regex: /^blob:/i } },
+            { posterUrl: { $regex: /^blob:/i } }
+          ]
+        }).toArray();
+
+        if (invalidReels.length > 0) {
+          Logger.warn(`[MongoDB] Found ${invalidReels.length} reels with invalid/temporary blob: URLs. Auto-sanitizing...`);
+          for (const inv of invalidReels) {
+            const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === inv.craftType) || INITIAL_CRAFT_REELS_DB[0];
+            const updates: any = {};
+            if (!inv.videoUrl || inv.videoUrl.startsWith('blob:')) {
+              updates.videoUrl = fallback.videoUrl;
+            }
+            if (!inv.posterUrl || inv.posterUrl.startsWith('blob:')) {
+              updates.posterUrl = fallback.posterUrl;
+            }
+            if (Object.keys(updates).length > 0) {
+              await database.collection('reels').updateOne({ _id: inv._id }, { $set: updates });
+            }
+          }
+          Logger.info(`[MongoDB] Successfully sanitized ${invalidReels.length} reels with permanent media URLs.`);
+        }
       }
     } catch (seedErr) {
       Logger.warn('[MongoDB] Error checking/seeding reels:', seedErr);

@@ -417,6 +417,8 @@ export interface CraftReel {
   governorate: Governorate;
   craftType: string;
   videoUrl: string;
+  cloudinaryPublicId?: string;
+  resourceType?: string;
   posterUrl: string;
   duration: string;
   likesCount: number;

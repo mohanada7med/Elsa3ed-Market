@@ -7,7 +7,9 @@ import type { CraftReelDocument, CraftReelCommentDocument } from '../models/type
 import { Logger } from '../utils/logger.ts';
 
 import { storageService } from '../services/storage/storageProvider.ts';
+import { extractCloudinaryPublicId, cloudinaryStorage } from '../services/storage/cloudinaryProvider.ts';
 import { uploadLimiter } from '../middleware/rateLimiter.ts';
+import { INITIAL_CRAFT_REELS_DB } from '../config/initialReels.ts';
 
 const router = express.Router();
 
@@ -133,7 +135,7 @@ router.get('/:id', async (req, res: Response) => {
   }
 });
 
-// POST /api/reels/upload-video - Upload Reel Video to Cloudinary Elsa3ed-Market/reels folder
+// POST /api/reels/upload-video - Upload Reel Video to Cloudinary with isolated seller/admin folders
 router.post('/upload-video', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user;
@@ -144,7 +146,7 @@ router.post('/upload-video', uploadLimiter, requireAuth, async (req: Authenticat
       });
     }
 
-    const { video, filename = 'reel_video.mp4', mimeType = 'video/mp4' } = req.body;
+    const { video, filename = 'reel_video.mp4', mimeType = 'video/mp4', targetSellerId } = req.body;
     if (!video) {
       return res.status(400).json({
         success: false,
@@ -152,23 +154,43 @@ router.post('/upload-video', uploadLimiter, requireAuth, async (req: Authenticat
       });
     }
 
+    if (typeof video === 'string' && video.trim().startsWith('blob:')) {
+      return res.status(400).json({
+        success: false,
+        error: 'لا يمكن رفع رابط blob مؤقت. يرجى إرسال ملف الفيديو الفعلي (Base64 / DataURI)'
+      });
+    }
+
+    // Determine strict isolated folder and seller identity server-side
+    let effectiveSellerId: string | undefined;
+    if (user.role === 'seller') {
+      // Strictly derive sellerId from server session token, NEVER from client request
+      effectiveSellerId = user.sellerId || user.id;
+    } else if (user.role === 'admin') {
+      effectiveSellerId = targetSellerId || undefined;
+    }
+
     const uploadResult = await storageService.upload({
       data: video,
       filename,
       mimeType,
-      folder: 'reels',
+      folder: 'videos',
       resourceType: 'video',
+      sellerId: effectiveSellerId,
+      role: user.role,
       ownerId: user.id
     });
 
-    Logger.info(`[Reels] Video uploaded to Cloudinary: ${uploadResult.url}`);
+    Logger.info(`[Reels] Video uploaded to Cloudinary: ${uploadResult.url} (Folder: ${uploadResult.fileKey})`);
 
     res.status(201).json({
       success: true,
-      message: 'تم رفع فيديو الريلز بنجاح وتخزينه في مجلد Elsa3ed-Market/reels على Cloudinary',
+      message: `تم رفع الفيديو بنجاح وحفظه سحابياً على Cloudinary (${user.role === 'seller' ? 'مجلد الحرفي' : 'مجلد الإدارة'})`,
       data: {
         url: uploadResult.url,
         fileKey: uploadResult.fileKey,
+        cloudinaryPublicId: uploadResult.fileKey,
+        resourceType: 'video',
         duration: uploadResult.duration,
         format: uploadResult.mimeType
       }
@@ -184,7 +206,6 @@ router.post('/upload-video', uploadLimiter, requireAuth, async (req: Authenticat
 
 // POST /api/reels - Create new reel (Seller or Admin)
 router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
-
   try {
     const user = req.user!;
     if (user.role !== 'seller' && user.role !== 'admin') {
@@ -204,6 +225,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       governorate,
       craftType,
       videoUrl,
+      cloudinaryPublicId,
       posterUrl,
       duration,
       productId,
@@ -230,8 +252,17 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     if (!videoUrl?.trim()) {
       return res.status(400).json({
         success: false,
-        error: 'رابط الفيديو السحابي أو الملف المرفوع مطلوب',
+        error: 'رابط الفيديو السحابي مطلوب',
         code: 'VALIDATION_ERROR'
+      });
+    }
+
+    // Critical: strictly forbid saving temporary blob URLs in MongoDB or DB
+    if (videoUrl.trim().startsWith('blob:')) {
+      return res.status(400).json({
+        success: false,
+        error: 'لا يمكن حفظ رابط blob مؤقت في قاعدة البيانات. يرجى التأكد من رفع الفيديو بنجاح إلى Cloudinary أولاً للحصول على رابط دائم.',
+        code: 'INVALID_BLOB_URL'
       });
     }
 
@@ -241,12 +272,17 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     let effectiveWorkshopName = workshopName || 'ورشة الصعيد التراثية';
 
     if (user.role === 'seller') {
-      // Strictly bind to seller's own id
+      // Strictly bind to seller's own authenticated id
       effectiveSellerId = user.sellerId || user.id;
     } else {
-      // Admin can assign to any seller or custom
+      // Admin can assign to any seller or platform-admin
       effectiveSellerId = requestedSellerId || user.sellerId || 'platform-admin';
     }
+
+    const resolvedPublicId =
+      cloudinaryPublicId ||
+      extractCloudinaryPublicId(videoUrl.trim()) ||
+      undefined;
 
     const newReel: CraftReelDocument = {
       id: `reel-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -261,6 +297,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       governorate: governorate || user.governorate || 'قنا',
       craftType: craftType || 'حرفة يدوية صعيدية',
       videoUrl: videoUrl.trim(),
+      cloudinaryPublicId: resolvedPublicId,
+      resourceType: 'video',
       posterUrl:
         posterUrl?.trim() ||
         productImage ||
@@ -311,7 +349,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       details: `تم إضافة الفيديو "${newReel.title}" للورشة "${newReel.workshopName}" (${newReel.governorate}) [${newReel.id}]`
     });
 
-    Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id})`);
+    Logger.info(`[Reels] Created new reel: ${newReel.id} by ${user.role} (${user.id}) - Cloudinary Public ID: ${resolvedPublicId || 'N/A'}`);
 
     return res.status(201).json({
       success: true,
@@ -379,7 +417,38 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
 
     if (updates.title !== undefined) sanitizedUpdates.title = updates.title.trim();
     if (updates.description !== undefined) sanitizedUpdates.description = updates.description.trim();
-    if (updates.videoUrl !== undefined) sanitizedUpdates.videoUrl = updates.videoUrl.trim();
+
+    // Check videoUrl update and clean up old Cloudinary asset if replaced
+    if (updates.videoUrl !== undefined) {
+      const newVideoUrl = updates.videoUrl.trim();
+      if (newVideoUrl.startsWith('blob:')) {
+        return res.status(400).json({
+          success: false,
+          error: 'لا يمكن حفظ رابط blob مؤقت في قاعدة البيانات',
+          code: 'INVALID_BLOB_URL'
+        });
+      }
+      sanitizedUpdates.videoUrl = newVideoUrl;
+
+      if (newVideoUrl !== existingReel.videoUrl) {
+        // Old video is being replaced: destroy old Cloudinary asset to avoid orphaned files
+        const oldPublicId = existingReel.cloudinaryPublicId || extractCloudinaryPublicId(existingReel.videoUrl);
+        if (oldPublicId) {
+          Logger.info(`[Reels] Replacing video for reel ${id}. Deleting old asset: ${oldPublicId}`);
+          cloudinaryStorage.delete(oldPublicId, { id: user.id, role: user.role }).catch((delErr) => {
+            Logger.warn(`[Reels] Could not delete old video asset: ${oldPublicId}`, delErr);
+          });
+        }
+
+        sanitizedUpdates.cloudinaryPublicId =
+          updates.cloudinaryPublicId ||
+          extractCloudinaryPublicId(newVideoUrl) ||
+          undefined;
+        sanitizedUpdates.resourceType = 'video';
+      }
+    }
+
+    if (updates.cloudinaryPublicId !== undefined) sanitizedUpdates.cloudinaryPublicId = updates.cloudinaryPublicId;
     if (updates.posterUrl !== undefined) sanitizedUpdates.posterUrl = updates.posterUrl.trim();
     if (updates.duration !== undefined) sanitizedUpdates.duration = updates.duration;
     if (updates.governorate !== undefined) sanitizedUpdates.governorate = updates.governorate;
@@ -453,7 +522,7 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
   }
 });
 
-// DELETE /api/reels/:id - Delete Reel (Seller deletes ONLY their own, Admin deletes ANY)
+// DELETE /api/reels/:id - Delete Reel (Seller deletes ONLY their own, Admin deletes ANY) + Cloudinary deletion
 router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
@@ -497,6 +566,15 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
       }
     }
 
+    // Clean up video asset from Cloudinary to avoid orphaned media files
+    const videoPublicId = existingReel.cloudinaryPublicId || extractCloudinaryPublicId(existingReel.videoUrl);
+    if (videoPublicId) {
+      Logger.info(`[Reels] Deleting video asset from Cloudinary: ${videoPublicId}`);
+      cloudinaryStorage.delete(videoPublicId, { id: user.id, role: user.role }).catch((delErr) => {
+        Logger.warn(`[Reels] Cloudinary deletion error for ${videoPublicId}:`, delErr);
+      });
+    }
+
     if (isMongo && db) {
       await db.collection('reels').deleteOne({ id });
     }
@@ -518,7 +596,7 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
 
     return res.json({
       success: true,
-      message: 'تم حذف مقطع الفيديو بنجاح من المنصة وقاعدة البيانات'
+      message: 'تم حذف مقطع الفيديو بنجاح من المنصة وقاعدة البيانات والتخزين السحابي'
     });
   } catch (err: any) {
     Logger.error('[Reels] Error deleting reel:', err);
@@ -527,6 +605,137 @@ router.delete('/:id', requireAuth, async (req: AuthenticatedRequest, res: Respon
       error: 'فشل في حذف مقطع الفيديو',
       code: 'SERVER_ERROR'
     });
+  }
+});
+
+// POST /api/reels/bulk-delete - Bulk delete multiple reels (Admin only) + Cloudinary cleanup
+router.post('/bulk-delete', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user!;
+    const { ids } = req.body;
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'عفواً، الحذف المتعدد للفيديوهات مقتصر على مدير المنصة فقط',
+        code: 'FORBIDDEN'
+      });
+    }
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى تحديد معرفات مقاطع الفيديو المراد حذفها',
+        code: 'BAD_REQUEST'
+      });
+    }
+
+    const { db, isMongo } = await getDatabase();
+    let reelsToDelete: CraftReelDocument[] = [];
+
+    if (isMongo && db) {
+      reelsToDelete = await db.collection<CraftReelDocument>('reels').find({ id: { $in: ids } }).toArray();
+    } else {
+      reelsToDelete = memoryDb.reels.filter((r) => ids.includes(r.id));
+    }
+
+    // Clean up all Cloudinary video assets
+    for (const r of reelsToDelete) {
+      const videoPublicId = r.cloudinaryPublicId || extractCloudinaryPublicId(r.videoUrl);
+      if (videoPublicId) {
+        cloudinaryStorage.delete(videoPublicId, { id: user.id, role: user.role }).catch(() => {});
+      }
+    }
+
+    if (isMongo && db) {
+      await db.collection('reels').deleteMany({ id: { $in: ids } });
+    }
+
+    const initialCount = memoryDb.reels.length;
+    memoryDb.reels = memoryDb.reels.filter((r) => !ids.includes(r.id));
+
+    // Audit Log
+    memoryDb.auditLogs.unshift({
+      id: `audit-${Date.now()}`,
+      userName: user.name,
+      userRole: user.role,
+      action: 'حذف جماعي لفيديوهات ريلز',
+      resource: 'craft_reels',
+      timestamp: new Date().toISOString(),
+      status: 'تنبيه',
+      details: `قام المدير ${user.name} بحذف ${ids.length} مقطع فيديو دفعة واحدة وتطهيرها من الكلاود`
+    });
+
+    Logger.info(`[Reels] Bulk deleted ${ids.length} reels by admin (${user.id})`);
+
+    return res.json({
+      success: true,
+      deletedCount: ids.length,
+      message: `تم حذف ${ids.length} مقطع فيديو بنجاح من قاعدة البيانات والمنصة والتخزين السحابي`
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Error bulk deleting reels:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'فشل في الحذف الجماعي لمقاطع الفيديو',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// POST /api/reels/audit-videos - Audit and sanitize any invalid or blob: video URLs in database
+router.post('/audit-videos', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user!;
+    if (user.role !== 'admin') {
+      return res.status(403).json({ success: false, error: 'غير مصرح' });
+    }
+
+    const { db, isMongo } = await getDatabase();
+    let invalidCount = 0;
+    const repairedList: string[] = [];
+
+    if (isMongo && db) {
+      const allDbReels = await db.collection<CraftReelDocument>('reels').find({}).toArray();
+      for (const r of allDbReels) {
+        if (!r.videoUrl || r.videoUrl.startsWith('blob:') || r.videoUrl.trim() === '') {
+          invalidCount++;
+          const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === r.craftType) || INITIAL_CRAFT_REELS_DB[0];
+          const newUrl = fallback.videoUrl;
+          await db.collection('reels').updateOne(
+            { id: r.id },
+            {
+              $set: {
+                videoUrl: newUrl,
+                posterUrl: r.posterUrl && !r.posterUrl.startsWith('blob:') ? r.posterUrl : fallback.posterUrl,
+                updatedAt: new Date().toISOString()
+              }
+            }
+          );
+          repairedList.push(r.id);
+        }
+      }
+    }
+
+    // Also sanitize memoryDb
+    for (const r of memoryDb.reels) {
+      if (!r.videoUrl || r.videoUrl.startsWith('blob:') || r.videoUrl.trim() === '') {
+        const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === r.craftType) || INITIAL_CRAFT_REELS_DB[0];
+        r.videoUrl = fallback.videoUrl;
+        if (!r.posterUrl || r.posterUrl.startsWith('blob:')) {
+          r.posterUrl = fallback.posterUrl;
+        }
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `تم فحص قاعدة البيانات: تم العثور على ${invalidCount} روابط غير صالحة وتم إصلاحها بنجاح`,
+      invalidCount,
+      repairedList
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err?.message });
   }
 });
 

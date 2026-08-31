@@ -470,6 +470,8 @@ export interface CraftReelDocument {
   governorate: string;
   craftType: string;
   videoUrl: string;
+  cloudinaryPublicId?: string;
+  resourceType?: string;
   posterUrl: string;
   duration: string;
   likesCount: number;
