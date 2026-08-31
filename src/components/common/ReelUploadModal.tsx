@@ -3,6 +3,7 @@ import { CraftReel, Governorate, Product } from '../../types.ts';
 import { craftReelsService, HERITAGE_VIDEO_PRESETS } from '../../services/craftReelsService.ts';
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
+import { VideoUploadProgress } from './VideoUploadProgress.tsx';
 
 import {
   Film,
@@ -29,16 +30,6 @@ import {
   UserPlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-
-function readFileAsDataUri(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 
 interface ReelUploadModalProps {
   isOpen: boolean;
@@ -74,8 +65,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   
   // Video Source State
   const [videoUrl, setVideoUrl] = useState('');
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoBlobUrl, setVideoBlobUrl] = useState<string | null>(null);
+  const [cloudinaryPublicId, setCloudinaryPublicId] = useState<string | undefined>(undefined);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [duration, setDuration] = useState('0:30');
   
   // Poster State
@@ -106,7 +97,6 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
   // Preview video player
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const posterInputRef = useRef<HTMLInputElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -132,39 +122,20 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
     }
   }, [selectedProductId, sellerProducts]);
 
-  // Handle local video file upload
-  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('video/')) {
-      setErrorMsg('يرجى اختيار ملف فيديو صالح (MP4, WebM, MOV)');
-      return;
-    }
-
-    setErrorMsg(null);
-    setVideoFile(file);
-
-    const blobUrl = URL.createObjectURL(file);
-    setVideoBlobUrl(blobUrl);
-    setVideoUrl(blobUrl);
-
-    // Capture snapshot for poster
-    generatePosterFromVideo(blobUrl);
-  };
-
-  const generatePosterFromVideo = (blobUrl: string) => {
+  const generatePosterFromVideo = (videoSrc: string) => {
     setIsGeneratingPoster(true);
     const video = document.createElement('video');
-    video.src = blobUrl;
+    video.src = videoSrc;
     video.crossOrigin = 'anonymous';
     video.currentTime = 1.0; // 1 second in
 
     video.onloadeddata = () => {
       // Calculate formatted duration
-      const mins = Math.floor(video.duration / 60);
-      const secs = Math.floor(video.duration % 60);
-      setDuration(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
+      if (video.duration && !isNaN(video.duration)) {
+        const mins = Math.floor(video.duration / 60);
+        const secs = Math.floor(video.duration % 60);
+        setDuration(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
+      }
     };
 
     video.onseeked = () => {
@@ -206,22 +177,33 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
   const handleSelectPreset = (preset: typeof HERITAGE_VIDEO_PRESETS[0]) => {
     setVideoUrl(preset.videoUrl);
+    setCloudinaryPublicId(undefined);
     setPosterUrl(preset.posterUrl);
     setDuration(preset.duration);
     setCraftType(preset.craftType);
     setGovernorate(preset.governorate as Governorate);
     setTitle(preset.title);
     setMusicTrack(preset.musicTrack);
-    setVideoFile(null);
-    setVideoBlobUrl(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!videoUrl) {
-      setErrorMsg('يرجى تحديد أو رفع فيديو للصنعة الحرفية');
+
+    if (isUploadingVideo) {
+      setErrorMsg('جاري رفع الفيديو إلى السحابة، يرجى الانتظار حتى اكتمال الرفع');
       return;
     }
+
+    if (!videoUrl || !videoUrl.trim()) {
+      setErrorMsg('يرجى تحديد أو رفع مقطع فيديو صالح للصنعة الحرفية أولاً');
+      return;
+    }
+
+    if (videoUrl.trim().startsWith('blob:')) {
+      setErrorMsg('لا يمكن حفظ رابط مؤقت (blob:). يرجى التأكد من اكتمال الرفع السحابي للفيديو.');
+      return;
+    }
+
     if (!title.trim()) {
       setErrorMsg('يرجى كتابة عنوان جذاب لمقطع الفيديو');
       return;
@@ -246,38 +228,6 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
     try {
-      let finalVideoUrl = videoUrl;
-      let finalCloudinaryPublicId: string | undefined;
-
-      // If a local video file was selected, upload directly to Cloudinary
-      if (videoFile) {
-        try {
-          const base64Data = await readFileAsDataUri(videoFile);
-          const userParam = (currentUser as any) || {
-            id: sellerId || 'seller-current',
-            role: (currentUser as any)?.role || 'seller',
-            sellerId: sellerId || (currentUser as any)?.sellerId,
-            name: artisanName
-          };
-          const uploadRes = await api.uploadReelVideo(userParam, base64Data, videoFile.name, sellerId);
-          if (uploadRes?.url) {
-            finalVideoUrl = uploadRes.url;
-            finalCloudinaryPublicId = uploadRes.fileKey;
-          }
-        } catch (uploadErr: any) {
-          setIsSubmitting(false);
-          setErrorMsg(`فشل في رفع الفيديو إلى Cloudinary: ${uploadErr?.message || uploadErr}`);
-          return;
-        }
-      }
-
-      // Strict validation: NEVER allow saving temporary blob: URLs to database
-      if (finalVideoUrl.startsWith('blob:')) {
-        setIsSubmitting(false);
-        setErrorMsg('لا يمكن حفظ رابط مؤقت (blob:). يرجى التأكد من اختيار ملف الفيديو وإعادة المحاولة لرفعه إلى السحابة.');
-        return;
-      }
-
       const userParam = (currentUser as any) || {
         id: sellerId || 'seller-current',
         role: (currentUser as any)?.role || 'seller',
@@ -293,8 +243,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
         governorate,
         craftType,
-        videoUrl: finalVideoUrl,
-        cloudinaryPublicId: finalCloudinaryPublicId,
+        videoUrl: videoUrl.trim(),
+        cloudinaryPublicId: cloudinaryPublicId,
         resourceType: 'video',
         posterUrl: effectivePoster,
 
@@ -523,28 +473,37 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
                     {/* Source Controls */}
                     {sourceType === 'upload' && (
-                      <div className="border-2 border-dashed border-[#E8E1D9] dark:border-[#4A3E35] hover:border-[#B45F42] rounded-2xl p-4 sm:p-6 text-center transition-colors bg-[#FAF6F0]/50 dark:bg-[#1F1916]/50">
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="video/*"
-                          onChange={handleVideoFileChange}
-                          className="hidden"
+                      <div className="bg-[#FAF6F0]/60 dark:bg-[#1F1916]/60 p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
+                        <VideoUploadProgress
+                          currentUser={currentUser}
+                          sellerId={sellerId}
+                          onUploadStart={() => {
+                            setIsUploadingVideo(true);
+                            setErrorMsg(null);
+                          }}
+                          onUploadSuccess={(result) => {
+                            setVideoUrl(result.url);
+                            setCloudinaryPublicId(result.cloudinaryPublicId);
+                            setIsUploadingVideo(false);
+                            setErrorMsg(null);
+                            // Auto snapshot poster
+                            generatePosterFromVideo(result.url);
+                          }}
+                          onUploadError={(err) => {
+                            setIsUploadingVideo(false);
+                            setErrorMsg(`فشل في رفع الفيديو: ${err}`);
+                          }}
+                          onUploadCancel={() => {
+                            setVideoUrl('');
+                            setCloudinaryPublicId(undefined);
+                            setIsUploadingVideo(false);
+                          }}
+                          onVideoRemoved={() => {
+                            setVideoUrl('');
+                            setCloudinaryPublicId(undefined);
+                            setIsUploadingVideo(false);
+                          }}
                         />
-                        <Film className="w-8 sm:w-10 h-8 sm:h-10 text-[#B45F42] mx-auto mb-2 opacity-80" />
-                        <p className="text-xs font-bold text-[#2D2A26] dark:text-[#FDFBF7]">
-                          {videoFile ? videoFile.name : 'اضغط لاختيار فيديو من هاتفك أو اسحب الملف هنا'}
-                        </p>
-                        <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                          يدعم MP4, WebM بمقاس 9:16 ومدة حتى 60 ثانية
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="mt-3 px-4 py-2.5 bg-[#B45F42] text-white text-xs font-bold rounded-xl shadow-xs hover:bg-[#9E4F36] transition-all cursor-pointer min-h-[44px]"
-                        >
-                          {videoFile ? 'تغيير ملف الفيديو' : 'اختيار فيديو من الجهاز'}
-                        </button>
                       </div>
                     )}
 
@@ -557,7 +516,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             value={videoUrl}
                             onChange={(e) => {
                               setVideoUrl(e.target.value);
-                              setVideoFile(null);
+                              setCloudinaryPublicId(undefined);
                             }}
                             placeholder="https://... (رابط فيديو MP4 مباشر من Cloudinary, S3, Firebase)"
                             className="w-full pl-3 pr-9 py-2.5 bg-[#FAF6F0] dark:bg-[#1F1916] border border-[#E8E1D9] dark:border-[#4A3E35] rounded-xl text-xs text-[#2D2A26] dark:text-white outline-none focus:border-[#B45F42]"
@@ -877,7 +836,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                   {isSubmitting ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>{videoFile ? 'جاري رفع الفيديو إلى Cloudinary...' : 'جاري حفظ الفيديو...'}</span>
+                      <span>جاري حفظ ونشر الفيديو...</span>
                     </>
                   ) : (
                     <>

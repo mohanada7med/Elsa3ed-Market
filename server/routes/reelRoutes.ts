@@ -1,5 +1,6 @@
 import express from 'express';
 import type { Response } from 'express';
+import multer from 'multer';
 import { requireAuth } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
@@ -9,9 +10,32 @@ import { Logger } from '../utils/logger.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
 import { extractCloudinaryPublicId, cloudinaryStorage } from '../services/storage/cloudinaryProvider.ts';
 import { uploadLimiter } from '../middleware/rateLimiter.ts';
-import { INITIAL_CRAFT_REELS_DB } from '../config/initialReels.ts';
 
 const router = express.Router();
+
+// Configure Multer for streaming/binary multipart video uploads (up to 150MB)
+const videoMulter = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 150 * 1024 * 1024 // 150 MB
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedMimes = [
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+      'video/ogg',
+      'video/x-matroska',
+      'video/3gpp',
+      'video/x-msvideo'
+    ];
+    if (allowedMimes.includes(file.mimetype) || file.mimetype.startsWith('video/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('نوع الملف غير مدعوم. يرجى اختيار ملف فيديو صالح (MP4, WebM, MOV, OGG)'));
+    }
+  }
+});
 
 
 // GET /api/reels - Get all reels with optional filters
@@ -135,8 +159,8 @@ router.get('/:id', async (req, res: Response) => {
   }
 });
 
-// POST /api/reels/upload-video - Upload Reel Video to Cloudinary with isolated seller/admin folders
-router.post('/upload-video', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+// GET /api/reels/upload-signature - Request secure Cloudinary direct signed upload parameters
+router.get('/upload-signature', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
@@ -146,60 +170,193 @@ router.post('/upload-video', uploadLimiter, requireAuth, async (req: Authenticat
       });
     }
 
-    const { video, filename = 'reel_video.mp4', mimeType = 'video/mp4', targetSellerId } = req.body;
-    if (!video) {
-      return res.status(400).json({
-        success: false,
-        error: 'يرجى تقديم بيانات ملف الفيديو لرفعه إلى Cloudinary'
+    if (!cloudinaryStorage.isAvailable()) {
+      return res.json({
+        success: true,
+        directUpload: false,
+        message: 'Cloudinary direct upload not available; using server multipart upload'
       });
     }
 
-    if (typeof video === 'string' && video.trim().startsWith('blob:')) {
-      return res.status(400).json({
-        success: false,
-        error: 'لا يمكن رفع رابط blob مؤقت. يرجى إرسال ملف الفيديو الفعلي (Base64 / DataURI)'
-      });
-    }
-
-    // Determine strict isolated folder and seller identity server-side
     let effectiveSellerId: string | undefined;
     if (user.role === 'seller') {
       // Strictly derive sellerId from server session token, NEVER from client request
       effectiveSellerId = user.sellerId || user.id;
     } else if (user.role === 'admin') {
-      effectiveSellerId = targetSellerId || undefined;
+      effectiveSellerId = (req.query.targetSellerId as string) || undefined;
     }
 
-    const uploadResult = await storageService.upload({
-      data: video,
-      filename,
-      mimeType,
-      folder: 'videos',
-      resourceType: 'video',
-      sellerId: effectiveSellerId,
+    const filename = (req.query.filename as string) || 'reel_video.mp4';
+    const signatureData = cloudinaryStorage.generateVideoUploadSignature({
       role: user.role,
-      ownerId: user.id
+      sellerId: effectiveSellerId,
+      filename
     });
 
-    Logger.info(`[Reels] Video uploaded to Cloudinary: ${uploadResult.url} (Folder: ${uploadResult.fileKey})`);
+    Logger.info(`[Reels] Generated direct upload signature for ${user.role} (Seller: ${effectiveSellerId || 'admin'})`);
 
-    res.status(201).json({
+    return res.json({
       success: true,
-      message: `تم رفع الفيديو بنجاح وحفظه سحابياً على Cloudinary (${user.role === 'seller' ? 'مجلد الحرفي' : 'مجلد الإدارة'})`,
-      data: {
-        url: uploadResult.url,
-        fileKey: uploadResult.fileKey,
-        cloudinaryPublicId: uploadResult.fileKey,
-        resourceType: 'video',
-        duration: uploadResult.duration,
-        format: uploadResult.mimeType
-      }
+      directUpload: true,
+      data: signatureData
     });
   } catch (err: any) {
-    Logger.error('[Reels] Video upload error:', err?.message || err);
-    res.status(500).json({
+    Logger.error('[Reels] Error generating video signature:', err?.message || err);
+    return res.status(500).json({
       success: false,
-      error: err?.message || 'فشل في رفع الفيديو إلى Cloudinary'
+      error: err?.message || 'فشل في توليد توقيع الرفع السحابي'
+    });
+  }
+});
+
+// POST /api/reels/upload-video - Upload Reel Video to Cloudinary/Storage with isolated seller/admin folders
+router.post(
+  '/upload-video',
+  uploadLimiter,
+  requireAuth,
+  (req: AuthenticatedRequest, res: Response, next) => {
+    videoMulter.single('videoFile')(req, res, (err) => {
+      if (err) {
+        if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({
+            success: false,
+            error: 'حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به (150 ميجابايت)'
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          error: err?.message || 'فشل في قراءة ملف الفيديو المرفوع'
+        });
+      }
+      next();
+    });
+  },
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const user = req.user;
+      if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
+        return res.status(403).json({
+          success: false,
+          error: 'فقط البائع المعتمد أو مدير المنصة يملك صلاحية رفع فيديوهات الريلز'
+        });
+      }
+
+      let uploadData: string | Buffer;
+      let filename = 'reel_video.mp4';
+      let mimeType = 'video/mp4';
+
+      if (req.file) {
+        uploadData = req.file.buffer;
+        filename = req.file.originalname || filename;
+        mimeType = req.file.mimetype || mimeType;
+      } else if (req.body?.video) {
+        const rawVideo = req.body.video;
+        if (typeof rawVideo === 'string' && rawVideo.trim().startsWith('blob:')) {
+          return res.status(400).json({
+            success: false,
+            error: 'لا يمكن رفع رابط blob مؤقت. يرجى إرسال ملف الفيديو الفعلي'
+          });
+        }
+        uploadData = rawVideo;
+        filename = req.body.filename || filename;
+        mimeType = req.body.mimeType || mimeType;
+      } else {
+        return res.status(400).json({
+          success: false,
+          error: 'يرجى اختيار وتمرير ملف الفيديو لرفعه'
+        });
+      }
+
+      // Determine strict isolated folder and seller identity server-side
+      let effectiveSellerId: string | undefined;
+      if (user.role === 'seller') {
+        // Strictly derive sellerId from server session token, NEVER from client request
+        effectiveSellerId = user.sellerId || user.id;
+      } else if (user.role === 'admin') {
+        effectiveSellerId = (req.body.targetSellerId || req.query.targetSellerId) as string || undefined;
+      }
+
+      const uploadResult = await storageService.upload({
+        data: uploadData,
+        filename,
+        mimeType,
+        folder: 'videos',
+        resourceType: 'video',
+        sellerId: effectiveSellerId,
+        role: user.role,
+        ownerId: user.id
+      });
+
+      Logger.info(`[Reels] Video uploaded to storage: ${uploadResult.url} (Key: ${uploadResult.fileKey})`);
+
+      res.status(201).json({
+        success: true,
+        message: `تم رفع الفيديو بنجاح وحفظه (${user.role === 'seller' ? 'مجلد الحرفي' : 'مجلد الإدارة'})`,
+        data: {
+          url: uploadResult.url,
+          fileKey: uploadResult.fileKey,
+          cloudinaryPublicId: uploadResult.fileKey,
+          resourceType: 'video',
+          duration: uploadResult.duration,
+          format: uploadResult.mimeType
+        }
+      });
+    } catch (err: any) {
+      Logger.error('[Reels] Video upload error:', err?.message || err);
+      res.status(500).json({
+        success: false,
+        error: err?.message || 'فشل في رفع الفيديو إلى خدمة التخزين'
+      });
+    }
+  }
+);
+
+// POST /api/reels/delete-asset - Clean up uploaded asset if upload is cancelled or creation fails
+router.post('/delete-asset', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
+      return res.status(403).json({
+        success: false,
+        error: 'غير مصرح بحذف الأصول الإعلامية'
+      });
+    }
+
+    const { fileKey, publicId } = req.body;
+    const targetKey = publicId || fileKey;
+
+    if (!targetKey || typeof targetKey !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى تحديد المفتاح السحابي للملف المراد حذفه'
+      });
+    }
+
+    // Security check: sellers can only delete assets from their own folder
+    if (user.role === 'seller') {
+      const sellerId = user.sellerId || user.id;
+      const cleanSellerId = sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
+      if (!targetKey.includes(cleanSellerId) && !targetKey.includes(sellerId)) {
+        return res.status(403).json({
+          success: false,
+          error: 'غير مصرح بحذف ملف لا ينتمي لمجلد ورشتك'
+        });
+      }
+    }
+
+    const deleted = await storageService.delete(targetKey, { id: user.id, role: user.role });
+    Logger.info(`[Reels] Cleaned up asset: ${targetKey} (Deleted: ${deleted})`);
+
+    return res.json({
+      success: true,
+      deleted,
+      message: 'تم تنظيف الملف بنجاح'
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Error deleting asset:', err?.message || err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || 'فشل في تنظيف الملف'
     });
   }
 });
@@ -700,37 +857,19 @@ router.post('/audit-videos', requireAuth, async (req: AuthenticatedRequest, res:
       for (const r of allDbReels) {
         if (!r.videoUrl || r.videoUrl.startsWith('blob:') || r.videoUrl.trim() === '') {
           invalidCount++;
-          const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === r.craftType) || INITIAL_CRAFT_REELS_DB[0];
-          const newUrl = fallback.videoUrl;
-          await db.collection('reels').updateOne(
-            { id: r.id },
-            {
-              $set: {
-                videoUrl: newUrl,
-                posterUrl: r.posterUrl && !r.posterUrl.startsWith('blob:') ? r.posterUrl : fallback.posterUrl,
-                updatedAt: new Date().toISOString()
-              }
-            }
-          );
+          // Remove invalid blob reel
+          await db.collection('reels').deleteOne({ id: r.id });
           repairedList.push(r.id);
         }
       }
     }
 
     // Also sanitize memoryDb
-    for (const r of memoryDb.reels) {
-      if (!r.videoUrl || r.videoUrl.startsWith('blob:') || r.videoUrl.trim() === '') {
-        const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === r.craftType) || INITIAL_CRAFT_REELS_DB[0];
-        r.videoUrl = fallback.videoUrl;
-        if (!r.posterUrl || r.posterUrl.startsWith('blob:')) {
-          r.posterUrl = fallback.posterUrl;
-        }
-      }
-    }
+    memoryDb.reels = memoryDb.reels.filter((r) => r.videoUrl && !r.videoUrl.startsWith('blob:') && r.videoUrl.trim() !== '');
 
     return res.json({
       success: true,
-      message: `تم فحص قاعدة البيانات: تم العثور على ${invalidCount} روابط غير صالحة وتم إصلاحها بنجاح`,
+      message: `تم فحص قاعدة البيانات: تم تنظيف ${invalidCount} فيديوهات غير صالحة`,
       invalidCount,
       repairedList
     });

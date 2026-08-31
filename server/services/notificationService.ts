@@ -2,28 +2,7 @@ import { getDatabase } from '../db/mongodb.ts';
 import type { NotificationDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 
-const memoryNotifications: NotificationDocument[] = [
-  {
-    id: 'notif-1',
-    userId: 'user-buyer-1',
-    title: 'طلبك قيد المراجعة',
-    message: 'تم استلام طلبك رقم SAED-1042 وتأكيد عملية الدفع بنجاح.',
-    type: 'order',
-    isRead: false,
-    link: 'orders',
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'notif-2',
-    userId: 'seller-1',
-    title: 'طلب جديد وارد',
-    message: 'لديك طلب جديد رقم SAED-1042 يحتاج للتجهيز والتغليف.',
-    type: 'order',
-    isRead: false,
-    link: 'seller-dashboard',
-    createdAt: new Date().toISOString()
-  }
-];
+const memoryNotifications: NotificationDocument[] = [];
 
 export async function getUserNotifications(userId: string): Promise<NotificationDocument[]> {
   const { db, isMongo } = await getDatabase();

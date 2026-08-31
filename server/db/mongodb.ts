@@ -1,11 +1,9 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
-import bcrypt from 'bcryptjs';
 import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
 import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument, CraftReelDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
-import { INITIAL_CRAFT_REELS_DB } from '../config/initialReels.ts';
 
 dotenv.config();
 
@@ -40,7 +38,7 @@ class MemoryStore {
   reviews: ReviewDocument[] = [];
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
-  reels: CraftReelDocument[] = [...INITIAL_CRAFT_REELS_DB];
+  reels: CraftReelDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {
@@ -161,96 +159,14 @@ export async function getDatabase(): Promise<{ db: Db | null; isMongo: boolean }
 
 async function seedMongoDatabase(database: Db) {
   try {
-    // Only seed standard platform categories if none exist
+    // Only initialize standard platform heritage categories taxonomy if empty
     const categoriesCount = await database.collection('categories').countDocuments().catch(() => 1);
     if (categoriesCount === 0) {
       await database.collection('categories').insertMany(PLATFORM_CATEGORIES as any[]);
-      Logger.info('[MongoDB] Initialized standard platform categories collection');
+      Logger.info('[MongoDB] Initialized standard platform heritage categories taxonomy');
     }
 
-    // Seed default baseline admin and seller accounts ONLY if missing
-    try {
-      const [adminExists, sellerExists] = await Promise.all([
-        database.collection('users').findOne({ usernameNormalized: 'admin' }),
-        database.collection('users').findOne({ usernameNormalized: 'seller1' })
-      ]);
-
-      if (!adminExists || !sellerExists) {
-        const defaultPasswordHash = await bcrypt.hash('password123', 10);
-
-        if (!adminExists) {
-          await database.collection('users').insertOne({
-            id: 'user-admin-1',
-            username: 'admin',
-            usernameNormalized: 'admin',
-            name: 'أ/ محمود الهواري (مدير المنصة)',
-            email: 'admin@elsa3ed.eg',
-            phone: '01000000000',
-            role: 'admin',
-            passwordHash: defaultPasswordHash,
-            governorate: 'قنا',
-            savedAddresses: [],
-            status: 'active',
-            avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-          Logger.info('[MongoDB] Seeded default platform admin user (@admin)');
-        }
-
-        if (!sellerExists) {
-          await database.collection('users').insertOne({
-            id: 'user-seller-1',
-            username: 'seller1',
-            usernameNormalized: 'seller1',
-            name: 'عم حمزة القناوي',
-            email: 'seller1@elsa3ed.eg',
-            phone: '01011111111',
-            role: 'seller',
-            passwordHash: defaultPasswordHash,
-            sellerId: 'seller-1',
-            sellerStatus: 'approved',
-            governorate: 'قنا',
-            savedAddresses: [],
-            status: 'active',
-            avatar: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
-
-          await database.collection('sellers').updateOne(
-            { id: 'seller-1' },
-            {
-              $setOnInsert: {
-                id: 'seller-1',
-                userId: 'user-seller-1',
-                name: 'عم حمزة القناوي',
-                workshopName: 'ورشة الفخار القناوي الأصيل',
-                phone: '01011111111',
-                email: 'seller1@elsa3ed.eg',
-                governorate: 'قنا',
-                city: 'قنا',
-                address: 'حي القناوية، مركز قنا',
-                specialty: 'صناعة الفخار والقلل القناوي',
-                status: 'approved',
-                story: 'حرفة ورثتها أباً عن جد منذ أكثر من 40 عاماً',
-                rating: 4.9,
-                reviewCount: 28,
-                totalSales: 154,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-              }
-            },
-            { upsert: true }
-          );
-          Logger.info('[MongoDB] Seeded default seller user (@seller1)');
-        }
-      }
-    } catch (userSeedErr) {
-      Logger.error('[MongoDB] Error seeding default users:', userSeedErr);
-    }
-
-    // Parallel index creation grouped by collection to avoid connection starvation
+    // Parallel index creation grouped by collection to ensure optimal performance and integrity
     const indexOperations = [
       // Users
       database.collection('users').createIndex({ usernameNormalized: 1 }, { unique: true }),
@@ -282,7 +198,7 @@ async function seedMongoDatabase(database: Db) {
       database.collection('categories').createIndex({ slug: 1 }, { unique: true }),
       database.collection('categories').createIndex({ active: 1, displayOrder: 1 }),
 
-      // Sellers (including essential userId lookup index)
+      // Sellers
       database.collection('sellers').createIndex({ id: 1 }, { unique: true }),
       database.collection('sellers').createIndex({ userId: 1 }),
       database.collection('sellers').createIndex({ status: 1, governorate: 1 }),
@@ -307,47 +223,10 @@ async function seedMongoDatabase(database: Db) {
       database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 })
     ];
 
-    // Execute non-blocking batch indexing in background without throwing on partial errors
+    // Execute non-blocking batch indexing in background
     await Promise.allSettled(indexOperations);
-
-    // Initial check for reels seed and auto-sanitization of any legacy blob: URLs
-    try {
-      const reelsCount = await database.collection('reels').countDocuments().catch(() => 1);
-      if (reelsCount === 0) {
-        await database.collection('reels').insertMany(INITIAL_CRAFT_REELS_DB);
-        Logger.info('[MongoDB] Seeded initial craft reels into database');
-      } else {
-        // Auto-sanitize legacy blob: URLs in database if any exist
-        const invalidReels = await database.collection('reels').find({
-          $or: [
-            { videoUrl: { $regex: /^blob:/i } },
-            { posterUrl: { $regex: /^blob:/i } }
-          ]
-        }).toArray();
-
-        if (invalidReels.length > 0) {
-          Logger.warn(`[MongoDB] Found ${invalidReels.length} reels with invalid/temporary blob: URLs. Auto-sanitizing...`);
-          for (const inv of invalidReels) {
-            const fallback = INITIAL_CRAFT_REELS_DB.find((init) => init.craftType === inv.craftType) || INITIAL_CRAFT_REELS_DB[0];
-            const updates: any = {};
-            if (!inv.videoUrl || inv.videoUrl.startsWith('blob:')) {
-              updates.videoUrl = fallback.videoUrl;
-            }
-            if (!inv.posterUrl || inv.posterUrl.startsWith('blob:')) {
-              updates.posterUrl = fallback.posterUrl;
-            }
-            if (Object.keys(updates).length > 0) {
-              await database.collection('reels').updateOne({ _id: inv._id }, { $set: updates });
-            }
-          }
-          Logger.info(`[MongoDB] Successfully sanitized ${invalidReels.length} reels with permanent media URLs.`);
-        }
-      }
-    } catch (seedErr) {
-      Logger.warn('[MongoDB] Error checking/seeding reels:', seedErr);
-    }
   } catch (err) {
-    Logger.error('[MongoDB] Index creation error:', err);
+    Logger.error('[MongoDB] Database index/taxonomy initialization error:', err);
   }
 }
 

@@ -98,7 +98,15 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
             </div>
 
             {/* Comments List */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scrollbar-thin">
+            <div
+              className="flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-3 scrollbar-thin"
+              style={{
+                overscrollBehavior: 'contain',
+                overscrollBehaviorY: 'contain',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-y'
+              }}
+            >
               {comments.length > 0 ? (
                 comments.map((c) => (
                   <div key={c.id} className="flex items-start gap-2.5 text-right">

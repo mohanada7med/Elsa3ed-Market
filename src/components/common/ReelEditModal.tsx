@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { CraftReel, Governorate, Product, Seller } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
+import { VideoUploadProgress } from './VideoUploadProgress.tsx';
 import {
   Film,
   X,
@@ -17,7 +18,8 @@ import {
   Music,
   Eye,
   Star,
-  Pin
+  Pin,
+  Upload
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -46,6 +48,9 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [cloudinaryPublicId, setCloudinaryPublicId] = useState<string | undefined>(undefined);
+  const [videoInputMode, setVideoInputMode] = useState<'url' | 'upload'>('url');
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [posterUrl, setPosterUrl] = useState('');
   const [governorate, setGovernorate] = useState<Governorate>('قنا');
   const [craftType, setCraftType] = useState('');
@@ -141,6 +146,10 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isUploadingVideo) {
+      setErrorMsg('جاري رفع الفيديو إلى السحابة، يرجى الانتظار حتى اكتمال الرفع');
+      return;
+    }
     if (!title.trim()) {
       setErrorMsg('يرجى إدخال عنوان الفيديو');
       return;
@@ -167,6 +176,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       title: title.trim(),
       description: description.trim(),
       videoUrl: videoUrl.trim(),
+      cloudinaryPublicId: cloudinaryPublicId || reel.cloudinaryPublicId,
       posterUrl: posterUrl.trim() || productImage || reel.posterUrl,
       duration: duration || reel.duration,
       governorate,
@@ -295,24 +305,87 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 )}
               </div>
 
-              {/* Video Cloud URL Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#2D2A26] dark:text-[#FDFBF7] flex items-center gap-1.5">
-                  <LinkIcon className="w-3.5 h-3.5 text-[#B45F42]" />
-                  <span>رابط الفيديو على الكلاود (Cloud Video URL / CDN / MP4)</span>
-                </label>
-                <input
-                  type="url"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://res.cloudinary.com/.../video.mp4 أو https://my-bucket.s3.../video.mp4"
-                  className="w-full p-2.5 bg-[#FDFBF7] dark:bg-[#1F1916] border border-[#E8E1D9] dark:border-[#382E27] rounded-xl text-xs outline-none focus:border-[#B45F42] text-left font-mono"
-                  dir="ltr"
-                  required
-                />
-                <p className="text-[10px] text-[#7A6F64] dark:text-[#A89F91]">
-                  يدعم روابط Cloudinary السحابية، AWS S3، Vimeo Direct، Google Cloud، وأي رابط فيديو مباشر.
-                </p>
+              {/* Video Cloud URL Input / Upload switcher */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-[#2D2A26] dark:text-[#FDFBF7] flex items-center gap-1.5">
+                    <Film className="w-3.5 h-3.5 text-[#B45F42]" />
+                    <span>تحديد أو استبدال الفيديو</span>
+                  </label>
+                  <div className="flex items-center bg-[#FAF6F0] dark:bg-[#1F1916] p-0.5 rounded-lg border border-[#E8E1D9] dark:border-[#382E27] text-[11px]">
+                    <button
+                      type="button"
+                      onClick={() => setVideoInputMode('url')}
+                      className={`px-2 py-1 rounded-md font-bold transition-all ${
+                        videoInputMode === 'url'
+                          ? 'bg-[#B45F42] text-white'
+                          : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      رابط URL
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideoInputMode('upload')}
+                      className={`px-2 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${
+                        videoInputMode === 'upload'
+                          ? 'bg-[#B45F42] text-white'
+                          : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <Upload className="w-3 h-3" />
+                      <span>رفع ملف جديد</span>
+                    </button>
+                  </div>
+                </div>
+
+                {videoInputMode === 'url' ? (
+                  <div>
+                    <input
+                      type="url"
+                      value={videoUrl}
+                      onChange={(e) => {
+                        setVideoUrl(e.target.value);
+                        setCloudinaryPublicId(undefined);
+                      }}
+                      placeholder="https://res.cloudinary.com/.../video.mp4 أو https://my-bucket.s3.../video.mp4"
+                      className="w-full p-2.5 bg-[#FDFBF7] dark:bg-[#1F1916] border border-[#E8E1D9] dark:border-[#382E27] rounded-xl text-xs outline-none focus:border-[#B45F42] text-left font-mono"
+                      dir="ltr"
+                      required
+                    />
+                    <p className="text-[10px] text-[#7A6F64] dark:text-[#A89F91] mt-1">
+                      يدعم روابط Cloudinary السحابية، AWS S3، Vimeo Direct، Google Cloud، وأي رابط فيديو مباشر.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-[#FAF6F0]/60 dark:bg-[#1F1916]/60 p-3 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
+                    <VideoUploadProgress
+                      currentUser={currentUser}
+                      sellerId={sellerId}
+                      onUploadStart={() => {
+                        setIsUploadingVideo(true);
+                        setErrorMsg(null);
+                      }}
+                      onUploadSuccess={(result) => {
+                        setVideoUrl(result.url);
+                        setCloudinaryPublicId(result.cloudinaryPublicId);
+                        setIsUploadingVideo(false);
+                        setErrorMsg(null);
+                      }}
+                      onUploadError={(err) => {
+                        setIsUploadingVideo(false);
+                        setErrorMsg(`فشل في رفع الفيديو: ${err}`);
+                      }}
+                      onUploadCancel={() => {
+                        setIsUploadingVideo(false);
+                      }}
+                      onVideoRemoved={() => {
+                        setCloudinaryPublicId(undefined);
+                        setIsUploadingVideo(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Poster Image URL */}

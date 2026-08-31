@@ -55,22 +55,38 @@ export const IntroExperience: React.FC = () => {
           <div className="relative aspect-video w-full overflow-hidden bg-black flex items-center justify-center">
             {/* Background looping visual montage */}
             <video
-              className="w-full h-full object-cover opacity-100"
+              className="w-full h-full object-cover opacity-90"
               autoPlay
               loop
               muted={isMuted}
               playsInline
-              poster="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
+              poster="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80"
+              onError={(e) => {
+                // If video fails, ensure smooth fallback
+                const target = e.currentTarget;
+                target.style.display = 'none';
+              }}
             >
-              {/* Fallback to online cinematic video or poster */}
               <source
-                src="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
+                src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4"
+                type="video/mp4"
+              />
+              <source
+                src="https://assets.mixkit.co/videos/preview/mixkit-potter-working-on-a-pottery-wheel-41718-large.mp4"
                 type="video/mp4"
               />
             </video>
 
+            {/* Fallback image when video is hidden */}
+            <img
+              src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80"
+              alt="أصالة تراث الصعيد"
+              className="absolute inset-0 w-full h-full object-cover -z-10"
+              loading="eager"
+            />
+
             {/* Gradient overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#231a14] via-black/1 to-black/2 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#231a14] via-black/30 to-black/40 pointer-events-none" />
 
             {/* Center Story Highlights */}
 

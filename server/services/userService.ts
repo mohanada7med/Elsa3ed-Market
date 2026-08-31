@@ -150,20 +150,6 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
     return memUser as unknown as UserDocument;
   }
 
-  if (id === 'user-admin-1') {
-    return {
-      id: 'user-admin-1',
-      username: 'admin',
-      name: 'أ/ محمود الهواري (مدير المنصة)',
-      email: 'admin@elsa3ed.eg',
-      phone: '01000000000',
-      role: 'admin',
-      governorate: 'قنا',
-      savedAddresses: [],
-      createdAt: '2026-01-01T00:00:00.000Z'
-    } as unknown as UserDocument;
-  }
-
   return null;
 }
 

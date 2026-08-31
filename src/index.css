@@ -44,6 +44,34 @@
   min-width: 44px;
 }
 
+/* Dedicated Reel Feed Scroll Snapping and Overscroll Containment */
+.reels-scroll-container {
+  height: 100%;
+  max-height: 100dvh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  touch-action: pan-y;
+}
+
+.reels-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.reel-snap-item {
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overscroll-behavior: contain;
+  overscroll-behavior-y: contain;
+}
+
 /* Safe area insets for mobile devices (notch & home indicator) */
 .safe-area-pb {
   padding-bottom: max(0.375rem, env(safe-area-inset-bottom));

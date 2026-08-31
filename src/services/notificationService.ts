@@ -49,147 +49,6 @@ export interface AppNotification {
 
 const STORAGE_KEY = 'saeed_platform_notifications_v1';
 
-// Initial mock notifications for realistic experience
-const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  // Admin notifications
-  {
-    id: 'notif-adm-1',
-    recipientRole: 'admin',
-    title: 'طلب انضمام ورشة حرفية جديدة',
-    message: 'قدمت "ورشة إخميم للنسيج والكليم" طلباً للانضمام إلى منصة سوق الصعيد في محافظة سوهاج.',
-    type: 'new_seller_registered',
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(), // 25 mins ago
-    actionPage: 'admin-dashboard',
-    actionTab: 'sellers',
-    metadata: {
-      sellerName: 'ورشة إخميم للنسيج',
-      governorate: 'سوهاج'
-    }
-  },
-  {
-    id: 'notif-adm-2',
-    recipientRole: 'admin',
-    title: 'منتج تراثي جديد بانتظار الاعتماد',
-    message: 'أضافت ورشة قنا للفخار منتج "قُلة قناوية فخار أصلية" وبانتظار المراجعة الفنية والموافقة.',
-    type: 'product_pending_review',
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 65).toISOString(), // 1 hour ago
-    actionPage: 'admin-dashboard',
-    actionTab: 'approvals',
-    metadata: {
-      productTitle: 'قُلة قناوية فخار أصلية',
-      sellerName: 'ورشة فخار قنا'
-    }
-  },
-  {
-    id: 'notif-adm-3',
-    recipientRole: 'admin',
-    title: 'طلب سحب أرباح مالي جديد',
-    message: 'طلب الحرفي "عم إبراهيم النوبي" سحب أرباح بقيمة 4,500 ج.م عبر إنستاباي.',
-    type: 'payout_requested',
-    read: true,
-    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(), // 3 hours ago
-    actionPage: 'admin-dashboard',
-    actionTab: 'payouts',
-    metadata: {
-      amount: 4500,
-      sellerName: 'عم إبراهيم النوبي'
-    }
-  },
-  {
-    id: 'notif-adm-4',
-    recipientRole: 'admin',
-    title: 'طلب استعادة كلمة مرور جديد',
-    message: 'طلب المستخدم "حرفي سوهاج" مساعدة الإدارة لإعادة تعيين كلمة المرور.',
-    type: 'password_reset_requested',
-    read: true,
-    createdAt: new Date(Date.now() - 1000 * 60 * 360).toISOString(),
-    actionPage: 'admin-dashboard',
-    actionTab: 'password-resets'
-  },
-
-  // Seller notifications
-  {
-    id: 'notif-sel-1',
-    recipientRole: 'seller',
-    recipientId: 'seller-1', // Default seller (ورشة فخار قنا)
-    title: 'طلب شراء جديد #ORD-9842',
-    message: 'قام أحد العملاء بطلب 2 قطعة من "طاجن فخار بلدي معتق" بقيمة 520 ج.م. يرجى تجهيز الطلب.',
-    type: 'new_order',
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(), // 15 mins ago
-    actionPage: 'seller-dashboard',
-    actionTab: 'orders',
-    metadata: {
-      orderId: 'ORD-9842',
-      orderNumber: 'ORD-9842',
-      amount: 520
-    }
-  },
-  {
-    id: 'notif-sel-2',
-    recipientRole: 'seller',
-    recipientId: 'seller-1',
-    title: 'تم اعتماد منتجك بنجاح!',
-    message: 'وافقت إدارة المنصة على عرض منتج "مج شاي صعيدي خزف يدوي" وهو الآن متاح للبيع للجمهور.',
-    type: 'product_approved',
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    actionPage: 'seller-dashboard',
-    actionTab: 'products',
-    metadata: {
-      productTitle: 'مج شاي صعيدي خزف يدوي'
-    }
-  },
-  {
-    id: 'notif-sel-3',
-    recipientRole: 'seller',
-    recipientId: 'seller-1',
-    title: 'تنبيه: اقتراب نفاد المخزون',
-    message: 'متبقي 3 قطع فقط من "زير ماء قناوي مبرد طبيعي". ننصح بتحديث كمية المخزون في الورشة.',
-    type: 'low_stock',
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
-    actionPage: 'seller-dashboard',
-    actionTab: 'inventory',
-    metadata: {
-      productTitle: 'زير ماء قناوي مبرد طبيعي',
-      stockCount: 3
-    }
-  },
-  {
-    id: 'notif-sel-4',
-    recipientRole: 'seller',
-    recipientId: 'seller-1',
-    title: 'تم تحويل مستحقاتك المالية بنجاح',
-    message: 'تم إيداع مبلغ 3,200 ج.م في حساب فودافون كاش الخاص بورشة العمل.',
-    type: 'payout_paid',
-    read: true,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-    actionPage: 'seller-dashboard',
-    actionTab: 'payouts',
-    metadata: {
-      amount: 3200
-    }
-  },
-  {
-    id: 'notif-sel-5',
-    recipientRole: 'seller',
-    recipientId: 'seller-1',
-    title: 'تقييم 5 نجوم جديد لمنتجك',
-    message: 'كتب المشتري "أحمد م.": "جودة الفخار ممتازة والتغليف كان محكم جداً، شكراً للصنعة الصعيدية الأصيلة!"',
-    type: 'new_review',
-    read: true,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
-    actionPage: 'seller-dashboard',
-    actionTab: 'products',
-    metadata: {
-      rating: 5
-    }
-  }
-];
-
 class NotificationService {
   private notifications: AppNotification[] = [];
 
@@ -199,7 +58,7 @@ class NotificationService {
 
   private loadFromStorage() {
     if (typeof window === 'undefined') {
-      this.notifications = INITIAL_NOTIFICATIONS;
+      this.notifications = [];
       return;
     }
     try {
@@ -207,11 +66,10 @@ class NotificationService {
       if (stored) {
         this.notifications = JSON.parse(stored);
       } else {
-        this.notifications = INITIAL_NOTIFICATIONS;
-        this.saveToStorage();
+        this.notifications = [];
       }
     } catch {
-      this.notifications = INITIAL_NOTIFICATIONS;
+      this.notifications = [];
     }
   }
 

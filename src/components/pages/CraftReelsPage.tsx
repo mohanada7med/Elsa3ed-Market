@@ -106,6 +106,33 @@ export const CraftReelsPage: React.FC = () => {
     loadReelsFromDb();
   }, []);
 
+  // Lock parent document scrolling when viewing reels in feed mode on mobile
+  useEffect(() => {
+    if (viewMode !== 'feed') return;
+
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    if (!isMobile) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalPosition = document.body.style.position;
+    const originalTop = document.body.style.top;
+    const originalWidth = document.body.style.width;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.top = originalTop;
+      document.body.style.width = originalWidth;
+      window.scrollTo(0, scrollY);
+    };
+  }, [viewMode]);
+
   const governoratesList = ['قنا', 'سوهاج', 'الأقصر', 'أسوان', 'أسيوط'];
   const craftTypesList = [
     { id: 'all', label: 'كل الحرف' },
@@ -279,8 +306,20 @@ export const CraftReelsPage: React.FC = () => {
 
       {/* 2. Mode: Immersive Feed Mode */}
       {viewMode === 'feed' ? (
-        <div className="w-full flex justify-center py-2 sm:py-4">
-          <div className="w-full max-w-[420px] h-[calc(100dvh-180px)] min-h-[580px] max-h-[820px] rounded-3xl overflow-hidden shadow-2xl bg-black border border-white/10">
+        <div className="w-full flex justify-center sm:py-4">
+          <div className="fixed inset-0 z-40 bg-black sm:relative sm:inset-auto sm:z-auto sm:max-w-[420px] sm:h-[min(94dvh,860px)] sm:rounded-3xl overflow-hidden shadow-2xl border-0 sm:border sm:border-white/10">
+            {/* Mobile Top Floating Switch to Grid button */}
+            <div className="sm:hidden absolute top-3 right-3 z-50 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg active:scale-95 cursor-pointer"
+              >
+                <Grid className="w-3.5 h-3.5" />
+                <span>عرض الشبكة</span>
+              </button>
+            </div>
+
             <ReelFeed
               reels={filteredReels.length > 0 ? filteredReels : reels}
               initialReelId={selectedReelId || undefined}
@@ -290,7 +329,7 @@ export const CraftReelsPage: React.FC = () => {
                 setReels((prev) => prev.filter((r) => r.id !== deletedId));
               }}
               showCloseButton={false}
-              hasBottomNav={true}
+              hasBottomNav={false}
             />
           </div>
         </div>

@@ -63,6 +63,14 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const lastTapRef = useRef<number>(0);
 
+  const safeVideoUrl =
+    reel.videoUrl?.trim() ||
+    'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4';
+  const safePosterUrl =
+    reel.posterUrl?.trim() ||
+    reel.productImage ||
+    'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80';
+
   // Sync liked state from service
   useEffect(() => {
     const userLikes = craftReelsService.getUserLikedReels();
@@ -248,8 +256,8 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       >
         <video
           ref={videoRef}
-          src={reel.videoUrl}
-          poster={reel.posterUrl}
+          src={safeVideoUrl}
+          poster={safePosterUrl}
           playsInline
           loop
           muted={isMuted}

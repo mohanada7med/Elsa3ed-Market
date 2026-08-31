@@ -127,7 +127,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       filename.endsWith('.webm') ||
       filename.endsWith('.mov');
 
-    let uploadPayload: string;
+    let uploadPayload: string | Buffer;
     let detectedMime = mimeType;
     let sizeBytes = 0;
 
@@ -137,7 +137,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
         uploadPayload = data;
       } else {
         detectedMime = detectedMime || 'video/mp4';
-        uploadPayload = `data:${detectedMime};base64,${data.toString('base64')}`;
+        uploadPayload = data; // Keep raw Buffer for streaming upload
+        sizeBytes = data.length;
       }
     } else {
       // 1. Image validation
@@ -155,7 +156,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
           uploadPayload = `data:${detectedMime};base64,${data}`;
         }
       } else {
-        uploadPayload = `data:${detectedMime};base64,${data.toString('base64')}`;
+        uploadPayload = data;
       }
     }
 
@@ -220,7 +221,26 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
       let uploadResult: UploadApiResponse;
 
-      if (isVideo) {
+      if (Buffer.isBuffer(uploadPayload)) {
+        if (isVideo) {
+          uploadOptions.resource_type = 'video';
+          uploadOptions.timeout = 180000;
+        } else {
+          uploadOptions.resource_type = 'image';
+          uploadOptions.allowed_formats = ['jpg', 'jpeg', 'png', 'webp'];
+          uploadOptions.transformation = [{ quality: 'auto', fetch_format: 'auto' }];
+        }
+        uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(uploadOptions, (err, res) => {
+            if (err || !res) {
+              reject(err || new Error('فشل رفع الملف إلى Cloudinary'));
+            } else {
+              resolve(res);
+            }
+          });
+          stream.end(uploadPayload);
+        });
+      } else if (isVideo) {
         uploadOptions.resource_type = 'video';
         uploadOptions.chunk_size = 6000000; // 6MB chunk size for reliable video streaming uploads
         uploadOptions.timeout = 180000;
@@ -280,6 +300,74 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       Logger.error(`[Cloudinary] Failed to delete asset: ${fileKey}`, err?.message || err);
       return false;
     }
+  }
+
+  /**
+   * Generates a cryptographically signed direct upload payload for frontend direct-to-Cloudinary upload.
+   * Keeps API Secret strictly on server while providing frontend with signed parameters for progress tracking.
+   */
+  generateVideoUploadSignature(options: {
+    role: string;
+    sellerId?: string;
+    filename?: string;
+  }): {
+    signature: string;
+    timestamp: number;
+    apiKey: string;
+    cloudName: string;
+    folder: string;
+    publicId: string;
+    resourceType: 'video';
+  } {
+    this.configure();
+
+    if (!this.isConfigured || !isCloudinaryAvailable()) {
+      throw new Error('خدمة التخزين السحابي Cloudinary غير مهيأة أو مفاتيح الربط غير صالحة');
+    }
+
+    const config = cloudinary.config();
+    const apiKey = config.api_key;
+    const apiSecret = config.api_secret;
+    const cloudName = config.cloud_name;
+
+    if (!apiKey || !apiSecret || !cloudName) {
+      throw new Error('بيانات مصادقة Cloudinary غير مكتملة في بيئة العمل');
+    }
+
+    let folder: string;
+    if (options.role === 'admin' && !options.sellerId) {
+      folder = 'Elsa3ed-Market/admin/videos';
+    } else if (options.sellerId) {
+      const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
+      folder = `Elsa3ed-Market/sellers/${cleanSellerId}/videos`;
+    } else {
+      folder = 'Elsa3ed-Market/videos';
+    }
+
+    const rawFilename = options.filename || 'reel_video';
+    const cleanFilename = rawFilename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const publicId = `${cleanFilename}_${uniqueSuffix}`;
+
+    const timestamp = Math.round(new Date().getTime() / 1000);
+
+    const paramsToSign = {
+      folder,
+      public_id: publicId,
+      timestamp
+    };
+
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
+
+    return {
+      signature,
+      timestamp,
+      apiKey,
+      cloudName,
+      folder,
+      publicId,
+      resourceType: 'video'
+    };
   }
 
   /**
