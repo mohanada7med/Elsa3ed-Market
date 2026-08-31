@@ -60,7 +60,7 @@ export const IntroExperience: React.FC = () => {
               loop
               muted={isMuted}
               playsInline
-              poster="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80"
+              poster="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
               onError={(e) => {
                 // If video fails, ensure smooth fallback
                 const target = e.currentTarget;
@@ -68,18 +68,18 @@ export const IntroExperience: React.FC = () => {
               }}
             >
               <source
-                src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4"
+                src="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
                 type="video/mp4"
               />
               <source
-                src="https://assets.mixkit.co/videos/preview/mixkit-potter-working-on-a-pottery-wheel-41718-large.mp4"
+                src="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
                 type="video/mp4"
               />
             </video>
 
             {/* Fallback image when video is hidden */}
             <img
-              src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80"
+              src="https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4"
               alt="أصالة تراث الصعيد"
               className="absolute inset-0 w-full h-full object-cover -z-10"
               loading="eager"

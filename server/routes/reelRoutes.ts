@@ -159,8 +159,8 @@ router.get('/:id', async (req, res: Response) => {
   }
 });
 
-// GET /api/reels/upload-signature - Request secure Cloudinary direct signed upload parameters
-router.get('/upload-signature', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+// GET & POST /api/reels/upload-signature - Request secure Cloudinary direct signed upload parameters
+const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user;
     if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
@@ -183,17 +183,17 @@ router.get('/upload-signature', requireAuth, async (req: AuthenticatedRequest, r
       // Strictly derive sellerId from server session token, NEVER from client request
       effectiveSellerId = user.sellerId || user.id;
     } else if (user.role === 'admin') {
-      effectiveSellerId = (req.query.targetSellerId as string) || undefined;
+      effectiveSellerId = ((req.body?.targetSellerId || req.query.targetSellerId) as string) || undefined;
     }
 
-    const filename = (req.query.filename as string) || 'reel_video.mp4';
+    const rawFilename = (req.body?.filename || req.query.filename as string) || 'reel_video.mp4';
     const signatureData = cloudinaryStorage.generateVideoUploadSignature({
       role: user.role,
       sellerId: effectiveSellerId,
-      filename
+      filename: rawFilename
     });
 
-    Logger.info(`[Reels] Generated direct upload signature for ${user.role} (Seller: ${effectiveSellerId || 'admin'})`);
+    Logger.info(`[Reels] Generated direct upload signature for ${user.role} (Seller: ${effectiveSellerId || 'admin'}, Folder: ${signatureData.folder})`);
 
     return res.json({
       success: true,
@@ -207,7 +207,10 @@ router.get('/upload-signature', requireAuth, async (req: AuthenticatedRequest, r
       error: err?.message || 'فشل في توليد توقيع الرفع السحابي'
     });
   }
-});
+};
+
+router.get('/upload-signature', requireAuth, handleUploadSignature);
+router.post('/upload-signature', requireAuth, handleUploadSignature);
 
 // POST /api/reels/upload-video - Upload Reel Video to Cloudinary/Storage with isolated seller/admin folders
 router.post(

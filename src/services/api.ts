@@ -1808,6 +1808,7 @@ export const api = {
       params.append('targetSellerId', targetSellerId);
     }
     const res = await fetch(`${API_BASE}/reels/upload-signature?${params.toString()}`, {
+      method: 'GET',
       credentials: 'include',
       headers: getAuthHeaders(user)
     });
@@ -1820,26 +1821,38 @@ export const api = {
 
   /**
    * Upload video with real upload progress tracking (XMLHttpRequest progress events)
-   * Supports direct Cloudinary signed upload or fallback server multipart stream upload.
-   * Eliminates Base64 conversion overhead for fast, high-performance uploading.
+   * Exclusively uses direct Cloudinary signed upload to bypass server/proxy payload limits (avoiding 413 errors).
+   * Eliminates Base64 conversion overhead for lightning-fast, high-performance streaming.
    */
   uploadReelVideoWithProgress(options: {
     user: { id?: string; role?: string; sellerId?: string };
-    file: File;
+    file: File | Blob;
+    filename?: string;
     onProgress?: (info: { loaded: number; total: number; percentage: number; state: 'uploading' | 'processing' }) => void;
     onCancelRef?: (cancelFn: () => void) => void;
     targetSellerId?: string;
   }): Promise<{ url: string; fileKey: string; cloudinaryPublicId: string; duration?: number; format?: string }> {
     return new Promise(async (resolve, reject) => {
-      const { user, file, onProgress, onCancelRef, targetSellerId } = options;
+      const { user, file, filename: customFilename, onProgress, onCancelRef, targetSellerId } = options;
+      const fileName = customFilename || (file instanceof File ? file.name : 'reel_video.mp4');
+      const fileSize = file.size;
 
       try {
-        // Step 1: Request upload signature from server
+        // Step 1: Request signed upload payload from server
         let signatureResponse;
         try {
-          signatureResponse = await api.getReelUploadSignature(user, file.name, targetSellerId);
-        } catch (sigErr) {
-          console.warn('[VideoUpload] Signature request failed, falling back to server upload:', sigErr);
+          signatureResponse = await api.getReelUploadSignature(user, fileName, targetSellerId);
+        } catch (sigErr: any) {
+          console.warn('[VideoUpload] Signature request failed:', sigErr);
+          // If signature failed with permission error or token expiration, do not proceed with doomed upload
+          if (fileSize > 4 * 1024 * 1024) {
+            return reject(
+              new Error(
+                sigErr?.message ||
+                  'تعذر الحصول على ترخيص الرفع السحابي للفيديو. يرجى التأكد من تسجيل الدخول والمحاولة مجدداً.'
+              )
+            );
+          }
         }
 
         const xhr = new XMLHttpRequest();
@@ -1850,29 +1863,29 @@ export const api = {
         }
 
         xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
+          if (event.lengthComputable && event.total > 0) {
             const percentage = Math.min(99, Math.round((event.loaded / event.total) * 100));
             onProgress?.({
               loaded: event.loaded,
               total: event.total,
               percentage,
-              state: percentage >= 100 ? 'processing' : 'uploading'
+              state: percentage >= 99 ? 'processing' : 'uploading'
             });
           }
         };
 
         xhr.upload.onload = () => {
-          // When 100% data has reached the server/Cloudinary, indicate processing state
+          // When 100% data has reached Cloudinary, indicate processing state
           onProgress?.({
-            loaded: file.size,
-            total: file.size,
+            loaded: fileSize,
+            total: fileSize,
             percentage: 100,
             state: 'processing'
           });
         };
 
         if (signatureResponse?.directUpload && signatureResponse.data) {
-          // Direct Cloudinary Signed Upload
+          // Direct Cloudinary Signed Upload (Zero Server Proxy Overhead — Completely bypasses Vercel/Proxy 413 limits)
           const sig = signatureResponse.data;
           const formData = new FormData();
           formData.append('file', file);
@@ -1898,32 +1911,53 @@ export const api = {
                   format: result.format
                 });
               } catch (e) {
-                reject(new Error('فشل في معالجة استجابة Cloudinary'));
+                reject(new Error('فشل في معالجة استجابة خدمة Cloudinary'));
               }
             } else {
               try {
                 const errJson = JSON.parse(xhr.responseText);
-                reject(new Error(errJson?.error?.message || `فشل رفع الفيديو (${xhr.status})`));
+                const cloudErr = errJson?.error?.message;
+                if (xhr.status === 413 || (cloudErr && cloudErr.toLowerCase().includes('too large'))) {
+                  reject(
+                    new Error(
+                      'حجم ملف الفيديو يتجاوز الحد المسموح به في خدمة التخزين السحابي (100 ميجابايت). يرجى اختيار ملف أصغر.'
+                    )
+                  );
+                } else if (cloudErr) {
+                  reject(new Error(`خطأ في الرفع السحابي: ${cloudErr}`));
+                } else {
+                  reject(new Error(`فشل رفع الفيديو إلى السحابة (${xhr.status})`));
+                }
               } catch {
-                reject(new Error(`فشل رفع الفيديو (${xhr.status})`));
+                if (xhr.status === 413) {
+                  reject(new Error('حجم ملف الفيديو يتجاوز الحد المسموح به (413).'));
+                } else {
+                  reject(new Error(`فشل رفع الفيديو إلى السحابة (${xhr.status})`));
+                }
               }
             }
           };
 
           xhr.onerror = () => {
-            reject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو'));
+            reject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو إلى السحابة'));
           };
 
           xhr.onabort = () => {
             reject(new Error('تم إلغاء عملية الرفع'));
           };
 
+          xhr.ontimeout = () => {
+            reject(new Error('انتهت مهلة الرفع السحابي بسبب بطء الاتصال. يرجى إعادة المحاولة.'));
+          };
+
+          xhr.timeout = 300000; // 5 minutes timeout for high-res craft reels
+
           xhr.send(formData);
         } else {
-          // Server-side Multipart Form-Data Upload
+          // Fallback: Local / Server-side Multipart Stream Upload (for non-Cloudinary setups)
           const formData = new FormData();
-          formData.append('videoFile', file);
-          formData.append('filename', file.name);
+          formData.append('videoFile', file, fileName);
+          formData.append('filename', fileName);
           formData.append('mimeType', file.type || 'video/mp4');
           if (targetSellerId) {
             formData.append('targetSellerId', targetSellerId);
@@ -1934,7 +1968,10 @@ export const api = {
 
           const authHeaders = getAuthHeaders(user);
           for (const [key, value] of Object.entries(authHeaders)) {
-            xhr.setRequestHeader(key, value);
+            // Do not override Content-Type for FormData multipart boundary
+            if (key.toLowerCase() !== 'content-type') {
+              xhr.setRequestHeader(key, value);
+            }
           }
 
           xhr.onload = () => {
@@ -1952,9 +1989,17 @@ export const api = {
             } else {
               try {
                 const errJson = JSON.parse(xhr.responseText);
-                reject(new Error(errJson.error || `فشل رفع الفيديو (${xhr.status})`));
+                if (xhr.status === 413) {
+                  reject(new Error('حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به لخادم التطبيق (413).'));
+                } else {
+                  reject(new Error(errJson.error || `فشل رفع الفيديو (${xhr.status})`));
+                }
               } catch {
-                reject(new Error(`فشل رفع الفيديو (${xhr.status})`));
+                if (xhr.status === 413) {
+                  reject(new Error('حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به لخادم التطبيق (413).'));
+                } else {
+                  reject(new Error(`فشل رفع الفيديو (${xhr.status})`));
+                }
               }
             }
           };
@@ -1995,26 +2040,36 @@ export const api = {
 
   async uploadReelVideo(
     user: { id?: string; role?: string; sellerId?: string },
-    videoDataUri: string,
+    videoDataUriOrFile: string | File | Blob,
     filename = 'reel_video.mp4',
     targetSellerId?: string
   ): Promise<{ url: string; fileKey: string; duration?: number; format?: string }> {
-    const res = await fetch(`${API_BASE}/reels/upload-video`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify({
-        video: videoDataUri,
-        filename,
-        mimeType: 'video/mp4',
-        targetSellerId
-      })
-    });
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في رفع الفيديو إلى Cloudinary');
+    // If a File or Blob or Base64 is passed, route through direct Cloudinary signed upload to avoid 413
+    let fileObj: File | Blob;
+    if (typeof videoDataUriOrFile === 'string') {
+      if (videoDataUriOrFile.startsWith('data:')) {
+        const parts = videoDataUriOrFile.split(',');
+        const mime = parts[0].match(/:(.*?);/)?.[1] || 'video/mp4';
+        const bstr = atob(parts[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        fileObj = new Blob([u8arr], { type: mime });
+      } else {
+        throw new Error('صيغة الفيديو غير صالحة');
+      }
+    } else {
+      fileObj = videoDataUriOrFile;
     }
-    return json.data;
+
+    return api.uploadReelVideoWithProgress({
+      user,
+      file: fileObj,
+      filename,
+      targetSellerId
+    });
   },
 
 
