@@ -6,10 +6,9 @@ import { HeritageCraftsShowcase } from '../public/HeritageCraftsShowcase';
 import { CraftReelsSection } from '../public/CraftReelsSection';
 import { ProductGrid } from '../products/ProductGrid';
 import { GovernorateExplorer } from '../public/GovernorateExplorer';
-import { PromotionsBanner } from '../public/PromotionsBanner';
 import { FeaturedSellers } from '../public/FeaturedSellers';
 import { AboutSection } from '../public/AboutSection';
-import { Sparkles, ArrowLeft, Flame, Award } from 'lucide-react';
+import { ArrowLeft, Flame } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
@@ -57,16 +56,13 @@ export const HomePage: React.FC = () => {
         <ProductGrid limit={8} />
       </section>
 
-      {/* 5. Governorate Map & Origin Explorer */}
+      {/* 6. Governorate Map & Origin Explorer */}
       <GovernorateExplorer />
-
-      {/* 6. Promotional Special Banner */}
-      <PromotionsBanner />
 
       {/* 7. Featured Artisans & Master Workshops */}
       <FeaturedSellers />
 
-      {/* 9. About Elsa3ed Market, Story & Mission */}
+      {/* 8. About Elsa3ed Market, Story & Mission */}
       <AboutSection />
     </div>
   );
