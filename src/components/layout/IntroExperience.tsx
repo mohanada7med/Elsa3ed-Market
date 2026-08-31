@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   Volume2,
   VolumeX,
   ArrowLeft,
   X,
-  Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -16,120 +15,41 @@ export const IntroExperience: React.FC = () => {
     setActivePage,
   } = useApp();
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-
   const [isMuted, setIsMuted] = useState(false);
-  const [isReady, setIsReady] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
-  /*
-   * Original Cloudinary video
-   */
-  const videoUrl =
-    'https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4';
-
-  /*
-   * Poster generated from the same video.
-   *
-   * so_0 = first frame
-   */
-  const posterUrl =
-    'https://res.cloudinary.com/kuana1nl/video/upload/so_0,w_1280,q_auto/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.jpg';
-
-  /*
-   * Start playback when the video is loaded.
-   */
-  useEffect(() => {
-    if (!showIntroVideo) return;
-
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    video.muted = isMuted;
-
-    const playVideo = async () => {
-      try {
-        await video.play();
-      } catch (error) {
-        /*
-         * Mobile browsers can block autoplay.
-         * In that case the poster remains visible
-         * until the user interacts with the page.
-         */
-        console.log('Autoplay waiting for user interaction');
-      }
-    };
-
-    playVideo();
-  }, [showIntroVideo]);
-
-  /*
-   * Video is ready to play.
-   */
-  const handleCanPlay = () => {
-    setIsReady(true);
-  };
-
-  /*
-   * Video loaded enough to display.
-   */
-  const handleLoadedData = () => {
-    setIsReady(true);
-  };
-
-  /*
-   * Video loading error.
-   */
-  const handleError = () => {
-    console.error('Failed to load intro video');
-    setHasError(true);
-  };
-
-  /*
-   * Toggle audio.
-   */
-  const toggleMute = () => {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    const newMutedState = !isMuted;
-
-    setIsMuted(newMutedState);
-
-    video.muted = newMutedState;
-
-    /*
-     * If the browser paused the video,
-     * try to start it again.
-     */
-    if (video.paused) {
-      video.play().catch(() => {
-        // Autoplay policy may prevent playback.
-      });
-    }
-  };
-
-  /*
-   * Start video after user interaction.
-   */
-  const startVideo = () => {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    video
-      .play()
-      .then(() => {
-        setIsReady(true);
-      })
-      .catch((error) => {
-        console.error('Unable to play video:', error);
-      });
-  };
 
   if (!showIntroVideo) return null;
+
+  /*
+   * ==========================================================
+   * VIDEO
+   * ==========================================================
+   *
+   * نفس الفيديو الأصلي بتاعك.
+   *
+   * فقط أضفنا q_auto و w_1280 لتقليل الحجم.
+   *
+   * لو Cloudinary عندك لا يقبل transformation مع الفيديو،
+   * استخدم الـ originalVideoUrl الموجود بالأسفل.
+   */
+
+  const originalVideoUrl =
+    'https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4';
+
+  const optimizedVideoUrl =
+    'https://res.cloudinary.com/kuana1nl/video/upload/w_1280,q_auto/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4';
+
+  /*
+   * ==========================================================
+   * POSTER
+   * ==========================================================
+   *
+   * الصورة يتم استخراجها من نفس الفيديو.
+   *
+   * so_0 = أول فريم.
+   */
+
+  const posterUrl =
+    'https://res.cloudinary.com/kuana1nl/video/upload/so_0,w_1280,q_auto/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.jpg';
 
   return (
     <AnimatePresence>
@@ -139,16 +59,11 @@ export const IntroExperience: React.FC = () => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="
-          fixed
-          inset-0
-          z-50
-          flex
-          items-center
-          justify-center
+          fixed inset-0 z-50
+          flex items-center justify-center
           bg-[#18110b]/90
           backdrop-blur-md
-          p-2.5
-          sm:p-6
+          p-2.5 sm:p-6
           overflow-y-auto
         "
       >
@@ -158,8 +73,7 @@ export const IntroExperience: React.FC = () => {
             w-full
             max-w-4xl
             bg-[#231a14]
-            border
-            border-[#d97706]/30
+            border border-[#d97706]/30
             rounded-2xl
             overflow-hidden
             shadow-2xl
@@ -170,9 +84,9 @@ export const IntroExperience: React.FC = () => {
           "
         >
 
-          {/* ========================= */}
+          {/* ================================================= */}
           {/* HEADER */}
-          {/* ========================= */}
+          {/* ================================================= */}
 
           <div
             className="
@@ -180,7 +94,7 @@ export const IntroExperience: React.FC = () => {
               top-4
               left-4
               right-4
-              z-30
+              z-20
               flex
               items-center
               justify-between
@@ -216,7 +130,7 @@ export const IntroExperience: React.FC = () => {
                   text-xs
                   font-medium
                   text-amber-200
-                "
+              "
               >
                 فيلم وثائقي: أصالة الصعيد
               </span>
@@ -229,14 +143,13 @@ export const IntroExperience: React.FC = () => {
               <button
                 type="button"
                 id="intro-mute-toggle"
-                onClick={toggleMute}
+                onClick={() => setIsMuted(!isMuted)}
                 className="
                   p-2
                   bg-black/50
                   hover:bg-black/80
                   rounded-full
-                  border
-                  border-white/10
+                  border border-white/10
                   text-white
                   transition-colors
                   min-h-[36px]
@@ -266,8 +179,7 @@ export const IntroExperience: React.FC = () => {
                   bg-black/50
                   hover:bg-black/80
                   rounded-full
-                  border
-                  border-white/10
+                  border border-white/10
                   text-white
                   transition-colors
                   min-h-[36px]
@@ -285,9 +197,9 @@ export const IntroExperience: React.FC = () => {
             </div>
           </div>
 
-          {/* ========================= */}
+          {/* ================================================= */}
           {/* VIDEO */}
-          {/* ========================= */}
+          {/* ================================================= */}
 
           <div
             className="
@@ -297,153 +209,71 @@ export const IntroExperience: React.FC = () => {
               overflow-hidden
               bg-black
             "
-            onClick={!isReady ? startVideo : undefined}
           >
 
-            {/* POSTER */}
-
-            <img
-              src={posterUrl}
-              alt="أصالة تراث الصعيد"
-              className={`
-                absolute
-                inset-0
+            <video
+              className="
                 w-full
                 h-full
                 object-cover
-                transition-opacity
-                duration-500
-                ${
-                  isReady && !hasError
-                    ? 'opacity-0 pointer-events-none'
-                    : 'opacity-100'
+              "
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              preload="auto"
+              poster={posterUrl}
+              onError={(e) => {
+                /*
+                 * إذا فشل الفيديو المحسن،
+                 * نرجع تلقائيًا للفيديو الأصلي.
+                 */
+
+                const video = e.currentTarget;
+
+                if (
+                  video.src !== originalVideoUrl
+                ) {
+                  video.src = originalVideoUrl;
+                  video.load();
+
+                  video.play().catch(() => {
+                    // Browser autoplay policy.
+                  });
                 }
-              `}
-              loading="eager"
-              fetchPriority="high"
-            />
+              }}
+            >
+              <source
+                src={optimizedVideoUrl}
+                type="video/mp4"
+              />
+            </video>
 
-            {/* LOADING */}
-
-            {!isReady && !hasError && (
-              <div
-                className="
-                  absolute
-                  inset-0
-                  z-10
-                  flex
-                  items-center
-                  justify-center
-                  pointer-events-none
-                "
-              >
-                <div
-                  className="
-                    w-11
-                    h-11
-                    rounded-full
-                    bg-black/50
-                    backdrop-blur-md
-                    border
-                    border-white/10
-                    flex
-                    items-center
-                    justify-center
-                  "
-                >
-                  <Loader2
-                    className="
-                      w-5
-                      h-5
-                      text-amber-400
-                      animate-spin
-                    "
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* VIDEO */}
-
-            {!hasError && (
-              <video
-                ref={videoRef}
-                className="
-                  absolute
-                  inset-0
-                  w-full
-                  h-full
-                  object-cover
-                "
-                autoPlay
-                loop
-                muted={isMuted}
-                playsInline
-                preload="auto"
-                poster={posterUrl}
-                onCanPlay={handleCanPlay}
-                onLoadedData={handleLoadedData}
-                onError={handleError}
-              >
-                <source
-                  src={videoUrl}
-                  type="video/mp4"
-                />
-
-                متصفحك لا يدعم تشغيل الفيديو.
-              </video>
-            )}
-
-            {/* ERROR */}
-
-            {hasError && (
-              <div
-                className="
-                  absolute
-                  inset-0
-                  bg-black
-                "
-              >
-                <img
-                  src={posterUrl}
-                  alt="أصالة تراث الصعيد"
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                  "
-                />
-              </div>
-            )}
-
-            {/* GRADIENT */}
+            {/* Gradient */}
 
             <div
               className="
                 absolute
                 inset-0
-                z-20
                 bg-gradient-to-t
                 from-[#231a14]
-                via-black/20
-                to-black/30
+                via-black/30
+                to-black/40
                 pointer-events-none
               "
             />
 
           </div>
 
-          {/* ========================= */}
+          {/* ================================================= */}
           {/* FOOTER */}
-          {/* ========================= */}
+          {/* ================================================= */}
 
           <div
             className="
-              p-4
-              sm:p-6
+              p-4 sm:p-6
               bg-[#1a120c]
-              border-t
-              border-[#3d2e22]
+              border-t border-[#3d2e22]
               flex
               flex-col
               sm:flex-row
@@ -518,7 +348,6 @@ export const IntroExperience: React.FC = () => {
               </button>
 
             </div>
-
           </div>
 
         </div>
