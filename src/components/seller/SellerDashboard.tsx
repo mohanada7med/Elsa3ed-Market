@@ -9,6 +9,7 @@ import { RefreshDataButton } from '../common/RefreshDataButton.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
+import { ChatView } from '../chat/ChatView.tsx';
 import {
   Store,
   Package,
@@ -57,7 +58,8 @@ import {
   Play,
   Share2,
   Heart,
-  Music
+  Music,
+  MessageSquare
 } from 'lucide-react';
 
 // Curated Heritage Craft Workshop Cover Presets
@@ -145,10 +147,11 @@ export const SellerDashboard: React.FC = () => {
     refreshStockMovements,
     sellerStats,
     refreshSellerStats,
-    updateSellerProfile
+    updateSellerProfile,
+    chatUnreadCount
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
 
   // Reels Management State (Seller Workshop Control)
   const [reels, setReels] = useState<CraftReel[]>([]);
@@ -206,6 +209,7 @@ export const SellerDashboard: React.FC = () => {
     if (activePage === 'seller-products') setActiveTab('products');
     else if (activePage === 'seller-inventory') setActiveTab('inventory');
     else if (activePage === 'seller-orders') setActiveTab('orders');
+    else if (activePage === 'seller-messages') setActiveTab('messages');
     else if (activePage === 'seller-payouts' || activePage === 'seller-analytics') setActiveTab('payouts');
     else if (activePage === 'seller-account') setActiveTab('settings');
     else if (activePage === 'seller-dashboard') setActiveTab('overview');
@@ -1146,6 +1150,25 @@ export const SellerDashboard: React.FC = () => {
         >
           <Truck className="w-4 h-4" />
           <span>تنفيذ وتجهيز الطلبات ({orders.length})</span>
+        </button>
+
+        <button
+          type="button"
+          id="seller-messages-tab-btn"
+          onClick={() => setActiveTab('messages')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'messages'
+              ? 'bg-[#B45F42] text-white shadow-xs'
+              : 'bg-white text-[#2D2A26] hover:bg-[#F3EFE9] border border-[#E8E1D9]'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4 text-amber-500" />
+          <span>محادثات الزبائن المباشرة</span>
+          {chatUnreadCount > 0 && (
+            <span className="bg-amber-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+              {chatUnreadCount}
+            </span>
+          )}
         </button>
 
         <button
@@ -2560,6 +2583,13 @@ export const SellerDashboard: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* TAB: SELLER LIVE CHAT */}
+      {activeTab === 'messages' && (
+        <div className="bg-white dark:bg-stone-900 rounded-3xl border border-[#E8E1D9] dark:border-stone-800 p-2 sm:p-4">
+          <ChatView isSellerMode={true} />
         </div>
       )}
 

@@ -13,11 +13,11 @@ import { uploadLimiter } from '../middleware/rateLimiter.ts';
 
 const router = express.Router();
 
-// Configure Multer for streaming/binary multipart video uploads (up to 150MB)
+// Configure Multer for streaming/binary multipart video uploads (up to 250MB fallback)
 const videoMulter = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 150 * 1024 * 1024 // 150 MB
+    fileSize: 250 * 1024 * 1024 // 250 MB
   },
   fileFilter: (_req, file, cb) => {
     const allowedMimes = [
@@ -123,42 +123,6 @@ router.get('/', async (req, res: Response) => {
   }
 });
 
-// GET /api/reels/:id - Get single reel
-router.get('/:id', async (req, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { db, isMongo } = await getDatabase();
-
-    let reel: CraftReelDocument | null = null;
-    if (isMongo && db) {
-      reel = await db.collection<CraftReelDocument>('reels').findOne({ id });
-    }
-    if (!reel) {
-      reel = memoryDb.reels.find((r) => r.id === id) || null;
-    }
-
-    if (!reel) {
-      return res.status(404).json({
-        success: false,
-        error: 'مقطع الفيديو غير موجود',
-        code: 'NOT_FOUND'
-      });
-    }
-
-    return res.json({
-      success: true,
-      data: reel
-    });
-  } catch (err: any) {
-    Logger.error('[Reels] Error getting reel by id:', err);
-    return res.status(500).json({
-      success: false,
-      error: 'تعذر جلب تفاصيل الفيديو',
-      code: 'SERVER_ERROR'
-    });
-  }
-});
-
 // GET & POST /api/reels/upload-signature - Request secure Cloudinary direct signed upload parameters
 const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -223,7 +187,7 @@ router.post(
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به (150 ميجابايت)'
+            error: 'حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به (250 ميجابايت)'
           });
         }
         return res.status(400).json({
@@ -360,6 +324,42 @@ router.post('/delete-asset', requireAuth, async (req: AuthenticatedRequest, res:
     return res.status(500).json({
       success: false,
       error: err?.message || 'فشل في تنظيف الملف'
+    });
+  }
+});
+
+// GET /api/reels/:id - Get single reel
+router.get('/:id', async (req, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { db, isMongo } = await getDatabase();
+
+    let reel: CraftReelDocument | null = null;
+    if (isMongo && db) {
+      reel = await db.collection<CraftReelDocument>('reels').findOne({ id });
+    }
+    if (!reel) {
+      reel = memoryDb.reels.find((r) => r.id === id) || null;
+    }
+
+    if (!reel) {
+      return res.status(404).json({
+        success: false,
+        error: 'مقطع الفيديو غير موجود',
+        code: 'NOT_FOUND'
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: reel
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Error getting reel by id:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'تعذر جلب تفاصيل الفيديو',
+      code: 'SERVER_ERROR'
     });
   }
 });

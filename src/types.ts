@@ -291,15 +291,18 @@ export type ActivePage =
   | 'orders'
   | 'order-details'
   | 'favorites'
+  | 'messages'
   | 'buyer-account'
   | 'seller-dashboard'
   | 'seller-products'
   | 'seller-inventory'
   | 'seller-orders'
+  | 'seller-messages'
   | 'seller-payouts'
   | 'seller-analytics'
   | 'seller-account'
   | 'admin-dashboard'
+
   | 'admin-sellers'
   | 'admin-products'
   | 'admin-buyers'
@@ -464,5 +467,46 @@ export interface CraftReel {
   createdAt: string;
   comments?: CraftReelComment[];
 }
+
+export interface Conversation {
+  id: string;
+  buyerId: string;
+  buyerName: string;
+  buyerAvatar?: string;
+  sellerId: string;
+  sellerName: string;
+  sellerAvatar?: string;
+  productId?: string;
+  productTitle?: string;
+  productImage?: string;
+  productPrice?: number;
+  orderId?: string;
+  orderNumber?: string;
+  orderStatus?: OrderStatus;
+  lastMessageText?: string;
+  lastMessageSenderId?: string;
+  lastMessageSenderRole?: UserRole;
+  lastMessageAt?: string;
+  buyerUnreadCount: number;
+  sellerUnreadCount: number;
+  status: 'active' | 'archived' | 'blocked';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: UserRole;
+  receiverId: string;
+  text: string;
+  messageType: 'text' | 'image' | 'product_reference' | 'system';
+  isRead: boolean;
+  readAt?: string;
+  createdAt: string;
+}
+
 
 

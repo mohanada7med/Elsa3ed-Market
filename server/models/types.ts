@@ -521,4 +521,45 @@ export interface CraftReelDocument {
   comments?: CraftReelCommentDocument[];
 }
 
+export interface ConversationDocument {
+  id: string;
+  buyerId: string;
+  buyerName: string;
+  buyerAvatar?: string;
+  sellerId: string;
+  sellerName: string;
+  sellerAvatar?: string;
+  productId?: string;
+  productTitle?: string;
+  productImage?: string;
+  productPrice?: number;
+  orderId?: string;
+  orderNumber?: string;
+  orderStatus?: OrderStatus;
+  lastMessageText?: string;
+  lastMessageSenderId?: string;
+  lastMessageSenderRole?: UserRole;
+  lastMessageAt?: string;
+  buyerUnreadCount: number;
+  sellerUnreadCount: number;
+  status: 'active' | 'archived' | 'blocked';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MessageDocument {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: UserRole;
+  receiverId: string;
+  text: string;
+  messageType: 'text' | 'image' | 'product_reference' | 'system';
+  isRead: boolean;
+  readAt?: string;
+  createdAt: string;
+}
+
+
 

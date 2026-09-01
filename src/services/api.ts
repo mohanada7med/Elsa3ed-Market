@@ -11,8 +11,11 @@ import {
   AdminPayoutSummary,
   PayoutMethod,
   CraftReel,
-  CraftReelComment
+  CraftReelComment,
+  Conversation,
+  ChatMessage
 } from '../types.ts';
+
 
 const API_BASE = '/api';
 const TOKEN_KEY = 'saeed_auth_token';
@@ -1827,14 +1830,21 @@ export const api = {
 
   /**
    * Upload video with real upload progress tracking (XMLHttpRequest progress events)
-   * Exclusively uses direct Cloudinary signed upload to bypass server/proxy payload limits (avoiding 413 errors).
-   * Eliminates Base64 conversion overhead for lightning-fast, high-performance streaming.
+   * Exclusively uses direct Cloudinary signed chunked upload to completely bypass server/proxy payload limits (avoiding 413 & timeouts).
+   * Supports massive video files (up to 2GB+) by slicing into reliable 6MB chunks with automatic per-chunk retries and progress aggregation.
    */
   uploadReelVideoWithProgress(options: {
     user: { id?: string; role?: string; sellerId?: string };
     file: File | Blob;
     filename?: string;
-    onProgress?: (info: { loaded: number; total: number; percentage: number; state: 'uploading' | 'processing' }) => void;
+    onProgress?: (info: {
+      loaded: number;
+      total: number;
+      percentage: number;
+      state: 'uploading' | 'processing';
+      currentChunk?: number;
+      totalChunks?: number;
+    }) => void;
     onCancelRef?: (cancelFn: () => void) => void;
     targetSellerId?: string;
   }): Promise<{ url: string; fileKey: string; cloudinaryPublicId: string; duration?: number; format?: string }> {
@@ -1843,6 +1853,24 @@ export const api = {
       const fileName = customFilename || (file instanceof File ? file.name : 'reel_video.mp4');
       const fileSize = file.size;
 
+      if (!file || fileSize <= 0) {
+        return reject(new Error('ملف الفيديو المحدد فارغ أو غير صالح'));
+      }
+
+      let isCancelled = false;
+      let activeXhr: XMLHttpRequest | null = null;
+
+      if (onCancelRef) {
+        onCancelRef(() => {
+          isCancelled = true;
+          if (activeXhr) {
+            try {
+              activeXhr.abort();
+            } catch {}
+          }
+        });
+      }
+
       try {
         // Step 1: Request signed upload payload from server
         let signatureResponse;
@@ -1850,7 +1878,6 @@ export const api = {
           signatureResponse = await api.getReelUploadSignature(user, fileName, targetSellerId);
         } catch (sigErr: any) {
           console.warn('[VideoUpload] Signature request failed:', sigErr);
-          // If signature failed with permission error or token expiration, do not proceed with doomed upload
           if (fileSize > 4 * 1024 * 1024) {
             return reject(
               new Error(
@@ -1861,104 +1888,164 @@ export const api = {
           }
         }
 
-        const xhr = new XMLHttpRequest();
-        if (onCancelRef) {
-          onCancelRef(() => {
-            xhr.abort();
-          });
-        }
+        if (signatureResponse?.directUpload && signatureResponse.data) {
+          // Direct Cloudinary Signed Chunked Upload (Zero Server Proxy Overhead — Completely bypasses Vercel/Proxy 413 limits)
+          const sig = signatureResponse.data;
+          const uploadUrl = `https://api.cloudinary.com/v1_1/${sig.cloudName}/video/upload`;
+          const uniqueUploadId = `cld_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable && event.total > 0) {
-            const percentage = Math.min(99, Math.round((event.loaded / event.total) * 100));
-            onProgress?.({
-              loaded: event.loaded,
-              total: event.total,
-              percentage,
-              state: percentage >= 99 ? 'processing' : 'uploading'
-            });
+          // Standard Cloudinary chunk size: 6MB (Cloudinary requires minimum 5MB for chunked uploads except last chunk)
+          const CHUNK_SIZE = 6 * 1024 * 1024;
+          const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
+          const isChunked = fileSize > CHUNK_SIZE;
+
+          let finalResult: any = null;
+
+          for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+            if (isCancelled) {
+              return reject(new Error('تم إلغاء عملية الرفع'));
+            }
+
+            const start = chunkIndex * CHUNK_SIZE;
+            const end = Math.min(start + CHUNK_SIZE, fileSize);
+            const isLastChunk = chunkIndex === totalChunks - 1;
+            const chunkBlob = file.slice(start, end);
+
+            // Execute chunk upload with up to 3 retries on transient network errors
+            let chunkSuccess = false;
+            let lastChunkError: any = null;
+
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              if (isCancelled) {
+                return reject(new Error('تم إلغاء عملية الرفع'));
+              }
+
+              try {
+                const chunkResponse = await new Promise<any>((chunkResolve, chunkReject) => {
+                  const xhr = new XMLHttpRequest();
+                  activeXhr = xhr;
+
+                  xhr.upload.onprogress = (event) => {
+                    if (event.lengthComputable && event.total > 0) {
+                      const cumulativeLoaded = start + event.loaded;
+                      const percentage = Math.min(99, Math.round((cumulativeLoaded / fileSize) * 100));
+                      onProgress?.({
+                        loaded: cumulativeLoaded,
+                        total: fileSize,
+                        percentage,
+                        state: isLastChunk && percentage >= 99 ? 'processing' : 'uploading',
+                        currentChunk: chunkIndex + 1,
+                        totalChunks
+                      });
+                    }
+                  };
+
+                  xhr.open('POST', uploadUrl);
+
+                  if (isChunked) {
+                    xhr.setRequestHeader('X-Unique-Upload-Id', uniqueUploadId);
+                    xhr.setRequestHeader('Content-Range', `bytes ${start}-${end - 1}/${fileSize}`);
+                  }
+
+                  xhr.timeout = 180000; // 3 minutes timeout per 6MB chunk
+
+                  xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                      try {
+                        const parsed = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+                        chunkResolve(parsed);
+                      } catch {
+                        chunkResolve({});
+                      }
+                    } else {
+                      try {
+                        const errJson = JSON.parse(xhr.responseText);
+                        const cloudErr = errJson?.error?.message || `HTTP ${xhr.status}`;
+                        chunkReject(new Error(cloudErr));
+                      } catch {
+                        chunkReject(new Error(`فشل رفع الجزء (${xhr.status})`));
+                      }
+                    }
+                  };
+
+                  xhr.onerror = () => {
+                    chunkReject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو'));
+                  };
+
+                  xhr.ontimeout = () => {
+                    chunkReject(new Error('انتهت مهلة رفع الجزء السحابي'));
+                  };
+
+                  xhr.onabort = () => {
+                    chunkReject(new Error('تم إلغاء عملية الرفع'));
+                  };
+
+                  const formData = new FormData();
+                  formData.append('file', chunkBlob);
+                  formData.append('api_key', sig.apiKey);
+                  formData.append('timestamp', String(sig.timestamp));
+                  formData.append('signature', sig.signature);
+                  formData.append('folder', sig.folder);
+                  formData.append('public_id', sig.publicId);
+
+                  xhr.send(formData);
+                });
+
+                chunkSuccess = true;
+                if (isLastChunk || chunkResponse?.secure_url || chunkResponse?.public_id) {
+                  finalResult = chunkResponse;
+                }
+                break;
+              } catch (err: any) {
+                lastChunkError = err;
+                if (err?.message === 'تم إلغاء عملية الرفع' || isCancelled) {
+                  return reject(new Error('تم إلغاء عملية الرفع'));
+                }
+                // If attempt < 3, wait briefly before retrying chunk
+                if (attempt < 3) {
+                  await new Promise((r) => setTimeout(r, attempt * 1000));
+                }
+              }
+            }
+
+            if (!chunkSuccess) {
+              const errMsg = lastChunkError?.message || 'فشل في رفع أجزاء الفيديو إلى السحابة';
+              if (errMsg.toLowerCase().includes('too large') || errMsg.includes('413')) {
+                return reject(
+                  new Error('حجم ملف الفيديو يتجاوز السعة السحابية المسموحة في باقة Cloudinary.')
+                );
+              }
+              return reject(new Error(`خطأ في الرفع السحابي (الجزء ${chunkIndex + 1}): ${errMsg}`));
+            }
           }
-        };
 
-        xhr.upload.onload = () => {
-          // When 100% data has reached Cloudinary, indicate processing state
+          // Complete upload progress
           onProgress?.({
             loaded: fileSize,
             total: fileSize,
             percentage: 100,
-            state: 'processing'
+            state: 'processing',
+            currentChunk: totalChunks,
+            totalChunks
           });
-        };
 
-        if (signatureResponse?.directUpload && signatureResponse.data) {
-          // Direct Cloudinary Signed Upload (Zero Server Proxy Overhead — Completely bypasses Vercel/Proxy 413 limits)
-          const sig = signatureResponse.data;
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('api_key', sig.apiKey);
-          formData.append('timestamp', String(sig.timestamp));
-          formData.append('signature', sig.signature);
-          formData.append('folder', sig.folder);
-          formData.append('public_id', sig.publicId);
+          if (finalResult && (finalResult.secure_url || finalResult.url || finalResult.public_id)) {
+            return resolve({
+              url: finalResult.secure_url || finalResult.url,
+              fileKey: finalResult.public_id || sig.publicId,
+              cloudinaryPublicId: finalResult.public_id || sig.publicId,
+              duration: finalResult.duration,
+              format: finalResult.format
+            });
+          }
 
-          const uploadUrl = `https://api.cloudinary.com/v1_1/${sig.cloudName}/video/upload`;
-
-          xhr.open('POST', uploadUrl);
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              try {
-                const result = JSON.parse(xhr.responseText);
-                resolve({
-                  url: result.secure_url || result.url,
-                  fileKey: result.public_id,
-                  cloudinaryPublicId: result.public_id,
-                  duration: result.duration,
-                  format: result.format
-                });
-              } catch (e) {
-                reject(new Error('فشل في معالجة استجابة خدمة Cloudinary'));
-              }
-            } else {
-              try {
-                const errJson = JSON.parse(xhr.responseText);
-                const cloudErr = errJson?.error?.message;
-                if (xhr.status === 413 || (cloudErr && cloudErr.toLowerCase().includes('too large'))) {
-                  reject(
-                    new Error(
-                      'حجم ملف الفيديو يتجاوز الحد المسموح به في خدمة التخزين السحابي (100 ميجابايت). يرجى اختيار ملف أصغر.'
-                    )
-                  );
-                } else if (cloudErr) {
-                  reject(new Error(`خطأ في الرفع السحابي: ${cloudErr}`));
-                } else {
-                  reject(new Error(`فشل رفع الفيديو إلى السحابة (${xhr.status})`));
-                }
-              } catch {
-                if (xhr.status === 413) {
-                  reject(new Error('حجم ملف الفيديو يتجاوز الحد المسموح به (413).'));
-                } else {
-                  reject(new Error(`فشل رفع الفيديو إلى السحابة (${xhr.status})`));
-                }
-              }
-            }
-          };
-
-          xhr.onerror = () => {
-            reject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو إلى السحابة'));
-          };
-
-          xhr.onabort = () => {
-            reject(new Error('تم إلغاء عملية الرفع'));
-          };
-
-          xhr.ontimeout = () => {
-            reject(new Error('انتهت مهلة الرفع السحابي بسبب بطء الاتصال. يرجى إعادة المحاولة.'));
-          };
-
-          xhr.timeout = 300000; // 5 minutes timeout for high-res craft reels
-
-          xhr.send(formData);
+          // Fallback if response didn't include url but public_id was uploaded
+          const deliveryUrl = `https://res.cloudinary.com/${sig.cloudName}/video/upload/${sig.folder}/${sig.publicId}.mp4`;
+          return resolve({
+            url: deliveryUrl,
+            fileKey: `${sig.folder}/${sig.publicId}`,
+            cloudinaryPublicId: `${sig.folder}/${sig.publicId}`
+          });
         } else {
           // Fallback: Local / Server-side Multipart Stream Upload (for non-Cloudinary setups)
           const formData = new FormData();
@@ -1969,12 +2056,26 @@ export const api = {
             formData.append('targetSellerId', targetSellerId);
           }
 
+          const xhr = new XMLHttpRequest();
+          activeXhr = xhr;
+
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable && event.total > 0) {
+              const percentage = Math.min(99, Math.round((event.loaded / event.total) * 100));
+              onProgress?.({
+                loaded: event.loaded,
+                total: event.total,
+                percentage,
+                state: percentage >= 99 ? 'processing' : 'uploading'
+              });
+            }
+          };
+
           xhr.open('POST', `${API_BASE}/reels/upload-video`);
           xhr.withCredentials = true;
 
           const authHeaders = getAuthHeaders(user);
           for (const [key, value] of Object.entries(authHeaders)) {
-            // Do not override Content-Type for FormData multipart boundary
             if (key.toLowerCase() !== 'content-type') {
               xhr.setRequestHeader(key, value);
             }
@@ -2022,6 +2123,8 @@ export const api = {
         }
       } catch (err: any) {
         reject(err);
+      } finally {
+        activeXhr = null;
       }
     });
   },
@@ -2187,6 +2290,113 @@ export const api = {
       throw new Error(json.error || 'فشل في إضافة التعليق');
     }
     return json.data;
+  },
+
+  // ==================== LIVE CHAT & MESSAGING ====================
+
+  async getChatUnreadCount(user?: { id?: string; role?: string; sellerId?: string }): Promise<number> {
+    try {
+      const res = await fetch(`${API_BASE}/chat/unread-count`, {
+        headers: getAuthHeaders(user)
+      });
+      const json = await res.json();
+      return json.unreadCount || 0;
+    } catch {
+      return 0;
+    }
+  },
+
+  async getConversations(user?: { id?: string; role?: string; sellerId?: string }): Promise<Conversation[]> {
+    const res = await fetch(`${API_BASE}/chat/conversations`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Conversation[]> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحميل المحادثات');
+    }
+    return json.data;
+  },
+
+  async getOrCreateConversation(
+    data: { sellerId: string; productId?: string; orderId?: string; initialMessage?: string },
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<Conversation> {
+    const res = await fetch(`${API_BASE}/chat/conversations`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<Conversation> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.message || json.error || 'فشل في فتح المحادثة');
+    }
+    return json.data;
+  },
+
+  async getConversation(
+    id: string,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<Conversation> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${id}`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Conversation> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب المحادثة');
+    }
+    return json.data;
+  },
+
+  async getMessages(
+    conversationId: string,
+    user?: { id?: string; role?: string; sellerId?: string },
+    limit: number = 50,
+    before?: string
+  ): Promise<ChatMessage[]> {
+    const query = new URLSearchParams({ limit: limit.toString() });
+    if (before) query.append('before', before);
+
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}/messages?${query.toString()}`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<ChatMessage[]> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في جلب الرسائل');
+    }
+    return json.data;
+  },
+
+  async sendMessage(
+    conversationId: string,
+    data: { text: string; messageType?: 'text' | 'image' | 'product_reference' },
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<{ message: ChatMessage; conversation: Conversation }> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: any = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.message || json.error || 'فشل في إرسال الرسالة');
+    }
+    return {
+      message: json.data,
+      conversation: json.conversation
+    };
+  },
+
+  async markConversationRead(
+    conversationId: string,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<number> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}/read`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user)
+    });
+    const json: any = await res.json();
+    return json.readCount || 0;
   }
 };
+
 

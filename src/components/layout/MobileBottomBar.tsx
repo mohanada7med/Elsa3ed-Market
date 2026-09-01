@@ -14,7 +14,8 @@ import {
   Boxes,
   ClipboardList,
   ShieldCheck,
-  Users
+  Users,
+  MessageSquare
 } from 'lucide-react';
 
 export const MobileBottomBar: React.FC = () => {
@@ -27,7 +28,8 @@ export const MobileBottomBar: React.FC = () => {
     isAuthenticated,
     currentRole,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    chatUnreadCount
   } = useApp();
 
   const handleAccountClick = () => {
@@ -122,20 +124,27 @@ export const MobileBottomBar: React.FC = () => {
               <span className="text-[10px] mt-1 tracking-tight">الطلبات</span>
             </button>
 
-            {/* Inventory */}
+            {/* Seller Live Messages */}
             <button
               type="button"
-              id="mobile-bar-seller-inventory"
-              onClick={() => setActivePage('seller-inventory')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'seller-inventory'
+              id="mobile-bar-seller-messages"
+              onClick={() => setActivePage('messages')}
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+                activePage === 'messages' || activePage === 'seller-messages'
                   ? 'text-amber-700 dark:text-amber-400 font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82]'
               }`}
-              aria-label="إدارة المخزون"
+              aria-label="رسائل الورشة"
             >
-              <Boxes className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">المخزون</span>
+              <div className="relative">
+                <MessageSquare className="w-5 h-5" />
+                {chatUnreadCount > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-amber-600 text-white text-[9px] font-bold px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
+                    {chatUnreadCount}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] mt-1 tracking-tight">الرسائل</span>
             </button>
           </>
         ) : isAuthenticated && currentRole === 'admin' ? (
@@ -344,6 +353,40 @@ export const MobileBottomBar: React.FC = () => {
                 )}
               </div>
               <span className="text-[10px] mt-1 tracking-tight">المفضلة</span>
+            </button>
+
+            {/* Messages / Chat Center */}
+            <button
+              type="button"
+              id="mobile-bar-messages"
+              onClick={() => {
+                if (!isAuthenticated) {
+                  setAuthModalTab('login');
+                  setIsAuthModalOpen(true);
+                } else {
+                  setActivePage('messages');
+                }
+              }}
+              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[48px] min-h-[48px] cursor-pointer ${
+                activePage === 'messages'
+                  ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
+                  : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
+              }`}
+              aria-label="الرسائل والمحادثات"
+              aria-current={activePage === 'messages' ? 'page' : undefined}
+            >
+              <div className="relative">
+                <MessageSquare className="w-5 h-5 transition-transform active:scale-90" />
+                {chatUnreadCount > 0 && (
+                  <span className="absolute -top-1 -right-2 bg-[#B45F42] dark:bg-[#FF855D] text-white text-[9px] font-bold px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
+                    {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+                  </span>
+                )}
+                {isAuthenticated && activePage === 'messages' && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
+                )}
+              </div>
+              <span className="text-[10px] mt-1 tracking-tight">الرسائل</span>
             </button>
 
             {/* Account / Login Button */}

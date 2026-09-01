@@ -4,6 +4,7 @@ import { NotificationCenter } from '../common/NotificationCenter';
 import {
   ShoppingBag,
   Heart,
+  MessageSquare,
   Search,
   Menu,
   X,
@@ -25,6 +26,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
+
 import { motion, AnimatePresence } from 'motion/react';
 
 export const Header: React.FC = () => {
@@ -44,7 +46,8 @@ export const Header: React.FC = () => {
     setAuthModalTab,
     setShowIntroVideo,
     theme,
-    toggleTheme
+    toggleTheme,
+    chatUnreadCount
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -298,6 +301,35 @@ export const Header: React.FC = () => {
               <NotificationCenter />
             )}
 
+            {/* Live Chat Messages Button (Visible when Authenticated or for Buyers/Sellers) */}
+            {isAuthenticated && (
+              <button
+                type="button"
+                id="nav-chat-btn"
+                onClick={() => {
+                  if (currentRole === 'seller') {
+                    setActivePage('seller-dashboard');
+                  } else {
+                    setActivePage('messages');
+                  }
+                }}
+                className={`relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors flex items-center justify-center cursor-pointer border ${
+                  activePage === 'messages' || activePage === 'seller-messages'
+                    ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                    : 'border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42]'
+                } min-h-[44px] min-w-[44px]`}
+                title="المحادثات المباشرة"
+                aria-label={`المحادثات المباشرة، ${chatUnreadCount} رسائل غير مقروءة`}
+              >
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42]" />
+                {chatUnreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs animate-pulse">
+                    {chatUnreadCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             {/* Favorites Icon (Buyers and Guests only - Hidden for Seller & Admin) */}
             {(currentRole === 'buyer' || !isAuthenticated) && (
               <button
@@ -443,6 +475,32 @@ export const Header: React.FC = () => {
                       >
                         <User className="w-4 h-4 text-[#B45F42]" />
                         <span>الملف الشخصي وإعدادات الحساب</span>
+                      </button>
+
+                      {/* Live Chat Messages Link in Dropdown */}
+                      <button
+                        type="button"
+                        id="user-messages-link"
+                        onClick={() => {
+                          if (currentRole === 'seller') {
+                            setActivePage('seller-dashboard');
+                          } else {
+                            setActivePage('messages');
+                          }
+                          setUserDropdownOpen(false);
+                        }}
+                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center justify-between font-medium transition-colors cursor-pointer"
+                        aria-label="المحادثات المباشرة مع الحرفيين"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <MessageSquare className="w-4 h-4 text-amber-600" />
+                          <span>المحادثات المباشرة</span>
+                        </div>
+                        {chatUnreadCount > 0 && (
+                          <span className="text-[10px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-full">
+                            {chatUnreadCount}
+                          </span>
+                        )}
                       </button>
 
                       {/* Buyer Links */}

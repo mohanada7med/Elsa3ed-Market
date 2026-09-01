@@ -19,6 +19,7 @@ import {
 } from '../types.ts';
 import { api } from '../services/api.ts';
 import { notificationService } from '../services/notificationService.ts';
+import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
 
 export interface ToastNotification {
   id: string;
@@ -198,10 +199,22 @@ interface AppContextType {
   // Auth
   changePersonalPassword: (currentPassword: string, newPassword: string) => Promise<void>;
 
-  // Notifications / Toast
+  // Notifications / Toast & Browser Push
   toasts: ToastNotification[];
   addToast: (title: string, message: string, type?: 'success' | 'info' | 'warning' | 'error') => void;
   removeToast: (id: string) => void;
+  browserNotificationPermission: NotificationPermission | 'unsupported';
+  browserNotificationSettings: BrowserNotificationSettings;
+  requestBrowserNotificationPermission: () => Promise<NotificationPermission | 'unsupported'>;
+  updateBrowserNotificationSettings: (partial: Partial<BrowserNotificationSettings>) => void;
+  sendTestBrowserNotification: () => void;
+
+  // Live Chat & Real-Time Messaging
+  chatUnreadCount: number;
+  refreshChatUnreadCount: () => Promise<void>;
+  activeConversationId: string | null;
+  setActiveConversationId: (id: string | null) => void;
+  openChatWithArtisan: (params: { sellerId: string; productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -315,11 +328,13 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   orders: '/orders',
   'order-details': '/orders',
   favorites: '/favorites',
+  messages: '/messages',
   'buyer-account': '/buyer-account',
   'seller-dashboard': '/seller-dashboard',
   'seller-products': '/seller-products',
   'seller-inventory': '/seller-inventory',
   'seller-orders': '/seller-orders',
+  'seller-messages': '/seller-messages',
   'seller-payouts': '/seller-payouts',
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
@@ -428,11 +443,13 @@ function getInitialNavigationState(): {
     'cart',
     'checkout',
     'favorites',
+    'messages',
     'buyer-account',
     'seller-dashboard',
     'seller-products',
     'seller-inventory',
     'seller-orders',
+    'seller-messages',
     'seller-payouts',
     'seller-analytics',
     'seller-account',
@@ -644,6 +661,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
+  // Live Chat State
+  const [chatUnreadCount, setChatUnreadCount] = useState<number>(0);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState(initialNav.searchQuery || '');
   const [selectedGovernorateFilter, setSelectedGovernorateFilter] = useState<Governorate | 'all'>('all');
@@ -672,6 +693,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
+
+  // Browser Push & Native Notification State
+  const [browserNotificationPermission, setBrowserNotificationPermission] = useState<NotificationPermission | 'unsupported'>(() => {
+    return browserNotificationService.getPermission();
+  });
+  const [browserNotificationSettings, setBrowserNotificationSettingsState] = useState<BrowserNotificationSettings>(() => {
+    return browserNotificationService.getSettings();
+  });
+
+  const updateBrowserNotificationSettings = useCallback((partial: Partial<BrowserNotificationSettings>) => {
+    const updated = browserNotificationService.updateSettings(partial);
+    setBrowserNotificationSettingsState(updated);
+  }, []);
+
+  const requestBrowserNotificationPermission = useCallback(async () => {
+    const res = await browserNotificationService.requestPermission();
+    setBrowserNotificationPermission(res);
+    setBrowserNotificationSettingsState(browserNotificationService.getSettings());
+    return res;
+  }, []);
+
+  const sendTestBrowserNotification = useCallback(() => {
+    browserNotificationService.sendTestNotification();
+    addToast('تم إرسال إشعار تجريبي', 'تم اختبار منظومة التنبيهات الفورية والتنبيه الصوتي بنجاح', 'success');
+  }, [addToast]);
+
+  // Setup Notification Click Navigation
+  useEffect(() => {
+    browserNotificationService.setNavigationHandler((page, tab, meta) => {
+      if (page) setActivePage(page as any);
+      if (meta?.orderId) setSelectedOrderId(meta.orderId);
+      if (meta?.productId) setSelectedProductId(meta.productId);
+      if (meta?.sellerId) setSelectedSellerId(meta.sellerId);
+      if (meta?.conversationId) setActiveConversationId(meta.conversationId);
+    });
+  }, [setActivePage]);
 
   // Sync cart & favorites to localStorage (Buyers and guests only)
   useEffect(() => {
@@ -948,6 +1005,126 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshReviews,
     refreshCart
   ]);
+
+  // Live Chat: Unread counter fetch
+  const refreshChatUnreadCount = useCallback(async () => {
+    if (!currentUser?.id || currentRole === 'guest') {
+      setChatUnreadCount(0);
+      return;
+    }
+    try {
+      const count = await api.getChatUnreadCount({
+        id: currentUser.id,
+        role: currentRole,
+        sellerId: currentUser.sellerId || currentUser.id
+      });
+      setChatUnreadCount(count);
+    } catch {
+      // Non-blocking
+    }
+  }, [currentUser, currentRole]);
+
+  // Initial and periodic unread count check
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshChatUnreadCount();
+      const interval = setInterval(refreshChatUnreadCount, 30000);
+      return () => clearInterval(interval);
+    } else {
+      setChatUnreadCount(0);
+    }
+  }, [isAuthenticated, refreshChatUnreadCount]);
+
+  // Real-time Chat SSE Stream Listener
+  useEffect(() => {
+    if (!isAuthenticated || !currentUser?.id || typeof window === 'undefined') return;
+
+    let eventSource: EventSource | null = null;
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('saeed_auth_token') : null;
+      const url = token ? `/api/chat/stream?token=${encodeURIComponent(token)}` : '/api/chat/stream';
+      eventSource = new EventSource(url);
+
+      eventSource.addEventListener('chat:new_message', (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          if (data.message && data.message.receiverId === currentUser.id) {
+            refreshChatUnreadCount();
+
+            // Native Browser Notification & Harmonic Chime
+            browserNotificationService.notifyIncomingMessage(
+              data.message.senderName || 'الطرف الآخر',
+              data.message.text || '',
+              data.message.conversationId
+            );
+
+            // Show toast notification if user is not looking at this conversation
+            if (activeConversationId !== data.message.conversationId) {
+              addToast(
+                `رسالة جديدة من ${data.message.senderName || 'الطرف الآخر'}`,
+                data.message.text?.length > 70 ? `${data.message.text.substring(0, 70)}...` : data.message.text,
+                'info'
+              );
+            }
+          }
+        } catch {}
+      });
+
+      eventSource.addEventListener('chat:message_read', () => {
+        refreshChatUnreadCount();
+      });
+
+      eventSource.onerror = () => {
+        // SSE handles reconnection automatically
+      };
+    } catch (err) {
+      console.warn('[AppContext] SSE connection initialization error:', err);
+    }
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  }, [isAuthenticated, currentUser?.id, activeConversationId, refreshChatUnreadCount, addToast]);
+
+  // Open Chat with Artisan Action
+  const openChatWithArtisan = useCallback(async (params: {
+    sellerId: string;
+    productId?: string;
+    orderId?: string;
+    initialMessage?: string;
+  }) => {
+    if (!isAuthenticated || !currentUser?.id) {
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول لبدء المحادثة المباشرة مع الحرفي', 'info');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const conv = await api.getOrCreateConversation(params, {
+        id: currentUser.id,
+        role: currentRole,
+        sellerId: currentUser.sellerId || currentUser.id
+      });
+
+      setActiveConversationId(conv.id);
+      if (currentRole === 'seller') {
+        setActivePage('seller-messages');
+      } else {
+        setActivePage('messages');
+      }
+      refreshChatUnreadCount();
+    } catch (err: any) {
+      console.error('[AppContext] Failed to open conversation:', err);
+      addToast('خطأ في المحادثة', err?.message || 'تعذر بدء المحادثة، يرجى المحاولة لاحقاً', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated, currentUser, currentRole, setActivePage, refreshChatUnreadCount, addToast]);
+
 
 
   // Log helper
@@ -2059,7 +2236,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         changePersonalPassword,
         toasts,
         addToast,
-        removeToast
+        removeToast,
+        browserNotificationPermission,
+        browserNotificationSettings,
+        requestBrowserNotificationPermission,
+        updateBrowserNotificationSettings,
+        sendTestBrowserNotification,
+
+        chatUnreadCount,
+        refreshChatUnreadCount,
+        activeConversationId,
+        setActiveConversationId,
+        openChatWithArtisan
       }}
     >
       {children}

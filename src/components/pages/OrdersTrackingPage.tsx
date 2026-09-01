@@ -16,7 +16,8 @@ import {
   AlertTriangle,
   XCircle,
   CreditCard,
-  Phone
+  Phone,
+  MessageSquare
 } from 'lucide-react';
 
 const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
@@ -28,7 +29,7 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrdersTrackingPage: React.FC = () => {
-  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId } = useApp();
+  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan } = useApp();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -358,20 +359,38 @@ export const OrdersTrackingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Cancel Order Action for Eligible States */}
-                {['review', 'pending', 'confirmed'].includes(currentSelected.status) && (
-                  <div className="pt-4 border-t border-[#ebdccd] flex justify-end">
+                {/* Order Chat & Actions */}
+                <div className="pt-4 border-t border-[#ebdccd] flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const firstItem = currentSelected.items?.[0];
+                      const sellerId = firstItem?.product?.sellerId || (firstItem as any)?.sellerId || currentSelected.sellerIds?.[0] || (currentSelected as any).sellerId;
+                      openChatWithArtisan({
+                        sellerId,
+                        orderId: currentSelected.id,
+                        initialMessage: `السلام عليكم، أستفسر بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
+                      });
+                    }}
+                    className="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold rounded-xl border border-amber-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <MessageSquare className="w-4 h-4 text-amber-700" />
+                    <span>محادثة الحرفي بخصوص هذا الطلب</span>
+                  </button>
+
+                  {/* Cancel Order Action for Eligible States */}
+                  {['review', 'pending', 'confirmed'].includes(currentSelected.status) && (
                     <button
                       type="button"
                       disabled={isCancelling}
                       onClick={() => handleCancelOrder(currentSelected.id)}
-                      className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                       <XCircle className="w-4 h-4" />
                       <span>{isCancelling ? 'جاري الإلغاء...' : 'إلغاء هذا الطلب'}</span>
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           )}

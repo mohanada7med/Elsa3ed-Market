@@ -20,7 +20,11 @@ import {
   KeyRound,
   Sparkles,
   X,
-  Clock
+  Clock,
+  Volume2,
+  VolumeX,
+  BellRing,
+  Radio
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -29,10 +33,20 @@ interface NotificationCenterProps {
 }
 
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({ className = '' }) => {
-  const { currentRole, currentUser, setActivePage } = useApp();
+  const {
+    currentRole,
+    currentUser,
+    setActivePage,
+    browserNotificationPermission,
+    browserNotificationSettings,
+    requestBrowserNotificationPermission,
+    updateBrowserNotificationSettings,
+    sendTestBrowserNotification
+  } = useApp();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const targetSellerId = currentUser?.sellerId || currentUser?.id;
@@ -218,6 +232,81 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
               >
                 <X className="w-4 h-4" />
               </button>
+            </div>
+
+            {/* Web Push & Sound Alert Bar */}
+            <div className="px-4 py-2.5 bg-gradient-to-r from-amber-500/10 via-[#B45F42]/10 to-amber-500/10 dark:from-amber-950/30 dark:via-[#B45F42]/20 dark:to-amber-950/30 border-b border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-6 h-6 rounded-full bg-[#B45F42] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <BellRing className="w-3.5 h-3.5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-bold text-[#2D2A26] dark:text-[#FAF6F2] truncate">
+                    {browserNotificationPermission === 'granted'
+                      ? 'إشعارات المتصفح الفورية مفعلة'
+                      : browserNotificationPermission === 'denied'
+                      ? 'إشعارات المتصفح محظورة بالإعدادات'
+                      : 'تفعيل إشعارات المتصفح الفورية'}
+                  </p>
+                  <p className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] truncate">
+                    {browserNotificationPermission === 'granted'
+                      ? 'تصلك تنبيهات الطلبات والرسائل حتى خارج التبويب'
+                      : 'احصل على تنبيهات لحظية فور ورود طلب أو رسالة'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                {browserNotificationPermission === 'granted' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateBrowserNotificationSettings({
+                          soundEnabled: !browserNotificationSettings.soundEnabled
+                        })
+                      }
+                      className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                        browserNotificationSettings.soundEnabled
+                          ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-400 border-gray-200 dark:border-gray-700'
+                      }`}
+                      title={
+                        browserNotificationSettings.soundEnabled
+                          ? 'الصوت مفعل - انقر للتعطيل'
+                          : 'الصوت معطل - انقر للتفعيل'
+                      }
+                    >
+                      {browserNotificationSettings.soundEnabled ? (
+                        <Volume2 className="w-3.5 h-3.5" />
+                      ) : (
+                        <VolumeX className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={sendTestBrowserNotification}
+                      className="px-2.5 py-1 bg-white dark:bg-[#2A2320] border border-[#B45F42]/30 hover:border-[#B45F42] text-[#B45F42] dark:text-[#FF855D] rounded-lg text-[10px] font-bold transition-all hover:bg-[#B45F42] hover:text-white cursor-pointer shadow-2xs"
+                    >
+                      تجربة
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={isRequestingPermission || browserNotificationPermission === 'denied'}
+                    onClick={async () => {
+                      setIsRequestingPermission(true);
+                      await requestBrowserNotificationPermission();
+                      setIsRequestingPermission(false);
+                    }}
+                    className="px-3 py-1 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                  >
+                    <Radio className="w-3 h-3 animate-pulse" />
+                    <span>{isRequestingPermission ? 'جارٍ الطلب...' : 'تفعيل'}</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Filter Tabs & Quick Actions */}

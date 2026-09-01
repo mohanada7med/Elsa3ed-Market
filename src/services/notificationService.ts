@@ -1,4 +1,5 @@
 import { Governorate, OrderStatus, ProductStatus } from '../types.ts';
+import { browserNotificationService } from './browserNotificationService.ts';
 
 export type NotificationType =
   | 'new_order'
@@ -144,6 +145,29 @@ class NotificationService {
 
     this.notifications = [newNotif, ...this.notifications];
     this.saveToStorage();
+
+    // Trigger Browser Push Notification & Sound Alert
+    try {
+      const notifCategory: 'order' | 'message' | 'stock' | 'system' =
+        newNotif.type === 'new_order' || newNotif.type === 'order_status_changed' || newNotif.type === 'order_cancelled'
+          ? 'order'
+          : newNotif.type === 'low_stock'
+          ? 'stock'
+          : 'system';
+
+      browserNotificationService.sendNotification({
+        title: newNotif.title,
+        body: newNotif.message,
+        type: notifCategory,
+        actionPage: newNotif.actionPage,
+        actionTab: newNotif.actionTab,
+        metadata: newNotif.metadata,
+        tag: newNotif.id
+      });
+    } catch {
+      // Graceful fallback
+    }
+
     return newNotif;
   }
 

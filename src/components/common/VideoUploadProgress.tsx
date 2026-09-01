@@ -26,7 +26,7 @@ export interface VideoUploadProgressProps {
   targetSellerId?: string;
   sellerId?: string;
   currentUser?: any;
-  maxSizeBytes?: number; // default 150MB
+  maxSizeBytes?: number; // default 2GB (Cloudinary chunked upload)
   onUploadSuccess: (result: {
     url: string;
     fileKey: string;
@@ -50,7 +50,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   targetSellerId,
   sellerId,
   currentUser,
-  maxSizeBytes = 150 * 1024 * 1024, // 150MB
+  maxSizeBytes = 2048 * 1024 * 1024, // 2GB
   onUploadSuccess,
   onUploadStart,
   onUploadCancel,
@@ -74,6 +74,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [loadedBytes, setLoadedBytes] = useState<number>(0);
   const [totalBytes, setTotalBytes] = useState<number>(0);
+  const [currentChunk, setCurrentChunk] = useState<number>(1);
+  const [totalChunks, setTotalChunks] = useState<number>(1);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
 
@@ -108,7 +110,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
     if (!bytes || bytes <= 0) return '0 B';
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   };
 
   const handleFileSelect = (file: File) => {
@@ -131,7 +134,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
       return;
     }
 
-    // Validate size
+    // Validate size (up to 2GB)
     if (file.size > maxSizeBytes) {
       setErrorMessage(`حجم الفيديو (${formatFileSize(file.size)}) يتجاوز الحد الأقصى المسموح (${formatFileSize(maxSizeBytes)}).`);
       setUploadState('error');
@@ -155,6 +158,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
     setTotalBytes(file.size);
     setLoadedBytes(0);
     setProgressPercent(0);
+    setCurrentChunk(1);
+    setTotalChunks(Math.ceil(file.size / (6 * 1024 * 1024)) || 1);
     setErrorMessage('');
     setUploadState('selected');
   };
@@ -171,6 +176,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
     setProgressPercent(0);
     setLoadedBytes(0);
     setTotalBytes(targetFile.size);
+    setCurrentChunk(1);
+    setTotalChunks(Math.ceil(targetFile.size / (6 * 1024 * 1024)) || 1);
     setErrorMessage('');
     onUploadStart?.();
 
@@ -179,10 +186,12 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
         user,
         file: targetFile,
         targetSellerId: effectiveSellerId,
-        onProgress: ({ loaded, total, percentage, state }) => {
+        onProgress: ({ loaded, total, percentage, state, currentChunk: curChunk, totalChunks: totChunks }) => {
           setLoadedBytes(loaded);
           setTotalBytes(total);
           setProgressPercent(percentage);
+          if (curChunk) setCurrentChunk(curChunk);
+          if (totChunks) setTotalChunks(totChunks);
           if (state === 'processing') {
             setUploadState('processing');
           }
@@ -400,9 +409,16 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
                 <Loader2 className="w-5 h-5 animate-spin" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-900">جاري رفع الفيديو سحابياً...</h4>
+                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                  <span>جاري رفع الفيديو سحابياً...</span>
+                  {totalChunks > 1 && (
+                    <span className="text-[11px] font-normal px-2 py-0.5 bg-amber-200/80 text-amber-900 rounded-full font-sans">
+                      الجزء {currentChunk} من {totalChunks}
+                    </span>
+                  )}
+                </h4>
                 <p className="text-xs text-amber-800 mt-0.5">
-                  تم نقل {formatFileSize(loadedBytes)} من إجمالي {formatFileSize(totalBytes)}
+                  تم نقل {formatFileSize(loadedBytes)} من إجمالي {formatFileSize(totalBytes)} (مباشر إلى Cloudinary)
                 </p>
               </div>
             </div>

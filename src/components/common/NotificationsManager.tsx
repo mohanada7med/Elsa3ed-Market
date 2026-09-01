@@ -23,7 +23,14 @@ import {
   Clock,
   Filter,
   Check,
-  Send
+  Send,
+  BellRing,
+  Volume2,
+  VolumeX,
+  Radio,
+  MessageSquare,
+  Sliders,
+  Play
 } from 'lucide-react';
 
 interface NotificationsManagerProps {
@@ -35,11 +42,21 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   viewMode,
   onNavigateTab
 }) => {
-  const { currentUser, currentRole, addToast } = useApp();
+  const {
+    currentUser,
+    currentRole,
+    addToast,
+    browserNotificationPermission,
+    browserNotificationSettings,
+    requestBrowserNotificationPermission,
+    updateBrowserNotificationSettings,
+    sendTestBrowserNotification
+  } = useApp();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterRead, setFilterRead] = useState<'all' | 'unread' | 'read'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isRequestingPermission, setIsRequestingPermission] = useState(false);
 
   // Admin Broadcast Announcement state
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
@@ -222,6 +239,256 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <span>إرسال تنبيه أو إعلان عام</span>
               </button>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Web Push & Instant Sound Alerts Configuration Bar */}
+      <div className="bg-white dark:bg-[#1E1917] p-5 sm:p-6 rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-5 border-b border-[#F0EBE4] dark:border-[#2E2520]">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200/60 dark:border-amber-900/60">
+              <BellRing className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base sm:text-lg font-bold text-[#2D2A26] dark:text-[#FAF6F2]">
+                  إشعارات المتصفح الفورية والتنبيهات الصوتية (Web Push)
+                </h3>
+                <span
+                  className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${
+                    browserNotificationPermission === 'granted'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
+                      : browserNotificationPermission === 'denied'
+                      ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300'
+                      : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                  }`}
+                >
+                  {browserNotificationPermission === 'granted'
+                    ? '● الإشعارات مفعلة'
+                    : browserNotificationPermission === 'denied'
+                    ? '● محظورة بالمتصفح'
+                    : '○ بانتظار الإذن'}
+                </span>
+              </div>
+              <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] max-w-2xl leading-relaxed">
+                استقبل تنبيهات لحظية ورنات مميزة فور ورود طلبات شراء جديدة أو رسائل من العملاء حتى إذا كنت تعمل في تبويب آخر أو المتصفح بالخلفية.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
+            {browserNotificationPermission === 'granted' ? (
+              <button
+                type="button"
+                onClick={sendTestBrowserNotification}
+                className="px-4 py-2.5 bg-[#FAF6F0] dark:bg-[#26201C] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2420] text-[#B45F42] dark:text-[#FF855D] border border-[#B45F42]/30 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>تجربة إشعار ورنة تجريبية</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={isRequestingPermission || browserNotificationPermission === 'denied'}
+                onClick={async () => {
+                  setIsRequestingPermission(true);
+                  await requestBrowserNotificationPermission();
+                  setIsRequestingPermission(false);
+                }}
+                className="px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-50 text-white rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-md cursor-pointer"
+              >
+                <Radio className="w-4 h-4 animate-pulse" />
+                <span>{isRequestingPermission ? 'جارٍ طلب الإذن من المتصفح...' : 'السماح بالإشعارات الفورية'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Granular Preferences Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-5">
+          {/* Sound Alert Toggle */}
+          <div
+            onClick={() =>
+              updateBrowserNotificationSettings({
+                soundEnabled: !browserNotificationSettings.soundEnabled
+              })
+            }
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+              browserNotificationSettings.soundEnabled
+                ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/50'
+                : 'bg-[#FAF6F0]/50 dark:bg-[#26201C]/50 border-[#E8E1D9] dark:border-[#382E27]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  browserNotificationSettings.soundEnabled
+                    ? 'bg-amber-500 text-white shadow-2xs'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                }`}
+              >
+                {browserNotificationSettings.soundEnabled ? (
+                  <Volume2 className="w-4 h-4" />
+                ) : (
+                  <VolumeX className="w-4 h-4" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block truncate">
+                  التنبيه الصوتي (Ringtone)
+                </span>
+                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block truncate">
+                  رنات تراثية هادئة ونقية
+                </span>
+              </div>
+            </div>
+            <div
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
+                browserNotificationSettings.soundEnabled ? 'bg-amber-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  browserNotificationSettings.soundEnabled ? 'translate-x-0' : '-translate-x-4'
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* New Orders Toggle */}
+          <div
+            onClick={() =>
+              updateBrowserNotificationSettings({
+                notifyOrders: !browserNotificationSettings.notifyOrders
+              })
+            }
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+              browserNotificationSettings.notifyOrders
+                ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50'
+                : 'bg-[#FAF6F0]/50 dark:bg-[#26201C]/50 border-[#E8E1D9] dark:border-[#382E27]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  browserNotificationSettings.notifyOrders
+                    ? 'bg-emerald-600 text-white shadow-2xs'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                }`}
+              >
+                <Package className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block truncate">
+                  تنبيهات طلبات الشراء
+                </span>
+                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block truncate">
+                  إشعار فوري عند كل طلب
+                </span>
+              </div>
+            </div>
+            <div
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
+                browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  browserNotificationSettings.notifyOrders ? 'translate-x-0' : '-translate-x-4'
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Chat Messages Toggle */}
+          <div
+            onClick={() =>
+              updateBrowserNotificationSettings({
+                notifyMessages: !browserNotificationSettings.notifyMessages
+              })
+            }
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+              browserNotificationSettings.notifyMessages
+                ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50'
+                : 'bg-[#FAF6F0]/50 dark:bg-[#26201C]/50 border-[#E8E1D9] dark:border-[#382E27]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  browserNotificationSettings.notifyMessages
+                    ? 'bg-blue-600 text-white shadow-2xs'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                }`}
+              >
+                <MessageSquare className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block truncate">
+                  رسائل المحادثة الفورية
+                </span>
+                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block truncate">
+                  استفسارات المشترين والورش
+                </span>
+              </div>
+            </div>
+            <div
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
+                browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  browserNotificationSettings.notifyMessages ? 'translate-x-0' : '-translate-x-4'
+                }`}
+              />
+            </div>
+          </div>
+
+          {/* Stock Alerts Toggle */}
+          <div
+            onClick={() =>
+              updateBrowserNotificationSettings({
+                notifyStock: !browserNotificationSettings.notifyStock
+              })
+            }
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+              browserNotificationSettings.notifyStock
+                ? 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/50'
+                : 'bg-[#FAF6F0]/50 dark:bg-[#26201C]/50 border-[#E8E1D9] dark:border-[#382E27]'
+            }`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  browserNotificationSettings.notifyStock
+                    ? 'bg-purple-600 text-white shadow-2xs'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
+                }`}
+              >
+                <AlertTriangle className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block truncate">
+                  تنبيهات المخزون
+                </span>
+                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block truncate">
+                  عند اقتراب نفاد القطع
+                </span>
+              </div>
+            </div>
+            <div
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
+                browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                  browserNotificationSettings.notifyStock ? 'translate-x-0' : '-translate-x-4'
+                }`}
+              />
+            </div>
           </div>
         </div>
       </div>

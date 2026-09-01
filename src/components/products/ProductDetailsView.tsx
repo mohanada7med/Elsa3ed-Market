@@ -5,6 +5,7 @@ import { updatePageSEO, generateProductSchema } from '../../utils/seo';
 import {
   Heart,
   ShoppingBag,
+  MessageSquare,
   Star,
   Sparkles,
   MapPin,
@@ -39,7 +40,8 @@ export const ProductDetailsView: React.FC = () => {
     addReview,
     addToast,
     currentRole,
-    isAuthenticated
+    isAuthenticated,
+    openChatWithArtisan
   } = useApp();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
@@ -336,6 +338,23 @@ export const ProductDetailsView: React.FC = () => {
                     <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
                   </button>
                 </div>
+
+                {/* Direct Chat with Artisan Button */}
+                <button
+                  type="button"
+                  id="details-chat-artisan-btn"
+                  onClick={() => {
+                    openChatWithArtisan({
+                      sellerId: product.sellerId || product.id,
+                      productId: product.id,
+                      initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق الصعيد.`
+                    });
+                  }}
+                  className="w-full py-3 px-4 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 font-bold text-xs sm:text-sm rounded-xl border border-amber-300 dark:border-amber-700/60 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>تواصل مباشرة مع شيخ الصنعة حول المقاسات أو التخصيص</span>
+                </button>
               </>
             ) : currentRole === 'seller' ? (
               /* Seller Actions (No Cart / No Buy Now) */

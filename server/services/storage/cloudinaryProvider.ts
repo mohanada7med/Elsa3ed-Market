@@ -224,7 +224,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       if (Buffer.isBuffer(uploadPayload)) {
         if (isVideo) {
           uploadOptions.resource_type = 'video';
-          uploadOptions.timeout = 180000;
+          uploadOptions.chunk_size = 6000000; // 6MB chunk size for video stream
+          uploadOptions.timeout = 300000; // 5 min timeout
         } else {
           uploadOptions.resource_type = 'image';
           uploadOptions.allowed_formats = ['jpg', 'jpeg', 'png', 'webp'];
@@ -243,7 +244,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       } else if (isVideo) {
         uploadOptions.resource_type = 'video';
         uploadOptions.chunk_size = 6000000; // 6MB chunk size for reliable video streaming uploads
-        uploadOptions.timeout = 180000;
+        uploadOptions.timeout = 300000; // 5 min timeout
         uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
       } else {
         uploadOptions.resource_type = 'image';

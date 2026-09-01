@@ -27,7 +27,9 @@ import { FavoritesPage } from './components/pages/FavoritesPage';
 import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
 import { AboutSection } from './components/public/AboutSection';
 import { CartPage } from './components/pages/CartPage';
+import { ChatView } from './components/chat/ChatView';
 import { ForbiddenPage } from './components/pages/ForbiddenPage';
+
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
@@ -126,6 +128,12 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'المفضلة وقائمة الرغبات',
           description: 'منتجاتك التراثية المفضلة المحفوظة في سوق الصعيد.'
+        });
+        break;
+      case 'messages':
+        updatePageSEO({
+          title: 'المحادثات المباشرة',
+          description: 'تواصل مباشر وفوري مع الحرفيين وشيوخ الصنعة في سوق الصعيد.'
         });
         break;
       case 'about':
@@ -247,6 +255,33 @@ const MainContent: React.FC = () => {
                 <ForbiddenPage />
               ) : (
                 <FavoritesPage />
+              )
+            )}
+
+            {/* Live Chat: Buyer & General Messages */}
+            {activePage === 'messages' && (
+              isAuthenticated ? (
+                <ChatView isSellerMode={currentRole === 'seller'} />
+              ) : (
+                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto text-2xl">
+                    💬
+                  </div>
+                  <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">المحادثة المباشرة مع الحرفيين</h2>
+                  <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
+                    يرجى تسجيل الدخول لبدء أو استكمال محادثاتك مع ورش الحرف التراثية ومتابعة استفساراتك.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthModalTab('login');
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                  >
+                    تسجيل الدخول للمحادثة
+                  </button>
+                </div>
               )
             )}
 

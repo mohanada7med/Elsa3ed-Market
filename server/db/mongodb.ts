@@ -1,7 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
 import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
-import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument, CraftReelDocument } from '../models/types.ts';
+import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument, CraftReelDocument, ConversationDocument, MessageDocument } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 
@@ -39,7 +39,10 @@ class MemoryStore {
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
   reels: CraftReelDocument[] = [];
+  conversations: ConversationDocument[] = [];
+  messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
+
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {
     id: 'platform_payment_config',
@@ -220,8 +223,18 @@ async function seedMongoDatabase(database: Db) {
       database.collection('password_resets').createIndex({ userId: 1 }),
       database.collection('reels').createIndex({ id: 1 }, { unique: true }),
       database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 }),
-      database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 })
+      database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 }),
+      // Live Chat
+      database.collection('conversations').createIndex({ id: 1 }, { unique: true }),
+      database.collection('conversations').createIndex({ buyerId: 1, updatedAt: -1 }),
+      database.collection('conversations').createIndex({ sellerId: 1, updatedAt: -1 }),
+      database.collection('conversations').createIndex({ buyerId: 1, sellerId: 1, productId: 1 }),
+      database.collection('conversations').createIndex({ buyerId: 1, sellerId: 1, orderId: 1 }),
+      database.collection('messages').createIndex({ id: 1 }, { unique: true }),
+      database.collection('messages').createIndex({ conversationId: 1, createdAt: 1 }),
+      database.collection('messages').createIndex({ receiverId: 1, isRead: 1 })
     ];
+
 
     // Execute non-blocking batch indexing in background
     await Promise.allSettled(indexOperations);
