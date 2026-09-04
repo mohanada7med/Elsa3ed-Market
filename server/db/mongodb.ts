@@ -1,9 +1,35 @@
 import { MongoClient, Db } from 'mongodb';
 import dotenv from 'dotenv';
 import type { Product, Seller, Category, AuditLog, UserProfile } from '../../src/types.ts';
-import type { OrderDocument, CartDocument, DiscountCouponDocument, ReviewDocument, StockMovementDocument, CraftStoryDocument, CraftReelDocument, ConversationDocument, MessageDocument } from '../models/types.ts';
+import type {
+  OrderDocument,
+  CartDocument,
+  DiscountCouponDocument,
+  ReviewDocument,
+  StockMovementDocument,
+  CraftStoryDocument,
+  CraftReelDocument,
+  ConversationDocument,
+  MessageDocument,
+  GovernorateDoc,
+  HeritagePlaceDoc,
+  CulturalCraftDoc,
+  WahStoryDoc,
+  LocalPersonDoc,
+  UpperEgyptFoodDoc,
+  CulturalEventDoc
+} from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
+import {
+  INITIAL_GOVERNORATES,
+  INITIAL_HERITAGE_PLACES,
+  INITIAL_CULTURAL_CRAFTS,
+  INITIAL_WAH_STORIES,
+  INITIAL_LOCAL_PEOPLE,
+  INITIAL_UPPER_EGYPT_FOOD,
+  INITIAL_CULTURAL_EVENTS
+} from './wahSeedData.ts';
 
 dotenv.config();
 
@@ -42,6 +68,15 @@ class MemoryStore {
   conversations: ConversationDocument[] = [];
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
+
+  // WAH Cultural Ecosystem Data
+  governorates: GovernorateDoc[] = [...INITIAL_GOVERNORATES];
+  heritagePlaces: HeritagePlaceDoc[] = [...INITIAL_HERITAGE_PLACES];
+  culturalCrafts: CulturalCraftDoc[] = [...INITIAL_CULTURAL_CRAFTS];
+  wahStories: WahStoryDoc[] = [...INITIAL_WAH_STORIES];
+  localPeople: LocalPersonDoc[] = [...INITIAL_LOCAL_PEOPLE];
+  upperEgyptFood: UpperEgyptFoodDoc[] = [...INITIAL_UPPER_EGYPT_FOOD];
+  culturalEvents: CulturalEventDoc[] = [...INITIAL_CULTURAL_EVENTS];
 
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {

@@ -39,8 +39,22 @@ export const SellerProfileView: React.FC = () => {
   );
 
   const handleShare = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي بنجاح', 'info');
+    const shareUrl = `${window.location.origin}/?seller=${seller.id}`;
+    if (navigator.share) {
+      navigator
+        .share({
+          title: seller.brandName,
+          text: `ورشة ${seller.brandName} - حرفيو صعيد مصر على منصة وه`,
+          url: shareUrl
+        })
+        .catch(() => {
+          navigator.clipboard?.writeText(shareUrl);
+          addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي المباشر بنجاح', 'info');
+        });
+    } else {
+      navigator.clipboard?.writeText(shareUrl);
+      addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي المباشر بنجاح', 'info');
+    }
   };
 
   return (
@@ -156,7 +170,7 @@ export const SellerProfileView: React.FC = () => {
             <div className="lg:col-span-4 bg-[#faf6f0] p-4 rounded-2xl border border-[#ebdccd] space-y-2 text-xs text-gray-700">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-amber-700" />
-                <span>عضو معتمد في سوق الصعيد منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>
+                <span>عضو معتمد في منصة وه منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-700" />

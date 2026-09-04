@@ -169,7 +169,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       navigator
         .share({
           title: reel.title,
-          text: `شاهد إبداع الصنعة الصعيدية في "${reel.title}" على سوق الصعيد!`,
+          text: `شاهد إبداع الصنعة الصعيدية في "${reel.title}" على منصة وه!`,
           url: shareUrl
         })
         .catch(() => {});

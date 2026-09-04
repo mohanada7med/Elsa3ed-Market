@@ -733,7 +733,7 @@ export const SellerDashboard: React.FC = () => {
                     أهلاً بك يا أسطى {statusDetails?.name || currentUser.name}!
                   </h1>
                   <p className="text-xs sm:text-sm text-amber-100 mt-1 leading-relaxed">
-                    تم استلام طلب تسجيل ورشتكم في سوق الصعيد بنجاح، وطلبكم قيد الفحص والتوثيق من قِبل إدارة المنصة.
+                    تم استلام طلب تسجيل ورشتكم في منصة وه بنجاح، وطلبكم قيد الفحص والتوثيق من قِبل إدارة المنصة.
                   </p>
                 </div>
               </div>
@@ -917,7 +917,7 @@ export const SellerDashboard: React.FC = () => {
               )}
 
               <p className="text-xs text-[#7A6F64] leading-relaxed">
-                يرجى التواصل مع إدارة منصة سوق الصعيد لتسوية الملاحظات المرفوعة وإعادة تفعيل نشاط المتجر.
+                يرجى التواصل مع إدارة منصة وه لتسوية الملاحظات المرفوعة وإعادة تفعيل نشاط المتجر.
               </p>
 
               <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
@@ -1321,7 +1321,7 @@ export const SellerDashboard: React.FC = () => {
                 <div>
                   <h4 className="text-xs font-bold text-amber-900">لديك منتجات قيد فحص الجودة والأصالة</h4>
                   <p className="text-[11px] text-amber-700">
-                    يقوم مسؤولو منصة سوق الصعيد بمراجعة بيانات قطعك والتأكد من أصالتها قبل النشر العام للجمهور.
+                    يقوم مسؤولو منصة وه بمراجعة بيانات قطعك والتأكد من أصالتها قبل النشر العام للجمهور.
                   </p>
                 </div>
               </div>
@@ -1839,7 +1839,7 @@ export const SellerDashboard: React.FC = () => {
                   <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
                 </div>
                 <h3 className="font-black text-xl text-[#2D2A26] font-heritage">
-                  هوية وغلاف الورشة في سوق الصعيد
+                  هوية وغلاف الورشة في منصة وه
                 </h3>
                 <p className="text-xs text-[#7A6F64] mt-1 max-w-2xl leading-relaxed">
                   خصص صورة الغلاف وشعار ورشتكم والبيانات التعريفية. تظهر هذه الصورة في صدارة بطاقة ورشتكم بقسم 

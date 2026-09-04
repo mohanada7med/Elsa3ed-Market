@@ -25,6 +25,7 @@ import uploadRoutes from './routes/uploadRoutes.ts';
 import seoRoutes from './routes/seoRoutes.ts';
 import reelRoutes from './routes/reelRoutes.ts';
 import chatRoutes from './routes/chatRoutes.ts';
+import wahContentRoutes from './routes/wahContentRoutes.ts';
 
 
 export function createApp(): Express {
@@ -129,6 +130,7 @@ export function createApp(): Express {
     { prefix: '/craft-stories', router: craftStoryRoutes },
     { prefix: '/reels', router: reelRoutes },
     { prefix: '/chat', router: chatRoutes },
+    { prefix: '/wah', router: wahContentRoutes },
     { prefix: '/products', router: productRoutes },
 
     { prefix: '/cart', router: cartRoutes },

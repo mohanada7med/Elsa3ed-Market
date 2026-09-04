@@ -7,7 +7,7 @@ export default function NotFound() {
         </div>
         <h1 className="text-2xl font-bold text-[#2D2A26]">الصفحة غير موجودة</h1>
         <p className="text-sm text-[#7A6F64] leading-relaxed">
-          عفواً، الصفحة التي تبحث عنها غير متوفرة أو تم نقلها في سوق الصعيد.
+          عفواً، الصفحة التي تبحث عنها غير متوفرة أو تم نقلها في وه.
         </p>
         <div className="pt-2">
           <a

@@ -164,7 +164,7 @@ export const CartPage: React.FC = () => {
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>تصفح منتجات سوق الصعيد</span>
+                <span>تصفح منتجات سوق وه</span>
               </button>
             </div>
           </motion.div>

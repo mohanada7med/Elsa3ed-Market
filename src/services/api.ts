@@ -13,7 +13,16 @@ import {
   CraftReel,
   CraftReelComment,
   Conversation,
-  ChatMessage
+  ChatMessage,
+  WahGovernorate,
+  HeritagePlace,
+  CulturalCraft,
+  WahStory,
+  LocalPerson,
+  UpperEgyptFood,
+  CulturalEvent,
+  MapGovernorateData,
+  GlobalSearchResult
 } from '../types.ts';
 
 
@@ -2398,5 +2407,288 @@ export const api = {
     return json.readCount || 0;
   }
 };
+
+// ==========================================
+// WAH PLATFORM CULTURAL CLIENT API
+// ==========================================
+
+export const wahApi = {
+  // 1. Governorates
+  async getGovernorates(): Promise<WahGovernorate[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/governorates`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getGovernorateBySlug(slug: string): Promise<WahGovernorate | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/governorates/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveGovernorate(gov: Partial<WahGovernorate>, user?: { id?: string; role?: string }): Promise<WahGovernorate> {
+    const res = await fetch(`${API_BASE}/wah/governorates`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(gov)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ المحافظة');
+    return json.data;
+  },
+
+  // 2. Heritage Places
+  async getPlaces(params?: { governorate?: string; category?: string }): Promise<HeritagePlace[]> {
+    try {
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.category) query.set('category', params.category);
+      const res = await fetch(`${API_BASE}/wah/places?${query.toString()}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getPlaceBySlug(slug: string): Promise<HeritagePlace | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/places/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async savePlace(place: Partial<HeritagePlace>, user?: { id?: string; role?: string }): Promise<HeritagePlace> {
+    const res = await fetch(`${API_BASE}/wah/places`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(place)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ المعلم التراثي');
+    return json.data;
+  },
+
+  // 3. Cultural Crafts
+  async getCrafts(): Promise<CulturalCraft[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/crafts`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getCraftEncyclopedia(): Promise<CulturalCraft[]> {
+    return this.getCrafts();
+  },
+
+  async getCraftBySlug(slug: string): Promise<CulturalCraft | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/crafts/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveCraft(craft: Partial<CulturalCraft>, user?: { id?: string; role?: string }): Promise<CulturalCraft> {
+    const res = await fetch(`${API_BASE}/wah/crafts`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(craft)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ الحرفة');
+    return json.data;
+  },
+
+  // 4. Wah Stories
+  async getStories(params?: { governorate?: string; category?: string }): Promise<WahStory[]> {
+    try {
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.category) query.set('category', params.category);
+      const res = await fetch(`${API_BASE}/wah/stories?${query.toString()}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getStoryBySlug(slug: string): Promise<WahStory | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/stories/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveStory(story: Partial<WahStory>, user?: { id?: string; role?: string }): Promise<WahStory> {
+    const res = await fetch(`${API_BASE}/wah/stories`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(story)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ القصة');
+    return json.data;
+  },
+
+  // 5. People
+  async getPeople(): Promise<LocalPerson[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/people`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getPersonBySlug(slug: string): Promise<LocalPerson | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/people/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async savePerson(person: Partial<LocalPerson>, user?: { id?: string; role?: string }): Promise<LocalPerson> {
+    const res = await fetch(`${API_BASE}/wah/people`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(person)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ بيانات الشخصية');
+    return json.data;
+  },
+
+  // 6. Food
+  async getFood(): Promise<UpperEgyptFood[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/food`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getFoods(): Promise<UpperEgyptFood[]> {
+    return this.getFood();
+  },
+
+  async getFoodBySlug(slug: string): Promise<UpperEgyptFood | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/food/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveFood(food: Partial<UpperEgyptFood>, user?: { id?: string; role?: string }): Promise<UpperEgyptFood> {
+    const res = await fetch(`${API_BASE}/wah/food`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(food)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ الوصفة');
+    return json.data;
+  },
+
+  // 7. Cultural Events
+  async getEvents(): Promise<CulturalEvent[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/events`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getEventBySlug(slug: string): Promise<CulturalEvent | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/events/${slug}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveEvent(event: Partial<CulturalEvent>, user?: { id?: string; role?: string }): Promise<CulturalEvent> {
+    const res = await fetch(`${API_BASE}/wah/events`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(event)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل حفظ الفعالية');
+    return json.data;
+  },
+
+  // 8. Map Data
+  async getMapData(): Promise<MapGovernorateData[]> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/map`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  // 9. Global Unified Search
+  async search(query: string): Promise<GlobalSearchResult[]> {
+    if (!query || query.trim().length < 2) return [];
+    try {
+      const res = await fetch(`${API_BASE}/wah/search?q=${encodeURIComponent(query.trim())}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async globalSearch(query: string): Promise<GlobalSearchResult[]> {
+    return this.search(query);
+  },
+
+  // 10. Ecosystem Stats
+  async getStats(): Promise<Record<string, number>> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/stats`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : {};
+    } catch {
+      return {};
+    }
+  }
+};
+
 
 

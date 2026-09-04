@@ -30,6 +30,25 @@ import { CartPage } from './components/pages/CartPage';
 import { ChatView } from './components/chat/ChatView';
 import { ForbiddenPage } from './components/pages/ForbiddenPage';
 
+// WAH Upper Egypt Digital Platform Pages
+import { UpperEgyptMapPage } from './components/pages/UpperEgyptMapPage';
+import { GovernoratesPage } from './components/pages/GovernoratesPage';
+import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
+import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
+import { PlaceDetailPage } from './components/pages/PlaceDetailPage';
+import { CulturalCraftsPage } from './components/pages/CulturalCraftsPage';
+import { CulturalCraftDetailPage } from './components/pages/CulturalCraftDetailPage';
+import { StoriesPage } from './components/pages/StoriesPage';
+import { StoryDetailPage } from './components/pages/StoryDetailPage';
+import { PeoplePage } from './components/pages/PeoplePage';
+import { PersonDetailPage } from './components/pages/PersonDetailPage';
+import { FoodHeritagePage } from './components/pages/FoodHeritagePage';
+import { FoodDetailPage } from './components/pages/FoodDetailPage';
+import { EventsPage } from './components/pages/EventsPage';
+import { EventDetailPage } from './components/pages/EventDetailPage';
+import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
+import { CulturalCmsAdminPage } from './components/pages/CulturalCmsAdminPage';
+
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
@@ -48,7 +67,7 @@ const LazySectionFallback: React.FC = () => (
   <div className="min-h-[420px] flex flex-col items-center justify-center p-8 text-center">
     <div className="w-12 h-12 border-4 border-[#E8E1D9] border-t-[#B45F42] rounded-full animate-spin mb-4" />
     <p className="text-sm font-bold text-[#2D2A26]">جاري تحميل لوحة التحكم...</p>
-    <p className="text-xs text-[#7A6F64] mt-1">سوق الصعيد — منصة التراث والحرف الأصيلة</p>
+    <p className="text-xs text-[#7A6F64] mt-1">وه | WAH — العالم الرقمي لصعيد مصر</p>
   </div>
 );
 
@@ -73,7 +92,7 @@ const MainContent: React.FC = () => {
       case 'home':
         updatePageSEO({
           title: 'الرئيسية',
-          description: 'سوق الصعيد - المنصة المعتمدة لتسوق الحرف اليدوية والفخار والكليم والعسل والخيرات التراثية مباشرة من ورش الصعيد.'
+          description: 'وه - العالم الرقمي لصعيد مصر لاكتشاف وتوثيق التراث والقرى والأكلات والحرف، وسوق وه المعتمد لتسوق منتجات الصعيد مباشرة من ورشها.'
         });
         break;
       case 'products':
@@ -96,7 +115,7 @@ const MainContent: React.FC = () => {
         break;
       case 'reels':
         updatePageSEO({
-          title: 'فيديوهات الحرفيين التفاعلية (Craft Reels)',
+          title: 'فيديوهات الحرفيين التفاعلية (وه Reels)',
           description: 'شاهد مقاطع فيديو حية للحرفيين وهم يصنعون الفخار والكليم والنحاس واشترِ القطعة فوراً من الورشة.'
         });
         break;
@@ -115,7 +134,7 @@ const MainContent: React.FC = () => {
       case 'checkout':
         updatePageSEO({
           title: 'إتمام الطلب والدفع الآمن',
-          description: 'بوابة الدفع والشحن الآمن لطلبات سوق الصعيد.'
+          description: 'بوابة الدفع والشحن الآمن لطلبات سوق وه.'
         });
         break;
       case 'orders':
@@ -127,19 +146,86 @@ const MainContent: React.FC = () => {
       case 'favorites':
         updatePageSEO({
           title: 'المفضلة وقائمة الرغبات',
-          description: 'منتجاتك التراثية المفضلة المحفوظة في سوق الصعيد.'
+          description: 'منتجاتك التراثية المفضلة المحفوظة في منصة وه.'
         });
         break;
       case 'messages':
         updatePageSEO({
           title: 'المحادثات المباشرة',
-          description: 'تواصل مباشر وفوري مع الحرفيين وشيوخ الصنعة في سوق الصعيد.'
+          description: 'تواصل مباشر وفوري مع الحرفيين وشيوخ الصنعة في منصة وه.'
         });
         break;
       case 'about':
         updatePageSEO({
-          title: 'عن منصة سوق الصعيد',
-          description: 'رسالتنا في دعم الحرفيين وتمكين التراث الصعيدي المصري وربطه بالأسواق العالمية.'
+          title: 'عن منصة وه | العالم الرقمي لصعيد مصر',
+          description: 'رسالتنا في توثيق وحفظ وإحياء تراث صعيد مصر وربطه بالعالم.'
+        });
+        break;
+      case 'map':
+        updatePageSEO({
+          title: 'خريطة صعيد مصر التفاعلية | وه',
+          description: 'استكشف محافظات صعيد مصر ومعالمها التراثية وحرفها وورشها على الخريطة التفاعلية.'
+        });
+        break;
+      case 'governorates':
+      case 'governorate-details':
+        updatePageSEO({
+          title: 'محافظات صعيد مصر | وه',
+          description: 'دليل شامل لكافة محافظات الصعيد من الفيوم حتى أسوان وحلايب وشلاتين.'
+        });
+        break;
+      case 'places':
+      case 'place-details':
+        updatePageSEO({
+          title: 'المعالم والتراث المعماري | وه',
+          description: 'توثيق المعابد، القلاع، الأديرة، المساجد العتيقة، والبيوت التراثية بالصعيد.'
+        });
+        break;
+      case 'cultural-crafts':
+      case 'craft-details':
+        updatePageSEO({
+          title: 'موسوعة الحرف والورش التراثية | وه',
+          description: 'أسرار صنائع الأجداد: الفخار، التلي، الفركة، الخزف، والألباستر.'
+        });
+        break;
+      case 'stories':
+      case 'story-details':
+        updatePageSEO({
+          title: 'وه بيحكي — حكايات ومرويات الصعيد | وه',
+          description: 'مستودع المرويات الشفاهية والسيرة الهلالية وأساطير النيل والجبل بالصعيد.'
+        });
+        break;
+      case 'people':
+      case 'person-details':
+        updatePageSEO({
+          title: 'ناس الصعيد وحراس التراث | وه',
+          description: 'سير ومسيرات شيوخ الصنعة والرواة والفنانين التلقائيين في صعيد مصر.'
+        });
+        break;
+      case 'food':
+      case 'food-details':
+        updatePageSEO({
+          title: 'طعم الصعيد — المطبخ التراثي | وه',
+          description: 'توثيق أكلات ومخبوزات الصعيد الأصيلة وسر الطبخ في الفرن البلدي.'
+        });
+        break;
+      case 'events':
+      case 'event-details':
+        updatePageSEO({
+          title: 'فعاليات ومواسم الصعيد | وه',
+          description: 'أجندة الموالد ومواسم الحصاد والمهرجانات التراثية في محافظات الصعيد.'
+        });
+        break;
+      case 'global-search':
+        updatePageSEO({
+          title: 'البحث الشامل | وه',
+          description: 'ابحث في كافة معالم وحرف وحكايات وأكلات وناس ومنتجات صعيد مصر.'
+        });
+        break;
+      case 'cultural-cms':
+        updatePageSEO({
+          title: 'لوحة التوثيق التراثي | وه',
+          description: 'استوديو التوثيق وحفظ التراث وإدارة الموسوعة التراثية لصعيد مصر.'
         });
         break;
       default:
@@ -156,12 +242,12 @@ const MainContent: React.FC = () => {
             <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
             <img
               src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-              alt="سوق الصعيد"
+              alt="وه | WAH"
               className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
             />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">سوق الصعيد</h2>
+            <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">وه | WAH</h2>
             <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
           </div>
         </div>
@@ -366,7 +452,7 @@ const MainContent: React.FC = () => {
                   </div>
                   <h2 className="text-xl font-bold text-[#2D2A26]">منطقة الإدارة العليا</h2>
                   <p className="text-sm text-[#7A6F64] leading-relaxed">
-                    هذه اللوحة مخصصة لمديري منصة سوق الصعيد فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
+                    هذه اللوحة مخصصة لمديري منصة وه فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
                   </p>
                   <button
                     type="button"
@@ -393,6 +479,25 @@ const MainContent: React.FC = () => {
                 <WholesalePage />
               </React.Suspense>
             )}
+
+            {/* WAH Upper Egypt Digital Platform Routes */}
+            {(activePage === 'map' || activePage === 'explore') && <UpperEgyptMapPage />}
+            {activePage === 'governorates' && <GovernoratesPage />}
+            {activePage === 'governorate-details' && <GovernorateDetailPage />}
+            {activePage === 'places' && <PlacesHeritagePage />}
+            {activePage === 'place-details' && <PlaceDetailPage />}
+            {activePage === 'cultural-crafts' && <CulturalCraftsPage />}
+            {(activePage === 'craft-details' || activePage === 'cultural-craft-details') && <CulturalCraftDetailPage />}
+            {activePage === 'stories' && <StoriesPage />}
+            {activePage === 'story-details' && <StoryDetailPage />}
+            {activePage === 'people' && <PeoplePage />}
+            {activePage === 'person-details' && <PersonDetailPage />}
+            {activePage === 'food' && <FoodHeritagePage />}
+            {activePage === 'food-details' && <FoodDetailPage />}
+            {activePage === 'events' && <EventsPage />}
+            {activePage === 'event-details' && <EventDetailPage />}
+            {activePage === 'global-search' && <GlobalSearchResultsPage />}
+            {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && <CulturalCmsAdminPage />}
 
             {![
               'home',
@@ -428,7 +533,27 @@ const MainContent: React.FC = () => {
               'admin-audit-logs',
               'admin-settings',
               'about',
-              'wholesale'
+              'wholesale',
+              'map',
+              'explore',
+              'governorates',
+              'governorate-details',
+              'places',
+              'place-details',
+              'cultural-crafts',
+              'cultural-craft-details',
+              'craft-details',
+              'stories',
+              'story-details',
+              'people',
+              'person-details',
+              'food',
+              'food-details',
+              'events',
+              'event-details',
+              'global-search',
+              'cultural-cms',
+              'admin-cultural-cms'
             ].includes(activePage) && <NotFoundPage />}
           </motion.div>
         </AnimatePresence>

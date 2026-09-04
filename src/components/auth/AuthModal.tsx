@@ -147,20 +147,20 @@ export const AuthModal: React.FC = () => {
             <X className="w-5 h-5" />
           </button>
 
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-2 text-2xl font-heritage font-black">
-            ص
+          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-2 text-xl font-heritage font-black">
+            وه
           </div>
           <h2 className="text-xl sm:text-2xl font-black font-heritage">
             {isForgotPassword
               ? 'استعادة كلمة المرور'
               : authModalTab === 'login'
-              ? 'تسجيل الدخول إلى سوق الصعيد'
+              ? 'تسجيل الدخول إلى وه'
               : 'إنشاء حساب جديد'}
           </h2>
           <p className="text-xs sm:text-sm text-amber-200/90 mt-1">
             {isForgotPassword
               ? 'أدخل اسم المستخدم أو بريدك الإلكتروني المسجل'
-              : 'منصة الحرف التراثية والمنتجات الأصيلة في صعيد مصر'}
+              : 'منصة وه — العالم الرقمي وتراث وحرف صعيد مصر'}
           </p>
         </div>
 
@@ -374,7 +374,7 @@ export const AuthModal: React.FC = () => {
                     type="submit"
                     id="auth-submit-btn"
                     disabled={isSubmitting}
-                    aria-label="تأكيد تسجيل الدخول إلى سوق الصعيد"
+                    aria-label="تأكيد تسجيل الدخول إلى وه"
                     className="w-full py-3.5 mt-2 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-base font-bold shadow-md transition-colors flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
                   >
                     <span>{isSubmitting ? 'جاري التحقق...' : 'تسجيل الدخول'}</span>

@@ -275,6 +275,26 @@ export interface PasswordResetRequest {
 
 export type ActivePage =
   | 'home'
+  | 'explore'
+  | 'governorates'
+  | 'governorate-details'
+  | 'map'
+  | 'places'
+  | 'place-details'
+  | 'cultural-crafts'
+  | 'cultural-craft-details'
+  | 'craft-details'
+  | 'stories'
+  | 'story-details'
+  | 'people'
+  | 'person-details'
+  | 'food'
+  | 'food-details'
+  | 'events'
+  | 'event-details'
+  | 'global-search'
+  | 'cultural-cms'
+  | 'wah-market'
   | 'products'
   | 'product-details'
   | 'categories'
@@ -302,6 +322,7 @@ export type ActivePage =
   | 'seller-analytics'
   | 'seller-account'
   | 'admin-dashboard'
+  | 'admin-cultural-cms'
 
   | 'admin-sellers'
   | 'admin-products'
@@ -507,6 +528,212 @@ export interface ChatMessage {
   readAt?: string;
   createdAt: string;
 }
+
+// ==========================================
+// WAH PLATFORM - CULTURAL & REGIONAL TYPES
+// ==========================================
+
+export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived';
+
+export interface WahGovernorate {
+  id: string;
+  name: string;
+  slug: string;
+  shortIntro: string;
+  history: string;
+  famousFor: string[];
+  coverImage: string;
+  gallery: string[];
+  capitalCity: string;
+  mapCoordinates?: { lat: number; lng: number };
+  traditionalCraftsIds: string[];
+  traditionalFoodIds: string[];
+  culturalTraditions: string[];
+  status: VerificationStatus;
+  places?: HeritagePlace[];
+  crafts?: CulturalCraft[];
+  foods?: UpperEgyptFood[];
+  stories?: WahStory[];
+  people?: LocalPerson[];
+  events?: CulturalEvent[];
+  products?: Product[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type GovernorateDoc = WahGovernorate;
+
+export interface HeritagePlace {
+  id: string;
+  title: string;
+  slug: string;
+  governorateId: string;
+  governorateName: string;
+  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center' | string;
+  description: string;
+  shortDescription?: string;
+  history: string;
+  fullHistory?: string;
+  historicalEra?: string;
+  architecturalHighlights?: string[];
+  galleryImages?: string[];
+  locationDescription?: string;
+  visitorTips?: string;
+  significance: string;
+  locationName: string;
+  coverImage: string;
+  gallery: string[];
+  videoUrl?: string;
+  relatedCrafts?: string[];
+  status: VerificationStatus;
+  sourceName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalCraft {
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  history: string;
+  governorates: string[];
+  materials: string[];
+  tools: string[];
+  manufacturingStages: { title: string; description: string; stepNumber: number }[];
+  stages?: { title: string; description: string; stepNumber?: number }[];
+  toolsUsed?: string[];
+  category?: string;
+  preservationStatus?: string;
+  governorateId?: string;
+  governorateName?: string;
+  coverImage: string;
+  gallery: string[];
+  videoUrl?: string;
+  relatedArtisansIds?: string[];
+  status: VerificationStatus;
+  relatedProducts?: Product[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WahStory {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: 'craft_origins' | 'places_myths' | 'villages_history' | 'artisan_journey' | 'oral_tradition' | 'folklore';
+  authorName: string;
+  narrator?: string;
+  culturalSignificance?: string;
+  governorateName: string;
+  governorateId: string;
+  coverImage: string;
+  readingTimeMinutes: number;
+  relatedPlaceId?: string;
+  relatedCraftId?: string;
+  relatedArtisanId?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LocalPerson {
+  id: string;
+  name: string;
+  slug: string;
+  titleOrRole: string;
+  craftTitle?: string;
+  governorateName: string;
+  governorateId: string;
+  biography: string;
+  bio?: string;
+  craftOrSkill: string;
+  avatarUrl: string;
+  photoUrl?: string;
+  quote?: string;
+  yearsOfExperience?: number;
+  relatedArtisanId?: string;
+  relatedCraftId?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpperEgyptFood {
+  id: string;
+  title: string;
+  name?: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  description: string;
+  category?: string;
+  ingredients: string[];
+  preparationMethod: string;
+  preparation?: string;
+  originStory: string;
+  story?: string;
+  occasionOrTradition?: string;
+  coverImage: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalEvent {
+  id: string;
+  title: string;
+  slug: string;
+  category: 'festival' | 'moulid' | 'exhibition' | 'workshop' | 'cultural_night' | 'market_fair' | string;
+  governorateName: string;
+  governorateId: string;
+  locationName: string;
+  location?: string;
+  eventDate: string;
+  startDate?: string;
+  eventTime?: string;
+  timeOfYear?: string;
+  description: string;
+  traditions?: string;
+  coverImage: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MapGovernorateData {
+  id: string;
+  name: string;
+  slug: string;
+  shortIntro: string;
+  coverImage: string;
+  famousFor: string[];
+  coordinates: { lat: number; lng: number };
+  stats: {
+    placesCount: number;
+    craftsCount: number;
+    storiesCount: number;
+    foodsCount: number;
+    eventsCount: number;
+    productsCount: number;
+  };
+}
+
+export interface GlobalSearchResult {
+  id: string;
+  title: string;
+  type: 'governorate' | 'place' | 'craft' | 'story' | 'person' | 'food' | 'event' | 'product';
+  typeLabel: string;
+  subtitle?: string;
+  coverImage?: string;
+  url: string;
+  slug: string;
+}
+
+export type WahSearchResult = GlobalSearchResult;
+
 
 
 

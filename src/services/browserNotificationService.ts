@@ -289,7 +289,7 @@ class BrowserNotificationService {
    */
   public sendTestNotification() {
     this.sendNotification({
-      title: 'سوق الصعيد - تجربة الإشعارات الفورية ✨',
+      title: 'وه | WAH - تجربة الإشعارات الفورية ✨',
       body: 'تهانينا! نظام الإشعارات الفورية والتنبيهات الصوتية يعمل بكفاءة تامة على جهازك.',
       type: 'system',
       actionPage: 'home',

@@ -41,7 +41,8 @@ export const ProductDetailsView: React.FC = () => {
     addToast,
     currentRole,
     isAuthenticated,
-    openChatWithArtisan
+    openChatWithArtisan,
+    isLoading
   } = useApp();
 
   const product = products.find((p) => p.id === selectedProductId) || products[0];
@@ -86,6 +87,15 @@ export const ProductDetailsView: React.FC = () => {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
 
+  if (isLoading && !product) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4">
+        <div className="w-12 h-12 border-4 border-[#943310] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-gray-600 text-sm font-bold">جاري تحميل تفاصيل المنتج...</p>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
@@ -116,8 +126,23 @@ export const ProductDetailsView: React.FC = () => {
   };
 
   const handleShare = () => {
-    navigator.clipboard?.writeText(window.location.href);
-    addToast('تم نسخ الرابط', 'تم نسخ رابط المنتج لمشاركته مع أصدقائك', 'info');
+    if (!product) return;
+    const shareUrl = `${window.location.origin}/?product=${product.id}`;
+    if (navigator.share) {
+      navigator
+        .share({
+          title: product.title,
+          text: `شاهد ${product.title} من صعيد مصر على منصة وه`,
+          url: shareUrl
+        })
+        .catch(() => {
+          navigator.clipboard?.writeText(shareUrl);
+          addToast('تم نسخ الرابط', 'تم نسخ رابط المنتج المباشر لمشاركته', 'info');
+        });
+    } else {
+      navigator.clipboard?.writeText(shareUrl);
+      addToast('تم نسخ الرابط', 'تم نسخ رابط المنتج المباشر لمشاركته مع أصدقائك', 'info');
+    }
   };
 
   return (

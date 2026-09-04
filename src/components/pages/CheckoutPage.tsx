@@ -100,7 +100,7 @@ export const CheckoutPage: React.FC = () => {
           onClick={() => setActivePage('products')}
           className="px-6 py-2.5 bg-[#943310] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer hover:bg-[#7c280a] transition-colors"
         >
-          تصفح سوق الصعيد الآن
+          تصفح سوق وه الآن
         </button>
       </div>
     );

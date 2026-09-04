@@ -445,7 +445,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             {/* Footer */}
             <div className="p-3 bg-[#FAF6F0] dark:bg-[#26201C] border-t border-[#E8E1D9] dark:border-[#382E27] text-center">
               <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90]">
-                نظام إشعارات سوق الصعيد الفوري • تحديث تلقائي مستمر
+                نظام إشعارات وه الفوري • تحديث تلقائي مستمر
               </span>
             </div>
           </motion.div>

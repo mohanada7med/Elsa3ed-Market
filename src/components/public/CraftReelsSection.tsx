@@ -95,7 +95,7 @@ export const CraftReelsSection: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B45F42]/10 dark:bg-[#B45F42]/20 text-[#B45F42] dark:text-[#E07A5F] text-xs font-bold mb-2">
               <Film className="w-3.5 h-3.5" />
-              <span>فيديوهات ورش الصعيد • Craft Reels</span>
+              <span>وه Reels • مقاطع صناع الصعيد</span>
               <span className="bg-[#B45F42] text-white text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse">
                 جديد
               </span>

@@ -72,7 +72,7 @@ export const WholesalePage: React.FC = () => {
 
     setIsSubmitting(true);
 
-    const message = `*طلب عرض أسعار بيع بالجملة وتوريدات - سوق الصعيد* 🏺\n\n` +
+    const message = `*طلب عرض أسعار بيع بالجملة وتوريدات - سوق وه* 🏺\n\n` +
       `🏢 *اسم المؤسسة/الشركة:* ${companyName}\n` +
       `👤 *المسؤول:* ${contactName}\n` +
       `📞 *رقم الهاتف:* ${phone}\n` +
@@ -299,7 +299,7 @@ export const WholesalePage: React.FC = () => {
             </h2>
 
             <p className="text-sm text-[#7A6F64] dark:text-[#DDD2C7] leading-relaxed">
-              املأ البيانات أدناه، وسيقوم مسؤول مبيعات الجملة في سوق الصعيد بإعداد جدول الكميات والأسعار والتواصل معك هاتفياً وعبر الواتساب خلال أقل من 3 ساعات.
+              املأ البيانات أدناه، وسيقوم مسؤول مبيعات الجملة في سوق وه بإعداد جدول الكميات والأسعار والتواصل معك هاتفياً وعبر الواتساب خلال أقل من 3 ساعات.
             </p>
 
             {/* Direct Contact Card */}
@@ -335,7 +335,7 @@ export const WholesalePage: React.FC = () => {
                   تم استلام طلبك بنجاح!
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 max-w-md mx-auto">
-                  شكراً لتواصلك مع سوق الصعيد. سيقوم فريق مبيعات الجملة بالتواصل مع <span className="font-bold">{companyName}</span> عبر رقم {phone} لتقديم عرض الأسعار وتفاصيل الإنتاج.
+                  شكراً لتواصلك مع سوق وه. سيقوم فريق مبيعات الجملة بالتواصل مع <span className="font-bold">{companyName}</span> عبر رقم {phone} لتقديم عرض الأسعار وتفاصيل الإنتاج.
                 </p>
                 <button
                   type="button"

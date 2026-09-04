@@ -1,6 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { HeroSection } from '../public/HeroSection';
+import { WahEcosystemPortalSection } from '../public/WahEcosystemPortalSection';
 import { FeaturedCategories } from '../public/FeaturedCategories';
 import { HeritageCraftsShowcase } from '../public/HeritageCraftsShowcase';
 import { CraftReelsSection } from '../public/CraftReelsSection';
@@ -15,16 +16,19 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section - WAH Digital Platform of Upper Egypt */}
       <HeroSection />
 
-      {/* 2. Featured Categories */}
+      {/* 2. WAH Ecosystem Portals (Map, Governorates, Places, Crafts, Stories, People, Food, Events, Market) */}
+      <WahEcosystemPortalSection />
+
+      {/* 3. Featured Categories in Marketplace */}
       <FeaturedCategories />
 
-      {/* 3. Upper Egypt Heritage Crafts Showcase (Deep Interactive Atlas) */}
+      {/* 4. Upper Egypt Heritage Crafts Showcase (Deep Interactive Atlas) */}
       <HeritageCraftsShowcase />
 
-      {/* 4. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
+      {/* 5. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
       <CraftReelsSection />
 
       {/* 5. Featured & Best-Selling Products Section */}

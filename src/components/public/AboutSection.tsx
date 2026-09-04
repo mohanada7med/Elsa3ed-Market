@@ -32,12 +32,12 @@ export const AboutSection: React.FC = () => {
 
             {/* Floating Experience Box */}
             <div className="absolute -bottom-5 left-2 sm:left-6 bg-[#943310] text-white p-3.5 sm:p-4 rounded-2xl shadow-xl border-2 border-amber-300/30 flex items-center gap-3 max-w-[calc(100%-1rem)]">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-amber-300 text-lg shrink-0">
-                ص
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-amber-300 text-sm shrink-0 font-heritage">
+                وه
               </div>
               <div className="text-right">
-                <span className="text-xs font-bold block">سوق الصعيد الرقمي</span>
-                <span className="text-[11px] text-amber-200">صنع بحب وإتقان مصري 100%</span>
+                <span className="text-xs font-bold block">منصة وه | WAH</span>
+                <span className="text-[11px] text-amber-200">العالم الرقمي لصعيد مصر • كل حكاية ليها أصل</span>
               </div>
             </div>
           </div>
@@ -46,16 +46,16 @@ export const AboutSection: React.FC = () => {
           <div className="lg:col-span-7 space-y-6 text-right">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#943310]/10 text-[#943310] text-xs font-bold">
               <HeartHandshake className="w-3.5 h-3.5" />
-              <span>عن سوق الصعيد (Elsa3ed Market)</span>
+              <span>عن منصة وه (WAH)</span>
             </div>
 
             <h2 className="text-2xl sm:text-4xl font-black text-gray-900 font-heritage leading-tight">
-              جسر يربط بين ورش الصعيد العريقة <br />
-              <span className="text-[#943310]">وبين كل عاشق للأصالة والجودة</span>
+              جسر يربط بين ورش وثقافة الصعيد العريقة <br />
+              <span className="text-[#943310]">وبين كل عاشق للأصالة والتراث</span>
             </h2>
 
             <p className="text-xs sm:text-sm text-[#614b3d] leading-relaxed">
-              تأسس <strong>سوق الصعيد</strong> كمنصة وطنية متخصصة لتمكين الحرفيين وشيوخ الصنعة والنساء المعيلات في قرى ونجوع محافظات الصعيد (أسوان، الأقصر، قنا، سوهاج، أسيوط، المنيا، والوادي الجديد). نهدف لتوثيق هذا التراث الثري، وتوفير حلول تغليف وشحن رقمية تضمن وصول المنتجات بأعلى معايير الجودة.
+              انطلقت <strong>منصة وه (WAH)</strong> كعالم رقمي جامع لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس صعيد مصر، ودعم الحرفيين وشيوخ الصنعة والنساء المعيلات في قرى ونجوع محافظات الصعيد (أسوان، الأقصر، قنا، سوهاج، أسيوط، المنيا، والوادي الجديد)، بجانب سوق وه المعتمد لتسوق الحرف الأصيلة مباشرة من صناعها.
             </p>
 
             {/* 3 Value Pillars */}

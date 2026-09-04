@@ -106,6 +106,24 @@ export const CraftReelsPage: React.FC = () => {
     loadReelsFromDb();
   }, []);
 
+  // Handle deep-link direct open of a specific reel
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const targetReelId =
+      params.get('reel') ||
+      params.get('reelId') ||
+      sessionStorage.getItem('wah_selected_reel_id');
+
+    if (targetReelId) {
+      setSelectedReelId(targetReelId);
+      setIsModalOpen(true);
+      try {
+        sessionStorage.removeItem('wah_selected_reel_id');
+      } catch {}
+    }
+  }, [reels]);
+
   // Lock parent document scrolling when viewing reels in feed mode on mobile
   useEffect(() => {
     if (viewMode !== 'feed') return;
@@ -176,7 +194,7 @@ export const CraftReelsPage: React.FC = () => {
         isOpen: true,
         title: 'تسجيل الدخول مطلوب لنشر الفيديوهات',
         message:
-          'ميزة رفع ونشر فيديوهات الورش الحرفية (Craft Reels) مخصصة للحرفيين والبائعين المسجلين فقط. يرجى تسجيل الدخول بحساب بائعك أو إنشاء حساب جديد.',
+          'ميزة رفع ونشر فيديوهات الورش الحرفية (وه Reels) مخصصة للحرفيين والبائعين المسجلين فقط. يرجى تسجيل الدخول بحساب بائعك أو إنشاء حساب جديد.',
         type: 'unauthenticated'
       });
       return;
@@ -248,7 +266,7 @@ export const CraftReelsPage: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B45F42]/10 dark:bg-[#B45F42]/20 text-[#B45F42] dark:text-[#E07A5F] text-xs font-bold mb-2">
             <Film className="w-3.5 h-3.5" />
-            <span>ريلز ورش الصعيد • Craft Reels</span>
+            <span>وه Reels • مقاطع صناع الصعيد</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
             شاهد الصنعة على أصولها واشترِ فوراً

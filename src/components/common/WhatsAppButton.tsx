@@ -16,7 +16,7 @@ export const WHATSAPP_INT_NUMBER = '201158969931';
 
 export function getWhatsAppUrl(customMessage?: string): string {
   const defaultMsg =
-    'السلام عليكم، أود الاستفسار عن منتجات سوق الصعيد التراثية.';
+    'السلام عليكم، أود الاستفسار عن منصة وه ومنتجات سوق وه التراثية.';
 
   const text = encodeURIComponent(customMessage || defaultMsg);
 
@@ -31,7 +31,7 @@ export const WhatsAppButton: React.FC = () => {
     const finalMsg =
       textToSend ||
       userMsg ||
-      'السلام عليكم، أود الاستفسار عن منتجات وخدمات سوق الصعيد.';
+      'السلام عليكم، أود الاستفسار عن منصة وه وسوق وه.';
 
     const url = getWhatsAppUrl(finalMsg);
 
@@ -68,7 +68,7 @@ export const WhatsAppButton: React.FC = () => {
         <HelpCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
       ),
       title: 'استفسار عام عن منتجات الورش الأصيلة',
-      text: 'السلام عليكم، أود المساعدة في اختيار منتجات وهدايا تراثية من سوق الصعيد.',
+      text: 'السلام عليكم، أود المساعدة في اختيار منتجات وهدايا تراثية من سوق وه.',
     },
   ];
 
@@ -122,7 +122,7 @@ export const WhatsAppButton: React.FC = () => {
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center p-1 border border-white/20">
                     <img
                       src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-                      alt="سوق الصعيد"
+                      alt="وه | WAH"
                       className="w-full h-full object-contain"
                     />
                   </div>
@@ -132,7 +132,7 @@ export const WhatsAppButton: React.FC = () => {
 
                 <div>
                   <h4 className="font-bold text-sm leading-tight text-white">
-                    خدمة عملاء سوق الصعيد
+                    خدمة عملاء وه | WAH
                   </h4>
 
                   <p className="text-[11px] text-amber-100/90 font-mono mt-0.5">
@@ -155,7 +155,7 @@ export const WhatsAppButton: React.FC = () => {
             <div className="p-4 bg-[#E5DDD5]/30 dark:bg-[#14100E] space-y-3 max-h-[300px] overflow-y-auto">
               <div className="bg-white dark:bg-[#221C18] p-3 rounded-2xl rounded-tr-none shadow-2xs border border-gray-100 dark:border-[#332A24] text-xs text-gray-800 dark:text-[#DDD2C7] leading-relaxed">
                 <p className="font-bold text-[#B45F42] dark:text-[#FF855D] mb-1">
-                  مرحباً بك في سوق الصعيد! 🏺✨
+                  مرحباً بك في وه! 🏺✨
                 </p>
 
                 <p>

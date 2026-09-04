@@ -21,7 +21,7 @@ export const NotFoundPage: React.FC = () => {
         </h1>
 
         <p className="text-[#6e5d4f] text-base leading-relaxed mb-8">
-          يبدو أنك سلكت مساراً غير موجود في أزقة سوق الصعيد. قد تكون الصفحة قد نُقلت أو تم تعديل رابطها.
+          يبدو أنك سلكت مساراً غير موجود في أزقة وه. قد تكون الصفحة قد نُقلت أو تم تعديل رابطها.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -31,7 +31,7 @@ export const NotFoundPage: React.FC = () => {
             className="flex items-center justify-center gap-2 bg-[#9a3412] hover:bg-[#7c2d12] text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
           >
             <Home className="w-5 h-5" />
-            <span>العودة لبوابة السوق</span>
+            <span>العودة للرئيسية</span>
           </button>
 
           <button

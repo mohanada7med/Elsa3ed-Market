@@ -1,5 +1,5 @@
 /**
- * SEO and Structured Data Helper for Elsa3ed Market (سوق الصعيد)
+ * SEO and Structured Data Helper for WAH (وه)
  */
 
 export interface SEOConfig {
@@ -12,15 +12,15 @@ export interface SEOConfig {
 }
 
 export function updatePageSEO(config: SEOConfig) {
-  const baseTitle = 'سوق الصعيد | Elsa3ed Market';
-  const finalTitle = config.title ? `${config.title} | ${baseTitle}` : `${baseTitle} — أصالة الحرف والمنتجات التراثية`;
+  const baseTitle = 'وه | WAH';
+  const finalTitle = config.title ? `${config.title} | ${baseTitle}` : `${baseTitle} — العالم الرقمي لصعيد مصر`;
 
   document.title = finalTitle;
 
   // Description
   const description =
     config.description ||
-    'سوق الصعيد هو المنصة الرائدة لعرض وشراء المنتجات اليدوية والحرف التراثية والخيرات الأصيلة من قلب صعيد مصر.';
+    'وه — منصة رقمية شاملة لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس وحكايات صعيد مصر، وسوق وه للحرف التراثية.';
 
   let metaDesc = document.querySelector('meta[name="description"]');
   if (!metaDesc) {

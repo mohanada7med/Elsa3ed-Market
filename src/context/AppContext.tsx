@@ -46,6 +46,29 @@ interface AppContextType {
   navigateToSeller: (sellerId: string) => void;
   navigateToOrder: (orderId: string) => void;
 
+  // WAH Cultural Ecosystem Navigation
+  selectedGovernorateSlug: string | null;
+  setSelectedGovernorateSlug: (slug: string | null) => void;
+  selectedPlaceSlug: string | null;
+  setSelectedPlaceSlug: (slug: string | null) => void;
+  selectedCraftSlug: string | null;
+  setSelectedCraftSlug: (slug: string | null) => void;
+  selectedStorySlug: string | null;
+  setSelectedStorySlug: (slug: string | null) => void;
+  selectedPersonSlug: string | null;
+  setSelectedPersonSlug: (slug: string | null) => void;
+  selectedFoodSlug: string | null;
+  setSelectedFoodSlug: (slug: string | null) => void;
+  selectedEventSlug: string | null;
+  setSelectedEventSlug: (slug: string | null) => void;
+  navigateToGovernorate: (slug: string) => void;
+  navigateToPlace: (slug: string) => void;
+  navigateToCraft: (slug: string) => void;
+  navigateToStory: (slug: string) => void;
+  navigateToPerson: (slug: string) => void;
+  navigateToFood: (slug: string) => void;
+  navigateToEvent: (slug: string) => void;
+
   // Intro Experience
   showIntroVideo: boolean;
   setShowIntroVideo: (show: boolean) => void;
@@ -224,7 +247,7 @@ export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/up
 export const GUEST_USER: UserProfile = {
   id: '',
   username: '',
-  name: 'زائر سوق الصعيد',
+  name: 'زائر وه',
   email: '',
   phone: '',
   role: 'guest',
@@ -281,10 +304,10 @@ export const normalizeOrder = (ord: any): Order => {
     id: ord.id || `ord-${Date.now()}`,
     orderNumber: ord.orderNumber || `SAED-${String(ord.id || '').replace(/\D/g, '').slice(-4) || '1042'}`,
     buyerId: ord.buyerId || 'user-buyer-1',
-    buyerName: ord.buyerName || ord.shippingAddress?.fullName || 'عميل سوق الصعيد',
+    buyerName: ord.buyerName || ord.shippingAddress?.fullName || 'عميل وه',
     buyerPhone: ord.buyerPhone || ord.shippingAddress?.phone || '01000000000',
     shippingAddress: {
-      fullName: ord.shippingAddress?.fullName || ord.shippingAddress?.buyerName || ord.buyerName || 'عميل سوق الصعيد',
+      fullName: ord.shippingAddress?.fullName || ord.shippingAddress?.buyerName || ord.buyerName || 'عميل وه',
       phone: ord.shippingAddress?.phone || ord.shippingAddress?.buyerPhone || ord.buyerPhone || '01000000000',
       governorate: (ord.shippingAddress?.governorate || 'القاهرة') as Governorate,
       city: ord.shippingAddress?.city || 'المدينة',
@@ -312,6 +335,26 @@ export const normalizeOrder = (ord: any): Order => {
 
 const PAGE_ROUTES: Record<ActivePage, string> = {
   home: '/',
+  explore: '/explore',
+  governorates: '/governorates',
+  'governorate-details': '/governorates',
+  map: '/map',
+  places: '/places',
+  'place-details': '/places',
+  'cultural-crafts': '/cultural-crafts',
+  'cultural-craft-details': '/cultural-crafts',
+  'craft-details': '/cultural-crafts',
+  stories: '/stories',
+  'story-details': '/stories',
+  people: '/people',
+  'person-details': '/people',
+  food: '/food',
+  'food-details': '/food',
+  events: '/events',
+  'event-details': '/events',
+  'global-search': '/search',
+  'cultural-cms': '/admin-cultural-cms',
+  'wah-market': '/products',
   products: '/products',
   'product-details': '/products',
   categories: '/categories',
@@ -339,6 +382,7 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
   'admin-dashboard': '/admin-dashboard',
+  'admin-cultural-cms': '/admin-cultural-cms',
   'admin-sellers': '/admin-sellers',
   'admin-products': '/admin-products',
   'admin-buyers': '/admin-buyers',
@@ -358,16 +402,231 @@ function getInitialNavigationState(): {
   sellerId: string | null;
   orderId: string | null;
   searchQuery: string;
+  governorateSlug?: string | null;
+  placeSlug?: string | null;
+  craftSlug?: string | null;
+  storySlug?: string | null;
+  personSlug?: string | null;
+  foodSlug?: string | null;
+  eventSlug?: string | null;
 } {
   if (typeof window === 'undefined') {
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: '' };
   }
 
   const path = window.location.pathname.replace(/\/+$/, '') || '/';
-  const params = new URLSearchParams(window.location.search);
-  const idFromQuery = params.get('id');
-  const queryTerm = params.get('q') || params.get('search') || '';
+  const search = window.location.search;
+  const hash = window.location.hash;
 
+  // Aggregate parameters from both query string and hash parameters (e.g., #/reels?reel=... or ?product=...)
+  const params = new URLSearchParams(search);
+  if (hash && hash.includes('?')) {
+    const hashParams = new URLSearchParams(hash.split('?')[1]);
+    hashParams.forEach((val, key) => {
+      if (!params.has(key)) params.set(key, val);
+    });
+  }
+
+  const idFromQuery = params.get('id');
+  const slugFromQuery = params.get('slug');
+  const queryTerm = params.get('q') || params.get('search') || '';
+  const pageParam = params.get('page') as ActivePage | null;
+
+  // 1. Direct Deep-Linking Priority via Explicit Query Parameters (Works regardless of pathname)
+  const reelId = params.get('reel') || params.get('reelId');
+  if (reelId) {
+    try { sessionStorage.setItem('wah_selected_reel_id', reelId); } catch {}
+    return { page: 'reels', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  const productId = params.get('product') || params.get('productId') || (pageParam === 'product-details' ? idFromQuery : null);
+  if (productId) {
+    return { page: 'product-details', productId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  const sellerId = params.get('seller') || params.get('sellerId') || (pageParam === 'seller-details' ? idFromQuery : null);
+  if (sellerId) {
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId, orderId: null, searchQuery: queryTerm };
+  }
+
+  const orderId = params.get('order') || params.get('orderId') || (pageParam === 'order-details' ? idFromQuery : null);
+  if (orderId) {
+    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId, searchQuery: queryTerm };
+  }
+
+  const categoryId = params.get('category') || params.get('categoryId') || (pageParam === 'category-details' ? idFromQuery : null);
+  if (categoryId) {
+    return { page: 'category-details', productId: null, categoryId, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  const placeSlug = params.get('place') || params.get('placeSlug') || (pageParam === 'place-details' ? slugFromQuery : null);
+  if (placeSlug) {
+    return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug };
+  }
+
+  const craftSlug = params.get('craft') || params.get('craftSlug') || ((pageParam === 'cultural-craft-details' || pageParam === 'craft-details') ? slugFromQuery : null);
+  if (craftSlug) {
+    return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug };
+  }
+
+  const storySlug = params.get('story') || params.get('storySlug') || (pageParam === 'story-details' ? slugFromQuery : null);
+  if (storySlug) {
+    return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug };
+  }
+
+  const personSlug = params.get('person') || params.get('personSlug') || (pageParam === 'person-details' ? slugFromQuery : null);
+  if (personSlug) {
+    return { page: 'person-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, personSlug };
+  }
+
+  const foodSlug = params.get('food') || params.get('foodSlug') || (pageParam === 'food-details' ? slugFromQuery : null);
+  if (foodSlug) {
+    return { page: 'food-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, foodSlug };
+  }
+
+  const eventSlug = params.get('event') || params.get('eventSlug') || (pageParam === 'event-details' ? slugFromQuery : null);
+  if (eventSlug) {
+    return { page: 'event-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, eventSlug };
+  }
+
+  const governorateSlug = params.get('governorate') || params.get('governorateSlug') || (pageParam === 'governorate-details' ? slugFromQuery : null);
+  if (governorateSlug) {
+    return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug };
+  }
+
+  if (pageParam && PAGE_ROUTES[pageParam]) {
+    return {
+      page: pageParam,
+      productId: idFromQuery,
+      categoryId: idFromQuery,
+      sellerId: idFromQuery,
+      orderId: idFromQuery,
+      searchQuery: queryTerm,
+      governorateSlug: slugFromQuery,
+      placeSlug: slugFromQuery,
+      craftSlug: slugFromQuery,
+      storySlug: slugFromQuery,
+      personSlug: slugFromQuery,
+      foodSlug: slugFromQuery,
+      eventSlug: slugFromQuery
+    };
+  }
+
+  // 2. WAH Cultural Ecosystem Path-based Routes
+  if (path === '/governorates' || path.startsWith('/governorates/')) {
+    const slug = slugFromQuery || (path.startsWith('/governorates/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug: slug };
+    }
+    return { page: 'governorates', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/places' || path.startsWith('/places/')) {
+    const slug = slugFromQuery || (path.startsWith('/places/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug: slug };
+    }
+    return { page: 'places', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/cultural-crafts' || path.startsWith('/cultural-crafts/')) {
+    const slug = slugFromQuery || (path.startsWith('/cultural-crafts/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug: slug };
+    }
+    return { page: 'cultural-crafts', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/stories' || path.startsWith('/stories/')) {
+    const slug = slugFromQuery || (path.startsWith('/stories/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug: slug };
+    }
+    return { page: 'stories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/people' || path.startsWith('/people/')) {
+    const slug = slugFromQuery || (path.startsWith('/people/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'person-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, personSlug: slug };
+    }
+    return { page: 'people', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/food' || path.startsWith('/food/')) {
+    const slug = slugFromQuery || (path.startsWith('/food/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'food-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, foodSlug: slug };
+    }
+    return { page: 'food', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/events' || path.startsWith('/events/')) {
+    const slug = slugFromQuery || (path.startsWith('/events/') ? path.split('/')[2] : null);
+    if (slug) {
+      return { page: 'event-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, eventSlug: slug };
+    }
+    return { page: 'events', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/reels' || path.startsWith('/reels/')) {
+    const rId = path.startsWith('/reels/') ? path.split('/')[2] : null;
+    if (rId) {
+      try { sessionStorage.setItem('wah_selected_reel_id', rId); } catch {}
+    }
+    return { page: 'reels', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  // 3. Path-based Product / Category / Seller / Order Routes
+  if (path === '/products') {
+    if (idFromQuery) {
+      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path.startsWith('/products/')) {
+    const prodId = path.split('/')[2];
+    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/categories') {
+    if (idFromQuery) {
+      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path.startsWith('/categories/')) {
+    const catId = path.split('/')[2];
+    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/sellers') {
+    if (idFromQuery) {
+      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path.startsWith('/sellers/')) {
+    const sId = path.split('/')[2];
+    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/orders') {
+    if (idFromQuery) {
+      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery, searchQuery: queryTerm };
+    }
+    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path.startsWith('/orders/')) {
+    const ordId = path.split('/')[2];
+    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId, searchQuery: queryTerm };
+  }
+
+  // 4. Root / Default Page & Session fallback
   if (path === '/' || path === '') {
     const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
     if (saved && PAGE_ROUTES[saved] && saved !== 'home') {
@@ -377,10 +636,33 @@ function getInitialNavigationState(): {
         categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
         sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
         orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
-        searchQuery: queryTerm
+        searchQuery: queryTerm,
+        governorateSlug: sessionStorage.getItem('wah_selected_governorate_slug'),
+        placeSlug: sessionStorage.getItem('wah_selected_place_slug'),
+        craftSlug: sessionStorage.getItem('wah_selected_craft_slug'),
+        storySlug: sessionStorage.getItem('wah_selected_story_slug'),
+        personSlug: sessionStorage.getItem('wah_selected_person_slug'),
+        foodSlug: sessionStorage.getItem('wah_selected_food_slug'),
+        eventSlug: sessionStorage.getItem('wah_selected_event_slug')
       };
     }
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/map') {
+    return { page: 'map', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/explore') {
+    return { page: 'explore', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/admin-cultural-cms') {
+    return { page: 'admin-cultural-cms', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  if (path === '/market') {
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   if (path === '/search') {
@@ -437,6 +719,17 @@ function getInitialNavigationState(): {
 
   const simplePages: ActivePage[] = [
     'crafts',
+    'explore',
+    'governorates',
+    'map',
+    'places',
+    'cultural-crafts',
+    'stories',
+    'people',
+    'food',
+    'events',
+    'wah-market',
+    'admin-cultural-cms',
     'about',
     'wholesale',
     'search',
@@ -480,7 +773,14 @@ function getInitialNavigationState(): {
       categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
       sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
       orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
-      searchQuery: queryTerm
+      searchQuery: queryTerm,
+      governorateSlug: sessionStorage.getItem('wah_selected_governorate_slug'),
+      placeSlug: sessionStorage.getItem('wah_selected_place_slug'),
+      craftSlug: sessionStorage.getItem('wah_selected_craft_slug'),
+      storySlug: sessionStorage.getItem('wah_selected_story_slug'),
+      personSlug: sessionStorage.getItem('wah_selected_person_slug'),
+      foodSlug: sessionStorage.getItem('wah_selected_food_slug'),
+      eventSlug: sessionStorage.getItem('wah_selected_event_slug')
     };
   }
 
@@ -495,6 +795,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(initialNav.categoryId);
   const [selectedSellerId, setSelectedSellerId] = useState<string | null>(initialNav.sellerId);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(initialNav.orderId);
+
+  // WAH Cultural Ecosystem Selected Slugs
+  const [selectedGovernorateSlug, setSelectedGovernorateSlug] = useState<string | null>(initialNav.governorateSlug || null);
+  const [selectedPlaceSlug, setSelectedPlaceSlug] = useState<string | null>(initialNav.placeSlug || null);
+  const [selectedCraftSlug, setSelectedCraftSlug] = useState<string | null>(initialNav.craftSlug || null);
+  const [selectedStorySlug, setSelectedStorySlug] = useState<string | null>(initialNav.storySlug || null);
+  const [selectedPersonSlug, setSelectedPersonSlug] = useState<string | null>(initialNav.personSlug || null);
+  const [selectedFoodSlug, setSelectedFoodSlug] = useState<string | null>(initialNav.foodSlug || null);
+  const [selectedEventSlug, setSelectedEventSlug] = useState<string | null>(initialNav.eventSlug || null);
 
   // Sync activePage with browser URL and history
   const setActivePage = useCallback((pageOrUpdater: ActivePage | ((prev: ActivePage) => ActivePage)) => {
@@ -512,6 +821,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (nav.categoryId !== undefined) setSelectedCategoryId(nav.categoryId);
       if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
       if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
+      if (nav.governorateSlug !== undefined) setSelectedGovernorateSlug(nav.governorateSlug);
+      if (nav.placeSlug !== undefined) setSelectedPlaceSlug(nav.placeSlug);
+      if (nav.craftSlug !== undefined) setSelectedCraftSlug(nav.craftSlug);
+      if (nav.storySlug !== undefined) setSelectedStorySlug(nav.storySlug);
+      if (nav.personSlug !== undefined) setSelectedPersonSlug(nav.personSlug);
+      if (nav.foodSlug !== undefined) setSelectedFoodSlug(nav.foodSlug);
+      if (nav.eventSlug !== undefined) setSelectedEventSlug(nav.eventSlug);
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -522,7 +838,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (typeof window === 'undefined') return;
     try {
       sessionStorage.setItem('elsa3ed_active_page', activePage);
-      const isDynamicRoute = ['product-details', 'category-details', 'seller-details', 'order-details'].includes(activePage);
+      const isDynamicRoute = [
+        'product-details', 'category-details', 'seller-details', 'order-details',
+        'governorate-details', 'place-details', 'cultural-craft-details',
+        'story-details', 'person-details', 'food-details', 'event-details'
+      ].includes(activePage);
       if (!isDynamicRoute) {
         const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
         const expectedPath = PAGE_ROUTES[activePage] || (activePage === 'home' ? '/' : `/${activePage}`);
@@ -1149,7 +1469,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
       setIsAuthModalOpen(false);
-      addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في سوق الصعيد!`, 'success');
+      addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
     }
   };
 
@@ -1215,7 +1535,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
         return prev;
       });
-      addToast('تسجيل الخروج', 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في سوق الصعيد.', 'info');
+      addToast('تسجيل الخروج', 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في وه.', 'info');
     }
   };
 
@@ -1487,6 +1807,77 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sessionStorage.setItem('elsa3ed_selected_order_id', orderId);
       const targetUrl = `/orders?id=${encodeURIComponent(orderId)}`;
       window.history.pushState({ page: 'order-details', orderId }, '', targetUrl);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // WAH Cultural Ecosystem Navigation Helpers
+  const navigateToGovernorate = (slug: string) => {
+    setSelectedGovernorateSlug(slug);
+    setActivePageState('governorate-details');
+    try {
+      sessionStorage.setItem('wah_selected_governorate_slug', slug);
+      window.history.pushState({ page: 'governorate-details', slug }, '', `/governorates?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToPlace = (slug: string) => {
+    setSelectedPlaceSlug(slug);
+    setActivePageState('place-details');
+    try {
+      sessionStorage.setItem('wah_selected_place_slug', slug);
+      window.history.pushState({ page: 'place-details', slug }, '', `/places?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToCraft = (slug: string) => {
+    setSelectedCraftSlug(slug);
+    setActivePageState('cultural-craft-details');
+    try {
+      sessionStorage.setItem('wah_selected_craft_slug', slug);
+      window.history.pushState({ page: 'cultural-craft-details', slug }, '', `/cultural-crafts?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToStory = (slug: string) => {
+    setSelectedStorySlug(slug);
+    setActivePageState('story-details');
+    try {
+      sessionStorage.setItem('wah_selected_story_slug', slug);
+      window.history.pushState({ page: 'story-details', slug }, '', `/stories?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToPerson = (slug: string) => {
+    setSelectedPersonSlug(slug);
+    setActivePageState('person-details');
+    try {
+      sessionStorage.setItem('wah_selected_person_slug', slug);
+      window.history.pushState({ page: 'person-details', slug }, '', `/people?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToFood = (slug: string) => {
+    setSelectedFoodSlug(slug);
+    setActivePageState('food-details');
+    try {
+      sessionStorage.setItem('wah_selected_food_slug', slug);
+      window.history.pushState({ page: 'food-details', slug }, '', `/food?slug=${encodeURIComponent(slug)}`);
+    } catch { }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToEvent = (slug: string) => {
+    setSelectedEventSlug(slug);
+    setActivePageState('event-details');
+    try {
+      sessionStorage.setItem('wah_selected_event_slug', slug);
+      window.history.pushState({ page: 'event-details', slug }, '', `/events?slug=${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1864,7 +2255,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     notes?: string;
   }): Promise<Order> => {
     const resolvedAddress = {
-      fullName: orderData.buyerName || orderData.address?.fullName || orderData.address?.buyerName || currentUser.name || 'عميل سوق الصعيد',
+      fullName: orderData.buyerName || orderData.address?.fullName || orderData.address?.buyerName || currentUser.name || 'عميل وه',
       phone: orderData.buyerPhone || orderData.address?.phone || orderData.address?.buyerPhone || currentUser.phone || '01000000000',
       governorate: (orderData.governorate || orderData.address?.governorate || currentUser.governorate || 'القاهرة') as Governorate,
       city: orderData.city || orderData.address?.city || 'المدينة',
@@ -1902,7 +2293,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
       );
 
-      // Trigger Platform Notification to Admin & Sellers
+      // Trigger Platform & Native Web Browser Push Notification
       try {
         notificationService.notifyNewOrder({
           orderId: createdOrder.id,
@@ -1912,6 +2303,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           governorate: resolvedAddress.governorate,
           sellerIds: normalized.items.map((i: any) => i.product?.sellerId).filter(Boolean)
         });
+        browserNotificationService.notifyNewOrder(
+          createdOrder.orderNumber || createdOrder.id,
+          createdOrder.total,
+          currentRole === 'seller'
+        );
       } catch (errNotif) {
         console.warn('Could not trigger notification for new order:', errNotif);
       }
@@ -1948,6 +2344,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             buyerId: updated.buyerId,
             sellerId: currentUser.sellerId || currentUser.id
           });
+          browserNotificationService.notifyOrderStatus(
+            updated.orderNumber || orderId,
+            newStatus,
+            false
+          );
         } catch (eN) {
           console.warn('Notification error on order status:', eN);
         }
@@ -1966,6 +2367,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             newStatus,
             buyerId: updated.buyerId
           });
+          browserNotificationService.notifyOrderStatus(
+            updated.orderNumber || orderId,
+            newStatus,
+            false
+          );
         } catch (eN) {
           console.warn('Notification error on order status:', eN);
         }
@@ -2118,6 +2524,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         navigateToCategory,
         navigateToSeller,
         navigateToOrder,
+
+        // WAH Cultural Ecosystem Navigation
+        selectedGovernorateSlug,
+        setSelectedGovernorateSlug,
+        selectedPlaceSlug,
+        setSelectedPlaceSlug,
+        selectedCraftSlug,
+        setSelectedCraftSlug,
+        selectedStorySlug,
+        setSelectedStorySlug,
+        selectedPersonSlug,
+        setSelectedPersonSlug,
+        selectedFoodSlug,
+        setSelectedFoodSlug,
+        selectedEventSlug,
+        setSelectedEventSlug,
+        navigateToGovernorate,
+        navigateToPlace,
+        navigateToCraft,
+        navigateToStory,
+        navigateToPerson,
+        navigateToFood,
+        navigateToEvent,
 
         showIntroVideo,
         setShowIntroVideo,

@@ -129,7 +129,7 @@ export const Header: React.FC = () => {
           { id: 'cart', label: 'سلة المشتريات' },
           { id: 'orders', label: 'طلباتي' }
         ]
-        : [{ id: 'about', label: 'عن سوق الصعيد' }])
+        : [{ id: 'about', label: 'عن وه' }])
     ];
   }, [isAuthenticated, currentRole]);
 
@@ -214,7 +214,7 @@ export const Header: React.FC = () => {
             id="brand-logo"
             role="button"
             tabIndex={0}
-            aria-label="سوق الصعيد - العودة إلى الصفحة الرئيسية"
+            aria-label="وه - العودة إلى الصفحة الرئيسية"
             onClick={() => setActivePage('home')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -227,16 +227,21 @@ export const Header: React.FC = () => {
             <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform duration-200">
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-                alt="شعار سوق الصعيد"
+                alt="شعار وه"
                 className="w-full h-full object-contain drop-shadow-xs"
               />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-lg sm:text-2xl lg:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage tracking-tight leading-none">
-                سوق الصعيد
-              </span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage tracking-tight leading-none">
+                  وه
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-[#B45F42] tracking-wider font-sans">
+                  WAH
+                </span>
+              </div>
               <span className="hidden sm:block text-[10px] sm:text-xs text-[#7A6F64] dark:text-[#A89C90] font-medium tracking-wide mt-1">
-                أصالة الحرف والخيرات التراثية
+                العالم الرقمي لصعيد مصر
               </span>
             </div>
           </div>
@@ -250,7 +255,7 @@ export const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن: فخار قنا، كليم أخميم، عسل سدر..."
-                aria-label="البحث في سوق الصعيد"
+                aria-label="البحث في وه"
                 className="w-full bg-[#F3EFE9] dark:bg-[#25201D] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#7A6F64] rounded-xl pl-10 pr-4 py-2 sm:py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] focus:ring-2 focus:ring-[#B45F42]/20 outline-none transition-all"
               />
               <button
@@ -396,7 +401,7 @@ export const Header: React.FC = () => {
                     setIsAuthModalOpen(true);
                   }}
                   className="hidden xl:flex px-4 py-2.5 bg-[#F3EFE9] dark:bg-[#2A2320] hover:bg-[#E8E1D9] dark:hover:bg-[#352D29] text-[#B45F42] dark:text-[#FF855D] border border-[#B45F42]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5 min-h-[44px] cursor-pointer"
-                  aria-label="إنشاء حساب جديد في سوق الصعيد"
+                  aria-label="إنشاء حساب جديد في وه"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>إنشاء حساب</span>
@@ -811,7 +816,7 @@ export const Header: React.FC = () => {
                       setAuthModalTab('register');
                       setIsAuthModalOpen(true);
                     }}
-                    aria-label="إنشاء حساب جديد في سوق الصعيد"
+                    aria-label="إنشاء حساب جديد في وه"
                     className="py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <UserPlus className="w-4 h-4" />

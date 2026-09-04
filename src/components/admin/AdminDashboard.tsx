@@ -815,7 +815,7 @@ export const AdminDashboard: React.FC = () => {
         categoryId: prodCategoryId,
         categoryName: selectedCat?.name || prodCategoryName,
         sellerId: prodSellerId || currentUser.id,
-        sellerName: targetSeller?.brandName || targetSeller?.name || 'إدارة منصة سوق الصعيد',
+        sellerName: targetSeller?.brandName || targetSeller?.name || 'إدارة منصة وه',
         sellerGovernorate: (prodOriginGovernorate || targetSeller?.governorate || 'قنا') as any,
         price: Number(prodPrice),
         originalPrice: prodOriginalPrice ? Number(prodOriginalPrice) : undefined,
@@ -1373,7 +1373,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-black font-heritage">لوحة الإدارة المركزية لمنصة سوق الصعيد</h1>
+              <h1 className="text-xl sm:text-2xl font-black font-heritage">لوحة الإدارة المركزية لمنصة وه</h1>
               <span className="bg-amber-400 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full">
                 Super Admin
               </span>
@@ -1617,7 +1617,7 @@ export const AdminDashboard: React.FC = () => {
           {/* Overview Top Header with Refresh Button */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E8E1D9] shadow-xs">
             <div>
-              <h2 className="font-black text-lg text-[#2D2A26]">نظرة عامة على أداء منصة سوق الصعيد</h2>
+              <h2 className="font-black text-lg text-[#2D2A26]">نظرة عامة على أداء منصة وه</h2>
               <p className="text-xs text-[#7A6F64] mt-0.5">
                 مؤشرات حية للمبيعات، الورش الحرفية، طابور الاعتماد وشحنات الصعيد
               </p>
@@ -3082,7 +3082,7 @@ export const AdminDashboard: React.FC = () => {
                   required
                   value={adminPaymentSettings.instaPayAccount}
                   onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
-                  placeholder="مثال: elsa3ed@instapay"
+                  placeholder="مثال: wah@instapay"
                   className="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-blue-500"
                   dir="ltr"
                 />
@@ -5594,7 +5594,7 @@ export const AdminDashboard: React.FC = () => {
                 />
                 <label htmlFor="admin-seller-verified-toggle" className="text-xs font-bold text-[#2D2A26] cursor-pointer flex items-center gap-1">
                   <BadgeCheck className="w-4 h-4 text-emerald-600" />
-                  <span>ورشة معتمدة رسمياً وموثقة من إدارة منصة سوق الصعيد</span>
+                  <span>ورشة معتمدة رسمياً وموثقة من إدارة منصة وه</span>
                 </label>
               </div>
 
@@ -5928,7 +5928,7 @@ export const AdminDashboard: React.FC = () => {
         onClose={() => setIsAdminReelUploadOpen(false)}
         onSuccess={handleAdminReelUploaded}
         sellerId={currentUser?.sellerId || 'seller-admin'}
-        sellerName={currentUser?.name || 'إدارة منصة سوق الصعيد'}
+        sellerName={currentUser?.name || 'إدارة منصة وه'}
         artisanName="أسطى الحرفة الصعيدي"
         defaultGovernorate="قنا"
         sellerProducts={adminProducts}

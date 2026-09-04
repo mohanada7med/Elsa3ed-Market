@@ -40,7 +40,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
     const created = craftReelsService.addComment(reel.id, {
       userName:
         currentUser?.name ||
-        (isAuthenticated ? 'مستخدم سوق الصعيد' : 'محب للتراث الصعيدي'),
+        (isAuthenticated ? 'مستخدم وه' : 'محب للتراث الصعيدي'),
       userAvatar:
         currentUser?.avatar ||
         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',

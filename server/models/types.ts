@@ -561,5 +561,145 @@ export interface MessageDocument {
   createdAt: string;
 }
 
+export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived';
+
+export interface GovernorateDoc {
+  _id?: string;
+  id: string;
+  name: string;
+  slug: string;
+  shortIntro: string;
+  history: string;
+  famousFor: string[];
+  coverImage: string;
+  gallery: string[];
+  capitalCity: string;
+  mapCoordinates?: { lat: number; lng: number };
+  traditionalCraftsIds: string[];
+  traditionalFoodIds: string[];
+  culturalTraditions: string[];
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HeritagePlaceDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  governorateId: string;
+  governorateName: string;
+  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center';
+  description: string;
+  history: string;
+  significance: string;
+  locationName: string;
+  coverImage: string;
+  gallery: string[];
+  videoUrl?: string;
+  relatedCrafts?: string[];
+  status: VerificationStatus;
+  sourceName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalCraftDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  shortDescription: string;
+  history: string;
+  governorates: string[];
+  materials: string[];
+  tools: string[];
+  manufacturingStages: { title: string; description: string; stepNumber: number }[];
+  coverImage: string;
+  gallery: string[];
+  videoUrl?: string;
+  relatedArtisansIds?: string[];
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WahStoryDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: 'craft_origins' | 'places_myths' | 'villages_history' | 'artisan_journey' | 'oral_tradition' | 'folklore';
+  authorName: string;
+  governorateName: string;
+  governorateId: string;
+  coverImage: string;
+  readingTimeMinutes: number;
+  relatedPlaceId?: string;
+  relatedCraftId?: string;
+  relatedArtisanId?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LocalPersonDoc {
+  _id?: string;
+  id: string;
+  name: string;
+  slug: string;
+  titleOrRole: string;
+  governorateName: string;
+  governorateId: string;
+  biography: string;
+  craftOrSkill: string;
+  avatarUrl: string;
+  yearsOfExperience?: number;
+  relatedArtisanId?: string;
+  relatedCraftId?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpperEgyptFoodDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  description: string;
+  ingredients: string[];
+  preparationMethod: string;
+  originStory: string;
+  occasionOrTradition?: string;
+  coverImage: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalEventDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  category: 'festival' | 'moulid' | 'exhibition' | 'workshop' | 'cultural_night' | 'market_fair';
+  governorateName: string;
+  governorateId: string;
+  locationName: string;
+  eventDate: string;
+  eventTime?: string;
+  description: string;
+  coverImage: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 

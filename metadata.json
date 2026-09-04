@@ -1,6 +1,6 @@
 {
-  "name": "سوق الصعيد (Elsa3ed Market)",
-  "description": "المنصة الرائدة للتجارة الإلكترونية والحرف التراثية والمنتجات الأصيلة من قلب صعيد مصر",
+  "name": "وه | WAH — العالم الرقمي لصعيد مصر",
+  "description": "منصة رقمية شاملة لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس وحكايات صعيد مصر",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

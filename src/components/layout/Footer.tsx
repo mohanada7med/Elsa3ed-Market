@@ -71,15 +71,15 @@ export const Footer: React.FC = () => {
           {/* Brand Story */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#B45F42] to-[#9E4F36] flex items-center justify-center text-white font-black text-xl font-heritage">
-                ص
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#B45F42] to-[#9E4F36] flex items-center justify-center text-white font-black text-lg font-heritage">
+                وه
               </div>
               <span className="text-2xl font-black text-white font-heritage">
-                سوق الصعيد (Elsa3ed Market)
+                وه | WAH
               </span>
             </div>
             <p className="text-sm text-[#C5B8AC] leading-relaxed max-w-md">
-              المنصة الرقمية الأولى المتخصصة في إبراز وتسويق كنوز صعيد مصر التراثية. نربط أنوال أخميم، وفواخير قنا وأسيوط، ونخيل أسوان، وفنون الأقصر بكل منزل مصري وعربي بروح الأصالة والجودة العالية.
+              وه منصة رقمية متكاملة لاكتشاف وتوثيق تراث وثقافة وحكايات وحرف صعيد مصر، وربط صناعه بالجمهور بكل فخر وأصالة.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -88,7 +88,7 @@ export const Footer: React.FC = () => {
                 id="footer-intro-btn"
                 onClick={() => setShowIntroVideo(true)}
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#2E2824] hover:bg-[#3D3732] text-amber-200 text-xs font-semibold border border-amber-400/25 transition-colors cursor-pointer"
-                aria-label="مشاهدة الفيلم التعريفي والوثائقي عن سوق الصعيد"
+                aria-label="مشاهدة الفيلم التعريفي والوثائقي عن وه"
               >
                 <Film className="w-4 h-4" />
                 <span>مشاهدة الفيلم التعريفي</span>
@@ -99,7 +99,7 @@ export const Footer: React.FC = () => {
           {/* Quick Marketplace Links */}
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#3D3732] pb-2">
-              تصفح السوق
+              تصفح سوق وه
             </h4>
             <ul className="space-y-2 text-xs text-[#C5B8AC]">
               <li>
@@ -274,7 +274,7 @@ export const Footer: React.FC = () => {
         {/* Payment Methods & Copyright */}
         <div className="mt-8 pt-6 border-t border-[#3D3732] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A89D91]">
           <p className="text-center sm:text-left">
-            جميع الحقوق محفوظة © {new Date().getFullYear()} سوق الصعيد (Elsa3ed Market) — صنع بحب وإتقان مصري.
+            جميع الحقوق محفوظة © {new Date().getFullYear()} وه | WAH — العالم الرقمي لصعيد مصر.
           </p>
         </div>
       </div>
