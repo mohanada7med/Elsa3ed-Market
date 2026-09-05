@@ -15,7 +15,8 @@ import {
   RefreshCw,
   Sparkles,
   Info,
-  ChevronLeft
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext.tsx';
 import { api } from '../../services/api.ts';
@@ -497,10 +498,11 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                       setSelectedConv(null);
                       setActiveConversationId(null);
                     }}
-                    className="md:hidden p-1.5 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg"
+                    className="md:hidden p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
                     title="الرجوع لقائمة المحادثات"
+                    aria-label="الرجوع لقائمة المحادثات"
                   >
-                    <ChevronLeft className="w-5 h-5" />
+                    <ChevronRight className="w-5 h-5" />
                   </button>
 
                   {/* Avatar */}

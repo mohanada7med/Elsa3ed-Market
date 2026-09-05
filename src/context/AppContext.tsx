@@ -15,6 +15,7 @@ import {
   Seller,
   UserProfile,
   UserRole,
+  AuthState,
   ThemeMode
 } from '../types.ts';
 import { api } from '../services/api.ts';
@@ -80,6 +81,7 @@ interface AppContextType {
   toggleTheme: () => void;
 
   // Auth & Roles
+  authState: AuthState;
   isAuthChecking: boolean;
   isAuthenticated: boolean;
   currentRole: UserRole;
@@ -911,6 +913,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentUser, setCurrentUser] = useState<UserProfile>(GUEST_USER);
   const [currentRole, setCurrentRole] = useState<UserRole>('guest');
   const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
+  const [authState, setAuthState] = useState<AuthState>('AUTH_CHECKING');
 
   // Restore authenticated session from secure HTTP-only cookie on mount
   useEffect(() => {
@@ -918,12 +921,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     async function restoreSession() {
       try {
         const user = await api.getMe();
-        if (isMounted && user && user.id) {
-          setCurrentUser(user);
-          setCurrentRole(user.role || 'buyer');
+        if (isMounted) {
+          if (user && user.id) {
+            setCurrentUser(user);
+            setCurrentRole(user.role || 'buyer');
+            setAuthState('AUTHENTICATED');
+          } else {
+            setCurrentUser(GUEST_USER);
+            setCurrentRole('guest');
+            setAuthState('UNAUTHENTICATED');
+          }
         }
       } catch (err) {
         console.warn('[AppContext] Session verification check failed:', err);
+        if (isMounted) {
+          setCurrentUser(GUEST_USER);
+          setCurrentRole('guest');
+          setAuthState('UNAUTHENTICATED');
+        }
       } finally {
         if (isMounted) {
           setIsAuthChecking(false);
@@ -1469,6 +1484,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (data && data.user) {
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
+      setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
     }
@@ -1506,6 +1522,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (data && data.user) {
       setCurrentUser(data.user);
       setCurrentRole(data.user.role || 'buyer');
+      setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
       addToast(
         'إنشاء الحساب',
@@ -1529,6 +1546,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } finally {
       setCurrentUser(GUEST_USER);
       setCurrentRole('guest');
+      setAuthState('UNAUTHENTICATED');
       // If the user is on a protected page, navigate to public homepage
       setActivePage((prev) => {
         if (['buyer-account', 'seller-dashboard', 'admin-dashboard', 'checkout', 'favorites'].includes(prev)) {
@@ -2557,6 +2575,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTheme,
         toggleTheme,
 
+        authState,
         isAuthChecking,
         isAuthenticated,
         currentRole,

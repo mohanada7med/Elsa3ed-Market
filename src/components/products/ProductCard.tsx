@@ -36,10 +36,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.35, ease: "easeOut" }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="geometric-card flex flex-col overflow-hidden group relative bg-white"
+      className="wah-card flex flex-col overflow-hidden group relative"
     >
       {/* Product Image & Badges */}
-      <div className="relative aspect-square w-full overflow-hidden bg-[#F3EFE9]">
+      <div className="relative aspect-square w-full overflow-hidden bg-[#F3EFE9] dark:bg-[#25201D]">
         <img
           src={primaryImage}
           alt={product.title}
@@ -56,7 +56,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           )}
           {product.isHandmade && (
-            <span className="bg-amber-100/95 text-[#B45F42] text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-xs border border-amber-300/40 shadow-xs flex items-center gap-1 self-start">
+            <span className="bg-amber-100/95 dark:bg-amber-900/90 text-[#B45F42] dark:text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-xs border border-amber-300/40 shadow-xs flex items-center gap-1 self-start">
               <Sparkles className="w-3 h-3 text-amber-600" />
               <span>يدوي أصيل</span>
             </span>
@@ -75,10 +75,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 e.stopPropagation();
                 toggleFavorite(product.id);
               }}
-              className={`p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-xs min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer ${
+              className={`p-2.5 rounded-xl backdrop-blur-md transition-colors shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer ${
                 favorite
                   ? 'bg-rose-500 text-white'
-                  : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500 border border-[#E8E1D9]'
+                  : 'bg-white/90 dark:bg-[#1E1917]/90 hover:bg-white dark:hover:bg-[#25201D] text-gray-700 dark:text-stone-300 hover:text-rose-500 border border-[#E8E1D9] dark:border-[#382E27]'
               }`}
               title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
               aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
@@ -93,7 +93,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => navigateToProduct(product.id)}
-            className="p-2 rounded-md bg-white/90 hover:bg-white text-[#2D2A26] hover:text-[#B45F42] border border-[#E8E1D9] backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:block cursor-pointer"
+            className="p-2 rounded-xl bg-white/90 dark:bg-[#1E1917]/90 hover:bg-white dark:hover:bg-[#25201D] text-[#2D2A26] dark:text-[#FAF6F2] hover:text-[#B45F42] border border-[#E8E1D9] dark:border-[#382E27] backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer"
             title={`معاينة تفاصيل ${product.title}`}
             aria-label={`معاينة تفاصيل ${product.title}`}
           >
@@ -111,7 +111,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Content Details */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-4 flex-1 flex flex-col justify-between bg-white dark:bg-[#1C1816]">
         <div>
           {/* Seller / Workshop Link */}
           <div className="flex items-center justify-between gap-1 mb-1.5">
@@ -120,7 +120,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               id={`seller-link-${product.sellerId}`}
               onClick={() => navigateToSeller(product.sellerId)}
               aria-label={`زيارة ورشة الحرفي ${product.sellerName}`}
-              className="text-[11px] font-medium text-[#7A6F64] hover:text-[#B45F42] transition-colors truncate text-right cursor-pointer"
+              className="text-[11px] font-medium text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42] transition-colors truncate text-right cursor-pointer"
             >
               {product.sellerName}
             </button>
@@ -128,7 +128,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* Rating Stars */}
             <div className="flex items-center gap-1 text-xs shrink-0" aria-label={`التقييم ${product.rating} من 5 نجوم بناء على ${product.reviewCount} تقييم`}>
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span className="font-bold text-[#2D2A26] text-[11px]">{product.rating}</span>
+              <span className="font-bold text-[#2D2A26] dark:text-[#FAF6F2] text-[11px]">{product.rating}</span>
               <span className="text-[10px] text-gray-400">({product.reviewCount})</span>
             </div>
           </div>
@@ -145,17 +145,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 navigateToProduct(product.id);
               }
             }}
-            className="font-bold text-[#2D2A26] text-sm leading-snug hover:text-[#B45F42] transition-colors cursor-pointer line-clamp-2 mb-2"
+            className="font-bold text-[#2D2A26] dark:text-[#FAF6F2] text-sm leading-snug hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors cursor-pointer line-clamp-2 mb-2"
           >
             {product.title}
           </h3>
         </div>
 
         {/* Pricing & Add To Cart Button */}
-        <div className="pt-3 border-t border-[#E8E1D9] flex items-center justify-between gap-2 mt-auto">
+        <div className="pt-3 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-black text-[#B45F42]">
+              <span className="text-base font-black text-[#B45F42] dark:text-[#FF855D]">
                 {product.price} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (
@@ -164,7 +164,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </span>
               )}
             </div>
-            <span className="text-[10px] text-emerald-700 font-semibold block">
+            <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold block">
               {product.inStock ? `متوفر (${product.stockCount} قطعة)` : 'غير متوفر حالياً'}
             </span>
           </div>
@@ -181,7 +181,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 addToCart(product, 1);
               }}
               disabled={!product.inStock}
-              className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-300 dark:disabled:bg-stone-700 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title={`إضافة ${product.title} إلى سلة المشتريات`}
               aria-label={`إضافة ${product.title} إلى سلة المشتريات`}
             >
@@ -197,7 +197,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 e.stopPropagation();
                 navigateToProduct(product.id);
               }}
-              className="p-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title="عرض تفاصيل القطعة"
               aria-label="عرض تفاصيل القطعة"
             >
@@ -213,7 +213,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 e.stopPropagation();
                 navigateToProduct(product.id);
               }}
-              className="p-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[42px] min-w-[42px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title="إدارة القطعة التراثية"
               aria-label="إدارة القطعة التراثية"
             >

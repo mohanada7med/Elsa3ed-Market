@@ -502,7 +502,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-gray-100 dark:border-stone-800">
             <table className="w-full text-right border-collapse">
               <thead>
                 <tr className="bg-gray-50/75 text-gray-500 text-xs font-medium border-b border-gray-100">

@@ -21,23 +21,12 @@ import type {
   CityDoc,
   VillageDoc,
   CulturalTraditionDoc,
-  PlatformSettingsDoc
+  PlatformSettingsDoc,
+  SeasonDoc
 } from '../models/types.ts';
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
-import {
-  INITIAL_GOVERNORATES,
-  INITIAL_HERITAGE_PLACES,
-  INITIAL_CULTURAL_CRAFTS,
-  INITIAL_WAH_STORIES,
-  INITIAL_LOCAL_PEOPLE,
-  INITIAL_UPPER_EGYPT_FOOD,
-  INITIAL_CULTURAL_EVENTS,
-  INITIAL_CITIES,
-  INITIAL_VILLAGES,
-  INITIAL_TRADITIONS,
-  INITIAL_PLATFORM_SETTINGS
-} from './wahSeedData.ts';
+import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
 
 dotenv.config();
 
@@ -77,14 +66,15 @@ class MemoryStore {
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
 
-  // WAH Cultural Ecosystem Data
-  governorates: GovernorateDoc[] = [...INITIAL_GOVERNORATES];
-  heritagePlaces: HeritagePlaceDoc[] = [...INITIAL_HERITAGE_PLACES];
-  culturalCrafts: CulturalCraftDoc[] = [...INITIAL_CULTURAL_CRAFTS];
-  wahStories: WahStoryDoc[] = [...INITIAL_WAH_STORIES];
-  localPeople: LocalPersonDoc[] = [...INITIAL_LOCAL_PEOPLE];
-  upperEgyptFood: UpperEgyptFoodDoc[] = [...INITIAL_UPPER_EGYPT_FOOD];
-  culturalEvents: CulturalEventDoc[] = [...INITIAL_CULTURAL_EVENTS];
+  // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB)
+  governorates: GovernorateDoc[] = [];
+  heritagePlaces: HeritagePlaceDoc[] = [];
+  culturalCrafts: CulturalCraftDoc[] = [];
+  wahStories: WahStoryDoc[] = [];
+  localPeople: LocalPersonDoc[] = [];
+  upperEgyptFood: UpperEgyptFoodDoc[] = [];
+  culturalEvents: CulturalEventDoc[] = [];
+  seasons: SeasonDoc[] = [];
 
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {
@@ -212,72 +202,12 @@ async function seedMongoDatabase(database: Db) {
       Logger.info('[MongoDB] Initialized standard platform heritage categories taxonomy');
     }
 
-    // Seed WAH Cultural & Geographic Collections permanently into MongoDB
-    const govCount = await database.collection('wah_governorates').countDocuments().catch(() => 1);
-    if (govCount === 0 && INITIAL_GOVERNORATES.length > 0) {
-      await database.collection('wah_governorates').insertMany(INITIAL_GOVERNORATES as any[]);
-      Logger.info('[MongoDB] Initialized WAH Governorates in database');
-    }
-
-    const cityCount = await database.collection('wah_cities').countDocuments().catch(() => 1);
-    if (cityCount === 0 && INITIAL_CITIES.length > 0) {
-      await database.collection('wah_cities').insertMany(INITIAL_CITIES as any[]);
-      Logger.info('[MongoDB] Initialized WAH Cities in database');
-    }
-
-    const villageCount = await database.collection('wah_villages').countDocuments().catch(() => 1);
-    if (villageCount === 0 && INITIAL_VILLAGES.length > 0) {
-      await database.collection('wah_villages').insertMany(INITIAL_VILLAGES as any[]);
-      Logger.info('[MongoDB] Initialized WAH Villages in database');
-    }
-
-    const placesCount = await database.collection('wah_heritage_places').countDocuments().catch(() => 1);
-    if (placesCount === 0 && INITIAL_HERITAGE_PLACES.length > 0) {
-      await database.collection('wah_heritage_places').insertMany(INITIAL_HERITAGE_PLACES as any[]);
-      Logger.info('[MongoDB] Initialized WAH Heritage Places in database');
-    }
-
-    const craftsCount = await database.collection('wah_cultural_crafts').countDocuments().catch(() => 1);
-    if (craftsCount === 0 && INITIAL_CULTURAL_CRAFTS.length > 0) {
-      await database.collection('wah_cultural_crafts').insertMany(INITIAL_CULTURAL_CRAFTS as any[]);
-      Logger.info('[MongoDB] Initialized WAH Cultural Crafts in database');
-    }
-
-    const traditionsCount = await database.collection('wah_traditions').countDocuments().catch(() => 1);
-    if (traditionsCount === 0 && INITIAL_TRADITIONS.length > 0) {
-      await database.collection('wah_traditions').insertMany(INITIAL_TRADITIONS as any[]);
-      Logger.info('[MongoDB] Initialized WAH Traditions in database');
-    }
-
-    const storiesCount = await database.collection('wah_stories').countDocuments().catch(() => 1);
-    if (storiesCount === 0 && INITIAL_WAH_STORIES.length > 0) {
-      await database.collection('wah_stories').insertMany(INITIAL_WAH_STORIES as any[]);
-      Logger.info('[MongoDB] Initialized WAH Stories in database');
-    }
-
-    const peopleCount = await database.collection('wah_local_people').countDocuments().catch(() => 1);
-    if (peopleCount === 0 && INITIAL_LOCAL_PEOPLE.length > 0) {
-      await database.collection('wah_local_people').insertMany(INITIAL_LOCAL_PEOPLE as any[]);
-      Logger.info('[MongoDB] Initialized WAH Local People in database');
-    }
-
-    const foodCount = await database.collection('wah_food').countDocuments().catch(() => 1);
-    if (foodCount === 0 && INITIAL_UPPER_EGYPT_FOOD.length > 0) {
-      await database.collection('wah_food').insertMany(INITIAL_UPPER_EGYPT_FOOD as any[]);
-      Logger.info('[MongoDB] Initialized WAH Food in database');
-    }
-
-    const eventsCount = await database.collection('wah_events').countDocuments().catch(() => 1);
-    if (eventsCount === 0 && INITIAL_CULTURAL_EVENTS.length > 0) {
-      await database.collection('wah_events').insertMany(INITIAL_CULTURAL_EVENTS as any[]);
-      Logger.info('[MongoDB] Initialized WAH Cultural Events in database');
-    }
-
-    const settingsCount = await database.collection('platform_settings').countDocuments().catch(() => 1);
-    if (settingsCount === 0) {
-      await database.collection('platform_settings').insertOne(INITIAL_PLATFORM_SETTINGS as any);
-      Logger.info('[MongoDB] Initialized Platform Settings in database');
-    }
+    // Initialize platform settings if not present
+    await database.collection('platform_settings').updateOne(
+      { id: INITIAL_PLATFORM_SETTINGS.id },
+      { $setOnInsert: INITIAL_PLATFORM_SETTINGS },
+      { upsert: true }
+    );
 
     // Parallel index creation grouped by collection to ensure optimal performance and integrity
     const indexOperations = [
@@ -321,6 +251,11 @@ async function seedMongoDatabase(database: Db) {
       database.collection('wah_events').createIndex({ id: 1 }, { unique: true }),
       database.collection('wah_events').createIndex({ slug: 1 }, { unique: true }),
       database.collection('wah_events').createIndex({ governorateId: 1, status: 1 }),
+
+      database.collection('wah_seasons').createIndex({ id: 1 }, { unique: true }),
+      database.collection('wah_seasons').createIndex({ slug: 1 }, { unique: true }),
+      database.collection('wah_seasons').createIndex({ governorateId: 1 }),
+      database.collection('wah_seasons').createIndex({ status: 1 }),
 
       database.collection('platform_settings').createIndex({ id: 1 }, { unique: true }),
       database.collection('media_assets').createIndex({ id: 1 }, { unique: true }),

@@ -146,7 +146,7 @@ export const ProductDetailsView: React.FC = () => {
   };
 
   return (
-    <div id="product-details-view" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+    <div id="product-details-view" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-28 sm:pb-8 space-y-10">
       {/* Breadcrumb Navigation */}
       <nav className="flex items-center gap-2 text-xs text-[#8c6b53]">
         <button
@@ -212,11 +212,10 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   id="details-fav-btn"
                   onClick={() => toggleFavorite(product.id)}
-                  className={`p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all ${
-                    favorite
+                  className={`p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all ${favorite
                       ? 'bg-rose-500 text-white'
                       : 'bg-white/90 hover:bg-white text-gray-700 hover:text-rose-500'
-                  }`}
+                    }`}
                   title="المفضلة"
                 >
                   <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
@@ -233,11 +232,10 @@ export const ProductDetailsView: React.FC = () => {
                   key={idx}
                   type="button"
                   onClick={() => setSelectedImageIndex(idx)}
-                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${
-                    selectedImageIndex === idx
+                  className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 shrink-0 transition-all ${selectedImageIndex === idx
                       ? 'border-[#943310] ring-2 ring-[#943310]/20'
                       : 'border-[#ebdccd] opacity-70 hover:opacity-100'
-                  }`}
+                    }`}
                 >
                   <img src={img} alt={`معاينة ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
@@ -287,9 +285,8 @@ export const ProductDetailsView: React.FC = () => {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-4 h-4 ${
-                    i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-                  }`}
+                  className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
+                    }`}
                 />
               ))}
             </div>
@@ -314,11 +311,10 @@ export const ProductDetailsView: React.FC = () => {
 
             <div className="text-left">
               <span
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${
-                  product.inStock
+                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${product.inStock
                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                     : 'bg-rose-100 text-rose-800'
-                }`}
+                  }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>{product.inStock ? `متوفر في الورشة (${product.stockCount} قطعة)` : 'نفد المخزون'}</span>
@@ -372,7 +368,7 @@ export const ProductDetailsView: React.FC = () => {
                     openChatWithArtisan({
                       sellerId: product.sellerId || product.id,
                       productId: product.id,
-                      initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق الصعيد.`
+                      initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق وه.`
                     });
                   }}
                   className="w-full py-3 px-4 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 font-bold text-xs sm:text-sm rounded-xl border border-amber-300 dark:border-amber-700/60 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
@@ -501,44 +497,40 @@ export const ProductDetailsView: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('desc')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${
-              activeTab === 'desc'
+            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${activeTab === 'desc'
                 ? 'border-b-2 border-[#943310] text-[#943310]'
                 : 'text-gray-500 hover:text-gray-800'
-            }`}
+              }`}
           >
             وصف القطعة وأصالتها
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('specs')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${
-              activeTab === 'specs'
+            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${activeTab === 'specs'
                 ? 'border-b-2 border-[#943310] text-[#943310]'
                 : 'text-gray-500 hover:text-gray-800'
-            }`}
+              }`}
           >
             المواصفات وطريقة الصنع
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('reviews')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${
-              activeTab === 'reviews'
+            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${activeTab === 'reviews'
                 ? 'border-b-2 border-[#943310] text-[#943310]'
                 : 'text-gray-500 hover:text-gray-800'
-            }`}
+              }`}
           >
             آراء المشترين ({productReviews.length})
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('shipping')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${
-              activeTab === 'shipping'
+            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap ${activeTab === 'shipping'
                 ? 'border-b-2 border-[#943310] text-[#943310]'
                 : 'text-gray-500 hover:text-gray-800'
-            }`}
+              }`}
           >
             الشحن والتغليف الآمن
           </button>
@@ -662,9 +654,8 @@ export const ProductDetailsView: React.FC = () => {
                       className="p-1"
                     >
                       <Star
-                        className={`w-5 h-5 ${
-                          star <= newRating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-                        }`}
+                        className={`w-5 h-5 ${star <= newRating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
+                          }`}
                       />
                     </button>
                   ))}
@@ -733,6 +724,48 @@ export const ProductDetailsView: React.FC = () => {
             {relatedProducts.map((prod) => (
               <ProductCard key={prod.id} product={prod} />
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Sticky Action Bar for Buyers */}
+      {(currentRole === 'buyer' || !isAuthenticated) && product.inStock && (
+        <div className="fixed bottom-14 left-0 right-0 z-30 sm:hidden bg-white/95 dark:bg-[#1E1917]/95 backdrop-blur-md border-t border-[#E8E1D9] dark:border-[#382E27] px-4 py-2.5 flex items-center justify-between gap-3 shadow-lg">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90]">الإجمالي:</span>
+            <span className="text-base font-black text-[#B45F42] dark:text-[#FF855D]">
+              {product.price * quantity} ج.م
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border border-[#E8E1D9] dark:border-[#382E27] rounded-xl bg-white dark:bg-[#1C1816] p-0.5">
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="w-8 h-8 text-gray-600 dark:text-stone-300 font-bold flex items-center justify-center cursor-pointer"
+                aria-label="تقليل الكمية"
+              >
+                -
+              </button>
+              <span className="px-2 font-bold text-xs text-gray-900 dark:text-[#FAF6F2]">{quantity}</span>
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.min(product.stockCount || 99, quantity + 1))}
+                disabled={quantity >= (product.stockCount || 0)}
+                className="w-8 h-8 text-gray-600 dark:text-stone-300 disabled:opacity-40 font-bold flex items-center justify-center cursor-pointer"
+                aria-label="زيادة الكمية"
+              >
+                +
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => addToCart(product, quantity)}
+              className="px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer min-h-[42px]"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>إضافة للسلة</span>
+            </button>
           </div>
         </div>
       )}

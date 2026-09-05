@@ -257,8 +257,18 @@ export const Header: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن: فخار قنا، كليم أخميم، عسل سدر..."
                 aria-label="البحث في وه"
-                className="w-full bg-[#F3EFE9] dark:bg-[#25201D] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#7A6F64] rounded-xl pl-10 pr-4 py-2 sm:py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] focus:ring-2 focus:ring-[#B45F42]/20 outline-none transition-all"
+                className="w-full bg-[#F3EFE9] dark:bg-[#25201D] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#7A6F64] rounded-xl pl-16 pr-4 py-2 sm:py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] focus:ring-2 focus:ring-[#B45F42]/20 outline-none transition-all"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute left-9 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-[#B45F42] rounded-full transition-colors cursor-pointer"
+                  aria-label="مسح نص البحث"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
               <button
                 type="submit"
                 id="desktop-search-btn"
@@ -747,7 +757,7 @@ export const Header: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
-              className="top-10 sm:top-18 bg-black/50 z-30 backdrop-blur-xs"
+              className="fixed inset-0 top-16 sm:top-20 bg-black/60 z-30 backdrop-blur-xs"
               aria-hidden="true"
             />
 

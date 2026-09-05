@@ -449,7 +449,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
             </button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-gray-100 dark:border-stone-800">
             <table className="w-full text-right border-collapse">
               <thead>
                 <tr className="bg-gray-50/75 text-gray-500 text-xs font-medium border-b border-gray-100">
@@ -659,7 +659,7 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
                 <div className="p-3 bg-blue-50/70 border border-blue-200/70 rounded-xl text-xs text-blue-900 space-y-1">
                   <div className="flex items-center gap-1.5 font-bold">
                     <ShieldCheck className="w-4 h-4 text-blue-600 shrink-0" />
-                    <span>سياسة التحويل المالي بسوق الصعيد</span>
+                    <span>سياسة التحويل المالي بسوق وه</span>
                   </div>
                   <p className="text-[11px] leading-relaxed text-blue-800">
                     تتم مراجعة الطلب وتحويل المبلغ يدوياً من قِبل إدارة المنصة، وسيتم إشعارك فور اكتمال التحويل مع تسجيل رقم المعاملة الرسمية.

@@ -231,12 +231,12 @@ export const MobileBottomBar: React.FC = () => {
         ) : (
           /* ==================== BUYER & GUEST SHOPPING NAVIGATION ==================== */
           <>
-            {/* Home Button */}
+            {/* 1. Home */}
             <button
               type="button"
               id="mobile-bar-home"
               onClick={() => setActivePage('home')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
                 activePage === 'home'
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -250,15 +250,15 @@ export const MobileBottomBar: React.FC = () => {
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">الرئيسية</span>
+              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">الرئيسية</span>
             </button>
 
-            {/* Products / Market Button */}
+            {/* 2. Products / Market */}
             <button
               type="button"
               id="mobile-bar-products"
               onClick={() => setActivePage('products')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
                 activePage === 'products' || activePage === 'product-details'
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -272,15 +272,15 @@ export const MobileBottomBar: React.FC = () => {
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">المنتجات</span>
+              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">المتجر</span>
             </button>
 
-            {/* Craft Reels Button (NEW FEATURE) */}
+            {/* 3. Craft Reels */}
             <button
               type="button"
               id="mobile-bar-reels"
               onClick={() => setActivePage('reels')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
                 activePage === 'reels'
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -290,24 +290,24 @@ export const MobileBottomBar: React.FC = () => {
             >
               <div className="relative">
                 <Film className="w-5 h-5 transition-transform active:scale-90" />
-                <span className="absolute -top-1 -right-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[8px] font-black px-1 rounded-full animate-pulse">
+                <span className="absolute -top-1 -right-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[7px] font-black px-1 rounded-full">
                   Reels
                 </span>
                 {isAuthenticated && activePage === 'reels' && (
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">الفيديوهات</span>
+              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">الفيديوهات</span>
             </button>
 
-            {/* Cart Trigger (Action Highlight - ONLY FOR BUYER/GUEST) */}
+            {/* 4. Cart Button */}
             <button
               type="button"
               id="mobile-bar-cart"
               onClick={() => {
-                setActivePage('cart');
+                setIsCartDrawerOpen(true);
               }}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
                 activePage === 'cart'
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -325,76 +325,15 @@ export const MobileBottomBar: React.FC = () => {
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight font-medium">السلة</span>
+              <span className="text-[10px] mt-1 tracking-tight font-medium truncate max-w-full">السلة</span>
             </button>
 
-            {/* Favorites Button */}
-            <button
-              type="button"
-              id="mobile-bar-favorites"
-              onClick={() => setActivePage('favorites')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'favorites'
-                  ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
-                  : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
-              aria-label="المفضلة"
-              aria-current={activePage === 'favorites' ? 'page' : undefined}
-            >
-              <div className="relative">
-                <Heart className="w-5 h-5 transition-transform active:scale-90" />
-                {favorites.length > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-rose-500 text-white text-[9px] font-bold px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center">
-                    {favorites.length}
-                  </span>
-                )}
-                {isAuthenticated && activePage === 'favorites' && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
-                )}
-              </div>
-              <span className="text-[10px] mt-1 tracking-tight">المفضلة</span>
-            </button>
-
-            {/* Messages / Chat Center */}
-            <button
-              type="button"
-              id="mobile-bar-messages"
-              onClick={() => {
-                if (!isAuthenticated) {
-                  setAuthModalTab('login');
-                  setIsAuthModalOpen(true);
-                } else {
-                  setActivePage('messages');
-                }
-              }}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[48px] min-h-[48px] cursor-pointer ${
-                activePage === 'messages'
-                  ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
-                  : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
-              aria-label="الرسائل والمحادثات"
-              aria-current={activePage === 'messages' ? 'page' : undefined}
-            >
-              <div className="relative">
-                <MessageSquare className="w-5 h-5 transition-transform active:scale-90" />
-                {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-[#B45F42] dark:bg-[#FF855D] text-white text-[9px] font-bold px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
-                    {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
-                  </span>
-                )}
-                {isAuthenticated && activePage === 'messages' && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
-                )}
-              </div>
-              <span className="text-[10px] mt-1 tracking-tight">الرسائل</span>
-            </button>
-
-            {/* Account / Login Button */}
+            {/* 5. Account / Login */}
             <button
               type="button"
               id="mobile-bar-account"
               onClick={handleAccountClick}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
+              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
                 isAccountActive
                   ? 'text-[#B45F42] dark:text-[#FF855D] font-bold'
                   : 'text-[#7A6F64] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
@@ -412,7 +351,7 @@ export const MobileBottomBar: React.FC = () => {
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B45F42] dark:bg-[#FF855D] rounded-full" />
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">
+              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">
                 {!isAuthenticated ? 'دخول' : 'حسابي'}
               </span>
             </button>

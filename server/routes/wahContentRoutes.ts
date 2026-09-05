@@ -17,7 +17,11 @@ import type {
   VillageDoc,
   CulturalTraditionDoc,
   PlatformSettingsDoc,
-  VerificationStatus
+  VerificationStatus,
+  SeasonDoc,
+  GovernorateDashboardStats,
+  BulkActionPayload,
+  RelationshipPayload
 } from '../models/types.ts';
 
 const router = express.Router();
@@ -66,7 +70,7 @@ router.get('/governorates', async (req: Request, res: Response) => {
   }
 });
 
-// GET single governorate by slug or id
+// GET single governorate by slug or id with populated child collections
 router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
@@ -84,7 +88,158 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
     if (!gov) {
       return res.status(404).json({ success: false, error: 'المحافظة غير موجودة', code: 'NOT_FOUND' });
     }
-    return res.json({ success: true, data: gov });
+
+    let places: any[] = [];
+    let crafts: any[] = [];
+    let stories: any[] = [];
+    let people: any[] = [];
+    let foods: any[] = [];
+    let events: any[] = [];
+    let seasons: any[] = [];
+    let cities: any[] = [];
+    let villages: any[] = [];
+    let products: any[] = [];
+
+    if (isMongo && db) {
+      const [
+        placesDocs,
+        craftsDocs,
+        storiesDocs,
+        peopleDocs,
+        foodsDocs,
+        eventsDocs,
+        seasonsDocs,
+        citiesDocs,
+        villagesDocs,
+        productsDocs
+      ] = await Promise.all([
+        db.collection('wah_heritage_places').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_cultural_crafts').find({
+          $or: [
+            { governorates: gov.name },
+            { id: { $in: gov.traditionalCraftsIds || [] } }
+          ],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_stories').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_local_people').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_food').find({
+          $or: [
+            { governorateId: gov.id },
+            { governorateName: gov.name },
+            { id: { $in: gov.traditionalFoodIds || [] } }
+          ],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_events').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_seasons').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          status: { $ne: 'archived' }
+        }).toArray(),
+        db.collection('wah_cities').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }]
+        }).toArray(),
+        db.collection('wah_villages').find({
+          $or: [{ governorateId: gov.id }, { governorateName: gov.name }]
+        }).toArray(),
+        db.collection('products').find({
+          $or: [
+            { sellerGovernorate: gov.name },
+            { 'specifications.originGovernorate': gov.name },
+            { sellerGovernorate: { $regex: gov.name, $options: 'i' } }
+          ],
+          approvalStatus: 'approved'
+        }).toArray()
+      ]);
+
+      places = placesDocs;
+      crafts = craftsDocs;
+      stories = storiesDocs;
+      people = peopleDocs;
+      foods = foodsDocs;
+      events = eventsDocs;
+      seasons = seasonsDocs;
+      cities = citiesDocs;
+      villages = villagesDocs;
+      products = productsDocs;
+    } else {
+      places = memoryDb.heritagePlaces.filter(p => (p.governorateId === gov!.id || p.governorateName === gov!.name) && p.status !== 'archived');
+      crafts = memoryDb.culturalCrafts.filter(c => ((c.governorates && c.governorates.includes(gov!.name)) || (gov!.traditionalCraftsIds && gov!.traditionalCraftsIds.includes(c.id))) && c.status !== 'archived');
+      stories = memoryDb.wahStories.filter(s => (s.governorateId === gov!.id || s.governorateName === gov!.name) && s.status !== 'archived');
+      people = memoryDb.localPeople.filter(p => (p.governorateId === gov!.id || p.governorateName === gov!.name) && p.status !== 'archived');
+      foods = memoryDb.upperEgyptFood.filter(f => (f.governorateId === gov!.id || f.governorateName === gov!.name || (gov!.traditionalFoodIds && gov!.traditionalFoodIds.includes(f.id))) && f.status !== 'archived');
+      events = memoryDb.culturalEvents.filter(e => (e.governorateId === gov!.id || e.governorateName === gov!.name) && e.status !== 'archived');
+      seasons = memoryDb.seasons.filter(s => s.governorateId === gov!.id || s.governorateName === gov!.name);
+      products = memoryDb.products.filter(p => (p.sellerGovernorate === gov!.name || p.specifications?.originGovernorate === gov!.name) && p.approvalStatus === 'approved');
+    }
+
+    // Normalize child records for seamless frontend presentation
+    const normalizedPlaces = places.map((p: any) => ({
+      ...p,
+      shortDescription: p.shortDescription || p.description
+    }));
+
+    const normalizedCrafts = crafts.map((c: any) => ({
+      ...c,
+      category: c.category || 'حرفة يدوية أصيلة'
+    }));
+
+    const normalizedStories = stories.map((s: any) => ({
+      ...s,
+      narrator: s.narrator || s.authorName
+    }));
+
+    const normalizedPeople = people.map((p: any) => ({
+      ...p,
+      photoUrl: p.photoUrl || p.avatarUrl,
+      avatarUrl: p.avatarUrl || p.photoUrl,
+      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
+      bio: p.bio || p.biography,
+      biography: p.biography || p.bio
+    }));
+
+    const normalizedFoods = foods.map((f: any) => ({
+      ...f,
+      name: f.name || f.title,
+      title: f.title || f.name,
+      story: f.story || f.originStory || f.description,
+      category: f.category || f.occasionOrTradition || 'أكلات وتراث الصعيد'
+    }));
+
+    const normalizedEvents = events.map((e: any) => ({
+      ...e,
+      timeOfYear: e.timeOfYear || e.startDate || e.eventDate,
+      startDate: e.startDate || e.eventDate,
+      location: e.location || e.locationName
+    }));
+
+    const populatedGov = {
+      ...gov,
+      places: normalizedPlaces,
+      crafts: normalizedCrafts,
+      stories: normalizedStories,
+      people: normalizedPeople,
+      foods: normalizedFoods,
+      events: normalizedEvents,
+      seasons,
+      cities,
+      villages,
+      products
+    };
+
+    return res.json({ success: true, data: populatedGov });
   } catch (err: any) {
     Logger.error('[WAH Content] Error fetching single governorate:', err);
     return res.status(500).json({ success: false, error: 'فشل جلب بيانات المحافظة', code: 'SERVER_ERROR' });
@@ -630,19 +785,32 @@ router.delete('/places/:id', requireAdmin, async (req: AuthenticatedRequest, res
 
 router.get('/crafts', async (req: Request, res: Response) => {
   try {
-    const { governorate, status } = req.query;
+    const { governorate, governorateId, status } = req.query;
+    const targetGov = (governorate || governorateId) as string;
     const { db, isMongo } = await getMongoOrMemory();
 
     if (isMongo && db) {
       const query: any = {};
-      if (governorate) query.governorates = governorate;
+      if (targetGov) {
+        query.$or = [
+          { governorates: targetGov },
+          { governorateId: targetGov },
+          { governorateName: targetGov }
+        ];
+      }
       if (status) query.status = status;
       const crafts = await db.collection<CulturalCraftDoc>('wah_cultural_crafts').find(query).toArray();
       return res.json({ success: true, count: crafts.length, data: crafts });
     }
 
     let list = memoryDb.culturalCrafts;
-    if (governorate) list = list.filter((c) => c.governorates.includes(String(governorate)));
+    if (targetGov) {
+      list = list.filter((c) =>
+        c.governorates?.includes(targetGov) ||
+        (c as any).governorateId === targetGov ||
+        (c as any).governorateName === targetGov
+      );
+    }
     if (status) list = list.filter((c) => c.status === status);
     return res.json({ success: true, count: list.length, data: list });
   } catch (err: any) {
@@ -1021,18 +1189,27 @@ router.get('/people', async (req: Request, res: Response) => {
     const { governorate, status } = req.query;
     const { db, isMongo } = await getMongoOrMemory();
 
+    const normalizePerson = (p: any) => ({
+      ...p,
+      photoUrl: p.photoUrl || p.avatarUrl,
+      avatarUrl: p.avatarUrl || p.photoUrl,
+      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
+      bio: p.bio || p.biography,
+      biography: p.biography || p.bio
+    });
+
     if (isMongo && db) {
       const query: any = {};
       if (governorate) query.$or = [{ governorateName: governorate }, { governorateId: governorate }];
       if (status) query.status = status;
       const people = await db.collection<LocalPersonDoc>('wah_local_people').find(query).toArray();
-      return res.json({ success: true, count: people.length, data: people });
+      return res.json({ success: true, count: people.length, data: people.map(normalizePerson) });
     }
 
     let list = memoryDb.localPeople;
     if (governorate) list = list.filter((p) => p.governorateName === governorate || p.governorateId === governorate);
     if (status) list = list.filter((p) => p.status === status);
-    return res.json({ success: true, count: list.length, data: list });
+    return res.json({ success: true, count: list.length, data: list.map(normalizePerson) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب شخصيات الصعيد' });
   }
@@ -1042,6 +1219,15 @@ router.get('/people/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
     const { db, isMongo } = await getMongoOrMemory();
+
+    const normalizePerson = (p: any) => ({
+      ...p,
+      photoUrl: p.photoUrl || p.avatarUrl,
+      avatarUrl: p.avatarUrl || p.photoUrl,
+      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
+      bio: p.bio || p.biography,
+      biography: p.biography || p.bio
+    });
 
     let person: LocalPersonDoc | null = null;
     if (isMongo && db) {
@@ -1053,7 +1239,7 @@ router.get('/people/:slugOrId', async (req: Request, res: Response) => {
     }
 
     if (!person) return res.status(404).json({ success: false, error: 'الشخصية غير موجودة' });
-    return res.json({ success: true, data: person });
+    return res.json({ success: true, data: normalizePerson(person) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب بيانات الشخصية' });
   }
@@ -1146,18 +1332,26 @@ router.get('/food', async (req: Request, res: Response) => {
     const { governorate, status } = req.query;
     const { db, isMongo } = await getMongoOrMemory();
 
+    const normalizeFood = (f: any) => ({
+      ...f,
+      name: f.name || f.title,
+      title: f.title || f.name,
+      story: f.story || f.originStory || f.description,
+      category: f.category || f.occasionOrTradition || 'أكلات وتراث الصعيد'
+    });
+
     if (isMongo && db) {
       const query: any = {};
       if (governorate) query.$or = [{ governorateName: governorate }, { governorateId: governorate }];
       if (status) query.status = status;
       const foods = await db.collection<UpperEgyptFoodDoc>('wah_food').find(query).toArray();
-      return res.json({ success: true, count: foods.length, data: foods });
+      return res.json({ success: true, count: foods.length, data: foods.map(normalizeFood) });
     }
 
     let list = memoryDb.upperEgyptFood;
     if (governorate) list = list.filter((f) => f.governorateName === governorate || f.governorateId === governorate);
     if (status) list = list.filter((f) => f.status === status);
-    return res.json({ success: true, count: list.length, data: list });
+    return res.json({ success: true, count: list.length, data: list.map(normalizeFood) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب أكلات الصعيد' });
   }
@@ -1167,6 +1361,14 @@ router.get('/food/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
     const { db, isMongo } = await getMongoOrMemory();
+
+    const normalizeFood = (f: any) => ({
+      ...f,
+      name: f.name || f.title,
+      title: f.title || f.name,
+      story: f.story || f.originStory || f.description,
+      category: f.category || f.occasionOrTradition || 'أكلات وتراث الصعيد'
+    });
 
     let food: UpperEgyptFoodDoc | null = null;
     if (isMongo && db) {
@@ -1178,7 +1380,7 @@ router.get('/food/:slugOrId', async (req: Request, res: Response) => {
     }
 
     if (!food) return res.status(404).json({ success: false, error: 'الوصفة غير موجودة' });
-    return res.json({ success: true, data: food });
+    return res.json({ success: true, data: normalizeFood(food) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب تفاصيل الوصفة' });
   }
@@ -1535,8 +1737,8 @@ router.get('/map', async (req: Request, res: Response) => {
             db.collection('wah_food').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
             db.collection('wah_events').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
             db.collection('products').countDocuments({ sellerGovernorate: gov.name }),
-            db.collection('wah_people').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('wah_reels').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } })
+            db.collection('wah_local_people').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
+            db.collection('reels').countDocuments({ $or: [{ governorate: gov.name }], status: { $ne: 'archived' } })
           ]);
 
           return {
@@ -1571,7 +1773,7 @@ router.get('/map', async (req: Request, res: Response) => {
         db.collection<CulturalCraftDoc>('wah_cultural_crafts').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<UpperEgyptFoodDoc>('wah_food').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<CulturalEventDoc>('wah_events').find({ status: { $ne: 'archived' } }).toArray(),
-        db.collection<LocalPersonDoc>('wah_people').find({ status: { $ne: 'archived' } }).toArray(),
+        db.collection<LocalPersonDoc>('wah_local_people').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<WahStoryDoc>('wah_stories').find({ status: { $ne: 'archived' } }).toArray()
       ]);
 
@@ -1966,6 +2168,580 @@ router.get('/search', async (req: Request, res: Response) => {
 });
 
 // ==========================================
+// 15. WAH SEASONS (مواسم المحافظة - مواسم الحصاد والزراعة والتراث)
+// ==========================================
+
+// GET /seasons - List seasons with filters
+router.get('/seasons', async (req: Request, res: Response) => {
+  try {
+    const { governorateId, governorateName, status, category, search } = req.query;
+    const { db, isMongo } = await getMongoOrMemory();
+
+    if (isMongo && db) {
+      const query: any = {};
+      if (governorateId) query.governorateId = governorateId;
+      if (governorateName) query.governorateName = governorateName;
+      if (status) query.status = status;
+      if (category) query.category = category;
+      if (search && typeof search === 'string') {
+        query.$or = [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ];
+      }
+      const list = await db.collection<SeasonDoc>('wah_seasons').find(query).sort({ createdAt: -1 }).toArray();
+      return res.json({ success: true, count: list.length, data: list });
+    }
+
+    let list = (memoryDb as any).seasons || [];
+    if (governorateId) list = list.filter((s: SeasonDoc) => s.governorateId === governorateId);
+    if (governorateName) list = list.filter((s: SeasonDoc) => s.governorateName === governorateName);
+    if (status) list = list.filter((s: SeasonDoc) => s.status === status);
+    if (category) list = list.filter((s: SeasonDoc) => s.category === category);
+    if (search && typeof search === 'string') {
+      const q = search.toLowerCase();
+      list = list.filter((s: SeasonDoc) => s.title.toLowerCase().includes(q) || s.description.toLowerCase().includes(q));
+    }
+    return res.json({ success: true, count: list.length, data: list });
+  } catch (err: any) {
+    Logger.error('[WAH Content] Error fetching seasons:', err);
+    return res.status(500).json({ success: false, error: 'فشل جلب مواسم المحافظة' });
+  }
+});
+
+// GET /seasons/:id - Single season by id or slug
+router.get('/seasons/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { db, isMongo } = await getMongoOrMemory();
+
+    let item: SeasonDoc | null = null;
+    if (isMongo && db) {
+      item = await db.collection<SeasonDoc>('wah_seasons').findOne({
+        $or: [{ id }, { slug: id }]
+      });
+    } else {
+      item = ((memoryDb as any).seasons || []).find((s: SeasonDoc) => s.id === id || s.slug === id) || null;
+    }
+
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'الموسم غير موجود' });
+    }
+    return res.json({ success: true, data: item });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'فشل جلب تفاصيل الموسم' });
+  }
+});
+
+// POST /seasons - Create season (Admin Only)
+router.post('/seasons', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const item: SeasonDoc = req.body;
+    if (!item.title || !item.governorateName) {
+      return res.status(400).json({ success: false, error: 'عنوان الموسم والمحافظة حقول مطلوبة' });
+    }
+
+    item.updatedAt = new Date().toISOString();
+    if (!item.id) item.id = `season-${Date.now()}`;
+    if (!item.createdAt) item.createdAt = item.updatedAt;
+    if (!item.status) item.status = 'approved';
+    if (!item.verificationStatus) item.verificationStatus = 'verified';
+    if (!item.slug) item.slug = `season-${encodeURIComponent(item.title.trim().toLowerCase().replace(/\s+/g, '-'))}`;
+
+    const { db, isMongo } = await getMongoOrMemory();
+    if (isMongo && db) {
+      await db.collection('wah_seasons').updateOne(
+        { id: item.id },
+        { $set: item },
+        { upsert: true }
+      );
+    }
+
+    if (!(memoryDb as any).seasons) (memoryDb as any).seasons = [];
+    const idx = (memoryDb as any).seasons.findIndex((s: SeasonDoc) => s.id === item.id);
+    if (idx >= 0) (memoryDb as any).seasons[idx] = item;
+    else (memoryDb as any).seasons.push(item);
+
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير النظام',
+      userRole: req.user?.role || 'admin',
+      action: 'ADMIN_SAVED_SEASON',
+      resource: 'wah_seasons',
+      resourceId: item.id,
+      details: `تم حفظ الموسم التراثي (${item.title}) لمحافظة (${item.governorateName})`
+    });
+
+    return res.status(201).json({ success: true, message: 'تم حفظ الموسم بنجاح', data: item });
+  } catch (err: any) {
+    Logger.error('[WAH Content] Error creating season:', err);
+    return res.status(500).json({ success: false, error: 'فشل حفظ الموسم التراثي' });
+  }
+});
+
+// PUT /seasons/:id - Update season (Admin Only)
+router.put('/seasons/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updateData = { ...req.body, updatedAt: new Date().toISOString() };
+    delete updateData._id;
+
+    const { db, isMongo } = await getMongoOrMemory();
+    if (isMongo && db) {
+      const result = await db.collection('wah_seasons').findOneAndUpdate(
+        { id },
+        { $set: updateData },
+        { returnDocument: 'after' }
+      );
+      if (!result) return res.status(404).json({ success: false, error: 'الموسم غير موجود' });
+
+      await createAuditLog({
+        actorId: req.user?.id,
+        userName: req.user?.name || 'مدير النظام',
+        userRole: req.user?.role || 'admin',
+        action: 'ADMIN_UPDATED_SEASON',
+        resource: 'wah_seasons',
+        resourceId: id,
+        details: `تم تحديث الموسم التراثي (${updateData.title || id})`
+      });
+
+      return res.json({ success: true, message: 'تم تحديث الموسم بنجاح', data: result });
+    }
+
+    if (!(memoryDb as any).seasons) (memoryDb as any).seasons = [];
+    const idx = (memoryDb as any).seasons.findIndex((s: SeasonDoc) => s.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, error: 'الموسم غير موجود' });
+    (memoryDb as any).seasons[idx] = { ...(memoryDb as any).seasons[idx], ...updateData };
+    return res.json({ success: true, message: 'تم تحديث الموسم بنجاح', data: (memoryDb as any).seasons[idx] });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'فشل تحديث بيانات الموسم' });
+  }
+});
+
+// DELETE /seasons/:id - Delete season (Admin Only)
+router.delete('/seasons/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { db, isMongo } = await getMongoOrMemory();
+
+    if (isMongo && db) {
+      await db.collection('wah_seasons').deleteOne({ id });
+    }
+    if ((memoryDb as any).seasons) {
+      (memoryDb as any).seasons = (memoryDb as any).seasons.filter((s: SeasonDoc) => s.id !== id);
+    }
+
+    await createAuditLog({
+      actorId: req.user?.id,
+      userName: req.user?.name || 'مدير النظام',
+      userRole: req.user?.role || 'admin',
+      action: 'ADMIN_DELETED_SEASON',
+      resource: 'wah_seasons',
+      resourceId: id,
+      details: `تم حذف الموسم التراثي (${id}) نهائياً`
+    });
+
+    return res.json({ success: true, message: 'تم حذف الموسم بنجاح' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'فشل حذف الموسم' });
+  }
+});
+
+// ==========================================
+// 16. GOVERNORATE DASHBOARD AGGREGATION
+// ==========================================
+
+router.get('/governorates/:slugOrId/dashboard', async (req: Request, res: Response) => {
+  try {
+    const { slugOrId } = req.params;
+    const { db, isMongo } = await getMongoOrMemory();
+
+    let gov: GovernorateDoc | null = null;
+    if (isMongo && db) {
+      gov = await db.collection<GovernorateDoc>('wah_governorates').findOne({
+        $or: [{ slug: slugOrId }, { id: slugOrId }]
+      });
+    } else {
+      gov = memoryDb.governorates.find((g) => g.slug === slugOrId || g.id === slugOrId) || null;
+    }
+
+    if (!gov) {
+      return res.status(404).json({ success: false, error: 'المحافظة غير موجودة' });
+    }
+
+    const govId = gov.id;
+    const govName = gov.name;
+
+    if (isMongo && db) {
+      const [
+        placesCount,
+        heritageSitesCount,
+        craftsCount,
+        foodsCount,
+        peopleCount,
+        artisansCount,
+        storiesCount,
+        eventsCount,
+        seasonsCount,
+        reelsCount,
+        productsCount,
+        citiesCount,
+        villagesCount,
+        pendingPlaces,
+        pendingCrafts,
+        pendingFoods,
+        pendingPeople,
+        pendingStories,
+        pendingEvents,
+        pendingSeasons
+      ] = await Promise.all([
+        db.collection('wah_heritage_places').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('wah_heritage_places').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }],
+          category: { $in: ['temple', 'monastery', 'mosque', 'museum', 'tomb', 'heritage_village'] }
+        }),
+        db.collection('wah_cultural_crafts').countDocuments({
+          governorates: { $in: [govName, govId] }
+        }),
+        db.collection('wah_food').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('wah_local_people').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('wah_local_people').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }],
+          craftOrSkill: { $exists: true, $ne: '' }
+        }),
+        db.collection('wah_stories').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('wah_events').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('wah_seasons').countDocuments({
+          $or: [{ governorateId: govId }, { governorateName: govName }]
+        }),
+        db.collection('reels').countDocuments({
+          $or: [{ governorate: govName }, { governorateId: govId }]
+        }),
+        db.collection('products').countDocuments({
+          $or: [{ sellerGovernorate: govName }, { governorateId: govId }]
+        }),
+        db.collection('wah_cities').countDocuments({ governorateId: govId }),
+        db.collection('wah_villages').countDocuments({ governorateId: govId }),
+        // Pending reviews counts
+        db.collection('wah_heritage_places').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }, { status: 'unverified' }] }
+          ]
+        }),
+        db.collection('wah_cultural_crafts').countDocuments({
+          governorates: { $in: [govName, govId] },
+          $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }]
+        }),
+        db.collection('wah_food').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
+        }),
+        db.collection('wah_local_people').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
+        }),
+        db.collection('wah_stories').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
+        }),
+        db.collection('wah_events').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
+        }),
+        db.collection('wah_seasons').countDocuments({
+          $and: [
+            { $or: [{ governorateId: govId }, { governorateName: govName }] },
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
+        })
+      ]);
+
+      const pendingReviewCount =
+        (pendingPlaces || 0) +
+        (pendingCrafts || 0) +
+        (pendingFoods || 0) +
+        (pendingPeople || 0) +
+        (pendingStories || 0) +
+        (pendingEvents || 0) +
+        (pendingSeasons || 0);
+
+      const stats: GovernorateDashboardStats = {
+        governorate: gov,
+        placesCount,
+        heritageSitesCount: heritageSitesCount || placesCount,
+        craftsCount,
+        foodsCount,
+        peopleCount,
+        artisansCount,
+        storiesCount,
+        eventsCount,
+        seasonsCount,
+        reelsCount,
+        productsCount,
+        citiesCount,
+        villagesCount,
+        pendingReviewCount
+      };
+
+      return res.json({ success: true, data: stats });
+    }
+
+    // In-memory fallback
+    const places = memoryDb.heritagePlaces.filter((p) => p.governorateId === govId || p.governorateName === govName);
+    const heritageSites = places.filter((p) => ['temple', 'monastery', 'mosque', 'museum', 'tomb', 'heritage_village'].includes(p.category));
+    const crafts = memoryDb.culturalCrafts.filter((c) => c.governorates.includes(govName));
+    const foods = memoryDb.upperEgyptFood.filter((f) => f.governorateId === govId || f.governorateName === govName);
+    const people = memoryDb.localPeople.filter((p) => p.governorateId === govId || p.governorateName === govName);
+    const artisans = people.filter((p) => !!p.craftOrSkill);
+    const stories = memoryDb.wahStories.filter((s) => s.governorateId === govId || s.governorateName === govName);
+    const events = memoryDb.culturalEvents.filter((e) => e.governorateId === govId || e.governorateName === govName);
+    const seasons = ((memoryDb as any).seasons || []).filter((s: any) => s.governorateId === govId || s.governorateName === govName);
+    const reels = (memoryDb.reels || []).filter((r: any) => r.governorate === govName);
+    const products = memoryDb.products.filter((p: any) => p.sellerGovernorate === govName);
+    const cities = ((memoryDb as any).cities || []).filter((c: any) => c.governorateId === govId);
+    const villages = ((memoryDb as any).villages || []).filter((v: any) => v.governorateId === govId);
+
+    const pendingReviewCount =
+      places.filter((p: any) => p.status === 'pending_review').length +
+      crafts.filter((c: any) => c.status === 'pending_review').length +
+      foods.filter((f: any) => f.status === 'pending_review').length +
+      people.filter((p: any) => p.status === 'pending_review').length +
+      stories.filter((s: any) => s.status === 'pending_review').length +
+      events.filter((e: any) => e.status === 'pending_review').length +
+      seasons.filter((s: any) => s.status === 'pending_review').length;
+
+    const stats: GovernorateDashboardStats = {
+      governorate: gov,
+      placesCount: places.length,
+      heritageSitesCount: heritageSites.length || places.length,
+      craftsCount: crafts.length,
+      foodsCount: foods.length,
+      peopleCount: people.length,
+      artisansCount: artisans.length,
+      storiesCount: stories.length,
+      eventsCount: events.length,
+      seasonsCount: seasons.length,
+      reelsCount: reels.length,
+      productsCount: products.length,
+      citiesCount: cities.length,
+      villagesCount: villages.length,
+      pendingReviewCount
+    };
+
+    return res.json({ success: true, data: stats });
+  } catch (err: any) {
+    Logger.error('[WAH Content] Error fetching governorate dashboard stats:', err);
+    return res.status(500).json({ success: false, error: 'فشل جلب إحصائيات لوحة المحافظة' });
+  }
+});
+
+// ==========================================
+// 17. BULK ACTIONS (تنفيذ الإجراءات المجمعة عبر كيانات المحافظة)
+// ==========================================
+
+router.post('/bulk-action', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { entityType, action, ids, rejectionReason }: BulkActionPayload = req.body;
+
+    if (!entityType || !action || !Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, error: 'يرجى تحديد نوع الكيان، الإجراء، وقائمة المعرفات' });
+    }
+
+    const collectionMap: Record<string, string> = {
+      places: 'wah_heritage_places',
+      heritage: 'wah_heritage_places',
+      crafts: 'wah_cultural_crafts',
+      foods: 'wah_food',
+      people: 'wah_local_people',
+      stories: 'wah_stories',
+      events: 'wah_events',
+      seasons: 'wah_seasons',
+      cities: 'wah_cities',
+      villages: 'wah_villages',
+      products: 'products'
+    };
+
+    const targetCollection = collectionMap[entityType];
+    if (!targetCollection) {
+      return res.status(400).json({ success: false, error: `نوع الكيان (${entityType}) غير مدعوم في الإجراءات المجمعة` });
+    }
+
+    let updateFields: any = { updatedAt: new Date().toISOString() };
+    if (action === 'approve') {
+      updateFields.status = 'approved';
+      updateFields.verificationStatus = 'verified';
+      updateFields.approvedAt = new Date().toISOString();
+      updateFields.approvedBy = req.user?.id || 'admin';
+    } else if (action === 'archive') {
+      updateFields.status = 'archived';
+    } else if (action === 'publish') {
+      updateFields.status = 'approved';
+    } else if (action === 'unpublish') {
+      updateFields.status = 'draft';
+    } else if (action === 'feature') {
+      updateFields.isFeatured = true;
+    } else if (action === 'unfeature') {
+      updateFields.isFeatured = false;
+    } else if (action === 'reject') {
+      updateFields.status = 'rejected';
+      updateFields.verificationStatus = 'rejected';
+      updateFields.rejectionReason = rejectionReason || 'تم الرفض بواسطة الإدارة';
+      updateFields.rejectedAt = new Date().toISOString();
+      updateFields.rejectedBy = req.user?.id || 'admin';
+    }
+
+    const { db, isMongo } = await getMongoOrMemory();
+    if (isMongo && db) {
+      const result = await db.collection(targetCollection).updateMany(
+        { id: { $in: ids } },
+        { $set: updateFields }
+      );
+
+      await createAuditLog({
+        actorId: req.user?.id,
+        userName: req.user?.name || 'مدير النظام',
+        userRole: req.user?.role || 'admin',
+        action: `ADMIN_BULK_${action.toUpperCase()}`,
+        resource: targetCollection,
+        resourceId: ids.join(','),
+        details: `تم تنفيذ إجراء مجمع (${action}) على ${result.modifiedCount} عنصر في (${targetCollection})`
+      });
+
+      return res.json({
+        success: true,
+        message: `تم تنفيذ العملية (${action}) بنجاح على ${result.modifiedCount} عنصر`,
+        modifiedCount: result.modifiedCount
+      });
+    }
+
+    // Memory fallback update
+    const memoryKeyMap: Record<string, string> = {
+      places: 'heritagePlaces',
+      heritage: 'heritagePlaces',
+      crafts: 'culturalCrafts',
+      foods: 'upperEgyptFood',
+      people: 'localPeople',
+      stories: 'wahStories',
+      events: 'culturalEvents',
+      seasons: 'seasons',
+      products: 'products'
+    };
+    const key = memoryKeyMap[entityType];
+    if (key && (memoryDb as any)[key]) {
+      (memoryDb as any)[key].forEach((item: any) => {
+        if (ids.includes(item.id)) {
+          Object.assign(item, updateFields);
+        }
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: `تم تنفيذ العملية (${action}) بنجاح على ${ids.length} عنصر في الذاكرة`,
+      modifiedCount: ids.length
+    });
+  } catch (err: any) {
+    Logger.error('[WAH Bulk Action] Error executing bulk action:', err);
+    return res.status(500).json({ success: false, error: 'فشل تنفيذ الإجراء المجمع' });
+  }
+});
+
+// ==========================================
+// 18. RELATIONSHIP MANAGER (إدارة العلاقات التراثية بين الكيانات)
+// ==========================================
+
+router.post('/relationships', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { sourceEntityType, sourceId, targetEntityType, targetId, relationType, action }: RelationshipPayload = req.body;
+
+    if (!sourceEntityType || !sourceId || !targetEntityType || !targetId || !action) {
+      return res.status(400).json({ success: false, error: 'بيانات الرابط غير مكتملة' });
+    }
+
+    const { db, isMongo } = await getMongoOrMemory();
+
+    if (isMongo && db) {
+      if (sourceEntityType === 'craft' && targetEntityType === 'person') {
+        if (action === 'link') {
+          await db.collection('wah_cultural_crafts').updateOne({ id: sourceId }, { $addToSet: { relatedArtisansIds: targetId } } as any);
+          await db.collection('wah_local_people').updateOne({ id: targetId }, { $set: { relatedCraftId: sourceId } });
+        } else {
+          await db.collection('wah_cultural_crafts').updateOne({ id: sourceId }, { $pull: { relatedArtisansIds: targetId } } as any);
+          await db.collection('wah_local_people').updateOne({ id: targetId }, { $unset: { relatedCraftId: '' } });
+        }
+      } else if (sourceEntityType === 'story') {
+        const fieldMap: Record<string, string> = {
+          place: 'relatedPlaceId',
+          craft: 'relatedCraftId',
+          person: 'relatedArtisanId'
+        };
+        const fld = fieldMap[targetEntityType];
+        if (fld) {
+          if (action === 'link') {
+            await db.collection('wah_stories').updateOne({ id: sourceId }, { $set: { [fld]: targetId } });
+          } else {
+            await db.collection('wah_stories').updateOne({ id: sourceId }, { $unset: { [fld]: '' } });
+          }
+        }
+      } else if (sourceEntityType === 'season') {
+        const arrayFieldMap: Record<string, string> = {
+          food: 'relatedFoods',
+          craft: 'relatedCrafts',
+          story: 'relatedStories',
+          person: 'relatedPeople',
+          event: 'relatedEvents',
+          place: 'relatedPlaces'
+        };
+        const fld = arrayFieldMap[targetEntityType];
+        if (fld) {
+          if (action === 'link') {
+            await db.collection('wah_seasons').updateOne({ id: sourceId }, { $addToSet: { [fld]: targetId } } as any);
+          } else {
+            await db.collection('wah_seasons').updateOne({ id: sourceId }, { $pull: { [fld]: targetId } } as any);
+          }
+        }
+      }
+
+      await createAuditLog({
+        actorId: req.user?.id,
+        userName: req.user?.name || 'مدير النظام',
+        userRole: req.user?.role || 'admin',
+        action: action === 'link' ? 'ADMIN_LINK_RELATION' : 'ADMIN_UNLINK_RELATION',
+        resource: `${sourceEntityType}_${targetEntityType}`,
+        resourceId: `${sourceId}:${targetId}`,
+        details: `تم ${action === 'link' ? 'ربط' : 'فك ربط'} (${sourceEntityType}:${sourceId}) مع (${targetEntityType}:${targetId})`
+      });
+
+      return res.json({ success: true, message: `تمت عملية ${action === 'link' ? 'الربط' : 'فك الارتباط'} بنجاح` });
+    }
+
+    return res.json({ success: true, message: 'تم تحديث العلاقة بنجاح' });
+  } catch (err: any) {
+    Logger.error('[WAH Relationships] Error updating relationship:', err);
+    return res.status(500).json({ success: false, error: 'فشل تحديث شبكة العلاقات' });
+  }
+});
+
+// ==========================================
 // 14. ECOSYSTEM STATS (إحصائيات المنصة الحية من MongoDB)
 // ==========================================
 
@@ -1985,6 +2761,7 @@ router.get('/stats', async (req: Request, res: Response) => {
         peopleCount,
         foodsCount,
         eventsCount,
+        seasonsCount,
         productsCount,
         sellersCount,
         ordersCount,
@@ -2000,6 +2777,7 @@ router.get('/stats', async (req: Request, res: Response) => {
         db.collection('wah_local_people').countDocuments(),
         db.collection('wah_food').countDocuments(),
         db.collection('wah_events').countDocuments(),
+        db.collection('wah_seasons').countDocuments(),
         db.collection('products').countDocuments(),
         db.collection('sellers').countDocuments(),
         db.collection('orders').countDocuments(),
@@ -2019,6 +2797,7 @@ router.get('/stats', async (req: Request, res: Response) => {
           peopleCount,
           foodsCount,
           eventsCount,
+          seasonsCount,
           productsCount,
           sellersCount,
           ordersCount,
@@ -2037,6 +2816,7 @@ router.get('/stats', async (req: Request, res: Response) => {
         peopleCount: memoryDb.localPeople.length,
         foodsCount: memoryDb.upperEgyptFood.length,
         eventsCount: memoryDb.culturalEvents.length,
+        seasonsCount: ((memoryDb as any).seasons || []).length,
         productsCount: memoryDb.products.length,
         sellersCount: memoryDb.sellers.length
       }

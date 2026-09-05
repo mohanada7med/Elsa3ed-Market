@@ -24,7 +24,11 @@ import {
   MapGovernorateData,
   MapPayload,
   MapMarkerItem,
-  GlobalSearchResult
+  GlobalSearchResult,
+  WahSeason,
+  GovernorateDashboardStats,
+  BulkActionPayload,
+  RelationshipPayload
 } from '../types.ts';
 
 
@@ -2448,11 +2452,13 @@ export const wahApi = {
   },
 
   // 2. Heritage Places
-  async getPlaces(params?: { governorate?: string; category?: string }): Promise<HeritagePlace[]> {
+  async getPlaces(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }): Promise<HeritagePlace[]> {
     try {
       const query = new URLSearchParams();
       if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
       if (params?.category) query.set('category', params.category);
+      if (params?.status) query.set('status', params.status);
       const res = await fetch(`${API_BASE}/wah/places?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
@@ -2483,9 +2489,13 @@ export const wahApi = {
   },
 
   // 3. Cultural Crafts
-  async getCrafts(): Promise<CulturalCraft[]> {
+  async getCrafts(params?: { governorate?: string; governorateId?: string; status?: string }): Promise<CulturalCraft[]> {
     try {
-      const res = await fetch(`${API_BASE}/wah/crafts`);
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
+      if (params?.status) query.set('status', params.status);
+      const res = await fetch(`${API_BASE}/wah/crafts?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
     } catch {
@@ -2519,11 +2529,13 @@ export const wahApi = {
   },
 
   // 4. Wah Stories
-  async getStories(params?: { governorate?: string; category?: string }): Promise<WahStory[]> {
+  async getStories(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }): Promise<WahStory[]> {
     try {
       const query = new URLSearchParams();
       if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
       if (params?.category) query.set('category', params.category);
+      if (params?.status) query.set('status', params.status);
       const res = await fetch(`${API_BASE}/wah/stories?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
@@ -2554,9 +2566,14 @@ export const wahApi = {
   },
 
   // 5. People
-  async getPeople(): Promise<LocalPerson[]> {
+  async getPeople(params?: { governorate?: string; governorateId?: string; role?: string; status?: string }): Promise<LocalPerson[]> {
     try {
-      const res = await fetch(`${API_BASE}/wah/people`);
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
+      if (params?.role) query.set('role', params.role);
+      if (params?.status) query.set('status', params.status);
+      const res = await fetch(`${API_BASE}/wah/people?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
     } catch {
@@ -2586,9 +2603,13 @@ export const wahApi = {
   },
 
   // 6. Food
-  async getFood(): Promise<UpperEgyptFood[]> {
+  async getFood(params?: { governorate?: string; governorateId?: string; status?: string }): Promise<UpperEgyptFood[]> {
     try {
-      const res = await fetch(`${API_BASE}/wah/food`);
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
+      if (params?.status) query.set('status', params.status);
+      const res = await fetch(`${API_BASE}/wah/food?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
     } catch {
@@ -2596,8 +2617,8 @@ export const wahApi = {
     }
   },
 
-  async getFoods(): Promise<UpperEgyptFood[]> {
-    return this.getFood();
+  async getFoods(params?: { governorate?: string; governorateId?: string; status?: string }): Promise<UpperEgyptFood[]> {
+    return this.getFood(params);
   },
 
   async getFoodBySlug(slug: string): Promise<UpperEgyptFood | null> {
@@ -2622,9 +2643,14 @@ export const wahApi = {
   },
 
   // 7. Cultural Events
-  async getEvents(): Promise<CulturalEvent[]> {
+  async getEvents(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }): Promise<CulturalEvent[]> {
     try {
-      const res = await fetch(`${API_BASE}/wah/events`);
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.governorateId) query.set('governorate', params.governorateId);
+      if (params?.category) query.set('category', params.category);
+      if (params?.status) query.set('status', params.status);
+      const res = await fetch(`${API_BASE}/wah/events?${query.toString()}`);
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
     } catch {
@@ -2994,6 +3020,92 @@ export const wahApi = {
     const json = await res.json();
     if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ إعدادات المنصة');
     return json.data;
+  },
+
+  // 16. Governorate-Centric CMS Dashboard (Real MongoDB Live Stats)
+  async getGovernorateDashboard(slugOrId: string): Promise<GovernorateDashboardStats> {
+    const res = await fetch(`${API_BASE}/wah/governorates/${slugOrId}/dashboard`);
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل جلب إحصائيات لوحة إدارة المحافظة');
+    }
+    return json.data;
+  },
+
+  // 17. Seasons CRUD
+  async getSeasons(params?: { governorateId?: string; governorateName?: string; status?: string; category?: string; search?: string }): Promise<WahSeason[]> {
+    try {
+      const query = new URLSearchParams();
+      if (params?.governorateId) query.set('governorateId', params.governorateId);
+      if (params?.governorateName) query.set('governorateName', params.governorateName);
+      if (params?.status) query.set('status', params.status);
+      if (params?.category) query.set('category', params.category);
+      if (params?.search) query.set('search', params.search);
+      const res = await fetch(`${API_BASE}/wah/seasons?${query.toString()}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getSeason(id: string): Promise<WahSeason | null> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/seasons/${id}`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async saveSeason(season: Partial<WahSeason>, user?: { id?: string; role?: string }): Promise<WahSeason> {
+    const isUpdate = !!season.id;
+    const url = isUpdate ? `${API_BASE}/wah/seasons/${season.id}` : `${API_BASE}/wah/seasons`;
+    const method = isUpdate ? 'PUT' : 'POST';
+
+    const res = await fetch(url, {
+      method,
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(season)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ بيانات الموسم');
+    return json.data;
+  },
+
+  async deleteSeason(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/seasons/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف الموسم');
+    return json;
+  },
+
+  // 18. Bulk Actions Engine
+  async executeBulkAction(payload: BulkActionPayload, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string; modifiedCount?: number }> {
+    const res = await fetch(`${API_BASE}/wah/bulk-action`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل تنفيذ الإجراء المجمع');
+    return json;
+  },
+
+  // 19. Relationship Linker
+  async updateRelationship(payload: RelationshipPayload, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/relationships`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل تحديث الرابط التراثي');
+    return json;
   }
 };
 

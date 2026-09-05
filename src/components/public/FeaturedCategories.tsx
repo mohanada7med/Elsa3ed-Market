@@ -14,10 +14,10 @@ export const FeaturedCategories: React.FC = () => {
             <Layers className="w-4 h-4" />
             <span>التصنيفات والحرف المتوارثة</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#2D2A26] font-heritage">
+          <h2 className="text-2xl sm:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
             تصفح كنوز وخيرات الصعيد
           </h2>
-          <p className="text-xs sm:text-sm text-[#7A6F64] mt-1">
+          <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#B8ACA0] mt-1">
             اختر التصنيف لاستكشاف منتجات الحرفيين والورش التراثية بكل محافظة
           </p>
         </div>
@@ -54,9 +54,9 @@ export const FeaturedCategories: React.FC = () => {
             transition={{ duration: 0.35, delay: (idx % 4) * 0.08 }}
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={() => navigateToCategory(cat.id)}
-            className="geometric-card overflow-hidden group cursor-pointer flex flex-col bg-white"
+            className="wah-card overflow-hidden group cursor-pointer flex flex-col"
           >
-            <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F3EFE9]">
+            <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F3EFE9] dark:bg-[#25201D]">
               <img
                 src={cat.image}
                 alt={cat.name}
@@ -84,13 +84,13 @@ export const FeaturedCategories: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 flex-1 flex flex-col justify-between bg-white text-xs">
-              <p className="text-[#54493F] line-clamp-2 leading-relaxed">
+            <div className="p-3.5 flex-1 flex flex-col justify-between bg-white dark:bg-[#1C1816] text-xs">
+              <p className="text-[#54493F] dark:text-[#B8ACA0] line-clamp-2 leading-relaxed">
                 {cat.description}
               </p>
 
               {cat.heritageNote && (
-                <div className="mt-2.5 pt-2 border-t border-[#E8E1D9] flex items-center gap-1 text-[10px] text-[#B45F42] font-medium">
+                <div className="mt-2.5 pt-2 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center gap-1 text-[10px] text-[#B45F42] dark:text-[#FF855D] font-medium">
                   <Sparkles className="w-3 h-3 shrink-0 text-amber-600" />
                   <span className="truncate">{cat.heritageNote}</span>
                 </div>

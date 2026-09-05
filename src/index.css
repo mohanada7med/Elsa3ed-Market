@@ -140,6 +140,222 @@
   box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.5);
 }
 
+/* =========================================================================
+   WAH | وه DESIGN SYSTEM TOKENS & STANDARD UTILITY CLASSES
+   ========================================================================= */
+
+.wah-card {
+  background: #ffffff;
+  border: 1px solid #E8E1D9;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px -2px rgba(45, 42, 38, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wah-card:hover {
+  border-color: #CBBDB0;
+  box-shadow: 0 10px 24px -6px rgba(45, 42, 38, 0.08);
+}
+
+.dark .wah-card {
+  background: #1B1613;
+  border-color: #382E27;
+  color: #FAF6F2;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.4);
+}
+
+.dark .wah-card:hover {
+  border-color: #FF855D;
+  box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.6);
+}
+
+/* Standardized Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background-color: #B45F42;
+  color: #ffffff;
+  box-shadow: 0 2px 6px -1px rgba(180, 95, 66, 0.25);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-primary:hover {
+  background-color: #9E4F36;
+  box-shadow: 0 4px 12px -2px rgba(180, 95, 66, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background-color: #F3EFE9;
+  color: #2D2A26;
+  border: 1px solid #E8E1D9;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-secondary:hover {
+  background-color: #EDE7DF;
+  border-color: #CBBDB0;
+}
+
+.dark .btn-secondary {
+  background-color: #261F1B;
+  color: #FAF6F2;
+  border-color: #382E27;
+}
+
+.dark .btn-secondary:hover {
+  background-color: #2F2622;
+  border-color: #483C32;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background-color: transparent;
+  color: #2D2A26;
+  border: 1.5px solid #E8E1D9;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-outline:hover {
+  border-color: #B45F42;
+  color: #B45F42;
+  background-color: rgba(180, 95, 66, 0.04);
+}
+
+.dark .btn-outline {
+  color: #FAF6F2;
+  border-color: #382E27;
+}
+
+.dark .btn-outline:hover {
+  border-color: #FF855D;
+  color: #FF855D;
+  background-color: rgba(255, 133, 93, 0.08);
+}
+
+.btn-destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background-color: #FFF1F2;
+  color: #BE123C;
+  border: 1px solid #FECDD3;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-destructive:hover {
+  background-color: #FFE4E6;
+  border-color: #FDA4AF;
+}
+
+.dark .btn-destructive {
+  background-color: rgba(190, 18, 60, 0.15);
+  color: #FDA4AF;
+  border-color: rgba(190, 18, 60, 0.3);
+}
+
+.dark .btn-destructive:hover {
+  background-color: rgba(190, 18, 60, 0.25);
+  border-color: rgba(190, 18, 60, 0.5);
+}
+
+/* Standardized Form Inputs */
+.wah-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  background-color: #FAF6F0;
+  color: #2D2A26;
+  border: 1px solid #E8E1D9;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.wah-input:focus {
+  background-color: #ffffff;
+  border-color: #B45F42;
+  box-shadow: 0 0 0 3px rgba(180, 95, 66, 0.12);
+}
+
+.dark .wah-input {
+  background-color: #1F1916;
+  color: #FAF6F2;
+  border-color: #382E27;
+}
+
+.dark .wah-input:focus {
+  background-color: #261F1B;
+  border-color: #FF855D;
+  box-shadow: 0 0 0 3px rgba(255, 133, 93, 0.2);
+}
+
+/* Skeleton Loading Pulse */
+@keyframes wah-skeleton {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.skeleton-pulse {
+  background-color: #EFE8DE;
+  animation: wah-skeleton 1.6s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
+
+.dark .skeleton-pulse {
+  background-color: #261F1B;
+}
+
 /* Custom scrollbar matching Geometric Balance */
 ::-webkit-scrollbar {
   width: 7px;

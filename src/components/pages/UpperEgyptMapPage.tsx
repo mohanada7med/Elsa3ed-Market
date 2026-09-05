@@ -110,261 +110,16 @@ const GOVERNORATE_EMBLEMS: Record<string, { symbol: string; label: string; folkl
   }
 };
 
-// Fallback data for all 9 Upper Egyptian governorates in geographic sequence (North to South)
-const VOYAGE_GOVERNORATES: MapGovernorateData[] = [
-  {
-    id: 'gov-fayoum',
-    name: 'الفيوم',
-    slug: 'fayoum',
-    nickname: 'واحة الصعيد الخضراء وأرض السواقي',
-    region: 'شمال الصعيد',
-    nileSegment: 'بحر يوسف وبحيرة قارون وسواقي الهدير',
-    shortIntro: 'واحة طبيعية وتاريخية فريدة تحتضن قرية تونس لصناعة الخزف ووادي الحيتان العالمي وبحيرة قارون وسواقي الهدير الخالدة.',
-    famousFor: ['قرية تونس للخزف', 'وادي الحيتان ووادي الريان', 'سواقي الهدير', 'بحيرة قارون', 'الفطير المشلتت والبط البلدي'],
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة الفيوم',
-    coordinates: { lat: 29.3084, lng: 30.8428 },
-    stats: { placesCount: 4, craftsCount: 3, storiesCount: 3, foodsCount: 3, eventsCount: 2, productsCount: 12 }
-  },
-  {
-    id: 'gov-bani-suef',
-    name: 'بني سويف',
-    slug: 'bani-suef',
-    nickname: 'بوابة الصعيد ولؤلؤة النيل الوسطى',
-    region: 'شمال الصعيد',
-    nileSegment: 'مجرى النيل الأوسط وبساتين ميدوم',
-    shortIntro: 'بوابة صعيد مصر الشمالية، مهد هرم ميدوم الأسطوري ومحمية كهف سنور ومزارع النباتات العطرية والطبية الأصيلة.',
-    famousFor: ['هرم ميدوم العريق', 'محمية كهف وادي سنور', 'النباتات الطبية والعطرية', 'الفخار اليدوي السويفي'],
-    coverImage: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة بني سويف',
-    coordinates: { lat: 29.0661, lng: 31.0994 },
-    stats: { placesCount: 3, craftsCount: 2, storiesCount: 2, foodsCount: 3, eventsCount: 1, productsCount: 8 }
-  },
-  {
-    id: 'gov-minya',
-    name: 'المنيا',
-    slug: 'minya',
-    nickname: 'عروس الصعيد وعاصمة التوحيد والفكر',
-    region: 'وسط الصعيد',
-    nileSegment: 'كورنيش عروس الصعيد وجبل الطير',
-    shortIntro: 'عروس الصعيد وأرض الفكر والتوحيد، موطن تل العمارنة وإخناتون ومقابر بني حسن المنحوتة ودير السيدة العذراء بجبل الطير.',
-    famousFor: ['تل العمارنة وعاصمة إخناتون', 'مقابر بني حسن الصخرية', 'دير جبل الطير التاريخي', 'العسل الأسود والملوخية البوراني'],
-    coverImage: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة المنيا',
-    coordinates: { lat: 28.1099, lng: 30.7503 },
-    stats: { placesCount: 5, craftsCount: 3, storiesCount: 4, foodsCount: 3, eventsCount: 2, productsCount: 14 }
-  },
-  {
-    id: 'gov-asyut',
-    name: 'أسيوط',
-    slug: 'asyut',
-    nickname: 'قلب الصعيد النابض وعاصمة فن التلي الرفيع',
-    region: 'وسط الصعيد',
-    nileSegment: 'قناطر أسيوط التاريخية ومحطة درب الأربعين',
-    shortIntro: 'قلب الصعيد النابض ومستودع التاريخ التجاري، عاصمة فن التلي المشغول بخيوط الفضة الصافية والدير المحرق التاريخي بالقوصية.',
-    famousFor: ['فن التلي الأسيوطي بالفضة', 'الدير المحرق بالقوصية', 'قناطر أسيوط التاريخية', 'صناعة السجاد الصوف اليدوي'],
-    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة أسيوط',
-    coordinates: { lat: 27.1809, lng: 31.1837 },
-    stats: { placesCount: 4, craftsCount: 4, storiesCount: 3, foodsCount: 3, eventsCount: 2, productsCount: 15 }
-  },
-  {
-    id: 'gov-sohag',
-    name: 'سوهاج',
-    slug: 'sohag',
-    nickname: 'معقل النسيج والحرير ومهد ملوك مصر',
-    region: 'جنوب الصعيد',
-    nileSegment: 'منحنى النيل بسوهاج وجزر الزهور وأبيدوس',
-    shortIntro: 'أرض الملوك ومنبت موحد القطرين، تضم معبد أبيدوس المقدس وأنوال الحرير والكتان بأخميم أقدم عاصمة نسيج في العالم القديم.',
-    famousFor: ['معبد أبيدوس وسيتي الأول', 'أنوال النسيج والحرير بأخميم', 'الدير الأبيض والدير الأحمر', 'تمثال ميريت آمون'],
-    coverImage: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة سوهاج',
-    coordinates: { lat: 26.5569, lng: 31.6948 },
-    stats: { placesCount: 5, craftsCount: 4, storiesCount: 3, foodsCount: 4, eventsCount: 2, productsCount: 16 }
-  },
-  {
-    id: 'gov-qena',
-    name: 'قنا',
-    slug: 'qena',
-    nickname: 'أرض القلال القناوية ومعبد دندرة والفركة',
-    region: 'جنوب الصعيد',
-    nileSegment: 'ثنية قنا العظمى ملتقى الصحراء والنيل',
-    shortIntro: 'عقدة النيل وسحر ثنية قنا الشهيرة، مهد معبد حتحور بدندرة وقلال وجرار الفخار القناوي الأصيل وأنوال الفركة بنقادة.',
-    famousFor: ['معبد دندرة الخالد', 'فخار قنا والقلل القناوي', 'فركة نقادة الحريرية اليدوية', 'مسجد سيدي عبد الرحيم القناوي', 'عصير ومزارع قصب السكر'],
-    coverImage: 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة قنا',
-    coordinates: { lat: 26.1551, lng: 32.7160 },
-    stats: { placesCount: 6, craftsCount: 4, storiesCount: 4, foodsCount: 4, eventsCount: 3, productsCount: 18 }
-  },
-  {
-    id: 'gov-luxor',
-    name: 'الأقصر',
-    slug: 'luxor',
-    nickname: 'طيبة عاصمة العالم القديم ومدينة الشمس',
-    region: 'جنوب الصعيد',
-    nileSegment: 'ضفتي طيبة الخالدتين ووادي الملوك',
-    shortIntro: 'عاصمة التاريخ وطيبة العظمى، تحتضن ثلث آثار العالم من معابد الكرنك والأقصر إلى وادي الملوك ونحاتي الألباستر بالقرنة.',
-    famousFor: ['معابد الكرنك والأقصر', 'وادي الملوك والملكات', 'نحت الألباستر بالقرنة', 'البالون الطائر', 'صناعة ورق البردي'],
-    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة الأقصر',
-    coordinates: { lat: 25.6872, lng: 32.6396 },
-    stats: { placesCount: 8, craftsCount: 4, storiesCount: 5, foodsCount: 4, eventsCount: 3, productsCount: 22 }
-  },
-  {
-    id: 'gov-aswan',
-    name: 'أسوان',
-    slug: 'aswan',
-    nickname: 'بلاد الذهب وموئل السحر النوبي الخالد',
-    region: 'جنوب الصعيد',
-    nileSegment: 'شلال النيل الأول وبحيرة ناصر والسد العالي',
-    shortIntro: 'بلاد الذهب ودرة النيل الجنوبية، ملتقى السحر النوبي والبيوت الملونة بمعبد فيلة وأبو سمبل، وسوق التوابل والكركديه والخوص.',
-    famousFor: ['معبد فيلة وأبو سمبل', 'قرى النوبة وغرب سهيل', 'مشغولات الخوص والخرز النوبي', 'سوق التوابل والكركديه الأسواني', 'جزيرة النباتات ومحمية سالوجا'],
-    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة أسوان',
-    coordinates: { lat: 24.0889, lng: 32.8998 },
-    stats: { placesCount: 7, craftsCount: 5, storiesCount: 5, foodsCount: 4, eventsCount: 3, productsCount: 24 }
-  },
-  {
-    id: 'gov-new-valley',
-    name: 'الوادي الجديد',
-    slug: 'new-valley',
-    nickname: 'واحات الأساطير وكنوز الصحراء الغربية',
-    region: 'الواحات والصحراء الغربية',
-    nileSegment: 'درب الأربعين الواصل إلى وادي النيل والواحات',
-    shortIntro: 'جنة واحات مصر الغربية (الخارجة والداخلة والفرافرة)، أرض مدينة القصر الإسلامية ومعبد هيبس وتمور النخيل الفاخرة.',
-    famousFor: ['مدينة القصر الإسلامية بالداخلة', 'معبد هيبس بالخارجة', 'محمية الصحراء البيضاء بالفرافرة', 'تمور الواحات وسلال الخوص'],
-    coverImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80',
-    capitalCity: 'مدينة الخارجة',
-    coordinates: { lat: 25.4514, lng: 30.5464 },
-    stats: { placesCount: 5, craftsCount: 3, storiesCount: 3, foodsCount: 3, eventsCount: 2, productsCount: 11 }
-  }
-];
-
-// Curated landmarks and crafts for dossier
-const VOYAGE_MARKERS: MapMarkerItem[] = [
-  {
-    id: 'marker-dendera',
-    title: 'معبد دندرة للإلهة حتحور',
-    slug: 'dendera-temple',
-    type: 'place',
-    typeLabel: 'صرح أثري فرعوني',
-    governorateId: 'gov-qena',
-    governorateName: 'قنا',
-    lat: 26.142,
-    lng: 32.670,
-    coverImage: 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'أحد أبهى وأكمل المعابد المصرية القديمة بسقوفه الملونة وأبراج زودياك الفلكية الخالدة.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-qena-pottery',
-    title: 'ورش صناعة الفخار والقلال القناوية',
-    slug: 'qena-pottery-craft',
-    type: 'craft',
-    typeLabel: 'حرفة تراثية عريقة',
-    governorateId: 'gov-qena',
-    governorateName: 'قنا',
-    lat: 26.160,
-    lng: 32.720,
-    coverImage: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'صناعة القلل والجرار التراثية المتوارثة من طمي وادي النيل لتبريد مياه الشرب طبيعياً.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-karnak',
-    title: 'مجمع معابد الكرنك العظيم',
-    slug: 'karnak-temples',
-    type: 'place',
-    typeLabel: 'أكبر مجمع ديني بالتاريخ',
-    governorateId: 'gov-luxor',
-    governorateName: 'الأقصر',
-    lat: 25.718,
-    lng: 32.658,
-    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'أعظم دور العبادة في التاريخ القديم بصالة الأعمدة الكبرى ومسلات حتشبسوت الخالدة.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-philae',
-    title: 'معبد فيلة لؤلؤة النيل',
-    slug: 'philae-temple',
-    type: 'place',
-    typeLabel: 'معبد جزيرة النيل',
-    governorateId: 'gov-aswan',
-    governorateName: 'أسوان',
-    lat: 24.025,
-    lng: 32.884,
-    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'معبد إيزيس الساحر القائم وسط مياه بحيرة خزان أسوان بروعته المعمارية الخاطفة.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-akhmeem-weaving',
-    title: 'أنوال نسيج وحرير أخميم',
-    slug: 'akhmeem-silk-weaving',
-    type: 'craft',
-    typeLabel: 'حرفة عالمية متوارثة',
-    governorateId: 'gov-sohag',
-    governorateName: 'سوهاج',
-    lat: 26.565,
-    lng: 31.745,
-    coverImage: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'غزل الحرير والكتان على الأنوال اليدوية المتوارثة في أخميم منذ عصور الفراعنة.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-asyut-tally',
-    title: 'فن التلي الأسيوطي بالفضة',
-    slug: 'asyut-tally-embroidery',
-    type: 'craft',
-    typeLabel: 'تطريز تراثي بالفضة',
-    governorateId: 'gov-asyut',
-    governorateName: 'أسيوط',
-    lat: 27.181,
-    lng: 31.185,
-    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'تطريز يدوي بخيوط الفضة والذهب على الشبيكة متوارث كتحفة فنية أسيوطية مسجلة عالمياً.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-meidum',
-    title: 'هرم ميدوم العريق',
-    slug: 'meidum-pyramid',
-    type: 'place',
-    typeLabel: 'معلم تاريخي معماري',
-    governorateId: 'gov-bani-suef',
-    governorateName: 'بني سويف',
-    lat: 29.261,
-    lng: 31.157,
-    coverImage: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'حلقة الوصل المعمارية بين الهرم المدرج والأهرام الكاملة وأحد أقدم شواهد الحضارة ببني سويف.',
-    isFeatured: true
-  },
-  {
-    id: 'marker-tunis-village',
-    title: 'قرية تونس وفخار الفيوم',
-    slug: 'tunis-pottery-village',
-    type: 'craft',
-    typeLabel: 'مركز عالمي للخزف',
-    governorateId: 'gov-fayoum',
-    governorateName: 'الفيوم',
-    lat: 29.245,
-    lng: 30.485,
-    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80',
-    shortDescription: 'عاصمة الخزف الفني والبيئي على ضفاف بحيرة قارون ومقصد محبي الفن والتراث.',
-    isFeatured: true
-  }
-];
-
 export const UpperEgyptMapPage: React.FC = () => {
   const { navigateToGovernorate, setActivePage, products, addToCart } = useApp();
 
-  // Governorates data & markers
-  const [governorates, setGovernorates] = useState<MapGovernorateData[]>(VOYAGE_GOVERNORATES);
-  const [markers, setMarkers] = useState<MapMarkerItem[]>(VOYAGE_MARKERS);
+  // Governorates data & markers (Database-driven 100% from MongoDB)
+  const [governorates, setGovernorates] = useState<MapGovernorateData[]>([]);
+  const [markers, setMarkers] = useState<MapMarkerItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Selected Governorate State (defaults to Qena - heart of Upper Egypt)
-  const [selectedIndex, setSelectedIndex] = useState<number>(5); // Index 5 = Qena
+  // Selected Governorate State (defaults to first available governorate)
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const selectedGov = governorates[selectedIndex] || governorates[0];
 
   // Active Tab inside governorate dossier: places | crafts | foods | folklore | products
@@ -382,7 +137,7 @@ export const UpperEgyptMapPage: React.FC = () => {
   // Added-to-cart toast visual state
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
-  // Load live data from API with fallback guarantee
+  // Load live data exclusively from MongoDB API
   useEffect(() => {
     let isMounted = true;
     const loadData = async () => {
@@ -397,7 +152,11 @@ export const UpperEgyptMapPage: React.FC = () => {
           }
         }
       } catch (err) {
-        console.warn('Live map data loaded from verified fallback', err);
+        console.error('[UpperEgyptMap] Failed to load live data from database:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
     loadData();
@@ -476,6 +235,22 @@ export const UpperEgyptMapPage: React.FC = () => {
       setAddedProductId(null);
     }, 2500);
   };
+
+  if (isLoading || governorates.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#14100E] flex flex-col items-center justify-center py-24">
+        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white dark:bg-[#1C1714] shadow-sm border border-[#E5DDD2] dark:border-[#2E241E]">
+          <span className="text-4xl font-bold text-[#9E3C1B] dark:text-[#E88E72] font-serif">وه</span>
+        </div>
+        <p className="mt-4 text-base font-medium text-[#5A4D42] dark:text-[#C5B8AC]">جاري تحميل أطلس الصعيد المباشر من قاعدة البيانات...</p>
+        <div className="mt-4 flex items-center gap-2">
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" style={{ animationDelay: '150ms' }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#14100E] text-[#1C1613] dark:text-[#FDFBF7] font-sans pb-28 selection:bg-[#9E3C1B] selection:text-white">

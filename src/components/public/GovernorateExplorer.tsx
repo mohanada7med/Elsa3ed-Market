@@ -61,6 +61,22 @@ const UPPER_EGYPT_GOVERNORATES: GovItem[] = [
     count: 0,
     bgGradient: 'from-[#14532d] to-[#15803d]',
     iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A7%D9%84%D9%85%D9%86%D9%8A%D8%A7.jpg'
+  },
+  {
+    name: 'بني سويف',
+    famousCraft: 'النباتات العطرية وفخار ميدوم',
+    famousItem: 'زيوت عطرية وفايش بالكركم ومفارش',
+    count: 0,
+    bgGradient: 'from-[#854d0e] to-[#a16207]',
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A8%D9%86%D9%8A-%D8%B3%D9%88%D9%8A%D9%81.jpg'
+  },
+  {
+    name: 'الوادي الجديد',
+    famousCraft: 'تمور الواحات وخوص النخيل',
+    famousItem: 'بلح صعيدي وسلال الخوص وزيت زيتون',
+    count: 0,
+    bgGradient: 'from-[#713f12] to-[#ca8a04]',
+    iconImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A7%D9%84%D9%88%D8%A7%D8%AF%D9%8A-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF.jpg  '
   }
 ];
 
@@ -90,7 +106,7 @@ export const GovernorateExplorer: React.FC = () => {
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3 sm:gap-4">
         {UPPER_EGYPT_GOVERNORATES.map((gov, idx) => {
           const govSellers = sellers.filter(
             (s) => s.governorate === gov.name && s.status !== 'rejected' && s.status !== 'suspended'

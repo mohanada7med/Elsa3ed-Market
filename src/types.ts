@@ -1,4 +1,5 @@
 export type UserRole = 'guest' | 'buyer' | 'seller' | 'admin';
+export type AuthState = 'AUTH_CHECKING' | 'AUTHENTICATED' | 'UNAUTHENTICATED';
 export type ThemeMode = 'light' | 'dark';
 
 export type Governorate =
@@ -534,7 +535,7 @@ export interface ChatMessage {
 // WAH PLATFORM - CULTURAL & REGIONAL TYPES
 // ==========================================
 
-export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived';
+export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived' | 'verified' | 'unverified';
 
 export interface WahGovernorate {
   id: string;
@@ -546,6 +547,9 @@ export interface WahGovernorate {
   coverImage: string;
   gallery: string[];
   capitalCity: string;
+  nickname?: string;
+  region?: string;
+  nileSegment?: string;
   mapCoordinates?: { lat: number; lng: number };
   traditionalCraftsIds: string[];
   traditionalFoodIds: string[];
@@ -586,6 +590,9 @@ export interface HeritagePlace {
   gallery: string[];
   videoUrl?: string;
   relatedCrafts?: string[];
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
+  rating?: number;
   status: VerificationStatus;
   sourceName?: string;
   createdAt: string;
@@ -859,6 +866,76 @@ export interface PlatformSettingsDoc {
   updatedAt: string;
   updatedBy: string;
 }
+
+export interface WahSeason {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  cityName?: string;
+  villageName?: string;
+  category: 'agricultural' | 'harvest' | 'food' | 'craft' | 'cultural' | 'religious';
+  description: string;
+  startPeriod: string;
+  endPeriod: string;
+  relatedFoods?: string[];
+  relatedCrafts?: string[];
+  relatedStories?: string[];
+  relatedPeople?: string[];
+  relatedEvents?: string[];
+  relatedPlaces?: string[];
+  coverImage?: string;
+  gallery?: string[];
+  videoUrl?: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'academic_unesco' | 'verified_cultural' | 'other';
+  researchDate?: string;
+  verificationStatus: VerificationStatus;
+  status: VerificationStatus;
+  isFeatured?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type SeasonDoc = WahSeason;
+
+export interface GovernorateDashboardStats {
+  governorate: WahGovernorate;
+  placesCount: number;
+  heritageSitesCount: number;
+  craftsCount: number;
+  foodsCount: number;
+  peopleCount: number;
+  artisansCount: number;
+  storiesCount: number;
+  eventsCount: number;
+  seasonsCount: number;
+  reelsCount: number;
+  productsCount: number;
+  citiesCount: number;
+  villagesCount: number;
+  pendingReviewCount: number;
+}
+
+export interface BulkActionPayload {
+  entityType: 'places' | 'crafts' | 'foods' | 'people' | 'stories' | 'events' | 'seasons' | 'cities' | 'villages' | 'products';
+  action: 'approve' | 'archive' | 'publish' | 'unpublish' | 'feature' | 'unfeature' | 'reject';
+  ids: string[];
+  rejectionReason?: string;
+}
+
+export interface RelationshipPayload {
+  sourceEntityType: string;
+  sourceId: string;
+  targetEntityType: string;
+  targetId: string;
+  relationType: 'related' | 'craft_artisan' | 'place_story' | 'craft_product' | 'season_food';
+  action: 'link' | 'unlink';
+}
+
 
 
 

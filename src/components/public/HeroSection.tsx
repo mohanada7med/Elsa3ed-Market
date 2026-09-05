@@ -35,14 +35,14 @@ export const HeroSection: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           {/* Main Hero Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="lg:col-span-7 space-y-6 text-right"
           >
             {/* Top Heritage Badge */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1, duration: 0.3 }}
@@ -53,7 +53,7 @@ export const HeroSection: React.FC = () => {
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.45 }}
@@ -64,7 +64,7 @@ export const HeroSection: React.FC = () => {
             </motion.h1>
 
             {/* Subheading */}
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.45 }}
@@ -74,7 +74,7 @@ export const HeroSection: React.FC = () => {
             </motion.p>
 
             {/* Clear Primary Actions */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35, duration: 0.45 }}
@@ -163,7 +163,7 @@ export const HeroSection: React.FC = () => {
             </motion.div>
 
             {/* Live Metrics Strip */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.55, duration: 0.5 }}
@@ -189,14 +189,14 @@ export const HeroSection: React.FC = () => {
           </motion.div>
 
           {/* Hero Visual Collage */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
             className="lg:col-span-5 relative mt-4 lg:mt-0"
           >
             <div className="relative mx-auto max-w-md">
-              <motion.div 
+              <motion.div
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.25 }}
                 className="geometric-card overflow-hidden shadow-xl bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]"
@@ -213,12 +213,7 @@ export const HeroSection: React.FC = () => {
                     </h3>
                     <p className="text-xs text-[#7A6F64]">درة العمارة البطلمية وسقف الأبراج السماوية</p>
                   </div>
-                  <button
-                    onClick={() => setActivePage('map')}
-                    className="px-3 py-1.5 rounded-xl bg-[#B45F42] text-white text-xs font-bold hover:bg-[#9E4F36] transition-colors cursor-pointer"
-                  >
-                    على الخريطة
-                  </button>
+
                 </div>
               </motion.div>
 
@@ -247,7 +242,7 @@ export const HeroSection: React.FC = () => {
               </motion.div>
 
               {/* Floating Tag */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.4 }}

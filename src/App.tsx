@@ -9,6 +9,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { WahLoadingScreen } from './components/common/WahLoadingScreen';
 import { updatePageSEO } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
@@ -242,24 +243,7 @@ const MainContent: React.FC = () => {
 
   // Initial Auth Verification State (rendered after all hooks)
   if (isAuthChecking) {
-    return (
-      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center p-4">
-        <div className="text-center space-y-4 max-w-sm mx-auto">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto relative flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full border-4 border-[#E8E1D9] border-t-[#B45F42] animate-spin" />
-            <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
-              alt="وه | WAH"
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-            />
-          </div>
-          <div>
-            <h2 className="text-lg sm:text-xl font-bold font-heritage text-[#2D2A26]">وه | WAH</h2>
-            <p className="text-xs text-[#7A6F64] mt-1">جاري التحقق من بيانات الجلسة واستعادة حسابك...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <WahLoadingScreen />;
   }
 
   return (
@@ -447,7 +431,7 @@ const MainContent: React.FC = () => {
             )}
 
             {/* Admin Dashboard: Requires Admin Role */}
-            {activePage.startsWith('admin-') && (
+            {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
               isAuthenticated && currentRole === 'admin' ? (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <AdminDashboard />

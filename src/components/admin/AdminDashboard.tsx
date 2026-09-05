@@ -2904,7 +2904,7 @@ export const AdminDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
             <table className="w-full text-xs text-right">
               <thead className="bg-[#F3EFE9] text-[#7A6F64] border-b border-[#E8E1D9]">
                 <tr>
@@ -3314,7 +3314,7 @@ export const AdminDashboard: React.FC = () => {
             />
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
             <table className="w-full text-xs text-right">
               <thead className="bg-[#F3EFE9] text-[#7A6F64] border-b border-[#E8E1D9]">
                 <tr>
@@ -3499,8 +3499,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white rounded-2xl border border-[#E8E1D9] shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
+          <div className="bg-white dark:bg-[#1C1816] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs overflow-hidden">
+            <div className="wah-table-container overflow-x-auto">
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#FDFBF7] border-b border-[#E8E1D9] text-[#7A6F64]">
                   <tr>
@@ -3735,8 +3735,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-2xl border border-[#E8E1D9] shadow-xs overflow-hidden">
-            <div className="overflow-x-auto">
+          <div className="bg-white dark:bg-[#1C1816] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs overflow-hidden">
+            <div className="wah-table-container overflow-x-auto">
               <table className="w-full text-right text-xs">
                 <thead className="bg-[#FDFBF7] border-b border-[#E8E1D9] text-[#7A6F64]">
                   <tr>

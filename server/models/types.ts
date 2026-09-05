@@ -561,7 +561,7 @@ export interface MessageDocument {
   createdAt: string;
 }
 
-export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived';
+export type VerificationStatus = 'draft' | 'pending_review' | 'approved' | 'rejected' | 'archived' | 'verified' | 'unverified';
 
 export interface GovernorateDoc {
   _id?: string;
@@ -575,13 +575,18 @@ export interface GovernorateDoc {
   gallery: string[];
   capitalCity: string;
   nickname?: string;
-  region?: 'جنوب الصعيد' | 'وسط الصعيد' | 'شمال الصعيد' | 'الواحات والصحراء الغربية';
+  region?: 'جنوب الصعيد' | 'وسط الصعيد' | 'شمال الصعيد' | 'الواحات والصحراء الغربية' | 'أقصى جنوب الصعيد';
   nileSegment?: string;
   mapCoordinates?: { lat: number; lng: number };
   traditionalCraftsIds: string[];
   traditionalFoodIds: string[];
   culturalTraditions: string[];
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -593,7 +598,7 @@ export interface HeritagePlaceDoc {
   slug: string;
   governorateId: string;
   governorateName: string;
-  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center';
+  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center' | 'historical';
   description: string;
   history: string;
   significance: string;
@@ -607,6 +612,10 @@ export interface HeritagePlaceDoc {
   rating?: number;
   status: VerificationStatus;
   sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -629,6 +638,11 @@ export interface CulturalCraftDoc {
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -652,6 +666,11 @@ export interface WahStoryDoc {
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -673,6 +692,11 @@ export interface LocalPersonDoc {
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -693,6 +717,11 @@ export interface UpperEgyptFoodDoc {
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -713,6 +742,11 @@ export interface CulturalEventDoc {
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
+  researchDate?: string;
+  verificationStatus?: VerificationStatus;
   approvedBy?: string;
   approvedAt?: string;
   rejectedBy?: string;
@@ -809,21 +843,73 @@ export interface MediaAssetDoc {
   updatedAt: string;
 }
 
-export interface ReportDoc {
+export interface SeasonDoc {
   _id?: string;
   id: string;
-  reporterId: string;
-  reporterName: string;
-  reportedEntityType: 'product' | 'seller' | 'review' | 'reel' | 'comment' | 'story' | 'user';
-  reportedEntityId: string;
-  reason: string;
-  details?: string;
-  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
-  resolvedBy?: string;
-  resolutionNote?: string;
+  title: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  cityName?: string;
+  villageName?: string;
+  category: 'agricultural' | 'harvest' | 'food' | 'craft' | 'cultural' | 'religious';
+  description: string;
+  startPeriod: string;
+  endPeriod: string;
+  relatedFoods?: string[];
+  relatedCrafts?: string[];
+  relatedStories?: string[];
+  relatedPeople?: string[];
+  relatedEvents?: string[];
+  relatedPlaces?: string[];
+  coverImage?: string;
+  gallery?: string[];
+  videoUrl?: string;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: 'official_gov' | 'academic_unesco' | 'verified_cultural' | 'other';
+  researchDate?: string;
+  verificationStatus: VerificationStatus;
+  status: VerificationStatus;
+  isFeatured?: boolean;
   createdAt: string;
   updatedAt: string;
 }
+
+export interface GovernorateDashboardStats {
+  governorate: GovernorateDoc;
+  placesCount: number;
+  heritageSitesCount: number;
+  craftsCount: number;
+  foodsCount: number;
+  peopleCount: number;
+  artisansCount: number;
+  storiesCount: number;
+  eventsCount: number;
+  seasonsCount: number;
+  reelsCount: number;
+  productsCount: number;
+  citiesCount: number;
+  villagesCount: number;
+  pendingReviewCount: number;
+}
+
+export interface BulkActionPayload {
+  entityType: 'places' | 'crafts' | 'foods' | 'people' | 'stories' | 'events' | 'seasons' | 'cities' | 'villages' | 'products';
+  action: 'approve' | 'archive' | 'publish' | 'unpublish' | 'feature' | 'unfeature' | 'reject';
+  ids: string[];
+  rejectionReason?: string;
+}
+
+export interface RelationshipPayload {
+  sourceEntityType: string;
+  sourceId: string;
+  targetEntityType: string;
+  targetId: string;
+  relationType: 'related' | 'craft_artisan' | 'place_story' | 'craft_product' | 'season_food';
+  action: 'link' | 'unlink';
+}
+
 
 
 

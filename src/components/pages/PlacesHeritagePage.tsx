@@ -14,6 +14,26 @@ import {
   ExternalLink
 } from 'lucide-react';
 
+const CATEGORY_MAP: Record<string, string[]> = {
+  'فرعوني': ['temple', 'tomb', 'pharaonic', 'فرعوني'],
+  'قبطي': ['monastery', 'coptic', 'قبطي'],
+  'إسلامي': ['mosque', 'islamic', 'إسلامي'],
+  'تراث شعبي': ['heritage_village', 'cultural_center', 'museum', 'folk', 'تراث شعبي'],
+  'طبيعي': ['nature', 'natural', 'طبيعي']
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  temple: 'معبد فرعوني',
+  tomb: 'مقابر أثرية',
+  monastery: 'دير قبطي',
+  mosque: 'مسجد أثري',
+  museum: 'متحف قومي',
+  heritage_village: 'قرية تراثية',
+  nature: 'محمية طبيعية',
+  cultural_center: 'مركز ثقافي',
+  historical: 'معلم تاريخي'
+};
+
 export const PlacesHeritagePage: React.FC = () => {
   const { navigateToPlace, navigateToGovernorate, setActivePage } = useApp();
   const [places, setPlaces] = useState<HeritagePlace[]>([]);
@@ -45,7 +65,10 @@ export const PlacesHeritagePage: React.FC = () => {
       place.title.includes(searchQuery) ||
       desc.includes(searchQuery) ||
       place.governorateName.includes(searchQuery);
-    const matchesCategory = categoryFilter === 'all' || place.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === 'all' ||
+      place.category === categoryFilter ||
+      (CATEGORY_MAP[categoryFilter] && CATEGORY_MAP[categoryFilter].includes(place.category));
     const matchesGov = governorateFilter === 'all' || place.governorateName === governorateFilter;
     return matchesSearch && matchesCategory && matchesGov;
   });
@@ -186,7 +209,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
                   <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                    {place.category}
+                    {CATEGORY_LABELS[place.category] || place.category}
                   </span>
 
                   <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#B45F42]/90 backdrop-blur-md text-white text-[11px] font-bold">

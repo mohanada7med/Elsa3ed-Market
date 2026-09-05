@@ -20,6 +20,18 @@ import {
   Store
 } from 'lucide-react';
 
+const CATEGORY_LABELS: Record<string, string> = {
+  temple: 'معبد فرعوني',
+  tomb: 'مقابر أثرية',
+  monastery: 'دير قبطي',
+  mosque: 'مسجد أثري',
+  museum: 'متحف قومي',
+  heritage_village: 'قرية تراثية',
+  nature: 'محمية طبيعية',
+  cultural_center: 'مركز ثقافي',
+  historical: 'معلم تاريخي'
+};
+
 export const GovernorateDetailPage: React.FC = () => {
   const {
     selectedGovernorateSlug,
@@ -304,7 +316,7 @@ export const GovernorateDetailPage: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                        {place.category}
+                        {CATEGORY_LABELS[place.category] || place.category}
                       </span>
                     </div>
                     <div className="p-5 flex-1 flex flex-col justify-between">
@@ -357,7 +369,7 @@ export const GovernorateDetailPage: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-amber-600/90 text-white text-[11px] font-bold">
-                        {craft.category}
+                        {craft.category || 'حرفة يدوية أصيلة'}
                       </span>
                     </div>
                     <div className="p-5 flex-1 flex flex-col justify-between">
@@ -461,7 +473,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   >
                     <div className="flex items-center gap-4 mb-4">
                       <img
-                        src={person.photoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'}
+                        src={person.photoUrl || (person as any).avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'}
                         alt={person.name}
                         className="w-16 h-16 rounded-2xl object-cover border border-[#E8E1D9]"
                       />
@@ -469,14 +481,14 @@ export const GovernorateDetailPage: React.FC = () => {
                         <h3 className="text-base font-bold group-hover:text-[#B45F42] transition-colors">
                           {person.name}
                         </h3>
-                        <p className="text-xs text-[#B45F42] font-semibold">{person.craftTitle}</p>
+                        <p className="text-xs text-[#B45F42] font-semibold">{person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole}</p>
                         {person.yearsOfExperience && (
                           <p className="text-[11px] text-[#7A6F64]">{person.yearsOfExperience} عاماً من الخبرة</p>
                         )}
                       </div>
                     </div>
                     <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-3 leading-relaxed mb-4">
-                      {person.bio}
+                      {person.bio || (person as any).biography}
                     </p>
                     <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B45F42]">
                       <span>الملف الكامل والمقتنيات</span>
@@ -514,20 +526,20 @@ export const GovernorateDetailPage: React.FC = () => {
                     <div className="relative aspect-[16/10] overflow-hidden">
                       <img
                         src={food.coverImage || 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600'}
-                        alt={food.name}
+                        alt={food.title || food.name || 'أكلة تراثية'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-600/90 text-white text-[11px] font-bold">
-                        {food.category}
+                        {food.category || (food as any).occasionOrTradition || 'أكلات وتراث الصعيد'}
                       </span>
                     </div>
                     <div className="p-5 flex-1 flex flex-col justify-between">
                       <div>
                         <h3 className="text-lg font-bold group-hover:text-[#B45F42] transition-colors mb-2">
-                          {food.name}
+                          {food.title || food.name}
                         </h3>
                         <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 leading-relaxed mb-3">
-                          {food.story || food.description}
+                          {food.story || (food as any).originStory || food.description}
                         </p>
                       </div>
                       <div className="pt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B45F42]">
@@ -571,7 +583,7 @@ export const GovernorateDetailPage: React.FC = () => {
                         </span>
                         <span className="text-xs text-[#7A6F64] flex items-center gap-1">
                           <Calendar className="w-3.5 h-3.5" />
-                          <span>{event.timeOfYear || event.startDate}</span>
+                          <span>{event.eventDate || event.timeOfYear || event.startDate}</span>
                         </span>
                       </div>
                       <h3 className="text-xl font-bold font-serif group-hover:text-[#B45F42] transition-colors mb-2">

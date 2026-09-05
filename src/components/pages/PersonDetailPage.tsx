@@ -111,14 +111,14 @@ export const PersonDetailPage: React.FC = () => {
         <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-10 border border-[#E8E1D9] dark:border-[#382E27] shadow-sm mb-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8 text-center sm:text-right">
             <img
-              src={person.photoUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'}
+              src={person.photoUrl || (person as any).avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'}
               alt={person.name}
               className="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl object-cover border-4 border-[#FAF6F0] dark:border-[#25201D] shadow-md shrink-0"
             />
             <div className="flex-1">
               <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap mb-2">
                 <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold">
-                  {person.craftTitle}
+                  {person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole}
                 </span>
                 <button
                   onClick={() => navigateToGovernorate(person.governorateId || 'qena')}
@@ -141,7 +141,7 @@ export const PersonDetailPage: React.FC = () => {
               )}
 
               <p className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed">
-                {person.bio}
+                {person.bio || (person as any).biography}
               </p>
             </div>
           </div>
