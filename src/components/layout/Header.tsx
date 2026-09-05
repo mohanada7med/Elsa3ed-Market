@@ -121,6 +121,7 @@ export const Header: React.FC = () => {
       { id: 'home', label: 'الرئيسية' },
       { id: 'products', label: 'كافة المنتجات' },
       { id: 'categories', label: 'التصنيفات التراثية' },
+      { id: 'map', label: 'رحلة محافظات الصعيد', isNew: true },
       { id: 'crafts', label: 'حكايات الحرف' },
       { id: 'reels', label: 'فيديوهات الحرف', isNew: true },
       { id: 'sellers', label: 'الورش والحرفيون' },

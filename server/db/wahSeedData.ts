@@ -1,18 +1,49 @@
-import {
+import type {
   GovernorateDoc,
   HeritagePlaceDoc,
   CulturalCraftDoc,
   WahStoryDoc,
   LocalPersonDoc,
   UpperEgyptFoodDoc,
-  CulturalEventDoc
+  CulturalEventDoc,
+  CityDoc,
+  VillageDoc,
+  CulturalTraditionDoc,
+  PlatformSettingsDoc
 } from '../models/types.ts';
 
 export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
   {
+    id: 'gov-fayoum',
+    name: 'الفيوم',
+    slug: 'fayoum',
+    nickname: 'واحة الصعيد الخضراء وأرض السواقي',
+    region: 'شمال الصعيد',
+    nileSegment: 'بحر يوسف وبحيرة قارون وسواقي الهدير',
+    shortIntro: 'واحة طبيعية وأثرية فريدة تحتضن قرية تونس لصناعة الخزف ووادي الحيتان أقدم التراث الطبيعي العالمي في مصر.',
+    history: 'أقدم منخفض طبيعي استصلحه ملوك الفراعنة في عصر الدولة الوسطى (الملك أمنمحات الثالث)، مشتهرة بسواقي الهدير التي ابتكرت في العصر البطلمي لرفع مياه بحر يوسف المتفرع من النيل، وقرية تونس رائدة الخزف الفني في الشرق الأوسط.',
+    famousFor: ['قرية تونس للخزف', 'وادي الحيتان ووادي الريان', 'سواقي الهدير بالفيوم', 'بحيرة قارون', 'الفطير المشلتت والبط الفيومي'],
+    coverImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop&q=80'
+    ],
+    capitalCity: 'مدينة الفيوم',
+    mapCoordinates: { lat: 29.3084, lng: 30.8428 },
+    traditionalCraftsIds: ['craft-pottery', 'craft-kilim', 'craft-palm'],
+    traditionalFoodIds: ['food-feteer', 'food-mesh'],
+    culturalTraditions: ['مهرجان الخزف الدولي بقرية تونس', 'مواسم صيد بحيرة قارون', 'التحطيب وأغاني الحصاد'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
     id: 'gov-bani-suef',
     name: 'بني سويف',
     slug: 'bani-suef',
+    nickname: 'بوابة الصعيد ولؤلؤة النيل الوسطى',
+    region: 'شمال الصعيد',
+    nileSegment: 'مجرى النيل الأوسط وبساتين ميدوم',
     shortIntro: 'بوابة صعيد مصر الشمالية، تجمع بين عبق الأهرامات المبكرة وسحر النيل وسهول الزراعة الخصبة والنباتات العطرية.',
     history: 'تمتلك بني سويف عمقاً حضارياً يمتد لعصور ما قبل الأسرات وعصر الدولة القديمة حيث هرم ميدوم العريق الذي يمثل حلقة الوصل المعمارية بين الهرم المدرج والأهرامات الكاملة، كما شهدت ازدهاراً صناعياً وتجارياً عبر محطات نهر النيل التاريخية.',
     famousFor: ['هرم ميدوم', 'محمية كهف وادي سنور', 'النباتات الطبية والعطرية', 'صناعات الفخار اليدوي', 'الأقمشة الشعبية'],
@@ -34,6 +65,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-minya',
     name: 'المنيا',
     slug: 'minya',
+    nickname: 'عروس الصعيد وعاصمة التوحيد والفكر',
+    region: 'وسط الصعيد',
+    nileSegment: 'كورنيش عروس الصعيد الممتد',
     shortIntro: 'عروس الصعيد وأرض التوحيد، مهد ثورة إخناتون الفنية والفكرية في تل العمارنة وكنوز بني حسن الخالدة.',
     history: 'حاضرة مصر الوسطى ومركزها الفكري في عهد إخناتون ونفرتيتي، حيث تأسست أخت أتون (تل العمارنة). تزخر المنيا بمقابر بني حسن المنحوتة في الصخر، ودير السيدة العذراء بجبل الطير الذي استقبل العائلة المقدسة في رحلتها التاريخية.',
     famousFor: ['تل العمارنة', 'مقابر بني حسن', 'دير جبل الطير', 'تونة الجبل', 'العسل الأسود والملوخية البورانية'],
@@ -55,6 +89,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-asyut',
     name: 'أسيوط',
     slug: 'asyut',
+    nickname: 'قلب الصعيد النابض وعاصمة التلي الرفيع',
+    region: 'وسط الصعيد',
+    nileSegment: 'قناطر أسيوط التاريخية ومحطة الأربعين',
     shortIntro: 'قلب الصعيد النابض وعاصمته التجارية عبر درب الأربعين، موطن فن التلي النادر والسجاد الصوف والكليم الأصيل.',
     history: 'كانت أسيوط (سيوط القديمة) مركز حراسة حدود مصر الوسطى ومحطة القوافل التجارية الكبرى القادمة من قلب أفريقيا عبر درب الأربعين. توارثت أسيوط فن التطريز بخيوط الفضة والذهب على قماش الشبيكة (التلي الأسيوطي) المسجل عالمياً كتراث فريد.',
     famousFor: ['فن التلي الأسيوطي', 'الدير المحرق بالقوصية', 'قناطر أسيوط التاريخية', 'وكالة شلبي للتوابل', 'صناعة السجاد اليدوي'],
@@ -76,6 +113,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-sohag',
     name: 'سوهاج',
     slug: 'sohag',
+    nickname: 'معقل النسيج والحرير ومهد ملوك مصر',
+    region: 'جنوب الصعيد',
+    nileSegment: 'منحنى النيل بسوهاج وجزر الزهور',
     shortIntro: 'أرض المواويل والنسيج اليدوي بأخميم، مستودع الحكمة والآثار بأبيدوس ومعبد سيتي الأول الأسطوري.',
     history: 'سوهاج هي أرض الملوك، منها خرج مينا موحد القطرين، وتحتضن أبيدوس أقدس بقاع مصر القديمة حيث دفن أوزوريس ومعبد سيتي الأول ذو النقوش الأكثر نقاءً في تاريخ العمارة المصرية. تشتهر أخميم بلقب مانشستر ما قبل التاريخ بفضل أنوال الحرير والكتان المتوارثة لآلاف السنين.',
     famousFor: ['معبد أبيدوس', 'أنوال النسيج بأخميم', 'الدير الأبيض والدير الأحمر', 'تمثال ميريت آمون', 'الكليم السوهاجي'],
@@ -96,6 +136,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-qena',
     name: 'قنا',
     slug: 'qena',
+    nickname: 'أرض القلال القناوية والفركة والكركديه',
+    region: 'جنوب الصعيد',
+    nileSegment: 'ثنية قنا العظمى ملتقى الصحراء والبحر',
     shortIntro: 'مهد الفخار والقناوي الأصيل، حامية معبد حتحور بدندرة وواحة القصب الأخضر والصناعات الحرفية المتجذرة.',
     history: 'تمثل قنا عقدة النيل حيث يلتف النهر في ثنية قنا الشهيرة لتلتقي طرق البحر الأحمر والصحراء الشرقية. تشتهر دندرة بمعبد الإلهة حتحور ربة الفنون والموسيقى، وتشتهر قرية الجرادسة ودندرة وقوص بصناعة القلل والجرار الفخارية الفريدة من نوعها بفضل خصائص طميها النيلي المميز.',
     famousFor: ['معبد دندرة', 'فخار قنا والقلل القناوي', 'قصب السكر والعسل الأسود', 'مسجد سيدي عبد الرحيم القناوي', 'تطريز الفركا بنقادة'],
@@ -116,6 +159,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-luxor',
     name: 'الأقصر',
     slug: 'luxor',
+    nickname: 'طيبة عاصمة العالم القديم ومدينة الشمس',
+    region: 'جنوب الصعيد',
+    nileSegment: 'ضفتي طيبة الخالدتين وجبال وادي الملوك',
     shortIntro: 'عاصمة التاريخ الإنساني وطيبة العظمى، موطن ثلث آثار العالم وأعظم نَحّاتي حجر الألباستر ومتاحف الهواء الطلق.',
     history: 'طيبة عاصمة الإمبراطورية المصرية القديمة وعصرها الذهبي. تضم معابد الكرنك والأقصر، ووادي الملوك والملكات، ومعبد حتشبسوت في الدير البحري. توارثت أجيال الحرفيين في القرنة غرب الأقصر فنون نحت حجر الألباستر الشفاف والبردي المزين بالهيروغليفية.',
     famousFor: ['معابد الكرنك والأقصر', 'وادي الملوك والملكات', 'نحت الألباستر بالقرنة', 'البالون الطائر', 'ورق البردي اليدوي'],
@@ -136,6 +182,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-aswan',
     name: 'أسوان',
     slug: 'aswan',
+    nickname: 'بلاد الذهب وموئل السحر النوبي الخالد',
+    region: 'جنوب الصعيد',
+    nileSegment: 'شلال النيل الأول وبحيرة ناصر العظيمة',
     shortIntro: 'بلاد الذهب وسحر النوبة الخالد، واحة التوابل والكركديه، ومنبت صناعات الخوص والجريد والخرز الإفريقي البديع.',
     history: 'سونو (السوق القديمة) عند الشلال الأول لنهر النيل، البوابة الإستراتيجية لمصر نحو إفريقيا ومحجر الجرانيت الوردي لمسلات الفراعنة. تتميز أسوان بالثقافة النوبية العريقة بمنازلها الملونة وقراها التراثية كغرب سهيل وهيسا، ومعبد فيلة الرومانسي وأبو سمبل الصخري.',
     famousFor: ['معبد فيلة وأبو سمبل', 'قرى النوبة وغرب سهيل', 'شغل الخوص والخرز النوبي', 'سوق التوابل والكركديه الأسواني', 'جزيرة النباتات ومحمية سالوجا وغزال'],
@@ -156,6 +205,9 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
     id: 'gov-new-valley',
     name: 'الوادي الجديد',
     slug: 'new-valley',
+    nickname: 'واحات الأساطير وكنوز الصحراء الغربية',
+    region: 'الواحات والصحراء الغربية',
+    nileSegment: 'درب الأربعين الواصل إلى وادي النيل',
     shortIntro: 'واحات الصحراء الغربية الساحرة (الخارجة، الداخلة، الفرافرة)، جنة النخيل وصناعة الأواني الخزفية والرمال البيضاء.',
     history: 'تمثل واحات الوادي الجديد كنزاً أثرياً وطبيعياً فريداً، حيث مدينة القصر الإسلامية المبنية بالطوب اللبن منذ القرون الوسطى، ومعبد هيبس الفرعوني بالخارجة، والصحراء البيضاء بفرافرة. يعتمد أهالي الواحات على النخيل في كل تفاصيل حياتهم من خوص وأثاث وسلال وتمر واحاتي فاخر.',
     famousFor: ['مدينة القصر الإسلامية', 'الصحراء البيضاء بالفرارة', 'تمور الواحات وسلال الخوص', 'معبد هيبس', 'الخزف الواحاتي والعيون الكبريتية'],
@@ -176,21 +228,111 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [
 
 export const INITIAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [
   {
-    id: 'place-dendera',
-    title: 'معبد دندرة المركب (معبد حتحور)',
-    slug: 'dendera-temple',
-    governorateId: 'gov-qena',
-    governorateName: 'قنا',
+    id: 'place-meidum',
+    title: 'هرم ميدوم وفجر الهندسة المصرية',
+    slug: 'meidum-pyramid',
+    governorateId: 'gov-bani-suef',
+    governorateName: 'بني سويف',
     category: 'temple',
-    description: 'أحد أروع وأكمل المعابد المصرية القديمة حفظاً لنقوشه وألوانه الزرقاء الساحرة، مكرس لحتحور ربة الحب والجمال والموسيقى والخصوبة.',
-    history: 'شُيد المعبد في العصر البطلمي واكتمل في عهد الرومان، ويشتهر بسقفه الفلكي الفريد ونقوش الأبراج الفلكية، بالإضافة إلى سراديب باطنية ونقوش مصابيح دندرة المثيرة للإعجاب.',
-    significance: 'يتميز بأعمدته الحتحورية ذات الوجوه الأربعة التي ترمز لجهات الأرض الأربع واحتفاظه بنقاء ألوانه الطبيعية بعد آلاف السنين.',
-    locationName: 'قرية دندرة، غرب قنا، على بعد 4 كم من مدينة قنا',
-    coverImage: 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=1200&auto=format&fit=crop&q=80',
+    description: 'الهرم الفريد الذي شيده الملك حوني وأكمله سنفرو، يمثل حلقة الوصل المعمارية بين الهرم المدرج والأهرامات الكاملة.',
+    history: 'شُيد قبل أكثر من 4600 عام، وتعتبر مصاطبه الصخرية الثلاث من أعظم شواهد التطور الهندسي المصري القديم في قلب محافظة بني سويف.',
+    significance: 'أول محاولة لبناء هرم ذي أوجه ملساء، وتحيط به مقابر أمراء الدولة القديمة ونقوش أوز ميدوم الشهيرة بمتحف الآثار.',
+    locationName: 'مركز الواسطى، شمال محافظة بني سويف',
+    coverImage: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1200&auto=format&fit=crop&q=80',
     gallery: [
-      'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800&auto=format&fit=crop&q=80'
     ],
-    relatedCrafts: ['فخار قنا والقلل', 'النقش على الأحجار'],
+    coordinates: { lat: 29.2605, lng: 31.1578 },
+    isFeatured: true,
+    rating: 4.8,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-sannur',
+    title: 'محمية كهف وادي سنور الكارستي',
+    slug: 'sannur-cave',
+    governorateId: 'gov-bani-suef',
+    governorateName: 'بني سويf',
+    category: 'nature',
+    description: 'كهف جيولوجي فريد ونادر عالمياً يمتلئ بالهوابط والصواعد الكالسيتية البديعة التي تشكلت عبر ملايين السنين في قلب الصحراء الشرقية.',
+    history: 'يعود تكوينه الجيولوجي لأكثر من 65 مليون سنة إثر ذوبان الحجر الجيري بواسطة المياه الجوفية، ويمتد لمسافة تزيد عن 700 متر باطن الأرض.',
+    significance: 'أحد أندر كهفين كارستيين مسجلين على مستوى كوكب الأرض مع كهف فيرجينيا بالولايات المتحدة.',
+    locationName: 'جنوب شرق بني سويف، الصحراء الشرقية',
+    coverImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 28.9167, lng: 31.2833 },
+    isFeatured: true,
+    rating: 4.7,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-amarna',
+    title: 'تل العمارنة (أخت أتون عاصمة التوحيد)',
+    slug: 'tell-el-amarna',
+    governorateId: 'gov-minya',
+    governorateName: 'المنيا',
+    category: 'temple',
+    description: 'العاصمة الفكرية والفنية التي أسسها الملك إخناتون والملكة نفرتيتي، مهد ثورة الفن المصري القديم وعبادة قرص الشمس أتون.',
+    history: 'تأسست عام 1346 قبل الميلاد على ضفة النيل الشرقية بالمنيا، وشهدت خروج الفنان المصري من القوالب التقليدية إلى الواقعية الإنسانية الشفافة.',
+    significance: 'تحتضن القصر الشمالي ومقابر النبلاء وقصر نفرتيتي الذي عُثر فيه على رأسها الأيقوني الخالد.',
+    locationName: 'دير مواس، جنوب محافظة المنيا',
+    coverImage: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 27.6469, lng: 30.9022 },
+    isFeatured: true,
+    rating: 4.9,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-beni-hasan',
+    title: 'مقابر بني حسن المنحوتة في الجبل',
+    slug: 'beni-hasan-tombs',
+    governorateId: 'gov-minya',
+    governorateName: 'المنيا',
+    category: 'tomb',
+    description: '39 مقبرة صخرية لحكام الإقليم في عهد الدولة الوسطى، وتتميز برسوم ألعاب المصارعة والرياضة والوفود التجارية القديمة.',
+    history: 'تعود للأسر الحادية عشرة والثانية عشرة (حوالي 2000 ق.م)، وتتميز بنقوش جدارية تحكي تفاصيل الحياة اليومية والزراعة والصيد والألعاب الأولمبية الفرعونية.',
+    significance: 'أدق توثيق لرياضات الفروسية والجمباز والمصارعة الفرعونية القديمة بنقوشها الملونة الزاهية.',
+    locationName: 'أبو قرقاص، الضفة الشرقية للنيل، المنيا',
+    coverImage: 'https://images.unsplash.com/photo-1566192091743-5966a6079984?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1566192091743-5966a6079984?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 27.9300, lng: 30.8717 },
+    isFeatured: true,
+    rating: 4.8,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-muharraq',
+    title: 'الدير المحرق العامر (جبل قسقام)',
+    slug: 'muharraq-monastery',
+    governorateId: 'gov-asyut',
+    governorateName: 'أسيوط',
+    category: 'monastery',
+    description: 'أقدس محطات العائلة المقدسة في مصر، حيث مكثت فيه أكثر من ستة أشهر في الكنيسة الأثرية القديمة المشيدة بالحجارة اللبنة.',
+    history: 'يعد من أقدم الأديرة المأهولة في العالم، ويضم الكنيسة الأثرية التي دُشنت بيد المسيح حسب المعتقد القبطي وحصناً أثرياً شُيد لصد غارات الصحراء.',
+    significance: 'يطلق عليه "أورشليم الثانية"، ويضم أكبر مكتبة للمخطوطات القبطية والعربية النادرة بالصعيد.',
+    locationName: 'مركز القوصية، غرب النيل، أسيوط',
+    coverImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 27.4600, lng: 30.8100 },
+    isFeatured: true,
+    rating: 4.9,
     status: 'approved',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z'
@@ -210,27 +352,55 @@ export const INITIAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [
     gallery: [
       'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&auto=format&fit=crop&q=80'
     ],
+    coordinates: { lat: 26.1844, lng: 31.9189 },
+    isFeatured: true,
+    rating: 5.0,
     relatedCrafts: ['نسيج أخميم اليدوي', 'الكليم السوهاجي'],
     status: 'approved',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z'
   },
   {
-    id: 'place-philae',
-    title: 'معبد فيلة جزيرة إيزيس',
-    slug: 'philae-temple',
-    governorateId: 'gov-aswan',
-    governorateName: 'أسوان',
-    category: 'temple',
-    description: 'جوهرة النيل وجزيرة الحب والجمال، المعبد الذي أنقذته اليونسكو من الغرق بعد بناء السد العالي ونُقل إلى جزيرة أجيليكا.',
-    history: 'شيد المعبد لعبادة الربة إيزيس واستمر مقصداً للعبادة حتى عهد الإمبراطور جستنيان، ويتميز بمقصورة تراجان الشهيرة وأعمدته النيلية البديعة.',
-    significance: 'آخر معقل للغة الهيروغليفية في التاريخ حيث تم تسجيل آخر نقش هيروغليفي معروف على أحد جدرانه عام 394 ميلادية.',
-    locationName: 'جزيرة أجيليكا، بحيرة أسوان، محافظة أسوان',
-    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=1200&auto=format&fit=crop&q=80',
+    id: 'place-merit-amun',
+    title: 'تمثال الأميرة ميريت آمون بأخميم',
+    slug: 'merit-amun-statue',
+    governorateId: 'gov-sohag',
+    governorateName: 'سوهاج',
+    category: 'museum',
+    description: 'أطول وأجمل تمثال لملكة مصرية يقف شامخاً في الهواء الطلق، ابنة رمسيس الثاني وزوجته الملكية الكبرى ذات الملامح الآسرة.',
+    history: 'اكتُشف التمثال المنحوت من الحجر الجيري الأبيض عام 1981 أثناء حفر أساسات معبد أخميم القديم، ويبلغ ارتفاعه قرابة 12 متراً.',
+    significance: 'أكبر تمثال لامرأة في الحضارة الفرعونية القديمة وتعتبر رمزاً أثرياً لمحافظة سوهاج.',
+    locationName: 'مدينة أخميم، شرق النيل، سوهاج',
+    coverImage: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=1200&auto=format&fit=crop&q=80',
     gallery: [
-      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&auto=format&fit=crop&q=80'
     ],
-    relatedCrafts: ['الخوص والجريد النوبي', 'شغل الخرز والتمائم'],
+    coordinates: { lat: 26.5640, lng: 31.7450 },
+    isFeatured: true,
+    rating: 4.8,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-dendera',
+    title: 'معبد دندرة المركب (معبد حتحور)',
+    slug: 'dendera-temple',
+    governorateId: 'gov-qena',
+    governorateName: 'قنا',
+    category: 'temple',
+    description: 'أحد أروع وأكمل المعابد المصرية القديمة حفظاً لنقوشه وألوانه الزرقاء الساحرة، مكرس لحتحور ربة الحب والجمال والموسيقى والخصوبة.',
+    history: 'شُيد المعبد في العصر البطلمي واكتمل في عهد الرومان، ويشتهر بسقفه الفلكي الفريد ونقوش الأبراج الفلكية، بالإضافة إلى سراديب باطنية ونقوش مصابيح دندرة المثيرة للإعجاب.',
+    significance: 'يتميز بأعمدته الحتحورية ذات الوجوه الأربعة التي ترمز لجهات الأرض الأربع واحتفاظه بنقاء ألوانه الطبيعية بعد آلاف السنين.',
+    locationName: 'قرية دندرة، غرب قنا، على بعد 4 كم من مدينة قنا',
+    coverImage: 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 26.1422, lng: 32.6703 },
+    isFeatured: true,
+    rating: 5.0,
+    relatedCrafts: ['فخار قنا والقلل', 'النقش على الأحجار'],
     status: 'approved',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z'
@@ -250,7 +420,99 @@ export const INITIAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [
     gallery: [
       'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80'
     ],
+    coordinates: { lat: 25.7188, lng: 32.6573 },
+    isFeatured: true,
+    rating: 5.0,
     relatedCrafts: ['نحت الألباستر', 'ورق البردي'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-valley-kings',
+    title: 'وادي الملوك ومقابر الفراعنة',
+    slug: 'valley-of-the-kings',
+    governorateId: 'gov-luxor',
+    governorateName: 'الأقصر',
+    category: 'tomb',
+    description: 'المقبرة الإمبراطورية العظمى المحفورة في قلب الصخر بجبل القرنة، موطن مقبرة توت عنخ آمون وسيتي الأول ورمسيس السادس.',
+    history: 'استخدم لأكثر من 500 عام في عصر الدولة الحديثة لدفن ملوك مصر، ويضم أكثر من 60 مقبرة ملكية تزخر بنصوص كتاب الموتى ورسوم الرحلة إلى الأبدية.',
+    significance: 'أعظم موقع للتراث الجنائزي على سطح الأرض، ومصدر روائع الكنوز الذهبية للمتحف المصري.',
+    locationName: 'البر الغربي للنيل، الأقصر',
+    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 25.7402, lng: 32.6014 },
+    isFeatured: true,
+    rating: 5.0,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-philae',
+    title: 'معبد فيلة جزيرة إيزيس',
+    slug: 'philae-temple',
+    governorateId: 'gov-aswan',
+    governorateName: 'أسوان',
+    category: 'temple',
+    description: 'جوهرة النيل وجزيرة الحب والجمال، المعبد الذي أنقذته اليونسكو من الغرق بعد بناء السد العالي ونُقل إلى جزيرة أجيليكا.',
+    history: 'شيد المعبد لعبادة الربة إيزيس واستمر مقصداً للعبادة حتى عهد الإمبراطور جستنيان، ويتميز بمقصورة تراجان الشهيرة وأعمدته النيلية البديعة.',
+    significance: 'آخر معقل للغة الهيروغليفية في التاريخ حيث تم تسجيل آخر نقش هيروغليفي معروف على أحد جدرانه عام 394 ميلادية.',
+    locationName: 'جزيرة أجيليكا، بحيرة أسوان، محافظة أسوان',
+    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 24.0253, lng: 32.8842 },
+    isFeatured: true,
+    rating: 4.9,
+    relatedCrafts: ['الخوص والجريد النوبي', 'شغل الخرز والتمائم'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-abu-simbel',
+    title: 'معبد أبو سمبل العظيم لرمسيس الثاني',
+    slug: 'abu-simbel-temples',
+    governorateId: 'gov-aswan',
+    governorateName: 'أسوان',
+    category: 'temple',
+    description: 'المعجزة المعمارية المنحوتة في الصخر على ضفاف بحيرة ناصر، حيث تتعامد الشمس مرتين سنوياً على قدس أقداس رمسيس الثاني.',
+    history: 'شُيد قبل أكثر من 3200 عام لتخليد نصر معركة قادش وحماية الحدود الجنوبية، ونُقل بالكامل في أضخم عملية إنقاذ آثاري في التاريخ بقيادة اليونسكو.',
+    significance: 'تتعامد الشمس في 22 أكتوبر و22 فبراير في ظاهرة فلكية وهندسية تسلب ألباب العالم حتى اليوم.',
+    locationName: 'أبو سمبل، جنوب بحيرة ناصر، محافظة أسوان',
+    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 22.3372, lng: 31.6258 },
+    isFeatured: true,
+    rating: 5.0,
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-west-suhail',
+    title: 'قرية غرب سهيل النوبية التراثية',
+    slug: 'west-suhail-village',
+    governorateId: 'gov-aswan',
+    governorateName: 'أسوان',
+    category: 'heritage_village',
+    description: 'واحة الأصالة النوبية بمنازلها المقببة الملونة بزخارف التراث والمطلة على شلال النيل وصخور الجرانيت الوردي.',
+    history: 'تأسست منذ نحو مائة عام مع إنشاء خزان أسوان القديم، وتوارث أهلها تربية التماسيح والضيافة النوبية وصناعة الخوص والمصنوعات الجلدية والخرز.',
+    significance: 'النافذة الأروع على الثقافة والموسيقى النوبية والبيت النوبي الحقيقي على ضفاف النيل.',
+    locationName: 'البر الغربي للنيل، أسوان، فوق هضبة سهيل',
+    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 24.0583, lng: 32.8750 },
+    isFeatured: true,
+    rating: 4.9,
     status: 'approved',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z'
@@ -270,7 +532,32 @@ export const INITIAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [
     gallery: [
       'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80'
     ],
+    coordinates: { lat: 25.6983, lng: 28.8833 },
+    isFeatured: true,
+    rating: 4.8,
     relatedCrafts: ['خوص النخيل', 'الخزف والفخار الواحاتي'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'place-white-desert',
+    title: 'محمية الصحراء البيضاء الساحرة بالفرافرة',
+    slug: 'white-desert-farafra',
+    governorateId: 'gov-new-valley',
+    governorateName: 'الوادي الجديد',
+    category: 'nature',
+    description: 'متحف صخري طبيعي مفتوح نحتته الرياح على هيئة تماثيل طباشيرية بيضاء نقية تتلألأ تحت ضوء القمر وسط رمال الصحراء الغربية.',
+    history: 'تشكلت هذه المنحوتات الطباشيرية الكارستية عبر ملايين السنين عندما كانت الصحراء الغربية قاعاً لبحر تيثيس القديم.',
+    significance: 'واحدة من أروع العجائب الجيولوجية في شمال إفريقيا ومقصد عالمي لسياحة السفاري والتخييم الفلكي.',
+    locationName: 'واحة الفرافرة، الوادي الجديد',
+    coverImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80'
+    ],
+    coordinates: { lat: 27.0600, lng: 27.9700 },
+    isFeatured: true,
+    rating: 5.0,
     status: 'approved',
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z'
@@ -628,3 +915,243 @@ export const INITIAL_CULTURAL_EVENTS: CulturalEventDoc[] = [
     updatedAt: '2026-01-01T00:00:00.000Z'
   }
 ];
+
+export const INITIAL_CITIES: CityDoc[] = [
+  {
+    id: 'city-beni-suef',
+    name: 'مدينة بني سويف',
+    governorateId: 'gov-bani-suef',
+    governorateName: 'بني سويف',
+    shortDescription: 'عاصمة المحافظة ومركزها التجاري على ضفاف نهر النيل.',
+    famousFor: ['شارع أحمد عرابي التجاري', 'حديقة النيل', 'صناعات الفخار'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-minya',
+    name: 'مدينة المنيا',
+    governorateId: 'gov-minya',
+    governorateName: 'المنيا',
+    shortDescription: 'عروس الصعيد بمبانيها الكلاسيكية وكورنيش النيل التاريخي الممتد.',
+    famousFor: ['كورنيش المنيا', 'ميدان البوستة', 'سوق الحبشي'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-mallawi',
+    name: 'ملوي',
+    governorateId: 'gov-minya',
+    governorateName: 'المنيا',
+    shortDescription: 'حاضرة التجارة والحرف الخشبية وصناعة الساقية والمحاريث بالمنيا.',
+    famousFor: ['متحف ملوي الآثاري', 'صناعات الخشب والأثاث الريفي'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-asyut',
+    name: 'مدينة أسيوط',
+    governorateId: 'gov-asyut',
+    governorateName: 'أسيوط',
+    shortDescription: 'عاصمة صعيد مصر الكبرى وملتقى قوافل التجارة وحرف التلي والسجاد.',
+    famousFor: ['قناطر أسيوط', 'شارع يسرى راغب', 'وكالة شلبي للتوابل'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-akhmeem',
+    name: 'أخميم',
+    governorateId: 'gov-sohag',
+    governorateName: 'سوهاج',
+    shortDescription: 'عاصمة النسيج اليدوي التاريخية والأنوال المتوارثة منذ الفراعنة.',
+    famousFor: ['أنوال أخميم للحرير والكتان', 'تمثال ميريت آمون'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-sohag',
+    name: 'مدينة سوهاج',
+    governorateId: 'gov-sohag',
+    governorateName: 'سوهاج',
+    shortDescription: 'حاضرة محافظة سوهاج ومركز التجارة على النيل.',
+    famousFor: ['متحف سوهاج القومي', 'مسجد العارف بالله', 'جزيرة الزهور'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-qena',
+    name: 'مدينة قنا',
+    governorateId: 'gov-qena',
+    governorateName: 'قنا',
+    shortDescription: 'مدينة القلل القناوية ومسجد سيدي عبد الرحيم القنائي الشهير.',
+    famousFor: ['مسجد عبد الرحيم القنائي', 'سوق الفخار', 'معبد دندرة'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-naqada',
+    name: 'نقادة',
+    governorateId: 'gov-qena',
+    governorateName: 'قنا',
+    shortDescription: 'معقل حضارة نقادة التاريخية ومركز صناعة الفركة اليدوية (الشال الصعيدي).',
+    famousFor: ['أنوال الفركة اليدوية', 'أديرة نقادة التاريخية'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-luxor',
+    name: 'مدينة الأقصر',
+    governorateId: 'gov-luxor',
+    governorateName: 'الأقصر',
+    shortDescription: 'طيبة عاصمة الإمبراطورية المصرية العظمى ومتحف العالم المفتوح.',
+    famousFor: ['معبد الكرنك', 'معبد الأقصر', 'وادي الملوك', 'صناعة الألباستر'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'city-aswan',
+    name: 'مدينة أسوان',
+    governorateId: 'gov-aswan',
+    governorateName: 'أسوان',
+    shortDescription: 'بوابة مصر الجنوبية وحاضنة التراث النوبي الساحر وجزر النيل العذبة.',
+    famousFor: ['السوق السياحي لأسوان', 'معبد فيلة', 'صناعات الخوص النوبي والبخور'],
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+export const INITIAL_VILLAGES: VillageDoc[] = [
+  {
+    id: 'village-dandara',
+    name: 'قرية دندرة',
+    cityName: 'مدينة قنا',
+    governorateId: 'gov-qena',
+    governorateName: 'قنا',
+    traditionalCraftId: 'craft-pottery-qena',
+    traditionalCraftName: 'الفخار والقلل القناوية',
+    description: 'قرية عريقة تحتضن معبد حتحور وتشتهر بعائلات الفواخير التي تشكل طمي النيل.',
+    famousFor: ['صناعة القلل والجرار', 'معبد دندرة'],
+    coverImage: 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'village-ballas',
+    name: 'قرية البلاص',
+    cityName: 'قنا',
+    governorateId: 'gov-qena',
+    governorateName: 'قنا',
+    traditionalCraftId: 'craft-pottery-qena',
+    traditionalCraftName: 'صناعة بلاص العسل والجبن',
+    description: 'القرية التي سمي باسمها "البلاص" الصعيدي الشهير لحفظ العسل والجبن القديم.',
+    famousFor: ['صناعة البلاص الفخاري الخزفي'],
+    coverImage: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'village-gharb-soheil',
+    name: 'قرية غرب سهيل النوبية',
+    cityName: 'مدينة أسوان',
+    governorateId: 'gov-aswan',
+    governorateName: 'أسوان',
+    traditionalCraftId: 'craft-nubian-basketry',
+    traditionalCraftName: 'الخوص النوبي والحلي التراثية',
+    description: 'واحدة من أجمل قرى النيل في أسوان ببيوتها الملونة وتماسيحها وترحيب أهلها.',
+    famousFor: ['البيوت النوبية الملونة', 'أطباق الخوص الملونة', 'تربية التماسيح التراثية'],
+    coverImage: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'village-gurna',
+    name: 'قرية القرنة التراثية',
+    cityName: 'مدينة الأقصر',
+    governorateId: 'gov-luxor',
+    governorateName: 'الأقصر',
+    traditionalCraftId: 'craft-alabaster',
+    traditionalCraftName: 'نحت حجر الألباستر والجرانيت',
+    description: 'تقع بالبر الغربي للأقصر، تشتهر بورش نحت الألباستر اليدوية وتصميم حسن فتحي المعماري.',
+    famousFor: ['مصانع الألباستر اليدوية', 'قرية حسن فتحي البيئية'],
+    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+export const INITIAL_TRADITIONS: CulturalTraditionDoc[] = [
+  {
+    id: 'tradition-tahtib',
+    title: 'فن ولعبة التحطيب الصعيدية',
+    slug: 'tahtib-martial-art',
+    governorateName: 'سوهاج والأقصر وقنا',
+    governorateId: 'gov-sohag',
+    category: 'customs',
+    description: 'فن الفروسية والمبارزة بالعصا الخيزران على إيقاع الطبل والمزمار البلدي، مسجل بقائمة التراث الإنساني لليونسكو كرمز لشهامة ونبل الصعايدة.',
+    historicalOrigin: 'منقوش على جدران معابد الفراعنة في بني حسن وتل العمارنة والأقصر.',
+    coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'tradition-sirah-hilaliyya',
+    title: 'السيرة الهلالية وفن الواو والمربعات',
+    slug: 'sirah-hilaliyya-storytelling',
+    governorateName: 'قنا وأسيوط وسوهاج',
+    governorateId: 'gov-qena',
+    category: 'oral_arts',
+    description: 'الملحمة الشعبية الشفاهية الأضخم في الوجدان العربي التي يرويها شعراء الربابة في المضايف وسهرات السمر الشتوية بصوت شجي.',
+    historicalOrigin: 'تغريبة بني هلال إلى بلاد المغرب العربي متوارثة شفاهياً منذ قرون.',
+    coverImage: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'tradition-shamsi-baking',
+    title: 'طقس خبيز العيش الشمسي في الفرن البلدي',
+    slug: 'shamsi-bread-ritual',
+    governorateName: 'عموم محافظات الصعيد',
+    governorateId: 'gov-asyut',
+    category: 'celebration',
+    description: 'يوم الخبيز الصعيدي المقدس، حيث تعجن النسوة الدقيق النقي وتترك الأقراص لتختمر تحت أشعة شمس الصعيد الساطعة قبل خبزها في الفرن البلدي الطيني.',
+    historicalOrigin: 'متوارث مباشرة من مصر القديمة كما توثقه نقوش مقابر دير المدينة والأقصر.',
+    coverImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800',
+    status: 'approved',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+export const INITIAL_PLATFORM_SETTINGS: PlatformSettingsDoc = {
+  id: 'platform-settings-default',
+  siteName: 'وه | WAH',
+  siteTagline: 'المنصة الوطنية الكبرى لتوثيق وتسويق تراث وحرف وثقافة صعيد مصر',
+  contactEmail: 'contact@wah-egypt.com',
+  contactPhone: '+20 100 123 4567',
+  shippingFlatRate: 45,
+  freeShippingThreshold: 500,
+  featuredGovernorates: ['gov-qena', 'gov-luxor', 'gov-aswan', 'gov-asyut', 'gov-sohag'],
+  featuredCrafts: ['craft-tally', 'craft-pottery-qena', 'craft-textile-akhmeem', 'craft-alabaster'],
+  featuredStories: ['story-tally-secret', 'story-ballas-clay'],
+  featuredProducts: [],
+  heroHeadline: 'وه.. أصالة الصعيد بين يديك',
+  heroSubheadline: 'منصة بيئية وتوثيقية وسوق مباشر يربطك بأعرق ورش الحرفيين، كنوز المحافظات، حكايات الأجداد، وخيرات جنوب الوادي.',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  updatedBy: 'system-init'
+};
+

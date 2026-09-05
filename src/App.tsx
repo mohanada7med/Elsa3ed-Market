@@ -48,6 +48,7 @@ import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
 import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
 import { CulturalCmsAdminPage } from './components/pages/CulturalCmsAdminPage';
+import { AdminMapEditorPage } from './components/pages/AdminMapEditorPage';
 
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
@@ -163,8 +164,8 @@ const MainContent: React.FC = () => {
         break;
       case 'map':
         updatePageSEO({
-          title: 'خريطة صعيد مصر التفاعلية | وه',
-          description: 'استكشف محافظات صعيد مصر ومعالمها التراثية وحرفها وورشها على الخريطة التفاعلية.'
+          title: 'أطلس الصعيد التفاعلي ورحلة النيل | وه',
+          description: 'استكشف محافظات صعيد مصر ومعالمها التراثية وحرفها وأسواقها على الأطلس التفاعلي ومسار رحلة النيل التراثية.'
         });
         break;
       case 'governorates':
@@ -226,6 +227,12 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'لوحة التوثيق التراثي | وه',
           description: 'استوديو التوثيق وحفظ التراث وإدارة الموسوعة التراثية لصعيد مصر.'
+        });
+        break;
+      case 'admin-map-editor':
+        updatePageSEO({
+          title: 'محرر إحداثيات الخريطة التفاعلية (GIS) | وه',
+          description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
         });
         break;
       default:
@@ -498,6 +505,7 @@ const MainContent: React.FC = () => {
             {activePage === 'event-details' && <EventDetailPage />}
             {activePage === 'global-search' && <GlobalSearchResultsPage />}
             {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && <CulturalCmsAdminPage />}
+            {activePage === 'admin-map-editor' && <AdminMapEditorPage />}
 
             {![
               'home',
@@ -553,7 +561,8 @@ const MainContent: React.FC = () => {
               'event-details',
               'global-search',
               'cultural-cms',
-              'admin-cultural-cms'
+              'admin-cultural-cms',
+              'admin-map-editor'
             ].includes(activePage) && <NotFoundPage />}
           </motion.div>
         </AnimatePresence>

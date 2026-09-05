@@ -4,6 +4,7 @@ import {
   Sparkles,
   ArrowLeft,
   Map,
+  Ship,
   Compass,
   Landmark,
   Hammer,
@@ -85,11 +86,11 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('map')}
-                aria-label="استكشاف خريطة صعيد مصر التفاعلية"
+                aria-label="استكشاف رحلة محافظات صعيد مصر"
                 className="w-full sm:w-auto px-7 sm:px-8 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-sm sm:text-base font-bold rounded-2xl shadow-md flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[46px]"
               >
-                <Compass className="w-5 h-5" />
-                <span>خريطة الصعيد التفاعلية</span>
+                <Ship className="w-5 h-5" />
+                <span>رحلة محافظات الصعيد</span>
                 <ArrowLeft className="w-4 h-4 mr-1 transition-transform group-hover:-translate-x-1" />
               </motion.button>
 

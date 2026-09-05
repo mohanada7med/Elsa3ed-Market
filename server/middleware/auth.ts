@@ -305,7 +305,7 @@ export function requireAdmin(req: AuthenticatedRequest, res: Response, next: Nex
   if (req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
-      error: 'عفواً، هذه العملية مخصصة لمدراء منصة سوق الصعيد فقط',
+      error: 'عفواً، هذه العملية مخصصة لمدراء منصة وه | WAH فقط',
       code: 'FORBIDDEN_ADMIN_ONLY'
     });
   }

@@ -22,6 +22,8 @@ import {
   UpperEgyptFood,
   CulturalEvent,
   MapGovernorateData,
+  MapPayload,
+  MapMarkerItem,
   GlobalSearchResult
 } from '../types.ts';
 
@@ -2656,10 +2658,97 @@ export const wahApi = {
     try {
       const res = await fetch(`${API_BASE}/wah/map`);
       const json = await res.json();
-      return json.success && Array.isArray(json.data) ? json.data : [];
+      if (json.success) {
+        if (Array.isArray(json.data)) return json.data;
+        if (Array.isArray(json.governorates)) return json.governorates;
+      }
+      return [];
     } catch {
       return [];
     }
+  },
+
+  async getFullMapPayload(): Promise<MapPayload> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/map`);
+      const json = await res.json();
+      if (json.success) {
+        const governorates = Array.isArray(json.governorates)
+          ? json.governorates
+          : (Array.isArray(json.data) ? json.data : []);
+        return {
+          governorates,
+          markers: Array.isArray(json.markers) ? json.markers : [],
+          featuredPlaces: Array.isArray(json.featuredPlaces) ? json.featuredPlaces : [],
+          stats: json.stats || {
+            governoratesCount: governorates.length,
+            placesCount: 0,
+            craftsCount: 0,
+            storiesCount: 0,
+            foodsCount: 0,
+            artisansCount: 0,
+            eventsCount: 0,
+            productsCount: 0,
+            reelsCount: 0
+          }
+        };
+      }
+      return {
+        governorates: [],
+        markers: [],
+        featuredPlaces: [],
+        stats: {
+          governoratesCount: 0,
+          placesCount: 0,
+          craftsCount: 0,
+          storiesCount: 0,
+          foodsCount: 0,
+          artisansCount: 0,
+          eventsCount: 0,
+          productsCount: 0,
+          reelsCount: 0
+        }
+      };
+    } catch (err) {
+      console.warn('Failed to load full map payload:', err);
+      return {
+        governorates: [],
+        markers: [],
+        featuredPlaces: [],
+        stats: {
+          governoratesCount: 0,
+          placesCount: 0,
+          craftsCount: 0,
+          storiesCount: 0,
+          foodsCount: 0,
+          artisansCount: 0,
+          eventsCount: 0,
+          productsCount: 0,
+          reelsCount: 0
+        }
+      };
+    }
+  },
+
+  async updateMapCoordinates(
+    entityType: 'governorate' | 'place' | 'craft' | 'food' | 'event' | 'artisan' | 'story',
+    id: string,
+    lat: number,
+    lng: number,
+    isFeatured?: boolean,
+    user?: { id?: string; role?: string }
+  ): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/map/coordinates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify({ entityType, id, lat, lng, isFeatured })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل تحديث إحداثيات الخريطة');
+    return json;
   },
 
   // 9. Global Unified Search
@@ -2687,6 +2776,224 @@ export const wahApi = {
     } catch {
       return {};
     }
+  },
+
+  // 11. Deletion with Dependency Checks
+  async deleteGovernorate(id: string, options?: { force?: boolean; archive?: boolean }, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string; dependencies?: Record<string, number> }> {
+    const query = new URLSearchParams();
+    if (options?.force) query.set('force', 'true');
+    if (options?.archive) query.set('archive', 'true');
+    const res = await fetch(`${API_BASE}/wah/governorates/${id}?${query.toString()}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف المحافظة');
+    return json;
+  },
+
+  async deletePlace(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/places/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف المعلم التراثي');
+    return json;
+  },
+
+  async deleteCraft(id: string, options?: { force?: boolean }, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const query = new URLSearchParams();
+    if (options?.force) query.set('force', 'true');
+    const res = await fetch(`${API_BASE}/wah/crafts/${id}?${query.toString()}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف الحرفة');
+    return json;
+  },
+
+  async deleteStory(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/stories/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف القصة');
+    return json;
+  },
+
+  async deletePerson(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/people/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف بيانات الشخصية');
+    return json;
+  },
+
+  async deleteFood(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/food/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف الوصفة');
+    return json;
+  },
+
+  async deleteEvent(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/wah/events/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف الفعالية');
+    return json;
+  },
+
+  // 12. Cities & Villages
+  async getCities(governorateId?: string): Promise<any[]> {
+    try {
+      const url = governorateId ? `${API_BASE}/wah/cities?governorateId=${governorateId}` : `${API_BASE}/wah/cities`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async saveCity(city: any, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/cities`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(city)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ المدينة');
+    return json.data;
+  },
+
+  async deleteCity(id: string, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/cities/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف المدينة');
+    return json;
+  },
+
+  async getVillages(params?: { governorateId?: string; cityId?: string }): Promise<any[]> {
+    try {
+      const query = new URLSearchParams();
+      if (params?.governorateId) query.set('governorateId', params.governorateId);
+      if (params?.cityId) query.set('cityId', params.cityId);
+      const res = await fetch(`${API_BASE}/wah/villages?${query.toString()}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async saveVillage(village: any, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/villages`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(village)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ القرية');
+    return json.data;
+  },
+
+  async deleteVillage(id: string, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/villages/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف القرية');
+    return json;
+  },
+
+  // 13. Traditions
+  async getTraditions(params?: { governorate?: string; category?: string }): Promise<any[]> {
+    try {
+      const query = new URLSearchParams();
+      if (params?.governorate) query.set('governorate', params.governorate);
+      if (params?.category) query.set('category', params.category);
+      const res = await fetch(`${API_BASE}/wah/traditions?${query.toString()}`);
+      const json = await res.json();
+      return json.success && Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
+  },
+
+  async saveTradition(tradition: any, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/traditions`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(tradition)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ التقليد');
+    return json.data;
+  },
+
+  async deleteTradition(id: string, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/traditions/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حذف التقليد');
+    return json;
+  },
+
+  // 14. Moderation
+  async updateModerationStatus(
+    entityType: string,
+    id: string,
+    status: string,
+    rejectionReason?: string,
+    user?: { id?: string; role?: string }
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/moderation/status`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ entityType, id, status, rejectionReason })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل تعديل حالة الاعتماد');
+    return json;
+  },
+
+  // 15. Platform Settings
+  async getPlatformSettings(): Promise<any> {
+    try {
+      const res = await fetch(`${API_BASE}/wah/settings`);
+      const json = await res.json();
+      return json.success && json.data ? json.data : null;
+    } catch {
+      return null;
+    }
+  },
+
+  async savePlatformSettings(settings: any, user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/settings`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(settings)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل حفظ إعدادات المنصة');
+    return json.data;
   }
 };
 

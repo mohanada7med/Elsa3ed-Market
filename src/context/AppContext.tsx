@@ -383,6 +383,7 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-account': '/seller-account',
   'admin-dashboard': '/admin-dashboard',
   'admin-cultural-cms': '/admin-cultural-cms',
+  'admin-map-editor': '/admin-map-editor',
   'admin-sellers': '/admin-sellers',
   'admin-products': '/admin-products',
   'admin-buyers': '/admin-buyers',

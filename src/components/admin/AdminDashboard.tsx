@@ -55,7 +55,8 @@ import {
   Play,
   Heart,
   Music,
-  Bell
+  Bell,
+  Landmark
 } from 'lucide-react';
 
 const HERITAGE_COVER_PRESETS = [
@@ -1454,6 +1455,16 @@ export const AdminDashboard: React.FC = () => {
         >
           <Sparkles className="w-4 h-4 text-amber-500" />
           <span>قصص الصنعة وأسرار الأجداد ({craftStories.length})</span>
+        </button>
+
+        <button
+          type="button"
+          id="admin-tab-wah-cultural"
+          onClick={() => setActivePage('admin-cultural-cms')}
+          className="px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 hover:bg-amber-100 border border-amber-300 dark:border-amber-800 cursor-pointer"
+        >
+          <Landmark className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+          <span>الموسوعة التراثية وإدارة المحافظات (WAH CMS)</span>
         </button>
 
         <button

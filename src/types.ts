@@ -323,6 +323,7 @@ export type ActivePage =
   | 'seller-account'
   | 'admin-dashboard'
   | 'admin-cultural-cms'
+  | 'admin-map-editor'
 
   | 'admin-sellers'
   | 'admin-products'
@@ -708,9 +709,21 @@ export interface MapGovernorateData {
   name: string;
   slug: string;
   shortIntro: string;
+  nickname?: string;
+  region?: 'جنوب الصعيد' | 'وسط الصعيد' | 'شمال الصعيد' | 'الواحات والصحراء الغربية';
+  nileSegment?: string;
   coverImage: string;
   famousFor: string[];
   coordinates: { lat: number; lng: number };
+  color?: string;
+  hoverColor?: string;
+  topCraft?: string;
+  topPlace?: string;
+  svgPath?: string;
+  labelX?: number;
+  labelY?: number;
+  capitalCity?: string;
+  status?: string;
   stats: {
     placesCount: number;
     craftsCount: number;
@@ -718,6 +731,55 @@ export interface MapGovernorateData {
     foodsCount: number;
     eventsCount: number;
     productsCount: number;
+    artisansCount?: number;
+    reelsCount?: number;
+  };
+}
+
+export type MapMarkerType =
+  | 'place'
+  | 'craft'
+  | 'food'
+  | 'event'
+  | 'artisan'
+  | 'reel'
+  | 'story'
+  | 'product';
+
+export interface MapMarkerItem {
+  id: string;
+  title: string;
+  slug: string;
+  type: MapMarkerType;
+  typeLabel: string;
+  governorateId: string;
+  governorateName: string;
+  cityName?: string;
+  lat: number;
+  lng: number;
+  coverImage?: string;
+  shortDescription?: string;
+  category?: string;
+  isFeatured?: boolean;
+  rating?: number;
+  status?: string;
+  detailsUrl?: string;
+}
+
+export interface MapPayload {
+  governorates: MapGovernorateData[];
+  markers: MapMarkerItem[];
+  featuredPlaces: MapMarkerItem[];
+  stats: {
+    governoratesCount: number;
+    placesCount: number;
+    craftsCount: number;
+    storiesCount: number;
+    foodsCount: number;
+    artisansCount: number;
+    eventsCount: number;
+    productsCount: number;
+    reelsCount: number;
   };
 }
 
@@ -733,6 +795,71 @@ export interface GlobalSearchResult {
 }
 
 export type WahSearchResult = GlobalSearchResult;
+
+export interface CityDoc {
+  id: string;
+  name: string;
+  governorateId: string;
+  governorateName: string;
+  shortDescription?: string;
+  famousFor?: string[];
+  status?: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VillageDoc {
+  id: string;
+  name: string;
+  cityName?: string;
+  cityId?: string;
+  governorateId: string;
+  governorateName: string;
+  traditionalCraftId?: string;
+  traditionalCraftName?: string;
+  description?: string;
+  famousFor?: string[];
+  coverImage?: string;
+  status?: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalTraditionDoc {
+  id: string;
+  title: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  category: 'customs' | 'oral_arts' | 'hospitality' | 'celebration' | string;
+  description: string;
+  historicalOrigin?: string;
+  coverImage?: string;
+  gallery?: string[];
+  videoUrl?: string;
+  status?: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlatformSettingsDoc {
+  id: string;
+  siteName: string;
+  siteTagline: string;
+  contactEmail: string;
+  contactPhone: string;
+  shippingFlatRate: number;
+  freeShippingThreshold: number;
+  featuredGovernorates: string[];
+  featuredCrafts: string[];
+  featuredStories: string[];
+  featuredProducts?: string[];
+  heroHeadline?: string;
+  heroSubheadline?: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
 
 
 

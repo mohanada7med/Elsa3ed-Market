@@ -574,6 +574,9 @@ export interface GovernorateDoc {
   coverImage: string;
   gallery: string[];
   capitalCity: string;
+  nickname?: string;
+  region?: 'جنوب الصعيد' | 'وسط الصعيد' | 'شمال الصعيد' | 'الواحات والصحراء الغربية';
+  nileSegment?: string;
   mapCoordinates?: { lat: number; lng: number };
   traditionalCraftsIds: string[];
   traditionalFoodIds: string[];
@@ -599,6 +602,9 @@ export interface HeritagePlaceDoc {
   gallery: string[];
   videoUrl?: string;
   relatedCrafts?: string[];
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
+  rating?: number;
   status: VerificationStatus;
   sourceName?: string;
   createdAt: string;
@@ -620,6 +626,8 @@ export interface CulturalCraftDoc {
   gallery: string[];
   videoUrl?: string;
   relatedArtisansIds?: string[];
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
@@ -641,6 +649,8 @@ export interface WahStoryDoc {
   relatedPlaceId?: string;
   relatedCraftId?: string;
   relatedArtisanId?: string;
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
@@ -660,6 +670,8 @@ export interface LocalPersonDoc {
   yearsOfExperience?: number;
   relatedArtisanId?: string;
   relatedCraftId?: string;
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
@@ -678,6 +690,8 @@ export interface UpperEgyptFoodDoc {
   originStory: string;
   occasionOrTradition?: string;
   coverImage: string;
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
@@ -696,10 +710,121 @@ export interface CulturalEventDoc {
   eventTime?: string;
   description: string;
   coverImage: string;
+  coordinates?: { lat: number; lng: number };
+  isFeatured?: boolean;
+  status: VerificationStatus;
+  approvedBy?: string;
+  approvedAt?: string;
+  rejectedBy?: string;
+  rejectedAt?: string;
+  rejectionReason?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CityDoc {
+  _id?: string;
+  id: string;
+  name: string;
+  governorateId: string;
+  governorateName: string;
+  shortDescription?: string;
+  historicalSignificance?: string;
+  famousFor?: string[];
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;
 }
+
+export interface VillageDoc {
+  _id?: string;
+  id: string;
+  name: string;
+  cityId?: string;
+  cityName?: string;
+  governorateId: string;
+  governorateName: string;
+  traditionalCraftId?: string;
+  traditionalCraftName?: string;
+  description?: string;
+  history?: string;
+  famousFor?: string[];
+  coverImage?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CulturalTraditionDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  slug: string;
+  governorateName: string;
+  governorateId: string;
+  category: 'wedding' | 'celebration' | 'hospitality' | 'oral_arts' | 'customs';
+  description: string;
+  historicalOrigin?: string;
+  coverImage?: string;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlatformSettingsDoc {
+  _id?: string;
+  id: string;
+  siteName: string;
+  siteTagline: string;
+  contactEmail: string;
+  contactPhone: string;
+  shippingFlatRate: number;
+  freeShippingThreshold: number;
+  featuredGovernorates: string[];
+  featuredCrafts: string[];
+  featuredStories: string[];
+  featuredProducts: string[];
+  heroHeadline: string;
+  heroSubheadline: string;
+  updatedAt: string;
+  updatedBy: string;
+}
+
+export interface MediaAssetDoc {
+  _id?: string;
+  id: string;
+  title: string;
+  url: string;
+  type: 'image' | 'video' | 'reel_audio';
+  category: 'governorate' | 'place' | 'craft' | 'story' | 'product' | 'reel' | 'general';
+  entityId?: string;
+  entityType?: string;
+  uploadedBy: string;
+  uploaderRole: UserRole;
+  sizeBytes?: number;
+  width?: number;
+  height?: number;
+  status: VerificationStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportDoc {
+  _id?: string;
+  id: string;
+  reporterId: string;
+  reporterName: string;
+  reportedEntityType: 'product' | 'seller' | 'review' | 'reel' | 'comment' | 'story' | 'user';
+  reportedEntityId: string;
+  reason: string;
+  details?: string;
+  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+  resolvedBy?: string;
+  resolutionNote?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 
 
