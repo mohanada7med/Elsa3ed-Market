@@ -100,7 +100,7 @@ export function validateImage(
     };
   }
 
-  if (sizeBytes < 100) {
+  if (sizeBytes < 20) {
     return {
       valid: false,
       error: 'ملف الصورة تالف أو فارغ'

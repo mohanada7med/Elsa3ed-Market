@@ -26,6 +26,7 @@ import seoRoutes from './routes/seoRoutes.ts';
 import reelRoutes from './routes/reelRoutes.ts';
 import chatRoutes from './routes/chatRoutes.ts';
 import wahContentRoutes from './routes/wahContentRoutes.ts';
+import adminMediaRoutes from './routes/adminMediaRoutes.ts';
 
 
 export function createApp(): Express {
@@ -136,6 +137,7 @@ export function createApp(): Express {
     { prefix: '/cart', router: cartRoutes },
     { prefix: '/orders', router: orderRoutes },
     { prefix: '/seller', router: sellerRoutes },
+    { prefix: '/admin/media', router: adminMediaRoutes },
     { prefix: '/admin', router: adminRoutes },
     { prefix: '', router: commonRoutes }
   ];

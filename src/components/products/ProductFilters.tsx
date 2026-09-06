@@ -54,18 +54,18 @@ export const ProductFilters: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ebdccd] p-3 sm:p-5 shadow-xs space-y-3 sm:space-y-4">
+    <div className="wah-card p-4 sm:p-5 space-y-4" dir="rtl">
       {/* Mobile Toggle Button */}
       <div className="flex sm:hidden items-center justify-between">
         <button
           type="button"
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="flex items-center gap-2 text-xs font-bold text-[#943310] bg-[#faf6f0] hover:bg-[#ede0ca] px-3.5 py-2 rounded-xl border border-[#ebdccd] min-h-[42px] transition-colors"
+          className="flex items-center gap-2 text-xs font-bold text-[#B45F42] dark:text-[#FF855D] bg-[#FDFBF7] dark:bg-[#1E1917] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] px-3.5 py-2.5 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] min-h-[44px] transition-colors cursor-pointer"
         >
           <Filter className="w-4 h-4" />
-          <span>{isMobileExpanded ? 'إخفاء الفلاتر والتصنيفات' : 'تصفية وفرز المعروضات'}</span>
+          <span>{isMobileExpanded ? 'إخفاء خيارات التصفية' : 'تصفية وفرز المعروضات'}</span>
           {activeCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-[#943310] text-white text-[10px] flex items-center justify-center font-black">
+            <span className="w-5 h-5 rounded-full bg-[#B45F42] text-white text-[10px] flex items-center justify-center font-black">
               {activeCount}
             </span>
           )}
@@ -76,7 +76,7 @@ export const ProductFilters: React.FC = () => {
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-[#943310] hover:text-[#7c280a] flex items-center gap-1 font-semibold p-2"
+            className="text-xs text-[#B45F42] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
             <span>إعادة ضبط</span>
@@ -86,12 +86,12 @@ export const ProductFilters: React.FC = () => {
 
       <div className={`${isMobileExpanded ? 'block' : 'hidden sm:block'} space-y-4 pt-1 sm:pt-0`}>
         {/* Filter Header & Reset (Desktop) */}
-        <div className="hidden sm:flex items-center justify-between border-b border-[#f0e4d7] pb-3">
-          <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-            <Filter className="w-4 h-4 text-[#943310]" />
-            <span>تصفية واختيار المنتجات</span>
+        <div className="hidden sm:flex items-center justify-between border-b border-[#E8E1D9] dark:border-[#382E27] pb-3">
+          <div className="flex items-center gap-2 text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2]">
+            <Filter className="w-4 h-4 text-[#B45F42] dark:text-[#FF855D]" />
+            <span>تصفية واختيار المنتجات التراثية</span>
             {activeCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-[#943310] text-white text-[10px] flex items-center justify-center font-bold">
+              <span className="w-5 h-5 rounded-full bg-[#B45F42] text-white text-[10px] flex items-center justify-center font-bold">
                 {activeCount}
               </span>
             )}
@@ -101,115 +101,115 @@ export const ProductFilters: React.FC = () => {
             <button
               type="button"
               onClick={resetFilters}
-              className="text-xs text-[#943310] hover:text-[#7c280a] flex items-center gap-1 font-semibold transition-colors"
+              className="text-xs text-[#B45F42] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
-              <span>إعادة ضبط الفلاتر</span>
+              <span>إعادة ضبط جميع الفلاتر</span>
             </button>
           )}
         </div>
 
-      {/* Governorate Pills (Upper Egypt) */}
-      <div>
-        <label className="block text-xs font-bold text-[#8c6b53] mb-2 flex items-center gap-1.5">
-          <MapPin className="w-3.5 h-3.5 text-amber-600" />
-          <span>المحافظة ومصدر الصنعة</span>
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          {GOVERNORATES.map((gov) => {
-            const isSelected = selectedGovernorateFilter === gov;
-            return (
-              <button
-                key={gov}
-                type="button"
-                id={`filter-gov-${gov}`}
-                onClick={() => setSelectedGovernorateFilter(gov)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                  isSelected
-                    ? 'bg-[#943310] text-white shadow-xs'
-                    : 'bg-[#faf6f0] text-gray-700 hover:bg-[#ede0ca] border border-[#ebdccd]'
-                }`}
-              >
-                {gov === 'all' ? 'جميع المحافظات' : gov}
-              </button>
-            );
-          })}
+        {/* Governorate Pills (Upper Egypt) */}
+        <div>
+          <label className="block text-xs font-bold text-[#7A6F64] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>المحافظة ومصدر الصنعة بالصعيد</span>
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {GOVERNORATES.map((gov) => {
+              const isSelected = selectedGovernorateFilter === gov;
+              return (
+                <button
+                  key={gov}
+                  type="button"
+                  id={`filter-gov-${gov}`}
+                  onClick={() => setSelectedGovernorateFilter(gov)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
+                    isSelected
+                      ? 'bg-[#B45F42] text-white shadow-xs'
+                      : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                  }`}
+                >
+                  {gov === 'all' ? 'جميع محافظات الصعيد' : gov}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Category Dropdown/Pills */}
-      <div>
-        <label className="block text-xs font-bold text-[#8c6b53] mb-2 flex items-center gap-1.5">
-          <Layers className="w-3.5 h-3.5 text-amber-600" />
-          <span>التصنيف التراثي</span>
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            id="filter-cat-all"
-            onClick={() => setSelectedCategoryFilter('all')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-              selectedCategoryFilter === 'all'
-                ? 'bg-[#943310] text-white shadow-xs'
-                : 'bg-[#faf6f0] text-gray-700 hover:bg-[#ede0ca] border border-[#ebdccd]'
-            }`}
-          >
-            جميع التصنيفات
-          </button>
-          {categories.map((cat) => {
-            const isSelected = selectedCategoryFilter === cat.id;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                id={`filter-cat-${cat.id}`}
-                onClick={() => setSelectedCategoryFilter(cat.id)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
-                  isSelected
-                    ? 'bg-[#943310] text-white shadow-xs'
-                    : 'bg-[#faf6f0] text-gray-700 hover:bg-[#ede0ca] border border-[#ebdccd]'
-                }`}
-              >
-                {cat.name}
-              </button>
-            );
-          })}
+        {/* Category Dropdown/Pills */}
+        <div>
+          <label className="block text-xs font-bold text-[#7A6F64] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
+            <Layers className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>التصنيف ونوع الحرفة</span>
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              id="filter-cat-all"
+              onClick={() => setSelectedCategoryFilter('all')}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
+                selectedCategoryFilter === 'all'
+                  ? 'bg-[#B45F42] text-white shadow-xs'
+                  : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+              }`}
+            >
+              جميع التصنيفات
+            </button>
+            {categories.map((cat) => {
+              const isSelected = selectedCategoryFilter === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  id={`filter-cat-${cat.id}`}
+                  onClick={() => setSelectedCategoryFilter(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
+                    isSelected
+                      ? 'bg-[#B45F42] text-white shadow-xs'
+                      : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Toggles & Sorting */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-[#f0e4d7]">
-        {/* Handmade Only Toggle */}
-        <label className="flex items-center gap-2.5 cursor-pointer bg-[#faf6f0] p-2.5 rounded-xl border border-[#ebdccd] hover:border-amber-400 transition-colors">
-          <input
-            type="checkbox"
-            checked={selectedHandmadeOnly}
-            onChange={(e) => setSelectedHandmadeOnly(e.target.checked)}
-            className="w-4 h-4 text-[#943310] rounded focus:ring-[#943310] border-gray-300"
-          />
-          <span className="text-xs font-bold text-gray-800 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-            <span>مشغولات يدوية 100% فقط</span>
-          </span>
-        </label>
+        {/* Toggles & Sorting */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#E8E1D9] dark:border-[#382E27]">
+          {/* Handmade Only Toggle */}
+          <label className="flex items-center gap-2.5 cursor-pointer bg-[#FDFBF7] dark:bg-[#1E1917] p-3 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] dark:hover:border-[#FF855D] transition-colors min-h-[44px]">
+            <input
+              type="checkbox"
+              checked={selectedHandmadeOnly}
+              onChange={(e) => setSelectedHandmadeOnly(e.target.checked)}
+              className="w-4 h-4 text-[#B45F42] rounded focus:ring-[#B45F42] border-[#E8E1D9] cursor-pointer"
+            />
+            <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>مشغولات يدوية 100% فقط بأيدي شيوخ الصنعة</span>
+            </span>
+          </label>
 
-        {/* Sort Select */}
-        <div className="flex items-center gap-2 bg-[#faf6f0] px-3 py-1 rounded-xl border border-[#ebdccd]">
-          <ArrowUpDown className="w-4 h-4 text-gray-500 shrink-0" />
-          <select
-            id="sort-select"
-            value={selectedSort}
-            onChange={(e) => setSelectedSort(e.target.value as any)}
-            className="w-full bg-transparent text-xs font-bold text-gray-800 py-1.5 outline-none cursor-pointer"
-          >
-            <option value="featured">الترتيب: الأكثر تميزاً وشهرة</option>
-            <option value="rating">الترتيب: الأعلى تقييماً</option>
-            <option value="price-asc">الترتيب: السعر من الأقل للأعلى</option>
-            <option value="price-desc">الترتيب: السعر من الأعلى للأقل</option>
-            <option value="newest">الترتيب: أحدث الإضافات</option>
-          </select>
+          {/* Sort Select */}
+          <div className="flex items-center gap-2 bg-[#FDFBF7] dark:bg-[#1E1917] px-3.5 py-1 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] min-h-[44px]">
+            <ArrowUpDown className="w-4 h-4 text-[#7A6F64] dark:text-[#A89C90] shrink-0" />
+            <select
+              id="sort-select"
+              value={selectedSort}
+              onChange={(e) => setSelectedSort(e.target.value as any)}
+              className="w-full bg-transparent text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] py-2 outline-none cursor-pointer"
+            >
+              <option value="featured" className="dark:bg-[#1E1917] dark:text-[#FAF6F2]">الترتيب: الأكثر تميزاً وشهرة بالصعيد</option>
+              <option value="rating" className="dark:bg-[#1E1917] dark:text-[#FAF6F2]">الترتيب: الأعلى تقييماً من المشترين</option>
+              <option value="price-asc" className="dark:bg-[#1E1917] dark:text-[#FAF6F2]">الترتيب: السعر من الأقل للأعلى</option>
+              <option value="price-desc" className="dark:bg-[#1E1917] dark:text-[#FAF6F2]">الترتيب: السعر من الأعلى للأقل</option>
+              <option value="newest" className="dark:bg-[#1E1917] dark:text-[#FAF6F2]">الترتيب: أحدث القطع المضافة</option>
+            </select>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

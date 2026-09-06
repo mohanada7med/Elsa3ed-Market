@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   ExternalLink
 } from 'lucide-react';
+import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export const GovernoratesPage: React.FC = () => {
   const { navigateToGovernorate, setActivePage } = useApp();
@@ -81,18 +82,49 @@ export const GovernoratesPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold mb-3 border border-amber-300 dark:border-amber-800/40">
-            <Landmark className="w-3.5 h-3.5" />
-            <span>موسوعة صعيد مصر الرقمية</span>
+        {/* Hero Section with Nubian Geometry Pattern */}
+        <div className="relative text-center max-w-4xl mx-auto mb-8 sm:mb-12 p-6 sm:p-10 rounded-3xl overflow-hidden bg-[#FAF6F0] dark:bg-[#1C1714] border-2 border-amber-300/60 dark:border-amber-900/40 shadow-sm">
+          {/* Visible Nubian Geometric Pattern Background */}
+          <NubianGeometricPattern
+            opacity={0.16}
+            color="#B24C2B"
+            variant="tapestry"
+            scale={1.05}
+            className="text-[#B24C2B] dark:text-[#E0633C]"
+          />
+
+          {/* Decorative Nubian Frieze Top */}
+          <div className="absolute top-0 inset-x-0">
+            <NubianGeometricPattern
+              variant="frieze"
+              opacity={0.35}
+              color="#B24C2B"
+              className="text-[#B24C2B]"
+            />
           </div>
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#29221D] dark:text-[#FAF6F2] font-serif tracking-tight mb-3">
-            محافظات صعيد مصر
-          </h1>
-          <p className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed">
-            ثماني محافظات عريقة تمتد على ضفاف النيل من الفيوم وبني سويف شمالاً حتى بلاد الذهب في أسوان جنوباً. لكل محافظة حكايتها وتاريخها وحرفتها التي تفردت بها عبر آلاف السنين.
-          </p>
+
+          {/* Decorative Nubian Frieze Bottom */}
+          <div className="absolute bottom-0 inset-x-0 rotate-180">
+            <NubianGeometricPattern
+              variant="frieze"
+              opacity={0.25}
+              color="#B24C2B"
+              className="text-[#B24C2B]"
+            />
+          </div>
+
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold mb-3 border border-amber-300/80 dark:border-amber-800/40">
+              <Landmark className="w-3.5 h-3.5" />
+              <span>موسوعة صعيد مصر الرقمية</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#29221D] dark:text-[#FAF6F2] font-heritage tracking-tight mb-3">
+              محافظات صعيد مصر
+            </h1>
+            <p className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed max-w-2xl mx-auto">
+              ثماني محافظات عريقة تمتد على ضفاف النيل من الفيوم وبني سويف شمالاً حتى بلاد الذهب في أسوان جنوباً. لكل محافظة حكايتها وتاريخها وحرفتها التي تفردت بها عبر آلاف السنين.
+            </p>
+          </div>
         </div>
 
         {/* Filters & Search Bar */}
@@ -182,8 +214,15 @@ export const GovernoratesPage: React.FC = () => {
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-                    <div>
+                  <div className="relative p-5 sm:p-6 flex-1 flex flex-col justify-between overflow-hidden">
+                    {/* Subtle Nubian Geometric Pattern on Card Body */}
+                    <NubianGeometricPattern
+                      opacity={0.07}
+                      color="#B24C2B"
+                      variant="diamonds"
+                      className="group-hover:opacity-15 transition-opacity"
+                    />
+                    <div className="relative z-10">
                       {/* Short Intro */}
                       <p className="text-xs sm:text-sm text-[#665A4F] dark:text-[#A89C90] leading-relaxed mb-4 line-clamp-2">
                         {gov.shortIntro}

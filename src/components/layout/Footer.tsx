@@ -1,7 +1,18 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, ShieldCheck, HeartHandshake, Truck, RefreshCcw, MapPin, Phone, Mail, Film, ArrowUp, MessageCircle, Building2 } from 'lucide-react';
-import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
+import {
+  Sparkles,
+  ShieldCheck,
+  HeartHandshake,
+  Truck,
+  MapPin,
+  Phone,
+  Mail,
+  Film,
+  ArrowUp,
+  Building2
+} from 'lucide-react';
+import { WAHPattern } from '../../design-system/WAHPattern';
 
 export const Footer: React.FC = () => {
   const { setActivePage, setShowIntroVideo } = useApp();
@@ -11,16 +22,21 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#231F1C] text-[#E8E1D9] border-t-4 border-[#B45F42] relative overflow-hidden pb-20 md:pb-0">
+    <footer className="bg-[var(--wah-surface,#1B1613)] text-[#E8E1D9] border-t-4 border-[var(--wah-primary,#B24C2B)] relative overflow-hidden pb-20 md:pb-0">
+      {/* Background subtle geometry pattern */}
+      <div className="absolute inset-0 pointer-events-none opacity-5">
+        <WAHPattern type="geometry" className="w-full h-full text-white" />
+      </div>
+
       {/* Upper Egyptian Heritage Features Banner */}
-      <div className="bg-[#2D2824] border-b border-[#3D3732] py-8 px-4 sm:px-6">
+      <div className="bg-[#241E1A] border-b border-[#352B24] py-8 px-4 sm:px-6 relative z-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-[#B45F42]/25 border border-[#B45F42]/40 flex items-center justify-center text-amber-300 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[var(--wah-primary,#B24C2B)]/20 border border-[var(--wah-primary,#B24C2B)]/40 flex items-center justify-center text-[var(--wah-accent,#D97724)] shrink-0">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-base">حرف يدوية أصيلة 100%</h4>
+              <h4 className="font-bold text-white text-base font-heritage">حرف يدوية أصيلة 100%</h4>
               <p className="text-xs text-[#C5B8AC] mt-1 leading-relaxed">
                 منتجات معتمدة ومصنوعة بأيدي شيوخ الصنعة في ورش وقرى الصعيد
               </p>
@@ -28,11 +44,11 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-[#B45F42]/25 border border-[#B45F42]/40 flex items-center justify-center text-amber-300 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[var(--wah-primary,#B24C2B)]/20 border border-[var(--wah-primary,#B24C2B)]/40 flex items-center justify-center text-[var(--wah-accent,#D97724)] shrink-0">
               <Truck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-base">تغليف آمن وشحن سريع</h4>
+              <h4 className="font-bold text-white text-base font-heritage">تغليف آمن وشحن سريع</h4>
               <p className="text-xs text-[#C5B8AC] mt-1 leading-relaxed">
                 تغليف مخصص لحماية الفخار والمشغولات الحساسة لكافة محافظات مصر
               </p>
@@ -40,11 +56,11 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-[#B45F42]/25 border border-[#B45F42]/40 flex items-center justify-center text-amber-300 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[var(--wah-primary,#B24C2B)]/20 border border-[var(--wah-primary,#B24C2B)]/40 flex items-center justify-center text-[var(--wah-accent,#D97724)] shrink-0">
               <HeartHandshake className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-base">دعم مباشر للحرفيين</h4>
+              <h4 className="font-bold text-white text-base font-heritage">دعم مباشر للحرفيين</h4>
               <p className="text-xs text-[#C5B8AC] mt-1 leading-relaxed">
                 عائد المبيعات يذهب مباشرة لأسر الحرفيين والتعاونيات التراثية
               </p>
@@ -52,11 +68,11 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="flex items-start gap-3.5">
-            <div className="w-12 h-12 rounded-lg bg-[#B45F42]/25 border border-[#B45F42]/40 flex items-center justify-center text-amber-300 shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-[var(--wah-primary,#B24C2B)]/20 border border-[var(--wah-primary,#B24C2B)]/40 flex items-center justify-center text-[var(--wah-accent,#D97724)] shrink-0">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-base">دفع آمن وضمان استبدال</h4>
+              <h4 className="font-bold text-white text-base font-heritage">دفع آمن وضمان استبدال</h4>
               <p className="text-xs text-[#C5B8AC] mt-1 leading-relaxed">
                 دعم فودافون كاش، انستاباي، والدفع عند الاستلام مع فحص الشحنة
               </p>
@@ -66,20 +82,20 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand Story */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#B45F42] to-[#9E4F36] flex items-center justify-center text-white font-black text-lg font-heritage">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--wah-primary,#B24C2B)] to-[#963E21] flex items-center justify-center text-white font-black text-lg font-heritage shadow-sm">
                 وه
               </div>
-              <span className="text-2xl font-black text-white font-heritage">
+              <span className="text-2xl font-black text-white font-heritage tracking-tight">
                 وه | WAH
               </span>
             </div>
             <p className="text-sm text-[#C5B8AC] leading-relaxed max-w-md">
-              وه منصة رقمية متكاملة لاكتشاف وتوثيق تراث وثقافة وحكايات وحرف صعيد مصر، وربط صناعه بالجمهور بكل فخر وأصالة.
+              منصة «وه» الرقمية الجامعة لاكتشاف وتوثيق تراث وثقافة وحكايات وحرف صعيد مصر، وربط صناعه بالجمهور بكل فخر وأصالة وتكنولوجيا معاصرة.
             </p>
 
             <div className="flex items-center gap-3 pt-2">
@@ -87,10 +103,10 @@ export const Footer: React.FC = () => {
                 type="button"
                 id="footer-intro-btn"
                 onClick={() => setShowIntroVideo(true)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#2E2824] hover:bg-[#3D3732] text-amber-200 text-xs font-semibold border border-amber-400/25 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#2E2824] hover:bg-[#3D3732] text-[var(--wah-accent-light,#FDF3E7)] text-xs font-bold border border-[var(--wah-accent,#D97724)]/30 transition-colors cursor-pointer"
                 aria-label="مشاهدة الفيلم التعريفي والوثائقي عن وه"
               >
-                <Film className="w-4 h-4" />
+                <Film className="w-4 h-4 text-[var(--wah-accent,#D97724)]" />
                 <span>مشاهدة الفيلم التعريفي</span>
               </button>
             </div>
@@ -98,7 +114,7 @@ export const Footer: React.FC = () => {
 
           {/* Quick Marketplace Links */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#3D3732] pb-2">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#352B24] pb-2 font-heritage">
               تصفح سوق وه
             </h4>
             <ul className="space-y-2 text-xs text-[#C5B8AC]">
@@ -106,7 +122,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('products')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى صفحة جميع المنتجات اليدوية"
                 >
                   جميع المنتجات اليدوية
@@ -116,7 +132,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('categories')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى صفحة التصنيفات التراثية"
                 >
                   التصنيفات التراثية
@@ -126,7 +142,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('crafts')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى أطلس حرف الصعيد"
                 >
                   أطلس حرف الصعيد
@@ -136,7 +152,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('sellers')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى دليل الورش والحرفيين"
                 >
                   دليل الورش والحرفيين
@@ -146,7 +162,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('wholesale')}
-                  className="text-amber-300 font-bold hover:text-white transition-colors text-right cursor-pointer flex items-center gap-1.5"
+                  className="text-[var(--wah-accent,#D97724)] font-bold hover:text-white transition-colors text-right cursor-pointer flex items-center gap-1.5"
                   aria-label="الانتقال إلى مبيعات الجملة وتوريدات الشركات"
                 >
                   <Building2 className="w-3.5 h-3.5" />
@@ -157,7 +173,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('about')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى قصة ورسالة المنصة"
                 >
                   قصة ورسالة المنصة
@@ -168,7 +184,7 @@ export const Footer: React.FC = () => {
 
           {/* Buyer Services */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#3D3732] pb-2">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#352B24] pb-2 font-heritage">
               خدمات المشترين
             </h4>
             <ul className="space-y-2 text-xs text-[#C5B8AC]">
@@ -176,7 +192,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('orders')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى تتبع طلبي وشحنتي"
                 >
                   تتبع طلبي وشحنتي
@@ -186,7 +202,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('favorites')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى قائمة الرغبات والمفضلة"
                 >
                   قائمة الرغبات والمفضلة
@@ -196,7 +212,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('cart')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى سلة المشتريات"
                 >
                   سلة المشتريات
@@ -206,7 +222,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('buyer-account')}
-                  className="hover:text-amber-200 transition-colors text-right cursor-pointer"
+                  className="hover:text-[var(--wah-accent-light,#FDF3E7)] transition-colors text-right cursor-pointer"
                   aria-label="الانتقال إلى إدارة العناوين والحساب"
                 >
                   إدارة العناوين والحساب
@@ -217,26 +233,26 @@ export const Footer: React.FC = () => {
 
           {/* Artisans & Contact */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#3D3732] pb-2">
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider border-b border-[#352B24] pb-2 font-heritage">
               انضم كحرفي صعيدي
             </h4>
             <p className="text-xs text-[#C5B8AC] leading-relaxed">
-              هل تمتلك ورشة فخار، نول نسيج، أو مزرعة تمور وعسل في الصعيد؟ انضم إلينا وسوق منتجاتك لملايين العملاء.
+              هل تمتلك ورشة فخار، نول نسيج، أو مزرعة تمور وعسل في الصعيد؟ انضم لـ «وه» وسوق إبداعاتك لملايين العملاء.
             </p>
             <div className="space-y-1.5 pt-2 text-xs text-amber-200 font-medium">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
+                <MapPin className="w-4 h-4 text-[var(--wah-accent,#D97724)] shrink-0" />
                 <span>قنا • الأقصر • أسوان • سوهاج • أسيوط</span>
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                <Phone className="w-4 h-4 text-[var(--wah-accent,#D97724)] shrink-0" />
                 <a href="tel:+201158969931" aria-label="الاتصال عبر الهاتف: 01158969931" className="hover:underline">
                   <span dir="ltr">01158969931</span>
                 </a>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="mailto:[EMAIL_ADDRESS]" aria-label="مراسلتنا عبر البريد الإلكتروني: ahmdmohanad28@gmail.com" className="hover:underline">
+                <Mail className="w-4 h-4 text-[var(--wah-accent,#D97724)] shrink-0" />
+                <a href="mailto:ahmdmohanad28@gmail.com" aria-label="مراسلتنا عبر البريد الإلكتروني: ahmdmohanad28@gmail.com" className="hover:underline">
                   <span>ahmdmohanad28@gmail.com</span>
                 </a>
               </div>
@@ -245,14 +261,14 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Governorates Strip */}
-        <div className="mt-12 pt-6 border-t border-[#3D3732] flex flex-wrap items-center justify-between gap-4">
+        <div className="mt-12 pt-6 border-t border-[#352B24] flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-[#A89D91] font-bold">محافظات التراث المباشر:</span>
             {['أسوان (التمور والخوص)', 'الأقصر (النحاس والخشب)', 'قنا (الفخار)', 'سوهاج (أخميم)', 'أسيوط (التلي والحرير)', 'المنيا (عسل السدر)', 'الوادي الجديد'].map(
               (gov, idx) => (
                 <span
                   key={idx}
-                  className="bg-[#2D2824] px-2.5 py-1 rounded-md text-amber-200/90 border border-[#3D3732] text-[11px]"
+                  className="bg-[#241E1A] px-2.5 py-1 rounded-md text-[var(--wah-accent-light,#FDF3E7)] border border-[#352B24] text-[11px]"
                 >
                   {gov}
                 </span>
@@ -271,8 +287,8 @@ export const Footer: React.FC = () => {
           </button>
         </div>
 
-        {/* Payment Methods & Copyright */}
-        <div className="mt-8 pt-6 border-t border-[#3D3732] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A89D91]">
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-[#352B24] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#A89D91]">
           <p className="text-center sm:text-left">
             جميع الحقوق محفوظة © {new Date().getFullYear()} وه | WAH — العالم الرقمي لصعيد مصر.
           </p>

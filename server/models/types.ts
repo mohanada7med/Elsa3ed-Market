@@ -829,16 +829,26 @@ export interface MediaAssetDoc {
   id: string;
   title: string;
   url: string;
+  secureUrl?: string;
+  publicId?: string;
+  folder?: string;
   type: 'image' | 'video' | 'reel_audio';
   category: 'governorate' | 'place' | 'craft' | 'story' | 'product' | 'reel' | 'general';
   entityId?: string;
   entityType?: string;
+  entitySlug?: string;
   uploadedBy: string;
   uploaderRole: UserRole;
   sizeBytes?: number;
+  bytes?: number;
   width?: number;
   height?: number;
+  format?: string;
+  alt?: string;
+  caption?: string;
+  isPrimary?: boolean;
   status: VerificationStatus;
+  metadata?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
 }

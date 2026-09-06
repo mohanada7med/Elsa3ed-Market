@@ -3,77 +3,83 @@ import { useApp } from '../../context/AppContext';
 import {
   Sparkles,
   ArrowLeft,
-  Map,
   Ship,
-  Compass,
   Landmark,
   Hammer,
   BookOpen,
-  Film,
   ShoppingBag,
   Users,
   Utensils,
-  MapPin
+  MapPin,
+  ChevronLeft
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { WAHPattern } from '../../design-system/WAHPattern';
+import { WAHBadge } from '../../design-system/WAHBadge';
 
 export const HeroSection: React.FC = () => {
-  const {
-    setActivePage,
-    setShowIntroVideo,
-    navigateToGovernorate,
-    isAuthenticated,
-    currentRole,
-    setIsAuthModalOpen,
-    setAuthModalTab
-  } = useApp();
+  const { setActivePage } = useApp();
 
   return (
-    <div className="relative bg-[#FAF6F0] dark:bg-[#151210] border-b border-[#E8E1D9] dark:border-[#382E27] overflow-hidden">
-      <div className="absolute inset-0 bg-heritage-pattern pointer-events-none opacity-40" />
+    <div className="relative bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] border-b border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] overflow-hidden transition-colors duration-300">
+      {/* Background Architectural Patterns */}
+      <div className="absolute inset-0 pointer-events-none opacity-45 dark:opacity-20">
+        <WAHPattern type="geometry" className="w-full h-full text-[var(--wah-border,#E5DDD3)] dark:text-[var(--wah-border,#352B24)]" />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-20 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Main Hero Content */}
+      {/* Radiant atmospheric glow */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[var(--wah-primary-light,rgba(178,76,43,0.12))] blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-[var(--wah-accent-light,rgba(217,119,36,0.1))] blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+          
+          {/* Main Hero Narrative */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.55, ease: 'easeOut' }}
             className="lg:col-span-7 space-y-6 text-right"
           >
-            {/* Top Heritage Badge */}
+            {/* Cultural Identity Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1, duration: 0.3 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#B45F42]/10 border border-[#B45F42]/30 text-[#B45F42] dark:text-[#FF855D] text-xs sm:text-sm font-bold shadow-2xs"
+              className="inline-flex items-center gap-2"
             >
-              <Sparkles className="w-4 h-4 text-amber-600 animate-pulse" />
-              <span>«وه — كل حكاية ليها أصل»</span>
+              <WAHBadge
+                variant="terracotta"
+                size="md"
+                icon={<Sparkles className="w-3.5 h-3.5 text-[var(--wah-primary,#B24C2B)] animate-pulse" />}
+              >
+                «وه — كل حكاية ليها أصل في الصعيد»
+              </WAHBadge>
             </motion.div>
 
-            {/* Headline */}
+            {/* Display Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.45 }}
-              className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-serif leading-[1.2] tracking-tight"
+              className="text-3xl sm:text-5xl lg:text-6xl font-black text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] font-heritage leading-[1.18] tracking-tight"
             >
-              منصة <span className="text-[#B45F42]">«وه»</span> <br className="hidden sm:inline" />
+              منصة <span className="text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)]">«وه»</span> <br className="hidden sm:inline" />
               العالم الرقمي لصعيد مصر
             </motion.h1>
 
-            {/* Subheading */}
+            {/* Context Subheading */}
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.45 }}
-              className="text-sm sm:text-base lg:text-lg text-[#54493F] dark:text-[#B8ACA0] leading-relaxed max-w-xl font-medium"
+              className="text-sm sm:text-base lg:text-lg text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed max-w-xl font-medium"
             >
-              المنصة الرقمية الجامعة لاكتشاف، توثيق، والارتباط بصعيد مصر: محافظاته، تراثه المعماري، صنائعه وأسرار ورشه، مروياته الشفاهية، شيوخ الصنعة، طعامه الأصيل، وسوقه المباشر من الورشة للبيت.
+              المنصة الرقمية الموثقة لاكتشاف والارتباط بصعيد مصر: محافظاته، صروحه المعمارية،
+              صنائعه وأسرار ورشه الحية، مروياته الشفاهية، شيوخ الصنعة، طعامه التراثي، وسوقه المباشر من الورشة للبيت.
             </motion.p>
 
-            {/* Clear Primary Actions */}
+            {/* Action Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -87,7 +93,7 @@ export const HeroSection: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('map')}
                 aria-label="استكشاف رحلة محافظات صعيد مصر"
-                className="w-full sm:w-auto px-7 sm:px-8 py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-sm sm:text-base font-bold rounded-2xl shadow-md flex items-center justify-center gap-2.5 transition-colors cursor-pointer min-h-[46px]"
+                className="btn-primary px-7 py-3.5 rounded-xl text-sm sm:text-base font-bold shadow-md flex items-center justify-center gap-2.5 transition-all cursor-pointer min-h-[46px]"
               >
                 <Ship className="w-5 h-5" />
                 <span>رحلة محافظات الصعيد</span>
@@ -101,9 +107,9 @@ export const HeroSection: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('places')}
                 aria-label="استكشاف المعالم والتراث المعماري"
-                className="w-full sm:w-auto px-5 sm:px-6 py-3.5 bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D] text-[#2D2A26] dark:text-[#FAF6F2] border-2 border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-sm sm:text-base font-bold rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer min-h-[46px]"
+                className="btn-outline px-6 py-3.5 rounded-xl text-sm sm:text-base font-bold shadow-2xs flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[46px]"
               >
-                <Landmark className="w-5 h-5 text-amber-700" />
+                <Landmark className="w-5 h-5 text-[var(--wah-secondary,#264653)] dark:text-[var(--wah-secondary,#427B8C)]" />
                 <span>المعالم والتراث</span>
               </motion.button>
 
@@ -114,9 +120,9 @@ export const HeroSection: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('products')}
                 aria-label="التسوق من سوق وه"
-                className="w-full sm:w-auto px-5 sm:px-6 py-3.5 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800/50 text-sm sm:text-base font-bold rounded-2xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer min-h-[46px]"
+                className="btn-secondary px-6 py-3.5 rounded-xl text-sm sm:text-base font-bold shadow-2xs flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[46px]"
               >
-                <ShoppingBag className="w-5 h-5 text-amber-800 dark:text-amber-300" />
+                <ShoppingBag className="w-5 h-5 text-[var(--wah-accent,#D97724)]" />
                 <span>سوق وه الحرفي</span>
               </motion.button>
             </motion.div>
@@ -126,94 +132,121 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.45, duration: 0.5 }}
-              className="pt-4 flex items-center gap-2 flex-wrap"
+              className="pt-3 flex items-center gap-2 flex-wrap"
             >
-              <span className="text-xs font-bold text-[#7A6F64]">بوابات الاستكشاف:</span>
+              <span className="text-xs font-bold text-[var(--wah-text-subtle,#9C8E80)]">بوابات التوثيق:</span>
               <button
+                type="button"
+                id="hero-chip-crafts"
                 onClick={() => setActivePage('cultural-crafts')}
-                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1917] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] text-xs font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
-                <Hammer className="w-3.5 h-3.5 text-[#B45F42]" />
+                <Hammer className="w-3.5 h-3.5 text-[var(--wah-primary,#B24C2B)]" />
                 <span>موسوعة الحرف</span>
               </button>
 
               <button
+                type="button"
+                id="hero-chip-stories"
                 onClick={() => setActivePage('stories')}
-                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1917] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] text-xs font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
-                <BookOpen className="w-3.5 h-3.5 text-amber-600" />
+                <BookOpen className="w-3.5 h-3.5 text-[var(--wah-accent,#D97724)]" />
                 <span>وه بيحكي (المرويات)</span>
               </button>
 
               <button
+                type="button"
+                id="hero-chip-people"
                 onClick={() => setActivePage('people')}
-                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1917] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] text-xs font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
-                <Users className="w-3.5 h-3.5 text-blue-600" />
+                <Users className="w-3.5 h-3.5 text-[var(--wah-secondary,#264653)] dark:text-[var(--wah-secondary,#427B8C)]" />
                 <span>ناس الصعيد</span>
               </button>
 
               <button
+                type="button"
+                id="hero-chip-food"
                 onClick={() => setActivePage('food')}
-                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E1917] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] text-xs font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
-                <Utensils className="w-3.5 h-3.5 text-emerald-600" />
+                <Utensils className="w-3.5 h-3.5 text-[var(--wah-success,#286644)]" />
                 <span>طعم الصعيد</span>
               </button>
             </motion.div>
 
-            {/* Live Metrics Strip */}
+            {/* Metrics Strip */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.55, duration: 0.5 }}
-              className="pt-6 border-t border-[#E8E1D9] dark:border-[#382E27] grid grid-cols-4 gap-2 sm:gap-4 max-w-xl"
+              className="pt-6 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] grid grid-cols-4 gap-2 sm:gap-4 max-w-xl"
             >
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">10</span>
-                <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">محافظات موثقة</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">10</span>
+                <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">محافظات موثقة</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">+150</span>
-                <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">معلم وموقع تراثي</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+150</span>
+                <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">معلم وموقع تراثي</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">+40</span>
-                <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">حرفة وصنعة أصيلة</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+40</span>
+                <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">حرفة وصنعة أصيلة</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#B45F42] block font-mono">100%</span>
-                <span className="text-[10px] sm:text-xs text-[#7A6F64] font-bold leading-tight block">توثيق حي وميداني</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">100%</span>
+                <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">توثيق حي وميداني</span>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Hero Visual Collage */}
+          {/* Hero Visual Composition */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.55, delay: 0.2, ease: 'easeOut' }}
             className="lg:col-span-5 relative mt-4 lg:mt-0"
           >
             <div className="relative mx-auto max-w-md">
+              {/* Main Card with Editorial Shape */}
               <motion.div
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.25 }}
-                className="geometric-card overflow-hidden shadow-xl bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]"
+                className="wah-card overflow-hidden shadow-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] wah-shape-editorial border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]"
               >
-                <img
-                  src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1000"
-                  alt="معابد وصروح صعيد مصر التاريخية"
-                  className="w-full h-72 sm:h-96 object-cover hover:scale-105 transition-transform duration-700"
-                />
-                <div className="p-4 bg-white dark:bg-[#1E1917] border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold font-serif text-[#29221D] dark:text-[#FAF6F2]">
-                      معبد دندرة — قنا
+                <div className="relative overflow-hidden aspect-[4/3] sm:aspect-square">
+                  <img
+                    src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1000"
+                    alt="معابد وصروح صعيد مصر التاريخية"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--wah-text,#241E1A)]/90 via-transparent to-black/20" />
+                  
+                  {/* Photo overlay info */}
+                  <div className="absolute bottom-4 right-4 left-4 text-right">
+                    <span className="text-[11px] font-bold text-[var(--wah-accent-light,#FDF3E7)] bg-[var(--wah-text,#241E1A)]/60 px-2.5 py-1 rounded-md backdrop-blur-md inline-block mb-1">
+                      صروح قنا الخالدة
+                    </span>
+                    <h3 className="text-base sm:text-lg font-bold font-heritage text-white leading-snug">
+                      معبد دندرة — درة العمارة وسقف الأبراج السماوية
                     </h3>
-                    <p className="text-xs text-[#7A6F64]">درة العمارة البطلمية وسقف الأبراج السماوية</p>
                   </div>
+                </div>
 
+                <div className="p-4 bg-white dark:bg-[var(--wah-surface,#1B1613)] flex items-center justify-between">
+                  <span className="text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)]">
+                    توثيق ميداني حصري لمنصة وه
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('places')}
+                    className="text-xs font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>استكشف المعلم</span>
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </motion.div>
 
@@ -226,33 +259,36 @@ export const HeroSection: React.FC = () => {
                 transition={{ delay: 0.4, duration: 0.4 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 onClick={() => setActivePage('cultural-crafts')}
-                className="absolute -bottom-3 sm:-bottom-5 right-2 sm:-right-4 bg-white dark:bg-[#1E1917] p-3 sm:p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-lg max-w-[200px] sm:max-w-[240px] cursor-pointer hover:border-[#B45F42] transition-colors z-10"
+                className="absolute -bottom-4 sm:-bottom-5 right-2 sm:-right-4 bg-white dark:bg-[var(--wah-surface,#1B1613)] p-3 sm:p-3.5 rounded-2xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] shadow-lg max-w-[200px] sm:max-w-[240px] cursor-pointer hover:border-[var(--wah-primary,#B24C2B)] transition-all z-10"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <img
                     src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200"
                     alt="فخار قنا"
-                    className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9] shrink-0"
+                    className="w-11 h-11 rounded-xl object-cover border border-[var(--wah-border,#E5DDD3)] shrink-0"
                   />
-                  <div>
-                    <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold block truncate">حرف وصنائع حية</span>
-                    <span className="text-xs sm:text-sm font-black text-[#2D2A26] dark:text-[#FAF6F2]">فخار وخزف الصعيد</span>
+                  <div className="text-right">
+                    <span className="text-[10px] text-[var(--wah-accent,#D97724)] font-bold block truncate">صنائع حية</span>
+                    <span className="text-xs sm:text-sm font-black text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]">فخار وخزف قنا</span>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Floating Tag */}
+              {/* Geographic Strip */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.4 }}
-                className="absolute -top-3 left-2 bg-[#1A1614] text-white px-3 py-2 rounded-xl border border-[#B45F42]/40 shadow-md flex items-center gap-2 z-10"
+                className="absolute -top-3 left-2 bg-[var(--wah-text,#241E1A)] text-white px-3 py-1.5 rounded-xl border border-[var(--wah-primary,#B24C2B)]/40 shadow-md flex items-center gap-1.5 z-10"
               >
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
-                <span className="text-xs font-bold text-amber-100 font-serif">من الجيزة إلى أسوان</span>
+                <MapPin className="w-3.5 h-3.5 text-[var(--wah-accent,#D97724)] shrink-0" />
+                <span className="text-xs font-bold text-[var(--wah-accent-light,#FDF3E7)] font-heritage">
+                  من الجيزة إلى أسوان
+                </span>
               </motion.div>
             </div>
           </motion.div>
+
         </div>
       </div>
     </div>

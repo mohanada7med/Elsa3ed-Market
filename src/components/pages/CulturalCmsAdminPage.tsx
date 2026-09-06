@@ -57,8 +57,11 @@ import {
   Filter,
   Layers,
   SlidersHorizontal,
-  ChevronLeft
+  ChevronLeft,
+  Image as ImageIcon
 } from 'lucide-react';
+import { AdminMediaUploader } from '../common/AdminMediaUploader';
+import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
 
 type GovernorateSubTab =
   | 'overview'

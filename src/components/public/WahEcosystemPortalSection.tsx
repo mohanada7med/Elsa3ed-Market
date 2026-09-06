@@ -15,6 +15,7 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export const WahEcosystemPortalSection: React.FC = () => {
   const { setActivePage } = useApp();
@@ -180,12 +181,20 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               {/* Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <p className="text-xs sm:text-sm text-[#6E6359] dark:text-[#A89C90] leading-relaxed">
+              <div className="relative p-5 flex-1 flex flex-col justify-between space-y-4 overflow-hidden">
+                {portal.id === 'governorates' && (
+                  <NubianGeometricPattern
+                    opacity={0.14}
+                    color="#B24C2B"
+                    variant="diamonds"
+                    className="group-hover:opacity-25 transition-opacity"
+                  />
+                )}
+                <p className="relative z-10 text-xs sm:text-sm text-[#6E6359] dark:text-[#A89C90] leading-relaxed">
                   {portal.desc}
                 </p>
 
-                <div className="pt-2 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between text-[#B45F42] dark:text-[#FF855D] text-xs font-bold group-hover:underline">
+                <div className="relative z-10 pt-2 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between text-[#B45F42] dark:text-[#FF855D] text-xs font-bold group-hover:underline">
                   <span>دخول البوابة</span>
                   <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 </div>

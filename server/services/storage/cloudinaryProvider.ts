@@ -280,9 +280,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     const fileKey = extractCloudinaryPublicId(fileKeyOrUrl) || fileKeyOrUrl;
 
-    // Security check: only allow deletion of Elsa3ed-Market assets
-    if (!fileKey.startsWith('Elsa3ed-Market/')) {
-      Logger.warn(`[Cloudinary] Refusing to delete asset outside Elsa3ed-Market namespace: ${fileKey}`);
+    // Security check: only allow deletion of Elsa3ed-Market or WAH assets
+    if (!fileKey.startsWith('Elsa3ed-Market/') && !fileKey.startsWith('WAH/')) {
+      Logger.warn(`[Cloudinary] Refusing to delete asset outside allowed namespaces: ${fileKey}`);
       return false;
     }
 
@@ -393,8 +393,8 @@ export function extractCloudinaryPublicId(urlOrKey: string): string | null {
   if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
     return trimmed;
   }
-  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?(Elsa3ed-Market/[^.?#]+)
-  const match = trimmed.match(/\/upload\/(?:v\d+\/)?(Elsa3ed-Market\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
+  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?((?:Elsa3ed-Market|WAH)/[^.?#]+)
+  const match = trimmed.match(/\/upload\/(?:v\d+\/)?((?:Elsa3ed-Market|WAH)\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
   if (match && match[1]) {
     return match[1];
   }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { MapGovernorateData, MapMarkerItem, Product } from '../../types';
+import { InteractiveMapCard } from '../public/InteractiveMapCard';
 import {
   Landmark,
   Hammer,
@@ -17,7 +18,8 @@ import {
   Scroll,
   Star,
   Ship,
-  Sparkles
+  Sparkles,
+  Map as MapIcon
 } from 'lucide-react';
 
 // Regional palette definition with authentic Upper Egyptian earth tones
@@ -125,10 +127,14 @@ export const UpperEgyptMapPage: React.FC = () => {
   // Active Tab inside governorate dossier: places | crafts | foods | folklore | products
   const [activeTab, setActiveTab] = useState<'places' | 'crafts' | 'foods' | 'folklore' | 'products'>('places');
 
-  // Exploration display mode (no map):
-  // 1. 'voyage': Nile River Corridor (step-by-step cruise station)
-  // 2. 'grid': All 9 Governorates Bento Cards
-  const [displayMode, setDisplayMode] = useState<'voyage' | 'grid'>('voyage');
+  // Selected Marker from the Interactive Map
+  const [selectedMarker, setSelectedMarker] = useState<MapMarkerItem | null>(null);
+
+  // Exploration display modes:
+  // 1. 'map': Seamless Floating Card-based Interactive Map with Ancient Pottery Markers
+  // 2. 'voyage': Nile River Corridor (step-by-step cruise station)
+  // 3. 'grid': All 9 Governorates Bento Cards
+  const [displayMode, setDisplayMode] = useState<'map' | 'voyage' | 'grid'>('map');
 
   // Search filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -273,13 +279,27 @@ export const UpperEgyptMapPage: React.FC = () => {
             </div>
           </div>
 
-          {/* View Modes: Voyage vs Grid */}
-          <div className="flex items-center bg-[#EFE9DF] dark:bg-[#251D18] p-1 rounded-2xl border-2 border-[#D9CFC2] dark:border-[#3D3028]">
+          {/* View Modes: Interactive Map vs Voyage vs Grid */}
+          <div className="flex items-center bg-[#EFE9DF] dark:bg-[#251D18] p-1 rounded-2xl border-2 border-[#D9CFC2] dark:border-[#3D3028] overflow-x-auto no-scrollbar">
+            <button
+              type="button"
+              id="btn-view-map"
+              onClick={() => setDisplayMode('map')}
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
+                displayMode === 'map'
+                  ? 'bg-[#9E3C1B] text-white shadow-xs'
+                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
+              }`}
+            >
+              <MapIcon className="w-4 h-4" />
+              <span>الخريطة التفاعلية الفخارية</span>
+            </button>
+
             <button
               type="button"
               id="btn-view-voyage"
               onClick={() => setDisplayMode('voyage')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
                 displayMode === 'voyage'
                   ? 'bg-[#9E3C1B] text-white shadow-xs'
                   : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
@@ -293,7 +313,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               type="button"
               id="btn-view-grid"
               onClick={() => setDisplayMode('grid')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
                 displayMode === 'grid'
                   ? 'bg-[#9E3C1B] text-white shadow-xs'
                   : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
@@ -345,6 +365,54 @@ export const UpperEgyptMapPage: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-8">
+        
+        {/* =========================================================
+           VIEW 1: SEAMLESS FLOATING CARD-BASED INTERACTIVE MAP (NEW)
+           With miniature antique pottery markers & floating inspector
+           ========================================================= */}
+        {displayMode === 'map' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black font-serif text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
+                  <MapIcon className="w-5 h-5 text-[#9E3C1B]" />
+                  <span>خريطة صعيد مصر التفاعلية الفخارية</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-[#5A4D42] dark:text-[#C5B8AC] mt-0.5">
+                  بطاقة تفاعلية عائمة تتيح لك استكشاف معالم وحرف وخيرات محافظات الصعيد بمؤشرات الفخار الأثري.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-950 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300">
+                  المحطة المحددة: {selectedGov.name}
+                </span>
+              </div>
+            </div>
+
+            <InteractiveMapCard
+              governorates={governorates}
+              markers={markers}
+              selectedGov={selectedGov}
+              onSelectGovernorate={(gov) => {
+                const foundIdx = governorates.findIndex((g) => g.id === gov.id);
+                if (foundIdx !== -1) setSelectedIndex(foundIdx);
+              }}
+              selectedMarker={selectedMarker}
+              onSelectMarker={(m) => {
+                setSelectedMarker(m);
+                if (m) {
+                  if (m.type === 'place') setActiveTab('places');
+                  else if (m.type === 'craft' || m.type === 'artisan') setActiveTab('crafts');
+                  else if (m.type === 'food') setActiveTab('foods');
+                  else if (m.type === 'story') setActiveTab('folklore');
+                }
+              }}
+              onNavigateToDossier={(slug) => navigateToGovernorate(slug)}
+              onShopGovernorate={() => setActivePage('products')}
+            />
+          </div>
+        )}
         
         {/* =========================================================
            VIEW 1: PANORAMIC NILE VOYAGE (Sequential Step-by-Step)

@@ -19,6 +19,7 @@ import {
   ExternalLink,
   Store
 } from 'lucide-react';
+import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 const CATEGORY_LABELS: Record<string, string> = {
   temple: 'معبد فرعوني',
@@ -113,7 +114,7 @@ export const GovernorateDetailPage: React.FC = () => {
         <img
           src={governorate.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1600'}
           alt={`محافظة ${governorate.name}`}
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#151210] via-black/40 to-transparent" />
 
@@ -207,12 +208,28 @@ export const GovernorateDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-8 space-y-8">
               {/* History Text */}
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E8E1D9] dark:border-[#382E27]">
-                <h2 className="text-xl sm:text-2xl font-black font-serif text-[#29221D] dark:text-[#FAF6F2] mb-4">
-                  تاريخ وأصالة محافظة {governorate.name}
-                </h2>
-                <div className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed space-y-4 whitespace-pre-line font-serif">
-                  {governorate.history || governorate.shortIntro}
+              <div className="relative bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E8E1D9] dark:border-[#382E27] overflow-hidden shadow-xs">
+                <NubianGeometricPattern
+                  opacity={0.12}
+                  color="#B24C2B"
+                  variant="diamonds"
+                  className="text-[#B24C2B] dark:text-[#E0633C]"
+                />
+                <div className="absolute top-0 inset-x-0">
+                  <NubianGeometricPattern
+                    variant="frieze"
+                    opacity={0.25}
+                    color="#B24C2B"
+                    className="text-[#B24C2B]"
+                  />
+                </div>
+                <div className="relative z-10 pt-2">
+                  <h2 className="text-xl sm:text-2xl font-black font-heritage text-[#29221D] dark:text-[#FAF6F2] mb-4">
+                    تاريخ وأصالة محافظة {governorate.name}
+                  </h2>
+                  <div className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed space-y-4 whitespace-pre-line font-heritage">
+                    {governorate.history || governorate.shortIntro}
+                  </div>
                 </div>
               </div>
 

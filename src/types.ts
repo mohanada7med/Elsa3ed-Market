@@ -936,6 +936,43 @@ export interface RelationshipPayload {
   action: 'link' | 'unlink';
 }
 
+export interface MediaItem {
+  id?: string;
+  url: string;
+  secureUrl?: string;
+  publicId?: string;
+  folder?: string;
+  type?: 'image' | 'video';
+  entityType?: string;
+  entityId?: string;
+  entitySlug?: string;
+  format?: string;
+  bytes?: number;
+  sizeBytes?: number;
+  width?: number;
+  height?: number;
+  alt?: string;
+  caption?: string;
+  isPrimary?: boolean;
+  uploadedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AdminMediaResponse {
+  success: boolean;
+  message?: string;
+  data?: MediaItem;
+  items?: MediaItem[];
+  total?: number;
+  page?: number;
+  limit?: number;
+  totalPages?: number;
+  error?: string;
+  code?: string;
+}
+
+
 
 
 

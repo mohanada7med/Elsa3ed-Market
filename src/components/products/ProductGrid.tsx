@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { Product } from '../../types';
-import { Sparkles, PackageOpen, RefreshCw } from 'lucide-react';
+import { WAHEmptyState } from '../../design-system/WAHEmptyState';
+import { PackageOpen } from 'lucide-react';
 
 interface ProductGridProps {
   customProducts?: Product[];
@@ -88,28 +89,18 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
 
   if (filteredProducts.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ebdccd] p-12 text-center my-6">
-        <div className="w-16 h-16 rounded-full bg-[#f3ebd9] text-[#943310] flex items-center justify-center mx-auto mb-4">
-          <PackageOpen className="w-8 h-8 opacity-70" />
-        </div>
-        <h3 className="font-bold text-gray-900 text-lg">لم يتم العثور على منتجات مطابقة</h3>
-        <p className="text-xs text-gray-500 mt-2 max-w-sm mx-auto leading-relaxed">
-          جرب تغيير كلمات البحث، أو إلغاء بعض الفلاتر لاستكشاف المزيد من روائع الحرف التراثية الصعيدية.
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            setSelectedGovernorateFilter('all');
-            setSelectedCategoryFilter('all');
-            setSelectedHandmadeOnly(false);
-            setSearchQuery('');
-          }}
-          className="mt-5 inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>إعادة ضبط البحث والتصفية</span>
-        </button>
-      </div>
+      <WAHEmptyState
+        icon={PackageOpen}
+        title="لم يتم العثور على قطع مطابقة"
+        description="جرب تغيير كلمات البحث، أو إلغاء بعض الفلاتر لاستكشاف المزيد من روائع الحرف التراثية الصعيدية الأصيلة."
+        actionLabel="إعادة ضبط البحث والتصفية"
+        onAction={() => {
+          setSelectedGovernorateFilter('all');
+          setSelectedCategoryFilter('all');
+          setSelectedHandmadeOnly(false);
+          setSearchQuery('');
+        }}
+      />
     );
   }
 

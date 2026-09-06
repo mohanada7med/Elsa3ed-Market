@@ -4,18 +4,14 @@ import { wahApi } from '../../services/api';
 import { WahStory } from '../../types';
 import {
   BookOpen,
-  MapPin,
   Search,
-  Filter,
-  ArrowLeft,
-  Sparkles,
-  Volume2,
-  Mic,
-  Share2
+  ArrowLeft
 } from 'lucide-react';
+import { WAHEditorialCard } from '../../design-system/cards/WAHEditorialCard';
+import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 
 export const StoriesPage: React.FC = () => {
-  const { navigateToStory, navigateToGovernorate, setActivePage } = useApp();
+  const { navigateToStory, setActivePage } = useApp();
   const [stories, setStories] = useState<WahStory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,24 +48,26 @@ export const StoriesPage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#FAF6F0] dark:bg-[#151210] text-[#29221D] dark:text-[#FAF6F2] py-6 sm:py-10 px-3 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[var(--wah-bg,#FAF7F2)] dark:bg-[var(--wah-bg,#120E0C)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] py-6 sm:py-10 px-3 sm:px-6 lg:px-8 font-sans" dir="rtl">
+      <div className="max-w-7xl mx-auto space-y-8">
         {/* Breadcrumb */}
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-[#7A6F64] dark:text-[#9C8F82]">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-medium">
             <button
               onClick={() => setActivePage('home')}
-              className="hover:text-[#B45F42] transition-colors cursor-pointer"
+              className="hover:text-[var(--wah-primary,#B24C2B)] dark:hover:text-[var(--wah-primary,#E0633C)] transition-colors cursor-pointer"
             >
               الرئيسية
             </button>
             <span>/</span>
-            <span className="text-[#B45F42] font-bold">وه بيحكي — حكايات ومرويات الصعيد</span>
+            <span className="text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] font-bold">
+              وه بيحكي — حكايات ومرويات الصعيد
+            </span>
           </div>
 
           <button
             onClick={() => setActivePage('governorates')}
-            className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#B45F42] hover:text-[#9E4F36] bg-[#B45F42]/10 hover:bg-[#B45F42]/20 px-3.5 py-1.5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] hover:underline cursor-pointer"
           >
             <span>حكايات حسب المحافظة</span>
             <ArrowLeft className="w-4 h-4" />
@@ -77,21 +75,21 @@ export const StoriesPage: React.FC = () => {
         </div>
 
         {/* Page Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold mb-3 border border-amber-300 dark:border-amber-800/40">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--wah-accent-light,#FDF3E7)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-accent,#D97724)] text-xs font-bold border border-[var(--wah-accent,#D97724)]/20">
             <BookOpen className="w-3.5 h-3.5" />
             <span>«وه — كل حكاية ليها أصل»</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-[#29221D] dark:text-[#FAF6F2] font-serif tracking-tight mb-3">
-            وه بيحكي
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black font-heritage tracking-tight">
+            وه بيحكي — ذاكرة المرويات الشفاهية
           </h1>
-          <p className="text-sm sm:text-base text-[#665A4F] dark:text-[#A89C90] leading-relaxed">
+          <p className="text-sm sm:text-base text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
             مستودع المرويات الشفاهية، أساطير النيل والجبل، السيرة الهلالية، وقصص البطولة والحكمة التي تناقلتها أجيال الصعيد حول موائد السمر في العصاري وليالي الشتاء.
           </p>
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white dark:bg-[#1E1917] rounded-2xl p-4 sm:p-5 border border-[#E8E1D9] dark:border-[#382E27] shadow-xs mb-8 space-y-4">
+        <div className="bg-white dark:bg-[var(--wah-surface,#1B1613)] rounded-2xl p-4 sm:p-5 border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] shadow-xs space-y-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="relative w-full md:w-80">
               <input
@@ -99,9 +97,9 @@ export const StoriesPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث في حكايات الصعيد وأساطيره..."
-                className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm text-[#29221D] dark:text-[#FAF6F2] rounded-xl pl-10 pr-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] outline-none"
+                className="w-full bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-xs sm:text-sm text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] rounded-xl pl-10 pr-4 py-2.5 border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] focus:border-[var(--wah-primary,#B24C2B)] outline-none"
               />
-              <Search className="w-4 h-4 text-[#7A6F64] absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-[var(--wah-text-muted,#73675B)] absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Categories */}
@@ -110,8 +108,8 @@ export const StoriesPage: React.FC = () => {
                 onClick={() => setCategoryFilter('all')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   categoryFilter === 'all'
-                    ? 'bg-[#B45F42] text-white'
-                    : 'bg-[#FAF6F0] dark:bg-[#25201D] text-[#665A4F] dark:text-[#A89C90] hover:bg-[#E8E1D9]'
+                    ? 'bg-[var(--wah-primary,#B24C2B)] text-white shadow-xs'
+                    : 'bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] hover:bg-[var(--wah-border,#E5DDD3)]'
                 }`}
               >
                 كافة الحكايات
@@ -122,8 +120,8 @@ export const StoriesPage: React.FC = () => {
                   onClick={() => setCategoryFilter(cat)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
                     categoryFilter === cat
-                      ? 'bg-[#B45F42] text-white'
-                      : 'bg-[#FAF6F0] dark:bg-[#25201D] text-[#665A4F] dark:text-[#A89C90] hover:bg-[#E8E1D9]'
+                      ? 'bg-[var(--wah-primary,#B24C2B)] text-white shadow-xs'
+                      : 'bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] hover:bg-[var(--wah-border,#E5DDD3)]'
                   }`}
                 >
                   {cat}
@@ -134,14 +132,14 @@ export const StoriesPage: React.FC = () => {
 
           {/* Governorate Sub-filter */}
           {governorates.length > 0 && (
-            <div className="flex items-center gap-2 pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] overflow-x-auto no-scrollbar">
-              <span className="text-xs font-bold text-[#7A6F64] shrink-0">المحافظة:</span>
+            <div className="flex items-center gap-2 pt-3 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] overflow-x-auto no-scrollbar">
+              <span className="text-xs font-bold text-[var(--wah-text-muted,#73675B)] shrink-0">المحافظة:</span>
               <button
                 onClick={() => setGovernorateFilter('all')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors shrink-0 ${
                   governorateFilter === 'all'
-                    ? 'bg-[#B45F42] text-white'
-                    : 'bg-[#FAF6F0] dark:bg-[#25201D] text-[#7A6F64]'
+                    ? 'bg-[var(--wah-primary,#B24C2B)] text-white'
+                    : 'bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text-muted,#73675B)]'
                 }`}
               >
                 الكل
@@ -152,8 +150,8 @@ export const StoriesPage: React.FC = () => {
                   onClick={() => setGovernorateFilter(gov)}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors shrink-0 ${
                     governorateFilter === gov
-                      ? 'bg-[#B45F42] text-white'
-                      : 'bg-[#FAF6F0] dark:bg-[#25201D] text-[#7A6F64] hover:bg-[#E8E1D9]'
+                      ? 'bg-[var(--wah-primary,#B24C2B)] text-white'
+                      : 'bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text-muted,#73675B)]'
                   }`}
                 >
                   {gov}
@@ -169,56 +167,36 @@ export const StoriesPage: React.FC = () => {
             {[1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="h-64 rounded-3xl bg-white dark:bg-[#1E1917] border border-[#E8E1D9] animate-pulse"
+                className="h-72 rounded-3xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] animate-pulse"
               />
             ))}
           </div>
         ) : filteredStories.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-            <BookOpen className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
-            <h3 className="text-lg font-bold">لم يتم العثور على حكايات مطابقة</h3>
-            <p className="text-xs text-[#7A6F64] mt-1">جرب تغيير كلمات البحث أو التصنيف</p>
-          </div>
+          <WAHEmptyState
+            icon={BookOpen}
+            title="لم يتم العثور على حكايات مطابقة"
+            description="جرب البحث بكلمات أخرى أو تغيير تصنيف الحكاية لاستكشاف مرويات الصعيد."
+            actionLabel="إعادة ضبط الفلاتر"
+            onAction={() => {
+              setSearchQuery('');
+              setCategoryFilter('all');
+              setGovernorateFilter('all');
+            }}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {filteredStories.map((story) => (
-              <div
+              <WAHEditorialCard
                 key={story.id}
                 id={`story-card-${story.slug}`}
+                title={story.title}
+                subtitle={story.narrator ? `عن الراوي: ${story.narrator}` : undefined}
+                excerpt={story.excerpt || story.content}
+                image={story.coverImage || 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?w=800'}
+                category={story.category}
+                governorate={story.governorateName}
                 onClick={() => navigateToStory(story.slug)}
-                className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] p-6 sm:p-8 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between cursor-pointer"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-4">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300">
-                      {story.category}
-                    </span>
-                    <span className="text-xs text-[#7A6F64] flex items-center gap-1 font-semibold">
-                      <MapPin className="w-3.5 h-3.5 text-[#B45F42]" />
-                      <span>محافظة {story.governorateName}</span>
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl sm:text-2xl font-black font-serif text-[#29221D] dark:text-[#FAF6F2] group-hover:text-[#B45F42] transition-colors mb-3">
-                    {story.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[#665A4F] dark:text-[#A89C90] leading-relaxed line-clamp-3 font-serif">
-                    {story.excerpt || story.content}
-                  </p>
-
-                  {story.narrator && (
-                    <p className="text-[11px] text-[#7A6F64] mt-3 italic">
-                      عن الراوي: {story.narrator}
-                    </p>
-                  )}
-                </div>
-
-                <div className="pt-4 mt-6 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-[#B45F42] dark:text-[#FF855D] font-bold text-xs sm:text-sm group-hover:text-[#9E4F36]">
-                  <span>اقرأ تفاصيل الحكاية</span>
-                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1.5 transition-transform" />
-                </div>
-              </div>
+              />
             ))}
           </div>
         )}

@@ -75,6 +75,7 @@ class MemoryStore {
   upperEgyptFood: UpperEgyptFoodDoc[] = [];
   culturalEvents: CulturalEventDoc[] = [];
   seasons: SeasonDoc[] = [];
+  media: import('../models/types.ts').MediaAssetDoc[] = [];
 
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createApp } from '../../server/app.ts';
+import { createApp } from '../../../server/app.ts';
 
 const app = createApp();
 
