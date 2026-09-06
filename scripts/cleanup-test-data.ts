@@ -12,6 +12,28 @@ cloudinary.config({
 });
 
 const ESSENTIAL_CLOUDINARY_ASSETS = new Set([
+  // WAH Canonical Assets
+  'WAH/general/branding/logo',
+  'WAH/general/placeholders/default-user-avatar',
+  'WAH/videos/intro/platform-intro',
+  'WAH/videos/promo/market-overview',
+  // Provinces
+  'WAH/provinces/beni-suef/cover',
+  'WAH/provinces/minya/cover',
+  'WAH/provinces/asyut/cover',
+  'WAH/provinces/sohag/cover',
+  'WAH/provinces/qena/cover',
+  'WAH/provinces/luxor/cover',
+  'WAH/provinces/aswan/cover',
+  'WAH/provinces/new-valley/cover',
+  // Categories
+  'WAH/crafts/pottery/category-cover',
+  'WAH/crafts/kilim/category-cover',
+  'WAH/crafts/palm-wicker/category-cover',
+  'WAH/crafts/tally/category-cover',
+  'WAH/food/natural-honey/category-cover',
+  'WAH/food/dates-fruits/category-cover',
+  // Legacy aliases
   'فخار',
   'كليم',
   'الخوص_والمشغولات_النخيلية',

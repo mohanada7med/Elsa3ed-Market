@@ -88,7 +88,7 @@ export const CheckoutPage: React.FC = () => {
   if (cart.length === 0 && !completedOrder) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-16 text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-[#F3EFE9] dark:bg-[#25201D] text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 rounded-full bg-[#F3EFE9] dark:bg-[#26201B] text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center mx-auto">
           <ShoppingBag className="w-8 h-8 opacity-70" />
         </div>
         <h2 className="text-xl font-bold text-gray-900 dark:text-[#FAF6F2]">سلة المشتريات فارغة</h2>
@@ -98,7 +98,7 @@ export const CheckoutPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('products')}
-          className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
+          className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
         >
           تصفح سوق وه الآن
         </button>
@@ -249,7 +249,7 @@ export const CheckoutPage: React.FC = () => {
           )}
 
           {/* Order Summary Details */}
-          <div className="bg-[#faf6f0] p-5 rounded-2xl border border-[#ebdccd] text-right space-y-3">
+          <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-[#ebdccd] text-right space-y-3">
             <h4 className="font-bold text-xs text-gray-900 border-b border-[#ebdccd] pb-2">
               ملخص الشحنة والمنتجات:
             </h4>
@@ -292,7 +292,7 @@ export const CheckoutPage: React.FC = () => {
               type="button"
               id="order-track-btn"
               onClick={() => setActivePage('orders')}
-              className="px-6 py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
             >
               <Truck className="w-4 h-4" />
               <span>تتبع مسار الشحنة الآن</span>
@@ -302,7 +302,7 @@ export const CheckoutPage: React.FC = () => {
               type="button"
               id="continue-shopping-btn"
               onClick={() => setActivePage('products')}
-              className="px-6 py-3 bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D] text-gray-800 dark:text-[#FAF6F2] border border-[#E8E1D9] dark:border-[#382E27] text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+              className="px-6 py-3 bg-white dark:bg-[#1E1917] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B] text-gray-800 dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
             >
               العودة للتسوق
             </button>
@@ -315,11 +315,11 @@ export const CheckoutPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#7A6F64] dark:text-[#A89C90]">
+      <nav className="flex items-center gap-2 text-xs text-[#73675B] dark:text-[#A89C90]">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -332,9 +332,9 @@ export const CheckoutPage: React.FC = () => {
         <div className="lg:col-span-7">
           <form onSubmit={handlePlaceOrder} className="space-y-6">
             {/* Step 1: Shipping Address */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 shadow-xs space-y-4">
               <div className="flex items-center gap-2.5 border-b border-[#F0EAE1] dark:border-[#2C2420] pb-3">
-                <div className="w-8 h-8 rounded-xl bg-[#B45F42]/10 text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#B24C2B]/10 text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center font-bold text-xs">
                   1
                 </div>
                 <h3 className="font-bold text-gray-900 dark:text-[#FAF6F2] text-base">عنوان الشحن والتوصيل في مصر</h3>
@@ -349,7 +349,7 @@ export const CheckoutPage: React.FC = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله الهاشمي"
-                    className="w-full px-3.5 py-3 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B45F42] min-h-[44px]"
+                    className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B24C2B] min-h-[44px]"
                   />
                 </div>
 
@@ -361,7 +361,7 @@ export const CheckoutPage: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="010XXXXXXXX"
-                    className="w-full px-3.5 py-3 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B45F42] min-h-[44px]"
+                    className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B24C2B] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -372,7 +372,7 @@ export const CheckoutPage: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-3 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B45F42] min-h-[44px] cursor-pointer"
+                    className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B24C2B] min-h-[44px] cursor-pointer"
                   >
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
@@ -398,7 +398,7 @@ export const CheckoutPage: React.FC = () => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="مثال: المعادي / نجع حمادي / أخميم"
-                    className="w-full px-3.5 py-3 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B45F42] min-h-[44px]"
+                    className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B24C2B] min-h-[44px]"
                   />
                 </div>
               </div>
@@ -411,7 +411,7 @@ export const CheckoutPage: React.FC = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="شارع النصر، عمارة 15، الدور الثالث، شقة 7"
-                  className="w-full px-3.5 py-3 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B45F42] min-h-[44px]"
+                  className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#B24C2B] min-h-[44px]"
                 />
               </div>
 
@@ -422,15 +422,15 @@ export const CheckoutPage: React.FC = () => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="مثال: يرجى الاتصال قبل الوصول بنصف ساعة، القطعة هدية تغليف خاص..."
                   rows={2}
-                  className="w-full px-3.5 py-2.5 bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-xs outline-none focus:border-[#B45F42]"
+                  className="w-full px-3.5 py-2.5 bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
                 />
               </div>
             </div>
 
             {/* Step 2: Payment Method */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 shadow-xs space-y-5">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 shadow-xs space-y-5">
               <div className="flex items-center gap-2.5 border-b border-[#F0EAE1] dark:border-[#2C2420] pb-3">
-                <div className="w-8 h-8 rounded-xl bg-[#B45F42]/10 text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#B24C2B]/10 text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center font-bold text-xs">
                   2
                 </div>
                 <div>
@@ -444,7 +444,7 @@ export const CheckoutPage: React.FC = () => {
                 <label
                   className={`p-4 rounded-2xl border flex flex-col gap-3 cursor-pointer transition-all ${paymentMethod === 'instapay'
                       ? 'border-blue-600 bg-blue-50/40 dark:bg-blue-950/30 ring-1 ring-blue-600'
-                      : 'border-[#E8E1D9] dark:border-[#382E27] bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D]'
+                      : 'border-[#E5DDD3] dark:border-[#352B24] bg-white dark:bg-[#1E1917] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -472,7 +472,7 @@ export const CheckoutPage: React.FC = () => {
 
                   {/* Expanded details when InstaPay selected */}
                   {paymentMethod === 'instapay' && (
-                    <div className="p-3.5 bg-white dark:bg-[#151210] rounded-xl border border-blue-200 dark:border-blue-900/50 text-xs space-y-2.5 animate-fadeIn">
+                    <div className="p-3.5 bg-white dark:bg-[#110E0C] rounded-xl border border-blue-200 dark:border-blue-900/50 text-xs space-y-2.5 animate-fadeIn">
                       <div className="flex items-center justify-between bg-blue-50/70 dark:bg-blue-950/40 p-2.5 rounded-lg border border-blue-100 dark:border-blue-900/40">
                         <div>
                           <span className="text-[10px] text-blue-800 dark:text-blue-300 block font-medium">معرف إنستاباي الرسمي للمنصة:</span>
@@ -494,7 +494,7 @@ export const CheckoutPage: React.FC = () => {
                       </div>
 
                       <div className="text-[11px] text-gray-600 dark:text-[#A89C90] space-y-1">
-                        <p>1. افتح تطبيق إنستاباي وقم بتحويل مبلغ <strong className="text-[#B45F42] dark:text-[#FF855D] font-bold">{cartTotal} ج.م</strong> إلى المعرف الموضح أعلاه.</p>
+                        <p>1. افتح تطبيق إنستاباي وقم بتحويل مبلغ <strong className="text-[#B24C2B] dark:text-[#FF855D] font-bold">{cartTotal} ج.م</strong> إلى المعرف الموضح أعلاه.</p>
                         <p>2. أدخل معرف حسابك أو الرقم المرجعي للتحويل بالأسفل لتسريع عملية التأكيد.</p>
                       </div>
 
@@ -507,7 +507,7 @@ export const CheckoutPage: React.FC = () => {
                           value={paymentReference}
                           onChange={(e) => setPaymentReference(e.target.value)}
                           placeholder="مثال: name@instapay أو الرقم المرجعي للعملية"
-                          className="w-full px-3 py-2 bg-[#FAF6F0] dark:bg-[#1C1816] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-lg text-xs outline-none focus:border-[#B45F42]"
+                          className="w-full px-3 py-2 bg-[#FAF7F2] dark:bg-[#1C1816] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-lg text-xs outline-none focus:border-[#B24C2B]"
                         />
                       </div>
                     </div>
@@ -518,7 +518,7 @@ export const CheckoutPage: React.FC = () => {
                 <label
                   className={`p-4 rounded-2xl border flex flex-col gap-3 cursor-pointer transition-all ${paymentMethod === 'vodafone_cash'
                       ? 'border-red-600 bg-red-50/40 dark:bg-red-950/30 ring-1 ring-red-600'
-                      : 'border-[#E8E1D9] dark:border-[#382E27] bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D]'
+                      : 'border-[#E5DDD3] dark:border-[#352B24] bg-white dark:bg-[#1E1917] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -546,7 +546,7 @@ export const CheckoutPage: React.FC = () => {
 
                   {/* Expanded details when Vodafone Cash selected */}
                   {paymentMethod === 'vodafone_cash' && (
-                    <div className="p-3.5 bg-white dark:bg-[#151210] rounded-xl border border-red-200 dark:border-red-900/50 text-xs space-y-2.5 animate-fadeIn">
+                    <div className="p-3.5 bg-white dark:bg-[#110E0C] rounded-xl border border-red-200 dark:border-red-900/50 text-xs space-y-2.5 animate-fadeIn">
                       <div className="flex items-center justify-between bg-red-50/70 dark:bg-red-950/40 p-2.5 rounded-lg border border-red-100 dark:border-red-900/40">
                         <div>
                           <span className="text-[10px] text-red-800 dark:text-red-300 block font-medium">رقم محفظة فودافون كاش للمنصة:</span>
@@ -568,7 +568,7 @@ export const CheckoutPage: React.FC = () => {
                       </div>
 
                       <div className="text-[11px] text-gray-600 dark:text-[#A89C90] space-y-1">
-                        <p>1. قم بتحويل مبلغ <strong className="text-[#B45F42] dark:text-[#FF855D] font-bold">{cartTotal} ج.م</strong> إلى رقم فودافون كاش الموضح أعلاه.</p>
+                        <p>1. قم بتحويل مبلغ <strong className="text-[#B24C2B] dark:text-[#FF855D] font-bold">{cartTotal} ج.م</strong> إلى رقم فودافون كاش الموضح أعلاه.</p>
                         <p>2. أدخل رقم المحفظة المحول منها بالأسفل لمطابقة العملية وتأكيد الطلب فوراً.</p>
                       </div>
 
@@ -581,7 +581,7 @@ export const CheckoutPage: React.FC = () => {
                           value={paymentReference}
                           onChange={(e) => setPaymentReference(e.target.value)}
                           placeholder="مثال: 010XXXXXXXX أو كود العملية"
-                          className="w-full px-3 py-2 bg-[#FAF6F0] dark:bg-[#1C1816] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-lg text-xs outline-none focus:border-[#B45F42]"
+                          className="w-full px-3 py-2 bg-[#FAF7F2] dark:bg-[#1C1816] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-lg text-xs outline-none focus:border-[#B24C2B]"
                         />
                       </div>
                     </div>
@@ -592,7 +592,7 @@ export const CheckoutPage: React.FC = () => {
                 <label
                   className={`p-4 rounded-2xl border flex flex-col gap-2 cursor-pointer transition-all ${paymentMethod === 'cod'
                       ? 'border-emerald-600 bg-emerald-50/40 dark:bg-emerald-950/30 ring-1 ring-emerald-600'
-                      : 'border-[#E8E1D9] dark:border-[#382E27] bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D]'
+                      : 'border-[#E5DDD3] dark:border-[#352B24] bg-white dark:bg-[#1E1917] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -619,7 +619,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
 
                   {paymentMethod === 'cod' && (
-                    <div className="p-3 bg-white dark:bg-[#151210] rounded-xl border border-emerald-200 dark:border-emerald-900/50 text-xs text-gray-600 dark:text-[#A89C90] space-y-1 animate-fadeIn">
+                    <div className="p-3 bg-white dark:bg-[#110E0C] rounded-xl border border-emerald-200 dark:border-emerald-900/50 text-xs text-gray-600 dark:text-[#A89C90] space-y-1 animate-fadeIn">
                       <p className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-semibold text-[11px]">
                         <Info className="w-3.5 h-3.5 text-emerald-600" />
                         <span>سيتم تسليم الشحنة لمندوب التوصيل وتحصيل المبلغ الإجمالي ({cartTotal} ج.م) نقداً عند باب بيتك.</span>
@@ -630,7 +630,7 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Payment Assurance Note */}
-              <div className="p-3 bg-[#FAF6F0] dark:bg-[#151210] rounded-xl border border-[#E8E1D9] dark:border-[#382E27] text-[11px] text-[#7A6F64] dark:text-[#A89C90] flex items-start gap-2">
+              <div className="p-3 bg-[#FAF7F2] dark:bg-[#110E0C] rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-[11px] text-[#73675B] dark:text-[#A89C90] flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <span>جميع المدفوعات والتحويلات يتم مراجعتها وتوثيقها بدقة لضمان حقوقك وحقوق الحرفيين في صعيد مصر.</span>
               </div>
@@ -640,7 +640,7 @@ export const CheckoutPage: React.FC = () => {
               type="submit"
               id="place-order-submit-btn"
               disabled={isSubmitting}
-              className={`w-full py-4 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-black text-sm rounded-2xl shadow-xl shadow-[#B45F42]/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[48px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+              className={`w-full py-4 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-black text-sm rounded-2xl shadow-xl shadow-[#B24C2B]/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[48px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
             >
               {isSubmitting ? (
@@ -657,7 +657,7 @@ export const CheckoutPage: React.FC = () => {
 
         {/* Order Summary Sidebar */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 shadow-xs space-y-4">
             <h3 className="font-bold text-gray-900 dark:text-[#FAF6F2] text-base border-b border-[#F0EAE1] dark:border-[#2C2420] pb-3">
               محتويات السلة ({cart.length} منتجات)
             </h3>
@@ -678,14 +678,14 @@ export const CheckoutPage: React.FC = () => {
                     <img
                       src={img}
                       alt={title}
-                      className="w-14 h-14 rounded-xl object-cover border border-[#E8E1D9] dark:border-[#382E27] shrink-0"
+                      className="w-14 h-14 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-xs font-bold text-gray-900 dark:text-[#FAF6F2] truncate">{title}</h4>
-                      <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block">
+                      <span className="text-[10px] text-[#73675B] dark:text-[#A89C90] block">
                         الكمية: {qty} • {sellerGov}
                       </span>
-                      <span className="text-xs font-black text-[#B45F42] dark:text-[#FF855D] block">{price * qty} ج.م</span>
+                      <span className="text-xs font-black text-[#B24C2B] dark:text-[#FF855D] block">{price * qty} ج.م</span>
                     </div>
                   </div>
                 );
@@ -710,13 +710,13 @@ export const CheckoutPage: React.FC = () => {
                   <span className="font-bold">- {cartDiscountAmount} ج.م</span>
                 </div>
               )}
-              <div className="pt-3 border-t border-[#E8E1D9] dark:border-[#382E27] flex justify-between text-base font-black text-gray-900 dark:text-[#FAF6F2]">
+              <div className="pt-3 border-t border-[#E5DDD3] dark:border-[#352B24] flex justify-between text-base font-black text-gray-900 dark:text-[#FAF6F2]">
                 <span>الإجمالي المطلوب:</span>
-                <span className="text-xl text-[#B45F42] dark:text-[#FF855D]">{cartTotal} ج.م</span>
+                <span className="text-xl text-[#B24C2B] dark:text-[#FF855D]">{cartTotal} ج.م</span>
               </div>
             </div>
 
-            <div className="p-3 bg-[#FAF6F0] dark:bg-[#151210] rounded-xl border border-[#E8E1D9] dark:border-[#382E27] text-[11px] text-[#7A6F64] dark:text-[#A89C90] flex items-start gap-2">
+            <div className="p-3 bg-[#FAF7F2] dark:bg-[#110E0C] rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-[11px] text-[#73675B] dark:text-[#A89C90] flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>ضمان أصالة الحرفة واستبدال مجاني في حال حدوث أي كسر أثناء الشحن.</span>
             </div>

@@ -54,7 +54,7 @@ const FOLDER_OPTIONS = [
 ];
 
 export const AdminMediaLibraryPage: React.FC = () => {
-  const { user } = useApp();
+  const { currentUser } = useApp();
 
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [totalItems, setTotalItems] = useState(0);
@@ -82,7 +82,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
     setIsLoading(true);
     setErrorMessage(null);
     try {
-      const res = await api.getAdminMediaList(user || {}, {
+      const res = await api.getAdminMediaList(currentUser || {}, {
         search: searchQuery,
         entityType: selectedEntityType,
         folder: selectedFolder,
@@ -99,7 +99,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, searchQuery, selectedEntityType, selectedFolder, selectedSort, currentPage]);
+  }, [currentUser, searchQuery, selectedEntityType, selectedFolder, selectedSort, currentPage]);
 
   useEffect(() => {
     loadMedia();
@@ -115,7 +115,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
     setDeletingItemId(item.id || item.publicId || 'current');
     try {
-      await api.deleteAdminMedia(user || {}, item.id || item.publicId || item.url);
+      await api.deleteAdminMedia(currentUser || {}, item.id || item.publicId || item.url);
       setMediaList((prev) => prev.filter((m) => m.id !== item.id && m.publicId !== item.publicId));
       setTotalItems((prev) => Math.max(0, prev - 1));
       if (lightboxItem?.id === item.id) setLightboxItem(null);
@@ -143,10 +143,10 @@ export const AdminMediaLibraryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#1A1512] text-[#2D2621] dark:text-[#E8E1D9] p-4 sm:p-6 md:p-8" dir="rtl">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#1A1512] text-[#2D2621] dark:text-[#E5DDD3] p-4 sm:p-6 md:p-8" dir="rtl">
       {/* Header Section */}
       <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#E8E0D5] dark:border-[#382E27]">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#E8E0D5] dark:border-[#352B24]">
           <div>
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-xl bg-[#8E422D]/10 dark:bg-[#FF8A65]/10 text-[#8E422D] dark:text-[#FF8A65] flex items-center justify-center">
@@ -165,7 +165,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => loadMedia()}
               disabled={isLoading}
-              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] hover:bg-[#F3ECE2] text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] hover:bg-[#F3ECE2] text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
               title="تحديث القائمة"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -195,7 +195,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setCurrentPage(1);
               }}
               placeholder="بحث بالاسم أو المعرف السحابي..."
-              className="w-full min-h-[44px] pr-10 pl-4 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs sm:text-sm placeholder:text-[#9C8F82] focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] pr-10 pl-4 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm placeholder:text-[#9C8F82] focus:outline-none focus:border-[#8E422D]"
             />
           </div>
 
@@ -207,7 +207,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedEntityType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
             >
               {ENTITY_TYPE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -225,7 +225,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedFolder(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
             >
               {FOLDER_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -243,7 +243,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedSort(e.target.value as any);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
             >
               <option value="newest">الأحدث رفعاً</option>
               <option value="oldest">الأقدم رفعاً</option>
@@ -278,9 +278,9 @@ export const AdminMediaLibraryPage: React.FC = () => {
             </p>
           </div>
         ) : mediaList.length === 0 ? (
-          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF6F0] dark:bg-[#201A16] p-8">
+          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#201A16] p-8">
             <ImageIcon className="w-12 h-12 text-[#A89D91] mx-auto mb-3 opacity-60" />
-            <h3 className="text-base font-bold text-[#2D2621] dark:text-[#E8E1D9] mb-1">
+            <h3 className="text-base font-bold text-[#2D2621] dark:text-[#E5DDD3] mb-1">
               لا توجد وسائط مسجلة في هذا التصنيف
             </h3>
             <p className="text-xs text-[#7A6E63] dark:text-[#A89D91] max-w-sm mx-auto mb-4">
@@ -301,7 +301,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
               return (
                 <div
                   key={item.id || item.publicId || url}
-                  className="rounded-2xl border border-[#E8E0D5] dark:border-[#382E27] bg-white dark:bg-[#251E1A] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="rounded-2xl border border-[#E8E0D5] dark:border-[#352B24] bg-white dark:bg-[#26201B] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                 >
                   {/* Thumbnail */}
                   <div className="relative aspect-video sm:aspect-4/3 bg-black/5 overflow-hidden">
@@ -339,7 +339,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   {/* Details */}
                   <div className="p-3 sm:p-4 space-y-2 flex-1 flex flex-col justify-between">
                     <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E8E1D9] truncate" title={item.title || item.alt}>
+                      <h4 className="text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E5DDD3] truncate" title={item.title || item.alt}>
                         {item.title || item.alt || 'صورة تراثية'}
                       </h4>
 
@@ -353,7 +353,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
                       {/* Public ID */}
                       {item.publicId && (
-                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-[#FAF6F0] dark:bg-[#1E1815] border border-[#E8E0D5] dark:border-[#382E27]">
+                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#1E1815] border border-[#E8E0D5] dark:border-[#352B24]">
                           <span className="text-[10px] font-mono text-[#7A6E63] dark:text-[#A89D91] truncate ltr" dir="ltr">
                             {item.publicId}
                           </span>
@@ -413,7 +413,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || isLoading}
-              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs font-bold disabled:opacity-40"
+              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs font-bold disabled:opacity-40"
             >
               السابق
             </button>
@@ -423,7 +423,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages || isLoading}
-              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#251E1A] text-xs font-bold disabled:opacity-40"
+              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs font-bold disabled:opacity-40"
             >
               التالي
             </button>
@@ -434,8 +434,8 @@ export const AdminMediaLibraryPage: React.FC = () => {
       {/* Upload Modal */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#251E1A] rounded-2xl w-full max-w-lg border border-[#E8E0D5] dark:border-[#382E27] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-[#E8E0D5] dark:border-[#382E27] mb-4">
+          <div className="bg-white dark:bg-[#26201B] rounded-2xl w-full max-w-lg border border-[#E8E0D5] dark:border-[#352B24] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-[#E8E0D5] dark:border-[#352B24] mb-4">
               <div className="flex items-center gap-2">
                 <ImageIcon className="w-5 h-5 text-[#8E422D]" />
                 <h3 className="text-base font-bold">رفع وسائط إلى Cloudinary</h3>
@@ -457,7 +457,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 <select
                   value={uploadEntityType}
                   onChange={(e) => setUploadEntityType(e.target.value)}
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF6F0] dark:bg-[#1E1815] text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#1E1815] text-xs sm:text-sm"
                 >
                   {ENTITY_TYPE_OPTIONS.filter((o) => o.value !== 'all').map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -476,7 +476,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   value={uploadEntitySlug}
                   onChange={(e) => setUploadEntitySlug(e.target.value)}
                   placeholder="مثال: meidum-pyramid أو fayesh"
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF6F0] dark:bg-[#1E1815] text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#1E1815] text-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -493,7 +493,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
               helperText="سيتم تنظيم الملفات في مسار WAH/{category}/{slug}"
             />
 
-            <div className="mt-5 pt-4 border-t border-[#E8E0D5] dark:border-[#382E27] flex justify-end">
+            <div className="mt-5 pt-4 border-t border-[#E8E0D5] dark:border-[#352B24] flex justify-end">
               <button
                 onClick={() => {
                   setIsUploadModalOpen(false);

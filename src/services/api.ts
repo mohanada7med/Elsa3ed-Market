@@ -163,6 +163,263 @@ async function dedupedFetch<T>(
   return promise;
 }
 
+export const adminMediaApi = {
+  uploadAdminMedia(
+    user: { id?: string; role?: string },
+    payload: {
+      file?: File | Blob;
+      data?: string;
+      filename?: string;
+      mimeType?: string;
+      entityType: string;
+      entitySlug?: string;
+      entityId?: string;
+      alt?: string;
+      caption?: string;
+      isPrimary?: boolean;
+      addToGallery?: boolean;
+    },
+    onProgress?: (percent: number) => void
+  ): Promise<MediaItem> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API_BASE}/admin/media/upload`, true);
+
+      const rawHeaders = getAuthHeadersRaw(user) as Record<string, string>;
+      for (const [header, val] of Object.entries(rawHeaders)) {
+        xhr.setRequestHeader(header, val);
+      }
+
+      if (xhr.upload && onProgress) {
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            onProgress(percent);
+          }
+        };
+      }
+
+      xhr.onload = () => {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && json.success && json.data) {
+            resolve(json.data);
+          } else {
+            reject(new Error(json.error || `فشل في رفع الصورة (${xhr.status})`));
+          }
+        } catch {
+          reject(new Error('استجابة غير صالحة من خادم رفع الصور'));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('خطأ في الاتصال بالشبكة أثناء رفع الصورة'));
+      };
+
+      if (payload.file) {
+        const formData = new FormData();
+        formData.append('file', payload.file, payload.filename || (payload.file as File).name || 'image.jpg');
+        formData.append('entityType', payload.entityType);
+        if (payload.entitySlug) formData.append('entitySlug', payload.entitySlug);
+        if (payload.entityId) formData.append('entityId', payload.entityId);
+        if (payload.alt) formData.append('alt', payload.alt);
+        if (payload.caption) formData.append('caption', payload.caption);
+        if (payload.isPrimary) formData.append('isPrimary', 'true');
+        if (payload.addToGallery) formData.append('addToGallery', 'true');
+        xhr.send(formData);
+      } else {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(payload));
+      }
+    });
+  },
+
+  async saveAdminMediaUrl(
+    user: { id?: string; role?: string },
+    payload: {
+      url: string;
+      entityType: string;
+      entitySlug?: string;
+      entityId?: string;
+      alt?: string;
+      caption?: string;
+      isPrimary?: boolean;
+      addToGallery?: boolean;
+    }
+  ): Promise<MediaItem> {
+    const res = await fetch(`${API_BASE}/admin/media/url`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في حفظ رابط الصورة');
+    }
+    return json.data;
+  },
+
+  replaceAdminMedia(
+    user: { id?: string; role?: string },
+    mediaId: string,
+    fileOrPayload: File | Blob | { data: string; filename?: string; mimeType?: string; alt?: string },
+    onProgress?: (percent: number) => void
+  ): Promise<MediaItem> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${API_BASE}/admin/media/replace/${encodeURIComponent(mediaId)}`, true);
+
+      const rawHeaders = getAuthHeadersRaw(user) as Record<string, string>;
+      for (const [header, val] of Object.entries(rawHeaders)) {
+        xhr.setRequestHeader(header, val);
+      }
+
+      if (xhr.upload && onProgress) {
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            onProgress(percent);
+          }
+        };
+      }
+
+      xhr.onload = () => {
+        try {
+          const json = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300 && json.success && json.data) {
+            resolve(json.data);
+          } else {
+            reject(new Error(json.error || 'فشل في استبدال الصورة'));
+          }
+        } catch {
+          reject(new Error('استجابة غير صالحة من خادم استبدال الصور'));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('خطأ في الاتصال بالشبكة أثناء استبدال الصورة'));
+      };
+
+      if (fileOrPayload instanceof Blob) {
+        const formData = new FormData();
+        formData.append('file', fileOrPayload);
+        xhr.send(formData);
+      } else {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(fileOrPayload));
+      }
+    });
+  },
+
+  async deleteAdminMedia(
+    user: { id?: string; role?: string },
+    mediaIdOrPublicId: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaIdOrPublicId)}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف الصورة');
+    }
+    return true;
+  },
+
+  async updateAdminMediaMetadata(
+    user: { id?: string; role?: string },
+    mediaId: string,
+    updates: { alt?: string; caption?: string; isPrimary?: boolean }
+  ): Promise<MediaItem> {
+    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaId)}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(updates)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تحديث بيانات الصورة');
+    }
+    return json.data;
+  },
+
+  async setPrimaryAdminMedia(
+    user: { id?: string; role?: string },
+    mediaId: string
+  ): Promise<MediaItem> {
+    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaId)}/primary`, {
+      method: 'POST',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في تعيين الصورة كصورة رئيسية');
+    }
+    return json.data;
+  },
+
+  async reorderGalleryMedia(
+    user: { id?: string; role?: string },
+    payload: { entityType: string; entityId: string; galleryUrls: string[] }
+  ): Promise<{ success: boolean; gallery: string[] }> {
+    const res = await fetch(`${API_BASE}/admin/media/gallery/reorder`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في إعادة ترتيب المعرض');
+    }
+    return json.data;
+  },
+
+  async reassignMediaEntity(
+    user: { id?: string; role?: string },
+    payload: { mediaId: string; targetEntityType: string; targetEntityId?: string; targetEntitySlug?: string }
+  ): Promise<MediaItem> {
+    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(payload.mediaId)}/reassign`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في إعادة تعيين الصورة');
+    }
+    return json.data;
+  },
+
+  async getAdminMediaList(
+    user: { id?: string; role?: string },
+    query?: { search?: string; entityType?: string; folder?: string; entityId?: string; page?: number; limit?: number; sort?: string }
+  ): Promise<{ items: MediaItem[]; total: number; page: number; limit: number; totalPages: number }> {
+    const params = new URLSearchParams();
+    if (query?.search) params.set('search', query.search);
+    if (query?.entityType) params.set('entityType', query.entityType);
+    if (query?.folder) params.set('folder', query.folder);
+    if (query?.entityId) params.set('entityId', query.entityId);
+    if (query?.page) params.set('page', String(query.page));
+    if (query?.limit) params.set('limit', String(query.limit));
+    if (query?.sort) params.set('sort', query.sort);
+
+    const res = await fetch(`${API_BASE}/admin/media?${params.toString()}`, {
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في جلب وسائط المنصة');
+    }
+    return {
+      items: json.items || [],
+      total: json.total || 0,
+      page: json.page || 1,
+      limit: json.limit || 24,
+      totalPages: json.totalPages || 1
+    };
+  }
+};
+
 export const api = {
   // Public Products
   async getPublicProducts(filters?: {
@@ -2431,7 +2688,9 @@ export const api = {
     });
     const json: any = await res.json();
     return json.readCount || 0;
-  }
+  },
+
+  ...adminMediaApi
 };
 
 // ==========================================
@@ -3129,166 +3388,7 @@ export const wahApi = {
   },
 
   // 20. Central Admin Media Management
-  async uploadAdminMedia(
-    user: { id?: string; role?: string },
-    payload: {
-      file?: File | Blob;
-      data?: string;
-      filename?: string;
-      mimeType?: string;
-      entityType: string;
-      entitySlug?: string;
-      entityId?: string;
-      alt?: string;
-      caption?: string;
-      isPrimary?: boolean;
-      addToGallery?: boolean;
-    }
-  ): Promise<MediaItem> {
-    let res: Response;
-    if (payload.file) {
-      const formData = new FormData();
-      formData.append('file', payload.file, payload.filename || (payload.file as File).name || 'image.jpg');
-      formData.append('entityType', payload.entityType);
-      if (payload.entitySlug) formData.append('entitySlug', payload.entitySlug);
-      if (payload.entityId) formData.append('entityId', payload.entityId);
-      if (payload.alt) formData.append('alt', payload.alt);
-      if (payload.caption) formData.append('caption', payload.caption);
-      if (payload.isPrimary) formData.append('isPrimary', 'true');
-      if (payload.addToGallery) formData.append('addToGallery', 'true');
-
-      res = await fetch(`${API_BASE}/admin/media/upload`, {
-        method: 'POST',
-        headers: getAuthHeadersRaw(user),
-        body: formData
-      });
-    } else {
-      res = await fetch(`${API_BASE}/admin/media/upload`, {
-        method: 'POST',
-        headers: getAuthHeaders(user),
-        body: JSON.stringify(payload)
-      });
-    }
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في رفع الصورة إلى Cloudinary');
-    }
-    return json.data;
-  },
-
-  async saveAdminMediaUrl(
-    user: { id?: string; role?: string },
-    payload: {
-      url: string;
-      entityType: string;
-      entitySlug?: string;
-      entityId?: string;
-      alt?: string;
-      caption?: string;
-      isPrimary?: boolean;
-      addToGallery?: boolean;
-    }
-  ): Promise<MediaItem> {
-    const res = await fetch(`${API_BASE}/admin/media/url`, {
-      method: 'POST',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify(payload)
-    });
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في حفظ رابط الصورة');
-    }
-    return json.data;
-  },
-
-  async replaceAdminMedia(
-    user: { id?: string; role?: string },
-    mediaId: string,
-    fileOrPayload: File | Blob | { data: string; filename?: string; mimeType?: string; alt?: string }
-  ): Promise<MediaItem> {
-    let res: Response;
-    if (fileOrPayload instanceof Blob) {
-      const formData = new FormData();
-      formData.append('file', fileOrPayload);
-      res = await fetch(`${API_BASE}/admin/media/replace/${mediaId}`, {
-        method: 'POST',
-        headers: getAuthHeadersRaw(user),
-        body: formData
-      });
-    } else {
-      res = await fetch(`${API_BASE}/admin/media/replace/${mediaId}`, {
-        method: 'POST',
-        headers: getAuthHeaders(user),
-        body: JSON.stringify(fileOrPayload)
-      });
-    }
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في استبدال الصورة');
-    }
-    return json.data;
-  },
-
-  async deleteAdminMedia(
-    user: { id?: string; role?: string },
-    mediaIdOrPublicId: string
-  ): Promise<boolean> {
-    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaIdOrPublicId)}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(user)
-    });
-    const json = await res.json();
-    if (!json.success) {
-      throw new Error(json.error || 'فشل في حذف الصورة');
-    }
-    return true;
-  },
-
-  async updateAdminMediaMetadata(
-    user: { id?: string; role?: string },
-    mediaId: string,
-    updates: { alt?: string; caption?: string; isPrimary?: boolean }
-  ): Promise<MediaItem> {
-    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaId)}`, {
-      method: 'PATCH',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify(updates)
-    });
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في تحديث بيانات الصورة');
-    }
-    return json.data;
-  },
-
-  async getAdminMediaList(
-    user: { id?: string; role?: string },
-    query?: { search?: string; entityType?: string; folder?: string; entityId?: string; page?: number; limit?: number; sort?: string }
-  ): Promise<{ items: MediaItem[]; total: number; page: number; limit: number; totalPages: number }> {
-    const params = new URLSearchParams();
-    if (query?.search) params.set('search', query.search);
-    if (query?.entityType) params.set('entityType', query.entityType);
-    if (query?.folder) params.set('folder', query.folder);
-    if (query?.entityId) params.set('entityId', query.entityId);
-    if (query?.page) params.set('page', String(query.page));
-    if (query?.limit) params.set('limit', String(query.limit));
-    if (query?.sort) params.set('sort', query.sort);
-
-    const res = await fetch(`${API_BASE}/admin/media?${params.toString()}`, {
-      headers: getAuthHeaders(user)
-    });
-    const json = await res.json();
-    if (!json.success) {
-      throw new Error(json.error || 'فشل في جلب وسائط المنصة');
-    }
-    return {
-      items: json.items || [],
-      total: json.total || 0,
-      page: json.page || 1,
-      limit: json.limit || 24,
-      totalPages: json.totalPages || 1
-    };
-  }
+  ...adminMediaApi
 };
 
 

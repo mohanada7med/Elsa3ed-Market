@@ -11,29 +11,29 @@ export const FavoritesPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#8c6b53]">
+      <nav className="flex items-center gap-2 text-xs text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)]">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#943310] transition-colors"
+          className="hover:text-[#943310] dark:hover:text-[var(--wah-primary,#E0633C)] transition-colors"
         >
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-        <span className="text-gray-900 font-bold">قائمة الرغبات والمفضلة</span>
+        <span className="text-gray-900 dark:text-[var(--wah-text,#FAF6F2)] font-bold">قائمة الرغبات والمفضلة</span>
       </nav>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ebdccd] pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 mb-1">
-            <Heart className="w-4 h-4 fill-rose-600" />
+          <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 mb-1">
+            <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
             <span>مجموعتك التراثية المفضلة</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 font-heritage">
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-[var(--wah-text,#FAF6F2)] font-heritage">
             القطع التي نالت إعجابك ({favoriteProducts.length})
           </h1>
-          <p className="text-xs text-[#8c6b53] mt-1">
+          <p className="text-xs text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)] mt-1">
             احفظ القطع الحرفية للرجوع إليها في أي وقت أو إضافتها لسلة التسوق
           </p>
         </div>
@@ -50,18 +50,18 @@ export const FavoritesPage: React.FC = () => {
       </div>
 
       {favoriteProducts.length === 0 ? (
-        <div className="bg-white rounded-3xl border border-[#ebdccd] p-16 text-center space-y-4">
-          <div className="w-20 h-20 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-[var(--wah-surface,#1B1613)] rounded-3xl border border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] p-16 text-center space-y-4">
+          <div className="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400 flex items-center justify-center mx-auto">
             <Heart className="w-10 h-10" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900">قائمة المفضلة فارغة حالياً</h3>
-          <p className="text-xs text-gray-500 max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-[var(--wah-text,#FAF6F2)]">قائمة المفضلة فارغة حالياً</h3>
+          <p className="text-xs text-gray-500 dark:text-[var(--wah-text-muted,#A89B8F)] max-w-sm mx-auto">
             انقر على أيقونة القلب على أي منتج من منتجات الفخار أو الكليم لحفظه في هذه القائمة.
           </p>
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="px-6 py-2.5 bg-[#943310] text-white text-xs font-bold rounded-xl shadow-md"
+            className="px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-md transition-colors"
           >
             استكشف سوق الصعيد الآن
           </button>

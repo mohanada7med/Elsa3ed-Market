@@ -11,3 +11,4 @@ export * from './cards/WAHEditorialCard';
 export * from './cards/WAHGovernorateCard';
 export * from './cards/WAHFoodCard';
 export * from './cards/WAHEventCard';
+export * from './renderIcon';

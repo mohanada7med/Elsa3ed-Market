@@ -8,20 +8,17 @@ export const ALLOWED_MIME_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
-  'image/gif',
-  'image/svg+xml'
+  'image/jpg'
 ];
 
 export const ALLOWED_EXTENSIONS = [
   '.jpg',
   '.jpeg',
   '.png',
-  '.webp',
-  '.gif',
-  '.svg'
+  '.webp'
 ];
 
-export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 export interface ImageValidationResult {
   valid: boolean;
@@ -114,7 +111,7 @@ export function validateImage(
   if (mimeType && !ALLOWED_MIME_TYPES.includes(mimeType)) {
     return {
       valid: false,
-      error: `نوع الملف (${mimeType}) غير مدعوم. الصيغ المدعومة هي JPG، PNG، WebP، GIF، SVG`
+      error: `نوع الملف (${mimeType}) غير مدعوم. الصيغ المدعومة هي JPG و PNG و WebP فقط`
     };
   }
 
@@ -161,7 +158,7 @@ export function validateImage(
       if (!ALLOWED_EXTENSIONS.includes(extension)) {
         return {
           valid: false,
-          error: `امتداد الملف (${extension}) غير مسموح به`
+          error: `امتداد الملف (${extension}) غير مسموح به. الامتدادات المدعومة هي: .jpg, .jpeg, .png, .webp`
         };
       }
 
@@ -174,9 +171,7 @@ export function validateImage(
           '.jpg': 'image/jpeg',
           '.jpeg': 'image/jpeg',
           '.png': 'image/png',
-          '.webp': 'image/webp',
-          '.gif': 'image/gif',
-          '.svg': 'image/svg+xml'
+          '.webp': 'image/webp'
         };
 
         const expectedMimeType = extensionMimeMap[extension];
@@ -212,12 +207,6 @@ export function validateImage(
       buffer[2] === 0x4e &&
       buffer[3] === 0x47;
 
-    // GIF
-    const isGif =
-      buffer[0] === 0x47 &&
-      buffer[1] === 0x49 &&
-      buffer[2] === 0x46;
-
     // WebP
     const isWebp =
       buffer.length >= 12 &&
@@ -230,17 +219,6 @@ export function validateImage(
       buffer[10] === 0x42 &&
       buffer[11] === 0x50;
 
-    // SVG
-    const initialContent = buffer
-      .toString('utf8', 0, Math.min(1000, buffer.length))
-      .trim()
-      .toLowerCase();
-
-    const isSvg =
-      initialContent.includes('<svg') ||
-      initialContent.startsWith('<?xml') &&
-      initialContent.includes('<svg');
-
     // ============================================================
     // Detect actual image type
     // ============================================================
@@ -251,12 +229,8 @@ export function validateImage(
       detectedMimeType = 'image/jpeg';
     } else if (isPng) {
       detectedMimeType = 'image/png';
-    } else if (isGif) {
-      detectedMimeType = 'image/gif';
     } else if (isWebp) {
       detectedMimeType = 'image/webp';
-    } else if (isSvg) {
-      detectedMimeType = 'image/svg+xml';
     }
 
     // ============================================================
@@ -267,7 +241,7 @@ export function validateImage(
       return {
         valid: false,
         error:
-          'الملف المرفوع لا يتطابق مع البنية الثنائية للصور المعتمدة'
+          'الملف المرفوع لا يتطابق مع البنية الثنائية للصور المعتمدة. الصيغ المسموح بها هي JPG و PNG و WEBP فقط'
       };
     }
 

@@ -1,11 +1,49 @@
 import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
+import { ObjectId } from 'mongodb';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { validateImage } from '../utils/imageValidator.ts';
 import { getCloudinaryFolder, sanitizeSlug } from '../utils/cloudinaryFolders.ts';
 import { cloudinaryStorage, isCloudinaryAvailable, extractCloudinaryPublicId } from './storage/cloudinaryProvider.ts';
 import { Logger } from '../utils/logger.ts';
 import type { MediaAssetDoc, UserRole } from '../models/types.ts';
+
+/**
+ * Ensures Cloudinary has active credentials configured, falling back safely
+ * to individual environment variables when CLOUDINARY_URL is a placeholder.
+ */
+function ensureCloudinaryConfig() {
+  const config = cloudinary.config();
+  if (!config.cloud_name || !config.api_key || !config.api_secret || config.api_key.includes('your_api_key')) {
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME.trim(),
+        api_key: process.env.CLOUDINARY_API_KEY.trim(),
+        api_secret: process.env.CLOUDINARY_API_SECRET.trim(),
+        secure: true
+      });
+    }
+  }
+}
+
+/**
+ * Builds a flexible MongoDB filter for matching a media asset by id, _id, or publicId.
+ */
+export function buildMediaIdFilter(mediaIdOrPublicId: string) {
+  const filter: any[] = [
+    { id: mediaIdOrPublicId },
+    { _id: mediaIdOrPublicId },
+    { publicId: mediaIdOrPublicId },
+    { url: mediaIdOrPublicId },
+    { secureUrl: mediaIdOrPublicId }
+  ];
+  if (ObjectId.isValid(mediaIdOrPublicId) && mediaIdOrPublicId.length === 24) {
+    try {
+      filter.push({ _id: new ObjectId(mediaIdOrPublicId) });
+    } catch {}
+  }
+  return { $or: filter };
+}
 
 export interface UploadAdminMediaOptions {
   data: Buffer | string; // Buffer or Base64 string
@@ -198,15 +236,14 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     throw new Error(validation.error || 'ملف الصورة غير صالح أو يتجاوز الحجم المسموح');
   }
 
-  // 3. Resolve Standardized Cloudinary Folder via Whitelisted Function
-  const targetFolder = getCloudinaryFolder({
-    type: entityType,
-    entitySlug: entitySlug || entityId
-  });
+  // 3. Resolve Standardized Cloudinary Folder via Whitelisted Central Function
+  const targetFolder = getCloudinaryFolder(entityType, entitySlug || entityId);
 
   if (!isCloudinaryAvailable()) {
     throw new Error('خدمة Cloudinary غير مهيأة أو غير متوفرة في بيئة العمل');
   }
+
+  ensureCloudinaryConfig();
 
   // 4. Generate Safe Public ID
   const cleanName = sanitizeSlug(filename.replace(/\.[^/.]+$/, '')) || 'img';
@@ -262,7 +299,8 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
   const mediaId = `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   const suggestedAlt = alt || `${filename || 'صورة'} - منصة وه للتراث`;
 
-  const mediaDoc: MediaAssetDoc = {
+  const mediaDoc: any = {
+    _id: mediaId,
     id: mediaId,
     title: suggestedAlt,
     url: uploadResult.secure_url,
@@ -350,11 +388,12 @@ export async function saveExternalUrlMedia(options: ExternalUrlMediaOptions): Pr
   }
 
   const publicId = extractCloudinaryPublicId(trimmed) || undefined;
-  const folder = getCloudinaryFolder({ type: entityType, entitySlug: entitySlug || entityId });
+  const folder = getCloudinaryFolder(entityType, entitySlug || entityId);
   const mediaId = `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   const title = alt || 'صورة خارجية موثقة';
 
-  const mediaDoc: MediaAssetDoc = {
+  const mediaDoc: any = {
+    _id: mediaId,
     id: mediaId,
     title,
     url: trimmed,
@@ -404,9 +443,7 @@ export async function replaceAdminMedia(options: ReplaceAdminMediaOptions): Prom
   let existingMedia: MediaAssetDoc | null = null;
 
   if (isMongo && db) {
-    existingMedia = await db.collection<MediaAssetDoc>('wah_media').findOne({
-      $or: [{ id: mediaId }, { _id: mediaId } as any]
-    });
+    existingMedia = await db.collection<MediaAssetDoc>('wah_media').findOne(buildMediaIdFilter(mediaId));
   }
   if (!existingMedia) {
     existingMedia = memoryDb.media.find((m) => m.id === mediaId) || null;
@@ -450,11 +487,11 @@ export async function replaceAdminMedia(options: ReplaceAdminMediaOptions): Prom
 
   if (isMongo && db) {
     await db.collection<MediaAssetDoc>('wah_media').updateOne(
-      { $or: [{ id: mediaId }, { _id: mediaId } as any] },
+      buildMediaIdFilter(mediaId),
       { $set: updatedDoc }
     );
     // Delete the temporary single media doc created by uploadAdminMedia since we updated the existing one
-    await db.collection('wah_media').deleteOne({ id: newMedia.id });
+    await db.collection('wah_media').deleteOne(buildMediaIdFilter(newMedia.id));
   }
 
   // Update in-memory
@@ -518,15 +555,7 @@ export async function deleteAdminMedia(
   let mediaDoc: MediaAssetDoc | null = null;
 
   if (isMongo && db) {
-    mediaDoc = await db.collection<MediaAssetDoc>('wah_media').findOne({
-      $or: [
-        { id: mediaIdOrPublicId },
-        { _id: mediaIdOrPublicId } as any,
-        { publicId: mediaIdOrPublicId },
-        { url: mediaIdOrPublicId },
-        { secureUrl: mediaIdOrPublicId }
-      ]
-    });
+    mediaDoc = await db.collection<MediaAssetDoc>('wah_media').findOne(buildMediaIdFilter(mediaIdOrPublicId));
   }
   if (!mediaDoc) {
     mediaDoc =
@@ -546,6 +575,7 @@ export async function deleteAdminMedia(
   // 1. Destroy asset from Cloudinary
   let cloudinaryDeleted = false;
   if (targetPublicId && isCloudinaryAvailable()) {
+    ensureCloudinaryConfig();
     try {
       const res = await cloudinary.uploader.destroy(targetPublicId);
       cloudinaryDeleted = res.result === 'ok' || res.result === 'not found';
@@ -580,14 +610,7 @@ export async function deleteAdminMedia(
 
   // 3. Remove document from MongoDB wah_media collection
   if (isMongo && db) {
-    await db.collection('wah_media').deleteMany({
-      $or: [
-        { id: mediaIdOrPublicId },
-        { _id: mediaIdOrPublicId } as any,
-        { publicId: targetPublicId },
-        { url: targetUrl }
-      ]
-    });
+    await db.collection('wah_media').deleteMany(buildMediaIdFilter(mediaIdOrPublicId));
   }
 
   // Remove from in-memory fallback
@@ -627,7 +650,7 @@ export async function updateAdminMediaMetadata(
     const res = await db
       .collection<MediaAssetDoc>('wah_media')
       .findOneAndUpdate(
-        { $or: [{ id: mediaId }, { _id: mediaId } as any] },
+        buildMediaIdFilter(mediaId),
         { $set: setObj },
         { returnDocument: 'after' }
       );
@@ -647,6 +670,141 @@ export async function updateAdminMediaMetadata(
   }
 
   return updatedDoc;
+}
+
+/**
+ * Sets an image as primary for an entity and updates the entity's coverImage.
+ */
+export async function setPrimaryAdminMedia(
+  mediaId: string,
+  user: { id: string; role: UserRole }
+): Promise<MediaAssetDoc | null> {
+  if (!user || user.role !== 'admin') {
+    throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let mediaDoc: MediaAssetDoc | null = null;
+
+  if (isMongo && db) {
+    mediaDoc = await db.collection<MediaAssetDoc>('wah_media').findOne(buildMediaIdFilter(mediaId));
+  }
+  if (!mediaDoc) {
+    mediaDoc = memoryDb.media.find((m) => m.id === mediaId) || null;
+  }
+
+  if (!mediaDoc) {
+    throw new Error('سجل الصورة المطلوب غير موجود');
+  }
+
+  // Unset isPrimary for other media belonging to this entity
+  if (mediaDoc.entityType && mediaDoc.entityId) {
+    if (isMongo && db) {
+      await db.collection<MediaAssetDoc>('wah_media').updateMany(
+        { entityType: mediaDoc.entityType, entityId: mediaDoc.entityId },
+        { $set: { isPrimary: false, updatedAt: new Date().toISOString() } }
+      );
+    }
+    memoryDb.media.forEach((m) => {
+      if (m.entityType === mediaDoc!.entityType && m.entityId === mediaDoc!.entityId) {
+        m.isPrimary = false;
+      }
+    });
+  }
+
+  // Set isPrimary = true on this media doc
+  return await updateAdminMediaMetadata(mediaId, { isPrimary: true }, user);
+}
+
+/**
+ * Reorders the gallery array for an entity.
+ */
+export async function reorderGalleryMedia(options: {
+  entityType: string;
+  entityId: string;
+  galleryUrls: string[];
+  user: { id: string; role: UserRole };
+}): Promise<{ success: boolean; gallery: string[] }> {
+  const { entityType, entityId, galleryUrls, user } = options;
+
+  if (!user || user.role !== 'admin') {
+    throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
+  }
+
+  if (!entityId || !Array.isArray(galleryUrls)) {
+    throw new Error('بيانات إعادة ترتيب المعرض غير مكتملة');
+  }
+
+  const collectionName = getEntityCollectionName(entityType);
+  if (!collectionName) {
+    throw new Error(`نوع الكيان ${entityType} غير مدعوم للمعرض`);
+  }
+
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    await db.collection(collectionName).updateOne(
+      { $or: [{ id: entityId }, { _id: entityId } as any] },
+      { $set: { gallery: galleryUrls, updatedAt: new Date().toISOString() } }
+    );
+  }
+
+  return { success: true, gallery: galleryUrls };
+}
+
+/**
+ * Reassigns an image asset to another entity or updates its slug/folder.
+ */
+export async function reassignMediaEntity(options: {
+  mediaId: string;
+  targetEntityType: string;
+  targetEntityId?: string;
+  targetEntitySlug?: string;
+  user: { id: string; role: UserRole };
+}): Promise<MediaAssetDoc | null> {
+  const { mediaId, targetEntityType, targetEntityId, targetEntitySlug, user } = options;
+
+  if (!user || user.role !== 'admin') {
+    throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let mediaDoc: MediaAssetDoc | null = null;
+
+  if (isMongo && db) {
+    mediaDoc = await db.collection<MediaAssetDoc>('wah_media').findOne(buildMediaIdFilter(mediaId));
+  }
+  if (!mediaDoc) {
+    mediaDoc = memoryDb.media.find((m) => m.id === mediaId) || null;
+  }
+
+  if (!mediaDoc) {
+    throw new Error('سجل الصورة المطلوب غير موجود');
+  }
+
+  const newFolder = getCloudinaryFolder(targetEntityType, targetEntitySlug || targetEntityId);
+
+  const updateFields: Partial<MediaAssetDoc> = {
+    entityType: targetEntityType,
+    entityId: targetEntityId,
+    entitySlug: sanitizeSlug(targetEntitySlug),
+    folder: newFolder,
+    category: targetEntityType as any,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (isMongo && db) {
+    await db.collection<MediaAssetDoc>('wah_media').updateOne(
+      { $or: [{ id: mediaId }, { _id: mediaId } as any] },
+      { $set: updateFields }
+    );
+  }
+
+  const idx = memoryDb.media.findIndex((m) => m.id === mediaId);
+  if (idx !== -1) {
+    memoryDb.media[idx] = { ...memoryDb.media[idx], ...updateFields };
+  }
+
+  return { ...mediaDoc, ...updateFields };
 }
 
 /**

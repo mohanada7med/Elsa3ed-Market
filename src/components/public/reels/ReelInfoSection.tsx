@@ -71,7 +71,7 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
         {/* Governorate Tag */}
         {reel.governorate && (
           <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-xs border border-white/15 text-[10px] font-medium text-amber-200/90 shrink-0">
-            <MapPin className="w-2.5 h-2.5 text-[#B45F42]" />
+            <MapPin className="w-2.5 h-2.5 text-[#B24C2B]" />
             <span>{reel.governorate}</span>
           </span>
         )}

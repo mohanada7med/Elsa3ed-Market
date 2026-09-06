@@ -244,7 +244,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | null>(null);
 
-export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg';
+export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
 
 export const GUEST_USER: UserProfile = {
   id: '',
@@ -395,7 +395,8 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-discounts': '/admin-discounts',
   'admin-reports': '/admin-reports',
   'admin-audit-logs': '/admin-audit-logs',
-  'admin-settings': '/admin-settings'
+  'admin-settings': '/admin-settings',
+  'admin-media': '/admin-media'
 };
 
 function getInitialNavigationState(): {
@@ -438,7 +439,7 @@ function getInitialNavigationState(): {
   // 1. Direct Deep-Linking Priority via Explicit Query Parameters (Works regardless of pathname)
   const reelId = params.get('reel') || params.get('reelId');
   if (reelId) {
-    try { sessionStorage.setItem('wah_selected_reel_id', reelId); } catch {}
+    try { sessionStorage.setItem('wah_selected_reel_id', reelId); } catch { }
     return { page: 'reels', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
@@ -575,7 +576,7 @@ function getInitialNavigationState(): {
   if (path === '/reels' || path.startsWith('/reels/')) {
     const rId = path.startsWith('/reels/') ? path.split('/')[2] : null;
     if (rId) {
-      try { sessionStorage.setItem('wah_selected_reel_id', rId); } catch {}
+      try { sessionStorage.setItem('wah_selected_reel_id', rId); } catch { }
     }
     return { page: 'reels', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
@@ -1072,12 +1073,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         localStorage.removeItem('saeed_cart');
         localStorage.removeItem('saeed_favorites');
-      } catch {}
+      } catch { }
       return;
     }
     try {
       localStorage.setItem('saeed_cart', JSON.stringify(cart));
-    } catch {}
+    } catch { }
   }, [cart, currentRole]);
 
   useEffect(() => {
@@ -1086,7 +1087,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     try {
       localStorage.setItem('saeed_favorites', JSON.stringify(favorites));
-    } catch {}
+    } catch { }
   }, [favorites, currentRole]);
 
   // Fetch Public Products from backend
@@ -1294,7 +1295,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsCartDrawerOpen(false);
       try {
         localStorage.removeItem('saeed_cart');
-      } catch {}
+      } catch { }
     }
   }, [currentRole, currentUser.id]);
 
@@ -1403,7 +1404,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               );
             }
           }
-        } catch {}
+        } catch { }
       });
 
       eventSource.addEventListener('chat:message_read', () => {

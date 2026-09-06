@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from 'next';
 import '../src/index.css';
 
 export const metadata: Metadata = {
-  title: 'وه | WAH — العالم الرقمي لصعيد مصر',
+  title: 'وه - WAH العالم الرقمي لصعيد مصر',
   description:
     'وه — كل حكاية ليها أصل. منصة رقمية شاملة لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس وحكايات وصناع صعيد مصر، وسوق وه للحرف التراثية.',
   icons: {
-    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png',
-    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png',
+    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png',
+    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png',
   },
   openGraph: {
     title: 'وه | WAH — العالم الرقمي لصعيد مصر',
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#9a3412',
+  themeColor: '#B24C2B',
   width: 'device-width',
   initialScale: 1,
 };
@@ -37,7 +37,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#faf6f0] text-[#29221d] antialiased selection:bg-[#c25e2e]/20 selection:text-[#802a0a]">
+      <body className="bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] antialiased selection:bg-[var(--wah-primary,#B24C2B)]/20 selection:text-[var(--wah-primary,#B24C2B)]">
         {children}
       </body>
     </html>

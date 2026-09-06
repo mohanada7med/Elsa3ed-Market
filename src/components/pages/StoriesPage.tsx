@@ -173,7 +173,7 @@ export const StoriesPage: React.FC = () => {
           </div>
         ) : filteredStories.length === 0 ? (
           <WAHEmptyState
-            icon={BookOpen}
+            icon={<BookOpen className="w-8 h-8 sm:w-10 sm:h-10" />}
             title="لم يتم العثور على حكايات مطابقة"
             description="جرب البحث بكلمات أخرى أو تغيير تصنيف الحكاية لاستكشاف مرويات الصعيد."
             actionLabel="إعادة ضبط الفلاتر"

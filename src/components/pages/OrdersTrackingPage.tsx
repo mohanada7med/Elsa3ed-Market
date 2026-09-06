@@ -74,11 +74,11 @@ export const OrdersTrackingPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#7A6F64] dark:text-[#A89C90]">
+      <nav className="flex items-center gap-2 text-xs text-[#73675B] dark:text-[#A89C90]">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors"
         >
           الرئيسية
         </button>
@@ -87,7 +87,7 @@ export const OrdersTrackingPage: React.FC = () => {
       </nav>
 
       {/* Page Header */}
-      <div className="bg-[#1F1916] rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#382E27]">
+      <div className="bg-[#1F1916] rounded-3xl p-6 sm:p-10 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#352B24]">
         <div className="space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-300 text-xs font-bold">
             <Truck className="w-3.5 h-3.5" />
@@ -113,7 +113,7 @@ export const OrdersTrackingPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer min-h-[42px]"
+            className="px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer min-h-[42px]"
           >
             تسوق المزيد من القطع
           </button>
@@ -121,8 +121,8 @@ export const OrdersTrackingPage: React.FC = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-16 text-center space-y-4">
-          <div className="w-20 h-20 rounded-full bg-[#FAF6F0] dark:bg-[#25201D] text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-16 text-center space-y-4">
+          <div className="w-20 h-20 rounded-full bg-[#FAF7F2] dark:bg-[#26201B] text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center mx-auto">
             <ShoppingBag className="w-10 h-10 opacity-60" />
           </div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-[#FAF6F2]">لا توجد لديك طلبات سابقة حتى الآن</h3>
@@ -132,7 +132,7 @@ export const OrdersTrackingPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
+            className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
           >
             استكشف سوق وه
           </button>
@@ -156,12 +156,12 @@ export const OrdersTrackingPage: React.FC = () => {
                     onClick={() => setSelectedOrder(ord)}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
                       isSelected
-                        ? 'bg-white dark:bg-[#1E1917] border-[#B45F42] shadow-md ring-1 ring-[#B45F42]'
-                        : 'bg-white dark:bg-[#1E1917] border-[#E8E1D9] dark:border-[#382E27] hover:border-amber-400'
+                        ? 'bg-white dark:bg-[#1E1917] border-[#B24C2B] shadow-md ring-1 ring-[#B24C2B]'
+                        : 'bg-white dark:bg-[#1E1917] border-[#E5DDD3] dark:border-[#352B24] hover:border-amber-400'
                     } ${isCancelled ? 'opacity-75 bg-gray-50/50 dark:bg-stone-900/50' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-mono font-bold text-xs text-[#B45F42] dark:text-[#FF855D]">
+                      <span className="font-mono font-bold text-xs text-[#B24C2B] dark:text-[#FF855D]">
                         {ord.orderNumber || ord.id}
                       </span>
                       <span
@@ -203,7 +203,7 @@ export const OrdersTrackingPage: React.FC = () => {
 
                     <div className="flex items-center justify-between text-[11px] text-gray-400 dark:text-stone-400 pt-2 border-t border-gray-100 dark:border-[#2A2320]">
                       <span>تاريخ الطلب: {ord.createdAt ? ord.createdAt.substring(0, 10) : 'اليوم'}</span>
-                      <span className="text-[#B45F42] dark:text-[#FF855D] font-semibold">عرض التفاصيل ←</span>
+                      <span className="text-[#B24C2B] dark:text-[#FF855D] font-semibold">عرض التفاصيل ←</span>
                     </div>
                   </div>
                 );
@@ -214,11 +214,11 @@ export const OrdersTrackingPage: React.FC = () => {
           {/* Active Order Tracking Timeline Detail */}
           {currentSelected && (
             <div className="lg:col-span-7 space-y-6">
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-4 sm:p-8 shadow-xs space-y-6">
+              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-4 sm:p-8 shadow-xs space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#F0EAE1] dark:border-[#2C2420] pb-4">
                   <div>
-                    <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] block">تفاصيل الطلب النشط:</span>
+                    <span className="text-xs text-[#73675B] dark:text-[#A89C90] block">تفاصيل الطلب النشط:</span>
                     <h2 className="text-lg font-bold font-mono text-gray-900 dark:text-[#FAF6F2]">
                       {currentSelected.orderNumber || currentSelected.id}
                     </h2>
@@ -231,7 +231,7 @@ export const OrdersTrackingPage: React.FC = () => {
 
                   <div className="text-left sm:text-left">
                     <span className="text-xs text-gray-400 block">الإجمالي النهائي:</span>
-                    <span className="text-lg font-black text-[#B45F42] dark:text-[#FF855D]">{currentSelected.total} ج.م</span>
+                    <span className="text-lg font-black text-[#B24C2B] dark:text-[#FF855D]">{currentSelected.total} ج.م</span>
                   </div>
                 </div>
 
@@ -251,7 +251,7 @@ export const OrdersTrackingPage: React.FC = () => {
                   <div className="space-y-4">
                     <h4 className="text-xs font-bold text-gray-900 dark:text-[#FAF6F2]">مراحل الشحن والتجهيز:</h4>
 
-                    <div className="relative pr-6 space-y-6 before:absolute before:right-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E8E1D9] dark:before:bg-[#382E27]">
+                    <div className="relative pr-6 space-y-6 before:absolute before:right-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#E5DDD3] dark:before:bg-[#352B24]">
                       {STATUS_STEPS.map((step, idx) => {
                         const currentIdx = getStepIndex(currentSelected.status);
                         const isPastOrCurrent = idx <= currentIdx;
@@ -262,8 +262,8 @@ export const OrdersTrackingPage: React.FC = () => {
                             <div
                               className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 -mr-6.5 ${
                                 isPastOrCurrent
-                                  ? 'bg-[#B45F42] text-white ring-4 ring-[#B45F42]/20'
-                                  : 'bg-[#E8E1D9] dark:bg-[#382E27] text-gray-400'
+                                  ? 'bg-[#B24C2B] text-white ring-4 ring-[#B24C2B]/20'
+                                  : 'bg-[#E5DDD3] dark:bg-[#352B24] text-gray-400'
                               }`}
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -273,7 +273,7 @@ export const OrdersTrackingPage: React.FC = () => {
                               <h5
                                 className={`text-xs font-bold ${
                                   isCurrent
-                                    ? 'text-[#B45F42] dark:text-[#FF855D]'
+                                    ? 'text-[#B24C2B] dark:text-[#FF855D]'
                                     : isPastOrCurrent
                                     ? 'text-gray-900 dark:text-[#FAF6F2]'
                                     : 'text-gray-400 dark:text-stone-500'
@@ -291,9 +291,9 @@ export const OrdersTrackingPage: React.FC = () => {
                 )}
 
                 {/* Shipping Destination Box */}
-                <div className="bg-[#FAF6F0] dark:bg-[#151210] p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] text-xs text-gray-700 dark:text-[#FAF6F2] space-y-2">
+                <div className="bg-[#FAF7F2] dark:bg-[#110E0C] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] text-xs text-gray-700 dark:text-[#FAF6F2] space-y-2">
                   <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FAF6F2]">
-                    <MapPin className="w-4 h-4 text-[#B45F42] dark:text-[#FF855D]" />
+                    <MapPin className="w-4 h-4 text-[#B24C2B] dark:text-[#FF855D]" />
                     <span>
                       عنوان التوصيل:{' '}
                       {currentSelected.shippingAddress?.governorate || 'المحافظة'} -{' '}
@@ -337,18 +337,18 @@ export const OrdersTrackingPage: React.FC = () => {
                             <img
                               src={img}
                               alt={title}
-                              className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9] dark:border-[#382E27]"
+                              className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24]"
                             />
                             <div>
                               <span className="font-bold text-gray-900 dark:text-[#FAF6F2] block">{title}</span>
-                              <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90]">
+                              <span className="text-[10px] text-[#73675B] dark:text-[#A89C90]">
                                 {sellerName} • محافظة {sellerGov}
                               </span>
                             </div>
                           </div>
 
                           <div className="text-left">
-                            <span className="font-bold text-[#B45F42] dark:text-[#FF855D] block">
+                            <span className="font-bold text-[#B24C2B] dark:text-[#FF855D] block">
                               {price * qty} ج.م
                             </span>
                             <span className="text-[10px] text-gray-400">الكمية: {qty}</span>

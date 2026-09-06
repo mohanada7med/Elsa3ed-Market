@@ -2,9 +2,10 @@ import React from 'react';
 import { WAHPattern } from './WAHPattern';
 import { WAHButton } from './WAHButton';
 import { PatternType } from './tokens';
+import { renderIcon } from './renderIcon';
 
-interface WAHEmptyStateProps {
-  icon?: React.ReactNode;
+export interface WAHEmptyStateProps {
+  icon?: React.ElementType | React.ReactNode;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -22,6 +23,8 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
   pattern = 'pottery',
   className = ''
 }) => {
+  const renderedIcon = renderIcon(icon, 'w-8 h-8 sm:w-10 sm:h-10');
+
   return (
     <div
       className={`relative min-h-[300px] sm:min-h-[360px] flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-3xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] bg-white dark:bg-[var(--wah-surface,#1B1613)] overflow-hidden ${className}`}
@@ -29,9 +32,9 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
       <WAHPattern type={pattern} opacity={0.05} />
 
       <div className="relative z-10 max-w-md mx-auto space-y-4">
-        {icon && (
+        {renderedIcon && (
           <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-[var(--wah-primary-light,rgba(178,76,43,0.1))] text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] flex items-center justify-center border border-[var(--wah-primary,#B24C2B)]/20 shadow-xs">
-            {icon}
+            {renderedIcon}
           </div>
         )}
 

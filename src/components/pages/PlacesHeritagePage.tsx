@@ -185,7 +185,7 @@ export const PlacesHeritagePage: React.FC = () => {
           </div>
         ) : filteredPlaces.length === 0 ? (
           <WAHEmptyState
-            icon={Landmark}
+            icon={<Landmark className="w-8 h-8 sm:w-10 sm:h-10" />}
             title="لم يتم العثور على معالم مطابقة"
             description="جرب البحث بكلمة أخرى أو تعديل تصنيف العصر والمحافظة."
             actionLabel="إعادة ضبط الفلاتر"

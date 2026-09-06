@@ -22,18 +22,62 @@ export const HeroSection: React.FC = () => {
 
   return (
     <div className="relative bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] border-b border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] overflow-hidden transition-colors duration-300">
-      {/* Background Architectural Patterns */}
-      <div className="absolute inset-0 pointer-events-none opacity-45 dark:opacity-20">
-        <WAHPattern type="geometry" className="w-full h-full text-[var(--wah-border,#E5DDD3)] dark:text-[var(--wah-border,#352B24)]" />
-      </div>
+      {/* =========================================================================
+          HERO CULTURAL BACKGROUND (باترن صعيدي تراثي خفيف وأنيق - للموبايل وكل الشاشات)
+          Upper Egyptian Kilim & Tally Heritage Pattern with Ambient Radial Fade
+         ========================================================================= */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+        {/* 1. Seamless Upper Egyptian Heritage Pattern (باترن التلي والكليم الصعيدي الأصيل) */}
+        <div
+          className="absolute inset-0 opacity-[0.10] dark:opacity-[0.15]"
+          style={{
+            maskImage: 'radial-gradient(ellipse 90% 80% at 50% 45%, black 40%, transparent 95%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 90% 80% at 50% 45%, black 40%, transparent 95%)'
+          }}
+        >
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern
+                id="wahUpperEgyptHeritagePattern"
+                width="48"
+                height="48"
+                patternUnits="userSpaceOnUse"
+              >
+                {/* Outer Kilim Diamond Grid (معينات الكليم الصعيدي) */}
+                <path
+                  d="M24 0 L48 24 L24 48 L0 24 Z"
+                  fill="none"
+                  stroke="var(--wah-primary, #B24C2B)"
+                  strokeWidth="0.9"
+                />
+                {/* Inner Tally Diamond (معين التلي الأسيوطي المنقط) */}
+                <path
+                  d="M24 9 L39 24 L24 39 L9 24 Z"
+                  fill="none"
+                  stroke="var(--wah-accent, #D97724)"
+                  strokeWidth="0.75"
+                  strokeDasharray="2 3"
+                />
+                {/* Traditional Tally Metal Cross (علامة التلي التقليدية) */}
+                <line x1="24" y1="16" x2="24" y2="32" stroke="var(--wah-secondary, #264653)" strokeWidth="0.8" />
+                <line x1="16" y1="24" x2="32" y2="24" stroke="var(--wah-secondary, #264653)" strokeWidth="0.8" />
+                {/* Interlocking Nubian Corner Chevron Ticks (أركان الشرفات النوبية) */}
+                <path
+                  d="M0 0 L6 6 M48 0 L42 6 M0 48 L6 42 M48 48 L42 42"
+                  stroke="var(--wah-primary, #B24C2B)"
+                  strokeWidth="0.65"
+                />
+              </pattern>
+            </defs>
 
-      {/* Radiant atmospheric glow */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[var(--wah-primary-light,rgba(178,76,43,0.12))] blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-[var(--wah-accent-light,rgba(217,119,36,0.1))] blur-3xl pointer-events-none" />
+            <rect width="100%" height="100%" fill="url(#wahUpperEgyptHeritagePattern)" />
+          </svg>
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-          
+
           {/* Main Hero Narrative */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -181,7 +225,7 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.55, duration: 0.5 }}
-              className="pt-6 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] grid grid-cols-4 gap-2 sm:gap-4 max-w-xl"
+              className="pt-6 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-xl"
             >
               <div>
                 <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">10</span>
@@ -223,7 +267,7 @@ export const HeroSection: React.FC = () => {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[var(--wah-text,#241E1A)]/90 via-transparent to-black/20" />
-                  
+
                   {/* Photo overlay info */}
                   <div className="absolute bottom-4 right-4 left-4 text-right">
                     <span className="text-[11px] font-bold text-[var(--wah-accent-light,#FDF3E7)] bg-[var(--wah-text,#241E1A)]/60 px-2.5 py-1 rounded-md backdrop-blur-md inline-block mb-1">

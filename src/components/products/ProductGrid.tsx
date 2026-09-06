@@ -90,7 +90,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
   if (filteredProducts.length === 0) {
     return (
       <WAHEmptyState
-        icon={PackageOpen}
+        icon={<PackageOpen className="w-8 h-8 sm:w-10 sm:h-10" />}
         title="لم يتم العثور على قطع مطابقة"
         description="جرب تغيير كلمات البحث، أو إلغاء بعض الفلاتر لاستكشاف المزيد من روائع الحرف التراثية الصعيدية الأصيلة."
         actionLabel="إعادة ضبط البحث والتصفية"

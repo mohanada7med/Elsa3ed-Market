@@ -99,11 +99,11 @@ export const WholesalePage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-bold text-[#7A6F64] dark:text-[#9C8F82]">
+      <div className="flex items-center gap-2 text-xs font-bold text-[#73675B] dark:text-[#9C8F82]">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors"
         >
           الرئيسية
         </button>
@@ -114,7 +114,7 @@ export const WholesalePage: React.FC = () => {
       {/* Hero Section */}
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2D221C] via-[#38281F] to-[#1C1410] text-white p-6 sm:p-12 border border-[#523C2F] shadow-2xl">
         {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#B45F42]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#B24C2B]/20 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -136,7 +136,7 @@ export const WholesalePage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#quotation-form"
-                className="px-6 py-3.5 rounded-2xl bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold text-sm shadow-lg shadow-[#B45F42]/30 transition-all hover:scale-105 flex items-center gap-2"
+                className="px-6 py-3.5 rounded-2xl bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold text-sm shadow-lg shadow-[#B24C2B]/30 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
                 <span>طلب عرض أسعار فوري</span>
@@ -196,23 +196,23 @@ export const WholesalePage: React.FC = () => {
           <h2 className="text-2xl sm:text-3xl font-black font-heritage text-[#2D2A26] dark:text-[#FAF6F2]">
             شرائح وتخفيضات البيع بالجملة
           </h2>
-          <p className="text-sm text-[#7A6F64] dark:text-[#DDD2C7]">
+          <p className="text-sm text-[#73675B] dark:text-[#DDD2C7]">
             نظام تسعير شفاف وتنافسي يتدرج بناءً على حجم الطلبية لخدمة كافة فئات التجار والمنشآت.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tier 1 */}
-          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs space-y-4 relative">
+          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs space-y-4 relative">
             <div className="inline-block px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs font-bold">
               الشريحة الأولى: كميات صغيرة
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">من 5 إلى 15 قطعة</h3>
-            <p className="text-3xl font-black text-[#B45F42] dark:text-[#FF855D]">خصم 15%</p>
+            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">خصم 15%</p>
             <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
               مثالية للمتاجر الناشئة، البازارات الصغيرة، وهدايا الفعاليات الخاصة.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#382E27]">
+            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#352B24]">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>إمكانية تشكيل المنتجات من نفس الفئة</span>
@@ -229,19 +229,19 @@ export const WholesalePage: React.FC = () => {
           </div>
 
           {/* Tier 2 (Highlighted) */}
-          <div className="bg-[#FAF6F0] dark:bg-[#221C18] p-6 rounded-3xl border-2 border-[#B45F42] dark:border-[#FF855D] shadow-lg relative transform md:-translate-y-2">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#B45F42] text-white text-[11px] font-bold py-1 px-4 rounded-full shadow-xs">
+          <div className="bg-[#FAF7F2] dark:bg-[#221C18] p-6 rounded-3xl border-2 border-[#B24C2B] dark:border-[#FF855D] shadow-lg relative transform md:-translate-y-2">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#B24C2B] text-white text-[11px] font-bold py-1 px-4 rounded-full shadow-xs">
               الأكثر طلباً للفنادق والمطاعم
             </div>
-            <div className="inline-block px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-[#B45F42] dark:text-[#FF855D] text-xs font-bold mt-2">
+            <div className="inline-block px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-[#B24C2B] dark:text-[#FF855D] text-xs font-bold mt-2">
               الشريحة الثانية: كميات متوسطة
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">من 16 إلى 50 قطعة</h3>
-            <p className="text-3xl font-black text-[#B45F42] dark:text-[#FF855D]">خصم 25%</p>
+            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">خصم 25%</p>
             <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
               تناسب تأثيث وتجهيز الفنادق التراثية، المطاعم، والمجموعات الديكورية.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-200 dark:border-[#382E27]">
+            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-200 dark:border-[#352B24]">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>إمكانية طلب عينة مدفوعة قبل الاعتماد</span>
@@ -258,16 +258,16 @@ export const WholesalePage: React.FC = () => {
           </div>
 
           {/* Tier 3 */}
-          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs space-y-4">
             <div className="inline-block px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs font-bold">
               الشريحة الكبرى: توريدات وتصدير
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">أكثر من 50 قطعة</h3>
-            <p className="text-3xl font-black text-[#B45F42] dark:text-[#FF855D]">تسعير ورش مخصص</p>
+            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">تسعير ورش مخصص</p>
             <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
               لكبار المستوردين، الشركات الهندسية، وسلاسل القرى السياحية العالمية.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#382E27]">
+            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#352B24]">
               <li className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>تخفيضات استثنائية تصل إلى 40%</span>
@@ -286,7 +286,7 @@ export const WholesalePage: React.FC = () => {
       </div>
 
       {/* Interactive Quotation Form Section */}
-      <div id="quotation-form" className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-10 shadow-lg">
+      <div id="quotation-form" className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-10 shadow-lg">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-5 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
@@ -298,13 +298,13 @@ export const WholesalePage: React.FC = () => {
               اطلب عرض سعر لطلبية الجملة الآن
             </h2>
 
-            <p className="text-sm text-[#7A6F64] dark:text-[#DDD2C7] leading-relaxed">
+            <p className="text-sm text-[#73675B] dark:text-[#DDD2C7] leading-relaxed">
               املأ البيانات أدناه، وسيقوم مسؤول مبيعات الجملة في سوق وه بإعداد جدول الكميات والأسعار والتواصل معك هاتفياً وعبر الواتساب خلال أقل من 3 ساعات.
             </p>
 
             {/* Direct Contact Card */}
-            <div className="p-4 bg-[#FAF6F0] dark:bg-[#221C18] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] space-y-3">
-              <p className="text-xs font-bold text-[#B45F42] dark:text-[#FF855D]">أو تواصل معنا مباشرة:</p>
+            <div className="p-4 bg-[#FAF7F2] dark:bg-[#221C18] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-3">
+              <p className="text-xs font-bold text-[#B24C2B] dark:text-[#FF855D]">أو تواصل معنا مباشرة:</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
                   <MessageCircle className="w-5 h-5" />
@@ -358,7 +358,7 @@ export const WholesalePage: React.FC = () => {
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="مثال: فندق قصر النيل، بازار الأقصر..."
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                     />
                   </div>
 
@@ -372,7 +372,7 @@ export const WholesalePage: React.FC = () => {
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                       placeholder="الاسم الثلاثي"
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                     />
                   </div>
                 </div>
@@ -388,7 +388,7 @@ export const WholesalePage: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="01XXXXXXXXX"
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none font-mono"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none font-mono"
                     />
                   </div>
 
@@ -399,7 +399,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={businessType}
                       onChange={(e) => setBusinessType(e.target.value)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                     >
                       {businessTypes.map((b) => (
                         <option key={b.id} value={b.id}>
@@ -418,7 +418,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={governorate}
                       onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                     >
                       <option value="القاهرة">القاهرة</option>
                       <option value="الجيزة">الجيزة</option>
@@ -443,7 +443,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={estimatedQuantity}
                       onChange={(e) => setEstimatedQuantity(e.target.value)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                     >
                       <option value="5-15 قطعة (شريحة أولى)">5 - 15 قطعة (خصم 15%)</option>
                       <option value="16-50 قطعة (شريحة ثانية)">16 - 50 قطعة (خصم 25%)</option>
@@ -468,8 +468,8 @@ export const WholesalePage: React.FC = () => {
                           onClick={() => toggleCategory(cat)}
                           className={`text-xs px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#B45F42] text-white border-[#B45F42] font-bold shadow-xs'
-                              : 'bg-gray-50 dark:bg-[#251E1A] text-gray-700 dark:text-[#DDD2C7] border-gray-200 dark:border-[#382E27] hover:border-gray-300'
+                              ? 'bg-[#B24C2B] text-white border-[#B24C2B] font-bold shadow-xs'
+                              : 'bg-gray-50 dark:bg-[#26201B] text-gray-700 dark:text-[#DDD2C7] border-gray-200 dark:border-[#352B24] hover:border-gray-300'
                           }`}
                         >
                           {isSelected && '✓ '}
@@ -489,14 +489,14 @@ export const WholesalePage: React.FC = () => {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="اكتب أي متطلبات خاصة بالقطع أو تفضيلات الألوان..."
-                    className="w-full text-xs bg-gray-50 dark:bg-[#251E1A] text-gray-900 dark:text-white px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B45F42] focus:outline-none"
+                    className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 rounded-xl bg-[#B45F42] hover:bg-[#9E4F36] disabled:bg-gray-400 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                  className="w-full py-3.5 px-6 rounded-xl bg-[#B24C2B] hover:bg-[#9E4F36] disabled:bg-gray-400 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'جاري التجهيز...' : 'إرسال طلب عرض السعر ومتابعته عبر واتساب'}</span>

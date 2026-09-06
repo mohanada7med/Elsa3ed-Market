@@ -174,7 +174,7 @@ export const EventsPage: React.FC = () => {
           </div>
         ) : filteredEvents.length === 0 ? (
           <WAHEmptyState
-            icon={Calendar}
+            icon={<Calendar className="w-8 h-8 sm:w-10 sm:h-10" />}
             title="لم يتم العثور على فعاليات مطابقة"
             description="جرب البحث بكلمة أخرى أو إلغاء تحديد المحافظة لمشاهدة جميع مواسم الصعيد."
             actionLabel="إعادة ضبط الفلاتر"

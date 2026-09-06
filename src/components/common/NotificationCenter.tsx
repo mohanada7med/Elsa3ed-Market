@@ -143,7 +143,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
       case 'password_reset_requested':
         return <KeyRound className="w-4 h-4 text-orange-600 dark:text-orange-400" />;
       default:
-        return <Bell className="w-4 h-4 text-[#B45F42]" />;
+        return <Bell className="w-4 h-4 text-[#B24C2B]" />;
     }
   };
 
@@ -175,11 +175,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
           setIsOpen(!isOpen);
           loadNotifications();
         }}
-        className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px]"
+        className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px]"
         aria-label={`مركز الإشعارات، ${unreadCount} إشعار غير مقروء`}
         aria-expanded={isOpen}
       >
-        <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42] transition-colors" />
+        <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] dark:text-[#A89C90] hover:text-[#B24C2B] transition-colors" />
 
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-red-600 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-md animate-pulse">
@@ -197,24 +197,24 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -6 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute left-0 mt-2 w-[340px] sm:w-[420px] max-w-[92vw] bg-white dark:bg-[#1E1917] border border-[#E8E1D9] dark:border-[#382E27] rounded-3xl shadow-2xl z-50 overflow-hidden origin-top-left flex flex-col max-h-[85vh]"
+            className="absolute left-0 mt-2 w-[340px] sm:w-[420px] max-w-[92vw] bg-white dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] rounded-3xl shadow-2xl z-50 overflow-hidden origin-top-left flex flex-col max-h-[85vh]"
           >
             {/* Header */}
-            <div className="p-4 bg-[#FAF6F0] dark:bg-[#26201C] border-b border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-3">
+            <div className="p-4 bg-[#FAF7F2] dark:bg-[#26201C] border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-[#B45F42]/10 dark:bg-[#B45F42]/20 flex items-center justify-center text-[#B45F42]">
+                <div className="w-8 h-8 rounded-xl bg-[#B24C2B]/10 dark:bg-[#B24C2B]/20 flex items-center justify-center text-[#B24C2B]">
                   <Bell className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-[#2D2A26] dark:text-[#FAF6F2] flex items-center gap-1.5">
                     <span>الإشعارات والتنبيهات</span>
                     {unreadCount > 0 && (
-                      <span className="bg-[#B45F42] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="bg-[#B24C2B] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                         {unreadCount} جديد
                       </span>
                     )}
                   </h3>
-                  <p className="text-[11px] text-[#7A6F64] dark:text-[#A89C90]">
+                  <p className="text-[11px] text-[#73675B] dark:text-[#A89C90]">
                     {currentRole === 'admin'
                       ? 'متابعة الطلبات، الورش، والاعتمادات بالمنصة'
                       : currentRole === 'seller'
@@ -235,9 +235,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             </div>
 
             {/* Web Push & Sound Alert Bar */}
-            <div className="px-4 py-2.5 bg-gradient-to-r from-amber-500/10 via-[#B45F42]/10 to-amber-500/10 dark:from-amber-950/30 dark:via-[#B45F42]/20 dark:to-amber-950/30 border-b border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-2 text-xs">
+            <div className="px-4 py-2.5 bg-gradient-to-r from-amber-500/10 via-[#B24C2B]/10 to-amber-500/10 dark:from-amber-950/30 dark:via-[#B24C2B]/20 dark:to-amber-950/30 border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-6 h-6 rounded-full bg-[#B45F42] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-6 h-6 rounded-full bg-[#B24C2B] text-white flex items-center justify-center shrink-0 shadow-xs">
                   <BellRing className="w-3.5 h-3.5" />
                 </div>
                 <div className="min-w-0">
@@ -248,7 +248,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                       ? 'إشعارات المتصفح محظورة بالإعدادات'
                       : 'تفعيل إشعارات المتصفح الفورية'}
                   </p>
-                  <p className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] truncate">
+                  <p className="text-[10px] text-[#73675B] dark:text-[#A89C90] truncate">
                     {browserNotificationPermission === 'granted'
                       ? 'تصلك تنبيهات الطلبات والرسائل حتى خارج التبويب'
                       : 'احصل على تنبيهات لحظية فور ورود طلب أو رسالة'}
@@ -286,7 +286,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                     <button
                       type="button"
                       onClick={sendTestBrowserNotification}
-                      className="px-2.5 py-1 bg-white dark:bg-[#2A2320] border border-[#B45F42]/30 hover:border-[#B45F42] text-[#B45F42] dark:text-[#FF855D] rounded-lg text-[10px] font-bold transition-all hover:bg-[#B45F42] hover:text-white cursor-pointer shadow-2xs"
+                      className="px-2.5 py-1 bg-white dark:bg-[#2A2320] border border-[#B24C2B]/30 hover:border-[#B24C2B] text-[#B24C2B] dark:text-[#FF855D] rounded-lg text-[10px] font-bold transition-all hover:bg-[#B24C2B] hover:text-white cursor-pointer shadow-2xs"
                     >
                       تجربة
                     </button>
@@ -300,7 +300,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                       await requestBrowserNotificationPermission();
                       setIsRequestingPermission(false);
                     }}
-                    className="px-3 py-1 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                    className="px-3 py-1 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
                   >
                     <Radio className="w-3 h-3 animate-pulse" />
                     <span>{isRequestingPermission ? 'جارٍ الطلب...' : 'تفعيل'}</span>
@@ -310,15 +310,15 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             </div>
 
             {/* Filter Tabs & Quick Actions */}
-            <div className="px-4 py-2 bg-white dark:bg-[#1E1917] border-b border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between gap-2 text-xs">
+            <div className="px-4 py-2 bg-white dark:bg-[#1E1917] border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between gap-2 text-xs">
               <div className="flex items-center gap-1">
                 <button
                   type="button"
                   onClick={() => setFilter('all')}
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     filter === 'all'
-                      ? 'bg-[#B45F42] text-white'
-                      : 'text-[#7A6F64] dark:text-[#A89C90] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420]'
+                      ? 'bg-[#B24C2B] text-white'
+                      : 'text-[#73675B] dark:text-[#A89C90] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420]'
                   }`}
                 >
                   الكل ({notifications.length})
@@ -328,8 +328,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                   onClick={() => setFilter('unread')}
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     filter === 'unread'
-                      ? 'bg-[#B45F42] text-white'
-                      : 'text-[#7A6F64] dark:text-[#A89C90] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420]'
+                      ? 'bg-[#B24C2B] text-white'
+                      : 'text-[#73675B] dark:text-[#A89C90] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420]'
                   }`}
                 >
                   غير المقروءة ({unreadCount})
@@ -342,7 +342,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                     <button
                       type="button"
                       onClick={handleMarkAllAsRead}
-                      className="text-[11px] font-bold text-[#B45F42] hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-[11px] font-bold text-[#B24C2B] hover:underline flex items-center gap-1 cursor-pointer"
                       title="تعليم كل الإشعارات كمقروءة"
                     >
                       <CheckCheck className="w-3.5 h-3.5" />
@@ -370,17 +370,17 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                     onClick={() => handleNotificationClick(notif)}
                     className={`p-3.5 sm:p-4 transition-colors cursor-pointer flex items-start gap-3 group relative ${
                       notif.read
-                        ? 'bg-white dark:bg-[#1E1917] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D]'
+                        ? 'bg-white dark:bg-[#1E1917] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
                         : 'bg-[#FFF8F3] dark:bg-[#2D201A] hover:bg-[#FDF2E9] dark:hover:bg-[#38261E]'
                     }`}
                   >
                     {/* Unread Indicator Bar */}
                     {!notif.read && (
-                      <div className="absolute right-0 top-3 bottom-3 w-1 bg-[#B45F42] rounded-l-full" />
+                      <div className="absolute right-0 top-3 bottom-3 w-1 bg-[#B24C2B] rounded-l-full" />
                     )}
 
                     {/* Icon Bubble */}
-                    <div className="w-9 h-9 rounded-2xl bg-white dark:bg-[#2A2320] border border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-center shrink-0 shadow-2xs">
+                    <div className="w-9 h-9 rounded-2xl bg-white dark:bg-[#2A2320] border border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-center shrink-0 shadow-2xs">
                       {getNotificationIcon(notif.type)}
                     </div>
 
@@ -391,12 +391,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                           className={`text-xs sm:text-sm font-bold truncate ${
                             notif.read
                               ? 'text-[#2D2A26] dark:text-[#FAF6F2]'
-                              : 'text-[#B45F42] dark:text-[#FF855D]'
+                              : 'text-[#B24C2B] dark:text-[#FF855D]'
                           }`}
                         >
                           {notif.title}
                         </h4>
-                        <span className="text-[10px] text-[#8C7E72] dark:text-[#7A6F64] flex items-center gap-1 shrink-0 font-medium">
+                        <span className="text-[10px] text-[#8C7E72] dark:text-[#73675B] flex items-center gap-1 shrink-0 font-medium">
                           <Clock className="w-2.5 h-2.5" />
                           <span>{formatTimeAgo(notif.createdAt)}</span>
                         </span>
@@ -409,7 +409,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                       {/* Action Pill if navigational */}
                       {notif.actionPage && (
                         <div className="pt-1 flex items-center justify-between">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#B45F42] dark:text-[#FF855D]">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#B24C2B] dark:text-[#FF855D]">
                             <span>عرض التفاصيل</span>
                             <ExternalLink className="w-3 h-3" />
                           </span>
@@ -429,13 +429,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                 ))
               ) : (
                 <div className="p-8 text-center space-y-3">
-                  <div className="w-12 h-12 rounded-full bg-[#FAF6F0] dark:bg-[#25201D] flex items-center justify-center mx-auto text-gray-300 dark:text-gray-600">
+                  <div className="w-12 h-12 rounded-full bg-[#FAF7F2] dark:bg-[#26201B] flex items-center justify-center mx-auto text-gray-300 dark:text-gray-600">
                     <Bell className="w-6 h-6" />
                   </div>
                   <h4 className="text-xs sm:text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2]">
                     {filter === 'unread' ? 'لا توجد إشعارات غير مقروءة' : 'صندوق الإشعارات فارغ حالياً'}
                   </h4>
-                  <p className="text-[11px] text-[#7A6F64] dark:text-[#A89C90] max-w-xs mx-auto">
+                  <p className="text-[11px] text-[#73675B] dark:text-[#A89C90] max-w-xs mx-auto">
                     ستصلك هنا كافة التنبيهات الفورية بخصوص الطلبات، حالة المنتجات، والمستحقات المالية أولاً بأول.
                   </p>
                 </div>
@@ -443,8 +443,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
             </div>
 
             {/* Footer */}
-            <div className="p-3 bg-[#FAF6F0] dark:bg-[#26201C] border-t border-[#E8E1D9] dark:border-[#382E27] text-center">
-              <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90]">
+            <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201C] border-t border-[#E5DDD3] dark:border-[#352B24] text-center">
+              <span className="text-[10px] text-[#73675B] dark:text-[#A89C90]">
                 نظام إشعارات وه الفوري • تحديث تلقائي مستمر
               </span>
             </div>

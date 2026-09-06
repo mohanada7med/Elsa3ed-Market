@@ -325,6 +325,7 @@ export type ActivePage =
   | 'admin-dashboard'
   | 'admin-cultural-cms'
   | 'admin-map-editor'
+  | 'admin-media'
 
   | 'admin-sellers'
   | 'admin-products'
@@ -681,6 +682,7 @@ export interface UpperEgyptFood {
   ingredients: string[];
   preparationMethod: string;
   preparation?: string;
+  prepTime?: string;
   originStory: string;
   story?: string;
   occasionOrTradition?: string;
@@ -703,6 +705,8 @@ export interface CulturalEvent {
   startDate?: string;
   eventTime?: string;
   timeOfYear?: string;
+  season?: string;
+  dateText?: string;
   description: string;
   traditions?: string;
   coverImage: string;
@@ -938,6 +942,7 @@ export interface RelationshipPayload {
 
 export interface MediaItem {
   id?: string;
+  title?: string;
   url: string;
   secureUrl?: string;
   publicId?: string;

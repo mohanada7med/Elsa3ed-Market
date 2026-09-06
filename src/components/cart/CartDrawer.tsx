@@ -57,12 +57,12 @@ export const CartDrawer: React.FC = () => {
           exit={{ x: '-100%' }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           id="cart-drawer-panel"
-          className="w-full sm:w-[420px] max-w-full bg-[#FAF6F0] dark:bg-[#1A1614] border-r border-[#E8E1D9] dark:border-[#382E27] shadow-2xl flex flex-col h-full"
+          className="w-full sm:w-[420px] max-w-full bg-[#FAF7F2] dark:bg-[#1A1614] border-r border-[#E5DDD3] dark:border-[#352B24] shadow-2xl flex flex-col h-full"
         >
           {/* Drawer Header */}
-          <div className="p-4 sm:p-5 bg-white dark:bg-[#1F1B18] border-b border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between">
+          <div className="p-4 sm:p-5 bg-white dark:bg-[#1F1B18] border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#B45F42]/10 text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-[#B24C2B]/10 text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center shrink-0">
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
@@ -86,7 +86,7 @@ export const CartDrawer: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             {cart.length === 0 ? (
               <div className="text-center py-16 px-4">
-                <div className="w-20 h-20 rounded-full bg-[#F3EFE9] dark:bg-[#25201D] text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center mx-auto mb-4">
+                <div className="w-20 h-20 rounded-full bg-[#F3EFE9] dark:bg-[#26201B] text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="w-10 h-10 opacity-60" />
                 </div>
                 <h4 className="font-bold text-gray-800 dark:text-[#FAF6F2] text-lg">سلة المشتريات فارغة</h4>
@@ -101,7 +101,7 @@ export const CartDrawer: React.FC = () => {
                     setActivePage('products');
                   }}
                   aria-label="استكشف جميع منتجات سوق الصعيد الآن"
-                  className="mt-6 px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+                  className="mt-6 px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
                 >
                   استكشف سوق الصعيد الآن
                 </button>
@@ -120,7 +120,7 @@ export const CartDrawer: React.FC = () => {
                   <div
                     key={prodId}
                     id={`cart-item-${prodId}`}
-                    className="p-3.5 bg-white dark:bg-[#1F1B18] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xs flex gap-3 relative group"
+                    className="p-3.5 bg-white dark:bg-[#1F1B18] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs flex gap-3 relative group"
                   >
                     <img
                       src={img}
@@ -138,7 +138,7 @@ export const CartDrawer: React.FC = () => {
                         setIsCartDrawerOpen(false);
                         navigateToProduct(prodId);
                       }}
-                      className="w-20 h-20 rounded-xl object-cover border border-[#E8E1D9] dark:border-[#382E27] cursor-pointer shrink-0 hover:opacity-90"
+                      className="w-20 h-20 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24] cursor-pointer shrink-0 hover:opacity-90"
                     />
 
                     <div className="flex-1 min-w-0">
@@ -156,22 +156,22 @@ export const CartDrawer: React.FC = () => {
                           setIsCartDrawerOpen(false);
                           navigateToProduct(prodId);
                         }}
-                        className="text-xs font-bold text-gray-900 dark:text-[#FAF6F2] line-clamp-2 cursor-pointer hover:text-[#B45F42] leading-snug"
+                        className="text-xs font-bold text-gray-900 dark:text-[#FAF6F2] line-clamp-2 cursor-pointer hover:text-[#B24C2B] leading-snug"
                       >
                         {title}
                       </h4>
 
-                      <div className="flex items-center gap-1.5 mt-1 text-[11px] text-[#7A6F64] dark:text-[#A89C90]">
+                      <div className="flex items-center gap-1.5 mt-1 text-[11px] text-[#73675B] dark:text-[#A89C90]">
                         <span>{sellerName}</span>
                         <span>•</span>
-                        <span className="bg-amber-100/70 dark:bg-amber-950/50 text-[#B45F42] dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-semibold">
+                        <span className="bg-amber-100/70 dark:bg-amber-950/50 text-[#B24C2B] dark:text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-semibold">
                           {sellerGov}
                         </span>
                       </div>
 
                       <div className="flex items-center justify-between mt-2.5">
                         <div className="flex items-center gap-1">
-                          <span className="text-sm font-black text-[#B45F42] dark:text-[#FF855D]">
+                          <span className="text-sm font-black text-[#B24C2B] dark:text-[#FF855D]">
                             {price * qty} ج.م
                           </span>
                           {qty > 1 && (
@@ -182,7 +182,7 @@ export const CartDrawer: React.FC = () => {
                         </div>
 
                         {/* Quantity Stepper */}
-                        <div className="flex items-center border border-[#E8E1D9] dark:border-[#382E27] rounded-xl bg-[#FAF6F0] dark:bg-[#151210] overflow-hidden">
+                        <div className="flex items-center border border-[#E5DDD3] dark:border-[#352B24] rounded-xl bg-[#FAF7F2] dark:bg-[#110E0C] overflow-hidden">
                           <button
                             type="button"
                             id={`qty-minus-${prodId}`}
@@ -226,7 +226,7 @@ export const CartDrawer: React.FC = () => {
 
           {/* Drawer Footer & Checkout Summary */}
           {cart.length > 0 && (
-            <div className="p-4 sm:p-5 bg-white dark:bg-[#1F1B18] border-t border-[#E8E1D9] dark:border-[#382E27] space-y-3.5">
+            <div className="p-4 sm:p-5 bg-white dark:bg-[#1F1B18] border-t border-[#E5DDD3] dark:border-[#352B24] space-y-3.5">
               {/* Promo code form */}
               {appliedDiscount ? (
                 <div className="flex items-center justify-between p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs">
@@ -251,12 +251,12 @@ export const CartDrawer: React.FC = () => {
                     onChange={(e) => setCouponInput(e.target.value)}
                     placeholder="كود الخصم (جرب SAEED100)"
                     aria-label="أدخل كود قسيمة الخصم الترويجية"
-                    className="flex-1 px-3 py-2 text-xs bg-[#FAF6F0] dark:bg-[#151210] border border-[#E8E1D9] dark:border-[#382E27] text-gray-900 dark:text-[#FAF6F2] rounded-xl outline-none focus:border-[#B45F42]"
+                    className="flex-1 px-3 py-2 text-xs bg-[#FAF7F2] dark:bg-[#110E0C] border border-[#E5DDD3] dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] rounded-xl outline-none focus:border-[#B24C2B]"
                   />
                   <button
                     type="submit"
                     aria-label="تطبيق كود الخصم"
-                    className="px-4 py-2 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2723] text-[#B45F42] dark:text-[#FF855D] border border-[#E8E1D9] dark:border-[#382E27] text-xs font-bold rounded-xl transition-colors shrink-0 min-h-[38px] cursor-pointer"
+                    className="px-4 py-2 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2723] text-[#B24C2B] dark:text-[#FF855D] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold rounded-xl transition-colors shrink-0 min-h-[38px] cursor-pointer"
                   >
                     تطبيق
                   </button>
@@ -283,9 +283,9 @@ export const CartDrawer: React.FC = () => {
                     <span className="font-bold">- {cartDiscountAmount} ج.م</span>
                   </div>
                 )}
-                <div className="border-t border-gray-100 dark:border-[#382E27] pt-2 flex justify-between text-sm font-black text-gray-900 dark:text-[#FAF6F2]">
+                <div className="border-t border-gray-100 dark:border-[#352B24] pt-2 flex justify-between text-sm font-black text-gray-900 dark:text-[#FAF6F2]">
                   <span>الإجمالي النهائي:</span>
-                  <span className="text-base text-[#B45F42] dark:text-[#FF855D]">{cartTotal} ج.م</span>
+                  <span className="text-base text-[#B24C2B] dark:text-[#FF855D]">{cartTotal} ج.م</span>
                 </div>
               </div>
 
@@ -296,7 +296,7 @@ export const CartDrawer: React.FC = () => {
                   id="cart-checkout-btn"
                   onClick={proceedToCheckout}
                   aria-label={`متابعة إتمام الطلب، المبلغ الإجمالي ${cartTotal} جنيه مصري`}
-                  className="w-full py-3.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold text-sm rounded-xl shadow-lg shadow-[#B45F42]/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
+                  className="w-full py-3.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold text-sm rounded-xl shadow-lg shadow-[#B24C2B]/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
                 >
                   <span>متابعة إتمام الطلب</span>
                   <ArrowLeft className="w-4 h-4" />
@@ -309,7 +309,7 @@ export const CartDrawer: React.FC = () => {
                     setIsCartDrawerOpen(false);
                     setActivePage('cart');
                   }}
-                  className="w-full py-2.5 bg-gray-100 dark:bg-[#25201D] hover:bg-gray-200 dark:hover:bg-[#2D2723] text-gray-800 dark:text-gray-200 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
+                  className="w-full py-2.5 bg-gray-100 dark:bg-[#26201B] hover:bg-gray-200 dark:hover:bg-[#2D2723] text-gray-800 dark:text-gray-200 font-bold text-xs rounded-xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
                   <span>عرض سلة المشتريات بالكامل</span>

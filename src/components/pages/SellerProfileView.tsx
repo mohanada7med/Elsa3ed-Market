@@ -60,11 +60,11 @@ export const SellerProfileView: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#7A6F64] dark:text-[#A89C90] font-medium">
+      <nav className="flex items-center gap-2 text-xs text-[#73675B] dark:text-[#A89C90] font-medium">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -72,7 +72,7 @@ export const SellerProfileView: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('sellers')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
         >
           دليل الحرفيين
         </button>
@@ -83,13 +83,13 @@ export const SellerProfileView: React.FC = () => {
       {/* Workshop Header & Profile Banner */}
       <div className="wah-card overflow-hidden shadow-lg">
         {/* Cover Banner */}
-        <div className="relative h-48 sm:h-64 w-full bg-[#FAF6F0] dark:bg-[#25201D]">
+        <div className="relative h-48 sm:h-64 w-full bg-[#FAF7F2] dark:bg-[#26201B]">
           <img src={seller.coverImage} alt={seller.brandName} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
           {/* Governorate tag & Share */}
           <div className="absolute top-4 right-4 flex items-center gap-2">
-            <span className="bg-[#B45F42] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
+            <span className="bg-[#B24C2B] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5" />
               <span>محافظة {seller.governorate}</span>
             </span>
@@ -126,7 +126,7 @@ export const SellerProfileView: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
                   {seller.brandName}
                 </h1>
-                <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#A89C90] font-semibold mt-0.5">
+                <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#A89C90] font-semibold mt-0.5">
                   الصانع: {seller.name} • تخصص: {seller.specialty}
                 </p>
               </div>
@@ -134,30 +134,30 @@ export const SellerProfileView: React.FC = () => {
 
             {/* Performance metrics */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
-              <div className="bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] px-3 sm:px-4 py-2 rounded-2xl text-center">
+              <div className="bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] px-3 sm:px-4 py-2 rounded-2xl text-center">
                 <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
                   <Star className="w-3.5 h-3.5 fill-amber-400" />
                   <span>{seller.rating}</span>
                 </div>
-                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block mt-0.5">تقييم المتسوقين</span>
+                <span className="text-[10px] text-[#73675B] dark:text-[#A89C90] block mt-0.5">تقييم المتسوقين</span>
               </div>
 
-              <div className="bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] px-3 sm:px-4 py-2 rounded-2xl text-center">
-                <span className="font-bold text-xs sm:text-sm text-[#B45F42] dark:text-[#FF855D] block">{seller.salesCount}+</span>
-                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block mt-0.5">قطعة تم شحنها</span>
+              <div className="bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] px-3 sm:px-4 py-2 rounded-2xl text-center">
+                <span className="font-bold text-xs sm:text-sm text-[#B24C2B] dark:text-[#FF855D] block">{seller.salesCount}+</span>
+                <span className="text-[10px] text-[#73675B] dark:text-[#A89C90] block mt-0.5">قطعة تم شحنها</span>
               </div>
 
-              <div className="bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] px-3 sm:px-4 py-2 rounded-2xl text-center">
+              <div className="bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] px-3 sm:px-4 py-2 rounded-2xl text-center">
                 <span className="font-bold text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] block">{seller.productsCount}</span>
-                <span className="text-[10px] text-[#7A6F64] dark:text-[#A89C90] block mt-0.5">منتجات معروضة</span>
+                <span className="text-[10px] text-[#73675B] dark:text-[#A89C90] block mt-0.5">منتجات معروضة</span>
               </div>
             </div>
           </div>
 
           {/* Artisan Story / Bio */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4 border-t border-[#E8E1D9] dark:border-[#382E27]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4 border-t border-[#E5DDD3] dark:border-[#352B24]">
             <div className="lg:col-span-8 space-y-3">
-              <h3 className="text-sm font-bold text-[#B45F42] dark:text-[#FF855D] flex items-center gap-1.5 font-heritage">
+              <h3 className="text-sm font-bold text-[#B24C2B] dark:text-[#FF855D] flex items-center gap-1.5 font-heritage">
                 <Sparkles className="w-4 h-4" />
                 <span>عن الورشة وتاريخ الصنعة التراثية</span>
               </h3>
@@ -167,7 +167,7 @@ export const SellerProfileView: React.FC = () => {
             </div>
 
             {/* Contact / Workshop Info */}
-            <div className="lg:col-span-4 bg-[#FAF6F0] dark:bg-[#25201D] p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] space-y-2.5 text-xs text-[#7A6F64] dark:text-[#A89C90]">
+            <div className="lg:col-span-4 bg-[#FAF7F2] dark:bg-[#26201B] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-2.5 text-xs text-[#73675B] dark:text-[#A89C90]">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>عضو معتمد في منصة وه منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>
@@ -177,7 +177,7 @@ export const SellerProfileView: React.FC = () => {
                 <span dir="ltr" className="font-mono text-[#2D2A26] dark:text-[#FAF6F2] font-semibold">{seller.phone}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-[#B45F42] dark:text-[#FF855D]" />
+                <Award className="w-4 h-4 text-[#B24C2B] dark:text-[#FF855D]" />
                 <span>حرف يدوية أصيلة خالية من المواد الصناعية</span>
               </div>
             </div>
@@ -192,11 +192,11 @@ export const SellerProfileView: React.FC = () => {
             <h2 className="text-xl sm:text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
               معروضات ومصنوعات {seller.brandName}
             </h2>
-            <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] mt-0.5">
+            <p className="text-xs text-[#73675B] dark:text-[#A89C90] mt-0.5">
               جميع القطع متوفرة للشحن المباشر من الورشة في {seller.governorate}
             </p>
           </div>
-          <span className="text-xs font-bold text-[#B45F42] dark:text-[#FF855D] bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800">
+          <span className="text-xs font-bold text-[#B24C2B] dark:text-[#FF855D] bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800">
             {sellerProducts.length} منتجات متاحة
           </span>
         </div>
@@ -204,7 +204,7 @@ export const SellerProfileView: React.FC = () => {
         {sellerProducts.length === 0 ? (
           <div className="wah-card p-12 text-center">
             <Store className="w-12 h-12 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
-            <h4 className="font-bold text-[#7A6F64] dark:text-[#A89C90] text-sm font-heritage">لا توجد منتجات منشورة حالياً لهذه الورشة</h4>
+            <h4 className="font-bold text-[#73675B] dark:text-[#A89C90] text-sm font-heritage">لا توجد منتجات منشورة حالياً لهذه الورشة</h4>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

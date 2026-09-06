@@ -85,26 +85,26 @@ export const CraftReelsSection: React.FC = () => {
   };
 
   return (
-    <section className="py-10 bg-gradient-to-b from-[#FDFBF7] via-[#F5EFE6] to-[#FDFBF7] dark:from-[#1A1614] dark:via-[#261E19] dark:to-[#1A1614] border-y border-[#E8E1D9] dark:border-[#382E27] relative overflow-hidden">
+    <section className="py-10 bg-gradient-to-b from-[#FAF7F2] via-[#F5EFE6] to-[#FAF7F2] dark:from-[#1A1614] dark:via-[#261E19] dark:to-[#1A1614] border-y border-[#E5DDD3] dark:border-[#352B24] relative overflow-hidden">
       {/* Decorative Heritage Watermark */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#B45F42]/5 rounded-full blur-3xl pointer-events-none -mr-48 -mt-48" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#B24C2B]/5 rounded-full blur-3xl pointer-events-none -mr-48 -mt-48" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B45F42]/10 dark:bg-[#B45F42]/20 text-[#B45F42] dark:text-[#E07A5F] text-xs font-bold mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B24C2B]/10 dark:bg-[#B24C2B]/20 text-[#B24C2B] dark:text-[#E07A5F] text-xs font-bold mb-2">
               <Film className="w-3.5 h-3.5" />
               <span>وه Reels • مقاطع صناع الصعيد</span>
-              <span className="bg-[#B45F42] text-white text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse">
+              <span className="bg-[#B24C2B] text-white text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse">
                 جديد
               </span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black text-[#2D2A26] dark:text-[#FDFBF7] font-heritage tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-[#2D2A26] dark:text-[#FAF7F2] font-heritage tracking-tight">
               شاهد الصنعة على أصولها واشترِ فوراً
             </h2>
-            <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#A89F91] mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#A89F91] mt-1 max-w-2xl">
               مقاطع حية من قلب ورش قنا وسوهاج وأسوان.. تابع أنامل الأسطوات على النول ودولاب الفخار مع إمكانية شراء القطعة المعروضة مباشرة.
             </p>
           </div>
@@ -112,7 +112,7 @@ export const CraftReelsSection: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('reels')}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#2D2A26] hover:bg-[#FAF6F0] text-[#B45F42] dark:text-[#E07A5F] font-bold text-xs sm:text-sm rounded-xl border border-[#E8E1D9] dark:border-[#4A3E35] shadow-xs transition-all hover:shadow-md cursor-pointer self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#2D2A26] hover:bg-[#FAF7F2] text-[#B24C2B] dark:text-[#E07A5F] font-bold text-xs sm:text-sm rounded-xl border border-[#E5DDD3] dark:border-[#4A3E35] shadow-xs transition-all hover:shadow-md cursor-pointer self-start sm:self-auto"
           >
             <span>استعراض كل الفيديوهات</span>
             <ArrowLeft className="w-4 h-4" />
@@ -129,7 +129,7 @@ export const CraftReelsSection: React.FC = () => {
               className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
             >
               {/* Pulsating Story Gradient Ring */}
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 bg-gradient-to-tr from-amber-500 via-[#B45F42] to-rose-500 group-hover:scale-105 transition-transform duration-200 shadow-md">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 bg-gradient-to-tr from-amber-500 via-[#B24C2B] to-rose-500 group-hover:scale-105 transition-transform duration-200 shadow-md">
                 <div className="w-full h-full rounded-full p-0.5 bg-white dark:bg-[#1A1614]">
                   <img
                     src={reel.artisanAvatar}
@@ -138,10 +138,10 @@ export const CraftReelsSection: React.FC = () => {
                   />
                 </div>
               </div>
-              <span className="text-[11px] font-bold text-[#2D2A26] dark:text-[#FDFBF7] text-center max-w-[76px] truncate">
+              <span className="text-[11px] font-bold text-[#2D2A26] dark:text-[#FAF7F2] text-center max-w-[76px] truncate">
                 {reel.artisanName}
               </span>
-              <span className="text-[9px] text-[#7A6F64] dark:text-[#A89F91] -mt-1">
+              <span className="text-[9px] text-[#73675B] dark:text-[#A89F91] -mt-1">
                 {reel.governorate}
               </span>
             </button>
@@ -185,7 +185,7 @@ export const CraftReelsSection: React.FC = () => {
                       <Trash2 className="w-3 h-3" />
                     </button>
                   )}
-                  <div className="flex items-center gap-1 bg-[#B45F42]/80 backdrop-blur-xs text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
+                  <div className="flex items-center gap-1 bg-[#B24C2B]/80 backdrop-blur-xs text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
                     <Flame className="w-3 h-3 text-amber-300" />
                     <span>{reel.likesCount}</span>
                   </div>
@@ -231,7 +231,7 @@ export const CraftReelsSection: React.FC = () => {
                   <button
                     type="button"
                     onClick={(e) => handleQuickAdd(e, reel)}
-                    className="p-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-lg transition-transform active:scale-90 shadow-md"
+                    className="p-1.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-lg transition-transform active:scale-90 shadow-md"
                     title="شراء فوري للمنتج"
                   >
                     <ShoppingBag className="w-3 h-3" />

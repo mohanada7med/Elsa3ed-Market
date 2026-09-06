@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[var(--wah-surface,#1B1613)] text-[#E8E1D9] border-t-4 border-[var(--wah-primary,#B24C2B)] relative overflow-hidden pb-20 md:pb-0">
+    <footer className="bg-[#231F1C] text-[#E5DDD3] border-t-4 border-[var(--wah-primary,#B24C2B)] relative overflow-hidden pb-20 md:pb-0">
       {/* Background subtle geometry pattern */}
       <div className="absolute inset-0 pointer-events-none opacity-5">
         <WAHPattern type="geometry" className="w-full h-full text-white" />
@@ -87,12 +87,8 @@ export const Footer: React.FC = () => {
           {/* Brand Story */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--wah-primary,#B24C2B)] to-[#963E21] flex items-center justify-center text-white font-black text-lg font-heritage shadow-sm">
-                وه
-              </div>
-              <span className="text-2xl font-black text-white font-heritage tracking-tight">
-                وه | WAH
-              </span>
+              <img src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png" alt="" width={150} />
+
             </div>
             <p className="text-sm text-[#C5B8AC] leading-relaxed max-w-md">
               منصة «وه» الرقمية الجامعة لاكتشاف وتوثيق تراث وثقافة وحكايات وحرف صعيد مصر، وربط صناعه بالجمهور بكل فخر وأصالة وتكنولوجيا معاصرة.

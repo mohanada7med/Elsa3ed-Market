@@ -78,13 +78,13 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
     ? 'px-2.5 py-1.5 text-[11px] gap-1.5'
     : 'px-3.5 py-2 text-xs gap-2';
 
-  let variantClasses = 'bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E8E1D9] shadow-2xs';
+  let variantClasses = 'bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E5DDD3] shadow-2xs';
   if (variant === 'outline') {
-    variantClasses = 'bg-transparent hover:bg-[#F3EFE9]/60 text-[#2D2A26] border border-[#E8E1D9]';
+    variantClasses = 'bg-transparent hover:bg-[#F3EFE9]/60 text-[#2D2A26] border border-[#E5DDD3]';
   } else if (variant === 'subtle') {
-    variantClasses = 'bg-[#FDFBF7] hover:bg-[#F3EFE9] text-[#7A6F64] hover:text-[#2D2A26] border border-[#E8E1D9]/70';
+    variantClasses = 'bg-[#FAF7F2] hover:bg-[#F3EFE9] text-[#73675B] hover:text-[#2D2A26] border border-[#E5DDD3]/70';
   } else if (variant === 'compact') {
-    variantClasses = 'bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E8E1D9] p-2';
+    variantClasses = 'bg-white hover:bg-[#F3EFE9] text-[#2D2A26] border border-[#E5DDD3] p-2';
   }
 
   return (
@@ -101,7 +101,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
         <RefreshCw
           className={`shrink-0 transition-transform duration-500 ${
             size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4'
-          } ${isBusy ? 'animate-spin text-[#B45F42]' : 'text-[#7A6F64] group-hover:text-[#2D2A26]'}`}
+          } ${isBusy ? 'animate-spin text-[#B24C2B]' : 'text-[#73675B] group-hover:text-[#2D2A26]'}`}
         />
         <span className="hidden sm:inline whitespace-nowrap">
           {isBusy ? loadingLabel : label}
@@ -113,7 +113,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
 
       {showLastUpdated && currentLastUpdated && (
         <span
-          className="hidden md:inline-flex items-center text-[11px] text-[#7A6F64] font-medium bg-[#F8F5F0] px-2.5 py-1 rounded-lg border border-[#E8E1D9]/60 whitespace-nowrap"
+          className="hidden md:inline-flex items-center text-[11px] text-[#73675B] font-medium bg-[#F8F5F0] px-2.5 py-1 rounded-lg border border-[#E5DDD3]/60 whitespace-nowrap"
           title="توقيت آخر جلب للبيانات"
         >
           آخر تحديث: {currentLastUpdated}

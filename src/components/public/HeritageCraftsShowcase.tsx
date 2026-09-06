@@ -121,7 +121,7 @@ export const HeritageCraftsShowcase: React.FC = () => {
                 {(craft.keyFeatures || []).map((feat, i) => (
                   <div
                     key={i}
-                    className="flex items-start gap-2 text-xs text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] bg-[var(--wah-surface-subtle,#FAF6F0)] dark:bg-[var(--wah-surface-subtle,#26201B)] p-3 rounded-xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]"
+                    className="flex items-start gap-2 text-xs text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] bg-[var(--wah-surface-subtle,#FAF7F2)] dark:bg-[var(--wah-surface-subtle,#26201B)] p-3 rounded-xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]"
                   >
                     <CheckCircle2 className="w-4 h-4 text-[var(--wah-success,#286644)] shrink-0 mt-0.5" />
                     <span className="leading-snug">{feat}</span>

@@ -10,14 +10,14 @@ export const FeaturedCategories: React.FC = () => {
     <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#B45F42] mb-1">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#B24C2B] mb-1">
             <Layers className="w-4 h-4" />
             <span>التصنيفات والحرف المتوارثة</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
             تصفح كنوز وخيرات الصعيد
           </h2>
-          <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#B8ACA0] mt-1">
+          <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#B8ACA0] mt-1">
             اختر التصنيف لاستكشاف منتجات الحرفيين والورش التراثية بكل محافظة
           </p>
         </div>
@@ -27,7 +27,7 @@ export const FeaturedCategories: React.FC = () => {
           id="view-all-cats-btn"
           onClick={() => setActivePage('categories')}
           aria-label="عرض جميع التصنيفات التراثية والحرفية"
-          className="text-xs sm:text-sm font-bold text-[#B45F42] hover:text-[#9E4F36] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
+          className="text-xs sm:text-sm font-bold text-[#B24C2B] hover:text-[#9E4F36] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
         >
           <span>عرض جميع التصنيفات</span>
           <ArrowLeft className="w-4 h-4" />
@@ -56,7 +56,7 @@ export const FeaturedCategories: React.FC = () => {
             onClick={() => navigateToCategory(cat.id)}
             className="wah-card overflow-hidden group cursor-pointer flex flex-col"
           >
-            <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F3EFE9] dark:bg-[#25201D]">
+            <div className="relative aspect-4/3 w-full overflow-hidden bg-[#F3EFE9] dark:bg-[#26201B]">
               <img
                 src={cat.image}
                 alt={cat.name}
@@ -67,7 +67,7 @@ export const FeaturedCategories: React.FC = () => {
 
               {cat.featuredGovernorate && (
                 <div className="absolute top-2.5 right-2.5">
-                  <span className="bg-[#B45F42]/90 text-amber-100 text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
+                  <span className="bg-[#B24C2B]/90 text-amber-100 text-[10px] font-bold px-2 py-0.5 rounded backdrop-blur-xs flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
                     <span>{cat.featuredGovernorate}</span>
                   </span>
@@ -90,7 +90,7 @@ export const FeaturedCategories: React.FC = () => {
               </p>
 
               {cat.heritageNote && (
-                <div className="mt-2.5 pt-2 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center gap-1 text-[10px] text-[#B45F42] dark:text-[#FF855D] font-medium">
+                <div className="mt-2.5 pt-2 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-1 text-[10px] text-[#B24C2B] dark:text-[#FF855D] font-medium">
                   <Sparkles className="w-3 h-3 shrink-0 text-amber-600" />
                   <span className="truncate">{cat.heritageNote}</span>
                 </div>

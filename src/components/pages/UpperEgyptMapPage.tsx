@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { MapGovernorateData, MapMarkerItem, Product } from '../../types';
-import { InteractiveMapCard } from '../public/InteractiveMapCard';
 import {
   Landmark,
   Hammer,
@@ -18,8 +17,7 @@ import {
   Scroll,
   Star,
   Ship,
-  Sparkles,
-  Map as MapIcon
+  Sparkles
 } from 'lucide-react';
 
 // Regional palette definition with authentic Upper Egyptian earth tones
@@ -40,8 +38,8 @@ const REGION_THEMES: Record<string, { badge: string; color: string; hoverColor: 
   },
   'جنوب الصعيد': {
     badge: 'bg-rose-100 text-rose-950 dark:bg-rose-950/80 dark:text-rose-200 border-rose-400 dark:border-rose-700',
-    color: '#9E3C1B',
-    hoverColor: '#B45F42',
+    color: '#B24C2B',
+    hoverColor: '#B24C2B',
     bgSoft: 'bg-rose-50 dark:bg-rose-950/30',
     border: 'border-rose-300 dark:border-rose-800'
   },
@@ -127,14 +125,10 @@ export const UpperEgyptMapPage: React.FC = () => {
   // Active Tab inside governorate dossier: places | crafts | foods | folklore | products
   const [activeTab, setActiveTab] = useState<'places' | 'crafts' | 'foods' | 'folklore' | 'products'>('places');
 
-  // Selected Marker from the Interactive Map
-  const [selectedMarker, setSelectedMarker] = useState<MapMarkerItem | null>(null);
-
-  // Exploration display modes:
-  // 1. 'map': Seamless Floating Card-based Interactive Map with Ancient Pottery Markers
-  // 2. 'voyage': Nile River Corridor (step-by-step cruise station)
-  // 3. 'grid': All 9 Governorates Bento Cards
-  const [displayMode, setDisplayMode] = useState<'map' | 'voyage' | 'grid'>('map');
+  // Exploration display mode (no map):
+  // 1. 'voyage': Nile River Corridor (step-by-step cruise station)
+  // 2. 'grid': All 9 Governorates Bento Cards
+  const [displayMode, setDisplayMode] = useState<'voyage' | 'grid'>('voyage');
 
   // Search filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -246,66 +240,53 @@ export const UpperEgyptMapPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#14100E] flex flex-col items-center justify-center py-24">
         <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white dark:bg-[#1C1714] shadow-sm border border-[#E5DDD2] dark:border-[#2E241E]">
-          <span className="text-4xl font-bold text-[#9E3C1B] dark:text-[#E88E72] font-serif">وه</span>
+          <span className="text-4xl font-bold text-[#B24C2B] dark:text-[#E88E72] font-serif">وه</span>
         </div>
         <p className="mt-4 text-base font-medium text-[#5A4D42] dark:text-[#C5B8AC]">جاري تحميل أطلس الصعيد المباشر من قاعدة البيانات...</p>
         <div className="mt-4 flex items-center gap-2">
-          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" style={{ animationDelay: '150ms' }} />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-[#9E3C1B]" style={{ animationDelay: '300ms' }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#B24C2B]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#B24C2B]" style={{ animationDelay: '150ms' }} />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-[#B24C2B]" style={{ animationDelay: '300ms' }} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#14100E] text-[#1C1613] dark:text-[#FDFBF7] font-sans pb-28 selection:bg-[#9E3C1B] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#14100E] text-[#241E1A] dark:text-[#FAF7F2] font-sans pb-28 selection:bg-[#B24C2B] selection:text-white">
       {/* 1. Top Navigation Bar */}
       <header className="border-b-2 border-[#E5DDD2] dark:border-[#2E241E] bg-white/95 dark:bg-[#1C1714]/95 backdrop-blur-md sticky top-0 z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3 flex-wrap">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
           {/* Breadcrumb & Title */}
-          <div className="flex items-center gap-2.5 text-sm sm:text-base font-black">
-            <button
-              id="voyage-breadcrumb-home"
-              onClick={() => setActivePage('home')}
-              className="text-[#5A4D42] dark:text-[#C5B8AC] hover:text-[#9E3C1B] dark:hover:text-[#E88E72] transition-colors cursor-pointer"
-            >
-              الرئيسية
-            </button>
-            <span className="text-[#C2B5A7]">/</span>
-            <div className="flex items-center gap-1.5 text-[#9E3C1B] dark:text-[#E88E72]">
-              <Ship className="w-5 h-5" />
-              <span className="font-black text-base sm:text-lg">رحلة محافظات الصعيد</span>
+          <div className="flex items-center justify-between w-full sm:w-auto gap-2.5 text-sm sm:text-base font-black">
+            <div className="flex items-center gap-2">
+              <button
+                id="voyage-breadcrumb-home"
+                onClick={() => setActivePage('home')}
+                className="text-[#5A4D42] dark:text-[#C5B8AC] hover:text-[#B24C2B] dark:hover:text-[#E88E72] transition-colors cursor-pointer"
+              >
+                الرئيسية
+              </button>
+              <span className="text-[#C2B5A7]">/</span>
+              <div className="flex items-center gap-1.5 text-[#B24C2B] dark:text-[#E88E72]">
+                <Ship className="w-5 h-5 shrink-0" />
+                <span className="font-black text-sm sm:text-lg">رحلة محافظات الصعيد</span>
+              </div>
             </div>
           </div>
 
-          {/* View Modes: Interactive Map vs Voyage vs Grid */}
-          <div className="flex items-center bg-[#EFE9DF] dark:bg-[#251D18] p-1 rounded-2xl border-2 border-[#D9CFC2] dark:border-[#3D3028] overflow-x-auto no-scrollbar">
-            <button
-              type="button"
-              id="btn-view-map"
-              onClick={() => setDisplayMode('map')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
-                displayMode === 'map'
-                  ? 'bg-[#9E3C1B] text-white shadow-xs'
-                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
-              }`}
-            >
-              <MapIcon className="w-4 h-4" />
-              <span>الخريطة التفاعلية الفخارية</span>
-            </button>
-
+          {/* View Modes: Voyage vs Grid */}
+          <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center bg-[#F3ECE2] dark:bg-[#26201B] p-1 rounded-2xl border-2 border-[#E5DDD3] dark:border-[#352B24]">
             <button
               type="button"
               id="btn-view-voyage"
               onClick={() => setDisplayMode('voyage')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
-                displayMode === 'voyage'
-                  ? 'bg-[#9E3C1B] text-white shadow-xs'
-                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
-              }`}
+              className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer text-center ${displayMode === 'voyage'
+                  ? 'bg-[#B24C2B] text-white shadow-xs'
+                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#241E1A]'
+                }`}
             >
-              <Ship className="w-4 h-4" />
+              <Ship className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>محطة بمحطة (رحلة النيل)</span>
             </button>
 
@@ -313,13 +294,12 @@ export const UpperEgyptMapPage: React.FC = () => {
               type="button"
               id="btn-view-grid"
               onClick={() => setDisplayMode('grid')}
-              className={`flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer whitespace-nowrap ${
-                displayMode === 'grid'
-                  ? 'bg-[#9E3C1B] text-white shadow-xs'
-                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#1C1613]'
-              }`}
+              className={`flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer text-center ${displayMode === 'grid'
+                  ? 'bg-[#B24C2B] text-white shadow-xs'
+                  : 'text-[#4A3E34] dark:text-[#D5C9BD] hover:text-[#241E1A]'
+                }`}
             >
-              <LayoutGrid className="w-4 h-4" />
+              <LayoutGrid className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>دليل الـ 9 محافظات</span>
             </button>
           </div>
@@ -327,10 +307,10 @@ export const UpperEgyptMapPage: React.FC = () => {
       </header>
 
       {/* 2. Quick Horizontal Station Ribbon (All 9 Governorates at a glance) */}
-      <nav aria-label="محطات الصعيد الـ 9" className="bg-white/90 dark:bg-[#1A1513]/90 border-b border-[#E5DDD2] dark:border-[#2E241E] py-2.5 px-4 sm:px-6 overflow-x-auto no-scrollbar">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3 min-w-max">
+      <nav aria-label="محطات الصعيد الـ 9" className="bg-white/90 dark:bg-[#1A1513]/90 border-b border-[#E5DDD2] dark:border-[#2E241E] py-2 px-3 sm:px-6 overflow-x-auto no-scrollbar touch-pan-x">
+        <div className="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-3 min-w-max">
           <div className="flex items-center gap-1.5 pl-2 text-xs font-black text-[#8C7A6B] dark:text-[#A8988B] shrink-0 border-l border-[#E5DDD2] dark:border-[#2E241E]">
-            <Ship className="w-4 h-4 text-[#9E3C1B]" />
+            <Ship className="w-4 h-4 text-[#B24C2B]" />
             <span>محطات النيل:</span>
           </div>
 
@@ -344,17 +324,15 @@ export const UpperEgyptMapPage: React.FC = () => {
                 id={`ribbon-gov-${gov.slug}`}
                 onClick={() => setSelectedIndex(index)}
                 aria-current={isCurrent ? 'step' : undefined}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer shrink-0 border-2 ${
-                  isCurrent
-                    ? 'bg-[#9E3C1B] text-white border-[#9E3C1B] shadow-sm scale-105'
-                    : 'bg-[#FAF7F2] dark:bg-[#251D18] text-[#4A3E34] dark:text-[#D5C9BD] border-[#E2D8CC] dark:border-[#3D3028] hover:border-[#9E3C1B]'
-                }`}
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer shrink-0 border-2 ${isCurrent
+                    ? 'bg-[#B24C2B] text-white border-[#B24C2B] shadow-sm scale-105'
+                    : 'bg-[#FAF7F2] dark:bg-[#26201B] text-[#4A3E34] dark:text-[#D5C9BD] border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B]'
+                  }`}
               >
                 <span className="text-sm">{emblem}</span>
                 <span>{gov.name}</span>
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                  isCurrent ? 'bg-amber-300 text-[#1C1613]' : 'bg-[#E5DDD2] dark:bg-[#3D3028] text-[#5A4D42] dark:text-[#C5B8AC]'
-                }`}>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isCurrent ? 'bg-amber-300 text-[#241E1A]' : 'bg-[#E5DDD2] dark:bg-[#352B24] text-[#5A4D42] dark:text-[#C5B8AC]'
+                  }`}>
                   {index + 1}
                 </span>
               </button>
@@ -364,138 +342,94 @@ export const UpperEgyptMapPage: React.FC = () => {
       </nav>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-8">
-        
-        {/* =========================================================
-           VIEW 1: SEAMLESS FLOATING CARD-BASED INTERACTIVE MAP (NEW)
-           With miniature antique pottery markers & floating inspector
-           ========================================================= */}
-        {displayMode === 'map' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black font-serif text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                  <MapIcon className="w-5 h-5 text-[#9E3C1B]" />
-                  <span>خريطة صعيد مصر التفاعلية الفخارية</span>
-                </h2>
-                <p className="text-xs sm:text-sm text-[#5A4D42] dark:text-[#C5B8AC] mt-0.5">
-                  بطاقة تفاعلية عائمة تتيح لك استكشاف معالم وحرف وخيرات محافظات الصعيد بمؤشرات الفخار الأثري.
-                </p>
-              </div>
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-8 space-y-6 sm:space-y-8">
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-950 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300">
-                  المحطة المحددة: {selectedGov.name}
-                </span>
-              </div>
-            </div>
-
-            <InteractiveMapCard
-              governorates={governorates}
-              markers={markers}
-              selectedGov={selectedGov}
-              onSelectGovernorate={(gov) => {
-                const foundIdx = governorates.findIndex((g) => g.id === gov.id);
-                if (foundIdx !== -1) setSelectedIndex(foundIdx);
-              }}
-              selectedMarker={selectedMarker}
-              onSelectMarker={(m) => {
-                setSelectedMarker(m);
-                if (m) {
-                  if (m.type === 'place') setActiveTab('places');
-                  else if (m.type === 'craft' || m.type === 'artisan') setActiveTab('crafts');
-                  else if (m.type === 'food') setActiveTab('foods');
-                  else if (m.type === 'story') setActiveTab('folklore');
-                }
-              }}
-              onNavigateToDossier={(slug) => navigateToGovernorate(slug)}
-              onShopGovernorate={() => setActivePage('products')}
-            />
-          </div>
-        )}
-        
         {/* =========================================================
            VIEW 1: PANORAMIC NILE VOYAGE (Sequential Step-by-Step)
            Senior-Friendly Navigation with Huge Controls
            ========================================================= */}
         {displayMode === 'voyage' && (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Step Navigation Bar */}
-            <div className="bg-white dark:bg-[#1C1714] rounded-3xl p-5 sm:p-6 border-2 border-[#E2D8CC] dark:border-[#2E241E] shadow-sm">
-              <div className="flex items-center justify-between gap-4 flex-wrap">
-                {/* Previous Station Button */}
-                <button
-                  type="button"
-                  id="btn-prev-station"
-                  onClick={handlePrevStation}
-                  className="flex items-center gap-2.5 px-5 sm:px-7 py-3.5 rounded-2xl font-black transition-all cursor-pointer border-2 min-h-[56px] text-sm sm:text-base bg-[#FAF7F2] dark:bg-[#251D18] hover:bg-[#EFE9DF] text-[#1C1613] dark:text-[#FDFBF7] border-[#D9CFC2] dark:border-[#3D3028] shadow-2xs hover:border-[#9E3C1B]"
-                  aria-label="المحطة السابقة في مسار رحلة النيل"
-                >
-                  <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-[#9E3C1B]" />
-                  <span>المحطة السابقة</span>
-                </button>
-
-                {/* Station Milestone Indicator */}
-                <div className="flex flex-col items-center justify-center text-center space-y-1">
-                  <span className="text-xs sm:text-sm font-bold text-[#6E5F52] dark:text-[#A8988B]">
+            <div className="bg-white dark:bg-[#1C1714] rounded-2xl sm:rounded-3xl p-4 sm:p-6 border-2 border-[#E5DDD3] dark:border-[#2E241E] shadow-sm">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                
+                {/* Station Milestone Indicator (Centered and placed on top on mobile) */}
+                <div className="flex flex-col items-center justify-center text-center space-y-1 sm:order-2">
+                  <span className="text-xs font-bold text-[#6E5F52] dark:text-[#A8988B] bg-[#F3ECE2] dark:bg-[#26201B] px-3 py-0.5 rounded-full">
                     المحطة {selectedIndex + 1} من {governorates.length}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{currentEmblem.symbol}</span>
-                    <span className="font-black text-xl sm:text-3xl text-[#9E3C1B] dark:text-amber-400 font-serif">
+                    <span className="text-2xl sm:text-3xl">{currentEmblem.symbol}</span>
+                    <h2 className="font-black text-2xl sm:text-3xl text-[#B24C2B] dark:text-amber-400 font-serif">
                       محافظة {selectedGov.name}
-                    </span>
+                    </h2>
                   </div>
                   <span className="text-xs font-bold text-[#8C7A6B] dark:text-[#B3A497]">
                     {selectedGov.nileSegment}
                   </span>
                 </div>
 
-                {/* Next Station Button */}
-                <button
-                  type="button"
-                  id="btn-next-station"
-                  onClick={handleNextStation}
-                  className="flex items-center gap-2.5 px-5 sm:px-7 py-3.5 rounded-2xl font-black transition-all cursor-pointer min-h-[56px] text-sm sm:text-base bg-[#9E3C1B] hover:bg-[#832E12] text-white shadow-sm"
-                  aria-label="المحطة التالية في مسار رحلة النيل"
-                >
-                  <span>المحطة التالية</span>
-                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300" />
-                </button>
+                {/* Mobile: 2 buttons side-by-side in full width grid. Desktop: placed on left and right */}
+                <div className="grid grid-cols-2 gap-2.5 w-full sm:contents sm:order-1">
+                  {/* Previous Station Button */}
+                  <button
+                    type="button"
+                    id="btn-prev-station"
+                    onClick={handlePrevStation}
+                    className="flex items-center justify-center gap-2 px-3.5 sm:px-7 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer border-2 min-h-[46px] sm:min-h-[56px] text-xs sm:text-base bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#F3ECE2] text-[#241E1A] dark:text-[#FAF7F2] border-[#E5DDD3] dark:border-[#352B24] shadow-2xs hover:border-[#B24C2B] sm:order-1"
+                    aria-label="المحطة السابقة في مسار رحلة النيل"
+                  >
+                    <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-[#B24C2B]" />
+                    <span>المحطة السابقة</span>
+                  </button>
+
+                  {/* Next Station Button */}
+                  <button
+                    type="button"
+                    id="btn-next-station"
+                    onClick={handleNextStation}
+                    className="flex items-center justify-center gap-2 px-3.5 sm:px-7 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer min-h-[46px] sm:min-h-[56px] text-xs sm:text-base bg-[#B24C2B] hover:bg-[#832E12] text-white shadow-sm sm:order-3"
+                    aria-label="المحطة التالية في مسار رحلة النيل"
+                  >
+                    <span>المحطة التالية</span>
+                    <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-amber-300" />
+                  </button>
+                </div>
               </div>
 
               {/* Visual Step Timeline Dots */}
-              <div className="mt-5 pt-4 border-t border-[#EFE9DF] dark:border-[#2E241E] flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
-                {governorates.map((gov, idx) => {
-                  const isCurrent = idx === selectedIndex;
-                  const isPast = idx < selectedIndex;
-                  return (
-                    <button
-                      key={gov.id}
-                      type="button"
-                      onClick={() => setSelectedIndex(idx)}
-                      className={`flex flex-col items-center gap-1.5 p-1 rounded-xl transition-all cursor-pointer shrink-0 ${
-                        isCurrent ? 'scale-110' : 'opacity-70 hover:opacity-100'
-                      }`}
-                      title={`محطة ${idx + 1}: ${gov.name}`}
-                    >
-                      <div
-                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs ${
-                          isCurrent
-                            ? 'bg-[#9E3C1B] text-white ring-4 ring-[#9E3C1B]/20'
-                            : isPast
-                            ? 'bg-amber-600 text-white'
-                            : 'bg-[#E5DDD2] dark:bg-[#3D3028] text-[#5A4D42] dark:text-[#C5B8AC]'
-                        }`}
+              <div className="mt-4 pt-3.5 border-t border-[#F3ECE2] dark:border-[#2E241E] flex items-center overflow-x-auto no-scrollbar touch-pan-x px-1">
+                <div className="flex items-center justify-between w-full min-w-max gap-3 sm:gap-1">
+                  {governorates.map((gov, idx) => {
+                    const isCurrent = idx === selectedIndex;
+                    const isPast = idx < selectedIndex;
+                    return (
+                      <button
+                        key={gov.id}
+                        type="button"
+                        onClick={() => setSelectedIndex(idx)}
+                        className={`flex flex-col items-center gap-1 p-1 rounded-xl transition-all cursor-pointer shrink-0 ${isCurrent ? 'scale-110' : 'opacity-70 hover:opacity-100'
+                          }`}
+                        title={`محطة ${idx + 1}: ${gov.name}`}
                       >
-                        {idx + 1}
-                      </div>
-                      <span className={`text-[11px] font-bold ${isCurrent ? 'text-[#9E3C1B] dark:text-amber-400 font-black' : 'text-[#6E5F52] dark:text-[#A8988B]'}`}>
-                        {gov.name}
-                      </span>
-                    </button>
-                  );
-                })}
+                        <div
+                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs ${isCurrent
+                              ? 'bg-[#B24C2B] text-white ring-4 ring-[#B24C2B]/20'
+                              : isPast
+                                ? 'bg-amber-600 text-white'
+                                : 'bg-[#E5DDD2] dark:bg-[#352B24] text-[#5A4D42] dark:text-[#C5B8AC]'
+                            }`}
+                        >
+                          {idx + 1}
+                        </div>
+                        <span className={`text-[10px] sm:text-[11px] font-bold ${isCurrent ? 'text-[#B24C2B] dark:text-amber-400 font-black' : 'text-[#6E5F52] dark:text-[#A8988B]'}`}>
+                          {gov.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
@@ -508,7 +442,7 @@ export const UpperEgyptMapPage: React.FC = () => {
         {displayMode === 'grid' && (
           <div className="space-y-6">
             {/* Search and Filters Bar */}
-            <div className="p-4 sm:p-6 bg-white dark:bg-[#1C1714] rounded-3xl border-2 border-[#E2D8CC] dark:border-[#2E241E] space-y-4 shadow-sm">
+            <div className="p-4 sm:p-6 bg-white dark:bg-[#1C1714] rounded-3xl border-2 border-[#E5DDD3] dark:border-[#2E241E] space-y-4 shadow-sm">
               <div className="flex flex-col sm:flex-row items-center gap-3">
                 <div className="relative flex-1 w-full">
                   <Search className="w-5 h-5 text-[#8C7A6B] absolute right-4 top-1/2 -translate-y-1/2" />
@@ -518,13 +452,13 @@ export const UpperEgyptMapPage: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="ابحث عن محافظة، حرفة (فخار، تلي، نول)، أو صرح أثري..."
-                    className="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-[#FAF7F2] dark:bg-[#251D18] border-2 border-[#D9CFC2] dark:border-[#3D3028] text-sm sm:text-base font-bold text-[#1C1613] dark:text-[#FDFBF7] outline-none focus:border-[#9E3C1B]"
+                    className="w-full pl-4 pr-12 py-3.5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] text-sm sm:text-base font-bold text-[#241E1A] dark:text-[#FAF7F2] outline-none focus:border-[#B24C2B]"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       onClick={() => setSearchQuery('')}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-[#8C7A6B] hover:text-[#1C1613]"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-[#8C7A6B] hover:text-[#241E1A]"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -538,11 +472,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                       key={reg}
                       type="button"
                       onClick={() => setSelectedRegionFilter(reg)}
-                      className={`px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-colors cursor-pointer border ${
-                        selectedRegionFilter === reg
-                          ? 'bg-[#9E3C1B] text-white border-[#9E3C1B]'
-                          : 'bg-[#FAF7F2] dark:bg-[#251D18] text-[#4A3E34] dark:text-[#D5C9BD] border-[#D9CFC2] dark:border-[#3D3028]'
-                      }`}
+                      className={`px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-colors cursor-pointer border ${selectedRegionFilter === reg
+                          ? 'bg-[#B24C2B] text-white border-[#B24C2B]'
+                          : 'bg-[#FAF7F2] dark:bg-[#26201B] text-[#4A3E34] dark:text-[#D5C9BD] border-[#E5DDD3] dark:border-[#352B24]'
+                        }`}
                     >
                       {reg}
                     </button>
@@ -562,11 +495,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                   <div
                     key={gov.id}
                     id={`card-gov-${gov.slug}`}
-                    className={`bg-white dark:bg-[#1C1714] rounded-3xl overflow-hidden border-2 transition-all flex flex-col justify-between shadow-sm hover:shadow-md ${
-                      isCurrent
-                        ? 'border-[#9E3C1B] ring-2 ring-[#9E3C1B]/30'
-                        : 'border-[#E2D8CC] dark:border-[#2E241E]'
-                    }`}
+                    className={`bg-white dark:bg-[#1C1714] rounded-3xl overflow-hidden border-2 transition-all flex flex-col justify-between shadow-sm hover:shadow-md ${isCurrent
+                        ? 'border-[#B24C2B] ring-2 ring-[#B24C2B]/30'
+                        : 'border-[#E5DDD3] dark:border-[#2E241E]'
+                      }`}
                   >
                     <div>
                       <div className="relative aspect-video overflow-hidden bg-[#2D2622]">
@@ -604,7 +536,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                             {gov.famousFor.slice(0, 3).map((f, i) => (
                               <span
                                 key={i}
-                                className="text-[11px] font-bold px-2 py-1 rounded-lg bg-[#FAF7F2] dark:bg-[#251D18] text-[#5A4D42] dark:text-[#C5B8AC] border border-[#E2D8CC] dark:border-[#3D3028]"
+                                className="text-[11px] font-bold px-2 py-1 rounded-lg bg-[#FAF7F2] dark:bg-[#26201B] text-[#5A4D42] dark:text-[#C5B8AC] border border-[#E5DDD3] dark:border-[#352B24]"
                               >
                                 {f}
                               </span>
@@ -621,16 +553,16 @@ export const UpperEgyptMapPage: React.FC = () => {
                           if (foundIdx !== -1) setSelectedIndex(foundIdx);
                           setDisplayMode('voyage');
                         }}
-                        className="flex-1 py-2.5 px-3 bg-[#EFE9DF] dark:bg-[#251D18] text-[#1C1613] dark:text-[#FDFBF7] font-black text-xs sm:text-sm rounded-xl hover:bg-[#E5DDD2] transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-[#D9CFC2] dark:border-[#3D3028]"
+                        className="flex-1 py-2.5 px-3 bg-[#F3ECE2] dark:bg-[#26201B] text-[#241E1A] dark:text-[#FAF7F2] font-black text-xs sm:text-sm rounded-xl hover:bg-[#E5DDD2] transition-colors cursor-pointer flex items-center justify-center gap-1.5 border border-[#E5DDD3] dark:border-[#352B24]"
                       >
-                        <Ship className="w-4 h-4 text-[#9E3C1B]" />
+                        <Ship className="w-4 h-4 text-[#B24C2B]" />
                         <span>فتح برحلة النيل</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => navigateToGovernorate(gov.slug)}
-                        className="flex-1 py-2.5 px-3 bg-[#9E3C1B] text-white font-black text-xs sm:text-sm rounded-xl hover:bg-[#853216] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
+                        className="flex-1 py-2.5 px-3 bg-[#B24C2B] text-white font-black text-xs sm:text-sm rounded-xl hover:bg-[#963E21] transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-2xs"
                       >
                         <span>الموسوعة</span>
                         <ArrowLeft className="w-4 h-4" />
@@ -647,68 +579,68 @@ export const UpperEgyptMapPage: React.FC = () => {
            ACTIVE GOVERNORATE HERITAGE DOSSIER
            Proverbs, crafts, cuisine & marketplace
            ========================================================= */}
-        <section aria-labelledby="active-gov-dossier-title" className="space-y-6">
+        <section aria-labelledby="active-gov-dossier-title" className="space-y-4 sm:space-y-6">
           {/* Panoramic Hero Banner for Selected Station */}
-          <div className="bg-white dark:bg-[#1B1512] rounded-3xl overflow-hidden border-2 border-[#E2D8CC] dark:border-[#2E241E] shadow-sm">
-            <div className="relative aspect-[21/9] min-h-[280px] sm:min-h-[360px] overflow-hidden bg-[#2D2622]">
+          <div className="bg-white dark:bg-[#1B1512] rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#E5DDD3] dark:border-[#2E241E] shadow-sm">
+            <div className="relative aspect-[16/10] sm:aspect-[21/9] min-h-[220px] sm:min-h-[360px] overflow-hidden bg-[#2D2622]">
               <img
                 src={selectedGov.coverImage}
                 alt={selectedGov.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
 
               {/* Top Region Badge */}
-              <div className="absolute top-4 sm:top-6 right-4 sm:right-6 left-4 sm:left-6 flex items-center justify-between gap-3">
-                <span className={`text-xs sm:text-sm font-black px-4 py-2 rounded-full backdrop-blur-md shadow-md ${currentTheme.badge}`}>
+              <div className="absolute top-3 sm:top-6 right-3 sm:right-6 left-3 sm:left-6 flex items-center justify-between gap-3">
+                <span className={`text-xs sm:text-sm font-black px-3 sm:px-4 py-1.5 sm:py-2 rounded-full backdrop-blur-md shadow-md ${currentTheme.badge}`}>
                   {selectedGov.region}
                 </span>
               </div>
 
               {/* Bottom Panoramic Info */}
-              <div className="absolute bottom-5 right-5 left-5 text-white space-y-1.5">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl sm:text-4xl">{currentEmblem.symbol}</span>
+              <div className="absolute bottom-3 sm:bottom-5 right-3 sm:right-5 left-3 sm:left-5 text-white space-y-1 sm:space-y-1.5">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-2xl sm:text-4xl">{currentEmblem.symbol}</span>
                   <h2
                     id="active-gov-dossier-title"
-                    className="font-black font-serif drop-shadow-md text-2xl sm:text-4xl"
+                    className="font-black font-serif drop-shadow-md text-xl sm:text-4xl"
                   >
                     محافظة {selectedGov.name}
                   </h2>
                 </div>
-                <p className="text-amber-300 font-black text-base sm:text-xl drop-shadow-sm">
+                <p className="text-amber-300 font-black text-sm sm:text-xl drop-shadow-sm">
                   «{selectedGov.nickname}»
                 </p>
-                <p className="text-white/80 text-xs sm:text-sm font-medium">
+                <p className="text-white/80 text-[11px] sm:text-sm font-medium">
                   العاصمة: {selectedGov.capitalCity} | قطاع النيل: {selectedGov.nileSegment}
                 </p>
               </div>
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="p-4 sm:p-6 bg-[#FAF7F2]/90 dark:bg-[#1C1714] border-b-2 border-[#EFE9DF] dark:border-[#2E241E]">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-[#251D18] border border-[#E2D8CC] dark:border-[#3D3028] text-center">
-                  <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] font-bold block">الصروح التاريخية</span>
-                  <span className="text-lg sm:text-xl font-black text-[#9E3C1B] dark:text-amber-400">
+            <div className="p-3 sm:p-6 bg-[#FAF7F2]/90 dark:bg-[#1C1714] border-b-2 border-[#F3ECE2] dark:border-[#2E241E]">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-center">
+                  <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-bold block">الصروح التاريخية</span>
+                  <span className="text-base sm:text-xl font-black text-[#B24C2B] dark:text-amber-400">
                     {selectedGov.stats?.placesCount || 5} معالم
                   </span>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-[#251D18] border border-[#E2D8CC] dark:border-[#3D3028] text-center">
-                  <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] font-bold block">الحرف التراثية</span>
-                  <span className="text-lg sm:text-xl font-black text-[#9E3C1B] dark:text-amber-400">
+                <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-center">
+                  <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-bold block">الحرف التراثية</span>
+                  <span className="text-base sm:text-xl font-black text-[#B24C2B] dark:text-amber-400">
                     {selectedGov.stats?.craftsCount || 4} صنائع حية
                   </span>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-[#251D18] border border-[#E2D8CC] dark:border-[#3D3028] text-center">
-                  <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] font-bold block">معروضات السوق</span>
-                  <span className="text-lg sm:text-xl font-black text-[#9E3C1B] dark:text-amber-400">
+                <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-center">
+                  <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-bold block">معروضات السوق</span>
+                  <span className="text-base sm:text-xl font-black text-[#B24C2B] dark:text-amber-400">
                     {govMarketProducts.length > 0 ? `${govMarketProducts.length} منتجات` : `${selectedGov.stats?.productsCount || 10}+ منتج`}
                   </span>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-white dark:bg-[#251D18] border border-[#E2D8CC] dark:border-[#3D3028] text-center">
-                  <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] font-bold block">الحكايات الشفاهية</span>
-                  <span className="text-lg sm:text-xl font-black text-[#9E3C1B] dark:text-amber-400">
+                <div className="p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-center">
+                  <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-bold block">الحكايات الشفاهية</span>
+                  <span className="text-base sm:text-xl font-black text-[#B24C2B] dark:text-amber-400">
                     {selectedGov.stats?.storiesCount || 4} مرويات
                   </span>
                 </div>
@@ -716,89 +648,86 @@ export const UpperEgyptMapPage: React.FC = () => {
             </div>
 
             {/* Interactive Tab Navigation */}
-            <div className="p-4 sm:p-8 space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b-2 border-[#EFE9DF] dark:border-[#2E241E] overflow-x-auto no-scrollbar">
-                <button
-                  type="button"
-                  id="tab-btn-places"
-                  onClick={() => setActiveTab('places')}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === 'places'
-                      ? 'bg-[#9E3C1B] text-white shadow-xs'
-                      : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#EFE9DF] dark:hover:bg-[#251D18]'
-                  }`}
-                >
-                  <Landmark className="w-5 h-5" />
-                  <span>الصروح والمعالم ({currentGovMarkers.filter((m) => m.type === 'place').length || 2})</span>
-                </button>
+            <div className="p-3 sm:p-8 space-y-4 sm:space-y-6">
+              <div className="flex items-center gap-1.5 sm:gap-2 pb-2 border-b-2 border-[#F3ECE2] dark:border-[#2E241E] overflow-x-auto no-scrollbar touch-pan-x">
+                <div className="flex items-center gap-1.5 sm:gap-2 min-w-max px-0.5">
+                  <button
+                    type="button"
+                    id="tab-btn-places"
+                    onClick={() => setActiveTab('places')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-xs sm:text-base ${activeTab === 'places'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#F3ECE2] dark:hover:bg-[#26201B]'
+                      }`}
+                  >
+                    <Landmark className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>الصروح والمعالم ({currentGovMarkers.filter((m) => m.type === 'place').length || 2})</span>
+                  </button>
 
-                <button
-                  type="button"
-                  id="tab-btn-crafts"
-                  onClick={() => setActiveTab('crafts')}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === 'crafts'
-                      ? 'bg-[#9E3C1B] text-white shadow-xs'
-                      : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#EFE9DF] dark:hover:bg-[#251D18]'
-                  }`}
-                >
-                  <Hammer className="w-5 h-5" />
-                  <span>الحرف والورش ({currentGovMarkers.filter((m) => m.type === 'craft').length || 2})</span>
-                </button>
+                  <button
+                    type="button"
+                    id="tab-btn-crafts"
+                    onClick={() => setActiveTab('crafts')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-xs sm:text-base ${activeTab === 'crafts'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#F3ECE2] dark:hover:bg-[#26201B]'
+                      }`}
+                  >
+                    <Hammer className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>الحرف والورش ({currentGovMarkers.filter((m) => m.type === 'craft').length || 2})</span>
+                  </button>
 
-                <button
-                  type="button"
-                  id="tab-btn-products"
-                  onClick={() => setActiveTab('products')}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === 'products'
-                      ? 'bg-[#9E3C1B] text-white shadow-xs'
-                      : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#EFE9DF] dark:hover:bg-[#251D18]'
-                  }`}
-                >
-                  <ShoppingBag className="w-5 h-5" />
-                  <span>معروضات السوق ({govMarketProducts.length})</span>
-                  {govMarketProducts.length > 0 && (
-                    <span className="text-[10px] bg-amber-400 text-[#1C1613] font-bold px-1.5 py-0.5 rounded-full">
-                      متاح
-                    </span>
-                  )}
-                </button>
+                  <button
+                    type="button"
+                    id="tab-btn-products"
+                    onClick={() => setActiveTab('products')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-xs sm:text-base ${activeTab === 'products'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#F3ECE2] dark:hover:bg-[#26201B]'
+                      }`}
+                  >
+                    <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>معروضات السوق ({govMarketProducts.length})</span>
+                    {govMarketProducts.length > 0 && (
+                      <span className="text-[10px] bg-amber-400 text-[#241E1A] font-bold px-1.5 py-0.5 rounded-full">
+                        متاح
+                      </span>
+                    )}
+                  </button>
 
-                <button
-                  type="button"
-                  id="tab-btn-foods"
-                  onClick={() => setActiveTab('foods')}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === 'foods'
-                      ? 'bg-[#9E3C1B] text-white shadow-xs'
-                      : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#EFE9DF] dark:hover:bg-[#251D18]'
-                  }`}
-                >
-                  <Utensils className="w-5 h-5" />
-                  <span>سفرة وخيرات البلد</span>
-                </button>
+                  <button
+                    type="button"
+                    id="tab-btn-foods"
+                    onClick={() => setActiveTab('foods')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-xs sm:text-base ${activeTab === 'foods'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#F3ECE2] dark:hover:bg-[#26201B]'
+                      }`}
+                  >
+                    <Utensils className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>سفرة وخيرات البلد</span>
+                  </button>
 
-                <button
-                  type="button"
-                  id="tab-btn-folklore"
-                  onClick={() => setActiveTab('folklore')}
-                  className={`flex items-center gap-2 px-4 sm:px-5 py-3 rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-sm sm:text-base ${
-                    activeTab === 'folklore'
-                      ? 'bg-[#9E3C1B] text-white shadow-xs'
-                      : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#EFE9DF] dark:hover:bg-[#251D18]'
-                  }`}
-                >
-                  <Scroll className="w-5 h-5" />
-                  <span>أمثال وحكايات شعبية</span>
-                </button>
+                  <button
+                    type="button"
+                    id="tab-btn-folklore"
+                    onClick={() => setActiveTab('folklore')}
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl font-black transition-all cursor-pointer whitespace-nowrap text-xs sm:text-base ${activeTab === 'folklore'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#5A4D42] dark:text-[#C5B8AC] hover:bg-[#F3ECE2] dark:hover:bg-[#26201B]'
+                      }`}
+                  >
+                    <Scroll className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>أمثال وحكايات شعبية</span>
+                  </button>
+                </div>
               </div>
 
               {/* TAB 1: PLACES */}
               {activeTab === 'places' && (
                 <div className="space-y-4">
-                  <h3 className="text-lg sm:text-xl font-black text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                    <Landmark className="w-5 h-5 text-[#9E3C1B]" />
+                  <h3 className="text-lg sm:text-xl font-black text-[#241E1A] dark:text-[#FAF7F2] flex items-center gap-2">
+                    <Landmark className="w-5 h-5 text-[#B24C2B]" />
                     <span>أبرز المعالم والصروح في {selectedGov.name}:</span>
                   </h3>
 
@@ -809,7 +738,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                         .map((p) => (
                           <div
                             key={p.id}
-                            className="bg-[#FAF7F2] dark:bg-[#201814] rounded-2xl overflow-hidden border-2 border-[#E2D8CC] dark:border-[#3D3028] flex flex-col sm:flex-row gap-4 p-4"
+                            className="bg-[#FAF7F2] dark:bg-[#26201B] rounded-2xl overflow-hidden border-2 border-[#E5DDD3] dark:border-[#352B24] flex flex-col sm:flex-row gap-4 p-4"
                           >
                             <img
                               src={p.coverImage}
@@ -817,7 +746,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                               className="w-full sm:w-36 h-36 object-cover rounded-xl shrink-0"
                             />
                             <div className="space-y-1.5 flex-1">
-                              <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                              <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                                 {p.title}
                               </h4>
                               <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 dark:bg-emerald-950/60 dark:text-emerald-300 inline-block">
@@ -830,7 +759,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                           </div>
                         ))
                     ) : (
-                      <div className="p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] col-span-2">
+                      <div className="p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] col-span-2">
                         <p className="text-[#4A3E34] dark:text-[#DDD3C7] font-bold text-sm sm:text-base">
                           تزخر محافظة {selectedGov.name} بالعديد من الآثار والمعابد والمساجد والكنائس التاريخية العريقة.
                         </p>
@@ -843,8 +772,8 @@ export const UpperEgyptMapPage: React.FC = () => {
               {/* TAB 2: CRAFTS */}
               {activeTab === 'crafts' && (
                 <div className="space-y-4">
-                  <h3 className="text-lg sm:text-xl font-black text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                    <Hammer className="w-5 h-5 text-[#9E3C1B]" />
+                  <h3 className="text-lg sm:text-xl font-black text-[#241E1A] dark:text-[#FAF7F2] flex items-center gap-2">
+                    <Hammer className="w-5 h-5 text-[#B24C2B]" />
                     <span>الحرف التراثية وشيوخ الصنعة في {selectedGov.name}:</span>
                   </h3>
 
@@ -855,7 +784,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                         .map((c) => (
                           <div
                             key={c.id}
-                            className="bg-[#FAF7F2] dark:bg-[#201814] rounded-2xl overflow-hidden border-2 border-[#E2D8CC] dark:border-[#3D3028] flex flex-col sm:flex-row gap-4 p-4"
+                            className="bg-[#FAF7F2] dark:bg-[#26201B] rounded-2xl overflow-hidden border-2 border-[#E5DDD3] dark:border-[#352B24] flex flex-col sm:flex-row gap-4 p-4"
                           >
                             <img
                               src={c.coverImage}
@@ -863,7 +792,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                               className="w-full sm:w-36 h-36 object-cover rounded-xl shrink-0"
                             />
                             <div className="space-y-1.5 flex-1">
-                              <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                              <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                                 {c.title}
                               </h4>
                               <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-950 dark:bg-amber-950/60 dark:text-amber-300 inline-block">
@@ -876,7 +805,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                           </div>
                         ))
                     ) : (
-                      <div className="p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] col-span-2">
+                      <div className="p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] col-span-2">
                         <p className="text-[#4A3E34] dark:text-[#DDD3C7] font-bold text-sm sm:text-base">
                           تتميز {selectedGov.name} بصناعات يدوية فريدة يتوارثها الحرفيون أباً عن جد كرمز أصيل للهوية الصعيدية.
                         </p>
@@ -890,15 +819,15 @@ export const UpperEgyptMapPage: React.FC = () => {
               {activeTab === 'products' && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <h3 className="text-lg sm:text-xl font-black text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                      <ShoppingBag className="w-5 h-5 text-[#9E3C1B]" />
+                    <h3 className="text-lg sm:text-xl font-black text-[#241E1A] dark:text-[#FAF7F2] flex items-center gap-2">
+                      <ShoppingBag className="w-5 h-5 text-[#B24C2B]" />
                       <span>منتجات حقيقية متوفرة للشراء من ورش {selectedGov.name}:</span>
                     </h3>
 
                     <button
                       type="button"
                       onClick={() => setActivePage('products')}
-                      className="text-xs sm:text-sm font-black text-[#9E3C1B] dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-xs sm:text-sm font-black text-[#B24C2B] dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>تصفح كافة معروضات المتجر</span>
                       <ArrowLeft className="w-3.5 h-3.5" />
@@ -906,37 +835,37 @@ export const UpperEgyptMapPage: React.FC = () => {
                   </div>
 
                   {govMarketProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
                       {govMarketProducts.map((prod) => (
                         <div
                           key={prod.id}
-                          className="bg-[#FAF7F2] dark:bg-[#201814] rounded-2xl border-2 border-[#E2D8CC] dark:border-[#3D3028] overflow-hidden p-3.5 flex flex-col justify-between space-y-3"
+                          className="bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl sm:rounded-2xl border-2 border-[#E5DDD3] dark:border-[#352B24] overflow-hidden p-2.5 sm:p-3.5 flex flex-col justify-between space-y-2 sm:space-y-3"
                         >
-                          <div className="space-y-2">
-                            <div className="aspect-square rounded-xl overflow-hidden bg-stone-100 relative">
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <div className="aspect-square rounded-lg sm:rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800 relative">
                               <img
                                 src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=600'}
                                 alt={prod.title}
                                 className="w-full h-full object-cover"
                               />
-                              <span className="absolute top-2 right-2 text-[10px] font-black px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md">
+                              <span className="absolute top-1.5 right-1.5 text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md">
                                 {prod.sellerGovernorate || selectedGov.name}
                               </span>
                             </div>
-                            <h4 className="text-sm sm:text-base font-black text-[#1C1613] dark:text-[#FDFBF7] line-clamp-1">
+                            <h4 className="text-xs sm:text-base font-black text-[#241E1A] dark:text-[#FAF7F2] line-clamp-1">
                               {prod.title}
                             </h4>
-                            <div className="flex items-center justify-between text-xs font-bold text-[#6E5F52] dark:text-[#A8988B]">
-                              <span>الورشة: {prod.sellerName || 'حرفيو الصعيد'}</span>
-                              <div className="flex items-center gap-1 text-amber-500">
+                            <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-[#6E5F52] dark:text-[#A8988B]">
+                              <span className="truncate max-w-[80px] sm:max-w-none">{prod.sellerName || 'حرفيو الصعيد'}</span>
+                              <div className="flex items-center gap-0.5 sm:gap-1 text-amber-500 shrink-0">
                                 <Star className="w-3 h-3 fill-current" />
                                 <span>{prod.rating || 4.9}</span>
                               </div>
                             </div>
                           </div>
 
-                          <div className="pt-2 border-t border-[#E2D8CC] dark:border-[#3D3028] flex items-center justify-between gap-2">
-                            <span className="text-base sm:text-lg font-black text-[#9E3C1B] dark:text-amber-400">
+                          <div className="pt-2 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between gap-1 sm:gap-2">
+                            <span className="text-xs sm:text-lg font-black text-[#B24C2B] dark:text-amber-400">
                               {prod.price} ج.م
                             </span>
 
@@ -944,21 +873,20 @@ export const UpperEgyptMapPage: React.FC = () => {
                               type="button"
                               id={`btn-add-atlas-cart-${prod.id}`}
                               onClick={() => handleAddToCart(prod)}
-                              className={`py-2 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                                addedProductId === prod.id
+                              className={`py-1.5 px-2 sm:py-2 sm:px-3 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black transition-all cursor-pointer flex items-center gap-1 shrink-0 ${addedProductId === prod.id
                                   ? 'bg-emerald-600 text-white'
-                                  : 'bg-[#9E3C1B] hover:bg-[#853216] text-white'
-                              }`}
+                                  : 'bg-[#B24C2B] hover:bg-[#963E21] text-white'
+                                }`}
                             >
                               {addedProductId === prod.id ? (
                                 <>
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>تمت الإضافة!</span>
+                                  <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                  <span>تم!</span>
                                 </>
                               ) : (
                                 <>
-                                  <ShoppingBag className="w-3.5 h-3.5" />
-                                  <span>أضف للسلة</span>
+                                  <ShoppingBag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                  <span>أضف</span>
                                 </>
                               )}
                             </button>
@@ -967,9 +895,9 @@ export const UpperEgyptMapPage: React.FC = () => {
                       ))}
                     </div>
                   ) : (
-                    <div className="p-8 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] text-center space-y-3">
-                      <ShoppingBag className="w-8 h-8 text-[#9E3C1B] mx-auto opacity-75" />
-                      <h4 className="text-base font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                    <div className="p-6 sm:p-8 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] text-center space-y-3">
+                      <ShoppingBag className="w-8 h-8 text-[#B24C2B] mx-auto opacity-75" />
+                      <h4 className="text-base font-black text-[#241E1A] dark:text-[#FAF7F2]">
                         ورش ومنتجات محافظة {selectedGov.name}
                       </h4>
                       <p className="text-xs sm:text-sm text-[#5A4D42] dark:text-[#C5B8AC] max-w-md mx-auto leading-relaxed">
@@ -978,7 +906,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setActivePage('products')}
-                        className="py-2.5 px-5 rounded-xl bg-[#9E3C1B] text-white text-xs sm:text-sm font-black hover:bg-[#853216] transition-colors cursor-pointer"
+                        className="py-2.5 px-5 rounded-xl bg-[#B24C2B] text-white text-xs sm:text-sm font-black hover:bg-[#963E21] transition-colors cursor-pointer"
                       >
                         استعرض منتجات الصعيد الآن
                       </button>
@@ -990,16 +918,16 @@ export const UpperEgyptMapPage: React.FC = () => {
               {/* TAB 4: FOODS */}
               {activeTab === 'foods' && (
                 <div className="space-y-4">
-                  <h3 className="text-lg sm:text-xl font-black text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                    <Utensils className="w-5 h-5 text-[#9E3C1B]" />
+                  <h3 className="text-lg sm:text-xl font-black text-[#241E1A] dark:text-[#FAF7F2] flex items-center gap-2">
+                    <Utensils className="w-5 h-5 text-[#B24C2B]" />
                     <span>سفرة وخيرات الصعيد الأصيلة في {selectedGov.name}:</span>
                   </h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] space-y-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🍞</span>
-                        <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                        <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                           العيش الشمسي الصعيدي
                         </h4>
                       </div>
@@ -1008,10 +936,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] space-y-2">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🍯</span>
-                        <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                        <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                           عسل القصب الأسود والفطير المشلتت
                         </h4>
                       </div>
@@ -1020,10 +948,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] space-y-2">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🥣</span>
-                        <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                        <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                           الكشك الصعيدي بالفريك واللبن
                         </h4>
                       </div>
@@ -1032,10 +960,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                       </p>
                     </div>
 
-                    <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] space-y-2">
+                    <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🦆</span>
-                        <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7]">
+                        <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2]">
                           الطيور البلدية والملوخية الناشفة
                         </h4>
                       </div>
@@ -1050,25 +978,25 @@ export const UpperEgyptMapPage: React.FC = () => {
               {/* TAB 5: FOLKLORE & PROVERBS */}
               {activeTab === 'folklore' && (
                 <div className="space-y-4">
-                  <div className="p-6 sm:p-8 rounded-3xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-center space-y-3 relative">
+                  <div className="p-4 sm:p-8 rounded-2xl sm:rounded-3xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 text-center space-y-2 sm:space-y-3 relative">
                     <div className="flex items-center justify-center gap-2">
                       <span className="text-xs font-black px-3.5 py-1 rounded-full bg-amber-200 text-amber-950 dark:bg-amber-900 dark:text-amber-200">
                         مَثَل شعبي من قلب {selectedGov.name}
                       </span>
                     </div>
-                    <p className="font-serif font-black text-[#9E3C1B] dark:text-amber-300 text-xl sm:text-3xl">
+                    <p className="font-serif font-black text-[#B24C2B] dark:text-amber-300 text-lg sm:text-3xl leading-relaxed">
                       {currentEmblem.proverb}
                     </p>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#201814] border-2 border-[#E2D8CC] dark:border-[#3D3028] space-y-3">
+                  <div className="p-4 sm:p-6 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border-2 border-[#E5DDD3] dark:border-[#352B24] space-y-2.5 sm:space-y-3">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <h4 className="text-base sm:text-lg font-black text-[#1C1613] dark:text-[#FDFBF7] flex items-center gap-2">
-                        <Scroll className="w-5 h-5 text-[#9E3C1B]" />
+                      <h4 className="text-base sm:text-lg font-black text-[#241E1A] dark:text-[#FAF7F2] flex items-center gap-2">
+                        <Scroll className="w-5 h-5 text-[#B24C2B]" />
                         <span>من حكايات وتراث {selectedGov.name}:</span>
                       </h4>
                     </div>
-                    <p className="text-[#4A3E34] dark:text-[#DDD3C7] leading-relaxed font-medium text-sm sm:text-base">
+                    <p className="text-[#4A3E34] dark:text-[#DDD3C7] leading-relaxed font-medium text-xs sm:text-base">
                       {currentEmblem.folklore}
                     </p>
                   </div>
@@ -1076,24 +1004,24 @@ export const UpperEgyptMapPage: React.FC = () => {
               )}
 
               {/* Action Buttons */}
-              <div className="pt-6 border-t-2 border-[#EFE9DF] dark:border-[#2E241E] flex flex-col sm:flex-row items-center gap-3">
+              <div className="pt-5 sm:pt-6 border-t-2 border-[#F3ECE2] dark:border-[#2E241E] flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                 <button
                   type="button"
                   id={`btn-open-encyclopedia-${selectedGov.slug}`}
                   onClick={() => navigateToGovernorate(selectedGov.slug)}
-                  className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-[#9E3C1B] hover:bg-[#853216] text-white font-black flex items-center justify-center gap-2.5 shadow-md transition-all cursor-pointer min-h-[52px] text-sm sm:text-base"
+                  className="w-full sm:flex-1 py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl sm:rounded-2xl bg-[#B24C2B] hover:bg-[#963E21] text-white font-black flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer min-h-[46px] sm:min-h-[52px] text-xs sm:text-base text-center"
                 >
                   <span>فتح موسوعة محافظة {selectedGov.name} بالكامل</span>
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
 
                 <button
                   type="button"
                   id="btn-open-market-gov"
                   onClick={() => setActivePage('products')}
-                  className="w-full sm:w-auto py-3.5 px-6 rounded-2xl bg-[#EFE9DF] dark:bg-[#251D18] hover:bg-[#E5DDD2] text-[#1C1613] dark:text-[#FDFBF7] font-black flex items-center justify-center gap-2 transition-colors cursor-pointer border-2 border-[#D9CFC2] dark:border-[#3D3028] min-h-[52px] text-sm sm:text-base"
+                  className="w-full sm:w-auto py-3 sm:py-3.5 px-4 sm:px-6 rounded-xl sm:rounded-2xl bg-[#F3ECE2] dark:bg-[#26201B] hover:bg-[#E5DDD2] text-[#241E1A] dark:text-[#FAF7F2] font-black flex items-center justify-center gap-2 transition-colors cursor-pointer border-2 border-[#E5DDD3] dark:border-[#352B24] min-h-[46px] sm:min-h-[52px] text-xs sm:text-base text-center"
                 >
-                  <ShoppingBag className="w-5 h-5 text-[#9E3C1B]" />
+                  <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[#B24C2B]" />
                   <span>تسوّق منتجات {selectedGov.name}</span>
                 </button>
               </div>

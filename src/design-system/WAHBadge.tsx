@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderIcon } from './renderIcon';
 
 export type BadgeVariant =
   | 'terracotta'
@@ -8,10 +9,10 @@ export type BadgeVariant =
   | 'success'
   | 'outline';
 
-interface WAHBadgeProps {
+export interface WAHBadgeProps {
   variant?: BadgeVariant;
   children: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: React.ElementType | React.ReactNode;
   className?: string;
   size?: 'sm' | 'md';
 }
@@ -24,6 +25,7 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
   size = 'md'
 }) => {
   const sizeClasses = size === 'sm' ? 'text-[10px] px-2 py-0.5 gap-1' : 'text-xs px-2.5 py-1 gap-1.5';
+  const renderedIcon = renderIcon(icon, size === 'sm' ? 'w-3 h-3 shrink-0' : 'w-3.5 h-3.5 shrink-0');
 
   const variantClasses: Record<BadgeVariant, string> = {
     terracotta:
@@ -44,7 +46,7 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
     <span
       className={`inline-flex items-center font-bold tracking-tight rounded-md select-none ${sizeClasses} ${variantClasses[variant]} ${className}`}
     >
-      {icon && <span className="shrink-0">{icon}</span>}
+      {renderedIcon && <span className="shrink-0">{renderedIcon}</span>}
       <span>{children}</span>
     </span>
   );

@@ -67,9 +67,9 @@ const WholesalePage = React.lazy(() =>
 
 const LazySectionFallback: React.FC = () => (
   <div className="min-h-[420px] flex flex-col items-center justify-center p-8 text-center">
-    <div className="w-12 h-12 border-4 border-[#E8E1D9] border-t-[#B45F42] rounded-full animate-spin mb-4" />
+    <div className="w-12 h-12 border-4 border-[#E5DDD3] border-t-[#B24C2B] rounded-full animate-spin mb-4" />
     <p className="text-sm font-bold text-[#2D2A26]">جاري تحميل لوحة التحكم...</p>
-    <p className="text-xs text-[#7A6F64] mt-1">وه | WAH — العالم الرقمي لصعيد مصر</p>
+    <p className="text-xs text-[#73675B] mt-1">وه | WAH — العالم الرقمي لصعيد مصر</p>
   </div>
 );
 
@@ -247,7 +247,7 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col justify-between bg-[#faf6f0]">
+    <main className="min-h-screen flex flex-col justify-between bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] transition-colors duration-300">
       <div>
     
       
@@ -288,12 +288,12 @@ const MainContent: React.FC = () => {
               ) : isAuthenticated ? (
                 <CheckoutPage />
               ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-[#E8E1D9] shadow-xl text-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#B45F42]/10 text-[#B45F42] flex items-center justify-center mx-auto text-2xl">
+                <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-[#E5DDD3] shadow-xl text-center space-y-4">
+                  <div className="w-16 h-16 rounded-2xl bg-[#B24C2B]/10 text-[#B24C2B] flex items-center justify-center mx-auto text-2xl">
                     🔒
                   </div>
                   <h2 className="text-xl font-bold text-[#2D2A26]">تسجيل الدخول لإتمام الطلب</h2>
-                  <p className="text-sm text-[#7A6F64] leading-relaxed">
+                  <p className="text-sm text-[#73675B] leading-relaxed">
                     يرجى تسجيل الدخول أو إنشاء حساب جديد لحفظ بيانات الشحن ومتابعة حالة طلبك التراثي.
                   </p>
                   <div className="pt-2 flex flex-col gap-2">
@@ -303,7 +303,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول للمتابعة
                     </button>
@@ -367,12 +367,12 @@ const MainContent: React.FC = () => {
               isAuthenticated ? (
                 <BuyerAccountPage />
               ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-[#E8E1D9] shadow-xl text-center space-y-4">
+                <div className="max-w-md mx-auto my-16 p-8 bg-white rounded-3xl border border-[#E5DDD3] shadow-xl text-center space-y-4">
                   <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mx-auto text-2xl">
                     👤
                   </div>
                   <h2 className="text-xl font-bold text-[#2D2A26]">إعدادات الحساب الشخصي</h2>
-                  <p className="text-sm text-[#7A6F64] leading-relaxed">
+                  <p className="text-sm text-[#73675B] leading-relaxed">
                     يرجى تسجيل الدخول للوصول إلى بياناتك الشخصية وعناوين الشحن المحفوظة.
                   </p>
                   <button
@@ -381,7 +381,7 @@ const MainContent: React.FC = () => {
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
-                    className="w-full py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all"
+                    className="w-full py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all"
                   >
                     تسجيل الدخول الآن
                   </button>
@@ -401,7 +401,7 @@ const MainContent: React.FC = () => {
                     🏺
                   </div>
                   <h2 className="text-xl font-bold text-[#2D2A26]">لوحة تحكم ورش الصعيد</h2>
-                  <p className="text-sm text-[#7A6F64] leading-relaxed">
+                  <p className="text-sm text-[#73675B] leading-relaxed">
                     هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
                   </p>
                   <div className="pt-2 flex flex-col gap-2">
@@ -421,7 +421,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-2.5 bg-white border border-[#E8E1D9] text-[#2D2A26] font-bold rounded-xl text-xs hover:bg-[#F3EFE9] transition-all"
+                      className="w-full py-2.5 bg-white border border-[#E5DDD3] text-[#2D2A26] font-bold rounded-xl text-xs hover:bg-[#F3EFE9] transition-all"
                     >
                       تقديم طلب انضمام ورشة جديدة
                     </button>
@@ -442,7 +442,7 @@ const MainContent: React.FC = () => {
                     🛡️
                   </div>
                   <h2 className="text-xl font-bold text-[#2D2A26]">منطقة الإدارة العليا</h2>
-                  <p className="text-sm text-[#7A6F64] leading-relaxed">
+                  <p className="text-sm text-[#73675B] leading-relaxed">
                     هذه اللوحة مخصصة لمديري منصة وه فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
                   </p>
                   <button

@@ -56,25 +56,25 @@ export const ForceChangePasswordModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white rounded-3xl border border-[#E8E1D9] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-hidden relative">
+      <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-hidden relative">
         {/* Header Badge & Title */}
-        <div className="flex items-center gap-3 border-b border-[#E8E1D9] pb-3.5">
-          <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-            <KeyRound className="w-5 h-5 text-amber-700" />
+        <div className="flex items-center gap-3 border-b border-[#E5DDD3] dark:border-[#352B24] pb-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center shrink-0">
+            <KeyRound className="w-5 h-5 text-amber-700 dark:text-amber-400" />
           </div>
           <div>
-            <h3 className="font-black text-base text-[#2D2A26]">تعيين كلمة مرور شخصية جديدة</h3>
-            <p className="text-xs text-amber-800 font-medium">إجراء أمني إلزامي لتفعيل حسابك</p>
+            <h3 className="font-black text-base text-[#2D2A26] dark:text-[#FAF6F2]">تعيين كلمة مرور شخصية جديدة</h3>
+            <p className="text-xs text-amber-800 dark:text-amber-300 font-medium">إجراء أمني إلزامي لتفعيل حسابك</p>
           </div>
         </div>
 
-        <p className="text-xs text-[#7A6F64] leading-relaxed">
-          مرحباً بك يا <strong className="text-[#2D2A26]">{currentUser.name || currentUser.username}</strong>. لقد قمت بتسجيل الدخول باستخدام كلمة مرور مؤقتة تم إنشاؤها لك من قبل الإدارة. لحماية وأمان حسابك، يجب تعيين كلمة مرور شخصية جديدة قبل متابعة التصفح.
+        <p className="text-xs text-[#73675B] dark:text-[#A89B8F] leading-relaxed">
+          مرحباً بك يا <strong className="text-[#2D2A26] dark:text-[#FAF6F2]">{currentUser.name || currentUser.username}</strong>. لقد قمت بتسجيل الدخول باستخدام كلمة مرور مؤقتة تم إنشاؤها لك من قبل الإدارة. لحماية وأمان حسابك، يجب تعيين كلمة مرور شخصية جديدة قبل متابعة التصفح.
         </p>
 
         {errorMessage && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
+          <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
+            <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 dark:text-red-400" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -82,7 +82,7 @@ export const ForceChangePasswordModal: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
           {/* Current Temporary Password */}
           <div>
-            <label className="block font-bold text-[#2D2A26] mb-1">
+            <label className="block font-bold text-[#2D2A26] dark:text-[#FAF6F2] mb-1">
               كلمة المرور المؤقتة الحالية *
             </label>
             <div className="relative">
@@ -92,7 +92,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="اكتب كلمة المرور المؤقتة التي زودتك بها الإدارة"
-                className="w-full pl-3 pr-10 py-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] text-xs font-mono text-left"
+                className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#3d3129] rounded-xl outline-none focus:border-[#B24C2B] text-xs font-mono text-left text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 dir="ltr"
               />
               <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -101,7 +101,7 @@ export const ForceChangePasswordModal: React.FC = () => {
 
           {/* New Personal Password */}
           <div>
-            <label className="block font-bold text-[#2D2A26] mb-1">
+            <label className="block font-bold text-[#2D2A26] dark:text-[#FAF6F2] mb-1">
               كلمة المرور الشخصية الجديدة (6 خانات على الأقل) *
             </label>
             <div className="relative">
@@ -111,7 +111,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="أدخل كلمة المرور الجديدة الخاصة بك"
-                className="w-full pl-3 pr-10 py-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] text-xs font-mono text-left"
+                className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#3d3129] rounded-xl outline-none focus:border-[#B24C2B] text-xs font-mono text-left text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 dir="ltr"
               />
               <KeyRound className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -120,7 +120,7 @@ export const ForceChangePasswordModal: React.FC = () => {
 
           {/* Confirm New Password */}
           <div>
-            <label className="block font-bold text-[#2D2A26] mb-1">
+            <label className="block font-bold text-[#2D2A26] dark:text-[#FAF6F2] mb-1">
               تأكيد كلمة المرور الجديدة *
             </label>
             <div className="relative">
@@ -130,7 +130,7 @@ export const ForceChangePasswordModal: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="أعد إدخال كلمة المرور الجديدة للتأكيد"
-                className="w-full pl-3 pr-10 py-2.5 bg-[#FDFBF7] border border-[#E8E1D9] rounded-xl outline-none focus:border-[#B45F42] text-xs font-mono text-left"
+                className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#3d3129] rounded-xl outline-none focus:border-[#B24C2B] text-xs font-mono text-left text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 dir="ltr"
               />
               <CheckCircle2 className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -141,7 +141,7 @@ export const ForceChangePasswordModal: React.FC = () => {
             <button
               type="button"
               onClick={() => logout()}
-              className="text-xs text-gray-500 hover:text-rose-600 font-medium py-1.5 flex items-center gap-1 cursor-pointer order-2 sm:order-1"
+              className="text-xs text-gray-500 dark:text-[#A89B8F] hover:text-rose-600 dark:hover:text-rose-400 font-medium py-1.5 flex items-center gap-1 cursor-pointer order-2 sm:order-1 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>تسجيل الخروج والعودة لاحقاً</span>
@@ -151,7 +151,7 @@ export const ForceChangePasswordModal: React.FC = () => {
               type="submit"
               disabled={isSubmitting}
               id="submit-force-change-pwd-btn"
-              className="w-full sm:w-auto px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer order-1 sm:order-2"
+              className="w-full sm:w-auto px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer order-1 sm:order-2"
             >
               {isSubmitting ? (
                 <>

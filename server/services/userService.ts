@@ -153,7 +153,7 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
   return null;
 }
 
-export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg';
+export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
 
 export async function createUser(userData: {
   id?: string;

@@ -134,7 +134,7 @@ export const AuthModal: React.FC = () => {
       id="auth-modal-backdrop"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto"
     >
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-[#ede4d8] overflow-hidden max-h-[92vh] flex flex-col my-auto">
+      <div className="relative w-full max-w-md bg-white dark:bg-[#1B1613] rounded-2xl shadow-2xl border border-[#ede4d8] dark:border-[#352B24] overflow-hidden max-h-[92vh] flex flex-col my-auto">
         {/* Modal Header */}
         <div className="bg-gradient-to-r from-[#943310] to-[#b4431a] p-5 sm:p-6 text-white text-center relative shrink-0">
           <button
@@ -171,9 +171,9 @@ export const AuthModal: React.FC = () => {
             <div>
               {forgotSubmitted ? (
                 <div className="text-center py-6 space-y-4">
-                  <CheckCircle2 className="w-14 h-14 text-emerald-600 mx-auto" />
-                  <h3 className="font-bold text-base text-gray-800">تم إرسال طلبك إلى الإدارة.</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-sm mx-auto">
+                  <CheckCircle2 className="w-14 h-14 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                  <h3 className="font-bold text-base text-gray-800 dark:text-[#FAF6F2]">تم إرسال طلبك إلى الإدارة.</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F] leading-relaxed max-w-sm mx-auto">
                     سيقوم المسؤول بمراجعة الطلب وإنشاء كلمة مرور جديدة لك.
                   </p>
                   <button
@@ -191,21 +191,21 @@ export const AuthModal: React.FC = () => {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="mb-2">
-                    <h3 className="font-bold text-sm sm:text-base text-gray-800">نسيت كلمة المرور؟</h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-[#FAF6F2]">نسيت كلمة المرور؟</h3>
+                    <p className="text-xs text-gray-500 dark:text-[#A89B8F] mt-1">
                       أدخل اسم المستخدم المسجل في المنصة وسيقوم فريق الإدارة بمراجعة الطلب وإنشاء كلمة مرور جديدة لحسابك.
                     </p>
                   </div>
 
                   {errorMessage && (
-                    <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm flex items-center gap-2">
-                      <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
+                    <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-2">
+                      <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 dark:text-red-400" />
                       <span>{errorMessage}</span>
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-800 mb-1.5">
+                    <label className="block text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1.5">
                       اسم المستخدم
                     </label>
                     <div className="relative">
@@ -216,7 +216,7 @@ export const AuthModal: React.FC = () => {
                         onChange={(e) => setForgotIdentifier(e.target.value)}
                         placeholder="اكتب اسم المستخدم"
                         autoComplete="username"
-                        className="w-full pl-3 pr-10 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] min-h-[48px]"
+                        className="w-full pl-3 pr-10 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[48px]"
                       />
                       <User className="w-5 h-5 text-gray-400 absolute right-3 top-3.5" />
                     </div>
@@ -245,7 +245,7 @@ export const AuthModal: React.FC = () => {
                       setErrorMessage(null);
                     }}
                     aria-label="الرجوع إلى نموذج تسجيل الدخول"
-                    className="w-full text-center text-xs sm:text-sm text-gray-600 hover:text-[#943310] font-medium py-2 cursor-pointer"
+                    className="w-full text-center text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F] hover:text-[#943310] dark:hover:text-[#E0633C] font-medium py-2 cursor-pointer transition-colors"
                   >
                     العودة لتسجيل الدخول
                   </button>
@@ -255,7 +255,7 @@ export const AuthModal: React.FC = () => {
           ) : (
             <div>
               {/* Tab switch between Login & Register */}
-              <div className="flex border-b border-gray-200 mb-5">
+              <div className="flex border-b border-gray-200 dark:border-[#352B24] mb-5">
                 <button
                   type="button"
                   id="tab-login"
@@ -268,8 +268,8 @@ export const AuthModal: React.FC = () => {
                   }}
                   className={`flex-1 pb-2.5 text-sm sm:text-base font-bold text-center border-b-2 transition-colors cursor-pointer ${
                     authModalTab === 'login'
-                      ? 'border-[#943310] text-[#943310]'
-                      : 'border-transparent text-gray-500 hover:text-gray-800'
+                      ? 'border-[#943310] text-[#943310] dark:border-[#E0633C] dark:text-[#E0633C]'
+                      : 'border-transparent text-gray-500 dark:text-[#A89B8F] hover:text-gray-800 dark:hover:text-[#FAF6F2]'
                   }`}
                 >
                   تسجيل الدخول
@@ -286,8 +286,8 @@ export const AuthModal: React.FC = () => {
                   }}
                   className={`flex-1 pb-2.5 text-sm sm:text-base font-bold text-center border-b-2 transition-colors cursor-pointer ${
                     authModalTab === 'register'
-                      ? 'border-[#943310] text-[#943310]'
-                      : 'border-transparent text-gray-500 hover:text-gray-800'
+                      ? 'border-[#943310] text-[#943310] dark:border-[#E0633C] dark:text-[#E0633C]'
+                      : 'border-transparent text-gray-500 dark:text-[#A89B8F] hover:text-gray-800 dark:hover:text-[#FAF6F2]'
                   }`}
                 >
                   حساب جديد
@@ -296,8 +296,8 @@ export const AuthModal: React.FC = () => {
 
               {/* Error Alert Box */}
               {errorMessage && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs sm:text-sm flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 shrink-0 text-red-500" />
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 dark:text-red-400" />
                   <span>{errorMessage}</span>
                 </div>
               )}
@@ -311,7 +311,7 @@ export const AuthModal: React.FC = () => {
                   <div>
                     <label
                       htmlFor="login-username-input"
-                      className="block text-sm sm:text-base font-bold text-gray-800 mb-1.5"
+                      className="block text-sm sm:text-base font-bold text-gray-800 dark:text-[#FAF6F2] mb-1.5"
                     >
                       اسم المستخدم
                     </label>
@@ -325,7 +325,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="اكتب اسم المستخدم"
                         aria-label="أدخل اسم المستخدم لتسجيل الدخول"
                         autoComplete="username"
-                        className="w-full pl-3 pr-11 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] focus:bg-white min-h-[48px] text-gray-900 transition-colors"
+                        className="w-full pl-3 pr-11 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] dark:focus:border-[#E0633C] focus:bg-white dark:focus:bg-[#1E1917] min-h-[48px] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
                       />
                       <User className="w-5 h-5 text-gray-400 absolute right-3.5 top-3.5" />
                     </div>
@@ -336,7 +336,7 @@ export const AuthModal: React.FC = () => {
                     <div className="flex items-center justify-between mb-1.5">
                       <label
                         htmlFor="login-password-input"
-                        className="text-sm sm:text-base font-bold text-gray-800"
+                        className="text-sm sm:text-base font-bold text-gray-800 dark:text-[#FAF6F2]"
                       >
                         كلمة المرور
                       </label>
@@ -348,7 +348,7 @@ export const AuthModal: React.FC = () => {
                           setErrorMessage(null);
                         }}
                         aria-label="استعادة كلمة المرور المنسية"
-                        className="text-xs sm:text-sm text-[#943310] hover:underline font-medium cursor-pointer"
+                        className="text-xs sm:text-sm text-[#943310] dark:text-[#E0633C] hover:underline font-medium cursor-pointer"
                       >
                         نسيت كلمة المرور؟
                       </button>
@@ -363,7 +363,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="اكتب كلمة المرور"
                         aria-label="أدخل كلمة المرور الخاصة بحسابك"
                         autoComplete="current-password"
-                        className="w-full pl-3 pr-11 py-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] focus:bg-white min-h-[48px] text-gray-900 transition-colors"
+                        className="w-full pl-3 pr-11 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] dark:focus:border-[#E0633C] focus:bg-white dark:focus:bg-[#1E1917] min-h-[48px] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
                       />
                       <Lock className="w-5 h-5 text-gray-400 absolute right-3.5 top-3.5" />
                     </div>
@@ -382,8 +382,8 @@ export const AuthModal: React.FC = () => {
                   </button>
 
                   {/* Switch to Registration */}
-                  <div className="text-center pt-3 border-t border-gray-100">
-                    <p className="text-xs sm:text-sm text-gray-600">
+                  <div className="text-center pt-3 border-t border-gray-100 dark:border-[#352B24]">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F]">
                       ليس لديك حساب؟{' '}
                       <button
                         type="button"
@@ -392,7 +392,7 @@ export const AuthModal: React.FC = () => {
                           setErrorMessage(null);
                         }}
                         aria-label="الانتقال إلى نموذج إنشاء حساب جديد"
-                        className="font-bold text-[#943310] hover:underline cursor-pointer"
+                        className="font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
                       >
                         إنشاء حساب جديد
                       </button>
@@ -407,7 +407,7 @@ export const AuthModal: React.FC = () => {
               {authModalTab === 'register' && (
                 <form onSubmit={handleSubmit} className="space-y-3.5">
                   {/* Account Type Selector (Buyer vs Seller) */}
-                  <div className="grid grid-cols-2 gap-2 mb-2 bg-[#faf6f0] p-1.5 rounded-xl border border-[#ebdccd]">
+                  <div className="grid grid-cols-2 gap-2 mb-2 bg-[#FAF7F2] dark:bg-[#26201B] p-1.5 rounded-xl border border-[#ebdccd] dark:border-[#352B24]">
                     <button
                       type="button"
                       id="role-buyer-select"
@@ -416,7 +416,7 @@ export const AuthModal: React.FC = () => {
                       className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         roleType === 'buyer'
                           ? 'bg-[#943310] text-white shadow-xs'
-                          : 'text-gray-600 hover:text-gray-900'
+                          : 'text-gray-600 dark:text-[#A89B8F] hover:text-gray-900 dark:hover:text-[#FAF6F2]'
                       }`}
                     >
                       <User className="w-4 h-4" />
@@ -430,7 +430,7 @@ export const AuthModal: React.FC = () => {
                       className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                         roleType === 'seller'
                           ? 'bg-amber-600 text-white shadow-xs'
-                          : 'text-gray-600 hover:text-gray-900'
+                          : 'text-gray-600 dark:text-[#A89B8F] hover:text-gray-900 dark:hover:text-[#FAF6F2]'
                       }`}
                     >
                       <Store className="w-4 h-4" />
@@ -439,12 +439,12 @@ export const AuthModal: React.FC = () => {
                   </div>
 
                   {/* Profile Picture Selection (Optional) with Default Preview */}
-                  <div className="flex flex-col items-center justify-center p-3 bg-[#faf6f0] rounded-2xl border border-[#ebdccd] text-center">
+                  <div className="flex flex-col items-center justify-center p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-2xl border border-[#ebdccd] dark:border-[#352B24] text-center">
                     <div className="relative group">
                       <img
                         src={avatarPreview || DEFAULT_USER_AVATAR}
                         alt="صورة الملف الشخصي"
-                        className="w-20 h-20 rounded-full object-cover border-2 border-[#943310]/40 shadow-xs bg-white"
+                        className="w-20 h-20 rounded-full object-cover border-2 border-[#943310]/40 shadow-xs bg-white dark:bg-[#1B1613]"
                       />
                       <button
                         type="button"
@@ -469,7 +469,7 @@ export const AuthModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
-                        className="text-xs font-bold text-[#943310] hover:underline cursor-pointer"
+                        className="text-xs font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
                       >
                         {avatarPreview ? 'تغيير الصورة' : 'اختيار صورة شخصية (اختياري)'}
                       </button>
@@ -480,13 +480,13 @@ export const AuthModal: React.FC = () => {
                             setAvatarPreview(null);
                             if (avatarInputRef.current) avatarInputRef.current.value = '';
                           }}
-                          className="text-xs text-rose-600 hover:underline cursor-pointer"
+                          className="text-xs text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
                         >
                           استعادة الافتراضية
                         </button>
                       )}
                     </div>
-                    <span className="text-[10px] text-gray-500 mt-0.5">
+                    <span className="text-[10px] text-gray-500 dark:text-[#A89B8F] mt-0.5">
                       {avatarPreview ? 'تم تحديد صورة مخصصة' : 'إذا لم تختر صورة، سيتم استخدام الصورة الافتراضية للمنصة'}
                     </span>
                   </div>
@@ -495,7 +495,7 @@ export const AuthModal: React.FC = () => {
                   <div>
                     <label
                       htmlFor="register-username-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                     >
                       اسم المستخدم (باللغة العربية أو الإنجليزية)
                     </label>
@@ -509,7 +509,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="اكتب اسم المستخدم (مثال: محمد أو أحمد123)"
                         aria-label="اسم المستخدم الجديد"
                         autoComplete="username"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
+                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
                       />
                       <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
                     </div>
@@ -519,7 +519,7 @@ export const AuthModal: React.FC = () => {
                   <div>
                     <label
                       htmlFor="register-name-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                     >
                       الاسم الكامل
                     </label>
@@ -533,7 +533,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="اكتب اسمك بالكامل"
                         aria-label="الاسم الكامل للشخص"
                         autoComplete="name"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
+                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
                       />
                       <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
                     </div>
@@ -544,7 +544,7 @@ export const AuthModal: React.FC = () => {
                     <div>
                       <label
                         htmlFor="register-workshop-input"
-                        className="block text-xs sm:text-sm font-bold text-amber-900 mb-1"
+                        className="block text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-300 mb-1"
                       >
                         اسم الورشة أو العلامة الحرفية
                       </label>
@@ -557,9 +557,9 @@ export const AuthModal: React.FC = () => {
                           onChange={(e) => setWorkshopName(e.target.value)}
                           placeholder="مثال: فواخير قنا الأصيلة"
                           aria-label="اسم الورشة أو البراند الحرفي الصعيدي"
-                          className="w-full pl-3 pr-10 py-2.5 bg-amber-50/60 border border-amber-300 rounded-xl text-sm outline-none focus:border-amber-600 min-h-[44px]"
+                          className="w-full pl-3 pr-10 py-2.5 bg-amber-50/60 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/50 rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-amber-700/60 dark:placeholder:text-amber-400/50 outline-none focus:border-amber-600 dark:focus:border-amber-500 min-h-[44px]"
                         />
-                        <Store className="w-4 h-4 text-amber-600 absolute right-3 top-3" />
+                        <Store className="w-4 h-4 text-amber-600 dark:text-amber-400 absolute right-3 top-3" />
                       </div>
                     </div>
                   )}
@@ -569,7 +569,7 @@ export const AuthModal: React.FC = () => {
                     <div>
                       <label
                         htmlFor="register-phone-input"
-                        className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                        className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                       >
                         رقم الهاتف
                       </label>
@@ -583,7 +583,7 @@ export const AuthModal: React.FC = () => {
                           placeholder="010XXXXXXXX"
                           aria-label="رقم الهاتف للتواصل والطلبات"
                           autoComplete="tel"
-                          className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
+                          className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
                         />
                         <Phone className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
                       </div>
@@ -592,7 +592,7 @@ export const AuthModal: React.FC = () => {
                     <div>
                       <label
                         htmlFor="register-governorate-select"
-                        className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                        className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                       >
                         المحافظة
                       </label>
@@ -601,19 +601,19 @@ export const AuthModal: React.FC = () => {
                         value={governorate}
                         aria-label="اختر محافظتك في صعيد مصر"
                         onChange={(e) => setGovernorate(e.target.value)}
-                        className="w-full py-2.5 px-3 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px] cursor-pointer"
+                        className="w-full py-2.5 px-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px] cursor-pointer"
                       >
-                        <option value="قنا">قنا</option>
-                        <option value="سوهاج">سوهاج</option>
-                        <option value="أسوان">أسوان</option>
-                        <option value="الأقصر">الأقصر</option>
-                        <option value="أسيوط">أسيوط</option>
-                        <option value="المنيا">المنيا</option>
-                        <option value="بني سويف">بني سويف</option>
-                        <option value="الوادي الجديد">الوادي الجديد</option>
-                        <option value="القاهرة">القاهرة</option>
-                        <option value="الجيزة">الجيزة</option>
-                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="قنا" className="dark:bg-[#1B1613]">قنا</option>
+                        <option value="سوهاج" className="dark:bg-[#1B1613]">سوهاج</option>
+                        <option value="أسوان" className="dark:bg-[#1B1613]">أسوان</option>
+                        <option value="الأقصر" className="dark:bg-[#1B1613]">الأقصر</option>
+                        <option value="أسيوط" className="dark:bg-[#1B1613]">أسيوط</option>
+                        <option value="المنيا" className="dark:bg-[#1B1613]">المنيا</option>
+                        <option value="بني سويف" className="dark:bg-[#1B1613]">بني سويف</option>
+                        <option value="الوادي الجديد" className="dark:bg-[#1B1613]">الوادي الجديد</option>
+                        <option value="القاهرة" className="dark:bg-[#1B1613]">القاهرة</option>
+                        <option value="الجيزة" className="dark:bg-[#1B1613]">الجيزة</option>
+                        <option value="الإسكندرية" className="dark:bg-[#1B1613]">الإسكندرية</option>
                       </select>
                     </div>
                   </div>
@@ -622,7 +622,7 @@ export const AuthModal: React.FC = () => {
                   <div>
                     <label
                       htmlFor="register-email-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                     >
                       البريد الإلكتروني <span className="text-gray-400 font-normal">(اختياري)</span>
                     </label>
@@ -635,7 +635,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="name@example.com (اختياري)"
                         aria-label="البريد الإلكتروني (اختياري)"
                         autoComplete="email"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
+                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
                       />
                       <Mail className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
                     </div>
@@ -645,7 +645,7 @@ export const AuthModal: React.FC = () => {
                   <div>
                     <label
                       htmlFor="register-password-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 mb-1"
+                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
                     >
                       كلمة المرور
                     </label>
@@ -659,7 +659,7 @@ export const AuthModal: React.FC = () => {
                         placeholder="اكتب كلمة المرور (6 خانات على الأقل)"
                         aria-label="أنشئ كلمة مرور مكونة من 6 خانات على الأقل"
                         autoComplete="new-password"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#faf6f0] border border-[#dfcebe] rounded-xl text-sm outline-none focus:border-[#943310] min-h-[44px]"
+                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
                       />
                       <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
                     </div>
@@ -684,8 +684,8 @@ export const AuthModal: React.FC = () => {
                   </button>
 
                   {/* Switch to Login */}
-                  <div className="text-center pt-2 border-t border-gray-100">
-                    <p className="text-xs sm:text-sm text-gray-600">
+                  <div className="text-center pt-2 border-t border-gray-100 dark:border-[#352B24]">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F]">
                       لديك حساب بالفعل؟{' '}
                       <button
                         type="button"
@@ -694,7 +694,7 @@ export const AuthModal: React.FC = () => {
                           setErrorMessage(null);
                         }}
                         aria-label="الانتقال إلى تسجيل الدخول"
-                        className="font-bold text-[#943310] hover:underline cursor-pointer"
+                        className="font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
                       >
                         تسجيل الدخول
                       </button>

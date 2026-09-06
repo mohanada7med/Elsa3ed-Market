@@ -33,11 +33,11 @@ export const SellersDirectoryPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#7A6F64] dark:text-[#A89C90] font-medium">
+      <nav className="flex items-center gap-2 text-xs text-[#73675B] dark:text-[#A89C90] font-medium">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B45F42] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -46,7 +46,7 @@ export const SellersDirectoryPage: React.FC = () => {
       </nav>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#B45F42] to-[#8C3E25] rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#B24C2B] to-[#8C3E25] rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
         <div className="relative z-10 max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-amber-200 text-xs font-bold backdrop-blur-xs">
             <Store className="w-3.5 h-3.5" />
@@ -68,7 +68,7 @@ export const SellersDirectoryPage: React.FC = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="ابحث باسم الورشة، الحرفي، أو التخصص..."
-                className="w-full pl-4 pr-10 py-3 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] rounded-xl text-xs sm:text-sm outline-none shadow-md placeholder-[#7A6F64] dark:placeholder-[#A89C90] min-h-[44px] border border-transparent dark:border-[#382E27] focus:border-amber-400 transition-colors"
+                className="w-full pl-4 pr-10 py-3 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] rounded-xl text-xs sm:text-sm outline-none shadow-md placeholder-[#73675B] dark:placeholder-[#A89C90] min-h-[44px] border border-transparent dark:border-[#352B24] focus:border-amber-400 transition-colors"
               />
               <Search className="w-4 h-4 text-stone-400 absolute right-3.5 top-3.5" />
             </div>
@@ -85,8 +85,8 @@ export const SellersDirectoryPage: React.FC = () => {
             onClick={() => setSelectedGov(gov)}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[40px] cursor-pointer ${
               selectedGov === gov
-                ? 'bg-[#B45F42] text-white shadow-xs'
-                : 'bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                ? 'bg-[#B24C2B] text-white shadow-xs'
+                : 'bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
             }`}
           >
             {gov === 'all' ? 'جميع المحافظات' : `محافظة ${gov}`}
@@ -97,17 +97,17 @@ export const SellersDirectoryPage: React.FC = () => {
       {/* Sellers Grid or Empty State */}
       {filteredSellers.length === 0 ? (
         <div className="wah-card p-12 text-center my-6 space-y-4">
-          <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-950/50 text-[#B45F42] dark:text-[#FF855D] flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-950/50 text-[#B24C2B] dark:text-[#FF855D] flex items-center justify-center mx-auto">
             <Store className="w-8 h-8 opacity-70" />
           </div>
           <h3 className="font-bold text-[#2D2A26] dark:text-[#FAF6F2] text-lg font-heritage">لم يتم العثور على ورش مطابقة للبحث</h3>
-          <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] max-w-md mx-auto leading-relaxed">
+          <p className="text-xs text-[#73675B] dark:text-[#A89C90] max-w-md mx-auto leading-relaxed">
             يمكنك إزالة فلتر البحث أو استعراض جميع المحافظات لرؤية باقي الحرفيين وشيوخ الصنعة.
           </p>
           <button
             type="button"
             onClick={() => { setSelectedGov('all'); setSearch(''); }}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
           >
             <span>إعادة ضبط البحث</span>
           </button>
@@ -119,10 +119,10 @@ export const SellersDirectoryPage: React.FC = () => {
               key={seller.id}
               id={`directory-seller-${seller.id}`}
               onClick={() => navigateToSeller(seller.id)}
-              className="wah-card overflow-hidden cursor-pointer group transition-all duration-300 flex flex-col hover:border-[#B45F42] dark:hover:border-[#FF855D]"
+              className="wah-card overflow-hidden cursor-pointer group transition-all duration-300 flex flex-col hover:border-[#B24C2B] dark:hover:border-[#FF855D]"
             >
               {/* Cover Banner */}
-              <div className="relative h-36 w-full overflow-hidden bg-[#FAF6F0] dark:bg-[#25201D]">
+              <div className="relative h-36 w-full overflow-hidden bg-[#FAF7F2] dark:bg-[#26201B]">
                 <img
                   src={seller.coverImage}
                   alt={seller.brandName}
@@ -130,7 +130,7 @@ export const SellersDirectoryPage: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="absolute top-3 right-3">
-                  <span className="bg-[#B45F42] text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs flex items-center gap-1">
+                  <span className="bg-[#B24C2B] text-white text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
                     <span>محافظة {seller.governorate}</span>
                   </span>
@@ -161,23 +161,23 @@ export const SellersDirectoryPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <h3 className="font-bold text-[#2D2A26] dark:text-[#FAF6F2] text-lg group-hover:text-[#B45F42] dark:group-hover:text-[#FF855D] transition-colors leading-tight font-heritage">
+                  <h3 className="font-bold text-[#2D2A26] dark:text-[#FAF6F2] text-lg group-hover:text-[#B24C2B] dark:group-hover:text-[#FF855D] transition-colors leading-tight font-heritage">
                     {seller.brandName}
                   </h3>
-                  <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] font-medium block mt-0.5">
+                  <span className="text-xs text-[#73675B] dark:text-[#A89C90] font-medium block mt-0.5">
                     بإشراف الصانع: {seller.name}
                   </span>
 
-                  <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] mt-2 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-[#73675B] dark:text-[#A89C90] mt-2 line-clamp-3 leading-relaxed">
                     {seller.bio}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-between text-xs">
-                  <span className="text-[#B45F42] dark:text-[#FF855D] font-bold bg-[#FAF6F0] dark:bg-[#25201D] px-2.5 py-1 rounded-md text-[11px] border border-[#E8E1D9] dark:border-[#382E27]">
+                <div className="mt-4 pt-3 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between text-xs">
+                  <span className="text-[#B24C2B] dark:text-[#FF855D] font-bold bg-[#FAF7F2] dark:bg-[#26201B] px-2.5 py-1 rounded-md text-[11px] border border-[#E5DDD3] dark:border-[#352B24]">
                     {seller.specialty}
                   </span>
-                  <span className="text-[#7A6F64] dark:text-[#A89C90] font-medium text-[11px]">
+                  <span className="text-[#73675B] dark:text-[#A89C90] font-medium text-[11px]">
                     {seller.productsCount} قطعة معروضة
                   </span>
                 </div>

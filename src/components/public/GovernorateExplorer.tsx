@@ -46,7 +46,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'النباتات العطرية والطبية وفخار ميدوم',
     famousItem: 'زيوت عطرية، شيح ونعناع بلدي، وفايش صعيدي بالحليب',
     tags: ['نباتات طبية', 'فايش صعيدي', 'زيوت بابونج', 'فخار ميدوم'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A8%D9%86%D9%8A-%D8%B3%D9%88%D9%8A%D9%81.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788699005/WAH/provinces/beni-suef/cover.jpg',
     folkloreProverb: '«أول خطوة في الصعيد سلام، ومن يدخلها يلقى الإكرام»',
     shortIntro: 'بوابة صعيد مصر الشمالية وحاضنة هرم ميدوم العريق، رائدة زراعة وتقطير النباتات الطبية والعطرية وصناعة الفايش الصعيدي.',
     nileOrder: 1
@@ -60,7 +60,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'عسل السدر الجبلي والزراعة العضوية النظيفة',
     famousItem: 'عسل جبلي نقي، زيت سمسم معصور على البارد، وأعشاب برية',
     tags: ['عسل سدر جبلي', 'زيت سمسم بلدي', 'أعشاب عطرية', 'دبس رمان'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A7%D9%84%D9%85%D9%86%D9%8A%D8%A7.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/WAH/provinces/minya/cover.jpg',
     folkloreProverb: '«عروس الصعيد النيل في حضنها، والنخل عالي في سماها»',
     shortIntro: 'عروس الصعيد وأرض التوحيد في تل العمارنة، تشتهر بإنتاج أجود أنواع عسل النحل الجبلي ومحاصيل الزراعة العضوية.',
     nileOrder: 2
@@ -74,7 +74,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'فن التلي الأسيوطي الرفيع وخيوط الفضة',
     famousItem: 'شيلان وجلاليب التلي المطرزة بالفضة الخالصة، وطواجن الفخار',
     tags: ['تلي أسيوط', 'فضة خالصة', 'تطريز يدوي', 'طواجن صعيدية'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015789/%D8%A7%D8%B3%D9%8A%D9%88%D8%B7.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015789/WAH/provinces/asyut/cover.jpg',
     folkloreProverb: '«التلي مش بس خيط فضة، دي حكاية فرح وزفة عروسة»',
     shortIntro: 'قلب الصعيد النابض وعاصمة درب الأربعين، موطن فن التلي النادر الذي يُحاك يدوياً بشرائط الفضة الخالصة.',
     nileOrder: 3
@@ -88,7 +88,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'أنوال أخميم التراثية والنسيج اليدوي الأصيل',
     famousItem: 'كليم الصوف والحرير الطبيعي، مفارش أخميم، وعسل الموالح',
     tags: ['كليم أخميم', 'حرير طبيعي', 'نسيج يدوي', 'مفارش قطنية'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015790/%D8%B3%D9%88%D9%87%D8%A7%D8%AC.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015790/WAH/provinces/sohag/cover.jpg',
     folkloreProverb: '«نول أخميم يغزل حرير وصوف، وكرم أهلها بالعين موصوف»',
     shortIntro: 'مدينة النسيج التاريخية ومهد الملوك، تشتهر بأنوال كليم أخميم الحريري ومعبد أبيدوس المقدس.',
     nileOrder: 4
@@ -102,7 +102,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'الفخار الصعيدي وأنوال الفركة بنقادة',
     famousItem: 'قلال قنا الفخارية، شيلان الفركة الحريرية، وعسل القصب الأسود',
     tags: ['قلال قنا', 'فركة نقادة', 'طواجن فخار', 'عسل قصب'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D9%82%D9%86%D8%A7.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/qena/cover.jpg',
     folkloreProverb: '«من شرب من قلال قنا، لا بد يعود لبلادنا»',
     shortIntro: 'أرض ثنية النيل الكبرى ومعبد دندرة، قلعة صناعة قلال الفخار المسامية الشهيرة وأنوال الفركة التراثية بمركز نقادة.',
     nileOrder: 5
@@ -116,7 +116,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'نحت الألاباستر والنحاسيات والخشب التراثي',
     famousItem: 'تماثيل الألباستر اليدوية، صواني النحاس المزخرفة، وأواني خشب السرسوع',
     tags: ['ألاباستر القرنة', 'نحاس منقوش', 'خشب سرسوع', 'برديات'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D8%A7%D9%84%D8%A7%D9%82%D8%B5%D8%B1.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/luxor/cover.jpg',
     folkloreProverb: '«طيبة بلد التاريخ والنور، من يزورها قلبه مسرور»',
     shortIntro: 'طيبة عاصمة العالم القديم، تضم ثلث آثار الإنسانية وورش نحت حجر الألاباستر بالبر الغربي والنحاس المطروق.',
     nileOrder: 6
@@ -130,7 +130,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'خيرات النوبة والخوص والمشغولات اليدوية',
     famousItem: 'تمور المجدول، كركديه أسوان، عطور وبخور، وسلال الخوص النوبية',
     tags: ['تمور مجدول', 'كركديه نوبي', 'سلال خوص', 'بخور صندل'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/%D8%A7%D8%B3%D9%88%D8%A7%D9%86.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/aswan/cover.jpg',
     folkloreProverb: '«في أسوان السلام في القلوب قبل البيوت، والنيل فيها ما يفوت»',
     shortIntro: 'درة النيل الجنوبية وموطن الحضارة النوبية العريقة، تشتهر ببيوتها الملونة وأسواق التوابل والمشغولات الخوصية.',
     nileOrder: 7
@@ -144,7 +144,7 @@ export const UPPER_EGYPT_GOVERNORATES: GovernorateExplorerItem[] = [
     famousCraft: 'تمور الواحات وخوص النخيل وزيت الزيتون',
     famousItem: 'بلح صعيدي، عجوة الواحات، زيت زيتون بكر، وسلال الجريد',
     tags: ['تمور صعيدية', 'زيت زيتون بكر', 'سلال خوص ونخيل', 'دبس تمر'],
-    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/%D8%A7%D9%84%D9%88%D8%A7%D8%AF%D9%8A-%D8%A7%D9%84%D8%AC%D8%AF%D9%8A%D8%AF.jpg',
+    coverImage: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788698700/WAH/provinces/new-valley/cover.jpg',
     folkloreProverb: '«نخلة الواحات أصلها ثابت في الأرض، وخيرها يفيض على الكل»',
     shortIntro: 'واحات النخيل والكنوز البكر، مهد أجود أصناف التمور الصعيدية وزيت الزيتون المعصور على البارد.',
     nileOrder: 8
@@ -216,14 +216,14 @@ export const GovernorateExplorer: React.FC = () => {
   return (
     <section className="relative my-8 sm:my-14 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Outer Heritage Container */}
-      <div className="rounded-3xl bg-[#FAF6F0] dark:bg-[#181310] border-2 border-amber-300/70 dark:border-amber-900/40 shadow-sm overflow-hidden p-4 sm:p-8">
-        
+      <div className="rounded-2xl sm:rounded-3xl bg-[#FAF7F2] dark:bg-[#181310] border-2 border-amber-300/70 dark:border-amber-900/40 shadow-sm overflow-hidden p-3 sm:p-8">
+
         {/* =========================================================
             1. TEXT HEADER SECTION
             Notice: Nubian Geometric Pattern is strictly on this text
             container background only, NEVER over any picture/image!
            ========================================================= */}
-        <div className="relative rounded-2xl bg-white dark:bg-[#201A16] border border-[#E8DFC5] dark:border-[#382B22] p-6 sm:p-10 mb-8 overflow-hidden shadow-xs">
+        <div className="relative rounded-xl sm:rounded-2xl bg-white dark:bg-[#201A16] border border-[#E8DFC5] dark:border-[#382B22] p-4 sm:p-10 mb-6 sm:mb-8 overflow-hidden shadow-xs">
           {/* Authentic Nubian Pattern purely behind the text */}
           <NubianGeometricPattern
             opacity={0.15}
@@ -261,7 +261,7 @@ export const GovernorateExplorer: React.FC = () => {
             </div>
 
             {/* Quick Action Navigation Buttons */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto shrink-0">
               <button
                 type="button"
                 id="btn-open-interactive-map"
@@ -269,7 +269,7 @@ export const GovernorateExplorer: React.FC = () => {
                   setActivePage('map');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#B24C2B] hover:bg-[#97381B] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer min-h-[44px]"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--wah-primary,#B24C2B)] hover:bg-[var(--wah-primary-hover,#963E21)] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer min-h-[44px]"
               >
                 <Compass className="w-4 h-4" />
                 <span>الخريطة التفاعلية الشاملة</span>
@@ -282,9 +282,9 @@ export const GovernorateExplorer: React.FC = () => {
                   setActivePage('governorates');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-[#2A221D] hover:bg-amber-50 dark:hover:bg-[#342A24] text-[#241E1A] dark:text-[#F7F3EE] text-xs sm:text-sm font-bold border border-[#E5DDD3] dark:border-[#40332B] shadow-xs transition-all cursor-pointer min-h-[44px]"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] hover:bg-[var(--wah-primary-light,#F7ECE6)] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-xs sm:text-sm font-bold border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] shadow-xs transition-all cursor-pointer min-h-[44px]"
               >
-                <Landmark className="w-4 h-4 text-amber-600" />
+                <Landmark className="w-4 h-4 text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)]" />
                 <span>موسوعة المحافظات</span>
               </button>
             </div>
@@ -295,17 +295,17 @@ export const GovernorateExplorer: React.FC = () => {
             2. INTERACTIVE CONTROLS BAR
             Search + Region Tabs + View Switcher (Cards vs River)
            ========================================================= */}
-        <div className="space-y-4 mb-6">
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <div className="space-y-3 sm:space-y-4 mb-6">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
             {/* Search Input */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-md w-full">
               <Search className="w-4 h-4 text-[#8C7A6B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن محافظة، حرفة، أو منتج شهير..."
-                className="w-full bg-white dark:bg-[#221B17] text-xs sm:text-sm text-[#241E1A] dark:text-[#F7F3EE] rounded-xl pl-9 pr-10 py-2.5 border border-[#E5DDD3] dark:border-[#382E27] focus:border-[#B24C2B] dark:focus:border-[#E0633C] outline-none shadow-xs transition-all"
+                className="w-full bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] text-xs sm:text-sm text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] rounded-xl pl-9 pr-10 py-2.5 border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] focus:border-[var(--wah-primary,#B24C2B)] dark:focus:border-[var(--wah-primary,#E0633C)] outline-none shadow-xs transition-all"
               />
               {searchQuery && (
                 <button
@@ -319,15 +319,14 @@ export const GovernorateExplorer: React.FC = () => {
             </div>
 
             {/* View Mode Switcher */}
-            <div className="flex items-center gap-2 self-end lg:self-auto bg-white dark:bg-[#221B17] p-1 rounded-xl border border-[#E5DDD3] dark:border-[#382E27] shadow-xs">
+            <div className="w-full sm:w-auto grid grid-cols-2 sm:flex items-center gap-1 sm:gap-2 self-stretch sm:self-end lg:self-auto bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] p-1 rounded-xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] shadow-xs">
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  viewMode === 'grid'
-                    ? 'bg-[#B24C2B] text-white shadow-xs'
-                    : 'text-[#665A4F] dark:text-[#A89B8F] hover:text-[#241E1A]'
-                }`}
+                className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${viewMode === 'grid'
+                  ? 'bg-[var(--wah-primary,#B24C2B)] text-white shadow-xs'
+                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[var(--wah-text,#241E1A)]'
+                  }`}
               >
                 <Layers className="w-3.5 h-3.5" />
                 <span>شبكة البطاقات</span>
@@ -336,11 +335,10 @@ export const GovernorateExplorer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setViewMode('river')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  viewMode === 'river'
-                    ? 'bg-[#B24C2B] text-white shadow-xs'
-                    : 'text-[#665A4F] dark:text-[#A89B8F] hover:text-[#241E1A]'
-                }`}
+                className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${viewMode === 'river'
+                  ? 'bg-[var(--wah-primary,#B24C2B)] text-white shadow-xs'
+                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[var(--wah-text,#241E1A)]'
+                  }`}
               >
                 <Ship className="w-3.5 h-3.5" />
                 <span>مسار النيل التفاعلي</span>
@@ -349,24 +347,25 @@ export const GovernorateExplorer: React.FC = () => {
           </div>
 
           {/* Region Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            {REGION_OPTIONS.map((opt) => {
-              const isActive = selectedRegion === opt.id;
-              return (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setSelectedRegion(opt.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
-                    isActive
-                      ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                      : 'bg-white dark:bg-[#221B17] text-[#665A4F] dark:text-[#A89B8F] border-[#E5DDD3] dark:border-[#382E27] hover:border-amber-400'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1 touch-pan-x">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-max">
+              {REGION_OPTIONS.map((opt) => {
+                const isActive = selectedRegion === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setSelectedRegion(opt.id)}
+                    className={`px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 border ${isActive
+                      ? 'bg-[var(--wah-primary,#B24C2B)] text-white border-[var(--wah-primary,#B24C2B)] shadow-xs'
+                      : 'bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] text-[#73675B] dark:text-[#A89B8F] border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)]/40 hover:text-[var(--wah-text,#241E1A)]'
+                      }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -384,7 +383,7 @@ export const GovernorateExplorer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleScrollRiver('right')}
-                  className="p-1.5 rounded-lg bg-white dark:bg-[#221B17] border border-[#E5DDD3] dark:border-[#382E27] hover:bg-amber-50 cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#221B17] border border-[#E5DDD3] dark:border-[#352B24] hover:bg-amber-50 cursor-pointer"
                   title="السابق"
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -392,7 +391,7 @@ export const GovernorateExplorer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleScrollRiver('left')}
-                  className="p-1.5 rounded-lg bg-white dark:bg-[#221B17] border border-[#E5DDD3] dark:border-[#382E27] hover:bg-amber-50 cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#221B17] border border-[#E5DDD3] dark:border-[#352B24] hover:bg-amber-50 cursor-pointer"
                   title="التالي"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -402,7 +401,7 @@ export const GovernorateExplorer: React.FC = () => {
 
             <div
               ref={riverScrollRef}
-              className="flex items-stretch gap-4 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth"
+              className="flex items-stretch gap-3 sm:gap-4 overflow-x-auto no-scrollbar py-2 px-1 scroll-smooth touch-pan-x snap-x snap-mandatory"
             >
               {UPPER_EGYPT_GOVERNORATES.map((gov) => {
                 const govSellers = sellers.filter(
@@ -417,7 +416,7 @@ export const GovernorateExplorer: React.FC = () => {
                 return (
                   <div
                     key={gov.slug}
-                    className="w-[280px] sm:w-[320px] shrink-0 rounded-2xl bg-white dark:bg-[#1F1916] border border-[#E5DDD3] dark:border-[#382E27] hover:border-[#B24C2B] shadow-xs hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group"
+                    className="w-[260px] xs:w-[280px] sm:w-[320px] shrink-0 snap-start rounded-2xl bg-white dark:bg-[#1F1916] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] shadow-xs hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group"
                   >
                     {/* Clean photo without any pattern */}
                     <div className="relative aspect-[16/10] overflow-hidden bg-stone-200 dark:bg-stone-800">
@@ -457,12 +456,12 @@ export const GovernorateExplorer: React.FC = () => {
                           <span>الحرفة:</span>
                           <span className="truncate">{gov.famousCraft}</span>
                         </div>
-                        <p className="text-xs text-[#665A4F] dark:text-[#A89B8F] line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[#73675B] dark:text-[#A89B8F] line-clamp-2 leading-relaxed">
                           {gov.shortIntro}
                         </p>
                       </div>
 
-                      <div className="pt-2 border-t border-[#EFE8DF] dark:border-[#302620] flex items-center justify-between gap-2">
+                      <div className="pt-2 border-t border-[#E5DDD3] dark:border-[#302620] flex items-center justify-between gap-2">
                         <div className="text-[10px] text-[#73675B] dark:text-[#A89B8F]">
                           <span className="font-bold text-[#B24C2B] dark:text-[#E0633C]">
                             {govSellers.length} مقدم خدمة
@@ -475,7 +474,7 @@ export const GovernorateExplorer: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setPreviewGov(gov)}
-                            className="p-1.5 rounded-lg bg-[#FAF6F0] dark:bg-[#2A221D] hover:bg-amber-100 text-[#241E1A] dark:text-white text-xs font-bold transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#2A221D] hover:bg-amber-100 text-[#241E1A] dark:text-white text-xs font-bold transition-colors cursor-pointer"
                             title="نظرة سريعة"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -483,7 +482,7 @@ export const GovernorateExplorer: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleShopGovernorate(gov.name)}
-                            className="px-2.5 py-1.5 rounded-lg bg-[#B24C2B] hover:bg-[#97381B] text-white text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                            className="px-2.5 py-1.5 rounded-lg bg-[#B24C2B] hover:bg-[#963E21] text-white text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <ShoppingBag className="w-3.5 h-3.5" />
                             <span>تسوّق</span>
@@ -508,7 +507,7 @@ export const GovernorateExplorer: React.FC = () => {
         {viewMode === 'grid' && (
           <div>
             {filteredGovernorates.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#382E27] p-8">
+              <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-8">
                 <Compass className="w-10 h-10 text-[#8C7A6B] mx-auto mb-3" />
                 <h3 className="text-base font-bold text-[#241E1A] dark:text-[#F7F3EE]">لم يتم العثور على محافظات مطابقة</h3>
                 <p className="text-xs text-[#73675B] dark:text-[#A89B8F] mt-1">جرب البحث بكلمة أخرى مثل «فخار»، «تلي»، «أسوان»، أو اختر إقليم آخر</p>
@@ -545,7 +544,7 @@ export const GovernorateExplorer: React.FC = () => {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: '-20px' }}
                       transition={{ duration: 0.3, delay: idx * 0.04 }}
-                      className="group bg-white dark:bg-[#1F1916] rounded-2xl border border-[#E5DDD3] dark:border-[#382E27] hover:border-[#B24C2B] dark:hover:border-[#E0633C] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+                      className="group bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] rounded-2xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] dark:hover:border-[var(--wah-primary,#E0633C)] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
                     >
                       {/* Top Photo Cover: Clean, High-Contrast, Pattern-Free! */}
                       <div className="relative aspect-[16/10] overflow-hidden bg-stone-200 dark:bg-stone-800">
@@ -569,7 +568,7 @@ export const GovernorateExplorer: React.FC = () => {
                               e.stopPropagation();
                               setPreviewGov(gov);
                             }}
-                            className="p-1.5 rounded-full bg-black/60 hover:bg-[#B24C2B] backdrop-blur-md text-white text-xs transition-colors cursor-pointer"
+                            className="p-1.5 rounded-full bg-black/60 hover:bg-[var(--wah-primary,#B24C2B)] backdrop-blur-md text-white text-xs transition-colors cursor-pointer"
                             title="نظرة سريعة"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -594,17 +593,17 @@ export const GovernorateExplorer: React.FC = () => {
                       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
                         <div>
                           {/* Famous Craft Badge */}
-                          <div className="p-2 rounded-xl bg-[#FAF6F0] dark:bg-[#28201B] border border-[#EFE8DF] dark:border-[#382E27] mb-2.5">
+                          <div className="p-2 rounded-xl bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] mb-2.5">
                             <span className="text-[10px] text-[#8C7A6B] dark:text-[#A8988B] block font-bold">
                               الحرفة التراثية الأشهر:
                             </span>
-                            <span className="text-xs font-bold text-[#B24C2B] dark:text-[#E0633C] line-clamp-1">
+                            <span className="text-xs font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] line-clamp-1">
                               {gov.famousCraft}
                             </span>
                           </div>
 
                           {/* Short Description */}
-                          <p className="text-xs text-[#665A4F] dark:text-[#A89B8F] leading-relaxed line-clamp-2">
+                          <p className="text-xs text-[#73675B] dark:text-[#A89B8F] leading-relaxed line-clamp-2">
                             {gov.shortIntro}
                           </p>
 
@@ -613,7 +612,7 @@ export const GovernorateExplorer: React.FC = () => {
                             {gov.tags.slice(0, 3).map((tag, tIdx) => (
                               <span
                                 key={tIdx}
-                                className="text-[10px] px-2 py-0.5 rounded-md bg-stone-100 dark:bg-[#2A231F] text-[#55473E] dark:text-[#C4B7AC]"
+                                className="text-[10px] px-2 py-0.5 rounded-md bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]"
                               >
                                 {tag}
                               </span>
@@ -622,10 +621,10 @@ export const GovernorateExplorer: React.FC = () => {
                         </div>
 
                         {/* Card Footer with Live Stats & Dual Action Buttons */}
-                        <div className="pt-3 border-t border-[#EFE8DF] dark:border-[#302620] space-y-2.5">
+                        <div className="pt-3 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] space-y-2.5">
                           {/* Stats */}
                           <div className="flex items-center justify-between text-[11px] text-[#73675B] dark:text-[#A89B8F] font-medium">
-                            <span className="font-bold text-[#B24C2B] dark:text-[#E0633C]">
+                            <span className="font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)]">
                               {sellersCount > 0 ? `${sellersCount} مقدم خدمة` : 'ورش التراث'}
                             </span>
                             <span>({productsCount} منتج بالسوق)</span>
@@ -636,7 +635,7 @@ export const GovernorateExplorer: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleShopGovernorate(gov.name)}
-                              className="w-full py-2 px-2.5 rounded-xl bg-[#B24C2B] hover:bg-[#97381B] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                              className="w-full py-2 px-2.5 rounded-xl bg-[var(--wah-primary,#B24C2B)] hover:bg-[var(--wah-primary-hover,#963E21)] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
                             >
                               <ShoppingBag className="w-3.5 h-3.5" />
                               <span>تسوّق</span>
@@ -645,10 +644,10 @@ export const GovernorateExplorer: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleOpenGovernorateDossier(gov.slug)}
-                              className="w-full py-2 px-2.5 rounded-xl bg-[#FAF6F0] dark:bg-[#251E1A] hover:bg-amber-100/70 dark:hover:bg-[#342A24] text-[#241E1A] dark:text-[#F7F3EE] text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-[#E5DDD3] dark:border-[#382E27]"
+                              className="w-full py-2 px-2.5 rounded-xl bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] hover:bg-[var(--wah-primary-light,#F7ECE6)] dark:hover:bg-[var(--wah-border,#352B24)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]"
                             >
                               <span>الدليل</span>
-                              <ArrowLeft className="w-3 h-3 text-[#B24C2B]" />
+                              <ArrowLeft className="w-3 h-3 text-[var(--wah-primary,#B24C2B)]" />
                             </button>
                           </div>
                         </div>
@@ -661,45 +660,7 @@ export const GovernorateExplorer: React.FC = () => {
           </div>
         )}
 
-        {/* =========================================================
-            5. AUTHENTIC FOLKLORE FOOTER BANNER
-            Purely a text container with Nubian pattern background!
-           ========================================================= */}
-        <div className="relative mt-8 rounded-2xl bg-white dark:bg-[#201A16] border border-[#E8DFC5] dark:border-[#382B22] p-5 sm:p-7 overflow-hidden shadow-xs">
-          <NubianGeometricPattern
-            opacity={0.12}
-            color="#B24C2B"
-            variant="diamonds"
-            className="text-[#B24C2B] dark:text-[#E0633C]"
-          />
 
-          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-right">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-[#B24C2B] dark:text-amber-400 flex items-center justify-center shrink-0">
-                <Landmark className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-[#241E1A] dark:text-[#F7F3EE]">
-                  هل تود استكشاف خريطة الصعيد التفاعلية مع إحداثيات GPS والمعالم الكاملة؟
-                </h4>
-                <p className="text-xs text-[#73675B] dark:text-[#A89B8F] mt-0.5">
-                  شاهد مسارات القرى التراثية، المعابد، وورش الحرفيين مباشرة على خريطة النيل
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setActivePage('map');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="px-5 py-2.5 rounded-xl bg-[#B24C2B] hover:bg-[#97381B] text-white text-xs sm:text-sm font-bold shrink-0 transition-all cursor-pointer shadow-xs"
-            >
-              افتح أطلس وخريطة الصعيد
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* =========================================================
@@ -714,7 +675,7 @@ export const GovernorateExplorer: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
-              className="relative w-full max-w-xl bg-white dark:bg-[#1C1714] rounded-3xl overflow-hidden shadow-2xl border border-[#E5DDD3] dark:border-[#382E27] max-h-[90vh] flex flex-col"
+              className="relative w-full max-w-xl bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] rounded-3xl overflow-hidden shadow-2xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] max-h-[90vh] flex flex-col"
             >
               {/* Clean Header Image: No pattern overlay */}
               <div className="relative h-48 sm:h-56 shrink-0 overflow-hidden bg-stone-900">
@@ -736,7 +697,7 @@ export const GovernorateExplorer: React.FC = () => {
 
                 {/* Badges & Title */}
                 <div className="absolute bottom-4 right-4 left-4 text-white">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-600 text-white text-[11px] font-bold mb-1.5">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--wah-primary,#B24C2B)] text-white text-[11px] font-bold mb-1.5 shadow-sm">
                     <span>{previewGov.symbol}</span>
                     <span>{previewGov.region}</span>
                     <span>•</span>
@@ -760,7 +721,7 @@ export const GovernorateExplorer: React.FC = () => {
 
                 <div className="relative z-10 space-y-4">
                   {/* Traditional Quote */}
-                  <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-heritage italic">
+                  <div className="p-3.5 rounded-2xl bg-[var(--wah-primary-light,#F7ECE6)] dark:bg-[var(--wah-primary-light,rgba(224,99,60,0.15))] border border-[var(--wah-primary,#B24C2B)]/20 text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] text-xs sm:text-sm font-heritage italic">
                     {previewGov.folkloreProverb}
                   </div>
 
@@ -776,20 +737,20 @@ export const GovernorateExplorer: React.FC = () => {
 
                   {/* Famous Craft and Items */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                    <div className="p-3 rounded-xl bg-[#FAF6F0] dark:bg-[#251E1A] border border-[#E8DFC5] dark:border-[#382B22]">
-                      <span className="text-[11px] font-bold text-[#B24C2B] dark:text-[#E0633C] block mb-1">
+                    <div className="p-3 rounded-xl bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]">
+                      <span className="text-[11px] font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block mb-1">
                         الحرفة الأكثر شهرة:
                       </span>
-                      <span className="text-xs text-[#241E1A] dark:text-[#F7F3EE] font-bold">
+                      <span className="text-xs text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] font-bold">
                         {previewGov.famousCraft}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#FAF6F0] dark:bg-[#251E1A] border border-[#E8DFC5] dark:border-[#382B22]">
-                      <span className="text-[11px] font-bold text-[#B24C2B] dark:text-[#E0633C] block mb-1">
+                    <div className="p-3 rounded-xl bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]">
+                      <span className="text-[11px] font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block mb-1">
                         أشهر المنتجات التراثية:
                       </span>
-                      <span className="text-xs text-[#241E1A] dark:text-[#F7F3EE]">
+                      <span className="text-xs text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]">
                         {previewGov.famousItem}
                       </span>
                     </div>
@@ -804,7 +765,7 @@ export const GovernorateExplorer: React.FC = () => {
                       {previewGov.tags.map((t, idx) => (
                         <span
                           key={idx}
-                          className="px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-[#2A231F] text-[#4A3E34] dark:text-[#D5C9BD] text-xs font-medium"
+                          className="px-2.5 py-1 rounded-lg bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-xs font-medium"
                         >
                           {t}
                         </span>
@@ -815,7 +776,7 @@ export const GovernorateExplorer: React.FC = () => {
               </div>
 
               {/* Modal Footer Actions */}
-              <div className="p-4 bg-[#FAF6F0] dark:bg-[#201A16] border-t border-[#E5DDD3] dark:border-[#382E27] flex items-center justify-between gap-3 shrink-0">
+              <div className="p-4 bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] flex items-center justify-between gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => {
@@ -823,9 +784,9 @@ export const GovernorateExplorer: React.FC = () => {
                     setPreviewGov(null);
                     handleOpenGovernorateDossier(g.slug);
                   }}
-                  className="px-4 py-2.5 rounded-xl bg-white dark:bg-[#2A231F] hover:bg-stone-100 text-[#241E1A] dark:text-[#F7F3EE] text-xs sm:text-sm font-bold border border-[#E5DDD3] dark:border-[#40332B] flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] hover:bg-[var(--wah-surface-subtle,#F3ECE2)] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-xs sm:text-sm font-bold border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <Landmark className="w-4 h-4 text-amber-600" />
+                  <Landmark className="w-4 h-4 text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)]" />
                   <span>دليل المحافظة التراثي</span>
                 </button>
 
@@ -836,7 +797,7 @@ export const GovernorateExplorer: React.FC = () => {
                     setPreviewGov(null);
                     handleShopGovernorate(g.name);
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-[#B24C2B] hover:bg-[#97381B] text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                  className="px-5 py-2.5 rounded-xl bg-[var(--wah-primary,#B24C2B)] hover:bg-[var(--wah-primary-hover,#963E21)] text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>تسوّق منتجات {previewGov.name}</span>

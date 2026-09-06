@@ -135,9 +135,9 @@ export const Header: React.FC = () => {
   }, [isAuthenticated, currentRole]);
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FDFBF7]/95 dark:bg-[#1A1614]/95 backdrop-blur-md border-b border-[#E8E1D9] dark:border-[#382E27] shadow-xs transition-colors duration-200">
+    <header className="sticky top-0 z-40 bg-[#FAF7F2]/95 dark:bg-[#1A1614]/95 backdrop-blur-md border-b border-[#E5DDD3] dark:border-[#352B24] shadow-xs transition-colors duration-200">
       {/* Top Heritage Notice Bar */}
-      <div className="bg-[#B45F42] text-[#FDFBF7] text-[11px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-3 sm:px-4 overflow-hidden">
+      <div className="bg-[#B24C2B] text-[#FAF7F2] text-[11px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-3 sm:px-4 overflow-hidden">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-center gap-2 overflow-hidden flex-1 min-w-0">
             {/* Seamless Moving Marquee Ticker */}
@@ -225,23 +225,16 @@ export const Header: React.FC = () => {
             }}
             className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 cursor-pointer group shrink-0 select-none"
           >
-            <div className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform duration-200">
+            <div className="w-15 h-15 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-30 lg:h-30 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform duration-200">
               <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1787864171/elsa3ed_market2.png"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
                 alt="شعار وه"
                 className="w-full h-full object-contain drop-shadow-xs"
               />
             </div>
             <div className="flex flex-col justify-center">
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage tracking-tight leading-none">
-                  وه
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-[#B45F42] tracking-wider font-sans">
-                  WAH
-                </span>
-              </div>
-              <span className="hidden sm:block text-[10px] sm:text-xs text-[#7A6F64] dark:text-[#A89C90] font-medium tracking-wide mt-1">
+
+              <span className="hidden sm:block text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-medium tracking-wide mt-1">
                 العالم الرقمي لصعيد مصر
               </span>
             </div>
@@ -257,13 +250,13 @@ export const Header: React.FC = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن: فخار قنا، كليم أخميم، عسل سدر..."
                 aria-label="البحث في وه"
-                className="w-full bg-[#F3EFE9] dark:bg-[#25201D] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#7A6F64] rounded-xl pl-16 pr-4 py-2 sm:py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] focus:ring-2 focus:ring-[#B45F42]/20 outline-none transition-all"
+                className="w-full bg-[#F3EFE9] dark:bg-[#26201B] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#73675B] rounded-xl pl-16 pr-4 py-2 sm:py-2.5 border border-[#E5DDD3] dark:border-[#352B24] focus:border-[#B24C2B] focus:ring-2 focus:ring-[#B24C2B]/20 outline-none transition-all"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-9 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-[#B45F42] rounded-full transition-colors cursor-pointer"
+                  className="absolute left-9 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-[#B24C2B] rounded-full transition-colors cursor-pointer"
                   aria-label="مسح نص البحث"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -272,7 +265,7 @@ export const Header: React.FC = () => {
               <button
                 type="submit"
                 id="desktop-search-btn"
-                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-2 text-[#B45F42] hover:text-[#9E4F36] rounded-lg hover:bg-amber-100/50 dark:hover:bg-amber-900/30 transition-colors cursor-pointer"
+                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-2 text-[#B24C2B] hover:text-[#9E4F36] rounded-lg hover:bg-amber-100/50 dark:hover:bg-amber-900/30 transition-colors cursor-pointer"
                 aria-label="تنفيذ البحث"
               >
                 <Search className="w-4 h-4" />
@@ -288,8 +281,8 @@ export const Header: React.FC = () => {
               id="mobile-search-toggle"
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
               className={`lg:hidden p-2 sm:p-2.5 rounded-xl transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center ${mobileSearchOpen
-                ? 'bg-[#B45F42] text-white'
-                : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-transparent hover:border-[#E8E1D9] dark:hover:border-[#382E27]'
+                ? 'bg-[#B24C2B] text-white'
+                : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-transparent hover:border-[#E5DDD3] dark:hover:border-[#352B24]'
                 }`}
               aria-label={mobileSearchOpen ? 'إغلاق شريط البحث' : 'فتح شريط البحث'}
             >
@@ -301,14 +294,14 @@ export const Header: React.FC = () => {
               type="button"
               id="header-theme-toggle-btn"
               onClick={toggleTheme}
-              className="p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px]"
+              className="p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px]"
               title={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
               aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 animate-spin-slow transition-transform hover:rotate-90" />
               ) : (
-                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] hover:text-[#B45F42] transition-colors" />
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] hover:text-[#B24C2B] transition-colors" />
               )}
             </button>
 
@@ -329,15 +322,14 @@ export const Header: React.FC = () => {
                     setActivePage('messages');
                   }
                 }}
-                className={`relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors flex items-center justify-center cursor-pointer border ${
-                  activePage === 'messages' || activePage === 'seller-messages'
-                    ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
-                    : 'border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42]'
-                } min-h-[44px] min-w-[44px]`}
+                className={`relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors flex items-center justify-center cursor-pointer border ${activePage === 'messages' || activePage === 'seller-messages'
+                  ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                  : 'border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B]'
+                  } min-h-[44px] min-w-[44px]`}
                 title="المحادثات المباشرة"
                 aria-label={`المحادثات المباشرة، ${chatUnreadCount} رسائل غير مقروءة`}
               >
-                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42]" />
+                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] dark:text-[#A89C90] hover:text-[#B24C2B]" />
                 {chatUnreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs animate-pulse">
                     {chatUnreadCount}
@@ -352,13 +344,13 @@ export const Header: React.FC = () => {
                 type="button"
                 id="nav-favorites-btn"
                 onClick={() => setActivePage('favorites')}
-                className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] min-h-[44px] min-w-[44px]"
+                className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] min-h-[44px] min-w-[44px]"
                 title="المفضلة"
                 aria-label={`قائمة المفضلة، ${favorites.length} عناصر محفوظة`}
               >
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#7A6F64] dark:text-[#A89C90] hover:text-[#B45F42]" />
+                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] dark:text-[#A89C90] hover:text-[#B24C2B]" />
                 {favorites.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B45F42] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B24C2B] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
                     {favorites.length}
                   </span>
                 )}
@@ -371,7 +363,7 @@ export const Header: React.FC = () => {
                 type="button"
                 id="nav-cart-btn"
                 onClick={() => setIsCartDrawerOpen(true)}
-                className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer"
+                className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer"
                 aria-label={`سلة المشتريات، ${cartCount} عناصر مضافة`}
               >
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -396,10 +388,10 @@ export const Header: React.FC = () => {
                     setAuthModalTab('login');
                     setIsAuthModalOpen(true);
                   }}
-                  className="px-2.5 sm:px-3.5 md:px-4 py-2 sm:py-2.5 bg-white dark:bg-[#25201D] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2723] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 sm:gap-2 min-h-[40px] sm:min-h-[44px] cursor-pointer"
+                  className="px-2.5 sm:px-3.5 md:px-4 py-2 sm:py-2.5 bg-white dark:bg-[#26201B] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2723] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 sm:gap-2 min-h-[40px] sm:min-h-[44px] cursor-pointer"
                   aria-label="تسجيل الدخول إلى حسابك"
                 >
-                  <LogIn className="w-4 h-4 text-[#B45F42]" />
+                  <LogIn className="w-4 h-4 text-[#B24C2B]" />
                   <span className="hidden xs:inline">تسجيل الدخول</span>
                   <span className="xs:hidden">دخول</span>
                 </button>
@@ -411,7 +403,7 @@ export const Header: React.FC = () => {
                     setAuthModalTab('register');
                     setIsAuthModalOpen(true);
                   }}
-                  className="hidden xl:flex px-4 py-2.5 bg-[#F3EFE9] dark:bg-[#2A2320] hover:bg-[#E8E1D9] dark:hover:bg-[#352D29] text-[#B45F42] dark:text-[#FF855D] border border-[#B45F42]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5 min-h-[44px] cursor-pointer"
+                  className="hidden xl:flex px-4 py-2.5 bg-[#F3EFE9] dark:bg-[#2A2320] hover:bg-[#E5DDD3] dark:hover:bg-[#352D29] text-[#B24C2B] dark:text-[#FF855D] border border-[#B24C2B]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5 min-h-[44px] cursor-pointer"
                   aria-label="إنشاء حساب جديد في وه"
                 >
                   <UserPlus className="w-4 h-4" />
@@ -425,21 +417,21 @@ export const Header: React.FC = () => {
                   type="button"
                   id="user-menu-btn"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2.5 p-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] rounded-xl bg-white dark:bg-[#25201D] transition-colors cursor-pointer min-h-[40px] sm:min-h-[44px]"
+                  className="flex items-center gap-1.5 sm:gap-2.5 p-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] rounded-xl bg-white dark:bg-[#26201B] transition-colors cursor-pointer min-h-[40px] sm:min-h-[44px]"
                   aria-label={`قائمة الحساب: ${currentUser.name || currentUser.username}`}
                   aria-expanded={userDropdownOpen}
                   aria-haspopup="true"
                 >
                   <img
-                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
+                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                     alt={currentUser.name || currentUser.username}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover border border-[#E8E1D9] dark:border-[#382E27] shrink-0"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
                   />
                   <div className="text-right hidden md:block max-w-[120px] lg:max-w-[150px]">
                     <span className="text-xs sm:text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] block leading-tight truncate">
                       {currentUser.username || currentUser.name}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] text-[#7A6F64] dark:text-[#A89C90] block font-medium truncate">
+                    <span className="text-[10px] sm:text-[11px] text-[#73675B] dark:text-[#A89C90] block font-medium truncate">
                       {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'حرفي وورشة' : 'حسابي'}
                     </span>
                   </div>
@@ -455,16 +447,16 @@ export const Header: React.FC = () => {
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95, y: -4 }}
                       transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute left-0 mt-2 w-64 sm:w-72 bg-white dark:bg-[#201B18] border border-[#E8E1D9] dark:border-[#382E27] rounded-2xl shadow-xl py-2 z-50 origin-top-left"
+                      className="absolute left-0 mt-2 w-64 sm:w-72 bg-white dark:bg-[#201B18] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl shadow-xl py-2 z-50 origin-top-left"
                     >
                       <div className="px-4 py-3 border-b border-[#F3EFE9] dark:border-[#2D2723]">
                         <p className="text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] truncate">
                           {currentUser.name || currentUser.username}
                         </p>
                         {currentUser.email ? (
-                          <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] truncate">{currentUser.email}</p>
+                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">{currentUser.email}</p>
                         ) : (
-                          <p className="text-xs text-[#7A6F64] dark:text-[#A89C90] truncate">@{currentUser.username}</p>
+                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">@{currentUser.username}</p>
                         )}
                         <span
                           className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
@@ -489,7 +481,7 @@ export const Header: React.FC = () => {
                         className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
                         aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
                       >
-                        <User className="w-4 h-4 text-[#B45F42]" />
+                        <User className="w-4 h-4 text-[#B24C2B]" />
                         <span>الملف الشخصي وإعدادات الحساب</span>
                       </button>
 
@@ -532,7 +524,7 @@ export const Header: React.FC = () => {
                             className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
                             aria-label="الانتقال إلى طلباتي وتتبع الشحنات"
                           >
-                            <PackageCheck className="w-4 h-4 text-[#B45F42]" />
+                            <PackageCheck className="w-4 h-4 text-[#B24C2B]" />
                             <span>طلباتي وتتبع الشحنات</span>
                           </button>
 
@@ -546,7 +538,7 @@ export const Header: React.FC = () => {
                             className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
                             aria-label={`الانتقال إلى قائمة المفضلة، ${favorites.length} عناصر`}
                           >
-                            <Heart className="w-4 h-4 text-[#B45F42]" />
+                            <Heart className="w-4 h-4 text-[#B24C2B]" />
                             <span>قائمة المفضلة ({favorites.length})</span>
                           </button>
                         </>
@@ -598,11 +590,11 @@ export const Header: React.FC = () => {
                           {theme === 'dark' ? (
                             <Sun className="w-4 h-4 text-amber-400" />
                           ) : (
-                            <Moon className="w-4 h-4 text-[#B45F42]" />
+                            <Moon className="w-4 h-4 text-[#B24C2B]" />
                           )}
                           <span>المظهر: {theme === 'dark' ? 'الوضع الداكن' : 'الوضع النهاري'}</span>
                         </div>
-                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#F3EFE9] dark:bg-[#2D2723] border border-[#E8E1D9] dark:border-[#382E27] text-[#7A6F64] dark:text-[#A89C90] font-bold">
+                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#F3EFE9] dark:bg-[#2D2723] border border-[#E5DDD3] dark:border-[#352B24] text-[#73675B] dark:text-[#A89C90] font-bold">
                           {theme === 'dark' ? 'ليلي 🌙' : 'نهاري ☀️'}
                         </span>
                       </button>
@@ -634,7 +626,7 @@ export const Header: React.FC = () => {
               type="button"
               id="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] rounded-xl transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center cursor-pointer border border-[#E8E1D9] dark:border-[#382E27]"
+              className="md:hidden p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
               aria-label={mobileMenuOpen ? 'إغلاق القائمة الرئيسية' : 'فتح القائمة الرئيسية'}
               aria-expanded={mobileMenuOpen}
             >
@@ -662,11 +654,11 @@ export const Header: React.FC = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="ابحث عن: فخار قنا، كليم، عسل سدر..."
                   aria-label="البحث عن منتجات الصعيد"
-                  className="w-full bg-[#F3EFE9] dark:bg-[#25201D] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#7A6F64] rounded-xl pl-10 pr-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] focus:border-[#B45F42] outline-none"
+                  className="w-full bg-[#F3EFE9] dark:bg-[#26201B] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#73675B] rounded-xl pl-10 pr-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] focus:border-[#B24C2B] outline-none"
                 />
                 <button
                   type="submit"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B45F42] cursor-pointer"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B24C2B] cursor-pointer"
                   aria-label="تنفيذ البحث"
                 >
                   <Search className="w-4 h-4" />
@@ -677,7 +669,7 @@ export const Header: React.FC = () => {
         </AnimatePresence>
 
         {/* Desktop Secondary Navigation Bar (md+) */}
-        <nav className="hidden md:flex items-center gap-1.5 pb-2.5 sm:pb-3 border-t border-[#E8E1D9]/70 dark:border-[#382E27]/70 pt-2.5 overflow-x-auto no-scrollbar" aria-label="روابط التنقل الرئيسية">
+        <nav className="hidden md:flex items-center gap-1.5 pb-2.5 sm:pb-3 border-t border-[#E5DDD3]/70 dark:border-[#352B24]/70 pt-2.5 overflow-x-auto no-scrollbar" aria-label="روابط التنقل الرئيسية">
           {roleNavLinks.map((link) => {
             const isActive = activePage === link.id;
             return (
@@ -689,15 +681,14 @@ export const Header: React.FC = () => {
                 aria-label={`الانتقال إلى صفحة ${link.label}`}
                 aria-current={isActive ? 'page' : undefined}
                 className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${isActive
-                  ? 'bg-[#B45F42] text-white shadow-xs'
-                  : 'text-[#54493F] dark:text-[#C5B8AC] hover:text-[#B45F42] dark:hover:text-[#FF855D] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
+                  ? 'bg-[#B24C2B] text-white shadow-xs'
+                  : 'text-[#54493F] dark:text-[#C5B8AC] hover:text-[#B24C2B] dark:hover:text-[#FF855D] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B]'
                   }`}
               >
                 <span>{link.label}</span>
                 {'isNew' in link && (link as any).isNew && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse ${
-                    isActive ? 'bg-amber-300 text-[#2D2A26]' : 'bg-[#B45F42] text-white'
-                  }`}>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse ${isActive ? 'bg-amber-300 text-[#2D2A26]' : 'bg-[#B24C2B] text-white'
+                    }`}>
                     جديد
                   </span>
                 )}
@@ -738,9 +729,9 @@ export const Header: React.FC = () => {
               id="nav-quick-orders"
               onClick={() => setActivePage('orders')}
               aria-label="الانتقال السريع إلى متابعة طلباتي"
-              className="mr-auto flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 bg-[#F3EFE9] dark:bg-[#25201D] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#E8E1D9] dark:hover:bg-[#2D2723] rounded-xl text-xs font-bold border border-[#E8E1D9] dark:border-[#382E27] transition-colors shrink-0 cursor-pointer"
+              className="mr-auto flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 bg-[#F3EFE9] dark:bg-[#26201B] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#E5DDD3] dark:hover:bg-[#2D2723] rounded-xl text-xs font-bold border border-[#E5DDD3] dark:border-[#352B24] transition-colors shrink-0 cursor-pointer"
             >
-              <PackageCheck className="w-3.5 h-3.5 text-[#B45F42]" />
+              <PackageCheck className="w-3.5 h-3.5 text-[#B24C2B]" />
               <span>متابعة طلباتي</span>
             </button>
           )}
@@ -768,24 +759,24 @@ export const Header: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: "easeInOut" }}
-              className="md:hidden relative z-40 bg-[#FDFBF7] dark:bg-[#1A1614] border-b border-[#E8E1D9] dark:border-[#382E27] px-4 py-4 space-y-3.5 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
+              className="md:hidden relative z-40 bg-[#FAF7F2] dark:bg-[#1A1614] border-b border-[#E5DDD3] dark:border-[#352B24] px-4 py-4 space-y-3.5 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
               role="dialog"
               aria-label="قائمة التنقل للهواتف"
             >
               {/* User Card on Mobile Drawer */}
               {isAuthenticated ? (
-                <div className="flex items-center justify-between p-3.5 bg-white dark:bg-[#201B18] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-2xs">
+                <div className="flex items-center justify-between p-3.5 bg-white dark:bg-[#201B18] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-2xs">
                   <div className="flex items-center gap-3 min-w-0">
                     <img
-                      src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1787924812/user.jpg'}
+                      src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                       alt={currentUser.name || currentUser.username}
-                      className="w-10 h-10 rounded-xl object-cover border border-[#E8E1D9] dark:border-[#382E27] shrink-0"
+                      className="w-10 h-10 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
                     />
                     <div className="min-w-0">
                       <span className="text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] block leading-tight truncate">
                         {currentUser.name || currentUser.username}
                       </span>
-                      <span className="text-xs text-[#7A6F64] dark:text-[#A89C90] block truncate">
+                      <span className="text-xs text-[#73675B] dark:text-[#A89C90] block truncate">
                         {currentUser.email || `@${currentUser.username}`}
                       </span>
                     </div>
@@ -804,7 +795,7 @@ export const Header: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 p-2 bg-[#F3EFE9] dark:bg-[#25201D] rounded-2xl">
+                <div className="grid grid-cols-2 gap-2 p-2 bg-[#F3EFE9] dark:bg-[#26201B] rounded-2xl">
                   <button
                     type="button"
                     id="mobile-login-btn"
@@ -814,9 +805,9 @@ export const Header: React.FC = () => {
                       setIsAuthModalOpen(true);
                     }}
                     aria-label="تسجيل الدخول إلى حسابك"
-                    className="py-2.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer border border-[#E8E1D9] dark:border-[#382E27]"
+                    className="py-2.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
                   >
-                    <LogIn className="w-4 h-4 text-[#B45F42]" />
+                    <LogIn className="w-4 h-4 text-[#B24C2B]" />
                     <span>تسجيل الدخول</span>
                   </button>
                   <button
@@ -828,7 +819,7 @@ export const Header: React.FC = () => {
                       setIsAuthModalOpen(true);
                     }}
                     aria-label="إنشاء حساب جديد في وه"
-                    className="py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <UserPlus className="w-4 h-4" />
                     <span>إنشاء حساب</span>
@@ -837,7 +828,7 @@ export const Header: React.FC = () => {
               )}
 
               {/* Theme Switcher Row in Drawer */}
-              <div className="p-3 bg-[#F3EFE9] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] rounded-2xl flex items-center justify-between">
+              <div className="p-3 bg-[#F3EFE9] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   {theme === 'dark' ? (
                     <Moon className="w-5 h-5 text-amber-400" />
@@ -846,7 +837,7 @@ export const Header: React.FC = () => {
                   )}
                   <div className="text-right">
                     <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block">مظهر المنصة</span>
-                    <span className="text-[11px] text-[#7A6F64] dark:text-[#A89C90] block">
+                    <span className="text-[11px] text-[#73675B] dark:text-[#A89C90] block">
                       {theme === 'dark' ? 'الوضع الداكن (الليلي)' : 'الوضع المضيء (النهاري)'}
                     </span>
                   </div>
@@ -856,7 +847,7 @@ export const Header: React.FC = () => {
                   id="mobile-theme-toggle-btn"
                   onClick={toggleTheme}
                   aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري' : 'التبديل إلى الوضع الداكن'}
-                  className="px-3 py-1.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                  className="px-3 py-1.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   {theme === 'dark' ? (
                     <>
@@ -865,7 +856,7 @@ export const Header: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <Moon className="w-3.5 h-3.5 text-[#B45F42]" />
+                      <Moon className="w-3.5 h-3.5 text-[#B24C2B]" />
                       <span>داكن</span>
                     </>
                   )}
@@ -888,8 +879,8 @@ export const Header: React.FC = () => {
                       aria-label={`الانتقال إلى صفحة ${link.label}`}
                       aria-current={isActive ? 'page' : undefined}
                       className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${isActive
-                        ? 'bg-[#B45F42] text-white'
-                        : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D]'
+                        ? 'bg-[#B24C2B] text-white'
+                        : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B]'
                         }`}
                     >
                       <span>{link.label}</span>
@@ -919,7 +910,7 @@ export const Header: React.FC = () => {
 
               {/* Role-Specific Protected Links in Drawer */}
               {isAuthenticated && (
-                <div className="border-t border-[#E8E1D9] dark:border-[#382E27] pt-2 space-y-1">
+                <div className="border-t border-[#E5DDD3] dark:border-[#352B24] pt-2 space-y-1">
                   <button
                     type="button"
                     id="mobile-account-link"
@@ -928,10 +919,10 @@ export const Header: React.FC = () => {
                       setMobileMenuOpen(false);
                     }}
                     aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] min-h-[44px] cursor-pointer"
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] min-h-[44px] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-[#B45F42]" />
+                      <User className="w-4 h-4 text-[#B24C2B]" />
                       <span>الملف الشخصي وإعدادات الحساب</span>
                     </div>
                     <ArrowLeft className="w-4 h-4 opacity-70" />

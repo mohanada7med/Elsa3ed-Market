@@ -225,16 +225,16 @@ export const CulturalCmsAdminPage: React.FC = () => {
   // Auth Guard
   if (!currentUser || currentUser.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-[#FAF6F0] dark:bg-[#151210] flex items-center justify-center p-6 text-center" dir="rtl">
-        <div className="bg-white dark:bg-[#1E1917] p-8 rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] max-w-md shadow-xl">
+      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6 text-center" dir="rtl">
+        <div className="bg-white dark:bg-[#1E1917] p-8 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] max-w-md shadow-xl">
           <Shield className="w-16 h-16 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[#29221D] dark:text-[#FAF6F2] mb-2 font-serif">منطقة إدارية مقيدة</h2>
-          <p className="text-xs text-[#7A6F64] dark:text-[#9C8F82] mb-6 leading-relaxed">
+          <h2 className="text-xl font-bold text-[#241E1A] dark:text-[#FAF6F2] mb-2 font-serif">منطقة إدارية مقيدة</h2>
+          <p className="text-xs text-[#73675B] dark:text-[#9C8F82] mb-6 leading-relaxed">
             نظام إدارة وتوثيق محافظات وه (Governorate CMS) مخصص لصلاحيات الإدارة العليا فقط.
           </p>
           <button
             onClick={() => setActivePage('home')}
-            className="px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+            className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
             العودة إلى الصفحة الرئيسية
           </button>
@@ -384,12 +384,12 @@ export const CulturalCmsAdminPage: React.FC = () => {
   if (!isAuthenticated || currentRole !== 'admin') {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4" dir="rtl">
-        <div className="max-w-md w-full my-16 p-8 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] shadow-xl text-center space-y-4">
+        <div className="max-w-md w-full my-16 p-8 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xl text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center mx-auto text-2xl">
             🛡️
           </div>
           <h2 className="text-xl font-bold text-[#2D2A26] dark:text-[#FAF6F2]">منطقة الإدارة العليا</h2>
-          <p className="text-sm text-[#7A6F64] dark:text-[#9C8F82] leading-relaxed">
+          <p className="text-sm text-[#73675B] dark:text-[#9C8F82] leading-relaxed">
             نظام إدارة المحافظات (WAH Governorate CMS) مخصص لمديري المنصة فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
           </p>
           <button
@@ -398,7 +398,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               setAuthModalTab('login');
               setIsAuthModalOpen(true);
             }}
-            className="w-full py-3 bg-[#B45F42] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+            className="w-full py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
           >
             تسجيل الدخول الإداري
           </button>
@@ -408,7 +408,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF6F0] dark:bg-[#151210] text-[#29221D] dark:text-[#FAF6F2] pt-6 pb-20 font-sans" dir="rtl">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] text-[#241E1A] dark:text-[#FAF6F2] pt-6 pb-20 font-sans" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* ========================================================================= */}
@@ -417,16 +417,16 @@ export const CulturalCmsAdminPage: React.FC = () => {
         {!selectedGovId && (
           <div className="space-y-6 animate-fadeIn">
             {/* Header banner */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#B45F42] uppercase tracking-wider">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#B24C2B] uppercase tracking-wider">
                   <Landmark className="w-4 h-4" />
                   <span>نظام إدارة التراث والمحتوى الجغرافي | WAH Governorate CMS</span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-black font-serif text-[#29221D] dark:text-[#FAF6F2]">
+                <h1 className="text-2xl sm:text-3xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
                   لوحة إدارة محافظات وه
                 </h1>
-                <p className="text-xs sm:text-sm text-[#7A6F64] dark:text-[#9C8F82] max-w-2xl leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#9C8F82] max-w-2xl leading-relaxed">
                   نظام إدارة المحتوى الموجه بالمحافظة: اختر أي محافظة من محافظات الصعيد لإدارة جميع المعالم، الحرف، الأكلات، شيوخ الصنعة، القصص، الفعاليات، والمواسم المرتبطة بها في مركز تحكم موحد.
                 </p>
               </div>
@@ -438,14 +438,14 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setEditingItem(null);
                     setIsEditModalOpen(true);
                   }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>توثيق محافظة جديدة</span>
                 </button>
                 <button
                   onClick={() => setActivePage('admin-dashboard')}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#25201D] text-[#665A4F] dark:text-[#A89C90] border border-[#E8E1D9] dark:border-[#382E27] hover:bg-[#FAF6F0] rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#26201B] text-[#73675B] dark:text-[#A89C90] border border-[#E5DDD3] dark:border-[#352B24] hover:bg-[#FAF7F2] rounded-xl text-xs font-bold transition-all cursor-pointer"
                 >
                   <span>لوحة المتجر</span>
                 </button>
@@ -453,24 +453,24 @@ export const CulturalCmsAdminPage: React.FC = () => {
             </div>
 
             {/* Filter and Search Toolbar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
               <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-[#7A6F64] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-4 h-4 text-[#73675B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={globalGovSearch}
                   onChange={(e) => setGlobalGovSearch(e.target.value)}
                   placeholder="ابحث عن محافظة، معلم، حرفة..."
-                  className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none focus:border-[#B45F42]"
+                  className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none focus:border-[#B24C2B]"
                 />
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">
-                <span className="text-xs text-[#7A6F64] font-bold whitespace-nowrap">الحالة:</span>
+                <span className="text-xs text-[#73675B] font-bold whitespace-nowrap">الحالة:</span>
                 <select
                   value={govStatusFilter}
                   onChange={(e) => setGovStatusFilter(e.target.value)}
-                  className="bg-[#FAF6F0] dark:bg-[#25201D] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none font-bold"
+                  className="bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold"
                 >
                   <option value="all">كافة المحافظات ({governorates.length})</option>
                   <option value="approved">معتمدة ومنشورة</option>
@@ -480,7 +480,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
                 <button
                   onClick={loadGovernorates}
-                  className="p-2 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#E8E1D9] rounded-xl border border-[#E8E1D9] dark:border-[#382E27] text-xs text-[#7A6F64] cursor-pointer"
+                  className="p-2 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-xs text-[#73675B] cursor-pointer"
                   title="تحديث البيانات"
                 >
                   <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -490,22 +490,22 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
             {/* Governorates Cards Grid */}
             {isLoading && governorates.length === 0 ? (
-              <div className="text-center py-24 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                <RefreshCw className="w-8 h-8 text-[#B45F42] animate-spin mx-auto mb-3" />
-                <p className="text-sm font-bold text-[#7A6F64]">جاري جلب بيانات محافظات الصعيد من قاعدة البيانات...</p>
+              <div className="text-center py-24 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                <RefreshCw className="w-8 h-8 text-[#B24C2B] animate-spin mx-auto mb-3" />
+                <p className="text-sm font-bold text-[#73675B]">جاري جلب بيانات محافظات الصعيد من قاعدة البيانات...</p>
               </div>
             ) : filteredGovernorates.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                <Landmark className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+              <div className="text-center py-20 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                <Landmark className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                 <h3 className="text-base font-bold">لا توجد نتائج مطابقة لبحثك</h3>
-                <p className="text-xs text-[#7A6F64] mt-1">تأكد من كتابة اسم المحافظة بشكل صحيح أو أعد ضبط خيارات التصفية.</p>
+                <p className="text-xs text-[#73675B] mt-1">تأكد من كتابة اسم المحافظة بشكل صحيح أو أعد ضبط خيارات التصفية.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredGovernorates.map((gov) => (
                   <div
                     key={gov.id}
-                    className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+                    className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
                   >
                     <div>
                       {/* Card Image Banner */}
@@ -531,7 +531,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
                       {/* Card Body */}
                       <div className="p-5 space-y-4">
-                        <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 leading-relaxed">
                           {gov.shortIntro || gov.history}
                         </p>
 
@@ -541,13 +541,13 @@ export const CulturalCmsAdminPage: React.FC = () => {
                             {gov.famousFor.slice(0, 3).map((feat, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#FAF6F0] dark:bg-[#25201D] text-[#7A6F64] dark:text-[#A89C90] border border-[#E8E1D9] dark:border-[#382E27]"
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#FAF7F2] dark:bg-[#26201B] text-[#73675B] dark:text-[#A89C90] border border-[#E5DDD3] dark:border-[#352B24]"
                               >
                                 {feat}
                               </span>
                             ))}
                             {gov.famousFor.length > 3 && (
-                              <span className="text-[10px] text-[#B45F42] font-bold self-center">
+                              <span className="text-[10px] text-[#B24C2B] font-bold self-center">
                                 +{gov.famousFor.length - 3} أخرى
                               </span>
                             )}
@@ -560,7 +560,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     <div className="p-5 pt-0 border-t border-[#F0EAE1] dark:border-[#2D2622] mt-2 flex items-center justify-between gap-3">
                       <button
                         onClick={() => setSelectedGovId(gov.id)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                       >
                         <span>دخول لوحة إدارة {gov.name}</span>
                         <ChevronLeft className="w-4 h-4" />
@@ -572,7 +572,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                           setEditingItem(gov);
                           setIsEditModalOpen(true);
                         }}
-                        className="p-2.5 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] text-[#665A4F] dark:text-[#A89C90] hover:bg-[#FAF6F0] text-xs font-bold transition-all cursor-pointer"
+                        className="p-2.5 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-[#73675B] dark:text-[#A89C90] hover:bg-[#FAF7F2] text-xs font-bold transition-all cursor-pointer"
                         title="تعديل بيانات المحافظة"
                       >
                         <Edit className="w-4 h-4" />
@@ -591,27 +591,27 @@ export const CulturalCmsAdminPage: React.FC = () => {
         {selectedGovId && activeGov && (
           <div className="space-y-6 animate-fadeIn">
             {/* Dedicated Top Breadcrumb & Switcher Navigation Bar */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedGovId(null)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] hover:bg-[#FAF6F0] text-xs font-bold text-[#7A6F64] cursor-pointer"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] hover:bg-[#FAF7F2] text-xs font-bold text-[#73675B] cursor-pointer"
                 >
                   <ArrowRight className="w-3.5 h-3.5" />
                   <span>كافة المحافظات</span>
                 </button>
-                <span className="text-[#B45F42] font-bold">/</span>
+                <span className="text-[#B24C2B] font-bold">/</span>
                 <span className="text-sm font-black font-serif">لوحة إدارة محافظة {activeGov.name}</span>
               </div>
 
               {/* Quick Governorates Switcher & Action Center Trigger */}
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#7A6F64] font-bold hidden sm:inline">تبديل المحافظة:</span>
+                  <span className="text-xs text-[#73675B] font-bold hidden sm:inline">تبديل المحافظة:</span>
                   <select
                     value={selectedGovId}
                     onChange={(e) => setSelectedGovId(e.target.value)}
-                    className="bg-[#FAF6F0] dark:bg-[#25201D] text-xs font-bold rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                    className="bg-[#FAF7F2] dark:bg-[#26201B] text-xs font-bold rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
                   >
                     {governorates.map((g) => (
                       <option key={g.id} value={g.id}>
@@ -623,7 +623,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
                 <button
                   onClick={() => setIsActionCenterOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>إضافة محتوى سريع</span>
@@ -632,7 +632,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
             </div>
 
             {/* Dedicated Hero Banner for this Governorate */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#E8E1D9] dark:border-[#382E27] bg-stone-900 text-white min-h-[160px] flex items-end p-6 sm:p-8">
+            <div className="relative rounded-3xl overflow-hidden border border-[#E5DDD3] dark:border-[#352B24] bg-stone-900 text-white min-h-[160px] flex items-end p-6 sm:p-8">
               <img
                 src={activeGov.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1200'}
                 alt={activeGov.name}
@@ -643,7 +643,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1.5 max-w-2xl">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#B45F42] text-white font-bold">
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#B24C2B] text-white font-bold">
                       {activeGov.region || 'صعيد مصر'}
                     </span>
                     {renderStatusBadge(activeGov.status)}
@@ -685,23 +685,23 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 return (
                   <div
                     key={idx}
-                    className="bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] shadow-2xs flex flex-col justify-between"
+                    className="bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-2xs flex flex-col justify-between"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <Icon className={`w-4 h-4 ${stat.color}`} />
-                      <span className="text-[10px] text-[#7A6F64] font-bold">MongoDB</span>
+                      <span className="text-[10px] text-[#73675B] font-bold">MongoDB</span>
                     </div>
-                    <div className="text-xl font-black font-serif text-[#29221D] dark:text-[#FAF6F2]">
+                    <div className="text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
                       {isStatsLoading ? '...' : stat.count}
                     </div>
-                    <div className="text-[11px] font-bold text-[#7A6F64] dark:text-[#9C8F82] mt-0.5">{stat.label}</div>
+                    <div className="text-[11px] font-bold text-[#73675B] dark:text-[#9C8F82] mt-0.5">{stat.label}</div>
                   </div>
                 );
               })}
             </div>
 
             {/* Scoped Governorate Category Navigation Tabs */}
-            <div className="bg-white dark:bg-[#1E1917] p-2 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <div className="bg-white dark:bg-[#1E1917] p-2 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {[
                 { id: 'overview', label: 'الملف التعريفي', icon: Info },
                 { id: 'cities_villages', label: `المدن والقرى (${cities.length + villages.length})`, icon: MapPin },
@@ -733,8 +733,8 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     }}
                     className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#B45F42] text-white shadow-xs'
-                        : 'text-[#665A4F] dark:text-[#A89C90] hover:bg-[#FAF6F0] dark:hover:bg-[#25201D]'
+                        ? 'bg-[#B24C2B] text-white shadow-xs'
+                        : 'text-[#73675B] dark:text-[#A89C90] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -746,9 +746,9 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
             {/* Bulk Actions Floating Bar (Active when items are selected) */}
             {selectedIds.length > 0 && (
-              <div className="bg-[#29221D] text-white p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
+              <div className="bg-[#241E1A] text-white p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
                 <div className="flex items-center gap-2 text-xs font-bold">
-                  <CheckSquare className="w-4 h-4 text-[#B45F42]" />
+                  <CheckSquare className="w-4 h-4 text-[#B24C2B]" />
                   <span>تم تحديد {selectedIds.length} عنصر</span>
                 </div>
 
@@ -793,15 +793,15 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
             {/* Internal Search Bar for active subtab */}
             {activeSubTab !== 'overview' && activeSubTab !== 'map' && activeSubTab !== 'relationships' && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27]">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-[#7A6F64] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Search className="w-4 h-4 text-[#73675B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={internalSearch}
                     onChange={(e) => setInternalSearch(e.target.value)}
                     placeholder={`البحث داخل محتوى ${activeGov.name}...`}
-                    className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs rounded-xl pr-10 pl-4 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                    className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl pr-10 pl-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
                   />
                 </div>
 
@@ -818,7 +818,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة عنصر في هذا القسم</span>
@@ -831,11 +831,11 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {/* SUBTAB 1: OVERVIEW & PROFILE (الملف التعريفي الكامل)      */}
             {/* ======================================================= */}
             {activeSubTab === 'overview' && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 space-y-6">
+              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
                 <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
                   <div>
                     <h3 className="text-lg font-bold font-serif">الملف التعريفي الشامل لمحافظة {activeGov.name}</h3>
-                    <p className="text-xs text-[#7A6F64] mt-0.5">يمكن للإدارة تعديل كافة بيانات المحافظة مباشرة وحفظها في قاعدة البيانات.</p>
+                    <p className="text-xs text-[#73675B] mt-0.5">يمكن للإدارة تعديل كافة بيانات المحافظة مباشرة وحفظها في قاعدة البيانات.</p>
                   </div>
                   <button
                     onClick={() => {
@@ -843,7 +843,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(activeGov);
                       setIsEditModalOpen(true);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <Edit className="w-4 h-4" />
                     <span>تحرير الحقول</span>
@@ -853,41 +853,41 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
                   <div className="space-y-3">
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">الاسم بالعربية:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl font-bold">{activeGov.name}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">الاسم بالعربية:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl font-bold">{activeGov.name}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">اللقب الشعبي والتاريخي:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">اللقب الشعبي والتاريخي:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">العاصمة الإقليمية:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">العاصمة الإقليمية:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">الإقليم الجغرافي:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">الإقليم الجغرافي:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">الموقع النيلي:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">الموقع النيلي:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">المقدمة والنبذة الموجزة:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">المقدمة والنبذة الموجزة:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">العمق التاريخي والتراثي:</span>
-                      <div className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl leading-relaxed">{activeGov.history}</div>
+                      <span className="font-bold text-[#73675B] block mb-1">العمق التاريخي والتراثي:</span>
+                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl leading-relaxed">{activeGov.history}</div>
                     </div>
                     <div>
-                      <span className="font-bold text-[#7A6F64] block mb-1">أبرز ما تشتهر به المحافظة:</span>
-                      <div className="flex flex-wrap gap-1.5 p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl">
+                      <span className="font-bold text-[#73675B] block mb-1">أبرز ما تشتهر به المحافظة:</span>
+                      <div className="flex flex-wrap gap-1.5 p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">
                         {activeGov.famousFor?.map((f, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-white dark:bg-[#1E1917] rounded-md font-bold text-[#B45F42]">
+                          <span key={i} className="px-2 py-0.5 bg-white dark:bg-[#1E1917] rounded-md font-bold text-[#B24C2B]">
                             {f}
                           </span>
                         ))}
@@ -904,10 +904,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'cities_villages' && (
               <div className="space-y-6">
                 {/* Cities Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 space-y-4">
+                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
                   <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
                     <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#B45F42]" />
+                      <MapPin className="w-4 h-4 text-[#B24C2B]" />
                       <span>مدن ومراكز محافظة {activeGov.name} ({cities.length})</span>
                     </h3>
                     <button
@@ -916,7 +916,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                         setEditingItem(null);
                         setIsEditModalOpen(true);
                       }}
-                      className="px-3 py-1.5 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold text-[#B45F42] flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة مدينة</span>
@@ -924,11 +924,11 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   </div>
 
                   {cities.length === 0 ? (
-                    <p className="text-xs text-[#7A6F64] text-center py-6">لم يتم تسجيل مدن تابعة لهذه المحافظة بعد.</p>
+                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل مدن تابعة لهذه المحافظة بعد.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {cities.map((city) => (
-                        <div key={city.id} className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-2">
+                        <div key={city.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                           <div className="flex items-center justify-between">
                             <h4 className="font-bold text-sm">{city.name}</h4>
                             <button
@@ -938,7 +938,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <p className="text-xs text-[#7A6F64] line-clamp-2">{city.shortDescription || 'مركز تراثي وتجاري عريق.'}</p>
+                          <p className="text-xs text-[#73675B] line-clamp-2">{city.shortDescription || 'مركز تراثي وتجاري عريق.'}</p>
                         </div>
                       ))}
                     </div>
@@ -946,10 +946,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 </div>
 
                 {/* Villages Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 space-y-4">
+                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
                   <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
                     <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Compass className="w-4 h-4 text-[#B45F42]" />
+                      <Compass className="w-4 h-4 text-[#B24C2B]" />
                       <span>القرى والنجوع التراثية ({villages.length})</span>
                     </h3>
                     <button
@@ -958,7 +958,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                         setEditingItem(null);
                         setIsEditModalOpen(true);
                       }}
-                      className="px-3 py-1.5 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold text-[#B45F42] flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة قرية</span>
@@ -966,11 +966,11 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   </div>
 
                   {villages.length === 0 ? (
-                    <p className="text-xs text-[#7A6F64] text-center py-6">لم يتم تسجيل قرى تراثية لهذه المحافظة بعد.</p>
+                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل قرى تراثية لهذه المحافظة بعد.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {villages.map((v) => (
-                        <div key={v.id} className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-2">
+                        <div key={v.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                           <div className="flex items-center justify-between">
                             <h4 className="font-bold text-sm">{v.name}</h4>
                             <button
@@ -980,9 +980,9 @@ export const CulturalCmsAdminPage: React.FC = () => {
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <p className="text-xs text-[#7A6F64] line-clamp-2">{v.description || 'قرية تحتضن موروثاً حرفياً.'}</p>
+                          <p className="text-xs text-[#73675B] line-clamp-2">{v.description || 'قرية تحتضن موروثاً حرفياً.'}</p>
                           {v.traditionalCraftName && (
-                            <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-white dark:bg-[#1E1917] text-[#B45F42]">
+                            <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-white dark:bg-[#1E1917] text-[#B24C2B]">
                               الحرفة: {v.traditionalCraftName}
                             </span>
                           )}
@@ -1000,10 +1000,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'places_heritage' && (
               <div className="space-y-4">
                 {places.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                    <Landmark className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                    <Landmark className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                     <h3 className="text-base font-bold">لا توجد معالم أو أماكن موثقة بعد في {activeGov.name}</h3>
-                    <p className="text-xs text-[#7A6F64] mt-1">استخدم زر "إضافة محتوى سريع" لتوثيق معلم جديد.</p>
+                    <p className="text-xs text-[#73675B] mt-1">استخدم زر "إضافة محتوى سريع" لتوثيق معلم جديد.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -1015,7 +1015,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                           <div
                             key={place.id}
                             className={`bg-white dark:bg-[#1E1917] rounded-2xl border transition-all p-5 shadow-xs flex flex-col justify-between ${
-                              isChecked ? 'border-[#B45F42] ring-2 ring-[#B45F42]/20' : 'border-[#E8E1D9] dark:border-[#382E27]'
+                              isChecked ? 'border-[#B24C2B] ring-2 ring-[#B24C2B]/20' : 'border-[#E5DDD3] dark:border-[#352B24]'
                             }`}
                           >
                             <div>
@@ -1027,27 +1027,27 @@ export const CulturalCmsAdminPage: React.FC = () => {
                                     if (e.target.checked) setSelectedIds((prev) => [...prev, place.id]);
                                     else setSelectedIds((prev) => prev.filter((id) => id !== place.id));
                                   }}
-                                  className="w-4 h-4 rounded border-stone-300 text-[#B45F42] focus:ring-[#B45F42] mt-1 cursor-pointer"
+                                  className="w-4 h-4 rounded border-stone-300 text-[#B24C2B] focus:ring-[#B24C2B] mt-1 cursor-pointer"
                                 />
                                 <div className="flex items-center gap-3 flex-1">
                                   <img
                                     src={place.coverImage || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=200'}
                                     alt={place.title}
-                                    className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9]"
+                                    className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
                                   />
                                   <div>
                                     <h4 className="font-bold text-sm line-clamp-1">{place.title}</h4>
-                                    <span className="text-[11px] text-[#B45F42] font-bold">{place.category}</span>
+                                    <span className="text-[11px] text-[#B24C2B] font-bold">{place.category}</span>
                                   </div>
                                 </div>
                                 {renderStatusBadge(place.status)}
                               </div>
-                              <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 mb-2 leading-relaxed">
+                              <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-2 leading-relaxed">
                                 {place.description}
                               </p>
                               {place.locationName && (
-                                <p className="text-[11px] text-[#7A6F64] flex items-center gap-1">
-                                  <MapPin className="w-3 h-3 text-[#B45F42]" />
+                                <p className="text-[11px] text-[#73675B] flex items-center gap-1">
+                                  <MapPin className="w-3 h-3 text-[#B24C2B]" />
                                   <span>{place.locationName}</span>
                                 </p>
                               )}
@@ -1061,7 +1061,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                                     setEditingItem(place);
                                     setIsEditModalOpen(true);
                                   }}
-                                  className="p-1.5 rounded-lg border border-[#E8E1D9] text-[#7A6F64] hover:bg-[#FAF6F0] cursor-pointer"
+                                  className="p-1.5 rounded-lg border border-[#E5DDD3] text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer"
                                   title="تعديل"
                                 >
                                   <Edit className="w-3.5 h-3.5" />
@@ -1074,7 +1074,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
                               </div>
-                              <span className="text-[10px] text-[#7A6F64] font-bold">إحداثيات: {place.coordinates ? 'موثقة ✓' : 'غير محددة'}</span>
+                              <span className="text-[10px] text-[#73675B] font-bold">إحداثيات: {place.coordinates ? 'موثقة ✓' : 'غير محددة'}</span>
                             </div>
                           </div>
                         );
@@ -1090,37 +1090,37 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'crafts' && (
               <div className="space-y-4">
                 {crafts.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                    <Hammer className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                    <Hammer className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                     <h3 className="text-base font-bold">لا توجد حرف موثقة لهذه المحافظة حالياً</h3>
-                    <p className="text-xs text-[#7A6F64] mt-1">وثّق الحرف التقليدية وأنوال النسيج والفخار والخوص الخاصة بـ {activeGov.name}.</p>
+                    <p className="text-xs text-[#73675B] mt-1">وثّق الحرف التقليدية وأنوال النسيج والفخار والخوص الخاصة بـ {activeGov.name}.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {crafts
                       .filter((c) => !internalSearch || c.title.toLowerCase().includes(internalSearch.toLowerCase()))
                       .map((craft) => (
-                        <div key={craft.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] p-5 shadow-xs flex flex-col justify-between">
+                        <div key={craft.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
                           <div>
                             <div className="flex items-start justify-between gap-2 mb-3">
                               <div className="flex items-center gap-3">
                                 <img
                                   src={craft.coverImage || 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=200'}
                                   alt={craft.title}
-                                  className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9]"
+                                  className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
                                 />
                                 <div>
                                   <h4 className="font-bold text-sm">{craft.title}</h4>
-                                  <span className="text-[10px] text-[#B45F42] font-bold">حرفة أصيلة</span>
+                                  <span className="text-[10px] text-[#B24C2B] font-bold">حرفة أصيلة</span>
                                 </div>
                               </div>
                               {renderStatusBadge(craft.status)}
                             </div>
-                            <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 mb-3">
+                            <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-3">
                               {craft.shortDescription || craft.history}
                             </p>
                             {craft.materials && (
-                              <p className="text-[10px] text-[#7A6F64]">المواد: {craft.materials.slice(0, 2).join('، ')}</p>
+                              <p className="text-[10px] text-[#73675B]">المواد: {craft.materials.slice(0, 2).join('، ')}</p>
                             )}
                           </div>
 
@@ -1132,7 +1132,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                                   setEditingItem(craft);
                                   setIsEditModalOpen(true);
                                 }}
-                                className="p-1.5 rounded-lg border border-[#E8E1D9] text-[#7A6F64] hover:bg-[#FAF6F0] cursor-pointer"
+                                className="p-1.5 rounded-lg border border-[#E5DDD3] text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer"
                               >
                                 <Edit className="w-3.5 h-3.5" />
                               </button>
@@ -1158,25 +1158,25 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'food' && (
               <div className="space-y-4">
                 {foods.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                    <Utensils className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                    <Utensils className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                     <h3 className="text-base font-bold">لا توجد أكلات موثقة لـ {activeGov.name} حالياً</h3>
-                    <p className="text-xs text-[#7A6F64] mt-1">وثّق المخبوزات والوصفات التاريخية المرتبطة بهذه المحافظة.</p>
+                    <p className="text-xs text-[#73675B] mt-1">وثّق المخبوزات والوصفات التاريخية المرتبطة بهذه المحافظة.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {foods.map((food) => (
-                      <div key={food.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] p-5 shadow-xs flex flex-col justify-between">
+                      <div key={food.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-2">
                             <h4 className="font-bold text-base">{food.title}</h4>
                             {renderStatusBadge(food.status)}
                           </div>
-                          <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 mb-3">
+                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-3">
                             {food.description || food.originStory}
                           </p>
                           {food.ingredients && (
-                            <p className="text-[10px] text-[#7A6F64]">المكونات: {food.ingredients.slice(0, 3).join('، ')}</p>
+                            <p className="text-[10px] text-[#73675B]">المكونات: {food.ingredients.slice(0, 3).join('، ')}</p>
                           )}
                         </div>
 
@@ -1194,7 +1194,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                               setEditingItem(food);
                               setIsEditModalOpen(true);
                             }}
-                            className="text-xs text-[#B45F42] hover:underline font-bold cursor-pointer"
+                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
                           >
                             تعديل الوصفة
                           </button>
@@ -1212,34 +1212,34 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'people_artisans' && (
               <div className="space-y-4">
                 {people.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                    <Users className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                    <Users className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                     <h3 className="text-base font-bold">لا يوجد شيوخ صنعة أو حرفيين مسجلين حالياً</h3>
-                    <p className="text-xs text-[#7A6F64] mt-1">وثّق أسماء وخبرات شيوخ الصنعة وحراس التراث في {activeGov.name}.</p>
+                    <p className="text-xs text-[#73675B] mt-1">وثّق أسماء وخبرات شيوخ الصنعة وحراس التراث في {activeGov.name}.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {people.map((person) => (
-                      <div key={person.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] p-5 shadow-xs flex flex-col justify-between">
+                      <div key={person.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-3">
                             <div className="flex items-center gap-3">
                               <img
                                 src={person.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120'}
                                 alt={person.name}
-                                className="w-12 h-12 rounded-xl object-cover border border-[#E8E1D9]"
+                                className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
                               />
                               <div>
                                 <h4 className="font-bold text-sm">{person.name}</h4>
-                                <p className="text-xs text-[#B45F42] font-bold">{person.titleOrRole}</p>
+                                <p className="text-xs text-[#B24C2B] font-bold">{person.titleOrRole}</p>
                               </div>
                             </div>
                             {renderStatusBadge(person.status)}
                           </div>
-                          <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-2 mb-2">
+                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-2">
                             {person.biography}
                           </p>
-                          <p className="text-[11px] text-[#7A6F64]">المهنة / المهارة: {person.craftOrSkill}</p>
+                          <p className="text-[11px] text-[#73675B]">المهنة / المهارة: {person.craftOrSkill}</p>
                         </div>
 
                         <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
@@ -1256,7 +1256,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                               setEditingItem(person);
                               setIsEditModalOpen(true);
                             }}
-                            className="text-xs text-[#B45F42] hover:underline font-bold cursor-pointer"
+                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
                           >
                             تعديل السيرة
                           </button>
@@ -1274,25 +1274,25 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'stories' && (
               <div className="space-y-4">
                 {stories.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27]">
-                    <BookOpen className="w-12 h-12 text-[#7A6F64] mx-auto mb-3" />
+                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
+                    <BookOpen className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
                     <h3 className="text-base font-bold">لا توجد حكايات موثقة لهذه المحافظة في وه بيحكي</h3>
-                    <p className="text-xs text-[#7A6F64] mt-1">وثّق المرويات الشفاهية والأساطير الشعبية لـ {activeGov.name}.</p>
+                    <p className="text-xs text-[#73675B] mt-1">وثّق المرويات الشفاهية والأساطير الشعبية لـ {activeGov.name}.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {stories.map((story) => (
-                      <div key={story.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] p-5 shadow-xs flex flex-col justify-between">
+                      <div key={story.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <span className="text-[11px] font-bold text-[#B45F42]">وه بيحكي</span>
+                            <span className="text-[11px] font-bold text-[#B24C2B]">وه بيحكي</span>
                             {renderStatusBadge(story.status)}
                           </div>
                           <h4 className="font-bold text-base mb-1">{story.title}</h4>
-                          <p className="text-xs text-[#665A4F] dark:text-[#A89C90] line-clamp-3 mb-3 leading-relaxed">
+                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-3 mb-3 leading-relaxed">
                             {story.excerpt || story.content}
                           </p>
-                          <p className="text-[10px] text-[#7A6F64]">الراوي / الكاتب: {story.authorName} • قراءة {story.readingTimeMinutes || 3} د</p>
+                          <p className="text-[10px] text-[#73675B]">الراوي / الكاتب: {story.authorName} • قراءة {story.readingTimeMinutes || 3} د</p>
                         </div>
 
                         <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
@@ -1309,7 +1309,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                               setEditingItem(story);
                               setIsEditModalOpen(true);
                             }}
-                            className="text-xs text-[#B45F42] hover:underline font-bold cursor-pointer"
+                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
                           >
                             تعديل الحكاية
                           </button>
@@ -1327,7 +1327,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {activeSubTab === 'events_seasons' && (
               <div className="space-y-6">
                 {/* Seasons Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 space-y-4">
+                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
                   <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
                     <h3 className="text-base font-bold font-serif flex items-center gap-2">
                       <Wheat className="w-4 h-4 text-amber-600" />
@@ -1339,7 +1339,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                         setEditingItem(null);
                         setIsEditModalOpen(true);
                       }}
-                      className="px-3 py-1.5 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold text-[#B45F42] flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة موسم</span>
@@ -1347,11 +1347,11 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   </div>
 
                   {seasons.length === 0 ? (
-                    <p className="text-xs text-[#7A6F64] text-center py-6">لم يتم تسجيل مواسم حصاد أو زراعة خاصة بهذه المحافظة.</p>
+                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل مواسم حصاد أو زراعة خاصة بهذه المحافظة.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {seasons.map((s) => (
-                        <div key={s.id} className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-2">
+                        <div key={s.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
                               {s.startPeriod} - {s.endPeriod}
@@ -1364,7 +1364,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                             </button>
                           </div>
                           <h4 className="font-bold text-sm">{s.title}</h4>
-                          <p className="text-xs text-[#7A6F64] line-clamp-2">{s.description}</p>
+                          <p className="text-xs text-[#73675B] line-clamp-2">{s.description}</p>
                         </div>
                       ))}
                     </div>
@@ -1372,10 +1372,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 </div>
 
                 {/* Cultural Events Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 space-y-4">
+                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
                   <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
                     <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-[#B45F42]" />
+                      <Calendar className="w-4 h-4 text-[#B24C2B]" />
                       <span>المهرجانات والموالد والفعاليات ({events.length})</span>
                     </h3>
                     <button
@@ -1384,7 +1384,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                         setEditingItem(null);
                         setIsEditModalOpen(true);
                       }}
-                      className="px-3 py-1.5 bg-[#FAF6F0] dark:bg-[#25201D] hover:bg-[#E8E1D9] rounded-xl text-xs font-bold text-[#B45F42] flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       <span>إضافة فعالية</span>
@@ -1392,13 +1392,13 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   </div>
 
                   {events.length === 0 ? (
-                    <p className="text-xs text-[#7A6F64] text-center py-6">لم يتم تسجيل فعاليات دورية لهذه المحافظة بعد.</p>
+                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل فعاليات دورية لهذه المحافظة بعد.</p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {events.map((ev) => (
-                        <div key={ev.id} className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-2">
+                        <div key={ev.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-[#B45F42] font-bold">{ev.eventDate}</span>
+                            <span className="text-[10px] text-[#B24C2B] font-bold">{ev.eventDate}</span>
                             <button
                               onClick={() => setDeleteConfirmation({ isOpen: true, item: ev, entityType: 'events' })}
                               className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
@@ -1407,7 +1407,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                             </button>
                           </div>
                           <h4 className="font-bold text-sm">{ev.title}</h4>
-                          <p className="text-xs text-[#7A6F64] line-clamp-2">{ev.description}</p>
+                          <p className="text-xs text-[#73675B] line-clamp-2">{ev.description}</p>
                         </div>
                       ))}
                     </div>
@@ -1421,32 +1421,32 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {/* ======================================================= */}
             {activeSubTab === 'products' && (
               <div className="space-y-4">
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6">
+                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6">
                   <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4 mb-4">
                     <div>
                       <h3 className="text-base font-bold font-serif">منتجات سوق وه المصنوعة في {activeGov.name} ({products.length})</h3>
-                      <p className="text-xs text-[#7A6F64] mt-0.5">المنتجات المرتبطة بحرفيي وتجار هذه المحافظة في المتجر المباشر.</p>
+                      <p className="text-xs text-[#73675B] mt-0.5">المنتجات المرتبطة بحرفيي وتجار هذه المحافظة في المتجر المباشر.</p>
                     </div>
                   </div>
 
                   {products.length === 0 ? (
-                    <div className="text-center py-12 text-[#7A6F64]">
+                    <div className="text-center py-12 text-[#73675B]">
                       <ShoppingBag className="w-10 h-10 mx-auto mb-2 opacity-40" />
                       <p className="text-xs font-bold">لا توجد منتجات مسجلة لصالح تجار هذه المحافظة في المتجر حالياً.</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {products.map((prod) => (
-                        <div key={prod.id} className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] flex items-center gap-3">
+                        <div key={prod.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-3">
                           <img
                             src={prod.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200'}
                             alt={prod.title}
-                            className="w-16 h-16 rounded-xl object-cover border border-[#E8E1D9]"
+                            className="w-16 h-16 rounded-xl object-cover border border-[#E5DDD3]"
                           />
                           <div className="flex-1 min-w-0">
                             <h4 className="font-bold text-xs truncate">{prod.title}</h4>
-                            <p className="text-[11px] text-[#B45F42] font-bold mt-0.5">{prod.price} ج.م</p>
-                            <span className="text-[10px] text-[#7A6F64] block">البائع: {prod.sellerName || 'حرفي محلي'}</span>
+                            <p className="text-[11px] text-[#B24C2B] font-bold mt-0.5">{prod.price} ج.م</p>
+                            <span className="text-[10px] text-[#73675B] block">البائع: {prod.sellerName || 'حرفي محلي'}</span>
                           </div>
                         </div>
                       ))}
@@ -1460,22 +1460,22 @@ export const CulturalCmsAdminPage: React.FC = () => {
             {/* SUBTAB 10: GOVERNORATE MAP (خريطة المحافظة وإحداثياتها) */}
             {/* ======================================================= */}
             {activeSubTab === 'map' && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 space-y-4">
+              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
                   <div>
                     <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <MapIcon className="w-4 h-4 text-[#B45F42]" />
+                      <MapIcon className="w-4 h-4 text-[#B24C2B]" />
                       <span>الخريطة التفاعلية لمحافظة {activeGov.name}</span>
                     </h3>
-                    <p className="text-xs text-[#7A6F64] mt-0.5">تظهر كافة المعالم والأماكن الموثقة بإحداثيات GPS في قاعدة البيانات.</p>
+                    <p className="text-xs text-[#73675B] mt-0.5">تظهر كافة المعالم والأماكن الموثقة بإحداثيات GPS في قاعدة البيانات.</p>
                   </div>
                 </div>
 
-                <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-900 border border-[#E8E1D9] dark:border-[#382E27] flex items-center justify-center p-6 text-center">
+                <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-900 border border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-center p-6 text-center">
                   <div className="space-y-2">
-                    <MapPin className="w-10 h-10 text-[#B45F42] mx-auto animate-bounce" />
+                    <MapPin className="w-10 h-10 text-[#B24C2B] mx-auto animate-bounce" />
                     <h4 className="font-bold text-sm">مستودع إحداثيات {activeGov.name}</h4>
-                    <p className="text-xs text-[#7A6F64] max-w-md">
+                    <p className="text-xs text-[#73675B] max-w-md">
                       تم ربط {places.filter((p) => !!p.coordinates).length} معلماً بإحداثيات حية. تظهر هذه النقاط تلقائياً على خريطة وه العامة وخريطة استكشاف الصعيد التفاعلية.
                     </p>
                   </div>
@@ -1484,9 +1484,9 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 {/* Coordinates list */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
                   {places.map((p) => (
-                    <div key={p.id} className="p-3 bg-[#FAF6F0] dark:bg-[#25201D] rounded-xl text-xs space-y-1">
+                    <div key={p.id} className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl text-xs space-y-1">
                       <div className="font-bold truncate">{p.title}</div>
-                      <div className="text-[10px] text-[#7A6F64]">
+                      <div className="text-[10px] text-[#73675B]">
                         إحداثيات: {p.coordinates ? `${p.coordinates.lat}, ${p.coordinates.lng}` : 'غير مدخلة'}
                       </div>
                     </div>
@@ -1535,13 +1535,13 @@ export const CulturalCmsAdminPage: React.FC = () => {
         {/* ========================================================================= */}
         {isActionCenterOpen && activeGov && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E8E1D9] dark:border-[#382E27] shadow-2xl space-y-5">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
                 <div>
                   <h3 className="text-lg font-bold font-serif">إضافة محتوى لمحافظة {activeGov.name}</h3>
-                  <p className="text-xs text-[#7A6F64] mt-0.5">اختر نوع الكيان المطلوب إضافته وتوثيقه في قاعدة البيانات:</p>
+                  <p className="text-xs text-[#73675B] mt-0.5">اختر نوع الكيان المطلوب إضافته وتوثيقه في قاعدة البيانات:</p>
                 </div>
-                <button onClick={() => setIsActionCenterOpen(false)} className="p-1.5 rounded-lg text-[#7A6F64] hover:bg-[#FAF6F0] cursor-pointer">
+                <button onClick={() => setIsActionCenterOpen(false)} className="p-1.5 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -1568,7 +1568,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                         setEditingItem(null);
                         setIsEditModalOpen(true);
                       }}
-                      className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
+                      className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
                     >
                       <Icon className={`w-6 h-6 ${act.color} group-hover:scale-110 transition-transform`} />
                       <span className="text-xs font-bold leading-tight">{act.label}</span>
@@ -1585,12 +1585,12 @@ export const CulturalCmsAdminPage: React.FC = () => {
         {/* ========================================================================= */}
         {deleteConfirmation && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-md w-full border border-[#E8E1D9] dark:border-[#382E27] shadow-2xl space-y-4 text-center">
+            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-md w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl space-y-4 text-center">
               <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold">تأكيد عملية الحذف أو الأرشفة</h3>
-              <p className="text-xs text-[#7A6F64] leading-relaxed">
+              <p className="text-xs text-[#73675B] leading-relaxed">
                 هل أنت متأكد من رغبتك في حذف السجل "{deleteConfirmation.item.name || deleteConfirmation.item.title}"؟ لا يمكن التراجع عن هذه العملية بعد التنفيذ.
               </p>
 
@@ -1598,7 +1598,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setDeleteConfirmation(null)}
-                  className="px-4 py-2 rounded-xl border border-[#E8E1D9] text-xs font-bold text-[#7A6F64] cursor-pointer"
+                  className="px-4 py-2 rounded-xl border border-[#E5DDD3] text-xs font-bold text-[#73675B] cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -1713,20 +1713,20 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 space-y-6">
+    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
       <div className="border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
         <h3 className="text-base font-bold font-serif flex items-center gap-2">
-          <LinkIcon className="w-4 h-4 text-[#B45F42]" />
+          <LinkIcon className="w-4 h-4 text-[#B24C2B]" />
           <span>مدير شبكة العلاقات التراثية الذكية ({governorate.name})</span>
         </h3>
-        <p className="text-xs text-[#7A6F64] mt-0.5">
+        <p className="text-xs text-[#73675B] mt-0.5">
           اربط الحرف بالحرفيين، والقصص بالمعالم التراثية، والمواسم بالأكلات دون الحاجة لكتابة معرفات برمجية يدوياً.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Link Craft <-> Artisan */}
-        <div className="p-5 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-4">
+        <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
             <Hammer className="w-4 h-4 text-orange-600" />
             <span>ربط حرفة أصيلة بشيخ صنعة / حرفي</span>
@@ -1734,11 +1734,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-[#7A6F64] mb-1 font-bold">الحرفة التراثية:</label>
+              <label className="block text-xs text-[#73675B] mb-1 font-bold">الحرفة التراثية:</label>
               <select
                 value={selectedCraftId}
                 onChange={(e) => setSelectedCraftId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               >
                 {crafts.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -1749,11 +1749,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs text-[#7A6F64] mb-1 font-bold">شيخ الصنعة / الحرفي:</label>
+              <label className="block text-xs text-[#73675B] mb-1 font-bold">شيخ الصنعة / الحرفي:</label>
               <select
                 value={selectedArtisanId}
                 onChange={(e) => setSelectedArtisanId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               >
                 {people.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -1766,7 +1766,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             <button
               disabled={isLinking || crafts.length === 0 || people.length === 0}
               onClick={handleLinkCraftArtisan}
-              className="w-full py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1774,7 +1774,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
         </div>
 
         {/* Link Story <-> Place */}
-        <div className="p-5 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] space-y-4">
+        <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-emerald-600" />
             <span>ربط قصة في "وه بيحكي" بمعلم تراثي</span>
@@ -1782,11 +1782,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-[#7A6F64] mb-1 font-bold">الحكاية الشعبية:</label>
+              <label className="block text-xs text-[#73675B] mb-1 font-bold">الحكاية الشعبية:</label>
               <select
                 value={selectedStoryId}
                 onChange={(e) => setSelectedStoryId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               >
                 {stories.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -1797,11 +1797,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs text-[#7A6F64] mb-1 font-bold">المعلم التراثي المرتبط:</label>
+              <label className="block text-xs text-[#73675B] mb-1 font-bold">المعلم التراثي المرتبط:</label>
               <select
                 value={selectedPlaceId}
                 onChange={(e) => setSelectedPlaceId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               >
                 {places.map((pl) => (
                   <option key={pl.id} value={pl.id}>
@@ -1814,7 +1814,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             <button
               disabled={isLinking || stories.length === 0 || places.length === 0}
               onClick={handleLinkStoryPlace}
-              className="w-full py-2 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1876,19 +1876,19 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] p-6 sm:p-8 space-y-6">
+    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
       <div className="border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
         <h3 className="text-base font-bold font-serif flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-amber-600" />
           <span>طابور مراجعة المحتوى وتدقيق المصادر ({pendingItems.length})</span>
         </h3>
-        <p className="text-xs text-[#7A6F64] mt-0.5">
+        <p className="text-xs text-[#73675B] mt-0.5">
           وفقاً لميثاق جودة بيانات وه: أي محتوى جديد يبدأ بحالة "يحتاج مراجعة" ومرفق معه المصدر وتاريخ البحث حتى يقرره مدير النظام.
         </p>
       </div>
 
       {pendingItems.length === 0 ? (
-        <div className="text-center py-12 text-[#7A6F64]">
+        <div className="text-center py-12 text-[#73675B]">
           <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-emerald-500" />
           <h4 className="font-bold text-sm">كافة السجلات معتمدة ومحققة</h4>
           <p className="text-xs mt-1">لا توجد عناصر بانتظار المراجعة في محافظة {governorate.name}.</p>
@@ -1898,7 +1898,7 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
           {pendingItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-2xl bg-[#FAF6F0] dark:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27] flex flex-col md:flex-row md:items-center justify-between gap-4"
+              className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -1907,9 +1907,9 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
                   </span>
                   <h4 className="font-bold text-sm">{item.title || item.name}</h4>
                 </div>
-                <p className="text-xs text-[#7A6F64] line-clamp-2">{item.description || item.shortIntro || item.biography}</p>
+                <p className="text-xs text-[#73675B] line-clamp-2">{item.description || item.shortIntro || item.biography}</p>
                 {item.sourceName && (
-                  <div className="text-[11px] text-[#B45F42] flex items-center gap-1 font-bold">
+                  <div className="text-[11px] text-[#B24C2B] flex items-center gap-1 font-bold">
                     <span>المصدر: {item.sourceName}</span>
                     {item.sourceUrl && (
                       <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="underline inline-flex items-center gap-0.5">
@@ -2166,38 +2166,38 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E8E1D9] dark:border-[#382E27] shadow-2xl my-8">
+      <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl my-8">
         <div className="flex items-center justify-between pb-4 border-b border-[#F0EAE1] dark:border-[#2D2622] mb-5">
           <h3 className="text-lg font-bold font-serif flex items-center gap-2">
-            <Plus className="w-4 h-4 text-[#B45F42]" />
+            <Plus className="w-4 h-4 text-[#B24C2B]" />
             <span>{editingItem ? 'تعديل السجل في MongoDB' : `توثيق ${entityType} جديد في قاعدة البيانات`}</span>
           </h3>
-          <button onClick={onClose} className="p-1 rounded-lg text-[#7A6F64] hover:bg-[#FAF6F0] cursor-pointer">
+          <button onClick={onClose} className="p-1 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-[#7A6F64] mb-1">الاسم أو العنوان الرئيسي *</label>
+            <label className="block text-xs font-bold text-[#73675B] mb-1">الاسم أو العنوان الرئيسي *</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: الدير المحرق، فن التلي، العيش الشمسي..."
-              className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none font-bold"
+              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#7A6F64] mb-1">المحافظة التابعة</label>
+              <label className="block text-xs font-bold text-[#73675B] mb-1">المحافظة التابعة</label>
               <select
                 value={selectedGovName}
                 onChange={(e) => setSelectedGovName(e.target.value)}
                 disabled={!!lockedGovernorate && !editingItem}
-                className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none font-bold disabled:opacity-75"
+                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold disabled:opacity-75"
               >
                 {governorates.map((g) => (
                   <option key={g.id} value={g.name}>
@@ -2208,107 +2208,108 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#7A6F64] mb-1">التصنيف أو الكلمات المفتاحية</label>
+              <label className="block text-xs font-bold text-[#73675B] mb-1">التصنيف أو الكلمات المفتاحية</label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="مثال: معبد فرعوني، دير، نسيج حرير..."
-                className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-[#7A6F64] mb-1">رابط صورة الغلاف أو الأيقونة</label>
-            <input
-              type="url"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
-            />
-          </div>
+          <AdminMediaUploader
+            entityType={entityType}
+            entitySlug={editingItem?.slug || title}
+            entityId={editingItem?.id}
+            entityTitle={title}
+            governorateName={selectedGovName}
+            value={coverImage}
+            onChange={(val) => setCoverImage(val)}
+            label="صورة الغلاف / الأيقونة التوثيقية"
+            helperText="ارفع صورة معتمدة من جهازك أو اعتمد رابطاً خارجياً للظهور في المنصة والخريطة"
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#7A6F64] mb-1">خط العرض (Latitude)</label>
+              <label className="block text-xs font-bold text-[#73675B] mb-1">خط العرض (Latitude)</label>
               <input
                 type="number"
                 step="any"
                 value={lat}
                 onChange={(e) => setLat(e.target.value)}
                 placeholder="27.1809"
-                className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#7A6F64] mb-1">خط الطول (Longitude)</label>
+              <label className="block text-xs font-bold text-[#73675B] mb-1">خط الطول (Longitude)</label>
               <input
                 type="number"
                 step="any"
                 value={lng}
                 onChange={(e) => setLng(e.target.value)}
                 placeholder="31.1837"
-                className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs rounded-xl px-3 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#7A6F64] mb-1">نبذة موجزة للعرض في البطاقات</label>
+            <label className="block text-xs font-bold text-[#73675B] mb-1">نبذة موجزة للعرض في البطاقات</label>
             <textarea
               rows={2}
               value={shortDesc}
               onChange={(e) => setShortDesc(e.target.value)}
               placeholder="تعريف مكثف لا يتجاوز سطرين..."
-              className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#7A6F64] mb-1">المحتوى التاريخي والتفصيلي والقصة</label>
+            <label className="block text-xs font-bold text-[#73675B] mb-1">المحتوى التاريخي والتفصيلي والقصة</label>
             <textarea
               rows={3}
               value={fullContent}
               onChange={(e) => setFullContent(e.target.value)}
               placeholder="التوثيق الكامل وتاريخ الصنعة والمروية التراثية..."
-              className="w-full bg-[#FAF6F0] dark:bg-[#25201D] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
             />
           </div>
 
           {/* Verification and Sources Panel */}
-          <div className="bg-[#FAF6F0] dark:bg-[#25201D] p-4 rounded-2xl border border-[#E8E1D9] dark:border-[#382E27] space-y-3">
-            <span className="text-xs font-black text-[#B45F42] block">توثيق المصدر وحالة النشر (وفق معايير وه)</span>
+          <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-3">
+            <span className="text-xs font-black text-[#B24C2B] block">توثيق المصدر وحالة النشر (وفق معايير وه)</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-[#7A6F64] mb-1">اسم المصدر المعتمد:</label>
+                <label className="block text-[11px] font-bold text-[#73675B] mb-1">اسم المصدر المعتمد:</label>
                 <input
                   type="text"
                   value={sourceName}
                   onChange={(e) => setSourceName(e.target.value)}
                   placeholder="مثال: وزارة السياحة والآثار المصرية"
-                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-[#7A6F64] mb-1">رابط المصدر (URL):</label>
+                <label className="block text-[11px] font-bold text-[#73675B] mb-1">رابط المصدر (URL):</label>
                 <input
                   type="url"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[#7A6F64] mb-1">حالة التحقق والنشر:</label>
+              <label className="block text-[11px] font-bold text-[#73675B] mb-1">حالة التحقق والنشر:</label>
               <select
                 value={verificationStatus}
                 onChange={(e) => setVerificationStatus(e.target.value as VerificationStatus)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs font-bold rounded-lg px-3 py-1.5 border border-[#E8E1D9] dark:border-[#382E27] outline-none"
+                className="w-full bg-white dark:bg-[#1E1917] text-xs font-bold rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
               >
                 <option value="verified">محقق ومعتمد للنشر العام (Verified)</option>
                 <option value="pending_review">يحتاج مراجعة وتدقيق (Pending Review)</option>
@@ -2321,14 +2322,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] text-xs font-bold text-[#7A6F64] cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] cursor-pointer"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#B45F42] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ في MongoDB'}</span>

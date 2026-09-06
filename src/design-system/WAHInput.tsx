@@ -1,15 +1,17 @@
 import React from 'react';
+import { renderIcon } from './renderIcon';
 
 export interface WAHInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   helperText?: string;
-  icon?: React.ReactNode;
+  icon?: React.ElementType | React.ReactNode;
 }
 
 export const WAHInput = React.forwardRef<HTMLInputElement, WAHInputProps>(
   ({ label, error, helperText, icon, className = '', id, ...props }, ref) => {
     const inputId = id || React.useId();
+    const renderedIcon = renderIcon(icon, 'w-4 h-4 shrink-0');
 
     return (
       <div className="w-full space-y-1.5 text-right">
@@ -23,9 +25,9 @@ export const WAHInput = React.forwardRef<HTMLInputElement, WAHInputProps>(
         )}
 
         <div className="relative flex items-center">
-          {icon && (
+          {renderedIcon && (
             <div className="absolute right-3 text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] pointer-events-none shrink-0">
-              {icon}
+              {renderedIcon}
             </div>
           )}
 
@@ -33,8 +35,8 @@ export const WAHInput = React.forwardRef<HTMLInputElement, WAHInputProps>(
             ref={ref}
             id={inputId}
             className={`w-full min-h-[44px] rounded-xl text-sm font-medium transition-all duration-200 outline-none ${
-              icon ? 'pr-10 pl-3.5' : 'px-3.5'
-            } py-2.5 bg-[var(--wah-surface-subtle,#FAF6F0)] dark:bg-[var(--wah-surface,#1B1613)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] placeholder:text-[var(--wah-text-subtle,#9C8E80)] border ${
+              renderedIcon ? 'pr-10 pl-3.5' : 'px-3.5'
+            } py-2.5 bg-[var(--wah-surface-subtle,#FAF7F2)] dark:bg-[var(--wah-surface,#1B1613)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] placeholder:text-[var(--wah-text-subtle,#9C8E80)] border ${
               error
                 ? 'border-[var(--wah-error,#B9382B)] focus:ring-2 focus:ring-[var(--wah-error,#B9382B)]/20'
                 : 'border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] focus:border-[var(--wah-primary,#B24C2B)] dark:focus:border-[var(--wah-primary,#E0633C)] focus:ring-2 focus:ring-[var(--wah-primary,#B24C2B)]/20 focus:bg-white dark:focus:bg-[var(--wah-surface-subtle,#26201B)]'
@@ -82,7 +84,7 @@ export const WAHTextarea = React.forwardRef<HTMLTextAreaElement, WAHTextareaProp
         <textarea
           ref={ref}
           id={textareaId}
-          className={`w-full min-h-[100px] rounded-xl text-sm font-medium p-3.5 transition-all duration-200 outline-none bg-[var(--wah-surface-subtle,#FAF6F0)] dark:bg-[var(--wah-surface,#1B1613)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] placeholder:text-[var(--wah-text-subtle,#9C8E80)] border ${
+          className={`w-full min-h-[100px] rounded-xl text-sm font-medium p-3.5 transition-all duration-200 outline-none bg-[var(--wah-surface-subtle,#FAF7F2)] dark:bg-[var(--wah-surface,#1B1613)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] placeholder:text-[var(--wah-text-subtle,#9C8E80)] border ${
             error
               ? 'border-[var(--wah-error,#B9382B)] focus:ring-2 focus:ring-[var(--wah-error,#B9382B)]/20'
               : 'border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] focus:border-[var(--wah-primary,#B24C2B)] dark:focus:border-[var(--wah-primary,#E0633C)] focus:ring-2 focus:ring-[var(--wah-primary,#B24C2B)]/20 focus:bg-white dark:focus:bg-[var(--wah-surface-subtle,#26201B)]'

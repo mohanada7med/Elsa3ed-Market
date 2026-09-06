@@ -33,10 +33,10 @@ export const IntroExperience: React.FC = () => {
    */
 
   const originalVideoUrl =
-    'https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4';
+    "https://res.cloudinary.com/kuana1nl/video/upload/v1788708117/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4";
 
   const optimizedVideoUrl =
-    'https://res.cloudinary.com/kuana1nl/video/upload/w_1280,q_auto/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4';
+    "https://res.cloudinary.com/kuana1nl/video/upload/v1788708117/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.mp4";
 
   /*
    * ==========================================================
@@ -49,7 +49,7 @@ export const IntroExperience: React.FC = () => {
    */
 
   const posterUrl =
-    'https://res.cloudinary.com/kuana1nl/video/upload/so_0,w_1280,q_auto/v1787870212/%D8%B9%D8%A7%D9%8A%D8%B2%D9%87_%D9%8A%D9%83%D9%88%D9%86_%D8%AB%D8%A7%D9%86%D9%8A%D9%87.jpg';
+    'https://res.cloudinary.com/kuana1nl/video/upload/so_0,w_1280,q_auto/v1787870212/WAH/videos/intro/platform-intro.jpg';
 
   return (
     <AnimatePresence>

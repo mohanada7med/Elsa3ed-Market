@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, HTMLMotionProps } from 'motion/react';
+import { renderIcon } from './renderIcon';
 
 export type ButtonVariant =
   | 'primary'
@@ -16,7 +17,7 @@ export interface WAHButtonProps extends Omit<HTMLMotionProps<'button'>, 'childre
   variant?: ButtonVariant;
   size?: ButtonSize;
   children?: React.ReactNode;
-  icon?: React.ReactNode;
+  icon?: React.ElementType | React.ReactNode;
   iconPosition?: 'start' | 'end';
   loading?: boolean;
   editorialShape?: boolean;
@@ -65,6 +66,8 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
       'bg-white dark:bg-[var(--wah-surface,#1B1613)] hover:bg-[var(--wah-surface-subtle,#F3ECE2)] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)]'
   };
 
+  const renderedIcon = renderIcon(icon, 'w-4 h-4 shrink-0');
+
   return (
     <motion.button
       whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
@@ -76,9 +79,9 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
         <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
       ) : (
         <>
-          {icon && iconPosition === 'start' && <span className="shrink-0">{icon}</span>}
+          {renderedIcon && iconPosition === 'start' && <span className="shrink-0">{renderedIcon}</span>}
           {children && <span>{children}</span>}
-          {icon && iconPosition === 'end' && <span className="shrink-0">{icon}</span>}
+          {renderedIcon && iconPosition === 'end' && <span className="shrink-0">{renderedIcon}</span>}
         </>
       )}
     </motion.button>

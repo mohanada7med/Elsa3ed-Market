@@ -1,11 +1,13 @@
 import React from 'react';
 import { WAHPattern } from './WAHPattern';
 import { PatternType } from './tokens';
+import { renderIcon } from './renderIcon';
 
 interface WAHSectionProps {
   id?: string;
   badge?: React.ReactNode;
-  badgeIcon?: React.ReactNode;
+  eyebrow?: React.ReactNode;
+  badgeIcon?: React.ElementType | React.ReactNode;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   action?: React.ReactNode;
@@ -20,6 +22,7 @@ interface WAHSectionProps {
 export const WAHSection: React.FC<WAHSectionProps> = ({
   id,
   badge,
+  eyebrow,
   badgeIcon,
   title,
   subtitle,
@@ -31,6 +34,9 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
   className = '',
   headerClassName = ''
 }) => {
+  const badgeContent = badge ?? eyebrow;
+  const renderedBadgeIcon = renderIcon(badgeIcon, 'w-3.5 h-3.5 shrink-0');
+
   return (
     <section
       id={id}
@@ -49,15 +55,15 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {(title || badge || action) && (
+        {(title || badgeContent || action) && (
           <div
             className={`flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 sm:mb-12 ${headerClassName}`}
           >
             <div className="space-y-2 max-w-2xl text-right">
-              {badge && (
+              {badgeContent && (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--wah-primary-light,rgba(178,76,43,0.1))] border border-[var(--wah-primary,#B24C2B)]/20 text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] text-xs font-bold">
-                  {badgeIcon && <span className="shrink-0">{badgeIcon}</span>}
-                  <span>{badge}</span>
+                  {renderedBadgeIcon}
+                  <span>{badgeContent}</span>
                 </div>
               )}
 

@@ -9,14 +9,30 @@ import {
   deleteAdminMedia,
   updateAdminMediaMetadata,
   getAdminMediaList,
-  saveExternalUrlMedia
+  saveExternalUrlMedia,
+  setPrimaryAdminMedia,
+  reorderGalleryMedia,
+  reassignMediaEntity,
+  buildMediaIdFilter
 } from '../services/mediaService.ts';
+import { getDatabase } from '../db/mongodb.ts';
+import { isValidWahEntityType } from '../utils/cloudinaryFolders.ts';
 import { Logger } from '../utils/logger.ts';
 
 const router = express.Router();
 
-// Enforce Admin authorization across all media endpoints
-router.use(requireAdmin);
+// Enforce strict Admin authorization across all media endpoints
+// Any unauthorized request (unauthenticated, buyer, or seller) strictly returns 403 Forbidden
+router.use((req: AuthenticatedRequest, res: Response, next) => {
+  if (!req.user || !req.user.id || req.user.role !== 'admin') {
+    return res.status(403).json({
+      success: false,
+      error: 'عفواً، هذه العملية مخصصة لمدراء منصة وه | WAH فقط',
+      code: 'FORBIDDEN'
+    });
+  }
+  next();
+});
 
 // Configure Multer for in-memory file streaming with strict limits
 const upload = multer({
@@ -88,7 +104,20 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
       });
     }
 
-    const entityType = body.entityType || 'general';
+    const rawEntityType = body.entityType ? String(body.entityType).trim() : 'general';
+    if (!isValidWahEntityType(rawEntityType)) {
+      return res.status(400).json({
+        success: false,
+        error: `نوع الكيان "${body.entityType}" غير صالح أو غير معتمد في بنية مجلدات WAH السحابية`,
+        code: 'UNKNOWN_ENTITY_TYPE'
+      });
+    }
+    const entityType = rawEntityType;
+
+    if (body.folder || body.publicId || body.public_id) {
+      Logger.warn('[Security] Client attempted to specify custom folder/publicId. Overriding with centralized server-generated path.');
+    }
+
     const entitySlug = body.entitySlug || body.slug || '';
     const entityId = body.entityId || '';
     const alt = body.alt || '';
@@ -134,7 +163,17 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
 // =========================================================================
 router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { url, entityType = 'general', entitySlug = '', entityId = '', alt = '', caption = '', isPrimary, addToGallery } = req.body;
+    const { url, entitySlug = '', entityId = '', alt = '', caption = '', isPrimary, addToGallery } = req.body;
+
+    const rawEntityType = req.body.entityType ? String(req.body.entityType).trim() : 'general';
+    if (!isValidWahEntityType(rawEntityType)) {
+      return res.status(400).json({
+        success: false,
+        error: `نوع الكيان "${req.body.entityType}" غير صالح أو غير معتمد في بنية مجلدات WAH السحابية`,
+        code: 'UNKNOWN_ENTITY_TYPE'
+      });
+    }
+    const entityType = rawEntityType;
 
     if (!url || typeof url !== 'string') {
       return res.status(400).json({
@@ -175,9 +214,9 @@ router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // =========================================================================
-// 3. POST /api/admin/media/replace/:id - Replace existing media
+// 3. POST /api/admin/media/replace/:id or /:id/replace - Replace existing media
 // =========================================================================
-router.post('/replace/:id', (req: AuthenticatedRequest, res: Response, next) => {
+router.post(['/replace/:id', '/:id/replace'], (req: AuthenticatedRequest, res: Response, next) => {
   const contentType = req.headers['content-type'] || '';
   if (contentType.includes('multipart/form-data')) {
     upload.single('file')(req, res, next);
@@ -324,6 +363,132 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
       success: false,
       error: 'فشل في جلب قائمة وسائط المنصة',
       code: 'FETCH_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// 7. POST /api/admin/media/:id/primary - Set Media as Primary Cover
+// =========================================================================
+router.post('/:id/primary', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const mediaId = req.params.id;
+    const updated = await setPrimaryAdminMedia(mediaId, {
+      id: req.user!.id,
+      role: req.user!.role
+    });
+
+    return res.json({
+      success: true,
+      message: 'تم تعيين الصورة كصورة غلاف رئيسية بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    Logger.error('[AdminMedia] Set primary error:', error?.message || error);
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل تعيين الصورة كصورة رئيسية',
+      code: 'SET_PRIMARY_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// 8. POST /api/admin/media/gallery/reorder - Reorder Gallery Images
+// =========================================================================
+router.post('/gallery/reorder', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { entityType, entityId, galleryUrls, items } = req.body || {};
+
+    if (Array.isArray(items)) {
+      const { db, isMongo } = await getDatabase();
+      if (isMongo && db) {
+        for (const item of items) {
+          if (item.id !== undefined && item.displayOrder !== undefined) {
+            await db.collection('wah_media').updateOne(
+              buildMediaIdFilter(item.id),
+              { $set: { displayOrder: item.displayOrder, updatedAt: new Date().toISOString() } }
+            );
+          }
+        }
+      }
+      return res.json({
+        success: true,
+        message: 'تم تحديث ترتيب عناصر المعرض بنجاح'
+      });
+    }
+
+    if (!entityType || !entityId || !Array.isArray(galleryUrls)) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى تزويد نوع الكيان ومعرفه ومصفوفة روابط المعرض بالترتيب الجديد',
+        code: 'INVALID_GALLERY_PAYLOAD'
+      });
+    }
+
+    const result = await reorderGalleryMedia({
+      entityType,
+      entityId,
+      galleryUrls,
+      user: {
+        id: req.user!.id,
+        role: req.user!.role
+      }
+    });
+
+    return res.json({
+      success: true,
+      message: 'تم تحديث ترتيب صور المعرض بنجاح',
+      data: result
+    });
+  } catch (error: any) {
+    Logger.error('[AdminMedia] Reorder gallery error:', error?.message || error);
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل إعادة ترتيب صور المعرض',
+      code: 'REORDER_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// 9. PATCH /api/admin/media/:id/reassign - Reassign Media to Another Entity
+// =========================================================================
+router.patch('/:id/reassign', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const mediaId = req.params.id;
+    const { targetEntityType, targetEntityId, targetEntitySlug } = req.body;
+
+    if (!targetEntityType || typeof targetEntityType !== 'string' || !isValidWahEntityType(targetEntityType)) {
+      return res.status(400).json({
+        success: false,
+        error: `نوع الكيان المستهدف "${targetEntityType || ''}" غير صالح أو غير معتمد في بنية مجلدات WAH السحابية`,
+        code: 'UNKNOWN_ENTITY_TYPE'
+      });
+    }
+
+    const updated = await reassignMediaEntity({
+      mediaId,
+      targetEntityType,
+      targetEntityId,
+      targetEntitySlug,
+      user: {
+        id: req.user!.id,
+        role: req.user!.role
+      }
+    });
+
+    return res.json({
+      success: true,
+      message: 'تمت إعادة تعيين الصورة إلى الكيان الجديد بنجاح',
+      data: updated
+    });
+  } catch (error: any) {
+    Logger.error('[AdminMedia] Reassign error:', error?.message || error);
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل إعادة تعيين الصورة',
+      code: 'REASSIGN_FAILED'
     });
   }
 });

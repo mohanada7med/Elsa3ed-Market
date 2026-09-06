@@ -60,12 +60,12 @@ export const ProductFilters: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="flex items-center gap-2 text-xs font-bold text-[#B45F42] dark:text-[#FF855D] bg-[#FDFBF7] dark:bg-[#1E1917] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] px-3.5 py-2.5 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] min-h-[44px] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-xs font-bold text-[#B24C2B] dark:text-[#FF855D] bg-[#FAF7F2] dark:bg-[#1E1917] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] px-3.5 py-2.5 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] min-h-[44px] transition-colors cursor-pointer"
         >
           <Filter className="w-4 h-4" />
           <span>{isMobileExpanded ? 'إخفاء خيارات التصفية' : 'تصفية وفرز المعروضات'}</span>
           {activeCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-[#B45F42] text-white text-[10px] flex items-center justify-center font-black">
+            <span className="w-5 h-5 rounded-full bg-[#B24C2B] text-white text-[10px] flex items-center justify-center font-black">
               {activeCount}
             </span>
           )}
@@ -76,7 +76,7 @@ export const ProductFilters: React.FC = () => {
           <button
             type="button"
             onClick={resetFilters}
-            className="text-xs text-[#B45F42] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
+            className="text-xs text-[#B24C2B] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
             <span>إعادة ضبط</span>
@@ -86,12 +86,12 @@ export const ProductFilters: React.FC = () => {
 
       <div className={`${isMobileExpanded ? 'block' : 'hidden sm:block'} space-y-4 pt-1 sm:pt-0`}>
         {/* Filter Header & Reset (Desktop) */}
-        <div className="hidden sm:flex items-center justify-between border-b border-[#E8E1D9] dark:border-[#382E27] pb-3">
+        <div className="hidden sm:flex items-center justify-between border-b border-[#E5DDD3] dark:border-[#352B24] pb-3">
           <div className="flex items-center gap-2 text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2]">
-            <Filter className="w-4 h-4 text-[#B45F42] dark:text-[#FF855D]" />
+            <Filter className="w-4 h-4 text-[#B24C2B] dark:text-[#FF855D]" />
             <span>تصفية واختيار المنتجات التراثية</span>
             {activeCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-[#B45F42] text-white text-[10px] flex items-center justify-center font-bold">
+              <span className="w-5 h-5 rounded-full bg-[#B24C2B] text-white text-[10px] flex items-center justify-center font-bold">
                 {activeCount}
               </span>
             )}
@@ -101,7 +101,7 @@ export const ProductFilters: React.FC = () => {
             <button
               type="button"
               onClick={resetFilters}
-              className="text-xs text-[#B45F42] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
+              className="text-xs text-[#B24C2B] dark:text-[#FF855D] hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
               <span>إعادة ضبط جميع الفلاتر</span>
@@ -111,7 +111,7 @@ export const ProductFilters: React.FC = () => {
 
         {/* Governorate Pills (Upper Egypt) */}
         <div>
-          <label className="block text-xs font-bold text-[#7A6F64] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
+          <label className="block text-xs font-bold text-[#73675B] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>المحافظة ومصدر الصنعة بالصعيد</span>
           </label>
@@ -126,8 +126,8 @@ export const ProductFilters: React.FC = () => {
                   onClick={() => setSelectedGovernorateFilter(gov)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
                     isSelected
-                      ? 'bg-[#B45F42] text-white shadow-xs'
-                      : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                      ? 'bg-[#B24C2B] text-white shadow-xs'
+                      : 'bg-[#FAF7F2] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
                   }`}
                 >
                   {gov === 'all' ? 'جميع محافظات الصعيد' : gov}
@@ -139,7 +139,7 @@ export const ProductFilters: React.FC = () => {
 
         {/* Category Dropdown/Pills */}
         <div>
-          <label className="block text-xs font-bold text-[#7A6F64] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
+          <label className="block text-xs font-bold text-[#73675B] dark:text-[#A89C90] mb-2 flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             <span>التصنيف ونوع الحرفة</span>
           </label>
@@ -150,8 +150,8 @@ export const ProductFilters: React.FC = () => {
               onClick={() => setSelectedCategoryFilter('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
                 selectedCategoryFilter === 'all'
-                  ? 'bg-[#B45F42] text-white shadow-xs'
-                  : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                  ? 'bg-[#B24C2B] text-white shadow-xs'
+                  : 'bg-[#FAF7F2] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
               }`}
             >
               جميع التصنيفات
@@ -166,8 +166,8 @@ export const ProductFilters: React.FC = () => {
                   onClick={() => setSelectedCategoryFilter(cat.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
                     isSelected
-                      ? 'bg-[#B45F42] text-white shadow-xs'
-                      : 'bg-[#FDFBF7] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#25201D] border border-[#E8E1D9] dark:border-[#382E27]'
+                      ? 'bg-[#B24C2B] text-white shadow-xs'
+                      : 'bg-[#FAF7F2] dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
                   }`}
                 >
                   {cat.name}
@@ -178,14 +178,14 @@ export const ProductFilters: React.FC = () => {
         </div>
 
         {/* Toggles & Sorting */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#E8E1D9] dark:border-[#382E27]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-[#E5DDD3] dark:border-[#352B24]">
           {/* Handmade Only Toggle */}
-          <label className="flex items-center gap-2.5 cursor-pointer bg-[#FDFBF7] dark:bg-[#1E1917] p-3 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] hover:border-[#B45F42] dark:hover:border-[#FF855D] transition-colors min-h-[44px]">
+          <label className="flex items-center gap-2.5 cursor-pointer bg-[#FAF7F2] dark:bg-[#1E1917] p-3 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] dark:hover:border-[#FF855D] transition-colors min-h-[44px]">
             <input
               type="checkbox"
               checked={selectedHandmadeOnly}
               onChange={(e) => setSelectedHandmadeOnly(e.target.checked)}
-              className="w-4 h-4 text-[#B45F42] rounded focus:ring-[#B45F42] border-[#E8E1D9] cursor-pointer"
+              className="w-4 h-4 text-[#B24C2B] rounded focus:ring-[#B24C2B] border-[#E5DDD3] cursor-pointer"
             />
             <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -194,8 +194,8 @@ export const ProductFilters: React.FC = () => {
           </label>
 
           {/* Sort Select */}
-          <div className="flex items-center gap-2 bg-[#FDFBF7] dark:bg-[#1E1917] px-3.5 py-1 rounded-xl border border-[#E8E1D9] dark:border-[#382E27] min-h-[44px]">
-            <ArrowUpDown className="w-4 h-4 text-[#7A6F64] dark:text-[#A89C90] shrink-0" />
+          <div className="flex items-center gap-2 bg-[#FAF7F2] dark:bg-[#1E1917] px-3.5 py-1 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] min-h-[44px]">
+            <ArrowUpDown className="w-4 h-4 text-[#73675B] dark:text-[#A89C90] shrink-0" />
             <select
               id="sort-select"
               value={selectedSort}

@@ -38,7 +38,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       tagline: 'لكل محافظة طابع وتاريخ وصنعة',
       desc: 'دليل تفصيلي لكل محافظة: الفيوم، بني سويف، المنيا، أسيوط، سوهاج، قنا، الأقصر، أسوان، الوادي الجديد، والبحر الأحمر.',
       icon: Map,
-      color: 'from-[#B45F42] to-[#8C3E25]',
+      color: 'from-[#B24C2B] to-[#8C3E25]',
       badge: '10 محافظات',
       page: 'governorates' as const,
       image: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=600'
@@ -126,11 +126,11 @@ export const WahEcosystemPortalSection: React.FC = () => {
     <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#B45F42]/10 border border-[#B45F42]/20 text-[#B45F42] text-xs font-bold">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#B24C2B]/10 border border-[#B24C2B]/20 text-[#B24C2B] text-xs font-bold">
           <Sparkles className="w-3.5 h-3.5 text-amber-600" />
           <span>منظومة «وه» الشاملة</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl font-black text-[#29221D] dark:text-[#FAF6F2] font-serif">
+        <h2 className="text-2xl sm:text-4xl font-black text-[#241E1A] dark:text-[#FAF6F2] font-serif">
           أبواب العالم الرقمي لصعيد مصر
         </h2>
         <p className="text-sm sm:text-base text-[#6E6359] dark:text-[#B8ACA0] leading-relaxed">
@@ -150,7 +150,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05, duration: 0.4 }}
               onClick={() => setActivePage(portal.page)}
-              className="group relative bg-white dark:bg-[#1C1816] rounded-3xl border border-[#E8E1D9] dark:border-[#382E27] overflow-hidden shadow-sm hover:shadow-xl hover:border-[#B45F42] transition-all cursor-pointer flex flex-col justify-between"
+              className="group relative bg-white dark:bg-[#1C1816] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] overflow-hidden shadow-sm hover:shadow-xl hover:border-[#B24C2B] transition-all cursor-pointer flex flex-col justify-between"
             >
               {/* Image banner */}
               <div className="relative h-44 w-full overflow-hidden bg-stone-200">
@@ -194,7 +194,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   {portal.desc}
                 </p>
 
-                <div className="relative z-10 pt-2 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between text-[#B45F42] dark:text-[#FF855D] text-xs font-bold group-hover:underline">
+                <div className="relative z-10 pt-2 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between text-[#B24C2B] dark:text-[#FF855D] text-xs font-bold group-hover:underline">
                   <span>دخول البوابة</span>
                   <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 </div>
