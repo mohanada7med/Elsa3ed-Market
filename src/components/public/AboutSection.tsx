@@ -1,119 +1,243 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { ShieldCheck, HeartHandshake, Sparkles, MapPin, Film, Users, Award } from 'lucide-react';
+import {
+  HeartHandshake,
+  Sparkles,
+  MapPin,
+  Film,
+  Users,
+  Store,
+  BookOpen,
+  Utensils,
+  ArrowLeft,
+} from 'lucide-react';
 
 export const AboutSection: React.FC = () => {
   const { setShowIntroVideo, setActivePage } = useApp();
 
   return (
-    <section className="py-16 bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] border-t border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left Column: Image Collage */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-[var(--wah-surface,#1B1613)]">
+    <section className="relative overflow-hidden py-20 sm:py-24 bg-[#FAF7F2] dark:bg-[#110E0C] border-t border-[#ebdccd] dark:border-[#352B24] transition-colors duration-300">
+
+      {/* Decorative background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#B24C2B]/5 blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-amber-500/5 blur-3xl" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+
+        {/* Intro Header */}
+        <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-16">
+
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#B24C2B]/10 dark:bg-[#E0633C]/10 text-[#943310] dark:text-[#E0633C] text-xs font-black mb-5">
+            <span>وه | WAH</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black text-[#241C17] dark:text-[#F7F3EE] font-heritage leading-tight">
+            الصعيد مش مجرد مكان...
+            <br />
+            <span className="text-[#B24C2B] dark:text-[#E0633C]">
+              الصعيد حكاية
+            </span>
+          </h2>
+
+          <p className="mt-5 text-sm sm:text-base leading-8 text-[#6E5F52] dark:text-[#A8988B]">
+            وه هي المساحة الرقمية اللي بتجمع روح الصعيد في مكان واحد؛
+            ناسه، بلادُه، حرفُه، أكله، حكاياته، تراثه وأسواقه.
+            بنوثّق الحكاية، ونقرّبك من أصحابها، ونخليك تعيش الصعيد من جوّه.
+          </p>
+        </div>
+
+        {/* Main Experience */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+          {/* Visual Story */}
+          <div className="lg:col-span-5 relative min-h-[420px]">
+
+            <div className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white dark:border-[#1B1613]">
+
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
-                alt="شيوخ الصنعة في صعيد مصر"
-                className="w-full h-96 object-cover"
+                alt="وه - العالم الرقمي لصعيد مصر"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-              <div className="absolute bottom-6 right-6 left-6 text-white text-right">
-                <span className="text-amber-300 font-bold text-xs uppercase tracking-wider block mb-1">
-                  عراقة متوارثة منذ آلاف السنين
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 text-white">
+
+                <span className="inline-flex items-center gap-2 text-amber-300 text-xs font-black mb-3">
+                  <MapPin className="w-4 h-4" />
+                  من الفيوم لأسوان
                 </span>
-                <h4 className="text-xl font-bold font-heritage leading-tight">
-                  "صنعة في اليد أمان من الفقر وعمار للبلاد"
-                </h4>
-                <p className="text-xs text-amber-100/80 mt-1">مثل صعيدي أصيل يجسد روح العمل والإتقان</p>
+
+                <h3 className="text-2xl sm:text-3xl font-black font-heritage leading-tight">
+                  كل مكان هنا
+                  <br />
+                  وراه حكاية.
+                </h3>
+
+                <p className="mt-3 text-xs sm:text-sm text-white/75 leading-6">
+                  اكتشف الصعيد من خلال ناسه وأماكنه وحرفه وحكاياته.
+                </p>
               </div>
             </div>
 
-            {/* Floating Experience Box */}
-            <div className="absolute -bottom-5 left-2 sm:left-6 bg-[#943310] dark:bg-[#B24C2B] text-white p-3.5 sm:p-4 rounded-2xl shadow-xl border-2 border-amber-300/30 flex items-center gap-3 max-w-[calc(100%-1rem)]">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black text-amber-300 text-sm shrink-0 font-heritage">
+            {/* Floating Brand Card */}
+            <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-[#B24C2B] text-white px-4 py-3 rounded-2xl shadow-xl border border-white/20 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black font-heritage text-lg">
                 وه
               </div>
-              <div className="text-right">
-                <span className="text-xs font-bold block">منصة وه | WAH</span>
-                <span className="text-[11px] text-amber-200">العالم الرقمي لصعيد مصر • كل حكاية ليها أصل</span>
+
+              <div>
+                <div className="text-xs font-black">
+                  WAH
+                </div>
+                <div className="text-[10px] text-white/75">
+                  كل حكاية ليها أصل
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Mission & Principles */}
-          <div className="lg:col-span-7 space-y-6 text-right">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#943310]/10 dark:bg-[#E0633C]/15 text-[#943310] dark:text-[#E0633C] text-xs font-bold">
-              <HeartHandshake className="w-3.5 h-3.5" />
-              <span>عن منصة وه (WAH)</span>
+          {/* Platform Content */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-7">
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <MapPin className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  أماكن
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  بلاد ومعالم وحكايات
+                </p>
+              </div>
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <Users className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  ناس
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  وجوه وشيوخ وأساطوات
+                </p>
+              </div>
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <Sparkles className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  حرف
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  صنعة متوارثة وحرفة حية
+                </p>
+              </div>
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <BookOpen className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  حكايات
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  مرويات وذاكرة المكان
+                </p>
+              </div>
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <Utensils className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  أكل
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  طعم الصعيد وأكلاته
+                </p>
+              </div>
+
+              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
+                <Store className="w-5 h-5 text-[#B24C2B] mb-3" />
+                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+                  سوق
+                </h4>
+                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                  من الصانع لبيتك
+                </p>
+              </div>
+
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-black text-gray-900 dark:text-[var(--wah-text,#F7F3EE)] font-heritage leading-tight">
-              جسر يربط بين ورش وثقافة الصعيد العريقة <br />
-              <span className="text-[#943310] dark:text-[#E0633C]">وبين كل عاشق للأصالة والتراث</span>
-            </h2>
+            {/* Mission */}
+            <div className="p-6 sm:p-7 rounded-3xl bg-[#241C17] dark:bg-[#1B1613] text-white relative overflow-hidden">
 
-            <p className="text-xs sm:text-sm text-[#614b3d] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
-              انطلقت <strong>منصة وه (WAH)</strong> كعالم رقمي جامع لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس صعيد مصر، ودعم الحرفيين وشيوخ الصنعة والنساء المعيلات في قرى ونجوع محافظات الصعيد (أسوان، الأقصر، قنا، سوهاج، أسيوط، المنيا، والوادي الجديد)، بجانب سوق وه المعتمد لتسوق الحرف الأصيلة مباشرة من صناعها.
-            </p>
+              <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-[#B24C2B]/20 blur-2xl" />
 
-            {/* 3 Value Pillars */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="bg-white dark:bg-[var(--wah-surface,#1B1613)] p-4 rounded-2xl border border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] shadow-xs text-right transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-[#943310] dark:text-[#E0633C] flex items-center justify-center mb-2.5">
-                  <Sparkles className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-xs text-gray-900 dark:text-[var(--wah-text,#F7F3EE)] mb-1">أصالة بدون وسطاء</h4>
-                <p className="text-[11px] text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
-                  تشتري مباشرة من صانع القطعة الحقيقي لضمان أفضل سعر وأعلى عائد للحرفي.
+              <div className="relative">
+
+                <span className="text-[11px] font-black text-amber-300">
+                  رؤيتنا
+                </span>
+
+                <h3 className="mt-2 text-xl sm:text-2xl font-black font-heritage">
+                  نخلي الصعيد أقرب...
+                  <span className="text-amber-300">
+                    وأصله أوضح.
+                  </span>
+                </h3>
+
+                <p className="mt-3 text-xs sm:text-sm text-white/65 leading-7">
+                  من أول مكان في البلد، لآخر حكاية عند الأسطى،
+                  وه بتبني مساحة رقمية تحفظ التراث، وتعرّف الناس بيه،
+                  وتفتح الطريق بين صانع التراث وكل اللي بيقدّره.
                 </p>
-              </div>
 
-              <div className="bg-white dark:bg-[var(--wah-surface,#1B1613)] p-4 rounded-2xl border border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] shadow-xs text-right transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-[#943310] dark:text-[#E0633C] flex items-center justify-center mb-2.5">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-xs text-gray-900 dark:text-[var(--wah-text,#F7F3EE)] mb-1">تغليف فخار مصفح</h4>
-                <p className="text-[11px] text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
-                  نظام حماية وتغليف معتمد للأواني الفخارية والقطع القابلة للكسر حتى الاستلام.
-                </p>
-              </div>
-
-              <div className="bg-white dark:bg-[var(--wah-surface,#1B1613)] p-4 rounded-2xl border border-[#ebdccd] dark:border-[var(--wah-border,#352B24)] shadow-xs text-right transition-colors">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-[#943310] dark:text-[#E0633C] flex items-center justify-center mb-2.5">
-                  <Users className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-xs text-gray-900 dark:text-[var(--wah-text,#F7F3EE)] mb-1">تمكين الأسر المنتجة</h4>
-                <p className="text-[11px] text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
-                  أكثر من 65% من حرفيي المنصة نساء معيلات وتعاونيات قرى صعيدية مكافحة.
-                </p>
               </div>
             </div>
 
-            {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3">
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3 mt-5">
+
               <button
                 type="button"
                 id="about-watch-film-btn"
                 onClick={() => setShowIntroVideo(true)}
-                className="px-5 py-3 rounded-xl bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
+                className="group px-5 py-3.5 rounded-xl bg-[#B24C2B] hover:bg-[#943310] text-white text-xs font-black shadow-lg flex items-center justify-center gap-2 transition-all min-h-[46px] cursor-pointer"
               >
                 <Film className="w-4 h-4" />
-                <span>مشاهدة الفيلم الوثائقي للمنصة</span>
+                مشاهدة حكاية وه
+                <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
               </button>
 
               <button
                 type="button"
                 id="about-explore-sellers-btn"
                 onClick={() => setActivePage('sellers')}
-                className="px-5 py-3 rounded-xl bg-white dark:bg-[var(--wah-surface,#1B1613)] hover:bg-[#f3ebd9] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-gray-800 dark:text-[var(--wah-text,#F7F3EE)] border border-[#dfcebe] dark:border-[var(--wah-border,#352B24)] text-xs font-bold shadow-xs transition-colors text-center min-h-[44px] flex items-center justify-center cursor-pointer"
+                className="px-5 py-3.5 rounded-xl bg-white dark:bg-[#1B1613] hover:bg-[#F3EBDD] dark:hover:bg-[#26201B] text-[#2C211B] dark:text-white border border-[#dfcebe] dark:border-[#352B24] text-xs font-black transition-all min-h-[46px] flex items-center justify-center gap-2 cursor-pointer"
               >
-                دليل ورش الحرفيين
+                <Store className="w-4 h-4" />
+                اكتشف صُنّاع الصعيد
               </button>
+
             </div>
+
           </div>
         </div>
+
+        {/* Bottom Statement */}
+        <div className="mt-16 text-center">
+
+          <div className="inline-flex items-center gap-3 text-[#8C7A6B] dark:text-[#A8988B]">
+            <span className="w-12 h-px bg-[#D8C9BA] dark:bg-[#493B31]" />
+
+            <span className="text-xs font-black">
+              كل حكاية ليها أصل
+            </span>
+
+            <span className="w-12 h-px bg-[#D8C9BA] dark:bg-[#493B31]" />
+          </div>
+
+        </div>
+
       </div>
     </section>
   );

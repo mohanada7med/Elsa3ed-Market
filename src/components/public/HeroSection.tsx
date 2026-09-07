@@ -228,15 +228,15 @@ export const HeroSection: React.FC = () => {
               className="pt-6 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-xl"
             >
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">10</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">8</span>
                 <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">محافظات موثقة</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+150</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+180</span>
                 <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">معلم وموقع تراثي</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+40</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] block font-mono">+35</span>
                 <span className="text-[10px] sm:text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-bold leading-tight block">حرفة وصنعة أصيلة</span>
               </div>
               <div>
@@ -262,7 +262,7 @@ export const HeroSection: React.FC = () => {
               >
                 <div className="relative overflow-hidden aspect-[4/3] sm:aspect-square">
                   <img
-                    src="https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1000"
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788715194/WAH/heritage-places/dendera-temple/img_2330_1788715194855_ea88.jpg"
                     alt="معابد وصروح صعيد مصر التاريخية"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                   />
@@ -281,7 +281,6 @@ export const HeroSection: React.FC = () => {
 
                 <div className="p-4 bg-white dark:bg-[var(--wah-surface,#1B1613)] flex items-center justify-between">
                   <span className="text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)]">
-                    توثيق ميداني حصري لمنصة وه
                   </span>
                   <button
                     type="button"
@@ -307,27 +306,25 @@ export const HeroSection: React.FC = () => {
               >
                 <div className="flex items-center gap-2.5">
                   <img
-                    src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200"
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg"
                     alt="فخار قنا"
                     className="w-11 h-11 rounded-xl object-cover border border-[var(--wah-border,#E5DDD3)] shrink-0"
                   />
                   <div className="text-right">
-                    <span className="text-[10px] text-[var(--wah-accent,#D97724)] font-bold block truncate">صنائع حية</span>
-                    <span className="text-xs sm:text-sm font-black text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]">فخار وخزف قنا</span>
+                    <span className="text-[10px] text-[var(--wah-accent,#D97724)] font-bold block truncate">فخار قنا</span>
+                    <span className="text-xs sm:text-sm font-black text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]">صناعة يدوية</span>
                   </div>
                 </div>
               </motion.div>
 
               {/* Geographic Strip */}
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 0.4 }}
-                className="absolute -top-3 left-2 bg-[var(--wah-text,#241E1A)] text-white px-3 py-1.5 rounded-xl border border-[var(--wah-primary,#B24C2B)]/40 shadow-md flex items-center gap-1.5 z-10"
+                whileHover={{ y: -3, scale: 1.06 }}
+                transition={{ duration: 0.25, ease: "easeOut" }} className="absolute -top-3 left-2 bg-[var(--wah-text,#241E1A)] text-white px-3 py-1.5 rounded-xl border border-[var(--wah-primary,#B24C2B)]/40 shadow-md flex items-center gap-1.5 z-10"
               >
                 <MapPin className="w-3.5 h-3.5 text-[var(--wah-accent,#D97724)] shrink-0" />
                 <span className="text-xs font-bold text-[var(--wah-accent-light,#FDF3E7)] font-heritage">
-                  من الجيزة إلى أسوان
+                  من الفيوم إلى أسوان
                 </span>
               </motion.div>
             </div>

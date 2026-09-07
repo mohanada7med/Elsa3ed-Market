@@ -24,24 +24,24 @@ export const WahEcosystemPortalSection: React.FC = () => {
     {
       id: 'map',
       title: 'أطلس الصعيد التفاعلي',
-      tagline: 'رحلة النيل التفاعلية ومسار محافظات ومعالم وحرف الصعيد',
-      desc: 'استكشف محافظات جنوب مصر من الفيوم وبني سويف حتى أسوان والنوبة، بأطلس تفاعلي بانورامي سلس ومريح للجميع مع استماع صوتي مباشر.',
+      tagline: 'على خط النيل اكتشف محافظات ومعالم وحرف الصعيد',
+      desc: 'استكشف محافظات جنوب مصر من الفيوم وبني سويف حتى أسوان والنوبة.',
       icon: Compass,
       color: 'from-amber-600 to-amber-800',
-      badge: 'أطلس تفاعلي مميز',
+      badge: 'اكتشف الصعيد..',
       page: 'map' as const,
-      image: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png'
     },
     {
       id: 'governorates',
-      title: 'محافظات الصعيد الـ 10',
+      title: 'محافظات الصعيد الـ 8',
       tagline: 'لكل محافظة طابع وتاريخ وصنعة',
-      desc: 'دليل تفصيلي لكل محافظة: الفيوم، بني سويف، المنيا، أسيوط، سوهاج، قنا، الأقصر، أسوان، الوادي الجديد، والبحر الأحمر.',
+      desc: 'دليل تفصيلي لكل محافظة: الفيوم، بني سويف، المنيا، أسيوط، سوهاج، قنا، الأقصر، أسوان، الوادي الجديد .',
       icon: Map,
       color: 'from-[#B24C2B] to-[#8C3E25]',
-      badge: '10 محافظات',
+      badge: '8 محافظات',
       page: 'governorates' as const,
-      image: 'https://images.unsplash.com/photo-1572252009286-268acec5ca0a?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788791500/copy_of_.jpg'
     },
     {
       id: 'places',
@@ -50,9 +50,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'توثيق معابد الكرنك، دندرة، إدفو، دير المحرق، قصور المنيا الخديوية، وجبانات أسوان الفاطمية وعمارة النوبة.',
       icon: Landmark,
       color: 'from-stone-700 to-stone-900',
-      badge: '+150 معلم',
+      badge: '+180 معلم',
       page: 'places' as const,
-      image: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg'
     },
     {
       id: 'crafts',
@@ -61,9 +61,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'توثيق حي لفخار قنا، تلي أسيوط الفضي، فركة نقادة الحريرية، ألباستر القرنة، وسجاد أخميم اليدوي الأصيل.',
       icon: Hammer,
       color: 'from-amber-700 to-orange-900',
-      badge: 'صنائع حية',
+      badge: 'حرف صعيدية',
       page: 'cultural-crafts' as const,
-      image: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg'
     },
     {
       id: 'stories',
@@ -74,29 +74,30 @@ export const WahEcosystemPortalSection: React.FC = () => {
       color: 'from-purple-800 to-indigo-950',
       badge: 'أرشيف شفاهي',
       page: 'stories' as const,
-      image: 'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png'
     },
     {
       id: 'people',
-      title: 'ناس الصعيد وحراس التراث',
-      tagline: 'سير ومسيرات الأسطوات والشعراء',
-      desc: 'وجوه صعيدية حقيقية: كبار الحرفيين، رواة الموالد، شيوخ الطرق، وفنانو النحت والنسيج ومواقف الكرم والشهامة.',
+      title: 'ناس الصعيد وحُرّاس الحكاية',
+      tagline: 'حكايات الأسطوات والشعراء وأهل الصنعة',
+      desc: 'تعرّف على وجوه الصعيد الحقيقية؛ أسطوات الحرف، رواة الحكايات، الشعراء، وفناني التراث، وكل شخص شايل حكاية من حكايات المكان.',
       icon: Users,
       color: 'from-blue-700 to-slate-900',
-      badge: 'شخصيات ملهمة',
+      badge: 'وجوه من الصعيد',
       page: 'people' as const,
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png'
     },
+
     {
       id: 'food',
       title: 'طعم الصعيد — المطبخ الأصيل',
       tagline: 'سر الفرن البلدي وخيرات الأرض',
-      desc: 'الشمس البلدي، الفايش الصعيدي الأصيل بالسمسم، الكشك المنياوي، ملوخية الصعيد المجففة، وعسل وسمن الجبل.',
+      desc: 'العيش الشمسى البلدي، الفايش الصعيدي الأصيل بالسمسم، الكشك المنياوي، ملوخية الصعيد المجففة، وعسل وسمن الجبل.',
       icon: Utensils,
       color: 'from-emerald-700 to-teal-950',
       badge: 'وصفات وأسرار',
       page: 'food' as const,
-      image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png'
     },
     {
       id: 'events',
@@ -107,7 +108,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       color: 'from-rose-700 to-pink-950',
       badge: 'أجندة حية',
       page: 'events' as const,
-      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png'
     },
     {
       id: 'marketplace',
@@ -118,7 +119,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       color: 'from-amber-800 to-orange-950',
       badge: 'سوق وه المباشر',
       page: 'products' as const,
-      image: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=600'
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png'
     }
   ];
 
@@ -131,10 +132,12 @@ export const WahEcosystemPortalSection: React.FC = () => {
           <span>منظومة «وه» الشاملة</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-black text-[#241E1A] dark:text-[#FAF6F2] font-serif">
-          أبواب العالم الرقمي لصعيد مصر
+          أول منصه صعيديه شامله
         </h2>
         <p className="text-sm sm:text-base text-[#6E6359] dark:text-[#B8ACA0] leading-relaxed">
-          «وه» ليست مجرد منصة تجارية؛ بل موسوعة حية ونافذة مفتوحة على تاريخ وجغرافية وأهل وروح صعيد مصر الأصيل.
+          "وه" مش مجرد منصة تجارية؛ ولكن موسوعة حية ونافذة مفتوحة
+          <br />
+          على  تاريخ وجغرافية وأهل وروح صعيد مصر الأصيل
         </p>
       </div>
 
@@ -182,9 +185,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
               {/* Body */}
               <div className="relative p-5 flex-1 flex flex-col justify-between space-y-4 overflow-hidden">
-                {portal.id === 'governorates' && (
+                {(
                   <NubianGeometricPattern
-                    opacity={0.14}
+                    opacity={0.05}
                     color="#B24C2B"
                     variant="diamonds"
                     className="group-hover:opacity-25 transition-opacity"

@@ -200,8 +200,9 @@ export const Header: React.FC = () => {
             </button>
             <span className="text-white/30 hidden lg:inline">|</span>
             <div className="hidden lg:flex items-center gap-2">
-              <span className="text-amber-100/90">محافظات الصعيد:</span>
-              <span className="font-bold">أسوان • الأقصر • قنا • سوهاج • أسيوط</span>
+              <span className="font-bold">
+                على امتداد النيل.. من أسوان مرورًا بالأقصر وقنا وسوهاج حتى أسيوط
+              </span>
             </div>
           </div>
         </div>
