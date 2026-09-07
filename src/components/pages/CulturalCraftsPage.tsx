@@ -38,7 +38,17 @@ export const CulturalCraftsPage: React.FC = () => {
     fetchCrafts();
   }, []);
 
-  const governorates = Array.from(new Set(crafts.map((c) => c.governorateName || c.governorates?.[0]))).filter(Boolean) as string[];
+  const governorates = Array.from(
+    new Set(
+      crafts.flatMap((c) =>
+        Array.isArray(c.governorates) && c.governorates.length > 0
+          ? c.governorates
+          : c.governorateName
+          ? [c.governorateName]
+          : []
+      )
+    )
+  ).filter(Boolean) as string[];
   const categories = Array.from(new Set(crafts.map((c) => c.category || 'صناعات يدوية'))).filter(Boolean) as string[];
 
   const filteredCrafts = crafts.filter((craft) => {
@@ -50,7 +60,10 @@ export const CulturalCraftsPage: React.FC = () => {
       govName.includes(searchQuery) ||
       craft.materials.some((m) => m.includes(searchQuery));
     const matchesCategory = categoryFilter === 'all' || craftCat === categoryFilter;
-    const matchesGov = governorateFilter === 'all' || (craft.governorateName || craft.governorates?.[0]) === governorateFilter;
+    const matchesGov =
+      governorateFilter === 'all' ||
+      (Array.isArray(craft.governorates) && craft.governorates.includes(governorateFilter)) ||
+      craft.governorateName === governorateFilter;
     return matchesSearch && matchesCategory && matchesGov;
   });
 
@@ -204,7 +217,7 @@ export const CulturalCraftsPage: React.FC = () => {
                   </span>
 
                   <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                    محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}
+                    محافظة {craft.governorateName || craft.governorates?.join('، ') || 'الصعيد'}
                   </span>
 
                   <div className="absolute bottom-3 right-3 left-3 text-white">

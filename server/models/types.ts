@@ -629,6 +629,8 @@ export interface CulturalCraftDoc {
   shortDescription: string;
   history: string;
   governorates: string[];
+  governorateName?: string;
+  governorateId?: string;
   materials: string[];
   tools: string[];
   manufacturingStages: { title: string; description: string; stepNumber: number }[];

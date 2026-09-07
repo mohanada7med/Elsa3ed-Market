@@ -279,9 +279,83 @@ export const AdminMapEditorPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Data Table */}
-        <div className="bg-white dark:bg-[#1A1614] rounded-3xl border border-[#E5DDD3] dark:border-[#2C2420] overflow-hidden shadow-xs">
-          <div className="overflow-x-auto">
+        {/* Data View: Desktop Table + Mobile Cards */}
+        <div className="bg-white dark:bg-[#1A1614] rounded-2xl sm:rounded-3xl border border-[#E5DDD3] dark:border-[#2C2420] overflow-hidden shadow-xs">
+          {/* Mobile Card List (< md) */}
+          <div className="block md:hidden divide-y divide-[#F0EAE1] dark:divide-[#2C2420]">
+            {isLoading ? (
+              <div className="p-8 text-center text-[#73675B]">
+                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#B24C2B]" />
+                <span className="text-xs">جاري تحميل بيانات المواقع من قاعدة البيانات...</span>
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <div className="p-8 text-center text-[#73675B] text-xs">
+                لا توجد عناصر مطابقة لخيارات البحث المحددة.
+              </div>
+            ) : (
+              filteredItems.map((item) => (
+                <div key={`${item.type}-${item.id}`} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {item.coverImage ? (
+                        <img
+                          src={item.coverImage}
+                          alt=""
+                          className="w-11 h-11 rounded-xl object-cover bg-gray-200 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] flex items-center justify-center text-[#B24C2B] shrink-0 border border-[#E5DDD3] dark:border-[#352B24]">
+                          <MapPin className="w-5 h-5" />
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="text-sm font-bold text-[#241E1A] dark:text-[#FAF6F2] line-clamp-1">
+                          {item.name}
+                        </h4>
+                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                          <span className="px-2 py-0.5 rounded-md bg-[#FAF7F2] dark:bg-[#26201B] text-[#73675B] dark:text-[#A89C90] border border-[#E5DDD3] dark:border-[#352B24] font-semibold text-[10px]">
+                            {item.typeLabel}
+                          </span>
+                          <span className="text-xs text-[#73675B] font-medium">
+                            {item.governorateName}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {item.isFeatured && (
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold text-[10px] shrink-0">
+                        بارز ★
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#F5EFE6] dark:border-[#26201B]">
+                    <div className="font-mono text-xs text-[#73675B] dark:text-[#A89C90] flex items-center gap-2">
+                      <span className="bg-[#FAF7F2] dark:bg-[#26201B] px-2 py-1 rounded-lg border border-[#E5DDD3] dark:border-[#352B24]">
+                        {item.lat.toFixed(4)}° N
+                      </span>
+                      <span className="bg-[#FAF7F2] dark:bg-[#26201B] px-2 py-1 rounded-lg border border-[#E5DDD3] dark:border-[#352B24]">
+                        {item.lng.toFixed(4)}° E
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setEditingItem({ ...item })}
+                      className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-[#B24C2B]/10 hover:bg-[#B24C2B] text-[#B24C2B] hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      <span>تعديل</span>
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Desktop Table (>= md) */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-right text-xs">
               <thead className="bg-[#FAF7F2] dark:bg-[#26201B] text-[#73675B] dark:text-[#9C8F82] border-b border-[#E5DDD3] dark:border-[#2C2420] font-bold">
                 <tr>
@@ -373,9 +447,9 @@ export const AdminMapEditorPage: React.FC = () => {
 
         {/* Modal for Editing Item Coordinates */}
         {editingItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <div className="bg-white dark:bg-[#1A1614] rounded-3xl max-w-lg w-full border border-[#E5DDD3] dark:border-[#2C2420] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95">
-              <div className="p-5 border-b border-[#E5DDD3] dark:border-[#2C2420] flex items-center justify-between">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+            <div className="bg-white dark:bg-[#1A1614] rounded-2xl sm:rounded-3xl max-w-lg w-full border border-[#E5DDD3] dark:border-[#2C2420] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 max-h-[92vh] overflow-y-auto">
+              <div className="p-4 sm:p-5 border-b border-[#E5DDD3] dark:border-[#2C2420] flex items-center justify-between">
                 <div>
                   <h3 className="font-black text-lg text-[#241E1A] dark:text-[#FAF6F2]">
                     ضبط إحداثيات: {editingItem.name}

@@ -1970,6 +1970,12 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
   const [shortDesc, setShortDesc] = useState(editingItem?.description || editingItem?.shortDescription || editingItem?.shortIntro || '');
   const [fullContent, setFullContent] = useState(editingItem?.history || editingItem?.biography || editingItem?.content || editingItem?.originStory || '');
   const [coverImage, setCoverImage] = useState(editingItem?.coverImage || editingItem?.avatarUrl || '');
+  const [videoUrl, setVideoUrl] = useState<string>(editingItem?.videoUrl || '');
+  const [gallery, setGallery] = useState<string[]>(
+    editingItem?.gallery && editingItem.gallery.length > 0
+      ? editingItem.gallery
+      : editingItem?.galleryImages || []
+  );
   const [lat, setLat] = useState<string>(editingItem?.coordinates?.lat?.toString() || '');
   const [lng, setLng] = useState<string>(editingItem?.coordinates?.lng?.toString() || '');
   const [sourceName, setSourceName] = useState(editingItem?.sourceName || 'وزارة السياحة والآثار المصرية');
@@ -2019,6 +2025,10 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             significance: shortDesc.trim(),
             locationName: selectedGovName,
             coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800',
+            videoUrl: videoUrl.trim() || undefined,
+            videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
+            gallery: gallery,
+            galleryImages: gallery,
             coordinates,
             status: verificationStatus === 'verified' ? 'approved' : 'pending_review',
             sourceName: sourceName.trim()
@@ -2038,6 +2048,9 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             tools: ['أدوات يدوية تقليدية'],
             manufacturingStages: [{ stepNumber: 1, title: 'المرحلة الأساسية', description: fullContent.trim() || shortDesc.trim() }],
             coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=800',
+            videoUrl: videoUrl.trim() || undefined,
+            videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
+            gallery: gallery,
             status: verificationStatus === 'verified' ? 'approved' : 'pending_review'
           },
           authUser
@@ -2165,14 +2178,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl my-8">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-[#1E1917] rounded-2xl sm:rounded-3xl p-4 sm:p-7 max-w-2xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl my-4 sm:my-8 max-h-[92vh] overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-[#F0EAE1] dark:border-[#2D2622] mb-5">
           <h3 className="text-lg font-bold font-serif flex items-center gap-2">
             <Plus className="w-4 h-4 text-[#B24C2B]" />
             <span>{editingItem ? 'تعديل السجل في MongoDB' : `توثيق ${entityType} جديد في قاعدة البيانات`}</span>
           </h3>
-          <button onClick={onClose} className="p-1 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer">
+          <button onClick={onClose} className="p-1 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer" aria-label="إغلاق">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -2230,6 +2243,75 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             label="صورة الغلاف / الأيقونة التوثيقية"
             helperText="ارفع صورة معتمدة من جهازك أو اعتمد رابطاً خارجياً للظهور في المنصة والخريطة"
           />
+
+          {/* Video and Gallery uploaders for places, crafts, and stories */}
+          {(entityType === 'place' || entityType === 'craft' || entityType === 'story') && (
+            <div className="space-y-4 pt-2 border-t border-[#F0EAE1] dark:border-[#2D2622]">
+              <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-3.5 sm:p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-[#B24C2B] flex items-center gap-1.5">
+                    <Video className="w-4 h-4" />
+                    <span>مقطع فيديو توثيقي (Cloudinary WAH/videos)</span>
+                  </span>
+                  <span className="text-[11px] text-[#73675B]">MP4, WebM حتى 150MB</span>
+                </div>
+                <AdminMediaUploader
+                  entityType="video"
+                  entitySlug={editingItem?.slug || title || 'place-video'}
+                  entityId={editingItem?.id}
+                  entityTitle={title}
+                  mediaCategory="video"
+                  multiple={false}
+                  value={videoUrl ? [videoUrl] : []}
+                  onChange={(uploaded: any) => {
+                    let vUrl = '';
+                    if (Array.isArray(uploaded) && uploaded.length > 0) {
+                      const item = uploaded[0];
+                      vUrl = typeof item === 'string' ? item : (item?.secureUrl || item?.url || '');
+                    } else if (typeof uploaded === 'string') {
+                      vUrl = uploaded;
+                    } else if (uploaded && typeof uploaded === 'object') {
+                      vUrl = uploaded.secureUrl || uploaded.url || '';
+                    }
+                    setVideoUrl(vUrl);
+                  }}
+                  label="فيديو المكان التوثيقي"
+                  helperText="ارفع فيديو للمكان أو الورشة ليظهر في مشغل الفيديو ومعرض المكان للزوار"
+                />
+              </div>
+
+              <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-3.5 sm:p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-[#B24C2B] flex items-center gap-1.5">
+                    <ImageIcon className="w-4 h-4" />
+                    <span>معرض صور إضافية للمكان (Gallery)</span>
+                  </span>
+                  <span className="text-[11px] text-[#73675B]">{gallery.length} صورة</span>
+                </div>
+                <AdminMediaUploader
+                  entityType={entityType}
+                  entitySlug={editingItem?.slug || title || 'place-gallery'}
+                  entityId={editingItem?.id}
+                  entityTitle={title}
+                  mediaCategory="image"
+                  multiple={true}
+                  value={gallery}
+                  onChange={(uploaded: any) => {
+                    if (Array.isArray(uploaded)) {
+                      const urls = uploaded
+                        .map((it: any) => (typeof it === 'string' ? it : (it?.secureUrl || it?.url || '')))
+                        .filter(Boolean);
+                      setGallery(urls);
+                    } else if (typeof uploaded === 'string' && uploaded) {
+                      setGallery((prev) => Array.from(new Set([...prev, uploaded])));
+                    }
+                  }}
+                  label="ألبوم صور إضافية للمعلم"
+                  helperText="ارفع مجموعة صور إضافية للمعلم التراثي ليتمكن الزوار من تصفحها بالمعرض"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>

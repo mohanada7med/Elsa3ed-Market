@@ -115,7 +115,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
               className="px-3.5 py-2 rounded-xl bg-[#B24C2B]/90 hover:bg-[#B24C2B] text-white text-xs font-bold transition-colors flex items-center gap-1.5"
             >
               <MapPin className="w-3.5 h-3.5" />
-              <span>محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</span>
+              <span>محافظة {craft.governorateName || (craft.governorates && craft.governorates.length > 0 ? craft.governorates.join('، ') : 'الصعيد')}</span>
             </button>
 
             <button

@@ -120,7 +120,9 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
         db.collection('wah_cultural_crafts').find({
           $or: [
             { governorates: gov.name },
-            { id: { $in: gov.traditionalCraftsIds || [] } }
+            { governorates: gov.id },
+            { governorateName: gov.name },
+            { governorateId: gov.id }
           ],
           status: { $ne: 'archived' }
         }).toArray(),
@@ -136,7 +138,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
           $or: [
             { governorateId: gov.id },
             { governorateName: gov.name },
-            { id: { $in: gov.traditionalFoodIds || [] } }
+            { governorates: gov.name }
           ],
           status: { $ne: 'archived' }
         }).toArray(),
@@ -176,10 +178,18 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       products = productsDocs;
     } else {
       places = memoryDb.heritagePlaces.filter(p => (p.governorateId === gov!.id || p.governorateName === gov!.name) && p.status !== 'archived');
-      crafts = memoryDb.culturalCrafts.filter(c => ((c.governorates && c.governorates.includes(gov!.name)) || (gov!.traditionalCraftsIds && gov!.traditionalCraftsIds.includes(c.id))) && c.status !== 'archived');
+      crafts = memoryDb.culturalCrafts.filter(c => (
+        (c.governorates && (c.governorates.includes(gov!.name) || c.governorates.includes(gov!.id))) ||
+        c.governorateName === gov!.name ||
+        c.governorateId === gov!.id
+      ) && c.status !== 'archived');
       stories = memoryDb.wahStories.filter(s => (s.governorateId === gov!.id || s.governorateName === gov!.name) && s.status !== 'archived');
       people = memoryDb.localPeople.filter(p => (p.governorateId === gov!.id || p.governorateName === gov!.name) && p.status !== 'archived');
-      foods = memoryDb.upperEgyptFood.filter(f => (f.governorateId === gov!.id || f.governorateName === gov!.name || (gov!.traditionalFoodIds && gov!.traditionalFoodIds.includes(f.id))) && f.status !== 'archived');
+      foods = memoryDb.upperEgyptFood.filter(f => (
+        f.governorateId === gov!.id ||
+        f.governorateName === gov!.name ||
+        (f as any).governorates?.includes(gov!.name)
+      ) && f.status !== 'archived');
       events = memoryDb.culturalEvents.filter(e => (e.governorateId === gov!.id || e.governorateName === gov!.name) && e.status !== 'archived');
       seasons = memoryDb.seasons.filter(s => s.governorateId === gov!.id || s.governorateName === gov!.name);
       products = memoryDb.products.filter(p => (p.sellerGovernorate === gov!.name || p.specifications?.originGovernorate === gov!.name) && p.approvalStatus === 'approved');
@@ -2403,7 +2413,11 @@ router.get('/governorates/:slugOrId/dashboard', async (req: Request, res: Respon
           category: { $in: ['temple', 'monastery', 'mosque', 'museum', 'tomb', 'heritage_village'] }
         }),
         db.collection('wah_cultural_crafts').countDocuments({
-          governorates: { $in: [govName, govId] }
+          $or: [
+            { governorates: { $in: [govName, govId] } },
+            { governorateName: govName },
+            { governorateId: govId }
+          ]
         }),
         db.collection('wah_food').countDocuments({
           $or: [{ governorateId: govId }, { governorateName: govName }]
@@ -2440,8 +2454,14 @@ router.get('/governorates/:slugOrId/dashboard', async (req: Request, res: Respon
           ]
         }),
         db.collection('wah_cultural_crafts').countDocuments({
-          governorates: { $in: [govName, govId] },
-          $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }]
+          $or: [
+            { governorates: { $in: [govName, govId] } },
+            { governorateName: govName },
+            { governorateId: govId }
+          ],
+          $and: [
+            { $or: [{ status: 'pending_review' }, { verificationStatus: 'pending_review' }] }
+          ]
         }),
         db.collection('wah_food').countDocuments({
           $and: [

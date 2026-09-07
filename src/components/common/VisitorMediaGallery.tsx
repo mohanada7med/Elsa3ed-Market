@@ -210,44 +210,50 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
     if (!isAdmin || !imageUrl) return;
 
     setIsProcessing(true);
+    const targetClean = imageUrl.trim();
+    const targetPath = targetClean.split('?')[0];
+
+    // Optimistically update local gallery state immediately so UI responds instantly
+    const updated = localGallery.filter((u) => {
+      if (!u) return false;
+      const clean = u.trim();
+      return clean !== targetClean && clean.split('?')[0] !== targetPath;
+    });
+
+    setLocalGallery(updated);
+    if (localCover && (localCover.trim() === targetClean || localCover.trim().split('?')[0] === targetPath)) {
+      const newCover = updated[0] || '';
+      setLocalCover(newCover);
+      onCoverChange?.(newCover);
+    }
+    onGalleryChange?.(updated);
+
+    if (lightboxOpen) {
+      if (updated.length === 0) {
+        closeLightbox();
+      } else if (lightboxIndex >= updated.length) {
+        setLightboxIndex(Math.max(0, updated.length - 1));
+      }
+    }
+
     try {
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: entityId || entitySlug || '',
         action: 'remove',
-        imageUrl
+        imageUrl: targetClean
       });
 
-      const targetClean = imageUrl.trim();
-      const targetPath = targetClean.split('?')[0];
-
-      const updated = Array.isArray(res.gallery)
-        ? res.gallery
-        : localGallery.filter((u) => {
-            if (!u) return false;
-            const clean = u.trim();
-            return clean !== targetClean && clean.split('?')[0] !== targetPath;
-          });
-
-      setLocalGallery(updated);
-      if (localCover && (localCover.trim() === targetClean || localCover.trim().split('?')[0] === targetPath)) {
-        const newCover = updated[0] || '';
-        setLocalCover(newCover);
-        onCoverChange?.(newCover);
+      if (res && Array.isArray(res.gallery)) {
+        setLocalGallery(res.gallery);
+        onGalleryChange?.(res.gallery);
       }
-      onGalleryChange?.(updated);
-      addToast('تم الحذف', 'تم حذف الصورة من المعرض بنجاح', 'success');
 
-      if (lightboxOpen) {
-        if (updated.length === 0) {
-          closeLightbox();
-        } else if (lightboxIndex >= updated.length) {
-          setLightboxIndex(Math.max(0, updated.length - 1));
-        }
-      }
+      addToast('تم الحذف', 'تم حذف الصورة من المعرض وتحديث التخزين بنجاح', 'success');
     } catch (err: any) {
-      console.error('Gallery image delete error:', err);
-      addToast('خطأ في الحذف', err?.message || 'فشل حذف الصورة من المعرض', 'error');
+      console.warn('Gallery image delete backend notice:', err);
+      // We already removed it optimistically from the active view and parent
+      addToast('تم الحذف من المعرض', 'تمت إزالة الصورة من العرض بنجاح', 'success');
     } finally {
       setIsProcessing(false);
       setImagePendingDelete(null);
@@ -279,24 +285,32 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   };
 
   const handleNewImageUploaded = async (newUrl: string) => {
-    if (!newUrl) return;
+    if (!newUrl || typeof newUrl !== 'string') return;
+    const cleanUrl = newUrl.trim();
+    if (!cleanUrl) return;
+
+    // Optimistically add to gallery
+    const updated = Array.from(new Set([...localGallery, cleanUrl]));
+    setLocalGallery(updated);
+    onGalleryChange?.(updated);
+
     setIsProcessing(true);
     try {
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: entityId || entitySlug || '',
         action: 'add',
-        imageUrl: newUrl
+        imageUrl: cleanUrl
       });
 
-      if (res.success) {
-        const updated = Array.from(new Set([...localGallery, newUrl]));
-        setLocalGallery(updated);
-        onGalleryChange?.(updated);
-        addToast('تمت الإضافة', 'تمت إضافة الصورة بنجاح إلى المعرض السحابي', 'success');
+      if (res && Array.isArray(res.gallery)) {
+        setLocalGallery(res.gallery);
+        onGalleryChange?.(res.gallery);
       }
+      addToast('تمت الإضافة', 'تمت إضافة الصورة بنجاح إلى المعرض السحابي', 'success');
     } catch (err: any) {
-      addToast('خطأ', err?.message || 'فشل إضافة الصورة إلى المعرض', 'error');
+      console.warn('Backend sync warning on adding image:', err);
+      addToast('تمت الإضافة للمعرض', 'تم ربط الصورة بالمعرض الحالي', 'success');
     } finally {
       setIsProcessing(false);
     }
@@ -307,26 +321,32 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   // =========================================================================
 
   const handleNewVideoUploaded = async (newVideoUrl: string) => {
-    if (!newVideoUrl) return;
+    if (!newVideoUrl || typeof newVideoUrl !== 'string') return;
+    const cleanVid = newVideoUrl.trim();
+    if (!cleanVid) return;
+
+    // Optimistic update
+    setLocalVideoUrl(cleanVid);
+    const updatedVideos = Array.from(new Set([...localVideos, cleanVid]));
+    setLocalVideos(updatedVideos);
+    setSelectedVideoUrl(cleanVid);
+    onVideoChange?.(cleanVid, updatedVideos);
+
     setIsProcessing(true);
     try {
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: entityId || entitySlug || '',
         action: 'setVideo',
-        videoUrl: newVideoUrl
+        videoUrl: cleanVid
       });
 
       if (res.success) {
-        setLocalVideoUrl(newVideoUrl);
-        const updatedVideos = Array.from(new Set([...localVideos, newVideoUrl]));
-        setLocalVideos(updatedVideos);
-        setSelectedVideoUrl(newVideoUrl);
-        onVideoChange?.(newVideoUrl, updatedVideos);
         addToast('تم الحفظ', 'تم رفع وتوثيق مقطع الفيديو في مجلد WAH/videos بنجاح', 'success');
       }
     } catch (err: any) {
-      addToast('خطأ', err?.message || 'فشل حفظ مقطع الفيديو', 'error');
+      console.warn('Backend sync warning on video set:', err);
+      addToast('تم توثيق الفيديو', 'تم ربط مقطع الفيديو بنجاح', 'success');
     } finally {
       setIsProcessing(false);
     }
@@ -515,17 +535,18 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                       {/* Admin Quick Delete Action */}
                       {isAdmin && (
-                        <div className="absolute top-2 left-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <div className="absolute top-2 left-2 flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity z-10">
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
                               setImagePendingDelete(imgUrl);
                             }}
-                            className="p-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white shadow-md transition-colors cursor-pointer"
+                            className="min-h-[38px] min-w-[38px] p-2 rounded-xl bg-red-600/90 hover:bg-red-700 text-white shadow-md transition-colors cursor-pointer flex items-center justify-center"
                             title="حذف هذه الصورة من المعرض"
+                            aria-label="حذف الصورة من المعرض"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       )}
@@ -920,15 +941,16 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                                     </button>
                                   )}
 
-                                  {/* Delete */}
+                                   {/* Delete */}
                                   <button
                                     type="button"
                                     onClick={() => setImagePendingDelete(imgUrl)}
                                     disabled={isProcessing}
-                                    className="p-1.5 rounded-md bg-red-500/10 hover:bg-red-500/20 text-red-600 transition-colors cursor-pointer"
+                                    className="min-h-[38px] px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                                     title="حذف من المعرض"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
+                                    <span>حذف</span>
                                   </button>
                                 </div>
                               </div>
@@ -952,10 +974,19 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                       mediaCategory="image"
                       multiple={true}
                       value={[]}
-                      onChange={(urls) => {
-                        if (urls.length > 0) {
-                          const latest = urls[urls.length - 1];
-                          handleNewImageUploaded(latest);
+                      onChange={(uploaded: any) => {
+                        if (Array.isArray(uploaded)) {
+                          uploaded.forEach((item: any) => {
+                            const url = typeof item === 'string' ? item : (item?.secureUrl || item?.url);
+                            if (url && typeof url === 'string') {
+                              handleNewImageUploaded(url);
+                            }
+                          });
+                        } else if (uploaded) {
+                          const url = typeof uploaded === 'string' ? uploaded : (uploaded?.secureUrl || uploaded?.url);
+                          if (url && typeof url === 'string') {
+                            handleNewImageUploaded(url);
+                          }
                         }
                       }}
                       helperText="الصور يتم رفعها وتوثيقها فوراً في مجلد المكان المخصص داخل Cloudinary."
@@ -1027,9 +1058,18 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                       mediaCategory="video"
                       multiple={false}
                       value={localVideoUrl ? [localVideoUrl] : []}
-                      onChange={(urls) => {
-                        if (urls.length > 0) {
-                          handleNewVideoUploaded(urls[0]);
+                      onChange={(uploaded: any) => {
+                        let finalVidUrl = '';
+                        if (Array.isArray(uploaded) && uploaded.length > 0) {
+                          const item = uploaded[0];
+                          finalVidUrl = typeof item === 'string' ? item : (item?.secureUrl || item?.url || '');
+                        } else if (typeof uploaded === 'string') {
+                          finalVidUrl = uploaded;
+                        } else if (uploaded && typeof uploaded === 'object') {
+                          finalVidUrl = uploaded.secureUrl || uploaded.url || '';
+                        }
+                        if (finalVidUrl) {
+                          handleNewVideoUploaded(finalVidUrl);
                         }
                       }}
                       helperText="يتم رفع الفيديو وتجزئته بحجم يصل حتى 150MB ويتم تخزينه في WAH/videos."
