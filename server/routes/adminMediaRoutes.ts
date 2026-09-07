@@ -12,6 +12,7 @@ import {
   saveExternalUrlMedia,
   setPrimaryAdminMedia,
   reorderGalleryMedia,
+  manageEntityGallery,
   reassignMediaEntity,
   buildMediaIdFilter
 } from '../services/mediaService.ts';
@@ -38,14 +39,29 @@ router.use((req: AuthenticatedRequest, res: Response, next) => {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB max image size
+    fileSize: 150 * 1024 * 1024 // 150MB max file size for images and videos
   },
   fileFilter: (_req, file, cb) => {
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-    if (allowedMimes.includes(file.mimetype.toLowerCase())) {
+    const allowedImageMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedVideoMimes = [
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+      'video/ogg',
+      'video/x-matroska',
+      'video/3gpp',
+      'video/x-msvideo'
+    ];
+    const mime = file.mimetype.toLowerCase();
+    if (
+      allowedImageMimes.includes(mime) ||
+      allowedVideoMimes.includes(mime) ||
+      mime.startsWith('image/') ||
+      mime.startsWith('video/')
+    ) {
       cb(null, true);
     } else {
-      cb(new Error('صيغة الملف غير مدعومة. الصيغ المدعومة هي: JPEG, PNG, WEBP'));
+      cb(new Error('صيغة الملف غير مدعومة. الصيغ المدعومة هي: صور (JPEG, PNG, WEBP) وفيديوهات (MP4, WEBM, MOV, OGG, MKV)'));
     }
   }
 });
@@ -62,7 +78,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم الصورة يتجاوز الحد المسموح (10 ميجابايت)',
+            error: 'حجم الملف يتجاوز الحد المسموح (150 ميجابايت)',
             code: 'FILE_TOO_LARGE'
           });
         }
@@ -74,7 +90,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
       } else if (err) {
         return res.status(400).json({
           success: false,
-          error: err.message || 'فشل في قراءة ملف الصورة',
+          error: err.message || 'فشل في قراءة ملف الوسائط',
           code: 'INVALID_FILE'
         });
       }
@@ -99,12 +115,25 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
     } else {
       return res.status(400).json({
         success: false,
-        error: 'لم يتم إرسال أي ملف صورة أو بيانات Base64',
+        error: 'لم يتم إرسال أي ملف وسائط أو بيانات Base64',
         code: 'NO_FILE_PROVIDED'
       });
     }
 
-    const rawEntityType = body.entityType ? String(body.entityType).trim() : 'general';
+    const isVideo =
+      mimeType.toLowerCase().startsWith('video/') ||
+      filename.toLowerCase().endsWith('.mp4') ||
+      filename.toLowerCase().endsWith('.webm') ||
+      filename.toLowerCase().endsWith('.mov') ||
+      filename.toLowerCase().endsWith('.ogg') ||
+      filename.toLowerCase().endsWith('.mkv') ||
+      body.resourceType === 'video' ||
+      body.entityType === 'video' ||
+      body.entityType === 'videos';
+
+    const resolvedResourceType: 'image' | 'video' = isVideo ? 'video' : 'image';
+
+    const rawEntityType = body.entityType ? String(body.entityType).trim() : (isVideo ? 'videos' : 'general');
     if (!isValidWahEntityType(rawEntityType)) {
       return res.status(400).json({
         success: false,
@@ -129,6 +158,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
       data: buffer,
       filename,
       mimeType,
+      resourceType: resolvedResourceType,
       entityType,
       entitySlug,
       entityId,
@@ -145,7 +175,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
 
     return res.status(201).json({
       success: true,
-      message: 'تم رفع الصورة وتوثيقها بنجاح',
+      message: isVideo ? 'تم رفع الفيديو وتوثيقه بنجاح' : 'تم رفع الصورة وتوثيقها بنجاح',
       data: media
     });
   } catch (error: any) {
@@ -311,11 +341,40 @@ router.patch('/:id', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // =========================================================================
-// 5. DELETE /api/admin/media/:id - Delete Media from Cloudinary & DB
+// 5. DELETE /api/admin/media/:id & POST /api/admin/media/delete
 // =========================================================================
-router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/delete', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const mediaId = req.params.id;
+    const mediaId = req.body.mediaId || req.body.id || req.body.publicId || req.body.url;
+    if (!mediaId) {
+      return res.status(400).json({ success: false, error: 'معرف أو رابط الصورة مطلوب للحذف' });
+    }
+
+    await deleteAdminMedia(mediaId, {
+      id: req.user!.id,
+      role: req.user!.role
+    });
+
+    return res.json({
+      success: true,
+      message: 'تم حذف الصورة من التخزين السحابي وقاعدة البيانات بنجاح'
+    });
+  } catch (error: any) {
+    Logger.error('[AdminMedia] POST deletion error:', error?.message || error);
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل حذف الصورة',
+      code: 'DELETE_FAILED'
+    });
+  }
+});
+
+router.delete(['/:id', '/:id(*)'], async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const mediaId = req.params.id || (req.params as any)[0] || (req.query.id as string);
+    if (!mediaId) {
+      return res.status(400).json({ success: false, error: 'معرف الصورة مطلوب' });
+    }
 
     await deleteAdminMedia(mediaId, {
       id: req.user!.id,
@@ -341,13 +400,14 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
 // =========================================================================
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { search, entityType, folder, entityId, page, limit, sort } = req.query;
+    const { search, entityType, folder, entityId, resourceType, type, page, limit, sort } = req.query;
 
     const result = await getAdminMediaList({
       search: search as string,
       entityType: entityType as string,
       folder: folder as string,
       entityId: entityId as string,
+      resourceType: (resourceType || type) as string,
       page: page ? parseInt(page as string, 10) : 1,
       limit: limit ? parseInt(limit as string, 10) : 24,
       sort: sort as any
@@ -447,6 +507,45 @@ router.post('/gallery/reorder', async (req: AuthenticatedRequest, res: Response)
       success: false,
       error: error?.message || 'فشل إعادة ترتيب صور المعرض',
       code: 'REORDER_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// 8.1 POST /api/admin/media/gallery/manage - Add, Remove, Set Cover, Update Gallery
+// =========================================================================
+router.post('/gallery/manage', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { entityType, entityId, action, imageUrl, videoUrl, galleryUrls } = req.body || {};
+
+    if (!entityType || !entityId || !action) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى تزويد نوع الكيان، ومعرفه، والإجراء المطلوب (add, remove, setCover, updateGallery, setVideo, removeVideo)',
+        code: 'MISSING_FIELDS'
+      });
+    }
+
+    const result = await manageEntityGallery({
+      entityType,
+      entityId,
+      action,
+      imageUrl,
+      videoUrl,
+      galleryUrls,
+      user: {
+        id: req.user!.id,
+        role: req.user!.role
+      }
+    });
+
+    return res.json(result);
+  } catch (error: any) {
+    Logger.error('[AdminMedia] Manage gallery error:', error?.message || error);
+    return res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل تعديل معرض صور المكان',
+      code: 'GALLERY_MANAGE_FAILED'
     });
   }
 });

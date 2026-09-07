@@ -590,6 +590,7 @@ export interface HeritagePlace {
   coverImage: string;
   gallery: string[];
   videoUrl?: string;
+  videos?: string[];
   relatedCrafts?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
@@ -619,6 +620,7 @@ export interface CulturalCraft {
   coverImage: string;
   gallery: string[];
   videoUrl?: string;
+  videos?: string[];
   relatedArtisansIds?: string[];
   status: VerificationStatus;
   relatedProducts?: Product[];
@@ -948,6 +950,7 @@ export interface MediaItem {
   publicId?: string;
   folder?: string;
   type?: 'image' | 'video';
+  resourceType?: 'image' | 'video';
   entityType?: string;
   entityId?: string;
   entitySlug?: string;
@@ -956,6 +959,7 @@ export interface MediaItem {
   sizeBytes?: number;
   width?: number;
   height?: number;
+  duration?: number;
   alt?: string;
   caption?: string;
   isPrimary?: boolean;

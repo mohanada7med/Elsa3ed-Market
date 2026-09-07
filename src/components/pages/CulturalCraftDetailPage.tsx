@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { CulturalCraft } from '../../types';
+import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
 import {
   Hammer,
   MapPin,
@@ -196,6 +197,28 @@ export const CulturalCraftDetailPage: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Visitor Media Gallery & Video Showcase */}
+            <VisitorMediaGallery
+              title={`معرض صور وتوثيق حرفة ${craft.title}`}
+              entityType="cultural-craft"
+              entityId={craft.id || craft.slug}
+              entitySlug={craft.slug}
+              entityTitle={craft.title}
+              coverImage={craft.coverImage}
+              gallery={(craft.gallery && craft.gallery.length > 0) ? craft.gallery : []}
+              videoUrl={(craft as any).videoUrl}
+              videos={(craft as any).videos || []}
+              onGalleryChange={(updatedGallery) => {
+                setCraft((prev) => prev ? { ...prev, gallery: updatedGallery } : null);
+              }}
+              onCoverChange={(newCover) => {
+                setCraft((prev) => prev ? { ...prev, coverImage: newCover } : null);
+              }}
+              onVideoChange={(newVideo, updatedVideos) => {
+                setCraft((prev) => prev ? { ...prev, videoUrl: newVideo || undefined, videos: updatedVideos } as any : null);
+              }}
+            />
 
             {/* Available Products in Marketplace */}
             {craft.relatedProducts && craft.relatedProducts.length > 0 && (

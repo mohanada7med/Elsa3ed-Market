@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { HeritagePlace } from '../../types';
+import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
 import {
   Landmark,
   MapPin,
@@ -14,7 +15,8 @@ import {
   Hammer,
   BookOpen,
   Info,
-  ExternalLink
+  ExternalLink,
+  Video
 } from 'lucide-react';
 
 export const PlaceDetailPage: React.FC = () => {
@@ -24,9 +26,12 @@ export const PlaceDetailPage: React.FC = () => {
     navigateToCraft,
     navigateToStory,
     setActivePage,
-    addToast
+    addToast,
+    currentUser,
+    currentRole
   } = useApp();
 
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const [place, setPlace] = useState<HeritagePlace | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -108,6 +113,21 @@ export const PlaceDetailPage: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-2">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('place-media-gallery');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-3 py-2 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                title="إدارة ورفع فيديوهات وصور المعلم"
+              >
+                <Video className="w-3.5 h-3.5" />
+                <span>رفع وسائط وفيديو</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={() => navigateToGovernorate(place.governorateId || 'qena')}
@@ -187,25 +207,28 @@ export const PlaceDetailPage: React.FC = () => {
               </div>
             )}
 
-            {/* Image Gallery */}
-            {((place.gallery && place.gallery.length > 0) || (place.galleryImages && place.galleryImages.length > 0)) && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24]">
-                <h3 className="text-lg sm:text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2] mb-4">
-                  معرض الصور التوثيقية
-                </h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {((place.gallery && place.gallery.length > 0) ? place.gallery : (place.galleryImages || [])).map((imgUrl, idx) => (
-                    <div key={idx} className="aspect-square rounded-2xl overflow-hidden bg-[#FAF7F2]">
-                      <img
-                        src={imgUrl}
-                        alt={`${place.title} ${idx + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Visitor Media Gallery & Video Showcase */}
+            <VisitorMediaGallery
+              id="place-media-gallery"
+              title={`معرض وتوثيق ${place.title}`}
+              entityType="heritage-place"
+              entityId={place.id || place.slug}
+              entitySlug={place.slug}
+              entityTitle={place.title}
+              coverImage={place.coverImage}
+              gallery={(place.gallery && place.gallery.length > 0) ? place.gallery : (place.galleryImages || [])}
+              videoUrl={(place as any).videoUrl}
+              videos={(place as any).videos || []}
+              onGalleryChange={(updatedGallery) => {
+                setPlace((prev) => prev ? { ...prev, gallery: updatedGallery, galleryImages: updatedGallery } : null);
+              }}
+              onCoverChange={(newCover) => {
+                setPlace((prev) => prev ? { ...prev, coverImage: newCover } : null);
+              }}
+              onVideoChange={(newVideo, updatedVideos) => {
+                setPlace((prev) => prev ? { ...prev, videoUrl: newVideo || undefined, videos: updatedVideos } as any : null);
+              }}
+            />
           </div>
 
           {/* Sidebar Visitor Info */}

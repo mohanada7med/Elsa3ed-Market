@@ -143,6 +143,7 @@ export interface FolderGenerationOptions {
   entityType?: string;
   entitySlug?: string;
   subfolder?: string;
+  resourceType?: 'image' | 'video';
 }
 
 /**
@@ -202,6 +203,7 @@ export function getCloudinaryFolder(
   let type: string;
   let entitySlug: string | undefined;
   let subfolder: string | undefined;
+  let resourceType: 'image' | 'video' | undefined;
 
   if (typeof entityTypeOrOptions === 'string') {
     type = entityTypeOrOptions;
@@ -210,6 +212,7 @@ export function getCloudinaryFolder(
     type = entityTypeOrOptions.type || entityTypeOrOptions.entityType || '';
     entitySlug = entityTypeOrOptions.entitySlug;
     subfolder = entityTypeOrOptions.subfolder;
+    resourceType = entityTypeOrOptions.resourceType;
   } else {
     const err = new Error('نوع الكيان (entityType) مطلوب لإنشاء مسار مجلد التخزين');
     (err as any).code = 'UNKNOWN_ENTITY_TYPE';
@@ -236,6 +239,21 @@ export function getCloudinaryFolder(
 
   const cleanSlug = sanitizeSlug(entitySlug);
   const cleanSubfolder = sanitizeSlug(subfolder);
+
+  // If this is a video or explicitly requested as video, route into WAH/videos folder tree (d03b8e1b5e8938e80e3e4205e905206b0e)
+  if (resourceType === 'video' || folderName === 'videos') {
+    const videoParts = [WAH_ROOT_FOLDER, 'videos'];
+    if (folderName !== 'videos') {
+      videoParts.push(folderName);
+    }
+    if (cleanSlug) {
+      videoParts.push(cleanSlug);
+    }
+    if (cleanSubfolder) {
+      videoParts.push(cleanSubfolder);
+    }
+    return videoParts.join('/');
+  }
 
   const parts = [WAH_ROOT_FOLDER, folderName];
 

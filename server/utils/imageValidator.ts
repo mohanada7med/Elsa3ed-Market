@@ -272,3 +272,96 @@ export function validateImage(
     sizeBytes
   };
 };
+
+export const ALLOWED_VIDEO_MIME_TYPES = [
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+  'video/ogg',
+  'video/x-matroska',
+  'video/3gpp',
+  'video/x-msvideo'
+];
+
+export const ALLOWED_VIDEO_EXTENSIONS = [
+  '.mp4',
+  '.webm',
+  '.mov',
+  '.ogg',
+  '.ogv',
+  '.mkv',
+  '.3gp',
+  '.avi'
+];
+
+export const MAX_VIDEO_FILE_SIZE_BYTES = 150 * 1024 * 1024; // 150 MB
+
+export function validateVideo(
+  data: string | Buffer,
+  filename?: string,
+  declaredMimeType?: string
+): ImageValidationResult {
+  let mimeType = declaredMimeType?.toLowerCase();
+  let buffer: Buffer;
+
+  if (typeof data === 'string') {
+    if (data.startsWith('data:')) {
+      const match = data.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
+      if (!match) {
+        return { valid: false, error: 'صيغة الفيديو المشفرة Data-URI غير صالحة' };
+      }
+      mimeType = match[1].toLowerCase();
+      try {
+        buffer = Buffer.from(match[2], 'base64');
+      } catch {
+        return { valid: false, error: 'فشل فك تشفير بيانات الفيديو' };
+      }
+    } else {
+      try {
+        buffer = Buffer.from(data, 'base64');
+      } catch {
+        return { valid: false, error: 'فشل معالجة بيانات الفيديو' };
+      }
+    }
+  } else if (Buffer.isBuffer(data)) {
+    buffer = data;
+  } else {
+    return { valid: false, error: 'بيانات الفيديو غير صالحة' };
+  }
+
+  const sizeBytes = buffer.length;
+  if (sizeBytes > MAX_VIDEO_FILE_SIZE_BYTES) {
+    return {
+      valid: false,
+      error: `حجم الفيديو (${Math.round(sizeBytes / (1024 * 1024))} ميجابايت) يتجاوز الحد المسموح (150 ميجابايت)`
+    };
+  }
+
+  let extension: string | undefined;
+  if (filename) {
+    const extMatch = filename.toLowerCase().match(/\.[a-z0-9]+$/);
+    if (extMatch) {
+      extension = extMatch[0];
+      if (!ALLOWED_VIDEO_EXTENSIONS.includes(extension)) {
+        return {
+          valid: false,
+          error: `امتداد الملف "${extension}" غير مسموح به لمقاطع الفيديو. الامتدادات المدعومة هي: MP4, WEBM, MOV, OGG, MKV`
+        };
+      }
+    }
+  }
+
+  if (mimeType && !ALLOWED_VIDEO_MIME_TYPES.includes(mimeType) && !mimeType.startsWith('video/')) {
+    return {
+      valid: false,
+      error: `صيغة الفيديو "${mimeType}" غير مدعومة. الصيغ المسموح بها هي MP4 و WebM و QuickTime و Ogg`
+    };
+  }
+
+  return {
+    valid: true,
+    mimeType: mimeType || 'video/mp4',
+    extension: extension || '.mp4',
+    sizeBytes
+  };
+}

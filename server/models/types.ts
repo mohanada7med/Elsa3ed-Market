@@ -606,6 +606,7 @@ export interface HeritagePlaceDoc {
   coverImage: string;
   gallery: string[];
   videoUrl?: string;
+  videos?: string[];
   relatedCrafts?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
@@ -634,6 +635,7 @@ export interface CulturalCraftDoc {
   coverImage: string;
   gallery: string[];
   videoUrl?: string;
+  videos?: string[];
   relatedArtisansIds?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
@@ -833,6 +835,7 @@ export interface MediaAssetDoc {
   publicId?: string;
   folder?: string;
   type: 'image' | 'video' | 'reel_audio';
+  resourceType?: 'image' | 'video';
   category: 'governorate' | 'place' | 'craft' | 'story' | 'product' | 'reel' | 'general';
   entityId?: string;
   entityType?: string;

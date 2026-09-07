@@ -20,7 +20,9 @@ import {
   ShieldAlert,
   Check,
   Sparkles,
-  Info
+  Info,
+  Video,
+  Play
 } from 'lucide-react';
 
 export interface AdminMediaUploaderProps {
@@ -37,6 +39,8 @@ export interface AdminMediaUploaderProps {
   helperText?: string;
   disabled?: boolean;
   className?: string;
+  mediaCategory?: 'all' | 'image' | 'video';
+  onEntityGalleryChange?: (action: 'add' | 'remove' | 'setCover', url: string) => void;
 }
 
 interface StagedFile {
@@ -50,6 +54,7 @@ interface StagedFile {
   progress: number;
   status: 'pending' | 'uploading' | 'success' | 'error';
   errorMessage?: string;
+  isVideo?: boolean;
 }
 
 interface StagedReplacement {
@@ -74,7 +79,9 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   label,
   helperText,
   disabled = false,
-  className = ''
+  className = '',
+  mediaCategory = 'all',
+  onEntityGalleryChange
 }) => {
   const { currentUser, currentRole } = useApp();
   const isAdmin = currentRole === 'admin';
@@ -160,39 +167,67 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   // 1. When files are picked or dropped from device: Stage with instant local preview before saving!
   const handleFilesSelected = (files: FileList | File[]) => {
     if (!isAdmin) {
-      setErrorMessage('عفواً، ميزة رفع الصور مخصصة لمدراء منصة وه فقط');
+      setErrorMessage('عفواً، ميزة رفع الوسائط مخصصة لمدراء منصة وه فقط');
       return;
     }
     if (!files || files.length === 0 || disabled) return;
     setErrorMessage(null);
 
-    const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedImageMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    const allowedVideoMimes = [
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+      'video/ogg',
+      'video/x-matroska',
+      'video/3gpp',
+      'video/x-msvideo'
+    ];
+
     const filesArray = Array.from(files);
     const remainingSlots = multiple ? maxFiles - currentItems.length : 1;
     const selected = filesArray.slice(0, remainingSlots);
 
     if (selected.length === 0) {
-      setErrorMessage(`تم الوصول إلى الحد الأقصى المسموح به (${maxFiles} صور)`);
+      setErrorMessage(`تم الوصول إلى الحد الأقصى المسموح به (${maxFiles} ملفات)`);
       return;
     }
 
     const newStaged: StagedFile[] = [];
 
     for (const file of selected) {
-      // Client-side validation: MIME type
-      if (!allowedMimes.includes(file.type.toLowerCase())) {
-        setErrorMessage(`الملف "${file.name}" غير مدعوم. الصيغ المقبولة هي: JPG و PNG و WEBP`);
+      const isVideo =
+        file.type.startsWith('video/') ||
+        allowedVideoMimes.includes(file.type.toLowerCase()) ||
+        Boolean(file.name.match(/\.(mp4|webm|mov|ogg|mkv|3gp|avi)$/i));
+
+      if (mediaCategory === 'image' && isVideo) {
+        setErrorMessage(`الملف "${file.name}" هو مقطع فيديو، وهذا الحقل مخصص للصور فقط.`);
+        return;
+      }
+      if (mediaCategory === 'video' && !isVideo) {
+        setErrorMessage(`الملف "${file.name}" ليس مقطع فيديو صالح. الصيغ المقبولة للفيديو: MP4, WebM, MOV.`);
         return;
       }
 
-      // Client-side validation: Max 10MB
-      if (file.size > 10 * 1024 * 1024) {
-        setErrorMessage(`الملف "${file.name}" يتجاوز الحد الأقصى المسموح به (10 ميجابايت)`);
-        return;
+      if (isVideo) {
+        if (file.size > 150 * 1024 * 1024) {
+          setErrorMessage(`مقطع الفيديو "${file.name}" يتجاوز الحد الأقصى المسموح به (150 ميجابايت)`);
+          return;
+        }
+      } else {
+        if (!allowedImageMimes.includes(file.type.toLowerCase())) {
+          setErrorMessage(`الملف "${file.name}" غير مدعوم. الصيغ المقبولة للصور: JPG, PNG, WEBP وللفيديو: MP4, WebM`);
+          return;
+        }
+        if (file.size > 10 * 1024 * 1024) {
+          setErrorMessage(`الصورة "${file.name}" تتجاوز الحد الأقصى المسموح به (10 ميجابايت)`);
+          return;
+        }
       }
 
       const localUrl = URL.createObjectURL(file);
-      const ext = file.name.split('.').pop()?.toUpperCase() || 'IMG';
+      const ext = file.name.split('.').pop()?.toUpperCase() || (isVideo ? 'VIDEO' : 'IMG');
 
       newStaged.push({
         id: `staged-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -203,7 +238,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         sizeBytes: file.size,
         format: ext,
         progress: 0,
-        status: 'pending'
+        status: 'pending',
+        isVideo
       });
     }
 
@@ -235,6 +271,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         );
 
         const isFirstImage = currentItems.length === 0 && i === 0;
+        const isVideo = item.isVideo || item.file.type.startsWith('video/');
 
         const uploadedMedia = await api.uploadAdminMedia(
           currentUser || {},
@@ -242,13 +279,14 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             file: item.file,
             filename: item.file.name,
             mimeType: item.file.type,
-            entityType,
+            resourceType: isVideo ? 'video' : 'image',
+            entityType: isVideo ? 'video' : entityType,
             entitySlug,
             entityId,
             alt: item.alt || getSuggestedAlt(),
             caption: item.caption,
             isPrimary: !multiple || isFirstImage,
-            addToGallery: multiple
+            addToGallery: multiple && !isVideo
           },
           (progressPercent) => {
             setStagedFiles((prev) =>
@@ -268,11 +306,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       if (multiple) {
         const newArray = [...currentItems.map((it) => it.item || it.url), ...uploadedResults];
         onChange(newArray);
-        setSuccessMessage(`تم رفع وتوثيق ${uploadedResults.length} صورة بنجاح في السحابة`);
+        setSuccessMessage(`تم رفع وتوثيق ${uploadedResults.length} وسيط بنجاح في السحابة`);
       } else {
         const first = uploadedResults[0];
         onChange(first.secureUrl || first.url);
-        setSuccessMessage('تم رفع الصورة واعتمادها بنجاح');
+        setSuccessMessage('تم رفع وتوثيق الوسيط بنجاح في السحابة');
       }
 
       // Cleanup staging
@@ -439,11 +477,6 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     }
     if (disabled || isUploading) return;
 
-    const confirmDelete = window.confirm(
-      'هل أنت متأكد من حذف هذه الصورة نهائياً من التخزين السحابي Cloudinary وقاعدة البيانات؟'
-    );
-    if (!confirmDelete) return;
-
     try {
       setIsUploading(true);
 
@@ -521,6 +554,14 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     }
   };
 
+  const isVideoUrl = (url?: string) =>
+    Boolean(
+      url &&
+        (url.match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i) ||
+          url.includes('/video/upload/') ||
+          url.includes('resource_type=video'))
+    );
+
   return (
     <div className={`w-full text-right ${className}`} dir="rtl">
       {/* Label and Header */}
@@ -530,7 +571,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             {label}
             {multiple && (
               <span className="text-[11px] font-normal text-[#8A7E72] dark:text-[#A89D91] mr-1.5">
-                ({currentItems.length} من {maxFiles} صور)
+                ({currentItems.length} من {maxFiles} {mediaCategory === 'video' ? 'فيديوهات' : 'وسائط'})
               </span>
             )}
           </label>
@@ -541,7 +582,13 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/jpg"
+        accept={
+          mediaCategory === 'video'
+            ? 'video/mp4,video/webm,video/quicktime,video/*'
+            : mediaCategory === 'image'
+            ? 'image/png,image/jpeg,image/webp,image/jpg'
+            : 'image/png,image/jpeg,image/webp,image/jpg,video/mp4,video/webm,video/quicktime,video/*'
+        }
         multiple={multiple}
         onChange={(e) => {
           if (e.target.files) handleFilesSelected(e.target.files);
@@ -554,7 +601,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       <input
         ref={replaceInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/jpg"
+        accept={
+          mediaCategory === 'video'
+            ? 'video/mp4,video/webm,video/quicktime,video/*'
+            : 'image/png,image/jpeg,image/webp,image/jpg'
+        }
         onChange={handleReplacementFilePicked}
         className="hidden"
         id="admin-media-replace-input"
@@ -565,7 +616,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {!isAdmin && (
         <div className="p-3 mb-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-200 text-xs flex items-center gap-2">
           <ShieldAlert className="w-4 h-4 shrink-0" />
-          <span>ميزة رفع واستبدال الصور مخصصة لمدراء المنصة فقط. يمكنك تصفح ومعاينة الصور.</span>
+          <span>ميزة رفع واستبدال الوسائط مخصصة لمدراء المنصة فقط. يمكنك تصفح ومعاينة الوسائط.</span>
         </div>
       )}
 
@@ -594,7 +645,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           }`}
         >
           <LinkIcon className="w-4 h-4 shrink-0" />
-          <span>رابط صورة خارجي (URL)</span>
+          <span>رابط وسيط خارجي (URL)</span>
         </button>
       </div>
 
@@ -624,14 +675,24 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             } ${disabled || !isAdmin ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
           >
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#EADCCB] dark:bg-[#362A22] flex items-center justify-center text-[#8E422D] dark:text-[#FF8A65]">
-              <Upload className="w-5 h-5 sm:w-6 sm:h-6" />
+              {mediaCategory === 'video' ? (
+                <Video className="w-5 h-5 sm:w-6 sm:h-6" />
+              ) : (
+                <Upload className="w-5 h-5 sm:w-6 sm:h-6" />
+              )}
             </div>
             <div>
               <p className="text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E5DDD3]">
-                اضغط هنا للاختيار من جهازك أو اسحب الصور إلى هنا
+                {mediaCategory === 'video'
+                  ? 'اضغط هنا للاختيار من جهازك أو اسحب مقطع الفيديو إلى هنا'
+                  : mediaCategory === 'image'
+                  ? 'اضغط هنا للاختيار من جهازك أو اسحب الصور إلى هنا'
+                  : 'اضغط هنا للاختيار من جهازك أو اسحب الصور والفيديوهات إلى هنا'}
               </p>
               <p className="text-[11px] sm:text-xs text-[#7A6E63] dark:text-[#A89D91] mt-0.5">
-                يدعم JPG و PNG و WEBP (الحد الأقصى 10 ميجابايت) • يتم التوثيق والمعاينة قبل الحفظ
+                {mediaCategory === 'video'
+                  ? 'يدعم MP4 و WebM و MOV (الحد الأقصى 150 ميجابايت) • مجلد WAH/videos'
+                  : 'يدعم الصور JPG و PNG (10 ميجابايت) والفيديو (150 ميجابايت) • يتم التوثيق والمعاينة قبل الحفظ'}
               </p>
             </div>
           </div>
@@ -644,7 +705,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           <div className="flex items-center justify-between pb-2 border-b border-[#E8E0D5] dark:border-[#3D332A]">
             <div className="flex items-center gap-2 text-xs font-bold text-[#8E422D] dark:text-[#FF8A65]">
               <Sparkles className="w-4 h-4" />
-              <span>معاينة الصورة قبل الحفظ والرفع إلى Cloudinary</span>
+              <span>معاينة الوسيط قبل الحفظ والرفع إلى Cloudinary</span>
             </div>
             <button
               type="button"
@@ -663,13 +724,22 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 key={sf.id}
                 className="flex gap-3 p-2.5 rounded-xl bg-white dark:bg-[#1E1815] border border-[#E8E0D5] dark:border-[#352B24]"
               >
-                <div className="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-black/10">
-                  <img
-                    src={sf.localPreviewUrl}
-                    alt={sf.alt}
-                    className="w-full h-full object-cover"
-                  />
-                  <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-white">
+                <div className="relative w-24 h-24 rounded-lg overflow-hidden shrink-0 bg-black/10 flex items-center justify-center">
+                  {sf.isVideo ? (
+                    <video
+                      src={sf.localPreviewUrl}
+                      className="w-full h-full object-cover"
+                      muted
+                    />
+                  ) : (
+                    <img
+                      src={sf.localPreviewUrl}
+                      alt={sf.alt}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-white flex items-center gap-1">
+                    {sf.isVideo && <Video className="w-2.5 h-2.5 text-amber-400" />}
                     {sf.format}
                   </span>
                 </div>
@@ -886,26 +956,32 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* SINGLE IMAGE PREVIEW MODE                                                */}
-      {/* ========================================================================= */}
+      {/* SINGLE IMAGE / VIDEO PREVIEW MODE */}
       {!multiple && currentItems.length > 0 && (
         <div className="relative rounded-2xl overflow-hidden border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#231C18] p-3">
-          <div className="relative w-full aspect-video sm:aspect-21/9 max-h-[240px] rounded-xl overflow-hidden bg-black/5 flex items-center justify-center">
-            <img
-              src={currentItems[0].url}
-              alt={currentItems[0].item?.alt || entityTitle || 'معاينة الصورة'}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800';
-              }}
-            />
+          <div className="relative w-full aspect-video sm:aspect-21/9 max-h-[240px] rounded-xl overflow-hidden bg-black/10 flex items-center justify-center">
+            {isVideoUrl(currentItems[0].url) ? (
+              <video
+                src={currentItems[0].url}
+                controls
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <img
+                src={currentItems[0].url}
+                alt={currentItems[0].item?.alt || entityTitle || 'معاينة الوسيط'}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800';
+                }}
+              />
+            )}
 
             {/* Cloudinary Badge */}
             {currentItems[0].url.includes('cloudinary.com') && (
               <div className="absolute top-2 right-2 px-2.5 py-1 rounded-md bg-[#8E422D]/90 backdrop-blur-xs text-white text-[10px] font-bold shadow-xs">
-                Cloudinary موثق
+                {isVideoUrl(currentItems[0].url) ? 'فيديو موثق' : 'Cloudinary موثق'}
               </div>
             )}
 
@@ -914,7 +990,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               type="button"
               onClick={() => setPreviewModalUrl(currentItems[0].url)}
               className="absolute top-2 left-2 p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white transition-all cursor-pointer"
-              title="تكبير ومعاينة الصورة"
+              title="تكبير ومعاينة"
             >
               <Eye className="w-4 h-4" />
             </button>
@@ -979,18 +1055,37 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 } bg-[#FAF7F2] dark:bg-[#231C18] p-2 flex flex-col justify-between`}
               >
                 {/* Thumbnail */}
-                <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black/5">
-                  <img
-                    src={img.url}
-                    alt={img.item?.alt || `صورة ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black/10 flex items-center justify-center">
+                  {isVideoUrl(img.url) ? (
+                    <>
+                      <video
+                        src={img.url}
+                        className="w-full h-full object-cover"
+                        muted
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <div className="w-8 h-8 rounded-full bg-black/60 flex items-center justify-center text-white">
+                          <Play className="w-4 h-4 fill-white ml-0.5" />
+                        </div>
+                      </div>
+                      <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] text-white flex items-center gap-1">
+                        <Video className="w-2.5 h-2.5 text-amber-400" />
+                        فيديو
+                      </span>
+                    </>
+                  ) : (
+                    <img
+                      src={img.url}
+                      alt={img.item?.alt || `صورة ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
 
                   {/* Primary Badge */}
                   {idx === 0 && (
                     <div className="absolute top-1.5 right-1.5 px-2 py-0.5 rounded-md bg-[#8E422D] text-white text-[10px] font-bold flex items-center gap-1 shadow-xs">
                       <Star className="w-3 h-3 fill-current" />
-                      <span>صورة رئيسية</span>
+                      <span>رئيسي</span>
                     </div>
                   )}
 
@@ -1092,11 +1187,20 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-            <img
-              src={previewModalUrl}
-              alt="معاينة بالحجم الكامل"
-              className="max-h-[78vh] w-auto object-contain rounded-xl"
-            />
+            {isVideoUrl(previewModalUrl) ? (
+              <video
+                src={previewModalUrl}
+                controls
+                autoPlay
+                className="max-h-[78vh] max-w-full rounded-xl"
+              />
+            ) : (
+              <img
+                src={previewModalUrl}
+                alt="معاينة بالحجم الكامل"
+                className="max-h-[78vh] w-auto object-contain rounded-xl"
+              />
+            )}
             <div className="w-full p-2 text-center text-xs text-white/70 truncate font-mono text-left mt-1" dir="ltr">
               {previewModalUrl}
             </div>

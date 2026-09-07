@@ -2,7 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
 import { ObjectId } from 'mongodb';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import { validateImage } from '../utils/imageValidator.ts';
+import { validateImage, validateVideo } from '../utils/imageValidator.ts';
 import { getCloudinaryFolder, sanitizeSlug } from '../utils/cloudinaryFolders.ts';
 import { cloudinaryStorage, isCloudinaryAvailable, extractCloudinaryPublicId } from './storage/cloudinaryProvider.ts';
 import { Logger } from '../utils/logger.ts';
@@ -49,6 +49,7 @@ export interface UploadAdminMediaOptions {
   data: Buffer | string; // Buffer or Base64 string
   filename?: string;
   mimeType?: string;
+  resourceType?: 'image' | 'video';
   entityType: string;
   entitySlug?: string;
   entityId?: string;
@@ -96,6 +97,7 @@ export interface GetMediaFilterOptions {
   entityType?: string;
   folder?: string;
   entityId?: string;
+  resourceType?: string;
   page?: number;
   limit?: number;
   sort?: 'newest' | 'oldest' | 'size_desc' | 'size_asc';
@@ -105,19 +107,21 @@ export interface GetMediaFilterOptions {
  * Maps entity type to the corresponding MongoDB collection name
  */
 function getEntityCollectionName(entityType: string): string | null {
-  const norm = entityType.toLowerCase();
+  if (!entityType) return null;
+  const norm = entityType.toLowerCase().replace(/[-_\s]/g, '');
   if (norm === 'province' || norm === 'provinces' || norm === 'governorate' || norm === 'governorates') {
     return 'wah_governorates';
   }
   if (
     norm === 'archaeologicalsite' ||
-    norm === 'archaeological-site' ||
     norm === 'place' ||
     norm === 'heritageplace' ||
     norm === 'places' ||
     norm === 'museum' ||
     norm === 'religioussite' ||
-    norm === 'naturalreserve'
+    norm === 'naturalreserve' ||
+    norm === 'site' ||
+    norm === 'sites'
   ) {
     return 'wah_heritage_places';
   }
@@ -151,7 +155,10 @@ function getEntityCollectionName(entityType: string): string | null {
   if (norm === 'category' || norm === 'categories') {
     return 'categories';
   }
-  return null;
+  if (norm === 'general' || norm === 'media' || norm === 'wahmedia') {
+    return 'wah_media';
+  }
+  return 'wah_heritage_places';
 }
 
 /**
@@ -162,7 +169,8 @@ async function syncMediaWithEntity(
   entityId: string,
   secureUrl: string,
   isPrimary?: boolean,
-  addToGallery?: boolean
+  addToGallery?: boolean,
+  resourceType?: 'image' | 'video'
 ) {
   if (!entityId) return;
 
@@ -177,16 +185,21 @@ async function syncMediaWithEntity(
       const updateFields: any = {};
       const pushFields: any = {};
 
-      if (isPrimary) {
-        if (entityType === 'person') {
-          updateFields.avatarUrl = secureUrl;
-        } else {
-          updateFields.coverImage = secureUrl;
+      if (resourceType === 'video') {
+        updateFields.videoUrl = secureUrl;
+        pushFields.videos = secureUrl;
+      } else {
+        if (isPrimary) {
+          if (entityType === 'person') {
+            updateFields.avatarUrl = secureUrl;
+          } else {
+            updateFields.coverImage = secureUrl;
+          }
         }
-      }
 
-      if (addToGallery) {
-        pushFields.gallery = secureUrl;
+        if (addToGallery) {
+          pushFields.gallery = secureUrl;
+        }
       }
 
       const updateOp: any = {};
@@ -203,6 +216,39 @@ async function syncMediaWithEntity(
       }
     } catch (err) {
       Logger.error(`[MediaSync] Failed to sync media with entity in ${collectionName}:`, err);
+    }
+  }
+
+  // Also sync in-memory collections for fast immediate reactivity
+  if (collectionName === 'wah_heritage_places') {
+    const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+    if (place) {
+      if (resourceType === 'video') {
+        place.videoUrl = secureUrl;
+        if (!place.videos) place.videos = [];
+        if (!place.videos.includes(secureUrl)) place.videos.push(secureUrl);
+      } else {
+        if (isPrimary) place.coverImage = secureUrl;
+        if (addToGallery) {
+          if (!place.gallery) place.gallery = [];
+          if (!place.gallery.includes(secureUrl)) place.gallery.push(secureUrl);
+        }
+      }
+    }
+  } else if (collectionName === 'wah_cultural_crafts') {
+    const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+    if (craft) {
+      if (resourceType === 'video') {
+        craft.videoUrl = secureUrl;
+        if (!craft.videos) craft.videos = [];
+        if (!craft.videos.includes(secureUrl)) craft.videos.push(secureUrl);
+      } else {
+        if (isPrimary) craft.coverImage = secureUrl;
+        if (addToGallery) {
+          if (!craft.gallery) craft.gallery = [];
+          if (!craft.gallery.includes(secureUrl)) craft.gallery.push(secureUrl);
+        }
+      }
     }
   }
 }
@@ -230,14 +276,32 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
   }
 
-  // 2. Validate Image Content & Format
-  const validation = validateImage(data, filename, mimeType);
+  // 2. Detect Media Type (Video vs Image)
+  const isVideo =
+    options.resourceType === 'video' ||
+    Boolean(mimeType && mimeType.toLowerCase().startsWith('video/')) ||
+    filename.toLowerCase().endsWith('.mp4') ||
+    filename.toLowerCase().endsWith('.webm') ||
+    filename.toLowerCase().endsWith('.mov') ||
+    filename.toLowerCase().endsWith('.ogg') ||
+    filename.toLowerCase().endsWith('.mkv') ||
+    entityType === 'video' ||
+    entityType === 'videos';
+
+  // 3. Validate Content & Format
+  const validation = isVideo
+    ? validateVideo(data, filename, mimeType)
+    : validateImage(data, filename, mimeType);
+
   if (!validation.valid) {
-    throw new Error(validation.error || 'ملف الصورة غير صالح أو يتجاوز الحجم المسموح');
+    throw new Error(validation.error || (isVideo ? 'ملف الفيديو غير صالح أو يتجاوز الحجم المسموح' : 'ملف الصورة غير صالح أو يتجاوز الحجم المسموح'));
   }
 
-  // 3. Resolve Standardized Cloudinary Folder via Whitelisted Central Function
-  const targetFolder = getCloudinaryFolder(entityType, entitySlug || entityId);
+  // 4. Resolve Standardized Cloudinary Folder via Whitelisted Central Function
+  // Videos are strictly routed under WAH/videos (d03b8e1b5e8938e80e3e4205e905206b0e)
+  const targetFolder = isVideo
+    ? getCloudinaryFolder({ entityType, entitySlug: entitySlug || entityId, resourceType: 'video' })
+    : getCloudinaryFolder(entityType, entitySlug || entityId);
 
   if (!isCloudinaryAvailable()) {
     throw new Error('خدمة Cloudinary غير مهيأة أو غير متوفرة في بيئة العمل');
@@ -245,12 +309,12 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
 
   ensureCloudinaryConfig();
 
-  // 4. Generate Safe Public ID
-  const cleanName = sanitizeSlug(filename.replace(/\.[^/.]+$/, '')) || 'img';
+  // 5. Generate Safe Public ID
+  const cleanName = sanitizeSlug(filename.replace(/\.[^/.]+$/, '')) || (isVideo ? 'vid' : 'img');
   const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
   const publicId = `${cleanName}_${uniqueSuffix}`;
 
-  // 5. Prepare Payload & Upload Options
+  // 6. Prepare Payload & Upload Options
   let uploadPayload: string | Buffer;
   if (Buffer.isBuffer(data)) {
     uploadPayload = data;
@@ -258,19 +322,27 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     if (data.startsWith('data:')) {
       uploadPayload = data;
     } else {
-      uploadPayload = `data:${validation.mimeType || 'image/jpeg'};base64,${data}`;
+      const defaultMime = isVideo ? 'video/mp4' : 'image/jpeg';
+      uploadPayload = `data:${validation.mimeType || defaultMime};base64,${data}`;
     }
   } else {
-    throw new Error('صيغة بيانات الصورة غير مدعومة');
+    throw new Error('صيغة بيانات الوسائط غير مدعومة');
   }
 
   const uploadOptions: any = {
     folder: targetFolder,
     public_id: publicId,
     overwrite: false,
-    resource_type: 'image',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-    transformation: [{ quality: 'auto', fetch_format: 'auto' }]
+    resource_type: isVideo ? 'video' : 'image',
+    ...(isVideo
+      ? {
+          eager: [{ quality: 'auto' }],
+          eager_async: true
+        }
+      : {
+          allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+          transformation: [{ quality: 'auto', fetch_format: 'auto' }]
+        })
   };
 
   let uploadResult: UploadApiResponse;
@@ -280,7 +352,7 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
       uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(uploadOptions, (err, res) => {
           if (err || !res) {
-            reject(err || new Error('فشل رفع الصورة إلى Cloudinary'));
+            reject(err || new Error(isVideo ? 'فشل رفع الفيديو إلى Cloudinary' : 'فشل رفع الصورة إلى Cloudinary'));
           } else {
             resolve(res);
           }
@@ -292,12 +364,12 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     }
   } catch (cloudErr: any) {
     Logger.error('[MediaService] Cloudinary upload error:', cloudErr?.message || cloudErr);
-    throw new Error(cloudErr?.message || 'فشل في رفع الصورة إلى خدمة التخزين السحابي Cloudinary');
+    throw new Error(cloudErr?.message || (isVideo ? 'فشل في رفع الفيديو إلى خدمة التخزين السحابي Cloudinary' : 'فشل في رفع الصورة إلى خدمة التخزين السحابي Cloudinary'));
   }
 
-  // 6. Construct Media Document
+  // 7. Construct Media Document
   const mediaId = `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-  const suggestedAlt = alt || `${filename || 'صورة'} - منصة وه للتراث`;
+  const suggestedAlt = alt || `${filename || (isVideo ? 'فيديو' : 'صورة')} - منصة وه للتراث`;
 
   const mediaDoc: any = {
     _id: mediaId,
@@ -307,8 +379,9 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     secureUrl: uploadResult.secure_url,
     publicId: uploadResult.public_id,
     folder: targetFolder,
-    type: 'image',
-    category: (entityType as any) || 'general',
+    type: isVideo ? 'video' : 'image',
+    resourceType: isVideo ? 'video' : 'image',
+    category: (entityType as any) || (isVideo ? 'videos' : 'general'),
     entityType,
     entityId: entityId || undefined,
     entitySlug: sanitizeSlug(entitySlug) || undefined,
@@ -318,7 +391,8 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     bytes: uploadResult.bytes || validation.sizeBytes || 0,
     width: uploadResult.width,
     height: uploadResult.height,
-    format: uploadResult.format,
+    duration: uploadResult.duration,
+    format: uploadResult.format || (isVideo ? 'mp4' : 'jpg'),
     alt: suggestedAlt,
     caption: caption || '',
     isPrimary: Boolean(isPrimary),
@@ -526,7 +600,11 @@ export async function replaceAdminMedia(options: ReplaceAdminMediaOptions): Prom
   // 4. Safely destroy the old Cloudinary asset now that replacement is verified in DB
   if (oldPublicId) {
     try {
-      await cloudinary.uploader.destroy(oldPublicId);
+      const destroyOpts: any = {};
+      if (existingMedia.type === 'video' || existingMedia.resourceType === 'video') {
+        destroyOpts.resource_type = 'video';
+      }
+      await cloudinary.uploader.destroy(oldPublicId, destroyOpts);
       Logger.info(`[MediaService] Successfully destroyed replaced old Cloudinary asset: ${oldPublicId}`);
     } catch (destroyErr) {
       Logger.warn('[MediaService] Failed to destroy old Cloudinary asset:', destroyErr);
@@ -577,7 +655,11 @@ export async function deleteAdminMedia(
   if (targetPublicId && isCloudinaryAvailable()) {
     ensureCloudinaryConfig();
     try {
-      const res = await cloudinary.uploader.destroy(targetPublicId);
+      const destroyOpts: any = {};
+      if (mediaDoc?.type === 'video' || mediaDoc?.resourceType === 'video') {
+        destroyOpts.resource_type = 'video';
+      }
+      const res = await cloudinary.uploader.destroy(targetPublicId, destroyOpts);
       cloudinaryDeleted = res.result === 'ok' || res.result === 'not found';
       Logger.info(`[MediaService] Cloudinary destroy result for ${targetPublicId}: ${res.result}`);
     } catch (cloudErr) {
@@ -601,9 +683,45 @@ export async function deleteAdminMedia(
           $pull: { gallery: targetUrl } as any,
           $set: { updatedAt: new Date().toISOString() }
         });
+        // Pull from videos or unset videoUrl
+        await db.collection(collectionName).updateOne(
+          { ...filter, videoUrl: targetUrl },
+          { $set: { videoUrl: '', updatedAt: new Date().toISOString() } }
+        );
+        await db.collection(collectionName).updateOne(filter, {
+          $pull: { videos: targetUrl } as any,
+          $set: { updatedAt: new Date().toISOString() }
+        });
         Logger.info(`[MediaService] Cleaned up entity references for ${mediaDoc.entityId} in ${collectionName}`);
       } catch (syncErr) {
         Logger.warn('[MediaService] Entity reference cleanup error:', syncErr);
+      }
+    }
+
+    // Clean up memoryDb entity stores as well
+    if (targetUrl) {
+      const targetClean = targetUrl.trim();
+      const targetPath = targetClean.split('?')[0];
+      const checkMatch = (u?: string) => u && (u.trim() === targetClean || u.trim().split('?')[0] === targetPath);
+
+      for (const p of memoryDb.heritagePlaces) {
+        if (checkMatch(p.coverImage)) p.coverImage = '';
+        if (p.gallery) p.gallery = p.gallery.filter((u) => !checkMatch(u));
+        if ((p as any).galleryImages) (p as any).galleryImages = (p as any).galleryImages.filter((u: string) => !checkMatch(u));
+        if (checkMatch(p.videoUrl)) p.videoUrl = '';
+        if (p.videos) p.videos = p.videos.filter((u) => !checkMatch(u));
+      }
+      for (const c of memoryDb.culturalCrafts) {
+        if (checkMatch(c.coverImage)) c.coverImage = '';
+        if (c.gallery) c.gallery = c.gallery.filter((u) => !checkMatch(u));
+      }
+      for (const g of memoryDb.governorates) {
+        if (checkMatch(g.coverImage)) g.coverImage = '';
+        if ((g as any).gallery) (g as any).gallery = (g as any).gallery.filter((u: string) => !checkMatch(u));
+      }
+      for (const s of memoryDb.wahStories) {
+        if (checkMatch(s.coverImage)) s.coverImage = '';
+        if ((s as any).gallery) (s as any).gallery = (s as any).gallery.filter((u: string) => !checkMatch(u));
       }
     }
   }
@@ -741,14 +859,296 @@ export async function reorderGalleryMedia(options: {
   }
 
   const { db, isMongo } = await getDatabase();
+  const filter = { $or: [{ id: entityId }, { _id: entityId } as any] };
   if (isMongo && db) {
     await db.collection(collectionName).updateOne(
-      { $or: [{ id: entityId }, { _id: entityId } as any] },
+      filter,
       { $set: { gallery: galleryUrls, updatedAt: new Date().toISOString() } }
     );
   }
 
+  // Also sync memoryDb
+  if (collectionName === 'wah_heritage_places') {
+    const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+    if (place) place.gallery = [...galleryUrls];
+  } else if (collectionName === 'wah_cultural_crafts') {
+    const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+    if (craft) craft.gallery = [...galleryUrls];
+  }
+
   return { success: true, gallery: galleryUrls };
+}
+
+/**
+ * Directly manages entity gallery items: add, remove, setCover, updateGallery, setVideo, removeVideo
+ */
+export async function manageEntityGallery(options: {
+  entityType: string;
+  entityId: string;
+  action: 'add' | 'remove' | 'setCover' | 'updateGallery' | 'setVideo' | 'removeVideo';
+  imageUrl?: string;
+  videoUrl?: string;
+  galleryUrls?: string[];
+  user: { id: string; role: UserRole };
+}): Promise<{
+  success: boolean;
+  message: string;
+  coverImage?: string;
+  gallery?: string[];
+  videoUrl?: string | null;
+  videos?: string[];
+}> {
+  const { entityType, entityId, action, imageUrl, videoUrl, galleryUrls, user } = options;
+
+  if (!user || user.role !== 'admin') {
+    throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
+  }
+
+  const collectionName = getEntityCollectionName(entityType);
+  if (!collectionName) {
+    throw new Error(`نوع الكيان ${entityType} غير مدعوم للمعرض`);
+  }
+
+  const { db, isMongo } = await getDatabase();
+  const filter = { $or: [{ id: entityId }, { slug: entityId }, { _id: entityId } as any] };
+
+  let updatedGallery: string[] = [];
+  let updatedCover: string | undefined;
+
+  if (action === 'setCover' && imageUrl) {
+    updatedCover = imageUrl;
+    if (isMongo && db) {
+      await db.collection(collectionName).updateOne(filter, {
+        $set: { coverImage: imageUrl, updatedAt: new Date().toISOString() }
+      });
+    }
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) place.coverImage = imageUrl;
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) craft.coverImage = imageUrl;
+    }
+    return { success: true, message: 'تم تعيين الصورة كصورة رئيسية للمكان بنجاح', coverImage: imageUrl };
+  }
+
+  if (action === 'setVideo' && (videoUrl || imageUrl)) {
+    const targetVideo = videoUrl || imageUrl;
+    if (isMongo && db) {
+      await db.collection(collectionName).updateOne(filter, {
+        $set: { videoUrl: targetVideo, updatedAt: new Date().toISOString() },
+        $addToSet: { videos: targetVideo } as any
+      });
+    }
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) {
+        place.videoUrl = targetVideo;
+        if (!place.videos) place.videos = [];
+        if (!place.videos.includes(targetVideo!)) place.videos.push(targetVideo!);
+      }
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) {
+        craft.videoUrl = targetVideo;
+        if (!craft.videos) craft.videos = [];
+        if (!craft.videos.includes(targetVideo!)) craft.videos.push(targetVideo!);
+      }
+    }
+    return { success: true, message: 'تم حفظ مقطع الفيديو التوثيقي بنجاح', videoUrl: targetVideo };
+  }
+
+  if (action === 'removeVideo') {
+    const targetVideo = videoUrl || imageUrl;
+    if (isMongo && db) {
+      const updateDoc: any = {
+        $set: { updatedAt: new Date().toISOString() }
+      };
+      if (!targetVideo) {
+        updateDoc.$set.videoUrl = null;
+      }
+      if (targetVideo) {
+        updateDoc.$pull = { videos: targetVideo };
+      }
+      await db.collection(collectionName).updateOne(filter, updateDoc);
+    }
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) {
+        if (!targetVideo || place.videoUrl === targetVideo) place.videoUrl = undefined;
+        if (targetVideo && place.videos) place.videos = place.videos.filter((v) => v !== targetVideo);
+      }
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) {
+        if (!targetVideo || craft.videoUrl === targetVideo) craft.videoUrl = undefined;
+        if (targetVideo && craft.videos) craft.videos = craft.videos.filter((v) => v !== targetVideo);
+      }
+    }
+    return { success: true, message: 'تم إزالة مقطع الفيديو بنجاح', videoUrl: null };
+  }
+
+  if (action === 'add' && imageUrl) {
+    if (isMongo && db) {
+      await db.collection(collectionName).updateOne(filter, {
+        $addToSet: { gallery: imageUrl } as any,
+        $set: { updatedAt: new Date().toISOString() }
+      });
+    }
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) {
+        if (!place.gallery) place.gallery = [];
+        if (!place.gallery.includes(imageUrl)) place.gallery.push(imageUrl);
+        updatedGallery = place.gallery;
+      }
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) {
+        if (!craft.gallery) craft.gallery = [];
+        if (!craft.gallery.includes(imageUrl)) craft.gallery.push(imageUrl);
+        updatedGallery = craft.gallery;
+      }
+    }
+    return { success: true, message: 'تمت إضافة الصورة إلى معرض صور المكان بنجاح', gallery: updatedGallery };
+  }
+
+  if (action === 'remove' && imageUrl) {
+    const targetClean = imageUrl.trim();
+    const targetPath = targetClean.split('?')[0];
+
+    if (isMongo && db) {
+      try {
+        const doc = await db.collection(collectionName).findOne(filter);
+        if (doc) {
+          const currentList: string[] = Array.isArray(doc.gallery)
+            ? doc.gallery
+            : Array.isArray((doc as any).galleryImages)
+            ? (doc as any).galleryImages
+            : [];
+
+          const filtered = currentList.filter((img: string) => {
+            if (!img) return false;
+            const clean = img.trim();
+            if (clean === targetClean || clean.split('?')[0] === targetPath) return false;
+            const p1 = clean.split('/upload/')[1];
+            const p2 = targetClean.split('/upload/')[1];
+            if (p1 && p2 && (p1.endsWith(p2) || p2.endsWith(p1))) return false;
+            return true;
+          });
+
+          const updateFields: any = {
+            gallery: filtered,
+            updatedAt: new Date().toISOString()
+          };
+          if ((doc as any).galleryImages) {
+            updateFields.galleryImages = filtered;
+          }
+          if (doc.coverImage && (doc.coverImage === targetClean || doc.coverImage.split('?')[0] === targetPath)) {
+            updateFields.coverImage = filtered[0] || '';
+          }
+          await db.collection(collectionName).updateOne(filter, { $set: updateFields });
+          updatedGallery = filtered;
+        } else {
+          await db.collection(collectionName).updateOne(filter, {
+            $pull: { gallery: imageUrl, galleryImages: imageUrl } as any,
+            $set: { updatedAt: new Date().toISOString() }
+          });
+        }
+      } catch (dbErr) {
+        Logger.warn('[MediaService] MongoDB gallery removal warning:', dbErr);
+      }
+    }
+
+    // Synchronize memoryDb store
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) {
+        const curList = Array.isArray(place.gallery) && place.gallery.length > 0 ? place.gallery : ((place as any).galleryImages || []);
+        const filtered = curList.filter((img: string) => img !== targetClean && img.split('?')[0] !== targetPath);
+        place.gallery = filtered;
+        (place as any).galleryImages = filtered;
+        if (place.coverImage && (place.coverImage === targetClean || place.coverImage.split('?')[0] === targetPath)) {
+          place.coverImage = filtered[0] || '';
+        }
+        updatedGallery = filtered;
+      }
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) {
+        const curList = craft.gallery || [];
+        const filtered = curList.filter((img: string) => img !== targetClean && img.split('?')[0] !== targetPath);
+        craft.gallery = filtered;
+        if (craft.coverImage && (craft.coverImage === targetClean || craft.coverImage.split('?')[0] === targetPath)) {
+          craft.coverImage = filtered[0] || '';
+        }
+        updatedGallery = filtered;
+      }
+    } else if (collectionName === 'wah_governorates') {
+      const gov = memoryDb.governorates.find((g) => g.id === entityId || g.slug === entityId);
+      if (gov && (gov as any).gallery) {
+        (gov as any).gallery = (gov as any).gallery.filter((img: string) => img !== targetClean && img.split('?')[0] !== targetPath);
+        updatedGallery = (gov as any).gallery;
+      }
+    } else if (collectionName === 'wah_stories') {
+      const story = memoryDb.wahStories.find((s) => s.id === entityId || s.slug === entityId);
+      if (story && (story as any).gallery) {
+        (story as any).gallery = (story as any).gallery.filter((img: string) => img !== targetClean && img.split('?')[0] !== targetPath);
+        updatedGallery = (story as any).gallery;
+      }
+    }
+
+    // Safely delete Cloudinary asset if public ID is extracted
+    const publicId = extractCloudinaryPublicId(targetClean);
+    if (publicId && isCloudinaryAvailable()) {
+      try {
+        ensureCloudinaryConfig();
+        await cloudinary.uploader.destroy(publicId);
+        Logger.info(`[MediaService] Cloudinary destroyed asset on gallery removal: ${publicId}`);
+      } catch (cloudErr) {
+        Logger.warn('[MediaService] Cloudinary destroy on gallery removal error:', cloudErr);
+      }
+    }
+
+    // Also remove from media assets collection
+    if (isMongo && db) {
+      await db.collection('wah_media').deleteMany({
+        $or: [{ url: targetClean }, { secureUrl: targetClean }, { url: targetPath }, { secureUrl: targetPath }]
+      });
+    }
+    memoryDb.media = memoryDb.media.filter(
+      (m) => m.url !== targetClean && m.secureUrl !== targetClean && m.url !== targetPath && m.secureUrl !== targetPath
+    );
+
+    return { success: true, message: 'تم حذف الصورة من معرض المكان بنجاح', gallery: updatedGallery };
+  }
+
+  if (action === 'updateGallery' && Array.isArray(galleryUrls)) {
+    if (isMongo && db) {
+      await db.collection(collectionName).updateOne(filter, {
+        $set: { gallery: galleryUrls, galleryImages: galleryUrls, updatedAt: new Date().toISOString() }
+      });
+    }
+    if (collectionName === 'wah_heritage_places') {
+      const place = memoryDb.heritagePlaces.find((p) => p.id === entityId || p.slug === entityId);
+      if (place) {
+        place.gallery = [...galleryUrls];
+        (place as any).galleryImages = [...galleryUrls];
+      }
+    } else if (collectionName === 'wah_cultural_crafts') {
+      const craft = memoryDb.culturalCrafts.find((c) => c.id === entityId || c.slug === entityId);
+      if (craft) craft.gallery = [...galleryUrls];
+    } else if (collectionName === 'wah_governorates') {
+      const gov = memoryDb.governorates.find((g) => g.id === entityId || g.slug === entityId);
+      if (gov) (gov as any).gallery = [...galleryUrls];
+    } else if (collectionName === 'wah_stories') {
+      const story = memoryDb.wahStories.find((s) => s.id === entityId || s.slug === entityId);
+      if (story) (story as any).gallery = [...galleryUrls];
+    }
+    return { success: true, message: 'تم تحديث صور المعرض بنجاح', gallery: galleryUrls };
+  }
+
+  return { success: false, message: 'إجراء غير معروف أو بيانات غير مكتملة' };
 }
 
 /**
@@ -811,7 +1211,7 @@ export async function reassignMediaEntity(options: {
  * Lists media items with search, filters, pagination, and sorting.
  */
 export async function getAdminMediaList(options: GetMediaFilterOptions) {
-  const { search, entityType, folder, entityId, page = 1, limit = 24, sort = 'newest' } = options;
+  const { search, entityType, folder, entityId, resourceType, page = 1, limit = 24, sort = 'newest' } = options;
   const { db, isMongo } = await getDatabase();
 
   const skip = (Math.max(1, page) - 1) * limit;
@@ -831,9 +1231,13 @@ export async function getAdminMediaList(options: GetMediaFilterOptions) {
       filter.entityId = entityId;
     }
 
+    if (resourceType && resourceType !== 'all') {
+      filter.$or = [{ type: resourceType }, { resourceType: resourceType }];
+    }
+
     if (search && typeof search === 'string' && search.trim()) {
       const q = search.trim();
-      filter.$or = [
+      const searchConditions = [
         { title: { $regex: q, $options: 'i' } },
         { alt: { $regex: q, $options: 'i' } },
         { caption: { $regex: q, $options: 'i' } },
@@ -841,6 +1245,12 @@ export async function getAdminMediaList(options: GetMediaFilterOptions) {
         { entitySlug: { $regex: q, $options: 'i' } },
         { folder: { $regex: q, $options: 'i' } }
       ];
+      if (filter.$or) {
+        filter.$and = [{ $or: filter.$or }, { $or: searchConditions }];
+        delete filter.$or;
+      } else {
+        filter.$or = searchConditions;
+      }
     }
 
     let sortObj: any = { createdAt: -1 };
@@ -878,6 +1288,9 @@ export async function getAdminMediaList(options: GetMediaFilterOptions) {
   }
   if (entityId) {
     list = list.filter((m) => m.entityId === entityId);
+  }
+  if (resourceType && resourceType !== 'all') {
+    list = list.filter((m) => m.type === resourceType || (m as any).resourceType === resourceType);
   }
   if (search && search.trim()) {
     const q = search.toLowerCase().trim();

@@ -171,6 +171,7 @@ export const adminMediaApi = {
       data?: string;
       filename?: string;
       mimeType?: string;
+      resourceType?: 'image' | 'video';
       entityType: string;
       entitySlug?: string;
       entityId?: string;
@@ -220,6 +221,7 @@ export const adminMediaApi = {
         const formData = new FormData();
         formData.append('file', payload.file, payload.filename || (payload.file as File).name || 'image.jpg');
         formData.append('entityType', payload.entityType);
+        if (payload.resourceType) formData.append('resourceType', payload.resourceType);
         if (payload.entitySlug) formData.append('entitySlug', payload.entitySlug);
         if (payload.entityId) formData.append('entityId', payload.entityId);
         if (payload.alt) formData.append('alt', payload.alt);
@@ -315,15 +317,27 @@ export const adminMediaApi = {
     user: { id?: string; role?: string },
     mediaIdOrPublicId: string
   ): Promise<boolean> {
-    const res = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaIdOrPublicId)}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(user)
-    });
-    const json = await res.json();
-    if (!json.success) {
+    try {
+      const res = await fetch(`${API_BASE}/admin/media/delete`, {
+        method: 'POST',
+        headers: getAuthHeaders(user),
+        body: JSON.stringify({ mediaId: mediaIdOrPublicId })
+      });
+      const json = await res.json();
+      if (json.success) return true;
       throw new Error(json.error || 'فشل في حذف الصورة');
+    } catch (err: any) {
+      // Fallback to legacy DELETE endpoint
+      const resFallback = await fetch(`${API_BASE}/admin/media/${encodeURIComponent(mediaIdOrPublicId)}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders(user)
+      });
+      const jsonFallback = await resFallback.json();
+      if (!jsonFallback.success) {
+        throw new Error(jsonFallback.error || err?.message || 'فشل في حذف الصورة');
+      }
+      return true;
     }
-    return true;
   },
 
   async updateAdminMediaMetadata(
@@ -392,13 +406,14 @@ export const adminMediaApi = {
 
   async getAdminMediaList(
     user: { id?: string; role?: string },
-    query?: { search?: string; entityType?: string; folder?: string; entityId?: string; page?: number; limit?: number; sort?: string }
+    query?: { search?: string; entityType?: string; folder?: string; entityId?: string; resourceType?: string; page?: number; limit?: number; sort?: string }
   ): Promise<{ items: MediaItem[]; total: number; page: number; limit: number; totalPages: number }> {
     const params = new URLSearchParams();
     if (query?.search) params.set('search', query.search);
     if (query?.entityType) params.set('entityType', query.entityType);
     if (query?.folder) params.set('folder', query.folder);
     if (query?.entityId) params.set('entityId', query.entityId);
+    if (query?.resourceType) params.set('resourceType', query.resourceType);
     if (query?.page) params.set('page', String(query.page));
     if (query?.limit) params.set('limit', String(query.limit));
     if (query?.sort) params.set('sort', query.sort);
@@ -417,6 +432,36 @@ export const adminMediaApi = {
       limit: json.limit || 24,
       totalPages: json.totalPages || 1
     };
+  },
+
+  async manageEntityGallery(
+    user: { id?: string; role?: string },
+    payload: {
+      entityType: string;
+      entityId: string;
+      action: 'add' | 'remove' | 'setCover' | 'updateGallery' | 'setVideo' | 'removeVideo';
+      imageUrl?: string;
+      videoUrl?: string;
+      galleryUrls?: string[];
+    }
+  ): Promise<{
+    success: boolean;
+    message: string;
+    coverImage?: string;
+    gallery?: string[];
+    videoUrl?: string | null;
+    videos?: string[];
+  }> {
+    const res = await fetch(`${API_BASE}/admin/media/gallery/manage`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل تعديل معرض الصور والوسائط');
+    }
+    return json;
   }
 };
 

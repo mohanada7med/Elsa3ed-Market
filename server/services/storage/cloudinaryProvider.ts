@@ -167,17 +167,17 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     if (isVideo || (folder as string) === 'reels' || (folder as string) === 'videos') {
       if (options.role === 'admin' && !options.sellerId) {
-        // Admin video uploads go to dedicated admin folder
-        cloudinaryFolder = 'Elsa3ed-Market/admin/videos';
+        // Admin video uploads go to dedicated WAH videos folder
+        cloudinaryFolder = 'WAH/videos';
       } else if (options.sellerId) {
         // Seller video uploads go to isolated seller folder
         const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
-        cloudinaryFolder = `Elsa3ed-Market/sellers/${cleanSellerId}/videos`;
+        cloudinaryFolder = `WAH/videos/sellers/${cleanSellerId}`;
       } else if (ownerId) {
         const cleanOwnerId = ownerId.replace(/[^a-zA-Z0-9_-]/g, '_');
-        cloudinaryFolder = `Elsa3ed-Market/sellers/${cleanOwnerId}/videos`;
+        cloudinaryFolder = `WAH/videos/sellers/${cleanOwnerId}`;
       } else {
-        cloudinaryFolder = 'Elsa3ed-Market/videos';
+        cloudinaryFolder = 'WAH/videos';
       }
 
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');

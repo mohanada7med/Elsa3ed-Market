@@ -25,6 +25,7 @@ import {
 
 const ENTITY_TYPE_OPTIONS = [
   { value: 'all', label: 'جميع الأنواع والأقسام' },
+  { value: 'video', label: 'مقاطع الفيديو التوثيقية (WAH/videos)' },
   { value: 'province', label: 'محافظات الصعيد (Provinces)' },
   { value: 'archaeologicalSite', label: 'المعالم والمواقع الأثرية (Sites)' },
   { value: 'craft', label: 'الحرف اليدوية والفنون (Crafts)' },
@@ -40,6 +41,7 @@ const ENTITY_TYPE_OPTIONS = [
 
 const FOLDER_OPTIONS = [
   { value: 'all', label: 'جميع المجلدات' },
+  { value: 'WAH/videos', label: 'WAH/videos (فيديوهات الصعيد)' },
   { value: 'WAH/provinces', label: 'WAH/provinces' },
   { value: 'WAH/archaeological-sites', label: 'WAH/archaeological-sites' },
   { value: 'WAH/crafts', label: 'WAH/crafts' },
@@ -76,6 +78,8 @@ export const AdminMediaLibraryPage: React.FC = () => {
   const [lightboxItem, setLightboxItem] = useState<MediaItem | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const [copiedPublicId, setCopiedPublicId] = useState<string | null>(null);
+  const [itemPendingDelete, setItemPendingDelete] = useState<MediaItem | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Load media items from API
   const loadMedia = useCallback(async () => {
@@ -106,21 +110,26 @@ export const AdminMediaLibraryPage: React.FC = () => {
   }, [loadMedia]);
 
   // Handle Delete media asset
-  const handleDeleteMedia = async (item: MediaItem) => {
-    if (!item.id && !item.publicId) return;
-    const confirmDelete = window.confirm(
-      `هل أنت متأكد من حذف هذه الصورة من Cloudinary وقاعدة البيانات؟\n${item.publicId || item.title || item.url}`
-    );
-    if (!confirmDelete) return;
+  const handleDeleteMedia = (item: MediaItem) => {
+    if (!item.id && !item.publicId && !item.url) return;
+    setDeleteError(null);
+    setItemPendingDelete(item);
+  };
 
-    setDeletingItemId(item.id || item.publicId || 'current');
+  const confirmDeleteMedia = async () => {
+    if (!itemPendingDelete) return;
+    const item = itemPendingDelete;
+    const targetId = item.id || item.publicId || item.url;
+    setDeletingItemId(targetId);
+    setDeleteError(null);
     try {
-      await api.deleteAdminMedia(currentUser || {}, item.id || item.publicId || item.url);
-      setMediaList((prev) => prev.filter((m) => m.id !== item.id && m.publicId !== item.publicId));
+      await api.deleteAdminMedia(currentUser || {}, targetId);
+      setMediaList((prev) => prev.filter((m) => m.id !== item.id && m.publicId !== item.publicId && m.url !== item.url));
       setTotalItems((prev) => Math.max(0, prev - 1));
-      if (lightboxItem?.id === item.id) setLightboxItem(null);
+      if (lightboxItem?.id === item.id || lightboxItem?.url === item.url) setLightboxItem(null);
+      setItemPendingDelete(null);
     } catch (err: any) {
-      alert(err?.message || 'فشل في حذف الصورة');
+      setDeleteError(err?.message || 'فشل في حذف الصورة من التخزين السحابي');
     } finally {
       setDeletingItemId(null);
     }
@@ -512,13 +521,26 @@ export const AdminMediaLibraryPage: React.FC = () => {
       {lightboxItem && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="relative max-w-4xl max-h-[95vh] bg-[#1F1A16] rounded-2xl p-4 overflow-hidden flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setLightboxItem(null)}
-              className="absolute top-4 left-4 z-10 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleDeleteMedia(lightboxItem);
+                }}
+                className="p-2 rounded-xl bg-red-600/90 hover:bg-red-600 text-white flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer"
+                title="حذف الصورة من السحابة"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>حذف الصورة</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLightboxItem(null)}
+                className="p-2 rounded-full bg-black/60 hover:bg-black/90 text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
             <img
               src={lightboxItem.secureUrl || lightboxItem.url}
@@ -531,6 +553,81 @@ export const AdminMediaLibraryPage: React.FC = () => {
               <p className="text-white/60 font-mono text-[11px] ltr" dir="ltr">
                 {lightboxItem.publicId || lightboxItem.url}
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Non-blocking Delete Confirmation Modal */}
+      {itemPendingDelete && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-red-600">
+              <div className="p-2 rounded-xl bg-red-100 dark:bg-red-950/50">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-[#241E1A] dark:text-[#FAF6F2]">
+                  تأكيد حذف الصورة
+                </h3>
+                <p className="text-xs text-[#73675B] dark:text-[#A89C90]">
+                  سيتم حذف الصورة نهائياً من التخزين السحابي وقاعدة البيانات
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-xl overflow-hidden bg-black/5 dark:bg-black/20 p-2 flex items-center gap-3">
+              <img
+                src={itemPendingDelete.secureUrl || itemPendingDelete.url}
+                alt="معاينة"
+                className="w-16 h-16 object-cover rounded-lg shrink-0"
+              />
+              <div className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">
+                <p className="font-bold text-[#241E1A] dark:text-[#FAF6F2] truncate">
+                  {itemPendingDelete.title || itemPendingDelete.alt || 'صورة من المعرض'}
+                </p>
+                <p className="font-mono text-[10px] truncate mt-0.5" dir="ltr">
+                  {itemPendingDelete.publicId || itemPendingDelete.url}
+                </p>
+              </div>
+            </div>
+
+            {deleteError && (
+              <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs text-red-700 dark:text-red-300">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3] dark:border-[#352B24]">
+              <button
+                type="button"
+                onClick={() => {
+                  setItemPendingDelete(null);
+                  setDeleteError(null);
+                }}
+                disabled={Boolean(deletingItemId)}
+                className="px-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteMedia}
+                disabled={Boolean(deletingItemId)}
+                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {deletingItemId ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>جاري الحذف...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>نعم، حذف نهائي</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
