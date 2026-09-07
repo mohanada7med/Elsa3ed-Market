@@ -247,6 +247,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     }
 
     setStagedFiles((prev) => [...prev, ...newStaged]);
+    // Auto-trigger upload immediately so files upload seamlessly without requiring an extra click
+    setTimeout(() => {
+      startUploadBatch(newStaged);
+    }, 100);
   };
 
   // Remove individual staged file before upload
@@ -275,7 +279,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         filename: item.file.name,
         mimeType: item.file.type,
         resourceType: isVideo ? 'video' : 'image',
-        entityType: isVideo ? 'video' : entityType,
+        entityType: entityType || (isVideo ? 'videos' : 'general'),
         entitySlug,
         entityId,
         alt: item.alt || getSuggestedAlt(),
@@ -291,61 +295,22 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     );
   };
 
-  // Retry upload for a specific failed staged file
-  const retrySingleStagedUpload = async (stagedId: string) => {
-    const item = stagedFiles.find((sf) => sf.id === stagedId);
-    if (!item || isUploading || disabled) return;
+  // Batch upload execution with automatic feedback and cleanup
+  const startUploadBatch = async (itemsToUpload: StagedFile[]) => {
+    const pendingItems = itemsToUpload.filter((sf) => sf.status !== 'success');
+    if (pendingItems.length === 0 || isUploading || disabled) return;
 
     setIsUploading(true);
     setErrorMessage(null);
 
-    setStagedFiles((prev) =>
-      prev.map((p) => (p.id === stagedId ? { ...p, status: 'uploading', progress: 10, errorMessage: undefined } : p))
-    );
-
-    try {
-      const isFirst = currentItems.length === 0;
-      const uploadedMedia = await uploadSingleItem(item, isFirst);
-
-      setStagedFiles((prev) =>
-        prev.map((p) => (p.id === stagedId ? { ...p, status: 'success', progress: 100 } : p))
-      );
-
-      if (multiple) {
-        onChange([...currentItems.map((it) => it.item || it.url), uploadedMedia]);
-      } else {
-        onChange(uploadedMedia.secureUrl || uploadedMedia.url);
-      }
-
-      setSuccessMessage(`تم رفع وتوثيق "${item.file.name}" بنجاح بالسحابة`);
-      setTimeout(() => {
-        removeStagedFile(stagedId);
-      }, 1200);
-    } catch (err: any) {
-      setStagedFiles((prev) =>
-        prev.map((p) => (p.id === stagedId ? { ...p, status: 'error', errorMessage: err?.message || 'فشل في إعادة الرفع' } : p))
-      );
-      setErrorMessage(`تعذر رفع "${item.file.name}": ${err?.message || 'خطأ في الاتصال'}`);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  // Execute upload of all staged files to Cloudinary via server API
-  const executeStagedUpload = async () => {
-    if (stagedFiles.length === 0 || isUploading || disabled) return;
-    setIsUploading(true);
-    setErrorMessage(null);
-
-    const pendingOrErrorItems = stagedFiles.filter((sf) => sf.status !== 'success');
     const uploadedResults: MediaItem[] = [];
     let hadErrors = false;
 
-    for (let i = 0; i < pendingOrErrorItems.length; i++) {
-      const item = pendingOrErrorItems[i];
+    for (let i = 0; i < pendingItems.length; i++) {
+      const item = pendingItems[i];
 
       setStagedFiles((prev) =>
-        prev.map((p) => (p.id === item.id ? { ...p, status: 'uploading', progress: 10, errorMessage: undefined } : p))
+        prev.map((p) => (p.id === item.id ? { ...p, status: 'uploading', progress: 5, errorMessage: undefined } : p))
       );
 
       const isFirstImage = currentItems.length === 0 && uploadedResults.length === 0;
@@ -380,14 +345,28 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
     setIsUploading(false);
 
-    // If all succeeded, clear staging
     if (!hadErrors) {
-      stagedFiles.forEach((sf) => URL.revokeObjectURL(sf.localPreviewUrl));
-      setStagedFiles([]);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      setTimeout(() => {
+        itemsToUpload.forEach((sf) => URL.revokeObjectURL(sf.localPreviewUrl));
+        setStagedFiles((prev) => prev.filter((p) => !itemsToUpload.some((it) => it.id === p.id)));
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }, 1200);
     } else {
       setErrorMessage('بعض الملفات واجهت خطأ أثناء الرفع، يمكنك النقر على "إعادة المحاولة" لكل ملف متبقٍ');
     }
+  };
+
+  // Retry upload for a specific failed staged file
+  const retrySingleStagedUpload = async (stagedId: string) => {
+    const item = stagedFiles.find((sf) => sf.id === stagedId);
+    if (!item || isUploading || disabled) return;
+    await startUploadBatch([item]);
+  };
+
+  // Execute upload of all staged files manually if desired
+  const executeStagedUpload = async () => {
+    const pendingOrErrorItems = stagedFiles.filter((sf) => sf.status !== 'success');
+    await startUploadBatch(pendingOrErrorItems);
   };
 
   // 2. Handle External URL submission (Backward compatibility)

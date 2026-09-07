@@ -40,7 +40,7 @@ export function buildMediaIdFilter(mediaIdOrPublicId: string) {
   if (ObjectId.isValid(mediaIdOrPublicId) && mediaIdOrPublicId.length === 24) {
     try {
       filter.push({ _id: new ObjectId(mediaIdOrPublicId) });
-    } catch {}
+    } catch { }
   }
   return { $or: filter };
 }
@@ -250,6 +250,17 @@ async function syncMediaWithEntity(
         }
       }
     }
+  } else if (collectionName === 'wah_stories') {
+    const story = memoryDb.wahStories.find((s) => s.id === entityId || s.slug === entityId);
+    if (story) {
+      if (resourceType === 'video') {
+        story.videoUrl = secureUrl;
+        if (!story.videos) story.videos = [];
+        if (!story.videos.includes(secureUrl)) story.videos.push(secureUrl);
+      } else {
+        if (isPrimary) story.coverImage = secureUrl;
+      }
+    }
   }
 }
 
@@ -336,13 +347,13 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     resource_type: isVideo ? 'video' : 'image',
     ...(isVideo
       ? {
-          eager: [{ quality: 'auto' }],
-          eager_async: true
-        }
+        chunk_size: 6000000, // 6MB chunks for robust streaming of large videos
+        timeout: 300000 // 5 minutes timeout to prevent connection drops on larger files
+      }
       : {
-          allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-          transformation: [{ quality: 'auto', fetch_format: 'auto' }]
-        })
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+        transformation: [{ quality: 'auto', fetch_format: 'auto' }]
+      })
   };
 
   let uploadResult: UploadApiResponse;
@@ -359,6 +370,8 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
         });
         stream.end(uploadPayload);
       });
+    } else if (isVideo) {
+      uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
     } else {
       uploadResult = await cloudinary.uploader.upload(uploadPayload, uploadOptions);
     }
@@ -1024,8 +1037,8 @@ export async function manageEntityGallery(options: {
           const currentList: string[] = Array.isArray(doc.gallery)
             ? doc.gallery
             : Array.isArray((doc as any).galleryImages)
-            ? (doc as any).galleryImages
-            : [];
+              ? (doc as any).galleryImages
+              : [];
 
           const filtered = currentList.filter((img: string) => {
             if (!img) return false;

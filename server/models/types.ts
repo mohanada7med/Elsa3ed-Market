@@ -663,6 +663,8 @@ export interface WahStoryDoc {
   governorateName: string;
   governorateId: string;
   coverImage: string;
+  videoUrl?: string;
+  videos?: string[];
   readingTimeMinutes: number;
   relatedPlaceId?: string;
   relatedCraftId?: string;

@@ -2101,6 +2101,8 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             category: 'oral_tradition',
             authorName: 'فريق توثيق وه',
             coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+            videoUrl: videoUrl.trim() || undefined,
+            videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
             readingTimeMinutes: 4,
             status: verificationStatus === 'verified' ? 'approved' : 'pending_review'
           },
@@ -2256,8 +2258,8 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                   <span className="text-[11px] text-[#73675B]">MP4, WebM حتى 150MB</span>
                 </div>
                 <AdminMediaUploader
-                  entityType="video"
-                  entitySlug={editingItem?.slug || title || 'place-video'}
+                  entityType={entityType}
+                  entitySlug={editingItem?.slug || title || 'media-video'}
                   entityId={editingItem?.id}
                   entityTitle={title}
                   mediaCategory="video"
@@ -2275,8 +2277,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                     }
                     setVideoUrl(vUrl);
                   }}
-                  label="فيديو المكان التوثيقي"
-                  helperText="ارفع فيديو للمكان أو الورشة ليظهر في مشغل الفيديو ومعرض المكان للزوار"
+                  label={
+                    entityType === 'craft'
+                      ? 'فيديو الحرفة التوثيقي'
+                      : entityType === 'story'
+                      ? 'فيديو القصة التوثيقي'
+                      : 'فيديو المعلم أو الموقع التوثيقي'
+                  }
+                  helperText="ارفع فيديو ليظهر في مشغل الفيديو ومعرض المكان أو الحرفة للزوار"
                 />
               </div>
 
