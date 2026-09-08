@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext';
 import { HeroSection } from '../public/HeroSection';
 import { WahEcosystemPortalSection } from '../public/WahEcosystemPortalSection';
 import { FeaturedCategories } from '../public/FeaturedCategories';
-import { HeritageCraftsShowcase } from '../public/HeritageCraftsShowcase';
 import { CraftReelsSection } from '../public/CraftReelsSection';
 import { ProductGrid } from '../products/ProductGrid';
 import { GovernorateExplorer } from '../public/GovernorateExplorer';
@@ -37,10 +36,7 @@ export const HomePage: React.FC = () => {
       {/* 3. Featured Categories in Marketplace */}
       <FeaturedCategories />
 
-      {/* 4. Upper Egypt Heritage Crafts Showcase (Deep Interactive Atlas) */}
-      <HeritageCraftsShowcase />
-
-      {/* 5. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
+      {/* 4. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
       <CraftReelsSection />
 
       {/* 5. Featured & Best-Selling Products Section */}
@@ -72,13 +68,10 @@ export const HomePage: React.FC = () => {
         <ProductGrid limit={8} />
       </section>
 
-      {/* 6. Governorate Map & Origin Explorer */}
       <GovernorateExplorer />
 
-      {/* 7. Featured Artisans & Master Workshops */}
       <FeaturedSellers />
 
-      {/* 8. About Elsa3ed Market, Story & Mission */}
       <AboutSection />
     </div>
   );

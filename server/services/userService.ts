@@ -8,14 +8,14 @@ import type { AuthenticatedUser } from '../middleware/auth.ts';
 
 /**
  * Extract Cloudinary public_id from Cloudinary URL or namespace key
- * Example: https://res.cloudinary.com/.../Elsa3ed-Market/products/prod-1/image.png -> Elsa3ed-Market/products/prod-1/image
+ * Example: https://res.cloudinary.com/.../WAH/products/prod-1/image.png -> WAH/products/prod-1/image
  */
 export function extractCloudinaryPublicId(urlOrId: string): string | null {
   if (!urlOrId || typeof urlOrId !== 'string') return null;
-  if (urlOrId.startsWith('Elsa3ed-Market/')) {
+  if (urlOrId.startsWith('WAH/')) {
     return urlOrId.replace(/\.[a-zA-Z0-9]+$/, '');
   }
-  const match = urlOrId.match(/(Elsa3ed-Market\/[^\.\?#]+)/);
+  const match = urlOrId.match(/(WAH\/[^\.\?#]+)/);
   return match ? match[1] : null;
 }
 
@@ -510,7 +510,7 @@ export async function deleteUserCascade(
         if (Array.isArray(prod.images)) {
           for (const imgUrl of prod.images) {
             const publicId = extractCloudinaryPublicId(imgUrl);
-            if (publicId && publicId.startsWith('Elsa3ed-Market/products/')) {
+            if (publicId && publicId.startsWith('WAH/products/')) {
               try {
                 await storageService.delete(publicId, { id: adminUser.id, role: 'admin' });
                 result.deletedProductImagesCount++;

@@ -50,11 +50,7 @@ export function isCloudinaryAvailable(): boolean {
   return false;
 }
 
-/**
- * Cloudinary Storage Provider
- * Official image storage system for Elsa3ed Market.
- * Strictly configured via server-side environment variables.
- */
+
 export class CloudinaryStorageProvider implements IStorageProvider {
   private isConfigured = false;
 
@@ -98,7 +94,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
   /**
    * Upload an image to Cloudinary in the structured folder:
-   * Elsa3ed-Market/products/{productId}/{filename}
+   * WAH/products/{productId}/{filename}
    */
   async upload(options: UploadFileOptions): Promise<UploadResult> {
     this.configure();
@@ -188,25 +184,25 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       shouldOverwrite = false;
     } else if (folder === 'products') {
       const prodId = productId || `prod-${Date.now()}`;
-      cloudinaryFolder = `Elsa3ed-Market/products/${prodId}`;
+      cloudinaryFolder = `WAH/products/${prodId}`;
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
       const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       publicId = `${cleanFilename}_${uniqueSuffix}`;
       shouldOverwrite = false;
     } else if (folder === 'users') {
       const targetUserId = userId || ownerId || `user-${Date.now()}`;
-      cloudinaryFolder = `Elsa3ed-Market/users/${targetUserId}`;
+      cloudinaryFolder = `WAH/users/${targetUserId}`;
       publicId = customPublicId || 'profile';
       shouldOverwrite = overwrite ?? true;
     } else if (folder === 'sellers') {
       const targetSellerId = (options.sellerId || ownerId || 'seller').replace(/[^a-zA-Z0-9_-]/g, '_');
-      cloudinaryFolder = `Elsa3ed-Market/sellers/${targetSellerId}`;
+      cloudinaryFolder = `WAH/sellers/${targetSellerId}`;
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
       const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       publicId = `${cleanFilename}_${uniqueSuffix}`;
       shouldOverwrite = overwrite ?? false;
     } else {
-      cloudinaryFolder = `Elsa3ed-Market/${folder}`;
+      cloudinaryFolder = `WAH/${folder}`;
       const cleanFilename = filename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
       const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
       publicId = `${cleanFilename}_${uniqueSuffix}`;
@@ -282,8 +278,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     const fileKey = extractCloudinaryPublicId(fileKeyOrUrl) || fileKeyOrUrl;
 
-    // Security check: only allow deletion of Elsa3ed-Market or WAH assets
-    if (!fileKey.startsWith('Elsa3ed-Market/') && !fileKey.startsWith('WAH/')) {
+    // Security check: only allow deletion of WAH or WAH assets
+    if (!fileKey.startsWith('WAH/') && !fileKey.startsWith('WAH/')) {
       Logger.warn(`[Cloudinary] Refusing to delete asset outside allowed namespaces: ${fileKey}`);
       return false;
     }
@@ -348,12 +344,12 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
     let folder: string;
     if (options.role === 'admin' && !options.sellerId) {
-      folder = 'Elsa3ed-Market/admin/videos';
+      folder = 'WAH/admin/videos';
     } else if (options.sellerId) {
       const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
-      folder = `Elsa3ed-Market/sellers/${cleanSellerId}/videos`;
+      folder = `WAH/sellers/${cleanSellerId}/videos`;
     } else {
-      folder = 'Elsa3ed-Market/videos';
+      folder = 'WAH/videos';
     }
 
     const rawFilename = options.filename || 'reel_video';
@@ -476,8 +472,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
 /**
  * Extracts Cloudinary public_id from a Cloudinary URL or returns the key if already a publicId.
- * Example: https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/Elsa3ed-Market/sellers/seller_1/videos/vid.mp4
- * -> Elsa3ed-Market/sellers/seller_1/videos/vid
+ * Example: https://res.cloudinary.com/kuana1nl/video/upload/v1787870212/WAH/sellers/seller_1/videos/vid.mp4
+ * -> WAH/sellers/seller_1/videos/vid
  */
 export function extractCloudinaryPublicId(urlOrKey: string): string | null {
   if (!urlOrKey || typeof urlOrKey !== 'string') return null;
@@ -485,12 +481,12 @@ export function extractCloudinaryPublicId(urlOrKey: string): string | null {
   if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
     return trimmed;
   }
-  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?((?:Elsa3ed-Market|WAH)/[^.?#]+)
-  const match = trimmed.match(/\/upload\/(?:v\d+\/)?((?:Elsa3ed-Market|WAH)\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
+  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?((?:WAH|WAH)/[^.?#]+)
+  const match = trimmed.match(/\/upload\/(?:v\d+\/)?((?:WAH|WAH)\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
   if (match && match[1]) {
     return match[1];
   }
   return null;
 }
 
-export const cloudinaryStorage = new CloudinaryStorageProvider();
+export const cloudinaryStorage = new CloudinaryStorageProvider();

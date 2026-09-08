@@ -504,15 +504,29 @@ export interface CraftReelCommentDocument {
   likesCount: number;
 }
 
+export type ReelContentType =
+  | 'all'
+  | 'places'
+  | 'crafts'
+  | 'heritage'
+  | 'events'
+  | 'food'
+  | 'markets'
+  | 'people'
+  | 'travel'
+  | 'other';
+
 export interface CraftReelDocument {
   id: string;
   title: string;
-  artisanName: string;
-  artisanAvatar: string;
-  workshopName: string;
-  sellerId: string;
+  contentType?: ReelContentType | string;
+  location?: string;
+  artisanName?: string;
+  artisanAvatar?: string;
+  workshopName?: string;
+  sellerId?: string;
   governorate: string;
-  craftType: string;
+  craftType?: string;
   videoUrl: string;
   cloudinaryPublicId?: string;
   resourceType?: string;
@@ -521,16 +535,16 @@ export interface CraftReelDocument {
   likesCount: number;
   viewsCount: number;
   sharesCount: number;
-  productId: string;
-  productTitle: string;
-  productPrice: number;
+  productId?: string;
+  productTitle?: string;
+  productPrice?: number;
   productOriginalPrice?: number;
-  productImage: string;
-  productRating: number;
-  inStock: boolean;
+  productImage?: string;
+  productRating?: number;
+  inStock?: boolean;
   description: string;
   hashtags: string[];
-  musicTrack: string;
+  musicTrack?: string;
   isVerifiedArtisan?: boolean;
   isFeatured?: boolean;
   isPinned?: boolean;

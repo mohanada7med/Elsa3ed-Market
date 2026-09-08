@@ -871,7 +871,7 @@ export const PlaceDetailPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('places')}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer w-fit shadow-md"
                 >
                   <span>استكشف باقي المعالم</span>
                   <ArrowLeft size={15} />

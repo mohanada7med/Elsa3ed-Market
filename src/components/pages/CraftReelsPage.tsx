@@ -56,7 +56,7 @@ export const CraftReelsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'feed' | 'grid'>('grid');
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
-  const [selectedCraftType, setSelectedCraftType] = useState<string>('all');
+  const [selectedContentType, setSelectedContentType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedReelId, setSelectedReelId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,7 +78,7 @@ export const CraftReelsPage: React.FC = () => {
   const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
     const confirmed = window.confirm(
-      `هل أنت متأكد من حذف مقطع "${reel.title}" من ورشة "${reel.workshopName}" نهائياً من المنصة بصفتك مديراً؟`
+      `هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً من المنصة بصفتك مديراً؟`
     );
     if (!confirmed) return;
 
@@ -152,15 +152,31 @@ export const CraftReelsPage: React.FC = () => {
     };
   }, [viewMode]);
 
-  const governoratesList = ['قنا', 'سوهاج', 'الأقصر', 'أسوان', 'أسيوط'];
-  const craftTypesList = [
-    { id: 'all', label: 'كل الحرف' },
-    { id: 'فخار', label: '🏺 فخار وخزف' },
-    { id: 'كليم', label: '🧶 كليم وسجاد نول' },
-    { id: 'نحاس', label: '✨ مشغولات نحاسية' },
-    { id: 'خوص', label: '🌴 خوص وسعف نخيل' },
-    { id: 'تلي', label: '🪡 تلي وتطريز فضة' },
-    { id: 'خشب', label: '🪵 خراطة خشب سرسوع' }
+  const governoratesList = ['قنا', 'سوهاج', 'الأقصر', 'أسوان', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'الفيوم'];
+
+  const contentTypesList = [
+    { id: 'all', label: 'كل الحكايات' },
+    { id: 'places', label: 'أماكن ومعالم' },
+    { id: 'crafts', label: 'حرف وصناعات' },
+    { id: 'heritage', label: 'تراث وآثار' },
+    { id: 'events', label: 'فعاليات ومهرجانات' },
+    { id: 'food', label: 'أكل صعيدي' },
+    { id: 'markets', label: 'أسواق' },
+    { id: 'people', label: 'حكايات الناس' },
+    { id: 'travel', label: 'رحلات وتجارب' },
+    { id: 'other', label: 'أخرى' }
+  ];
+
+  const governoratesDiscovery = [
+    { name: 'all', label: 'كل الصعيد', tag: 'جميع الحكايات', img: 'https' },
+    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=300&q=80' },
+    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=300&q=80' },
+    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://images.unsplash.com/photo-1590076215667-875d4ef2d7ee?auto=format&fit=crop&w=300&q=80' },
+    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80' },
+    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=80' },
+    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=300&q=80' },
+    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=300&q=80' },
+    { name: 'الوادي الجديد', label: 'الواحات', tag: 'سحر الطبيعة والعيون', img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80' }
   ];
 
   // Filtered Reels
@@ -168,34 +184,45 @@ export const CraftReelsPage: React.FC = () => {
     return reels.filter((reel) => {
       const matchGov =
         selectedGovernorate === 'all' || reel.governorate === selectedGovernorate;
-      const matchCraft =
-        selectedCraftType === 'all' ||
-        reel.craftType.toLowerCase().includes(selectedCraftType.toLowerCase()) ||
-        reel.title.toLowerCase().includes(selectedCraftType.toLowerCase());
-      const matchSearch =
-        !searchQuery.trim() ||
-        reel.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        reel.artisanName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        reel.workshopName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        reel.description.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchContent =
+        selectedContentType === 'all' ||
+        reel.contentType === selectedContentType ||
+        (!reel.contentType && selectedContentType === 'crafts');
 
-      return matchGov && matchCraft && matchSearch;
+      if (!searchQuery.trim()) {
+        return matchGov && matchContent;
+      }
+
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch =
+        reel.title.toLowerCase().includes(q) ||
+        (reel.description && reel.description.toLowerCase().includes(q)) ||
+        (reel.location && reel.location.toLowerCase().includes(q)) ||
+        (reel.governorate && reel.governorate.toLowerCase().includes(q)) ||
+        (reel.contentType && reel.contentType.toLowerCase().includes(q)) ||
+        (reel.craftType && reel.craftType.toLowerCase().includes(q)) ||
+        (reel.artisanName && reel.artisanName.toLowerCase().includes(q)) ||
+        (reel.workshopName && reel.workshopName.toLowerCase().includes(q)) ||
+        (reel.productTitle && reel.productTitle.toLowerCase().includes(q));
+
+      return matchGov && matchContent && matchSearch;
     });
-  }, [reels, selectedGovernorate, selectedCraftType, searchQuery]);
+  }, [reels, selectedGovernorate, selectedContentType, searchQuery]);
 
   const openReelModal = (reelId: string) => {
     setSelectedReelId(reelId);
     setIsModalOpen(true);
   };
 
-  // Upload Permission Check (Blocks Guests and Buyers)
+  // Upload Permission Check
   const handleOpenUpload = () => {
     if (!isAuthenticated || !currentUser) {
       setPermissionAlert({
         isOpen: true,
         title: 'تسجيل الدخول مطلوب لنشر الفيديوهات',
         message:
-          'ميزة رفع ونشر فيديوهات الورش الحرفية (وه Reels) مخصصة للحرفيين والبائعين المسجلين فقط. يرجى تسجيل الدخول بحساب بائعك أو إنشاء حساب جديد.',
+          'ميزة رفع ونشر حكايات الصعيد (وه Stories) متاحة للمستخدمين والبائعين المسجلين. يرجى تسجيل الدخول بحسابك أو إنشاء حساب جديد.',
         type: 'unauthenticated'
       });
       return;
@@ -204,9 +231,9 @@ export const CraftReelsPage: React.FC = () => {
     if (currentUser.role === 'buyer') {
       setPermissionAlert({
         isOpen: true,
-        title: 'خاص بالورش الحرفية والبائعين فقط',
+        title: 'خاص بالناشرين والشركاء والبائعين',
         message:
-          'حسابك الحالي مسجل كـ "مشتري". لنشر مقاطع كواليس الصنعة الصعيدية وربطها بمنتجاتك، يرجى التقديم لفتح ورشة بائع معتمدة أو ترقية حسابك.',
+          'حسابك الحالي مسجل كـ "مشتري". لنشر حكايات الصعيد والمعالم والفعاليات والمنتجات، يرجى التقديم لتفعيل صلاحية النشر أو ترقية حسابك.',
         type: 'buyer'
       });
       return;
@@ -227,29 +254,30 @@ export const CraftReelsPage: React.FC = () => {
 
   const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
+    if (!reel.productId || !reel.productTitle || !reel.productPrice) return;
     addToCart(
       {
         id: reel.productId,
         title: reel.productTitle,
         price: reel.productPrice,
-        originalPrice: reel.productOriginalPrice,
-        images: [reel.productImage],
-        rating: reel.productRating,
+        originalPrice: reel.productOriginalPrice || reel.productPrice,
+        images: reel.productImage ? [reel.productImage] : [],
+        rating: reel.productRating || 5,
         reviewCount: 22,
-        inStock: reel.inStock,
+        inStock: reel.inStock ?? true,
         stockCount: 15,
         categoryId: 'crafts',
-        categoryName: reel.craftType,
-        sellerId: reel.sellerId,
-        sellerName: reel.workshopName,
+        categoryName: reel.craftType || 'الصعيد',
+        sellerId: reel.sellerId || '',
+        sellerName: reel.workshopName || 'صانع صعيدي',
         sellerGovernorate: reel.governorate,
-        description: reel.description,
+        description: reel.description || '',
         specifications: {
-          material: reel.craftType,
+          material: reel.craftType || 'تراثي',
           originGovernorate: reel.governorate,
           craftsmanship: 'صناعة يدوية أصيلة'
         },
-        tags: reel.hashtags,
+        tags: reel.hashtags || [],
         isHandmade: true,
         isHeritage: true,
         createdAt: reel.createdAt,
@@ -268,9 +296,8 @@ export const CraftReelsPage: React.FC = () => {
         overflow-x-hidden
         bg-[#eee8dc]
         text-[#211d18]
-        transition-colors duration-500
         dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:text-white
       "
     >
       {/* =====================================================
@@ -315,7 +342,7 @@ export const CraftReelsPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
               WAH
             </div>
-            <div className="mt-1 text-sm font-black">وه Reels</div>
+            <div className="mt-1 text-sm font-black">وه Stories</div>
           </div>
 
           <button
@@ -336,7 +363,7 @@ export const CraftReelsPage: React.FC = () => {
               cursor-pointer
             "
           >
-            <span className="hidden sm:block">نشر فيديو للورشة</span>
+            <span className="hidden sm:block">نشر حكاية من الصعيد</span>
             <Plus size={15} />
           </button>
         </div>
@@ -355,31 +382,34 @@ export const CraftReelsPage: React.FC = () => {
               <div className="mb-8 flex items-center gap-3">
                 <Sparkles size={16} className="text-[#9a6a35]" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
-                  Upper Egypt Reels / Craft Videos
+                  UPPER EGYPT STORIES
                 </span>
               </div>
 
               <h1
                 className="
-                  max-w-5xl
-                  text-[14vw]
-                  font-black
-                  leading-[0.78]
-                  tracking-[-0.08em]
-                  sm:text-[11vw]
-                  lg:text-[9rem]
-                  xl:text-[11rem]
-                "
+    max-w-5xl
+    text-[14vw]
+    font-black
+    leading-[0.78]
+    tracking-[-0.08em]
+    sm:text-[11vw]
+    lg:text-[9rem]
+    xl:text-[11rem]
+  "
               >
                 شاهد
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الصنعة</span>
+                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">
+                  الصعيد
+                </span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
-                <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  مقاطع فيديو حية من قلب ورش قنا وسوهاج وأسوان تكشف أسرار الحرفة وتفاصيل المنتجات مع إمكانية الشراء الفوري.
+                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60 sm:text-xl">
+                  من الحرف والأسواق إلى الأماكن والمعالم والفعاليات...
+                  اكتشف حكايات الصعيد كما لم ترها من قبل.
                 </p>
               </div>
             </div>
@@ -403,7 +433,7 @@ export const CraftReelsPage: React.FC = () => {
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
-                      CRAFT REELS
+                      UPPER EGYPT STORIES
                     </span>
                     <Film size={18} className="text-[#9a6a35]" />
                   </div>
@@ -414,13 +444,13 @@ export const CraftReelsPage: React.FC = () => {
                         {reels.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        مقطع فيديو حي
+                        حكاية مصورة
                       </div>
                     </div>
 
                     <div>
                       <div className="text-5xl font-black tracking-[-0.05em]">
-                        8
+                        {governoratesList.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
                         محافظات صعيدية
@@ -431,7 +461,7 @@ export const CraftReelsPage: React.FC = () => {
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
                     <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
                     <span className="text-xs font-bold">
-                      من الورشة لبيتك مباشرة
+                      من قلب الصعيد وتراثه الحي
                     </span>
                   </div>
                 </div>
@@ -442,34 +472,48 @@ export const CraftReelsPage: React.FC = () => {
       </section>
 
       {/* =====================================================
-          STORIES AVATARS BAR
+          UPPER EGYPT DISCOVERY BAR (Governorates)
       ===================================================== */}
       <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pb-8">
         <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2">
-          {reels.map((reel) => (
-            <button
-              key={`story-${reel.id}`}
-              type="button"
-              onClick={() => openReelModal(reel.id)}
-              className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
-            >
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 bg-gradient-to-tr from-amber-500 via-[#9a6a35] to-rose-500 group-hover:scale-105 transition-transform duration-200 shadow-md">
-                <div className="w-full h-full rounded-full p-0.5 bg-white dark:bg-[#151513]">
-                  <img
-                    src={reel.artisanAvatar}
-                    alt={reel.artisanName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
+          {governoratesDiscovery.map((gov) => {
+            const isSelected = selectedGovernorate === gov.name;
+            return (
+              <button
+                key={`story-gov-${gov.name}`}
+                type="button"
+                onClick={() => setSelectedGovernorate(gov.name)}
+                className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
+              >
+                <div
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${
+                    isSelected
+                      ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
+                      : 'bg-black/10 dark:bg-white/10 group-hover:bg-[#9a6a35]/40'
+                  }`}
+                >
+                  <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
+                    <img
+                      src={gov.img}
+                      alt={gov.label}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-colors" />
+                  </div>
                 </div>
-              </div>
-              <span className="text-[11px] font-bold text-black dark:text-white text-center max-w-[76px] truncate">
-                {reel.artisanName}
-              </span>
-              <span className="text-[9px] text-black/50 dark:text-white/50 -mt-1">
-                {reel.governorate}
-              </span>
-            </button>
-          ))}
+                <span
+                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${
+                    isSelected ? 'text-[#9a6a35]' : 'text-black dark:text-white'
+                  }`}
+                >
+                  {gov.label}
+                </span>
+                <span className="text-[9px] text-black/50 dark:text-white/50 -mt-1">
+                  {gov.tag}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </section>
 
@@ -506,7 +550,7 @@ export const CraftReelsPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن أسطى، ورشة، أو منتج في الفيديو..."
+                placeholder="ابحث عن مكان، فعالية، حكاية، أكل، حرف أو أي شيء في الصعيد..."
                 className="
                   h-12 w-full
                   rounded-xl
@@ -577,8 +621,8 @@ export const CraftReelsPage: React.FC = () => {
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'grid'
-                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                    : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                  : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                   }`}
               >
                 <Grid size={15} />
@@ -589,8 +633,8 @@ export const CraftReelsPage: React.FC = () => {
                 type="button"
                 onClick={() => setViewMode('feed')}
                 className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'feed'
-                    ? 'bg-[#9a6a35] text-white shadow-md'
-                    : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                  ? 'bg-[#9a6a35] text-white shadow-md'
+                  : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                   }`}
               >
                 <Tv size={15} />
@@ -599,19 +643,19 @@ export const CraftReelsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Craft Categories Pills */}
+          {/* Content Categories Pills */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-3 mt-3 border-t border-black/10 dark:border-white/10">
-            {craftTypesList.map((craft) => (
+            {contentTypesList.map((cat) => (
               <button
-                key={craft.id}
+                key={cat.id}
                 type="button"
-                onClick={() => setSelectedCraftType(craft.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${selectedCraftType === craft.id
-                    ? 'bg-[#9a6a35] text-white shadow-md'
-                    : 'bg-black/[0.04] dark:bg-white/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
+                onClick={() => setSelectedContentType(cat.id)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${selectedContentType === cat.id
+                  ? 'bg-[#9a6a35] text-white shadow-md'
+                  : 'bg-black/[0.04] dark:bg-white/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
                   }`}
               >
-                {craft.label}
+                {cat.label}
               </button>
             ))}
           </div>
@@ -654,110 +698,116 @@ export const CraftReelsPage: React.FC = () => {
           <div>
             {filteredReels.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-                {filteredReels.map((reel) => (
-                  <div
-                    key={reel.id}
-                    id={`reel-card-${reel.id}`}
-                    onClick={() => openReelModal(reel.id)}
-                    className="group relative aspect-9/16 rounded-[1.5rem] overflow-hidden bg-black cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-black/10 dark:border-white/10"
-                  >
-                    {/* Poster Image / Video Preview */}
-                    <img
-                      src={reel.posterUrl}
-                      alt={reel.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                    />
+                {filteredReels.map((reel) => {
+                  const categoryLabel = contentTypesList.find(c => c.id === reel.contentType)?.label || reel.craftType || 'حكاية';
+                  const displayLoc = reel.location || reel.governorate;
 
-                    {/* Gradient Dark Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50 group-hover:via-black/20 transition-colors" />
+                  return (
+                    <div
+                      key={reel.id}
+                      id={`reel-card-${reel.id}`}
+                      onClick={() => openReelModal(reel.id)}
+                      className="group relative aspect-9/16 rounded-[1.5rem] overflow-hidden bg-black cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-black/10 dark:border-white/10"
+                    >
+                      {/* Poster Image / Video Preview */}
+                      <img
+                        src={reel.posterUrl}
+                        alt={reel.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                      />
 
-                    {/* Top Badges */}
-                    <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                      <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                        {reel.duration}
-                      </span>
+                      {/* Gradient Dark Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/50 group-hover:via-black/25 transition-colors" />
 
-                      <div className="flex items-center gap-1.5">
-                        {currentUser?.role === 'admin' && (
-                          <button
-                            type="button"
-                            onClick={(e) => handleAdminDeleteReel(e, reel)}
-                            className="p-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-400/50 shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer"
-                            title="حذف الفيديو بصلاحيات المدير"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                        )}
-                        <div className="flex items-center gap-1 bg-[#9a6a35]/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
-                          <Flame className="w-3 h-3 text-amber-300" />
-                          <span>{reel.likesCount}</span>
-                        </div>
-                      </div>
-                    </div>
+                      {/* Top Badges */}
+                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                          {reel.duration}
+                        </span>
 
-                    {/* Center Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg">
-                        <Play className="w-5 h-5 fill-white mr-0.5" />
-                      </div>
-                    </div>
-
-                    {/* Bottom Information Card */}
-                    <div className="absolute bottom-0 inset-x-0 p-3 z-10 space-y-2">
-                      {/* Artisan Info */}
-                      <div className="flex items-center gap-1.5">
-                        <img
-                          src={reel.artisanAvatar}
-                          alt={reel.artisanName}
-                          className="w-5 h-5 rounded-full object-cover border border-white/40 shadow-sm"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-bold text-white truncate drop-shadow-xs">
-                            {reel.artisanName}
-                          </p>
+                        <div className="flex items-center gap-1.5">
+                          {currentUser?.role === 'admin' && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleAdminDeleteReel(e, reel)}
+                              className="p-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-400/50 shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+                              title="حذف الفيديو بصلاحيات المدير"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          )}
+                          <div className="flex items-center gap-1 bg-[#9a6a35]/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                            <Flame className="w-3 h-3 text-amber-300" />
+                            <span>{reel.likesCount}</span>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Reel Title */}
-                      <h3 className="text-xs font-bold text-white line-clamp-2 leading-snug drop-shadow-md">
-                        {reel.title}
-                      </h3>
+                      {/* Center Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg">
+                          <Play className="w-5 h-5 fill-white mr-0.5" />
+                        </div>
+                      </div>
 
-                      {/* Product Quick Buy Bar */}
-                      <div className="pt-2 border-t border-white/20 flex items-center justify-between gap-1">
-                        <div className="min-w-0">
-                          <span className="text-[11px] text-amber-300 font-bold block truncate">
-                            {reel.productPrice} ج.م
+                      {/* Bottom Information Card */}
+                      <div className="absolute bottom-0 inset-x-0 p-3 z-10 space-y-2">
+                        {/* Location & Category Badges */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {displayLoc && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
+                              <MapPin size={10} className="text-[#9a6a35]" />
+                              <span>{displayLoc}</span>
+                            </span>
+                          )}
+                          <span className="text-[9px] font-medium text-white/70 bg-white/15 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                            {categoryLabel}
                           </span>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={(e) => handleQuickAdd(e, reel)}
-                          className="p-1.5 bg-[#9a6a35] hover:bg-[#744e26] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
-                          title="شراء فوري للمنتج"
-                        >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                        </button>
+                        {/* Story Title */}
+                        <h3 className="text-xs font-bold text-white line-clamp-2 leading-snug drop-shadow-md">
+                          {reel.title}
+                        </h3>
+
+                        {/* Product Quick Buy Bar (ONLY rendered if reel has a product) */}
+                        {reel.productId && reel.productId !== 'none' && reel.productPrice && (
+                          <div className="pt-2 border-t border-white/20 flex items-center justify-between gap-1">
+                            <div className="min-w-0">
+                              <span className="text-[11px] text-amber-300 font-bold block truncate">
+                                {reel.productPrice} ج.م
+                              </span>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => handleQuickAdd(e, reel)}
+                              className="p-1.5 bg-[#9a6a35] hover:bg-[#744e26] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
+                              title="شراء فوري للمنتج"
+                            >
+                              <ShoppingBag className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="bg-white/80 dark:bg-[#151513]/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
                 <Film className="w-12 h-12 text-black/30 dark:text-white/30 mx-auto" />
                 <h3 className="text-lg font-black">
-                  لا توجد فيديوهات مطابقة للبحث
+                  لا توجد حكايات مطابقة للبحث
                 </h3>
                 <p className="text-xs text-black/60 dark:text-white/60">
-                  جرب اختيار محافظة أخرى أو إعادة تعيين الفلاتر.
+                  جرب اختيار تصنيف آخر أو إعادة تعيين الفلاتر.
                 </p>
                 <button
                   type="button"
                   onClick={() => {
                     setSelectedGovernorate('all');
-                    setSelectedCraftType('all');
+                    setSelectedContentType('all');
                     setSearchQuery('');
                   }}
                   className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black text-xs font-bold rounded-xl cursor-pointer"
@@ -792,7 +842,7 @@ export const CraftReelsPage: React.FC = () => {
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
                 <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
-                  WATCH & SHOP
+                  UPPER EGYPT STORIES
                 </div>
                 <h2
                   className="
@@ -804,22 +854,22 @@ export const CraftReelsPage: React.FC = () => {
                     sm:text-6xl
                   "
                 >
-                  الصنعة مش كلام...
+                  الصعيد مش مكان...
                   <br />
-                  <span className="text-[#d5a56d]">دي أفعال وتفاصيل.</span>
+                  <span className="text-[#d5a56d]">دي حكايات بتتعايش.</span>
                 </h2>
               </div>
 
               <div className="flex flex-col gap-4">
                 <p className="text-sm leading-8 text-white/55">
-                  تابع كل جديد من ورش الصعيد واقتني القطع الفنية الأصلية مباشرة من صانعيها.
+                  شارك حكاية عن مكان أثري، سوق شعبي، أكلة أصيلة، حرفة تراثية، أو تجربة عشتها في قلب الصعيد.
                 </p>
                 <button
                   type="button"
                   onClick={handleOpenUpload}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
                 >
-                  <span>نشر فيديو لورشحتك</span>
+                  <span>نشر حكاية جديدة</span>
                   <Plus size={15} />
                 </button>
               </div>

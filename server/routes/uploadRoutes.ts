@@ -61,7 +61,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
     // 2. Server-Determined Ownership (never trust client-supplied ownerId)
     const ownerId = req.user!.role === 'seller' ? (req.user!.sellerId || req.user!.id) : req.user!.id;
 
-    // 3. Product ID Resolution for Cloudinary Folder: Elsa3ed-Market/products/{productId}/
+    // 3. Product ID Resolution for Cloudinary Folder: WAH/products/{productId}/
     let targetProductId = productId;
     if (!targetProductId) {
       targetProductId = `prod-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
@@ -145,7 +145,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
       console.log(`[UploadRoutes] Rolling back ${uploadedResults.length} uploaded assets after error...`);
       for (const item of uploadedResults) {
         if (item.fileKey) {
-          await storageService.delete(item.fileKey).catch(() => {});
+          await storageService.delete(item.fileKey).catch(() => { });
         }
       }
     }

@@ -70,9 +70,10 @@ export const EventsPage: React.FC = () => {
       {/* =====================================================
           NAVBAR
       ===================================================== */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
+      <header className="relative z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/70 dark:bg-[#151513]/90">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
+            type="button"
             onClick={() => setActivePage('home')}
             className="
               group flex items-center gap-3
@@ -109,10 +110,11 @@ export const EventsPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
               WAH
             </div>
-            <div className="mt-1 text-sm font-black">فعاليات الصعيد</div>
+            <div className="mt-1 text-sm font-black font-serif">فعاليات الصعيد</div>
           </div>
 
           <button
+            type="button"
             onClick={() => setActivePage('governorates')}
             className="
               flex items-center gap-2
@@ -137,7 +139,7 @@ export const EventsPage: React.FC = () => {
 
       {/* =====================================================
           HERO SECTION
-      ===================================================== */}
+      ================================================     */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
         <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
@@ -157,6 +159,7 @@ export const EventsPage: React.FC = () => {
                   max-w-5xl
                   text-[14vw]
                   font-black
+                  font-serif
                   leading-[0.78]
                   tracking-[-0.08em]
                   sm:text-[11vw]
@@ -171,7 +174,7 @@ export const EventsPage: React.FC = () => {
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
-                <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
+                <p className="text-sm leading-8 text-black/65 dark:text-white/65 sm:text-base">
                   مواعيد وأسرار الموالد الصوفية التاريخية، مواسم حصاد القصب وتصنيع العسل، مهرجانات التمور، وحلقات التحطيب بالأقصر وقنا.
                 </p>
               </div>
@@ -184,18 +187,20 @@ export const EventsPage: React.FC = () => {
                   relative overflow-hidden
                   rounded-[2rem]
                   border border-black/10
-                  bg-white/50
+                  bg-white/75
                   p-7
-                  backdrop-blur-xl
+                  shadow-lg
+                  backdrop-blur-2xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-[#151513]/90
+                  dark:shadow-black/30
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
+                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/45 dark:text-white/45">
                       FESTIVALS CALENDAR
                     </span>
                     <Calendar size={18} className="text-[#9a6a35]" />
@@ -203,19 +208,19 @@ export const EventsPage: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-8">
                     <div>
-                      <div className="text-5xl font-black tracking-[-0.05em]">
+                      <div className="text-5xl font-black tracking-[-0.05em] font-mono">
                         {events.length}
                       </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                      <div className="mt-2 text-xs text-black/55 dark:text-white/55 font-bold">
                         فعالية وموسم موثق
                       </div>
                     </div>
 
                     <div>
-                      <div className="text-5xl font-black tracking-[-0.05em]">
+                      <div className="text-5xl font-black tracking-[-0.05em] font-mono">
                         {governorates.length}
                       </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                      <div className="mt-2 text-xs text-black/55 dark:text-white/55 font-bold">
                         محافظة صعيدية
                       </div>
                     </div>
@@ -240,7 +245,7 @@ export const EventsPage: React.FC = () => {
       <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
         <div
           className="
-            rounded-[1.5rem]
+            rounded-[2rem]
             border border-black/10
             bg-white/75
             p-3
@@ -264,6 +269,7 @@ export const EventsPage: React.FC = () => {
                 "
               />
               <input
+                type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن مولد، موسم حصاد، أو معرض..."
@@ -286,6 +292,7 @@ export const EventsPage: React.FC = () => {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery('')}
                   className="
                     absolute left-3 top-1/2
@@ -322,9 +329,9 @@ export const EventsPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                <option value="all">كافة الفعاليات</option>
+                <option value="all" className="dark:bg-[#151513]">كافة الفعاليات</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat}>
+                  <option key={cat} value={cat} className="dark:bg-[#151513]">
                     {cat}
                   </option>
                 ))}
@@ -360,9 +367,9 @@ export const EventsPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                <option value="all">كل المحافظات</option>
+                <option value="all" className="dark:bg-[#151513]">كل المحافظات</option>
                 {governorates.map((gov) => (
-                  <option key={gov} value={gov}>
+                  <option key={gov} value={gov} className="dark:bg-[#151513]">
                     {gov}
                   </option>
                 ))}
@@ -398,6 +405,7 @@ export const EventsPage: React.FC = () => {
 
               {(searchQuery.trim() !== '' || categoryFilter !== 'all' || governorateFilter !== 'all') && (
                 <button
+                  type="button"
                   onClick={() => {
                     setSearchQuery('');
                     setCategoryFilter('all');
@@ -414,18 +422,18 @@ export const EventsPage: React.FC = () => {
       </section>
 
       {/* =====================================================
-          EVENTS GRID SECTION
-      ===================================================== */}
+          EVENTS GRID SECTION (Modern Glassmorphism Cards)
+      ================================================     */}
       <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12">
         <div className="mb-10 flex items-end justify-between">
           <div>
             <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
               UPPER EGYPT SEASONS
             </div>
-            <h2 className="text-3xl font-black sm:text-4xl">مواسم الصعيد الاحتفالية</h2>
+            <h2 className="text-3xl font-black sm:text-4xl font-serif">مواسم الصعيد الاحتفالية</h2>
           </div>
 
-          <div className="hidden items-center gap-2 text-xs text-black/40 dark:text-white/40 sm:flex">
+          <div className="hidden items-center gap-2 text-xs text-black/50 dark:text-white/50 sm:flex">
             <Flame size={14} />
             <span>Cultural Calendar</span>
           </div>
@@ -437,7 +445,7 @@ export const EventsPage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-white/5"
+                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-white/5"
               />
             ))}
           </div>
@@ -454,6 +462,8 @@ export const EventsPage: React.FC = () => {
               border-black/15
               text-center
               dark:border-white/15
+              bg-white/50 dark:bg-[#151513]/50
+              backdrop-blur-xl
             "
           >
             <div
@@ -469,12 +479,13 @@ export const EventsPage: React.FC = () => {
             </div>
 
             <h3 className="text-xl font-black">لم يتم العثور على فعاليات مطابقة</h3>
-            <p className="mt-3 text-sm text-black/45 dark:text-white/45">
+            <p className="mt-3 text-sm text-black/60 dark:text-white/60">
               جرب البحث بكلمات أخرى أو تغيير الفلاتر لاستعراض مواسم الصعيد.
             </p>
 
             {(searchQuery.trim() !== '' || categoryFilter !== 'all' || governorateFilter !== 'all') && (
               <button
+                type="button"
                 onClick={() => {
                   setSearchQuery('');
                   setCategoryFilter('all');
@@ -497,7 +508,7 @@ export const EventsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Events Grid */}
+        {/* Events Grid (Refined Design) */}
         {!isLoading && filteredEvents.length > 0 && (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredEvents.map((event, index) => {
@@ -515,156 +526,106 @@ export const EventsPage: React.FC = () => {
                     relative
                     flex flex-col justify-between
                     overflow-hidden
-                    rounded-[1.5rem]
-                    bg-black
+                    rounded-[2rem]
+                    border border-black/10
+                    bg-white/75
+                    p-6 sm:p-7
+                    shadow-lg
+                    backdrop-blur-xl
+                    transition-all duration-500
+                    hover:-translate-y-1.5
+                    hover:border-[#9a6a35]
+                    hover:shadow-[0_20px_50px_rgba(154,106,53,0.12)]
+                    dark:border-white/10
+                    dark:bg-[#151513]/90
                     cursor-pointer
                   "
                 >
-                  <div className="relative h-[340px] sm:h-[380px] w-full overflow-hidden">
-                    <img
-                      src={image}
-                      alt={event.title}
-                      loading="lazy"
-                      className="
-                        h-full w-full
-                        object-cover
-                        opacity-90
-                        transition-all
-                        duration-700
-                        ease-out
-                        group-hover:scale-110
-                        group-hover:opacity-100
-                      "
-                    />
+                  <div>
+                    {/* Top Image & Badges */}
+                    <div className="relative mb-6 h-56 w-full overflow-hidden rounded-2xl border border-black/10 dark:border-white/10">
+                      <img
+                        src={image}
+                        alt={event.title}
+                        loading="lazy"
+                        className="
+                          h-full w-full
+                          object-cover
+                          transition-transform
+                          duration-700
+                          group-hover:scale-110
+                        "
+                      />
 
-                    {/* Dark Gradient Overlay */}
-                    <div
-                      className="
-                        absolute inset-0
-                        bg-gradient-to-t
-                        from-black
-                        via-black/25
-                        to-transparent
-                      "
-                    />
-
-                    {/* Serial Number */}
-                    <div
-                      className="
-                        absolute right-5 top-5
-                        text-7xl
-                        font-black
-                        leading-none
-                        tracking-[-0.08em]
-                        text-white/15
-                        transition-all
-                        duration-500
-                        group-hover:text-white/30
-                      "
-                    >
-                      {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    {/* Category Badge */}
-                    <div className="absolute left-5 top-5">
-                      {event.category && (
-                        <span
-                          className="
-                            inline-flex
-                            rounded-full
-                            border border-white/20
-                            bg-black/20
-                            px-3 py-1.5
-                            text-[10px]
-                            font-bold
-                            text-white
-                            backdrop-blur-md
-                          "
-                        >
-                          {event.category}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                      <div className="mb-3 flex items-center justify-between gap-2 text-[10px] font-bold text-white/65">
-                        {event.governorateName && (
-                          <div className="flex items-center gap-1">
-                            <MapPin size={12} />
-                            <span>{event.governorateName}</span>
-                          </div>
-                        )}
-                        <div className="flex items-center gap-1">
-                          <Clock size={12} />
-                          <span>{seasonText}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-end justify-between gap-4">
-                        <div className="min-w-0">
-                          <h3
+                      {/* Category Badge */}
+                      <div className="absolute left-3 top-3">
+                        {event.category && (
+                          <span
                             className="
-                              text-2xl
-                              font-black
-                              leading-tight
+                              inline-flex
+                              rounded-xl
+                              border border-white/20
+                              bg-black/40
+                              px-3 py-1
+                              text-[10px]
+                              font-bold
                               text-white
-                              transition-transform
-                              duration-500
-                              group-hover:-translate-y-1
-                              sm:text-3xl
+                              backdrop-blur-md
                             "
                           >
-                            {event.title}
-                          </h3>
+                            {event.category}
+                          </span>
+                        )}
+                      </div>
 
-                          {event.description && (
-                            <p
-                              className="
-                                mt-2
-                                line-clamp-2
-                                max-w-xl
-                                text-xs
-                                leading-6
-                                text-white/65
-                              "
-                            >
-                              {event.description}
-                            </p>
-                          )}
-                        </div>
-
-                        <span
-                          className="
-                            flex h-11 w-11
-                            shrink-0
-                            items-center justify-center
-                            rounded-full
-                            bg-white
-                            text-black
-                            transition-all
-                            duration-500
-                            group-hover:-translate-x-1
-                            group-hover:-translate-y-1
-                          "
-                        >
-                          <ArrowUpLeft size={18} />
-                        </span>
+                      {/* Governorate Badge */}
+                      <div className="absolute right-3 top-3">
+                        {event.governorateName && (
+                          <span
+                            className="
+                              inline-flex items-center gap-1
+                              rounded-xl
+                              border border-white/20
+                              bg-black/40
+                              px-3 py-1
+                              text-[10px]
+                              font-bold
+                              text-white
+                              backdrop-blur-md
+                            "
+                          >
+                            <MapPin size={11} className="text-[#9a6a35]" />
+                            {event.governorateName}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Hover Border Frame */}
-                    <div
-                      className="
-                        pointer-events-none
-                        absolute inset-3
-                        rounded-[1.1rem]
-                        border border-white/0
-                        transition-all
-                        duration-500
-                        group-hover:border-white/30
-                      "
-                    />
+                    {/* Metadata (Date / Season) */}
+                    <div className="mb-2.5 flex items-center gap-2 text-xs font-semibold text-[#9a6a35]">
+                      <Clock size={14} />
+                      <span>{seasonText}</span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-2xl font-black mb-3 transition-colors group-hover:text-[#9a6a35] font-serif">
+                      {event.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-xs sm:text-sm leading-6 text-black/65 dark:text-white/65 line-clamp-3 mb-4">
+                      {event.description}
+                    </p>
+                  </div>
+
+                  {/* Footer Action */}
+                  <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
+                    <span className="text-black/50 dark:text-white/50 group-hover:text-[#9a6a35] transition-colors">
+                      استكشاف تفاصيل الموسم
+                    </span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+                      <ArrowUpLeft size={16} />
+                    </span>
                   </div>
                 </article>
               );
@@ -675,7 +636,7 @@ export const EventsPage: React.FC = () => {
 
       {/* =====================================================
           FINAL CTA
-      ===================================================== */}
+      ================================================     */}
       <section className="border-t border-black/10 dark:border-white/10">
         <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div
@@ -685,16 +646,19 @@ export const EventsPage: React.FC = () => {
               bg-[#211d18]
               px-6 py-14
               text-white
+              dark:bg-white
+              dark:text-black
               sm:px-12 sm:py-20
               lg:px-20
+              shadow-2xl
             "
           >
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
-            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10" />
+            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10 dark:border-black/10" />
+            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10 dark:border-black/10" />
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
                   SEASONS & FESTIVALS
                 </div>
                 <h2
@@ -702,6 +666,7 @@ export const EventsPage: React.FC = () => {
                     max-w-4xl
                     text-4xl
                     font-black
+                    font-serif
                     leading-tight
                     tracking-[-0.04em]
                     sm:text-6xl
@@ -709,11 +674,11 @@ export const EventsPage: React.FC = () => {
                 >
                   مواسم بتتجدد...
                   <br />
-                  وفرحة بتجمع القلوب.
+                  <span className="text-[#9a6a35]">وفرحة بتجمع القلوب.</span>
                 </h2>
               </div>
 
-              <p className="text-sm leading-8 text-white/55">
+              <p className="text-sm leading-8 text-white/70 dark:text-black/70">
                 الفعاليات والموالد في الصعيد مش مجرد احتفالات، دي طقوس مجتمعية بتعبر عن الروح والأصل والترابط.
               </p>
             </div>
@@ -723,3 +688,5 @@ export const EventsPage: React.FC = () => {
     </div>
   );
 };
+
+export default EventsPage;

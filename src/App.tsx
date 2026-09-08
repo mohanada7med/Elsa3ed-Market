@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
+import WahIntro from './components/WahIntro';
 import { AppProvider, useApp, PAGE_ROUTES } from './context/AppContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/layout/Header';
@@ -19,11 +21,9 @@ import { ProductsPage } from './components/pages/ProductsPage';
 import { ProductDetailsView } from './components/products/ProductDetailsView';
 import { CategoriesPage } from './components/pages/CategoriesPage';
 import { CraftsPage } from './components/pages/CraftsPage';
-import { CraftReelsPage } from './components/pages/CraftReelsPage';
 import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
 import { SellerProfileView } from './components/pages/SellerProfileView';
 import { CheckoutPage } from './components/pages/CheckoutPage';
-import { OrdersTrackingPage } from './components/pages/OrdersTrackingPage';
 import { FavoritesPage } from './components/pages/FavoritesPage';
 import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
 import { AboutSection } from './components/public/AboutSection';
@@ -32,7 +32,6 @@ import { ChatView } from './components/chat/ChatView';
 import { ForbiddenPage } from './components/pages/ForbiddenPage';
 
 // WAH Upper Egypt Digital Platform Pages
-import { UpperEgyptMapPage } from './components/pages/UpperEgyptMapPage';
 import { GovernoratesPage } from './components/pages/GovernoratesPage';
 import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
 import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
@@ -48,14 +47,11 @@ import { FoodDetailPage } from './components/pages/FoodDetailPage';
 import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
 import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
-import { CulturalCmsAdminPage } from './components/pages/CulturalCmsAdminPage';
-import { AdminMapEditorPage } from './components/pages/AdminMapEditorPage';
-import { DialectDictionaryPage } from './components/pages/DialectDictionaryPage';
 
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
-// Dynamic code-splitting for heavy non-public dashboard bundles
+// Dynamic code-splitting for heavy non-public dashboard and heavy standalone page bundles
 const SellerDashboard = React.lazy(() =>
   import('./components/seller/SellerDashboard').then((m) => ({ default: m.SellerDashboard }))
 );
@@ -64,6 +60,24 @@ const AdminDashboard = React.lazy(() =>
 );
 const WholesalePage = React.lazy(() =>
   import('./components/pages/WholesalePage').then((m) => ({ default: m.WholesalePage }))
+);
+const CulturalCmsAdminPage = React.lazy(() =>
+  import('./components/pages/CulturalCmsAdminPage').then((m) => ({ default: m.CulturalCmsAdminPage }))
+);
+const AdminMapEditorPage = React.lazy(() =>
+  import('./components/pages/AdminMapEditorPage').then((m) => ({ default: m.AdminMapEditorPage }))
+);
+const UpperEgyptMapPage = React.lazy(() =>
+  import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
+);
+const CraftReelsPage = React.lazy(() =>
+  import('./components/pages/CraftReelsPage').then((m) => ({ default: m.CraftReelsPage }))
+);
+const DialectDictionaryPage = React.lazy(() =>
+  import('./components/pages/DialectDictionaryPage').then((m) => ({ default: m.DialectDictionaryPage }))
+);
+const OrdersTrackingPage = React.lazy(() =>
+  import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
 );
 
 const LazySectionFallback: React.FC = () => (
@@ -89,7 +103,7 @@ const MainContent: React.FC = () => {
     setAuthModalTab
   } = useApp();
   const selectedProduct = products.find((p) => p.id === selectedProductId);
-
+  const [showIntro, setShowIntro] = useState(true);
   // Dynamic SEO meta updates on page transition (called unconditionally at top of component)
   useEffect(() => {
     switch (activePage) {
@@ -248,16 +262,22 @@ const MainContent: React.FC = () => {
         break;
     }
   }, [activePage, selectedProduct, selectedSellerId]);
-
+  if (showIntro) {
+    return (
+      <WahIntro
+        onEnter={() => setShowIntro(false)}
+      />
+    );
+  }
   // Initial Auth Verification State (rendered after all hooks)
   if (isAuthChecking) {
     return <WahLoadingScreen />;
+
   }
 
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] transition-colors duration-500">
       <div>
-
 
         <Header />
 
@@ -272,11 +292,15 @@ const MainContent: React.FC = () => {
           >
             {activePage === 'home' && <HomePage />}
             {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
-            {activePage === 'product-details' && <ProductDetailsView />}
+            {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
             {activePage === 'categories' && <CategoriesPage />}
             {activePage === 'category-details' && <ProductsPage />}
             {activePage === 'crafts' && <CraftsPage />}
-            {activePage === 'reels' && <CraftReelsPage />}
+            {activePage === 'reels' && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <CraftReelsPage />
+              </React.Suspense>
+            )}
             {activePage === 'sellers' && <SellersDirectoryPage />}
             {activePage === 'seller-details' && <SellerProfileView />}
 
@@ -331,7 +355,9 @@ const MainContent: React.FC = () => {
               isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
                 <ForbiddenPage />
               ) : (
-                <OrdersTrackingPage />
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <OrdersTrackingPage />
+                </React.Suspense>
               )
             )}
 
@@ -546,7 +572,11 @@ const MainContent: React.FC = () => {
             )}
 
             {/* WAH Upper Egypt Digital Platform Routes */}
-            {(activePage === 'map' || activePage === 'explore') && <UpperEgyptMapPage />}
+            {(activePage === 'map' || activePage === 'explore') && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <UpperEgyptMapPage />
+              </React.Suspense>
+            )}
             {activePage === 'governorates' && <GovernoratesPage />}
             {activePage === 'governorate-details' && <GovernorateDetailPage />}
             {activePage === 'places' && <PlacesHeritagePage />}
@@ -562,9 +592,21 @@ const MainContent: React.FC = () => {
             {activePage === 'events' && <EventsPage />}
             {activePage === 'event-details' && <EventDetailPage />}
             {activePage === 'global-search' && <GlobalSearchResultsPage />}
-            {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && <CulturalCmsAdminPage />}
-            {activePage === 'admin-map-editor' && <AdminMapEditorPage />}
-            {activePage === 'dialect-dictionary' && <DialectDictionaryPage />}
+            {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <CulturalCmsAdminPage />
+              </React.Suspense>
+            )}
+            {activePage === 'admin-map-editor' && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <AdminMapEditorPage />
+              </React.Suspense>
+            )}
+            {activePage === 'dialect-dictionary' && (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <DialectDictionaryPage />
+              </React.Suspense>
+            )}
 
             {!PAGE_ROUTES[activePage] && <NotFoundPage />}
           </motion.div>

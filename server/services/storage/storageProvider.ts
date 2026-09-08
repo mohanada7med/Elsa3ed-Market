@@ -194,7 +194,7 @@ class DelegatingStorageProvider implements IStorageProvider {
   async delete(fileKey: string, requestingUser?: { id: string; role: string }): Promise<boolean> {
     if (!fileKey) return false;
 
-    if (fileKey.startsWith('Elsa3ed-Market/') && isCloudinaryAvailable()) {
+    if (fileKey.startsWith('WAH/') && isCloudinaryAvailable()) {
       try {
         return await cloudinaryStorage.delete(fileKey, requestingUser);
       } catch (err) {
@@ -209,7 +209,7 @@ class DelegatingStorageProvider implements IStorageProvider {
     if (fileKey.startsWith('http://') || fileKey.startsWith('https://') || fileKey.startsWith('data:')) {
       return fileKey;
     }
-    if (fileKey.startsWith('Elsa3ed-Market/')) {
+    if (fileKey.startsWith('WAH/')) {
       return isCloudinaryAvailable() ? cloudinaryStorage.getUrl(fileKey) : fileKey;
     }
     return localStorageProvider.getUrl(fileKey);

@@ -11,9 +11,12 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const {
-    navigateToProduct,
+    setSelectedProductId,
+    setActivePage,
     addToCart,
-    toggleFavorite,
+    setIsCartDrawerOpen,
+    addToFavorites,
+    removeFromFavorites,
     isFavorite,
     navigateToSeller,
     currentRole,
@@ -29,6 +32,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     product.images?.[0] ||
     'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
+  const handleCardClick = () => {
+    setSelectedProductId(product.id);
+    setActivePage('product-detail');
+  };
+
   return (
     <motion.div
       id={`product-card-${product.id}`}
@@ -37,15 +45,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       viewport={{ once: true, margin: '-30px' }}
       transition={{ duration: 0.35, ease: 'easeOut' }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="flex flex-col overflow-hidden group relative transition-all duration-300 rounded-[1.5rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl"
+      onClick={handleCardClick}
+      className="flex flex-col overflow-hidden group relative transition-all duration-300 rounded-[1.5rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl cursor-pointer"
     >
       {/* Product Image & Badges */}
       <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-white/5">
         <img
           src={primaryImage}
           alt={product.title}
-          onClick={() => navigateToProduct(product.id)}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
 
@@ -73,7 +81,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               whileTap={{ scale: 0.9 }}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleFavorite(product.id);
+                if (favorite) {
+                  removeFromFavorites(product.id);
+                } else {
+                  addToFavorites(product.id);
+                }
               }}
               className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer ${
                 favorite
@@ -92,7 +104,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             id={`quick-view-btn-${product.id}`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => navigateToProduct(product.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCardClick();
+            }}
             className="p-2.5 rounded-xl bg-white/90 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-[#20201d] text-[#211d18] dark:text-[#f5f0e7] hover:text-[#9a6a35] dark:hover:text-[#d5a56d] border border-black/10 dark:border-white/10 backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer"
             title={`معاينة تفاصيل ${product.title}`}
             aria-label={`معاينة تفاصيل ${product.title}`}
@@ -120,7 +135,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <button
               type="button"
               id={`seller-link-${product.sellerId}`}
-              onClick={() => navigateToSeller(product.sellerId)}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateToSeller(product.sellerId);
+              }}
               aria-label={`زيارة ورشة الحرفي ${product.sellerName}`}
               className="text-xs font-bold text-black/60 dark:text-white/60 hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors truncate text-right cursor-pointer"
             >
@@ -144,17 +162,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Product Title */}
           <h3
-            onClick={() => navigateToProduct(product.id)}
-            role="button"
-            tabIndex={0}
-            aria-label={`عرض تفاصيل المنتج: ${product.title}`}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                navigateToProduct(product.id);
-              }
-            }}
-            className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-sm leading-snug hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer line-clamp-2 mb-2"
+            className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-sm leading-snug hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors line-clamp-2 mb-2"
           >
             {product.title}
           </h3>
@@ -188,6 +196,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 addToCart(product, 1);
+                setIsCartDrawerOpen(true);
               }}
               disabled={!product.inStock}
               className="p-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
@@ -204,7 +213,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               whileTap={{ scale: 0.92 }}
               onClick={(e) => {
                 e.stopPropagation();
-                navigateToProduct(product.id);
+                handleCardClick();
               }}
               className="p-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title="عرض تفاصيل القطعة"
@@ -220,7 +229,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               whileTap={{ scale: 0.92 }}
               onClick={(e) => {
                 e.stopPropagation();
-                navigateToProduct(product.id);
+                handleCardClick();
               }}
               className="p-2.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-white shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title="إدارة القطعة التراثية"

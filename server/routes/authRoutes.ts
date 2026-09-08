@@ -444,7 +444,7 @@ router.post('/profile/image', uploadLimiter, requireAuth, async (req: Authentica
       });
     }
 
-    // 2. Upload to Cloudinary under Elsa3ed-Market/users/{userId}/profile
+    // 2. Upload to Cloudinary under WAH/users/{userId}/profile
     const result = await storageService.upload({
       data: image,
       filename: filename || 'profile.jpg',

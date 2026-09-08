@@ -117,18 +117,7 @@ export const StoryDetailPage: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={toggleAudio}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                isPlayingAudio
-                  ? 'bg-emerald-600 text-white animate-pulse'
-                  : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
-              }`}
-            >
-              {isPlayingAudio ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[#9a6a35]" />}
-              <span>{isPlayingAudio ? 'إيقاف السرد' : 'استمع للحكاية'}</span>
-            </button>
+
 
             <button
               type="button"

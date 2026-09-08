@@ -2398,6 +2398,7 @@ export const api = {
     sellerId?: string;
     governorate?: string;
     craftType?: string;
+    contentType?: string;
     search?: string;
     featuredOnly?: boolean;
   }): Promise<CraftReel[]> {
@@ -2405,6 +2406,7 @@ export const api = {
     if (filters?.sellerId && filters.sellerId !== 'all') params.append('sellerId', filters.sellerId);
     if (filters?.governorate && filters.governorate !== 'all') params.append('governorate', filters.governorate);
     if (filters?.craftType && filters.craftType !== 'all') params.append('craftType', filters.craftType);
+    if (filters?.contentType && filters.contentType !== 'all') params.append('contentType', filters.contentType);
     if (filters?.search) params.append('search', filters.search);
     if (filters?.featuredOnly) params.append('featuredOnly', 'true');
 

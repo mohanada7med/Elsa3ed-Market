@@ -2222,13 +2222,13 @@ export const AdminDashboard: React.FC = () => {
               <div className="space-y-2 max-w-2xl">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-amber-300 text-xs font-bold border border-white/15">
                   <Film className="w-4 h-4 text-amber-400" />
-                  <span>الإشراف على محتوى الفيديو القصير (Craft Reels)</span>
+                  <span>الإشراف على محتوى وه Stories وحكايات الصعيد</span>
                 </div>
                 <h2 className="text-xl sm:text-2xl font-black font-heritage">
-                  إدارة فيديوهات كواليس الصنع والتفاعل المباشر
+                  إدارة الفيديوهات والحكايات المصورة والتفاعل المباشر
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  مراقبة الفيديوهات القصيرة المرفوعة من الورش، اعتماد مقاطع جديدة منسوبة للحرفيين، والربط بالمنتجات المعتمدة لضمان تجربة تسوق تفاعلية ممتازة.
+                  مراقبة الفيديوهات المصورة لمعالم الصعيد وتراثه وأسواقه وأكلاته وحرفه، إدارة التصنيفات والمحافظات، والربط الاختياري بالمنتجات.
                 </p>
               </div>
 
@@ -2247,7 +2247,7 @@ export const AdminDashboard: React.FC = () => {
                   className="px-5 py-3 bg-gradient-to-r from-[#9a6a35] to-[#7d5427] hover:from-[#7d5427] hover:to-[#623f1a] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>إضافة فيديو كحرفي/إدارة</span>
+                  <span>نشر حكاية/فيديو جديد</span>
                 </button>
               </div>
             </div>
@@ -2261,7 +2261,7 @@ export const AdminDashboard: React.FC = () => {
                 <Film className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
               </div>
               <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminReels.length} مقطع</span>
-              <span className="text-[10px] text-emerald-700 font-bold block mt-1">تغطي 7 محافظات صعيدية</span>
+              <span className="text-[10px] text-emerald-700 font-bold block mt-1">تغطي محافظات الصعيد</span>
             </div>
 
             <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
@@ -2270,7 +2270,7 @@ export const AdminDashboard: React.FC = () => {
                 <Eye className="w-4 h-4 text-amber-600" />
               </div>
               <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminReels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
+                {adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0).toLocaleString()}
               </span>
               <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات كاملة وتفاعلية</span>
             </div>
@@ -2281,20 +2281,20 @@ export const AdminDashboard: React.FC = () => {
                 <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
               </div>
               <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminReels.reduce((acc, r) => acc + r.likesCount, 0).toLocaleString()}
+                {adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0).toLocaleString()}
               </span>
               <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل جمهور المنصة</span>
             </div>
 
             <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-                <span>الورش الممثلة بالفيديو</span>
+                <span>الحكايات والمقاطع</span>
                 <Store className="w-4 h-4 text-indigo-600" />
               </div>
               <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {new Set(adminReels.map((r) => r.artisanName)).size} ورشة
+                {adminReels.length} حكاية
               </span>
-              <span className="text-[10px] text-indigo-700 font-bold block mt-1">حرفيون موثقون</span>
+              <span className="text-[10px] text-indigo-700 font-bold block mt-1">محتوى وثائقي وتجاري</span>
             </div>
           </div>
 
@@ -2338,7 +2338,7 @@ export const AdminDashboard: React.FC = () => {
                 type="text"
                 value={adminReelSearchTerm}
                 onChange={(e) => setAdminReelSearchTerm(e.target.value)}
-                placeholder="ابحث بالفيديو، الحرفي، المنتج..."
+                placeholder="ابحث بالعنوان، المكان، التصنيف..."
                 className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
               />
               {adminReelSearchTerm && (
@@ -2356,24 +2356,32 @@ export const AdminDashboard: React.FC = () => {
           {/* Reels Grid */}
           {adminReels.filter((r) => {
             const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+            const term = adminReelSearchTerm.trim().toLowerCase();
             const matchesSearch =
-              adminReelSearchTerm.trim() === '' ||
-              r.title.includes(adminReelSearchTerm) ||
-              r.artisanName.includes(adminReelSearchTerm) ||
-              r.craftType.includes(adminReelSearchTerm) ||
-              r.productTitle.includes(adminReelSearchTerm);
+              term === '' ||
+              r.title.toLowerCase().includes(term) ||
+              (r.location && r.location.toLowerCase().includes(term)) ||
+              (r.contentType && r.contentType.toLowerCase().includes(term)) ||
+              (r.description && r.description.toLowerCase().includes(term)) ||
+              (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
+              (r.craftType && r.craftType.toLowerCase().includes(term)) ||
+              (r.productTitle && r.productTitle.toLowerCase().includes(term));
             return matchesGov && matchesSearch;
           }).length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {adminReels
                 .filter((r) => {
                   const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+                  const term = adminReelSearchTerm.trim().toLowerCase();
                   const matchesSearch =
-                    adminReelSearchTerm.trim() === '' ||
-                    r.title.includes(adminReelSearchTerm) ||
-                    r.artisanName.includes(adminReelSearchTerm) ||
-                    r.craftType.includes(adminReelSearchTerm) ||
-                    r.productTitle.includes(adminReelSearchTerm);
+                    term === '' ||
+                    r.title.toLowerCase().includes(term) ||
+                    (r.location && r.location.toLowerCase().includes(term)) ||
+                    (r.contentType && r.contentType.toLowerCase().includes(term)) ||
+                    (r.description && r.description.toLowerCase().includes(term)) ||
+                    (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
+                    (r.craftType && r.craftType.toLowerCase().includes(term)) ||
+                    (r.productTitle && r.productTitle.toLowerCase().includes(term));
                   return matchesGov && matchesSearch;
                 })
                 .map((reel) => (
@@ -2421,7 +2429,7 @@ export const AdminDashboard: React.FC = () => {
                           )}
                         </div>
                         <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                          {reel.governorate}
+                          {reel.location || reel.governorate}
                         </span>
                       </div>
 
@@ -2431,25 +2439,35 @@ export const AdminDashboard: React.FC = () => {
                           {reel.title}
                         </p>
                         <p className="text-[10px] text-amber-300 truncate">
-                          {reel.artisanName} ({reel.workshopName || 'ورشة تراثية'}) • {reel.craftType}
+                          {reel.contentType || reel.craftType || 'حكاية صعيدية'}
                         </p>
                       </div>
                     </div>
 
                     {/* Bottom Metadata & Actions */}
                     <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-white/5/40">
-                      {/* Linked Product */}
-                      <div className="p-2.5 bg-white rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
-                        <img
-                          src={reel.productImage}
-                          alt={reel.productTitle}
-                          className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
-                          <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">{reel.productPrice} ج.م</span>
+                      {/* Linked Product (Optional) */}
+                      {reel.productId && reel.productTitle ? (
+                        <div className="p-2.5 bg-white dark:bg-[#1c1c19] rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
+                          {reel.productImage && (
+                            <img
+                              src={reel.productImage}
+                              alt={reel.productTitle}
+                              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100 dark:border-white/10"
+                            />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
+                            <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">{reel.productPrice} ج.م</span>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
+                          <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
+                            محتوى وثائقي / بدون منتج مرتبط
+                          </span>
+                        </div>
+                      )}
 
                       {/* Engagement Stats & Database Sync Badge */}
                       <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">

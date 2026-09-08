@@ -17,28 +17,32 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
   const { addToCart, products, navigateToProduct, addToast } = useApp();
   const [isAdded, setIsAdded] = useState(false);
 
-  if (!reel.productId || !reel.productTitle) return null;
+  const productId = reel.productId;
+  const productTitle = reel.productTitle;
+  const productPrice = reel.productPrice;
+
+  if (!productId || productId === 'none' || !productTitle || !productPrice) return null;
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const fullProduct = products.find((p) => p.id === reel.productId) || {
-      id: reel.productId,
-      title: reel.productTitle,
-      price: reel.productPrice,
-      originalPrice: reel.productOriginalPrice,
-      images: [reel.productImage],
+    const fullProduct = products.find((p) => p.id === productId) || {
+      id: productId,
+      title: productTitle,
+      price: productPrice,
+      originalPrice: reel.productOriginalPrice || productPrice,
+      images: reel.productImage ? [reel.productImage] : ['/placeholder.jpg'],
       rating: reel.productRating || 5,
       reviewCount: 12,
       inStock: reel.inStock ?? true,
       stockCount: 10,
       categoryId: 'crafts',
-      categoryName: reel.craftType,
-      sellerId: reel.sellerId,
-      sellerName: reel.workshopName,
+      categoryName: reel.craftType || 'حرف صعيدية',
+      sellerId: reel.sellerId || 'seller-1',
+      sellerName: reel.workshopName || 'الصعيد',
       sellerGovernorate: reel.governorate,
-      description: reel.description,
+      description: reel.description || productTitle,
       specifications: {
-        material: reel.craftType,
+        material: reel.craftType || 'يدوي أصيل',
         originGovernorate: reel.governorate,
         craftsmanship: 'صناعة يدوية أصيلة'
       },
@@ -46,12 +50,12 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
       isHandmade: true,
       isHeritage: true,
       createdAt: reel.createdAt,
-      approvalStatus: 'approved'
+      approvalStatus: 'approved' as const
     };
 
     addToCart(fullProduct, 1);
     setIsAdded(true);
-    addToast('أُضيف إلى السلة', `تمت إضافة "${reel.productTitle}" لسلة مشترياتك`, 'success');
+    addToast('أُضيف إلى السلة', `تمت إضافة "${productTitle}" لسلة مشترياتك`, 'success');
     setTimeout(() => setIsAdded(false), 2400);
   };
 
@@ -59,9 +63,9 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
     e.stopPropagation();
     if (onCloseParent) onCloseParent();
     if (onSelectProduct) {
-      onSelectProduct(reel.productId);
+      onSelectProduct(productId);
     } else {
-      navigateToProduct(reel.productId);
+      navigateToProduct(productId);
     }
   };
 
@@ -93,14 +97,14 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
       <div className="min-w-0 max-w-[150px] sm:max-w-[200px] text-right">
         <div className="flex items-center gap-1">
           <span className="text-[11px] font-bold text-white truncate block">
-            {reel.productTitle}
+            {productTitle}
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="text-[11px] font-extrabold text-amber-400">
-            {reel.productPrice} ج.م
+            {productPrice} ج.م
           </span>
-          {reel.productOriginalPrice && reel.productOriginalPrice > reel.productPrice && (
+          {reel.productOriginalPrice && reel.productOriginalPrice > productPrice && (
             <span className="text-[9px] text-gray-400 line-through">
               {reel.productOriginalPrice}
             </span>

@@ -53,7 +53,7 @@ const videoMulter = multer({
 // GET /api/reels - Get all reels with optional filters
 router.get('/', async (req, res: Response) => {
   try {
-    const { sellerId, governorate, craftType, search, featuredOnly, limit = 50 } = req.query;
+    const { sellerId, governorate, craftType, contentType, search, featuredOnly, limit = 50 } = req.query;
     const { db, isMongo } = await getDatabase();
 
     let reels: CraftReelDocument[] = [];
@@ -66,22 +66,40 @@ router.get('/', async (req, res: Response) => {
       if (governorate && governorate !== 'all') {
         query.governorate = governorate;
       }
-      if (craftType && craftType !== 'all') {
-        query.craftType = craftType;
+      if (contentType && contentType !== 'all') {
+        query.$or = [
+          { contentType: contentType },
+          { craftType: contentType }
+        ];
+      } else if (craftType && craftType !== 'all') {
+        query.$or = [
+          { craftType: craftType },
+          { contentType: craftType }
+        ];
       }
       if (featuredOnly === 'true') {
         query.isFeatured = true;
       }
       if (search && typeof search === 'string' && search.trim() !== '') {
         const regex = new RegExp(search.trim(), 'i');
-        query.$or = [
+        const searchConditions: any[] = [
           { title: regex },
+          { description: regex },
+          { governorate: regex },
+          { location: regex },
+          { contentType: regex },
           { artisanName: regex },
           { workshopName: regex },
           { craftType: regex },
           { productTitle: regex },
           { hashtags: regex }
         ];
+        if (query.$or) {
+          query.$and = [{ $or: query.$or }, { $or: searchConditions }];
+          delete query.$or;
+        } else {
+          query.$or = searchConditions;
+        }
       }
 
       reels = (await db
@@ -100,8 +118,14 @@ router.get('/', async (req, res: Response) => {
       if (governorate && governorate !== 'all') {
         memoryList = memoryList.filter((r) => r.governorate === governorate);
       }
-      if (craftType && craftType !== 'all') {
-        memoryList = memoryList.filter((r) => r.craftType === craftType);
+      if (contentType && contentType !== 'all') {
+        memoryList = memoryList.filter(
+          (r) => r.contentType === contentType || r.craftType === contentType
+        );
+      } else if (craftType && craftType !== 'all') {
+        memoryList = memoryList.filter(
+          (r) => r.craftType === craftType || r.contentType === craftType
+        );
       }
       if (featuredOnly === 'true') {
         memoryList = memoryList.filter((r) => r.isFeatured);
@@ -111,10 +135,14 @@ router.get('/', async (req, res: Response) => {
         memoryList = memoryList.filter(
           (r) =>
             r.title.toLowerCase().includes(q) ||
-            r.artisanName.toLowerCase().includes(q) ||
-            r.workshopName.toLowerCase().includes(q) ||
-            r.craftType.toLowerCase().includes(q) ||
-            r.productTitle.toLowerCase().includes(q)
+            (r.description && r.description.toLowerCase().includes(q)) ||
+            (r.location && r.location.toLowerCase().includes(q)) ||
+            (r.governorate && r.governorate.toLowerCase().includes(q)) ||
+            (r.contentType && r.contentType.toLowerCase().includes(q)) ||
+            (r.artisanName && r.artisanName.toLowerCase().includes(q)) ||
+            (r.workshopName && r.workshopName.toLowerCase().includes(q)) ||
+            (r.craftType && r.craftType.toLowerCase().includes(q)) ||
+            (r.productTitle && r.productTitle.toLowerCase().includes(q))
         );
       }
       reels = memoryList;
@@ -452,6 +480,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
 
     const {
       title,
+      contentType,
+      location,
       artisanName,
       artisanAvatar,
       workshopName,
@@ -501,16 +531,13 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     }
 
     // Role Ownership Resolution
-    let effectiveSellerId: string;
-    let effectiveArtisanName = artisanName || user.name || 'أسطى الحرفة';
-    let effectiveWorkshopName = workshopName || 'ورشة الصعيد التراثية';
-
+    let effectiveSellerId: string | undefined;
     if (user.role === 'seller') {
       // Strictly bind to seller's own authenticated id
       effectiveSellerId = user.sellerId || user.id;
     } else {
       // Admin can assign to any seller or platform-admin
-      effectiveSellerId = requestedSellerId || user.sellerId || 'platform-admin';
+      effectiveSellerId = requestedSellerId || user.sellerId || undefined;
     }
 
     const resolvedPublicId =
@@ -518,18 +545,21 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       extractCloudinaryPublicId(videoUrl.trim()) ||
       undefined;
 
+    const hasProduct = Boolean(productId && productId !== 'none' && productTitle?.trim());
+
     const newReel: CraftReelDocument = {
       id: `reel-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       title: title.trim(),
-      artisanName: effectiveArtisanName.trim(),
+      contentType: contentType || 'places',
+      location: location?.trim() || governorate || 'الصعيد',
+      artisanName: artisanName?.trim() || undefined,
       artisanAvatar:
         artisanAvatar ||
-        user.avatar ||
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-      workshopName: effectiveWorkshopName.trim(),
+        undefined,
+      workshopName: workshopName?.trim() || undefined,
       sellerId: effectiveSellerId,
       governorate: governorate || user.governorate || 'قنا',
-      craftType: craftType || 'حرفة يدوية صعيدية',
+      craftType: craftType || undefined,
       videoUrl: videoUrl.trim(),
       cloudinaryPublicId: resolvedPublicId,
       resourceType: 'video',
@@ -541,23 +571,20 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       likesCount: 0,
       viewsCount: 1,
       sharesCount: 0,
-      productId: productId || `prod-${Date.now()}`,
-      productTitle: productTitle?.trim() || title.trim(),
-      productPrice: Number(productPrice) || 200,
-      productOriginalPrice: productOriginalPrice ? Number(productOriginalPrice) : undefined,
-      productImage:
-        productImage ||
-        posterUrl ||
-        'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80',
-      productRating: Number(productRating) || 5.0,
-      inStock: true,
+      productId: hasProduct ? productId : undefined,
+      productTitle: hasProduct ? productTitle?.trim() : undefined,
+      productPrice: hasProduct && productPrice ? Number(productPrice) : undefined,
+      productOriginalPrice: hasProduct && productOriginalPrice ? Number(productOriginalPrice) : undefined,
+      productImage: hasProduct ? (productImage || posterUrl) : undefined,
+      productRating: hasProduct ? (Number(productRating) || 5.0) : undefined,
+      inStock: hasProduct ? true : undefined,
       description: description?.trim() || title.trim(),
       hashtags: Array.isArray(hashtags)
         ? hashtags
         : typeof hashtags === 'string'
         ? hashtags.split(/[,،\s]+/).filter(Boolean)
-        : ['#تراث_الصعيد', '#صناعة_يدوية'],
-      musicTrack: musicTrack || 'نغمات صعيدية أصيلة',
+        : ['#تراث_الصعيد', '#حكايات_الصعيد'],
+      musicTrack: musicTrack || undefined,
       isVerifiedArtisan: isVerifiedArtisan ?? true,
       isFeatured: user.role === 'admin' ? Boolean(isFeatured) : false,
       createdAt: new Date().toISOString().split('T')[0],
@@ -682,6 +709,8 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
       }
     }
 
+    if (updates.contentType !== undefined) sanitizedUpdates.contentType = updates.contentType;
+    if (updates.location !== undefined) sanitizedUpdates.location = updates.location ? updates.location.trim() : undefined;
     if (updates.cloudinaryPublicId !== undefined) sanitizedUpdates.cloudinaryPublicId = updates.cloudinaryPublicId;
     if (updates.posterUrl !== undefined) sanitizedUpdates.posterUrl = updates.posterUrl.trim();
     if (updates.duration !== undefined) sanitizedUpdates.duration = updates.duration;
@@ -693,11 +722,11 @@ router.put('/:id', requireAuth, async (req: AuthenticatedRequest, res: Response)
         ? updates.hashtags
         : String(updates.hashtags).split(/[,،\s]+/).filter(Boolean);
     }
-    if (updates.productId !== undefined) sanitizedUpdates.productId = updates.productId;
-    if (updates.productTitle !== undefined) sanitizedUpdates.productTitle = updates.productTitle;
-    if (updates.productPrice !== undefined) sanitizedUpdates.productPrice = Number(updates.productPrice);
-    if (updates.productOriginalPrice !== undefined) sanitizedUpdates.productOriginalPrice = Number(updates.productOriginalPrice);
-    if (updates.productImage !== undefined) sanitizedUpdates.productImage = updates.productImage;
+    if (updates.productId !== undefined) sanitizedUpdates.productId = updates.productId || undefined;
+    if (updates.productTitle !== undefined) sanitizedUpdates.productTitle = updates.productTitle || undefined;
+    if (updates.productPrice !== undefined) sanitizedUpdates.productPrice = updates.productPrice ? Number(updates.productPrice) : undefined;
+    if (updates.productOriginalPrice !== undefined) sanitizedUpdates.productOriginalPrice = updates.productOriginalPrice ? Number(updates.productOriginalPrice) : undefined;
+    if (updates.productImage !== undefined) sanitizedUpdates.productImage = updates.productImage || undefined;
     if (updates.inStock !== undefined) sanitizedUpdates.inStock = Boolean(updates.inStock);
 
     // Admin-Only Privileges

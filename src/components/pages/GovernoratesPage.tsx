@@ -234,11 +234,10 @@ export const GovernoratesPage: React.FC = () => {
                     key={item.value}
                     type="button"
                     onClick={() => setRegionFilter(item.value)}
-                    className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black transition-all cursor-pointer ${
-                      active
+                    className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black transition-all cursor-pointer ${active
                         ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-sm'
                         : 'bg-black/5 dark:bg-white/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:bg-[#9a6a35] hover:text-white'
-                    }`}
+                      }`}
                   >
                     {item.label}
                   </button>
@@ -303,33 +302,29 @@ export const GovernoratesPage: React.FC = () => {
                     <img
                       src={getImage(gov)}
                       alt={`محافظة ${gov.name}`}
-                      className={`absolute inset-0 h-full w-full object-cover transition duration-700 ${
-                        isHovered ? 'scale-108 saturate-110' : 'scale-100'
-                      }`}
+                      className={`absolute inset-0 h-full w-full object-cover transition duration-700 ${isHovered ? 'scale-108 saturate-110' : 'scale-100'
+                        }`}
                     />
 
                     {/* Overlay */}
                     <div
-                      className={`absolute inset-0 transition-all duration-500 ${
-                        isHovered
+                      className={`absolute inset-0 transition-all duration-500 ${isHovered
                           ? 'bg-gradient-to-t from-black/95 via-black/45 to-black/20'
                           : 'bg-gradient-to-t from-black/90 via-black/35 to-black/10'
-                      }`}
+                        }`}
                     />
 
                     {/* Decorative border */}
                     <div
-                      className={`absolute inset-3 rounded-[1.5rem] border transition duration-500 ${
-                        isHovered ? 'border-white/40' : 'border-white/10'
-                      }`}
+                      className={`absolute inset-3 rounded-[1.5rem] border transition duration-500 ${isHovered ? 'border-white/40' : 'border-white/10'
+                        }`}
                     />
 
                     {/* Number */}
                     <div className="absolute right-6 top-6">
                       <span
-                        className={`text-5xl font-black font-mono leading-none tracking-tight transition duration-500 ${
-                          isHovered ? 'text-white/80' : 'text-white/30'
-                        }`}
+                        className={`text-5xl font-black font-mono leading-none tracking-tight transition duration-500 ${isHovered ? 'text-white/80' : 'text-white/30'
+                          }`}
                       >
                         {String(index + 1).padStart(2, '0')}
                       </span>
@@ -345,9 +340,8 @@ export const GovernoratesPage: React.FC = () => {
                     {/* Poster content */}
                     <div className="absolute bottom-0 right-0 left-0 p-6 sm:p-7">
                       <div
-                        className={`mb-2 flex items-center gap-2 text-xs font-bold text-white/70 transition duration-500 ${
-                          isHovered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
-                        }`}
+                        className={`mb-2 flex items-center gap-2 text-xs font-bold text-white/70 transition duration-500 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
+                          }`}
                       >
                         <MapPin className="h-3.5 w-3.5 text-[#d5a56d]" />
                         <span>{gov.capitalCity ? `العاصمة: ${gov.capitalCity}` : 'صعيد مصر'}</span>
@@ -358,17 +352,15 @@ export const GovernoratesPage: React.FC = () => {
                       </h3>
 
                       <p
-                        className={`mt-2 line-clamp-2 max-w-lg text-xs leading-relaxed text-white/80 transition-all duration-500 ${
-                          isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-                        }`}
+                        className={`mt-2 line-clamp-2 max-w-lg text-xs leading-relaxed text-white/80 transition-all duration-500 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+                          }`}
                       >
                         {gov.shortIntro}
                       </p>
 
                       <div
-                        className={`mt-4 flex items-center gap-2 text-xs font-black text-[#d5a56d] transition-all duration-500 ${
-                          isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-                        }`}
+                        className={`mt-4 flex items-center gap-2 text-xs font-black text-[#d5a56d] transition-all duration-500 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+                          }`}
                       >
                         <span>افتح المعرض التوثيقي</span>
                         <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1.5" />
@@ -377,9 +369,8 @@ export const GovernoratesPage: React.FC = () => {
 
                     {/* Active bottom glow strip */}
                     <div
-                      className={`absolute bottom-0 right-0 h-1.5 bg-[#9a6a35] transition-all duration-500 ${
-                        isHovered ? 'left-0' : 'left-full'
-                      }`}
+                      className={`absolute bottom-0 right-0 h-1.5 bg-[#9a6a35] transition-all duration-500 ${isHovered ? 'left-0' : 'left-full'
+                        }`}
                     />
                   </button>
                 );
@@ -481,8 +472,7 @@ export const GovernoratesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('map')}
-                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-white text-black hover:bg-[#9a6a35] hover:text-white px-7 py-4 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
-              >
+                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
                 <Compass className="h-4 w-4" />
                 <span>استكشف الخريطة</span>
                 <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />

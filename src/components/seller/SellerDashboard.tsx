@@ -2495,7 +2495,7 @@ export const SellerDashboard: React.FC = () => {
                           {reel.duration}
                         </span>
                         <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                          {reel.governorate}
+                          {reel.location || reel.governorate}
                         </span>
                       </div>
 
@@ -2505,25 +2505,35 @@ export const SellerDashboard: React.FC = () => {
                           {reel.title}
                         </p>
                         <p className="text-[10px] text-amber-300 truncate">
-                          {reel.artisanName} • {reel.craftType}
+                          {reel.contentType || reel.craftType || 'حكاية صعيدية'}
                         </p>
                       </div>
                     </div>
 
                     {/* Bottom Metadata & Actions */}
                     <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/[0.02] dark:bg-white/[0.02]">
-                      {/* Linked Product Quick View */}
-                      <div className="p-2.5 bg-white/80 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
-                        <img
-                          src={reel.productImage}
-                          alt={reel.productTitle}
-                          className="w-10 h-10 rounded-xl object-cover shrink-0 border border-black/10 dark:border-white/10"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
-                          <span className="text-xs font-black font-mono text-[#9a6a35]">{reel.productPrice} ج.م</span>
+                      {/* Linked Product Quick View (Optional) */}
+                      {reel.productId && reel.productTitle ? (
+                        <div className="p-2.5 bg-white/80 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
+                          {reel.productImage && (
+                            <img
+                              src={reel.productImage}
+                              alt={reel.productTitle}
+                              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-black/10 dark:border-white/10"
+                            />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
+                            <span className="text-xs font-black font-mono text-[#9a6a35]">{reel.productPrice} ج.م</span>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
+                          <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
+                            محتوى وثائقي / بدون منتج مرتبط
+                          </span>
+                        </div>
+                      )}
 
                       {/* Engagement Stats & Cloud DB Status */}
                       <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">

@@ -1,7 +1,3 @@
-/**
- * Structured Logger for Elsa3ed Market (سوق الصعيد)
- * Formats logs with timestamps, levels, request correlation IDs, and automatic secret redaction.
- */
 
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'AUDIT';
 

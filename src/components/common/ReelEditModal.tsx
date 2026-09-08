@@ -53,6 +53,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const [posterUrl, setPosterUrl] = useState('');
   const [governorate, setGovernorate] = useState<Governorate>('قنا');
+  const [location, setLocation] = useState('');
+  const [contentType, setContentType] = useState<string>('places');
   const [craftType, setCraftType] = useState('');
   const [duration, setDuration] = useState('0:30');
   const [musicTrack, setMusicTrack] = useState('');
@@ -88,6 +90,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       setVideoUrl(reel.videoUrl || '');
       setPosterUrl(reel.posterUrl || '');
       setGovernorate(reel.governorate || 'قنا');
+      setLocation(reel.location || '');
+      setContentType(reel.contentType || 'places');
       setCraftType(reel.craftType || '');
       setDuration(reel.duration || '0:30');
       setMusicTrack(reel.musicTrack || '');
@@ -172,6 +176,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       .filter((t) => t.length > 0)
       .map((t) => (t.startsWith('#') ? t : `#${t}`));
 
+    const hasProduct = Boolean(productId && productId !== 'none');
     const updates: Partial<CraftReel> & Record<string, any> = {
       title: title.trim(),
       description: description.trim(),
@@ -180,15 +185,17 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       posterUrl: posterUrl.trim() || productImage || reel.posterUrl,
       duration: duration || reel.duration,
       governorate,
-      craftType: craftType.trim(),
+      location: location.trim() || governorate,
+      contentType: contentType || 'places',
+      craftType: craftType.trim() || 'الصعيد',
       musicTrack: musicTrack.trim(),
       hashtags: hashtags.length > 0 ? hashtags : reel.hashtags,
-      productId: productId || reel.productId,
-      productTitle: productTitle.trim() || title.trim(),
-      productPrice: Number(productPrice) || reel.productPrice,
-      productOriginalPrice: productOriginalPrice ? Number(productOriginalPrice) : undefined,
-      productImage: productImage.trim() || posterUrl.trim() || reel.productImage,
-      inStock
+      productId: hasProduct ? productId : undefined,
+      productTitle: hasProduct ? (productTitle.trim() || title.trim()) : undefined,
+      productPrice: hasProduct ? (Number(productPrice) || 0) : undefined,
+      productOriginalPrice: hasProduct && productOriginalPrice ? Number(productOriginalPrice) : undefined,
+      productImage: hasProduct ? (productImage.trim() || posterUrl.trim() || reel.productImage) : undefined,
+      inStock: hasProduct ? inStock : undefined
     };
 
     if (isAdmin) {
@@ -496,12 +503,34 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 />
               </div>
 
-              {/* Governorate & Craft Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Governorate, Location & Content Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <span>تصنيف المحتوى</span>
+                  </label>
+                  <select
+                    value={contentType}
+                    onChange={(e) => setContentType(e.target.value)}
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold"
+                  >
+                    <option value="places">أماكن ومعالم</option>
+                    <option value="crafts">حرف وصناعات</option>
+                    <option value="heritage">تراث وآثار</option>
+                    <option value="events">فعاليات ومهرجانات</option>
+                    <option value="food">أكل صعيدي</option>
+                    <option value="markets">أسواق</option>
+                    <option value="people">حكايات الناس</option>
+                    <option value="travel">رحلات وتجارب</option>
+                    <option value="other">أخرى</option>
+                  </select>
+                </div>
+
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
-                    <span>المحافظة التراثية</span>
+                    <span>المحافظة</span>
                   </label>
                   <select
                     value={governorate}
@@ -520,67 +549,76 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
-                    <Tag className="w-3.5 h-3.5 text-[#9a6a35]" />
-                    <span>نوع الحرفة اليدوية</span>
+                    <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <span>الموقع / المكان</span>
                   </label>
                   <input
                     type="text"
-                    value={craftType}
-                    onChange={(e) => setCraftType(e.target.value)}
-                    placeholder="مثال: فخار، كليم يدوي، نقش نحاس"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="مثال: معبد حتشبسوت"
                     className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none"
                   />
                 </div>
               </div>
 
-              {/* Linked Shoppable Product */}
+              {/* Linked Product (Optional) */}
               <div className="p-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShoppingBag className="w-4 h-4 text-[#9a6a35]" />
                     <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                      المنتج المرتبط بالفيديو للشراء المباشر
+                      المنتج المرتبط (اختياري)
                     </span>
                   </div>
-                  {sellerProducts.length > 0 && (
-                    <select
-                      onChange={(e) => handleProductSelect(e.target.value)}
-                      className="text-[11px] p-1.5 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-lg outline-none"
-                    >
-                      <option value="custom">اختيار من قائمة منتجاتي...</option>
-                      {sellerProducts.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.title} ({p.price} ج.م)
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                  <select
+                    value={productId || 'none'}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === 'none') {
+                        setProductId('');
+                        setProductTitle('');
+                        setProductPrice(0);
+                      } else {
+                        handleProductSelect(val);
+                      }
+                    }}
+                    className="text-[11px] p-1.5 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-lg outline-none"
+                  >
+                    <option value="none">✨ بدون ربط بمنتج</option>
+                    <option value="custom">إدخال منتج يدوياً...</option>
+                    {sellerProducts.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.title} ({p.price} ج.م)
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  <div className="sm:col-span-2">
-                    <label className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">اسم المنتج</label>
-                    <input
-                      type="text"
-                      value={productTitle}
-                      onChange={(e) => setProductTitle(e.target.value)}
-                      placeholder="اسم المنتج في الفيديو"
-                      className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none"
-                      required
-                    />
-                  </div>
+                {Boolean(productId && productId !== 'none') && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div className="sm:col-span-2">
+                      <label className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">اسم المنتج</label>
+                      <input
+                        type="text"
+                        value={productTitle}
+                        onChange={(e) => setProductTitle(e.target.value)}
+                        placeholder="اسم المنتج في الفيديو"
+                        className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">السعر الحالي (ج.م)</label>
-                    <input
-                      type="number"
-                      value={productPrice}
-                      onChange={(e) => setProductPrice(e.target.value)}
-                      className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-[#9a6a35]"
-                      required
-                    />
+                    <div>
+                      <label className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">السعر الحالي (ج.م)</label>
+                      <input
+                        type="number"
+                        value={productPrice}
+                        onChange={(e) => setProductPrice(e.target.value)}
+                        className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-[#9a6a35]"
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>

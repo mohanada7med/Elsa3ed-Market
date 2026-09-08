@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
+
 import {
   Heart,
   ShoppingBag,
@@ -13,9 +14,6 @@ import {
   ShieldCheck,
   Store,
   ChevronRight,
-  Clock,
-  Award,
-  Layers,
   Send,
   CheckCircle2,
   Share2,
@@ -23,9 +21,23 @@ import {
   Building2,
   Edit,
   Settings,
-  Boxes
+  Boxes,
+  ArrowUpLeft,
+  Minus,
+  Plus,
+  Copy,
+  Package,
+  Gem,
+  Ruler,
+  Weight,
+  Clock3,
+  Leaf,
+  BadgeCheck,
+  Layers3,
+  Info,
 } from 'lucide-react';
-import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
+
+import { getWhatsAppUrl } from '../common/WhatsAppButton';
 
 export const ProductDetailsView: React.FC = () => {
   const {
@@ -42,743 +54,2562 @@ export const ProductDetailsView: React.FC = () => {
     currentRole,
     isAuthenticated,
     openChatWithArtisan,
-    isLoading
+    isLoading,
   } = useApp();
 
   const effectiveProductId =
     selectedProductId ||
-    (typeof window !== 'undefined' && window.location.pathname.startsWith('/products/')
+    (typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/products/')
       ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
       : null);
 
-  const product = products.find((p) => p.id === effectiveProductId) || (!effectiveProductId ? products[0] : undefined);
+  const product =
+    products.find((p) => p.id === effectiveProductId) ||
+    (!effectiveProductId ? products[0] : undefined);
+
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews' | 'shipping'>('desc');
+  const [activeTab, setActiveTab] = useState<
+    'desc' | 'specs' | 'reviews' | 'shipping'
+  >('desc');
 
-  const productImages = product?.images && Array.isArray(product.images) && product.images.length > 0
-    ? product.images
-    : ['https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png'];
-  const productTags = Array.isArray(product?.tags) ? product.tags : [];
-  const productSpecs = product?.specifications || {
-    material: 'خامات طبيعية تراثية',
-    originGovernorate: product?.sellerGovernorate || 'قنا',
-    craftsmanship: 'صناعة يدوية أصيلة'
-  };
-
-  // Inject Product SEO and Schema.org Structured Data
-  useEffect(() => {
-    if (product) {
-      updatePageSEO({
-        title: product.title || 'منتج تراثي',
-        description: (product.description || '').slice(0, 160),
-        image: productImages[0],
-        type: 'product',
-        schema: generateProductSchema({
-          id: product.id,
-          title: product.title || '',
-          description: product.description || '',
-          images: productImages,
-          price: product.price || 0,
-          rating: product.rating || 5,
-          reviewCount: product.reviewCount || 0,
-          sellerName: product.sellerName || 'حرفي من الصعيد',
-          inStock: product.inStock !== false
-        })
-      });
-    }
-  }, [product, productImages]);
-
-  // Review form state
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
 
+  const productImages =
+    product?.images &&
+      Array.isArray(product.images) &&
+      product.images.length > 0
+      ? product.images
+      : [
+        'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png',
+      ];
+
+  const productTags = Array.isArray(product?.tags) ? product.tags : [];
+
+  const productSpecs = product?.specifications || {
+    material: 'خامات طبيعية تراثية',
+    originGovernorate: product?.sellerGovernorate || 'قنا',
+    craftsmanship: 'صناعة يدوية أصيلة',
+  };
+
+  useEffect(() => {
+    if (!product) return;
+
+    updatePageSEO({
+      title: product.title || 'منتج تراثي',
+      description: (product.description || '').slice(0, 160),
+      image: productImages[0],
+      type: 'product',
+      schema: generateProductSchema({
+        id: product.id,
+        title: product.title || '',
+        description: product.description || '',
+        images: productImages,
+        price: product.price || 0,
+        rating: product.rating || 5,
+        reviewCount: product.reviewCount || 0,
+        sellerName: product.sellerName || 'حرفي من الصعيد',
+        inStock: product.inStock !== false,
+      }),
+    });
+  }, [product]);
+
+  const favorite = product ? isFavorite(product.id) : false;
+
+  const productReviews = useMemo(
+    () => (reviews || []).filter((r) => r.productId === product?.id),
+    [reviews, product?.id]
+  );
+
+  const relatedProducts = useMemo(
+    () =>
+      (products || [])
+        .filter(
+          (p) =>
+            p.categoryId === product?.categoryId &&
+            p.id !== product?.id &&
+            p.approvalStatus === 'approved'
+        )
+        .slice(0, 4),
+    [products, product]
+  );
+
+  const stockCount = product?.stockCount || 0;
+
+  const totalPrice = product ? product.price * quantity : 0;
+
+  const discountAmount =
+    product &&
+      product.originalPrice &&
+      product.originalPrice > product.price
+      ? product.originalPrice - product.price
+      : 0;
+
+  const handleAddReview = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!product || !newComment.trim()) return;
+
+    addReview(product.id, newRating, newComment);
+
+    setNewComment('');
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+
+    const shareUrl = `${window.location.origin}/products/${encodeURIComponent(
+      product.id
+    )}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.title,
+          text: `شاهد ${product.title} من سوق وه`,
+          url: shareUrl,
+        });
+      } catch {
+        // User cancelled share dialog.
+      }
+    } else {
+      await navigator.clipboard?.writeText(shareUrl);
+
+      addToast(
+        'تم نسخ الرابط',
+        'تم نسخ رابط المنتج المباشر',
+        'info'
+      );
+    }
+  };
+
+  const handleCopyProductId = async () => {
+    if (!product) return;
+
+    await navigator.clipboard?.writeText(product.id);
+
+    addToast(
+      'تم النسخ',
+      'تم نسخ كود المنتج',
+      'info'
+    );
+  };
+
   if (isLoading && !product) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center space-y-4" dir="rtl">
-        <div className="w-12 h-12 border-4 border-[#9a6a35] border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-black/60 dark:text-white/60 text-sm font-bold">جاري تحميل تفاصيل المنتج...</p>
+      <div
+        dir="rtl"
+        className="
+          min-h-screen
+          flex
+          items-center
+          justify-center
+          bg-[#f1ece3]
+          dark:bg-[#090908]
+          px-5
+        "
+      >
+        <div className="text-center">
+          <div
+            className="
+              mx-auto
+              mb-5
+              h-12
+              w-12
+              animate-spin
+              rounded-full
+              border-4
+              border-[#9a6a35]/20
+              border-t-[#9a6a35]
+              dark:border-[#d5a56d]/20
+              dark:border-t-[#d5a56d]
+            "
+          />
+
+          <p className="text-sm font-bold text-black/60 dark:text-white/60">
+            جاري تحميل تفاصيل القطعة...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4" dir="rtl">
-        <h3 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">المنتج غير متوفر حالياً</h3>
-        <p className="text-black/60 dark:text-white/60 text-sm">قد يكون تم حذف المنتج أو لم يتم تحميل البيانات بعد.</p>
-        <button
-          type="button"
-          onClick={() => setActivePage('products')}
-          className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer"
+      <div
+        dir="rtl"
+        className="
+          min-h-screen
+          flex
+          items-center
+          justify-center
+          bg-[#f1ece3]
+          dark:bg-[#090908]
+          px-5
+        "
+      >
+        <div
+          className="
+            max-w-md
+            w-full
+            rounded-[2rem]
+            border
+            border-black/10
+            bg-white/70
+            p-10
+            text-center
+            shadow-xl
+            backdrop-blur-xl
+            dark:border-white/10
+            dark:bg-[#151513]/80
+          "
         >
-          العودة لكافة المنتجات
-        </button>
+          <div
+            className="
+              mx-auto
+              mb-5
+              flex
+              h-16
+              w-16
+              items-center
+              justify-center
+              rounded-2xl
+              bg-[#9a6a35]/10
+              text-[#9a6a35]
+              dark:bg-[#d5a56d]/10
+              dark:text-[#d5a56d]
+            "
+          >
+            <Package size={28} />
+          </div>
+
+          <h3 className="text-xl font-black">
+            المنتج غير متوفر حالياً
+          </h3>
+
+          <p className="mt-3 text-sm leading-7 text-black/50 dark:text-white/50">
+            قد يكون المنتج تم حذفه أو لم يتم تحميل البيانات بعد.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setActivePage('products')}
+            className="
+              mt-7
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              bg-[#211d18]
+              px-6
+              py-3
+              text-sm
+              font-bold
+              text-white
+              transition
+              hover:-translate-y-0.5
+              hover:bg-[#9a6a35]
+              dark:bg-white
+              dark:text-black
+              dark:hover:bg-[#d5a56d]
+              cursor-pointer
+            "
+          >
+            <ArrowUpLeft size={16} />
+            العودة للسوق
+          </button>
+        </div>
       </div>
     );
   }
 
-  const favorite = isFavorite(product?.id || '');
-  const productReviews = (reviews || []).filter((r) => r.productId === product.id);
-  const relatedProducts = (products || [])
-    .filter((p) => p.categoryId === product.categoryId && p.id !== product.id && p.approvalStatus === 'approved')
-    .slice(0, 4);
-
-  const handleAddReview = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-    addReview(product.id, newRating, newComment);
-    setNewComment('');
-  };
-
-  const handleShare = () => {
-    if (!product) return;
-    const shareUrl = `${window.location.origin}/products/${encodeURIComponent(product.id)}`;
-    if (navigator.share) {
-      navigator
-        .share({
-          title: product.title,
-          text: `شاهد ${product.title} من صعيد مصر على منصة وه`,
-          url: shareUrl
-        })
-        .catch(() => {
-          navigator.clipboard?.writeText(shareUrl);
-          addToast('تم نسخ الرابط', 'تم نسخ رابط المنتج المباشر لمشاركته', 'info');
-        });
-    } else {
-      navigator.clipboard?.writeText(shareUrl);
-      addToast('تم نسخ الرابط', 'تم نسخ رابط المنتج المباشر لمشاركته مع أصدقائك', 'info');
-    }
-  };
-
   return (
-    <div
+    <main
       id="product-details-view"
       dir="rtl"
-      className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] transition-colors duration-500 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 pb-28 sm:pb-8 space-y-10"
+      className="
+        min-h-screen
+        overflow-x-hidden
+        bg-[#f1ece3]
+        text-[#211d18]
+        transition-colors
+        duration-500
+        dark:bg-[#090908]
+        dark:text-[#f5f0e7]
+      "
     >
-      {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs text-black/50 dark:text-white/50 font-medium">
-        <button
-          type="button"
-          onClick={() => setActivePage('home')}
-          className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+      {/* Background Decoration */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div
+          className="
+            absolute
+            -right-48
+            top-40
+            h-[500px]
+            w-[500px]
+            rounded-full
+            border
+            border-[#9a6a35]/10
+            dark:border-[#d5a56d]/10
+          "
+        />
+
+        <div
+          className="
+            absolute
+            -left-52
+            bottom-20
+            h-[600px]
+            w-[600px]
+            rounded-full
+            border
+            border-[#9a6a35]/5
+            dark:border-[#d5a56d]/5
+          "
+        />
+      </div>
+
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          max-w-[1800px]
+          px-4
+          py-5
+          sm:px-6
+          sm:py-8
+          lg:px-10
+          xl:px-14
+        "
+      >
+        {/* Top Navigation */}
+        <div
+          className="
+            mb-7
+            flex
+            items-center
+            justify-between
+            gap-4
+          "
         >
-          الرئيسية
-        </button>
-        <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-        <button
-          type="button"
-          onClick={() => setActivePage('products')}
-          className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
-        >
-          سوق وه
-        </button>
-        <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-        <span className="text-[#9a6a35] dark:text-[#d5a56d] font-bold">{product.categoryName}</span>
-        <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold truncate max-w-xs">{product.title}</span>
-      </nav>
-
-      {/* Main Product Showcase Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* Product Gallery (Left in RTL = Right in View) */}
-        <div className="lg:col-span-6 space-y-4">
-          <div className="relative aspect-square w-full rounded-[2rem] overflow-hidden bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-            <img
-              src={productImages[selectedImageIndex] || productImages[0]}
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
-
-            {/* Badges */}
-            <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
-              {product.discountPercent && (
-                <span className="bg-[#9a6a35] text-white text-xs font-black px-2.5 py-1 rounded-md shadow-xs">
-                  خصم {product.discountPercent}%
-                </span>
-              )}
-              {product.isHandmade && (
-                <span className="bg-amber-100/95 dark:bg-amber-950/90 text-amber-900 dark:text-amber-200 text-xs font-bold px-2.5 py-1 rounded-md border border-amber-300 dark:border-amber-700/60 shadow-xs flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                  <span>حرفة يدوية أصيلة</span>
-                </span>
-              )}
-            </div>
-
-            {/* Favorite & Share on Image */}
-            <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-              <button
-                type="button"
-                id="details-share-btn"
-                onClick={handleShare}
-                className="p-2.5 rounded-full bg-white/90 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-[#20201d] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 shadow-sm transition-all cursor-pointer"
-                title="مشاركة المنتج"
-              >
-                <Share2 className="w-4 h-4" />
-              </button>
-              {(currentRole === 'buyer' || !isAuthenticated) && (
-                <button
-                  type="button"
-                  id="details-fav-btn"
-                  onClick={() => toggleFavorite(product.id)}
-                  className={`p-2.5 rounded-full backdrop-blur-md shadow-sm transition-all cursor-pointer ${favorite
-                    ? 'bg-rose-500 text-white'
-                    : 'bg-white/90 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-[#20201d] text-[#211d18] dark:text-[#f5f0e7] hover:text-rose-500 border border-black/10 dark:border-white/10'
-                    }`}
-                  title="المفضلة"
-                >
-                  <Heart className="w-4 h-4" fill={favorite ? 'currentColor' : 'none'} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Thumbnail list */}
-          {productImages.length > 1 && (
-            <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              {productImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedImageIndex(idx)}
-                  className={`relative w-20 h-20 rounded-2xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${selectedImageIndex === idx
-                    ? 'border-[#9a6a35] dark:border-[#d5a56d] ring-2 ring-[#9a6a35]/20'
-                    : 'border-black/10 dark:border-white/10 opacity-70 hover:opacity-100'
-                    }`}
-                >
-                  <img src={img} alt={`معاينة ${idx + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Product Info & Purchase Actions */}
-        <div className="lg:col-span-6 space-y-6">
-          {/* Seller / Workshop Header */}
-          <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
+          <nav
+            className="
+              flex
+              min-w-0
+              items-center
+              gap-2
+              overflow-hidden
+              text-[11px]
+              font-bold
+              text-black/40
+              dark:text-white/40
+            "
+          >
             <button
               type="button"
-              id="details-seller-link"
-              onClick={() => navigateToSeller(product.sellerId)}
-              className="flex items-center gap-2.5 hover:opacity-80 transition-opacity cursor-pointer"
+              onClick={() => setActivePage('home')}
+              className="
+                shrink-0
+                transition
+                hover:text-[#9a6a35]
+                dark:hover:text-[#d5a56d]
+                cursor-pointer
+              "
             >
-              <div className="w-9 h-9 rounded-xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center font-bold">
-                <Store className="w-5 h-5" />
-              </div>
-              <div className="text-right">
-                <span className="text-xs text-black/50 dark:text-white/50 block">صُنعت بأنامل الحرفي:</span>
-                <span className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">{product.sellerName}</span>
-              </div>
+              الرئيسية
             </button>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold border border-black/10 dark:border-white/10">
-              <MapPin className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
-              <span>محافظة {product.sellerGovernorate}</span>
+            <ChevronRight
+              size={13}
+              className="shrink-0 rotate-180"
+            />
+
+            <button
+              type="button"
+              onClick={() => setActivePage('products')}
+              className="
+                shrink-0
+                transition
+                hover:text-[#9a6a35]
+                dark:hover:text-[#d5a56d]
+                cursor-pointer
+              "
+            >
+              السوق
+            </button>
+
+            <ChevronRight
+              size={13}
+              className="shrink-0 rotate-180"
+            />
+
+            <span
+              className="
+                shrink-0
+                text-[#9a6a35]
+                dark:text-[#d5a56d]
+              "
+            >
+              {product.categoryName}
+            </span>
+
+            <ChevronRight
+              size={13}
+              className="shrink-0 rotate-180"
+            />
+
+            <span className="truncate text-black/70 dark:text-white/70">
+              {product.title}
+            </span>
+          </nav>
+
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+            <span
+              className="
+                text-[8px]
+                font-black
+                tracking-[0.3em]
+                text-black/30
+                dark:text-white/25
+              "
+            >
+              WAH / CRAFT ARCHIVE
             </span>
           </div>
+        </div>
 
-          {/* Title */}
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#211d18] dark:text-[#f5f0e7] leading-tight font-heritage">
-              {product.title}
-            </h1>
-            {product.titleEn && (
-              <p className="text-xs text-black/50 dark:text-white/50 font-medium mt-1 font-mono">{product.titleEn}</p>
+        {/* ========================================= */}
+        {/* HERO PRODUCT SECTION */}
+        {/* ========================================= */}
+
+        <section
+          className="
+            grid
+            gap-6
+            lg:grid-cols-[1.25fr_0.75fr]
+            lg:gap-8
+          "
+        >
+          {/* ================= GALLERY ================= */}
+
+          <div
+            className="
+              relative
+              overflow-hidden
+              rounded-[2rem]
+              border
+              border-black/10
+              bg-[#ddd4c5]
+              dark:border-white/10
+              dark:bg-[#151513]
+              lg:min-h-[760px]
+            "
+          >
+            {/* Number */}
+            <div
+              className="
+                absolute
+                right-5
+                top-5
+                z-20
+                flex
+                items-center
+                gap-2
+                rounded-full
+                border
+                border-black/10
+                bg-white/70
+                px-3
+                py-2
+                text-[9px]
+                font-black
+                backdrop-blur-xl
+                dark:border-white/10
+                dark:bg-black/40
+              "
+            >
+              <span>
+                {String(selectedImageIndex + 1).padStart(2, '0')}
+              </span>
+
+              <span className="text-black/30 dark:text-white/30">
+                /
+              </span>
+
+              <span className="text-black/40 dark:text-white/40">
+                {String(productImages.length).padStart(2, '0')}
+              </span>
+            </div>
+
+            {/* Main Image */}
+
+            <div
+              className="
+                relative
+                h-[430px]
+                sm:h-[560px]
+                lg:h-full
+                lg:min-h-[760px]
+              "
+            >
+              <img
+                src={
+                  productImages[selectedImageIndex] ||
+                  productImages[0]
+                }
+                alt={product.title}
+                className="
+                  h-full
+                  w-full
+                  object-cover
+                  transition-transform
+                  duration-700
+                  hover:scale-[1.025]
+                "
+              />
+
+              {/* Image Gradient */}
+              <div
+                className="
+                  pointer-events-none
+                  absolute
+                  inset-x-0
+                  bottom-0
+                  h-48
+                  bg-gradient-to-t
+                  from-black/60
+                  to-transparent
+                "
+              />
+
+              {/* Image Bottom Info */}
+              <div
+                className="
+                  absolute
+                  bottom-5
+                  right-5
+                  left-5
+                  z-10
+                  flex
+                  items-end
+                  justify-between
+                  gap-4
+                  text-white
+                "
+              >
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span
+                      className="
+                        rounded-full
+                        bg-[#d5a56d]
+                        px-3
+                        py-1
+                        text-[9px]
+                        font-black
+                        text-black
+                      "
+                    >
+                      {product.isHandmade
+                        ? 'HANDMADE'
+                        : 'AUTHENTIC CRAFT'}
+                    </span>
+
+                    {product.discountPercent ? (
+                      <span
+                        className="
+                          rounded-full
+                          bg-white/15
+                          px-3
+                          py-1
+                          text-[9px]
+                          font-black
+                          backdrop-blur-md
+                        "
+                      >
+                        -{product.discountPercent}%
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <div className="text-xs font-bold text-white/70">
+                    صُنعت في
+                  </div>
+
+                  <div className="mt-1 flex items-center gap-2 text-sm font-black">
+                    <MapPin size={14} />
+                    محافظة {product.sellerGovernorate}
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    hidden
+                    items-center
+                    gap-2
+                    rounded-full
+                    border
+                    border-white/20
+                    bg-black/20
+                    px-3
+                    py-2
+                    text-[9px]
+                    font-bold
+                    backdrop-blur-md
+                    sm:flex
+                  "
+                >
+                  <Gem size={12} />
+                  قطعة تراثية
+                </div>
+              </div>
+
+              {/* Favorite / Share */}
+              <div
+                className="
+                  absolute
+                  left-5
+                  top-5
+                  z-20
+                  flex
+                  gap-2
+                "
+              >
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    items-center
+                    justify-center
+                    rounded-full
+                    border
+                    border-white/20
+                    bg-black/25
+                    text-white
+                    backdrop-blur-xl
+                    transition
+                    hover:bg-white
+                    hover:text-black
+                    cursor-pointer
+                  "
+                  title="مشاركة"
+                >
+                  <Share2 size={17} />
+                </button>
+
+                {(currentRole === 'buyer' ||
+                  !isAuthenticated) && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toggleFavorite(product.id)
+                      }
+                      className={`
+                      flex
+                      h-11
+                      w-11
+                      items-center
+                      justify-center
+                      rounded-full
+                      border
+                      backdrop-blur-xl
+                      transition
+                      cursor-pointer
+                      ${favorite
+                          ? 'border-rose-400 bg-rose-500 text-white'
+                          : 'border-white/20 bg-black/25 text-white hover:bg-white hover:text-rose-500'
+                        }
+                    `}
+                      title="المفضلة"
+                    >
+                      <Heart
+                        size={17}
+                        fill={
+                          favorite ? 'currentColor' : 'none'
+                        }
+                      />
+                    </button>
+                  )}
+              </div>
+            </div>
+
+            {/* Thumbnails */}
+
+            {productImages.length > 1 && (
+              <div
+                className="
+                  absolute
+                  bottom-5
+                  left-5
+                  right-5
+                  z-20
+                  flex
+                  gap-2
+                  overflow-x-auto
+                  pb-1
+                "
+              >
+                {productImages.map((img, idx) => (
+                  <button
+                    key={`${img}-${idx}`}
+                    type="button"
+                    onClick={() =>
+                      setSelectedImageIndex(idx)
+                    }
+                    className={`
+                      h-14
+                      w-14
+                      shrink-0
+                      overflow-hidden
+                      rounded-xl
+                      border-2
+                      transition
+                      cursor-pointer
+                      sm:h-16
+                      sm:w-16
+                      ${selectedImageIndex === idx
+                        ? 'border-[#d5a56d] scale-105'
+                        : 'border-white/30 opacity-60 hover:opacity-100'
+                      }
+                    `}
+                  >
+                    <img
+                      src={img}
+                      alt={`صورة ${idx + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
-          {/* Rating Summary */}
-          <div className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-1 text-amber-500">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-stone-600'
-                    }`}
-                />
-              ))}
-            </div>
-            <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{product.rating}</span>
-            <span className="text-xs text-black/50 dark:text-white/50">({product.reviewCount} تقييم من مشترين حقيقيين)</span>
-          </div>
+          {/* ================= PRODUCT INFO ================= */}
 
-          {/* Price Box */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-sm flex items-center justify-between">
-            <div>
-              <span className="text-xs text-black/50 dark:text-white/50 block">السعر الحالي:</span>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-[#9a6a35] dark:text-[#d5a56d]">{product.price}</span>
-                <span className="text-sm font-bold text-[#9a6a35] dark:text-[#d5a56d]">جنيه مصري</span>
-                {product.originalPrice && product.originalPrice > product.price && (
-                  <span className="text-sm text-black/40 dark:text-white/40 line-through mr-2">
-                    {product.originalPrice} ج.م
-                  </span>
-                )}
+          <div
+            className="
+              flex
+              flex-col
+              rounded-[2rem]
+              border
+              border-black/10
+              bg-white/65
+              p-5
+              shadow-sm
+              backdrop-blur-xl
+              dark:border-white/10
+              dark:bg-[#121210]/80
+              sm:p-7
+              lg:p-9
+            "
+          >
+            {/* Collection Label */}
+
+            <div className="flex items-center justify-between gap-3">
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  text-[9px]
+                  font-black
+                  tracking-[0.2em]
+                  text-[#9a6a35]
+                  dark:text-[#d5a56d]
+                "
+              >
+                <Sparkles size={13} />
+                WAH CRAFT COLLECTION
+              </div>
+
+              {product.approvalStatus === 'approved' && (
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-1.5
+                    rounded-full
+                    bg-emerald-500/10
+                    px-2.5
+                    py-1.5
+                    text-[9px]
+                    font-bold
+                    text-emerald-700
+                    dark:text-emerald-300
+                  "
+                >
+                  <BadgeCheck size={13} />
+                  معتمد
+                </div>
+              )}
+            </div>
+
+            {/* Product Title */}
+
+            <div className="mt-8">
+              <h1
+                className="
+                  max-w-xl
+                  text-4xl
+                  font-black
+                  leading-[1.05]
+                  tracking-[-0.055em]
+                  sm:text-5xl
+                  lg:text-6xl
+                "
+              >
+                {product.title}
+              </h1>
+
+              {product.titleEn && (
+                <p
+                  className="
+                    mt-3
+                    text-[10px]
+                    font-bold
+                    tracking-[0.12em]
+                    text-black/35
+                    dark:text-white/30
+                  "
+                >
+                  {product.titleEn}
+                </p>
+              )}
+            </div>
+
+            {/* Seller */}
+
+            <button
+              type="button"
+              onClick={() =>
+                navigateToSeller(product.sellerId)
+              }
+              className="
+                mt-8
+                flex
+                w-full
+                items-center
+                justify-between
+                border-y
+                border-black/10
+                py-4
+                text-right
+                transition
+                hover:bg-black/[0.025]
+                dark:border-white/10
+                dark:hover:bg-white/[0.025]
+                cursor-pointer
+              "
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                    flex
+                    h-11
+                    w-11
+                    items-center
+                    justify-center
+                    rounded-2xl
+                    bg-[#9a6a35]/10
+                    text-[#9a6a35]
+                    dark:bg-[#d5a56d]/10
+                    dark:text-[#d5a56d]
+                  "
+                >
+                  <Store size={19} />
+                </div>
+
+                <div>
+                  <div className="text-[9px] text-black/40 dark:text-white/40">
+                    صُنعت بأنامل
+                  </div>
+
+                  <div className="mt-1 text-sm font-black">
+                    {product.sellerName}
+                  </div>
+                </div>
+              </div>
+
+              <ArrowUpLeft
+                size={17}
+                className="text-black/30 dark:text-white/30"
+              />
+            </button>
+
+            {/* Location */}
+
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  text-xs
+                  font-bold
+                  text-black/60
+                  dark:text-white/60
+                "
+              >
+                <MapPin
+                  size={15}
+                  className="text-[#9a6a35] dark:text-[#d5a56d]"
+                />
+
+                محافظة {product.sellerGovernorate}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCopyProductId}
+                className="
+                  flex
+                  items-center
+                  gap-1.5
+                  text-[9px]
+                  font-bold
+                  text-black/35
+                  transition
+                  hover:text-[#9a6a35]
+                  dark:text-white/30
+                  dark:hover:text-[#d5a56d]
+                  cursor-pointer
+                "
+                title="نسخ كود المنتج"
+              >
+                <span>
+                  #{product.id.slice(0, 8)}
+                </span>
+
+                <Copy size={11} />
+              </button>
+            </div>
+
+            {/* Rating */}
+
+            <div
+              className="
+                mt-6
+                flex
+                flex-wrap
+                items-center
+                gap-3
+              "
+            >
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={16}
+                    className={
+                      star <= Math.floor(product.rating)
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'text-black/15 dark:text-white/15'
+                    }
+                  />
+                ))}
+              </div>
+
+              <span className="text-sm font-black">
+                {product.rating}
+              </span>
+
+              <span className="text-[10px] text-black/40 dark:text-white/40">
+                {product.reviewCount} تقييم
+              </span>
+            </div>
+
+            {/* Description */}
+
+            <p
+              className="
+                mt-7
+                text-sm
+                leading-8
+                text-black/55
+                dark:text-white/50
+              "
+            >
+              {product.description}
+            </p>
+
+            {/* Data Strip */}
+
+            <div
+              className="
+                mt-7
+                grid
+                grid-cols-2
+                gap-px
+                overflow-hidden
+                rounded-2xl
+                border
+                border-black/10
+                bg-black/10
+                dark:border-white/10
+                dark:bg-white/10
+              "
+            >
+              <div
+                className="
+                  bg-white/70
+                  p-4
+                  dark:bg-[#171714]/90
+                "
+              >
+                <div className="flex items-center gap-2 text-[9px] text-black/40 dark:text-white/35">
+                  <Leaf size={13} />
+                  الخامة
+                </div>
+
+                <div className="mt-2 text-xs font-black">
+                  {productSpecs.material || 'خامات طبيعية'}
+                </div>
+              </div>
+
+              <div
+                className="
+                  bg-white/70
+                  p-4
+                  dark:bg-[#171714]/90
+                "
+              >
+                <div className="flex items-center gap-2 text-[9px] text-black/40 dark:text-white/35">
+                  <Layers3 size={13} />
+                  الصنعة
+                </div>
+
+                <div className="mt-2 text-xs font-black">
+                  {productSpecs.craftsmanship ||
+                    'صناعة يدوية'}
+                </div>
+              </div>
+
+              <div
+                className="
+                  bg-white/70
+                  p-4
+                  dark:bg-[#171714]/90
+                "
+              >
+                <div className="flex items-center gap-2 text-[9px] text-black/40 dark:text-white/35">
+                  <MapPin size={13} />
+                  المنشأ
+                </div>
+
+                <div className="mt-2 text-xs font-black">
+                  {productSpecs.originGovernorate ||
+                    product.sellerGovernorate}
+                </div>
+              </div>
+
+              <div
+                className="
+                  bg-white/70
+                  p-4
+                  dark:bg-[#171714]/90
+                "
+              >
+                <div className="flex items-center gap-2 text-[9px] text-black/40 dark:text-white/35">
+                  <Package size={13} />
+                  المخزون
+                </div>
+
+                <div className="mt-2 text-xs font-black">
+                  {product.inStock
+                    ? `${stockCount} قطعة`
+                    : 'نفد المخزون'}
+                </div>
               </div>
             </div>
 
-            <div className="text-left">
-              <span
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${product.inStock
-                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/60'
-                  : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300'
-                  }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>{product.inStock ? `متوفر في الورشة (${product.stockCount} قطعة)` : 'نفد المخزون'}</span>
-              </span>
-            </div>
-          </div>
+            {/* Price */}
 
-          {/* Role-Specific Actions: Buyer gets Cart, Seller gets Edit/Inventory, Admin gets Manage */}
-          <div className="space-y-3 pt-2">
-            {currentRole === 'buyer' || !isAuthenticated ? (
-              <>
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <div className="flex items-center justify-between sm:justify-start border border-black/10 dark:border-white/10 rounded-2xl bg-white/80 dark:bg-[#151513]/80 p-1 min-h-[44px]">
+            <div className="mt-8">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <div className="text-[10px] font-bold text-black/40 dark:text-white/35">
+                    السعر
+                  </div>
+
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <span
+                      className="
+                        text-4xl
+                        font-black
+                        tracking-[-0.06em]
+                        text-[#9a6a35]
+                        dark:text-[#d5a56d]
+                      "
+                    >
+                      {product.price}
+                    </span>
+
+                    <span className="text-xs font-bold">
+                      جنيه مصري
+                    </span>
+                  </div>
+                </div>
+
+                {product.originalPrice &&
+                  product.originalPrice > product.price ? (
+                  <div className="text-left">
+                    <div className="text-[10px] text-black/35 dark:text-white/30">
+                      السعر قبل الخصم
+                    </div>
+
+                    <div className="mt-1 text-sm font-bold text-black/35 line-through dark:text-white/30">
+                      {product.originalPrice} ج.م
+                    </div>
+
+                    <div className="mt-1 text-[9px] font-black text-emerald-600 dark:text-emerald-400">
+                      وفّرت {discountAmount} ج.م
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            {/* Stock */}
+
+            <div
+              className={`
+                mt-5
+                flex
+                items-center
+                justify-between
+                rounded-2xl
+                border
+                px-4
+                py-3
+                ${product.inStock
+                  ? 'border-emerald-500/20 bg-emerald-500/5'
+                  : 'border-rose-500/20 bg-rose-500/5'
+                }
+              `}
+            >
+              <div
+                className={`
+                  flex
+                  items-center
+                  gap-2
+                  text-xs
+                  font-bold
+                  ${product.inStock
+                    ? 'text-emerald-700 dark:text-emerald-300'
+                    : 'text-rose-700 dark:text-rose-300'
+                  }
+                `}
+              >
+                <CheckCircle2 size={15} />
+
+                {product.inStock
+                  ? 'القطعة متاحة للطلب'
+                  : 'القطعة غير متوفرة'}
+              </div>
+
+              {product.inStock && (
+                <span className="text-[9px] font-bold text-black/35 dark:text-white/30">
+                  {stockCount} متاح حالياً
+                </span>
+              )}
+            </div>
+
+            {/* Actions */}
+
+            <div className="mt-6">
+              {currentRole === 'buyer' ||
+                !isAuthenticated ? (
+                <>
+                  <div className="flex gap-3">
+                    {/* Quantity */}
+
+                    <div
+                      className="
+                        flex
+                        h-14
+                        shrink-0
+                        items-center
+                        rounded-2xl
+                        border
+                        border-black/10
+                        bg-black/[0.025]
+                        p-1
+                        dark:border-white/10
+                        dark:bg-white/[0.025]
+                      "
+                    >
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuantity(
+                            Math.max(1, quantity - 1)
+                          )
+                        }
+                        className="
+                          flex
+                          h-12
+                          w-10
+                          items-center
+                          justify-center
+                          rounded-xl
+                          transition
+                          hover:bg-black/5
+                          dark:hover:bg-white/10
+                          cursor-pointer
+                        "
+                      >
+                        <Minus size={15} />
+                      </button>
+
+                      <span className="w-8 text-center text-sm font-black">
+                        {quantity}
+                      </span>
+
+                      <button
+                        type="button"
+                        disabled={
+                          quantity >= stockCount
+                        }
+                        onClick={() =>
+                          setQuantity(
+                            Math.min(
+                              stockCount || 99,
+                              quantity + 1
+                            )
+                          )
+                        }
+                        className="
+                          flex
+                          h-12
+                          w-10
+                          items-center
+                          justify-center
+                          rounded-xl
+                          transition
+                          hover:bg-black/5
+                          disabled:opacity-30
+                          dark:hover:bg-white/10
+                          cursor-pointer
+                        "
+                      >
+                        <Plus size={15} />
+                      </button>
+                    </div>
+
+                    {/* Cart */}
+
                     <button
                       type="button"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3.5 py-1.5 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 rounded-xl font-bold min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
-                      aria-label="تقليل الكمية"
+                      disabled={!product.inStock}
+                      onClick={() =>
+                        addToCart(product, quantity)
+                      }
+                      className="
+                        flex
+                        min-h-14
+                        flex-1
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-2xl
+                        bg-[#211d18]
+                        px-4
+                        text-xs
+                        font-black
+                        text-white
+                        shadow-lg
+                        transition
+                        hover:-translate-y-0.5
+                        hover:bg-[#9a6a35]
+                        disabled:cursor-not-allowed
+                        disabled:opacity-40
+                        dark:bg-white
+                        dark:text-black
+                        dark:hover:bg-[#d5a56d]
+                        cursor-pointer
+                      "
                     >
-                      -
-                    </button>
-                    <span className="px-4 font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{quantity}</span>
-                    <button
-                      type="button"
-                      onClick={() => setQuantity(Math.min(product.stockCount || 99, quantity + 1))}
-                      disabled={quantity >= (product.stockCount || 0)}
-                      className="px-3.5 py-1.5 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40 rounded-xl font-bold min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer"
-                      aria-label="زيادة الكمية"
-                    >
-                      +
+                      <ShoppingBag size={18} />
+
+                      <span>
+                        إضافة للسلة
+                      </span>
+
+                      <span className="hidden sm:inline">
+                        • {totalPrice} ج.م
+                      </span>
                     </button>
                   </div>
 
+                  {/* Chat */}
+
                   <button
                     type="button"
-                    id="details-add-cart-btn"
-                    onClick={() => addToCart(product, quantity)}
-                    disabled={!product.inStock}
-                    className="flex-1 py-3.5 px-6 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-40 font-bold text-sm rounded-[1.25rem] shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
+                    onClick={() =>
+                      openChatWithArtisan({
+                        sellerId:
+                          product.sellerId ||
+                          product.id,
+                        productId: product.id,
+                        initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق وه.`,
+                      })
+                    }
+                    className="
+                      mt-3
+                      flex
+                      min-h-12
+                      w-full
+                      items-center
+                      justify-center
+                      gap-2
+                      rounded-2xl
+                      border
+                      border-[#9a6a35]/20
+                      bg-[#9a6a35]/5
+                      px-4
+                      text-xs
+                      font-bold
+                      text-[#7b542b]
+                      transition
+                      hover:bg-[#9a6a35]/10
+                      dark:border-[#d5a56d]/20
+                      dark:bg-[#d5a56d]/5
+                      dark:text-[#d5a56d]
+                      dark:hover:bg-[#d5a56d]/10
+                      cursor-pointer
+                    "
                   >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span>إضافة إلى سلة المشتريات ({product.price * quantity} ج.م)</span>
+                    <MessageSquare size={16} />
+                    تواصل مع الحرفي
                   </button>
-                </div>
-
-                {/* Direct Chat with Artisan Button */}
-                <button
-                  type="button"
-                  id="details-chat-artisan-btn"
-                  onClick={() => {
-                    openChatWithArtisan({
-                      sellerId: product.sellerId || product.id,
-                      productId: product.id,
-                      initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق وه.`
-                    });
-                  }}
-                  className="w-full py-3 px-4 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 font-bold text-xs sm:text-sm rounded-xl border border-amber-300 dark:border-amber-700/60 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                </>
+              ) : currentRole === 'seller' ? (
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-amber-500/20
+                    bg-amber-500/5
+                    p-4
+                  "
                 >
-                  <MessageSquare className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>تواصل مباشرة مع شيخ الصنعة حول المقاسات أو التخصيص</span>
-                </button>
-              </>
-            ) : currentRole === 'seller' ? (
-              /* Seller Actions (No Cart / No Buy Now) */
-              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-2xl space-y-3">
-                <p className="text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
-                  <Store className="w-4 h-4 text-amber-700" />
-                  <span>أنت مسجل كبائع وحرفي في سوق الصعيد</span>
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <button
-                    type="button"
-                    id="details-seller-edit-btn"
-                    onClick={() => setActivePage('seller-products')}
-                    className="flex-1 py-3 px-4 bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Edit className="w-4 h-4" />
-                    <span>تعديل بيانات المنتج</span>
-                  </button>
-                  <button
-                    type="button"
-                    id="details-seller-inventory-btn"
-                    onClick={() => setActivePage('seller-inventory')}
-                    className="flex-1 py-3 px-4 bg-white dark:bg-[#201B18] hover:bg-amber-100 text-amber-900 dark:text-amber-200 font-bold text-xs sm:text-sm rounded-xl border border-amber-300 dark:border-amber-700 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Boxes className="w-4 h-4" />
-                    <span>إدارة المخزون والكميات</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* Admin Actions (No Cart / No Buy Now) */
-              <div className="p-4 bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-2xl space-y-3">
-                <p className="text-xs font-bold text-purple-900 dark:text-purple-200 flex items-center gap-1.5">
-                  <Settings className="w-4 h-4 text-purple-700" />
-                  <span>إدارة ومراجعة المنتجات التراثية (الإدارة العليا)</span>
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <button
-                    type="button"
-                    id="details-admin-manage-btn"
-                    onClick={() => setActivePage('admin-products')}
-                    className="flex-1 py-3 px-4 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Settings className="w-4 h-4" />
-                    <span>إدارة المنتج في المنصة</span>
-                  </button>
-                  <button
-                    type="button"
-                    id="details-admin-review-btn"
-                    onClick={() => setActivePage('admin-dashboard')}
-                    className="flex-1 py-3 px-4 bg-white dark:bg-[#201B18] hover:bg-purple-100 text-purple-900 dark:text-purple-200 font-bold text-xs sm:text-sm rounded-xl border border-purple-300 dark:border-purple-700 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <ShieldCheck className="w-4 h-4" />
-                    <span>لوحة المراجعة والاعتماد</span>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-200">
+                    <Store size={16} />
+                    أنت مسجل كبائع وحرفي
+                  </div>
 
-          {/* Wholesale & Bulk Orders Banner */}
-          <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-300/60 dark:border-amber-700/40 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-200">
-                  متوفر للبيع بالجملة وتوريدات الفنادق والشركات (B2B)
-                </span>
-              </div>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
-                خصم حتى 35%
-              </span>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActivePage('seller-products')
+                      }
+                      className="
+                        flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        bg-amber-700
+                        px-4
+                        text-xs
+                        font-bold
+                        text-white
+                        hover:bg-amber-800
+                        cursor-pointer
+                      "
+                    >
+                      <Edit size={15} />
+                      تعديل المنتج
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActivePage('seller-inventory')
+                      }
+                      className="
+                        flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-amber-500/30
+                        bg-white
+                        px-4
+                        text-xs
+                        font-bold
+                        text-amber-800
+                        hover:bg-amber-50
+                        dark:bg-[#1a1512]
+                        dark:text-amber-200
+                        cursor-pointer
+                      "
+                    >
+                      <Boxes size={15} />
+                      المخزون
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-purple-500/20
+                    bg-purple-500/5
+                    p-4
+                  "
+                >
+                  <div className="flex items-center gap-2 text-xs font-bold text-purple-800 dark:text-purple-200">
+                    <Settings size={16} />
+                    إدارة المنتج
+                  </div>
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActivePage('admin-products')
+                      }
+                      className="
+                        flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        bg-purple-700
+                        px-4
+                        text-xs
+                        font-bold
+                        text-white
+                        hover:bg-purple-800
+                        cursor-pointer
+                      "
+                    >
+                      <Settings size={15} />
+                      إدارة المنتج
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActivePage('admin-dashboard')
+                      }
+                      className="
+                        flex
+                        min-h-11
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-xl
+                        border
+                        border-purple-500/30
+                        bg-white
+                        px-4
+                        text-xs
+                        font-bold
+                        text-purple-800
+                        hover:bg-purple-50
+                        dark:bg-[#17121a]
+                        dark:text-purple-200
+                        cursor-pointer
+                      "
+                    >
+                      <ShieldCheck size={15} />
+                      المراجعة
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <p className="text-xs text-amber-800/90 dark:text-amber-300/80 leading-relaxed">
-              نوفر أسعار جملة تصاعدية تبدأ من 5 قطع مع إمكانية حفر الشعار وطلب عينات قبل التوريد.
-            </p>
+            {/* Trust */}
 
-            <div className="flex items-center gap-2 pt-1">
+            <div
+              className="
+                mt-auto
+                pt-7
+              "
+            >
+              <div
+                className="
+                  grid
+                  grid-cols-2
+                  gap-2
+                "
+              >
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-black/10
+                    bg-black/[0.025]
+                    p-3
+                    dark:border-white/10
+                    dark:bg-white/[0.025]
+                  "
+                >
+                  <Truck
+                    size={16}
+                    className="text-[#9a6a35] dark:text-[#d5a56d]"
+                  />
+
+                  <div className="mt-2 text-[9px] font-bold text-black/50 dark:text-white/40">
+                    توصيل لباب البيت
+                  </div>
+                </div>
+
+                <div
+                  className="
+                    rounded-2xl
+                    border
+                    border-black/10
+                    bg-black/[0.025]
+                    p-3
+                    dark:border-white/10
+                    dark:bg-white/[0.025]
+                  "
+                >
+                  <ShieldCheck
+                    size={16}
+                    className="text-[#9a6a35] dark:text-[#d5a56d]"
+                  />
+
+                  <div className="mt-2 text-[9px] font-bold text-black/50 dark:text-white/40">
+                    أصالة الحرفة
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================= */}
+        {/* WHOLESALE */}
+        {/* ========================================= */}
+
+        <section
+          className="
+            mt-6
+            overflow-hidden
+            rounded-[2rem]
+            border
+            border-[#9a6a35]/20
+            bg-[#211d18]
+            text-white
+            dark:border-[#d5a56d]/20
+          "
+        >
+          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
+            <div>
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                  text-[9px]
+                  font-black
+                  tracking-[0.25em]
+                  text-[#d5a56d]
+                "
+              >
+                <Building2 size={14} />
+                WAH BUSINESS
+              </div>
+
+              <h2 className="mt-4 text-xl font-black sm:text-2xl">
+                محتاج كمية كبيرة؟
+              </h2>
+
+              <p className="mt-2 max-w-2xl text-xs leading-7 text-white/50 sm:text-sm">
+                متوفر للبيع بالجملة وتوريدات الفنادق
+                والشركات مع إمكانية التخصيص وطلب عينات
+                قبل التوريد.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2 sm:flex-row">
               <a
                 href={getWhatsAppUrl(
-                  `السلام عليكم، نود طلب عرض أسعار جملة لمنتج: "${product.title}" (كود: ${product.id}) لـ (اسم المنشأة/الفندق)...`
+                  `السلام عليكم، نود طلب عرض أسعار جملة لمنتج: "${product.title}" (كود: ${product.id})`
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 py-2 px-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                className="
+                  flex
+                  min-h-12
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-xl
+                  bg-[#d5a56d]
+                  px-6
+                  text-xs
+                  font-black
+                  text-black
+                  transition
+                  hover:bg-white
+                "
               >
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span>طلب تسعير جملة فوري</span>
+                <MessageCircle size={16} />
+                طلب عرض جملة
               </a>
 
               <button
                 type="button"
                 onClick={() => setActivePage('wholesale')}
-                className="py-2 px-3 bg-white dark:bg-[#1B1613] hover:bg-amber-100 text-amber-900 dark:text-amber-300 border border-amber-300 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                className="
+                  flex
+                  min-h-12
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-xl
+                  border
+                  border-white/10
+                  bg-white/5
+                  px-6
+                  text-xs
+                  font-bold
+                  transition
+                  hover:bg-white/10
+                  cursor-pointer
+                "
               >
                 تفاصيل التوريد
+                <ArrowUpLeft size={15} />
               </button>
             </div>
           </div>
+        </section>
 
-          {/* Quick Trust Pillars */}
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-black/10 dark:border-white/10 text-xs text-black/60 dark:text-white/60">
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
-              <span>توصيل معتمد لباب بيتك</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
-              <span>ضمان أصالة الحرفة اليدوية 100%</span>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* ========================================= */}
+        {/* INFORMATION TABS */}
+        {/* ========================================= */}
 
-      {/* Tabs Section: Description, Specifications, Reviews, Shipping */}
-      <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg p-5 sm:p-8 space-y-6">
-        <div className="flex border-b border-black/10 dark:border-white/10 gap-3 sm:gap-6 overflow-x-auto pb-3 no-scrollbar">
-          <button
-            type="button"
-            onClick={() => setActiveTab('desc')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap cursor-pointer ${activeTab === 'desc'
-              ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
-              : 'text-black/50 dark:text-white/50 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-              }`}
+        <section className="mt-6">
+          <div
+            className="
+              overflow-hidden
+              rounded-[2rem]
+              border
+              border-black/10
+              bg-white/65
+              shadow-sm
+              backdrop-blur-xl
+              dark:border-white/10
+              dark:bg-[#121210]/80
+            "
           >
-            وصف القطعة وأصالتها
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('specs')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap cursor-pointer ${activeTab === 'specs'
-              ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
-              : 'text-black/50 dark:text-white/50 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-              }`}
-          >
-            المواصفات وطريقة الصنع
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('reviews')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap cursor-pointer ${activeTab === 'reviews'
-              ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
-              : 'text-black/50 dark:text-white/50 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-              }`}
-          >
-            آراء المشترين ({productReviews.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('shipping')}
-            className={`pb-2 text-sm font-bold transition-colors whitespace-nowrap cursor-pointer ${activeTab === 'shipping'
-              ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
-              : 'text-black/50 dark:text-white/50 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-              }`}
-          >
-            الشحن والتغليف الآمن
-          </button>
-        </div>
+            {/* Tabs */}
 
-        {/* Tab 1: Description */}
-        {activeTab === 'desc' && (
-          <div className="space-y-4 text-sm text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">
-            <p className="text-base font-medium text-[#211d18] dark:text-[#f5f0e7]">{product.description}</p>
-            <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-2">
-              <h4 className="font-bold text-[#9a6a35] dark:text-[#d5a56d] text-xs flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4" />
-                <span>عن الحرفة الصعيدية في {product.sellerGovernorate}</span>
-              </h4>
-              <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                تعتبر هذه القطعة تجسيداً حياً لتقاليد متوارثة أباً عن جد. تم تصنيعها بمواد خام طبيعية 100% مستخلصة من بيئة صعيد مصر دون أي مواد كيميائية ضارة، لتمنح منزلك لمسة من الفخامة التراثية الأصيلة.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2 pt-2">
-              {productTags.map((tag, i) => (
-                <span key={i} className="text-xs bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl font-medium">
-                  #{tag}
-                </span>
+            <div
+              className="
+                flex
+                overflow-x-auto
+                border-b
+                border-black/10
+                dark:border-white/10
+              "
+            >
+              {[
+                ['desc', 'الحكاية والوصف'],
+                ['specs', 'المواصفات'],
+                ['reviews', `التقييمات (${productReviews.length})`],
+                ['shipping', 'الشحن والتغليف'],
+              ].map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() =>
+                    setActiveTab(
+                      key as
+                      | 'desc'
+                      | 'specs'
+                      | 'reviews'
+                      | 'shipping'
+                    )
+                  }
+                  className={`
+                    shrink-0
+                    px-5
+                    py-5
+                    text-xs
+                    font-black
+                    transition
+                    cursor-pointer
+                    sm:px-7
+                    ${activeTab === key
+                      ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
+                      : 'text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white'
+                    }
+                  `}
+                >
+                  {label}
+                </button>
               ))}
             </div>
-          </div>
-        )}
 
-        {/* Tab 2: Specs */}
-        {activeTab === 'specs' && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-right">
-              <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                <tr>
-                  <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5 w-1/3">الخامات والمواد الأساسية</td>
-                  <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.material || 'خامات طبيعية'}</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">محافظة ومكان المنشأ</td>
-                  <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">صعيد مصر - محافظة {productSpecs.originGovernorate || product.sellerGovernorate || 'قنا'}</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">طريقة التصنيع والصنعة</td>
-                  <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.craftsmanship || 'صناعة يدوية أصيلة'}</td>
-                </tr>
-                {productSpecs.dimensions && (
-                  <tr>
-                    <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">الأبعاد والمقاسات</td>
-                    <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.dimensions}</td>
-                  </tr>
-                )}
-                {productSpecs.weight && (
-                  <tr>
-                    <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">الوزن التقريبي</td>
-                    <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.weight}</td>
-                  </tr>
-                )}
-                {productSpecs.estimatedMakingTime && (
-                  <tr>
-                    <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">وقت الصنع اليدوي للقطعة</td>
-                    <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.estimatedMakingTime}</td>
-                  </tr>
-                )}
-                {productSpecs.careInstructions && (
-                  <tr>
-                    <td className="py-3 px-4 font-bold text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5">تعليمات العناية والتنظيف</td>
-                    <td className="py-3 px-4 font-semibold text-[#211d18] dark:text-[#f5f0e7]">{productSpecs.careInstructions}</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+            <div className="p-5 sm:p-8 lg:p-10">
+              {/* Description */}
 
-        {/* Tab 3: Reviews */}
-        {activeTab === 'reviews' && (
-          <div className="space-y-6">
-            {/* Reviews List */}
-            <div className="space-y-4">
-              {productReviews.length === 0 ? (
-                <p className="text-xs text-black/50 dark:text-white/50 italic">كن أول من يكتب تقييماً لهذه القطعة التراثية!</p>
-              ) : (
-                productReviews.map((rev) => (
-                  <div key={rev.id} className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-[#9a6a35] text-white flex items-center justify-center text-xs font-bold">
-                          {rev.userName.charAt(0)}
-                        </div>
-                        <div>
-                          <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7] block">{rev.userName}</span>
-                          <span className="text-[10px] text-black/50 dark:text-white/50">
-                            {rev.userGovernorate ? `محافظة ${rev.userGovernorate}` : 'مشتري موثق'}
+              {activeTab === 'desc' && (
+                <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+                  <div>
+                    <div
+                      className="
+                        mb-5
+                        flex
+                        items-center
+                        gap-2
+                        text-[9px]
+                        font-black
+                        tracking-[0.2em]
+                        text-[#9a6a35]
+                        dark:text-[#d5a56d]
+                      "
+                    >
+                      <Sparkles size={14} />
+                      THE STORY BEHIND THE CRAFT
+                    </div>
+
+                    <h3 className="text-2xl font-black sm:text-3xl">
+                      مش مجرد قطعة.
+                    </h3>
+
+                    <p
+                      className="
+                        mt-5
+                        max-w-3xl
+                        text-sm
+                        leading-9
+                        text-black/60
+                        dark:text-white/50
+                      "
+                    >
+                      {product.description}
+                    </p>
+
+                    <p
+                      className="
+                        mt-5
+                        max-w-3xl
+                        text-sm
+                        leading-9
+                        text-black/55
+                        dark:text-white/45
+                      "
+                    >
+                      هذه القطعة جزء من حرفة متوارثة في
+                      صعيد مصر، تجمع بين الخامة الطبيعية
+                      والمهارة اليدوية والهوية المحلية.
+                      كل تفصيلة فيها بتعبر عن المكان اللي
+                      خرجت منه.
+                    </p>
+
+                    {productTags.length > 0 && (
+                      <div className="mt-7 flex flex-wrap gap-2">
+                        {productTags.map((tag, index) => (
+                          <span
+                            key={`${tag}-${index}`}
+                            className="
+                              rounded-full
+                              border
+                              border-black/10
+                              bg-black/[0.025]
+                              px-3
+                              py-2
+                              text-[10px]
+                              font-bold
+                              text-black/50
+                              dark:border-white/10
+                              dark:bg-white/[0.025]
+                              dark:text-white/45
+                            "
+                          >
+                            #{tag}
                           </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 text-amber-500">
-                        {[...Array(rev.rating)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
                         ))}
                       </div>
-                    </div>
-                    <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">{rev.comment}</p>
-                    <span className="text-[10px] text-black/50 dark:text-white/50 block">{rev.date}</span>
+                    )}
                   </div>
-                ))
+
+                  <div
+                    className="
+                      rounded-3xl
+                      bg-[#211d18]
+                      p-6
+                      text-white
+                      dark:bg-[#0d0d0c]
+                    "
+                  >
+                    <div className="flex items-center gap-2 text-[#d5a56d]">
+                      <Gem size={17} />
+                      <span className="text-xs font-black">
+                        هوية القطعة
+                      </span>
+                    </div>
+
+                    <div className="mt-7 space-y-5">
+                      <div>
+                        <div className="text-[9px] text-white/35">
+                          الحرفة
+                        </div>
+                        <div className="mt-1 text-sm font-bold">
+                          {productSpecs.craftsmanship ||
+                            'صناعة يدوية أصيلة'}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[9px] text-white/35">
+                          الخامة
+                        </div>
+                        <div className="mt-1 text-sm font-bold">
+                          {productSpecs.material ||
+                            'خامات طبيعية'}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[9px] text-white/35">
+                          المنشأ
+                        </div>
+                        <div className="mt-1 text-sm font-bold">
+                          صعيد مصر —{' '}
+                          {productSpecs.originGovernorate ||
+                            product.sellerGovernorate}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Specs */}
+
+              {activeTab === 'specs' && (
+                <div>
+                  <div className="mb-7">
+                    <div
+                      className="
+                        text-[9px]
+                        font-black
+                        tracking-[0.2em]
+                        text-[#9a6a35]
+                        dark:text-[#d5a56d]
+                      "
+                    >
+                      PRODUCT SPECIFICATION
+                    </div>
+
+                    <h3 className="mt-2 text-2xl font-black">
+                      كل التفاصيل
+                    </h3>
+                  </div>
+
+                  <div
+                    className="
+                      grid
+                      overflow-hidden
+                      rounded-3xl
+                      border
+                      border-black/10
+                      dark:border-white/10
+                      sm:grid-cols-2
+                    "
+                  >
+                    {[
+                      [
+                        <Leaf size={17} />,
+                        'الخامات',
+                        productSpecs.material ||
+                        'خامات طبيعية',
+                      ],
+                      [
+                        <MapPin size={17} />,
+                        'مكان المنشأ',
+                        `صعيد مصر - ${productSpecs.originGovernorate ||
+                        product.sellerGovernorate
+                        }`,
+                      ],
+                      [
+                        <Sparkles size={17} />,
+                        'طريقة الصنع',
+                        productSpecs.craftsmanship ||
+                        'صناعة يدوية أصيلة',
+                      ],
+                      [
+                        <Ruler size={17} />,
+                        'الأبعاد',
+                        productSpecs.dimensions ||
+                        'غير محددة',
+                      ],
+                      [
+                        <Weight size={17} />,
+                        'الوزن',
+                        productSpecs.weight ||
+                        'غير محدد',
+                      ],
+                      [
+                        <Clock3 size={17} />,
+                        'وقت التصنيع',
+                        productSpecs.estimatedMakingTime ||
+                        'حسب نوع القطعة',
+                      ],
+                      [
+                        <Info size={17} />,
+                        'العناية',
+                        productSpecs.careInstructions ||
+                        'العناية حسب الخامة',
+                      ],
+                      [
+                        <Package size={17} />,
+                        'المخزون',
+                        product.inStock
+                          ? `${stockCount} قطعة`
+                          : 'نفد المخزون',
+                      ],
+                    ].map(
+                      ([icon, label, value], index) => (
+                        <div
+                          key={index}
+                          className="
+                            flex
+                            gap-4
+                            border-b
+                            border-black/10
+                            p-5
+                            last:border-b-0
+                            dark:border-white/10
+                            sm:nth-[odd]:border-l
+                          "
+                        >
+                          <div
+                            className="
+                              flex
+                              h-10
+                              w-10
+                              shrink-0
+                              items-center
+                              justify-center
+                              rounded-xl
+                              bg-[#9a6a35]/10
+                              text-[#9a6a35]
+                              dark:bg-[#d5a56d]/10
+                              dark:text-[#d5a56d]
+                            "
+                          >
+                            {icon}
+                          </div>
+
+                          <div>
+                            <div className="text-[9px] font-bold text-black/35 dark:text-white/30">
+                              {label}
+                            </div>
+
+                            <div className="mt-1 text-xs font-black">
+                              {value}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Reviews */}
+
+              {activeTab === 'reviews' && (
+                <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+                  {/* Review Summary */}
+
+                  <div
+                    className="
+                      h-fit
+                      rounded-3xl
+                      bg-[#211d18]
+                      p-7
+                      text-white
+                      dark:bg-[#0d0d0c]
+                    "
+                  >
+                    <div className="text-[9px] font-black tracking-[0.2em] text-[#d5a56d]">
+                      CUSTOMER REVIEWS
+                    </div>
+
+                    <div className="mt-7 flex items-end gap-3">
+                      <span className="text-6xl font-black tracking-[-0.08em]">
+                        {product.rating}
+                      </span>
+
+                      <div className="pb-2">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map(
+                            (star) => (
+                              <Star
+                                key={star}
+                                size={14}
+                                className={
+                                  star <=
+                                    Math.floor(
+                                      product.rating
+                                    )
+                                    ? 'fill-amber-400 text-amber-400'
+                                    : 'text-white/15'
+                                }
+                              />
+                            )
+                          )}
+                        </div>
+
+                        <div className="mt-1 text-[9px] text-white/40">
+                          {product.reviewCount} تقييم
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-7 border-t border-white/10 pt-5">
+                      <p className="text-xs leading-7 text-white/45">
+                        رأي المشترين بيساعد الناس تعرف
+                        جودة القطعة قبل ما تطلبها.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Reviews */}
+
+                  <div className="space-y-4">
+                    {productReviews.length === 0 ? (
+                      <div
+                        className="
+                          rounded-3xl
+                          border
+                          border-dashed
+                          border-black/10
+                          p-8
+                          text-center
+                          dark:border-white/10
+                        "
+                      >
+                        <Star
+                          size={25}
+                          className="
+                            mx-auto
+                            text-[#9a6a35]
+                            dark:text-[#d5a56d]
+                          "
+                        />
+
+                        <p className="mt-3 text-xs font-bold text-black/50 dark:text-white/40">
+                          كن أول من يكتب تقييمًا لهذه القطعة.
+                        </p>
+                      </div>
+                    ) : (
+                      productReviews.map((review) => (
+                        <div
+                          key={review.id}
+                          className="
+                            rounded-2xl
+                            border
+                            border-black/10
+                            bg-black/[0.02]
+                            p-5
+                            dark:border-white/10
+                            dark:bg-white/[0.02]
+                          "
+                        >
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className="
+                                  flex
+                                  h-10
+                                  w-10
+                                  items-center
+                                  justify-center
+                                  rounded-full
+                                  bg-[#9a6a35]
+                                  text-sm
+                                  font-black
+                                  text-white
+                                "
+                              >
+                                {review.userName.charAt(
+                                  0
+                                )}
+                              </div>
+
+                              <div>
+                                <div className="text-xs font-black">
+                                  {review.userName}
+                                </div>
+
+                                <div className="mt-1 text-[9px] text-black/40 dark:text-white/30">
+                                  {review.userGovernorate
+                                    ? `محافظة ${review.userGovernorate}`
+                                    : 'مشتري موثق'}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-1">
+                              {Array.from({
+                                length: review.rating,
+                              }).map((_, index) => (
+                                <Star
+                                  key={index}
+                                  size={12}
+                                  className="fill-amber-400 text-amber-400"
+                                />
+                              ))}
+                            </div>
+                          </div>
+
+                          <p className="mt-4 text-xs leading-7">
+                            {review.comment}
+                          </p>
+
+                          <div className="mt-3 text-[9px] text-black/30 dark:text-white/25">
+                            {review.date}
+                          </div>
+                        </div>
+                      ))
+                    )}
+
+                    {/* Add Review */}
+
+                    <form
+                      onSubmit={handleAddReview}
+                      className="
+                        rounded-3xl
+                        border
+                        border-black/10
+                        bg-white/60
+                        p-6
+                        dark:border-white/10
+                        dark:bg-white/[0.02]
+                      "
+                    >
+                      <h4 className="text-sm font-black">
+                        شارك تجربتك
+                      </h4>
+
+                      <div className="mt-4 flex gap-1">
+                        {[1, 2, 3, 4, 5].map(
+                          (star) => (
+                            <button
+                              key={star}
+                              type="button"
+                              onClick={() =>
+                                setNewRating(star)
+                              }
+                              className="cursor-pointer p-1"
+                            >
+                              <Star
+                                size={20}
+                                className={
+                                  star <= newRating
+                                    ? 'fill-amber-400 text-amber-400'
+                                    : 'text-black/15 dark:text-white/15'
+                                }
+                              />
+                            </button>
+                          )
+                        )}
+                      </div>
+
+                      <textarea
+                        required
+                        value={newComment}
+                        onChange={(e) =>
+                          setNewComment(e.target.value)
+                        }
+                        rows={4}
+                        placeholder="اكتب رأيك في القطعة وجودة الصنع..."
+                        className="
+                          mt-4
+                          w-full
+                          resize-none
+                          rounded-2xl
+                          border
+                          border-black/10
+                          bg-black/[0.025]
+                          p-4
+                          text-xs
+                          outline-none
+                          transition
+                          focus:border-[#9a6a35]
+                          dark:border-white/10
+                          dark:bg-white/[0.025]
+                        "
+                      />
+
+                      <button
+                        type="submit"
+                        className="
+                          mt-3
+                          inline-flex
+                          items-center
+                          gap-2
+                          rounded-xl
+                          bg-[#211d18]
+                          px-5
+                          py-3
+                          text-xs
+                          font-bold
+                          text-white
+                          transition
+                          hover:bg-[#9a6a35]
+                          dark:bg-white
+                          dark:text-black
+                          dark:hover:bg-[#d5a56d]
+                          cursor-pointer
+                        "
+                      >
+                        <Send size={14} />
+                        إرسال التقييم
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              )}
+
+              {/* Shipping */}
+
+              {activeTab === 'shipping' && (
+                <div>
+                  <div className="mb-7">
+                    <div
+                      className="
+                        text-[9px]
+                        font-black
+                        tracking-[0.2em]
+                        text-[#9a6a35]
+                        dark:text-[#d5a56d]
+                      "
+                    >
+                      DELIVERY & PACKAGING
+                    </div>
+
+                    <h3 className="mt-2 text-2xl font-black">
+                      القطعة هتوصلك بأمان
+                    </h3>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div
+                      className="
+                        rounded-3xl
+                        border
+                        border-black/10
+                        bg-black/[0.02]
+                        p-6
+                        dark:border-white/10
+                        dark:bg-white/[0.02]
+                      "
+                    >
+                      <Package
+                        size={22}
+                        className="text-[#9a6a35] dark:text-[#d5a56d]"
+                      />
+
+                      <h4 className="mt-4 text-sm font-black">
+                        التغليف الآمن
+                      </h4>
+
+                      <p className="mt-3 text-xs leading-7 text-black/50 dark:text-white/40">
+                        يتم تجهيز القطع بعناية واستخدام
+                        التغليف المناسب لطبيعة المنتج
+                        لتقليل احتمالات التلف أثناء النقل.
+                      </p>
+                    </div>
+
+                    <div
+                      className="
+                        rounded-3xl
+                        border
+                        border-black/10
+                        bg-black/[0.02]
+                        p-6
+                        dark:border-white/10
+                        dark:bg-white/[0.02]
+                      "
+                    >
+                      <Truck
+                        size={22}
+                        className="text-[#9a6a35] dark:text-[#d5a56d]"
+                      />
+
+                      <h4 className="mt-4 text-sm font-black">
+                        التوصيل
+                      </h4>
+
+                      <ul className="mt-3 space-y-2 text-xs leading-7 text-black/50 dark:text-white/40">
+                        <li>
+                          • القاهرة والجيزة والإسكندرية:
+                          48–72 ساعة.
+                        </li>
+
+                        <li>
+                          • باقي المحافظات: 3–4 أيام عمل
+                          تقريباً.
+                        </li>
+
+                        <li>
+                          • المناطق البعيدة: حسب شركة
+                          التوصيل.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
+          </div>
+        </section>
 
-            {/* Add Review Form */}
-            <form onSubmit={handleAddReview} className="bg-white/80 dark:bg-[#151513]/80 p-5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
-              <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">شاركنا رأيك في هذه القطعة</h4>
+        {/* ========================================= */}
+        {/* RELATED PRODUCTS */}
+        {/* ========================================= */}
+
+        {relatedProducts.length > 0 && (
+          <section className="mt-16 pb-24">
+            <div
+              className="
+                mb-7
+                flex
+                items-end
+                justify-between
+                gap-5
+              "
+            >
               <div>
-                <label className="block text-[11px] text-black/60 dark:text-white/60 mb-1">التقييم بالنجوم:</label>
-                <div className="flex gap-1.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setNewRating(star)}
-                      className="p-1 cursor-pointer"
-                    >
-                      <Star
-                        className={`w-5 h-5 ${star <= newRating ? 'fill-amber-400 text-amber-400' : 'text-gray-300 dark:text-stone-600'
-                          }`}
-                      />
-                    </button>
-                  ))}
+                <div
+                  className="
+                    text-[9px]
+                    font-black
+                    tracking-[0.2em]
+                    text-[#9a6a35]
+                    dark:text-[#d5a56d]
+                  "
+                >
+                  YOU MAY ALSO LIKE
                 </div>
+
+                <h2 className="mt-2 text-2xl font-black sm:text-3xl">
+                  قطع من نفس الحكاية
+                </h2>
               </div>
-              <div>
-                <textarea
-                  required
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="اكتب تجربتك مع جودة الصنع والتغليف وطعم/شكل القطعة..."
-                  rows={3}
-                  className="w-full p-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
-                />
-              </div>
+
               <button
-                type="submit"
-                className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
+                type="button"
+                onClick={() => setActivePage('products')}
+                className="
+                  hidden
+                  items-center
+                  gap-2
+                  text-xs
+                  font-bold
+                  text-[#9a6a35]
+                  hover:underline
+                  dark:text-[#d5a56d]
+                  sm:flex
+                  cursor-pointer
+                "
               >
-                <Send className="w-3.5 h-3.5" />
-                <span>إرسال التقييم</span>
+                عرض كل المنتجات
+                <ArrowUpLeft size={15} />
               </button>
-            </form>
-          </div>
-        )}
-
-        {/* Tab 4: Shipping */}
-        {activeTab === 'shipping' && (
-          <div className="space-y-4 text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
-                <h4 className="font-bold text-[#9a6a35] dark:text-[#d5a56d] mb-1">📦 التغليف التراثي المحكم</h4>
-                <p className="text-black/60 dark:text-white/60 leading-relaxed">
-                  يتم تغليف الفخار والخزف والأواني بطبقات مزدوجة من الفوم المقاوم للصدمات والكرتون المقوى مع ختم "قابل للكسر" لضمان وصولها سليمة 100%.
-                </p>
-              </div>
-              <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
-                <h4 className="font-bold text-[#9a6a35] dark:text-[#d5a56d] mb-1">⏱️ مدد التوصيل المتوقعة</h4>
-                <ul className="space-y-1 text-black/60 dark:text-white/60">
-                  <li>• القاهرة، الجيزة، الإسكندرية: خلال 48 إلى 72 ساعة.</li>
-                  <li>• محافظات الصعيد والوجه البحري: خلال 3 إلى 4 أيام عمل.</li>
-                  <li>• مدن القناة وسيناء: خلال 4 إلى 5 أيام عمل.</li>
-                </ul>
-              </div>
             </div>
-          </div>
-        )}
-      </div>
 
-      {/* Related Products Grid */}
-      {relatedProducts.length > 0 && (
-        <div className="space-y-4 pt-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7] font-heritage">
-              منتجات تراثية مشابهة قد تعجبك
-            </h3>
+            <div
+              className="
+                grid
+                grid-cols-1
+                gap-4
+                sm:grid-cols-2
+                lg:grid-cols-4
+              "
+            >
+              {relatedProducts.map((related) => (
+                <ProductCard
+                  key={related.id}
+                  product={related}
+                />
+              ))}
+            </div>
+
             <button
               type="button"
               onClick={() => setActivePage('products')}
-              className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
+              className="
+                mt-5
+                flex
+                w-full
+                items-center
+                justify-center
+                gap-2
+                rounded-2xl
+                border
+                border-black/10
+                bg-white/50
+                py-4
+                text-xs
+                font-bold
+                dark:border-white/10
+                dark:bg-white/[0.025]
+                sm:hidden
+                cursor-pointer
+              "
             >
-              عرض المزيد
+              عرض كل المنتجات
+              <ArrowUpLeft size={15} />
             </button>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {relatedProducts.map((prod) => (
-              <ProductCard key={prod.id} product={prod} />
-            ))}
-          </div>
-        </div>
-      )}
+          </section>
+        )}
+      </div>
 
-      {/* Mobile Sticky Action Bar for Buyers */}
-      {(currentRole === 'buyer' || !isAuthenticated) && product.inStock && (
-        <div className="fixed bottom-14 left-0 right-0 z-30 sm:hidden bg-white/95 dark:bg-[#151513]/95 backdrop-blur-md border-t border-black/10 dark:border-white/10 px-4 py-2.5 flex items-center justify-between gap-3 shadow-lg">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-black/50 dark:text-white/50">الإجمالي:</span>
-            <span className="text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">
-              {product.price * quantity} ج.م
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-white/5 p-0.5">
+      {/* ========================================= */}
+      {/* MOBILE STICKY CART */}
+      {/* ========================================= */}
+
+      {(currentRole === 'buyer' ||
+        !isAuthenticated) &&
+        product.inStock && (
+          <div
+            className="
+              fixed
+              bottom-0
+              left-0
+              right-0
+              z-50
+              border-t
+              border-black/10
+              bg-[#f7f3eb]/95
+              p-3
+              shadow-[0_-10px_40px_rgba(0,0,0,0.12)]
+              backdrop-blur-2xl
+              dark:border-white/10
+              dark:bg-[#11110f]/95
+              sm:hidden
+            "
+          >
+            <div className="flex items-center gap-3">
+              <div className="min-w-0">
+                <div className="text-[9px] text-black/40 dark:text-white/35">
+                  الإجمالي
+                </div>
+
+                <div className="text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">
+                  {totalPrice} ج.م
+                </div>
+              </div>
+
+              <div
+                className="
+                  flex
+                  shrink-0
+                  items-center
+                  rounded-xl
+                  border
+                  border-black/10
+                  bg-black/[0.03]
+                  dark:border-white/10
+                  dark:bg-white/[0.03]
+                "
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setQuantity(
+                      Math.max(1, quantity - 1)
+                    )
+                  }
+                  className="
+                    flex
+                    h-10
+                    w-9
+                    items-center
+                    justify-center
+                    cursor-pointer
+                  "
+                >
+                  <Minus size={14} />
+                </button>
+
+                <span className="w-7 text-center text-xs font-black">
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  disabled={quantity >= stockCount}
+                  onClick={() =>
+                    setQuantity(
+                      Math.min(
+                        stockCount || 99,
+                        quantity + 1
+                      )
+                    )
+                  }
+                  className="
+                    flex
+                    h-10
+                    w-9
+                    items-center
+                    justify-center
+                    disabled:opacity-30
+                    cursor-pointer
+                  "
+                >
+                  <Plus size={14} />
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-8 h-8 text-black/70 dark:text-white/70 font-bold flex items-center justify-center cursor-pointer"
-                aria-label="تقليل الكمية"
+                onClick={() =>
+                  addToCart(product, quantity)
+                }
+                className="
+                  flex
+                  min-h-11
+                  flex-1
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-xl
+                  bg-[#211d18]
+                  px-3
+                  text-xs
+                  font-black
+                  text-white
+                  dark:bg-white
+                  dark:text-black
+                  cursor-pointer
+                "
               >
-                -
-              </button>
-              <span className="px-2 font-bold text-xs text-[#211d18] dark:text-[#f5f0e7]">{quantity}</span>
-              <button
-                type="button"
-                onClick={() => setQuantity(Math.min(product.stockCount || 99, quantity + 1))}
-                disabled={quantity >= (product.stockCount || 0)}
-                className="w-8 h-8 text-black/70 dark:text-white/70 disabled:opacity-40 font-bold flex items-center justify-center cursor-pointer"
-                aria-label="زيادة الكمية"
-              >
-                +
+                <ShoppingBag size={16} />
+                إضافة للسلة
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => addToCart(product, quantity)}
-              className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer min-h-[42px]"
-            >
-              <ShoppingBag className="w-4 h-4" />
-              <span>إضافة للسلة</span>
-            </button>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+    </main>
   );
 };
+
+export default ProductDetailsView;

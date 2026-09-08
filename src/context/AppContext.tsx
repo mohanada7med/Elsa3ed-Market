@@ -159,6 +159,8 @@ interface AppContextType {
   // Favorites
   favorites: string[];
   toggleFavorite: (productId: string) => void;
+  addToFavorites: (productId: string) => void;
+  removeFromFavorites: (productId: string) => void;
   isFavorite: (productId: string) => boolean;
 
   // Search & Filter State
@@ -404,6 +406,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'wah-market': '/market',
   products: '/products',
   'product-details': '/products/:id',
+  'product-detail': '/products/:id',
 
   categories: '/categories',
   'category-details': '/categories/:id',
@@ -819,7 +822,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', activePage);
       const isDynamicRoute = [
-        'product-details', 'category-details', 'seller-details', 'order-details',
+        'product-details', 'product-detail', 'category-details', 'seller-details', 'order-details',
         'governorate-details', 'place-details', 'cultural-craft-details',
         'story-details', 'person-details', 'food-details', 'event-details'
       ].includes(activePage);
@@ -1951,6 +1954,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const isFavorite = (productId: string) => favorites.includes(productId);
 
+  const addToFavorites = (productId: string) => {
+    if (!favorites.includes(productId)) {
+      toggleFavorite(productId);
+    }
+  };
+
+  const removeFromFavorites = (productId: string) => {
+    if (favorites.includes(productId)) {
+      toggleFavorite(productId);
+    }
+  };
+
   // Navigation helpers
   // Safe identifier extraction helper to guard against [object Object] and ambiguous values
   const safeExtractIdentifier = (val: any): string | null => {
@@ -2880,6 +2895,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         favorites,
         toggleFavorite,
+        addToFavorites,
+        removeFromFavorites,
         isFavorite,
 
         searchQuery,

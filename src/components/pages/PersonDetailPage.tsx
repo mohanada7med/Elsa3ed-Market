@@ -312,8 +312,7 @@ export const PersonDetailPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('people')}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
-                >
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#211d18] text-white dark:bg-white dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-md cursor-pointer w-fit"                >
                   <span>تصفح كافة ناس الصعيد</span>
                   <ArrowLeft size={15} />
                 </button>

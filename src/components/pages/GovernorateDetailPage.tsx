@@ -367,8 +367,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <div className="mt-9 flex flex-wrap gap-3">
                   <button
                     onClick={() => scrollToSection('places')}
-                    className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-black text-[#241E1A] transition hover:-translate-y-0.5 hover:bg-[#d5a56d] hover:text-white"
-                  >
+                    className="group inline-flex items-center gap-2 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] px-6 py-3.5 text-sm font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"                  >
                     اكتشف المعالم
                     <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
                   </button>
@@ -424,8 +423,8 @@ export const GovernorateDetailPage: React.FC = () => {
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
                   className={`group flex min-w-max items-center gap-3 border-l border-[#E4DBD2] px-4 py-4 text-right transition first:border-l-0 dark:border-[#382D27] sm:px-6 ${active
-                      ? 'bg-[#241E1A] text-white dark:bg-[#FFF8F1] dark:text-[#17120F]'
-                      : 'text-[#73675B] hover:bg-white hover:text-[#241E1A] dark:text-[#B8AAA0] dark:hover:bg-[#1B1613] dark:hover:text-white'
+                    ? 'bg-[#241E1A] text-white dark:bg-[#FFF8F1] dark:text-[#17120F]'
+                    : 'text-[#73675B] hover:bg-white hover:text-[#241E1A] dark:text-[#B8AAA0] dark:hover:bg-[#1B1613] dark:hover:text-white'
                     }`}
                 >
                   <span className="text-[10px] font-black opacity-40">
@@ -441,8 +440,8 @@ export const GovernorateDetailPage: React.FC = () => {
                   {typeof section.count === 'number' && (
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] font-black ${active
-                          ? 'bg-white/10'
-                          : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
+                        ? 'bg-white/10'
+                        : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
                         }`}
                     >
                       {section.count}
@@ -588,8 +587,8 @@ export const GovernorateDetailPage: React.FC = () => {
                     key={place.id || place.slug || index}
                     onClick={() => navigateToPlace(place.slug || place.id)}
                     className={`group relative overflow-hidden rounded-[30px] text-right ${large
-                        ? 'min-h-[480px] lg:col-span-7'
-                        : 'min-h-[330px] lg:col-span-5'
+                      ? 'min-h-[480px] lg:col-span-7'
+                      : 'min-h-[330px] lg:col-span-5'
                       }`}
                   >
                     <img

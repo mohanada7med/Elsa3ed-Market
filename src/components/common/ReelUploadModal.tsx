@@ -78,21 +78,23 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [governorate, setGovernorate] = useState<Governorate>(defaultGovernorate);
-  const [craftType, setCraftType] = useState('فخار وخزف نيلي');
-  const [artisanName, setArtisanName] = useState(initialArtisanName || 'أسطى الحرفة الصعيدي');
-  const [workshopName, setWorkshopName] = useState(sellerName || 'ورشة الصنعة التراثية');
+  const [location, setLocation] = useState('');
+  const [contentType, setContentType] = useState<string>('places');
+  const [craftType, setCraftType] = useState('حرف وصناعات');
+  const [artisanName, setArtisanName] = useState(initialArtisanName || 'صانع محتوى صعيدي');
+  const [workshopName, setWorkshopName] = useState(sellerName || 'حكايات الصعيد');
   const [artisanAvatar, setArtisanAvatar] = useState(
     initialArtisanAvatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80'
   );
-  const [hashtagsStr, setHashtagsStr] = useState('#صناعة_يدوية, #تراث_الصعيد, #صنعة_أصيلة');
-  const [musicTrack, setMusicTrack] = useState('موال صعيدي تراثي مع المزمار والناي');
+  const [hashtagsStr, setHashtagsStr] = useState('#الصعيد, #وه_Stories, #حكايات_الصعيد');
+  const [musicTrack, setMusicTrack] = useState('');
 
-  // Linked Product State
-  const [selectedProductId, setSelectedProductId] = useState<string>(sellerProducts[0]?.id || 'custom');
-  const [productTitle, setProductTitle] = useState(sellerProducts[0]?.title || '');
-  const [productPrice, setProductPrice] = useState(sellerProducts[0]?.price || 350);
-  const [productOriginalPrice, setProductOriginalPrice] = useState(sellerProducts[0]?.originalPrice || 450);
-  const [productImage, setProductImage] = useState(sellerProducts[0]?.images?.[0] || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80');
+  // Linked Product State (COMPLETELY OPTIONAL)
+  const [selectedProductId, setSelectedProductId] = useState<string>('none');
+  const [productTitle, setProductTitle] = useState('');
+  const [productPrice, setProductPrice] = useState<number>(350);
+  const [productOriginalPrice, setProductOriginalPrice] = useState<number>(450);
+  const [productImage, setProductImage] = useState('');
   const [productRating, setProductRating] = useState(4.9);
 
   // Preview video player
@@ -107,7 +109,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
 
   // Sync when product selection changes
   useEffect(() => {
-    if (selectedProductId && selectedProductId !== 'custom') {
+    if (selectedProductId && selectedProductId !== 'custom' && selectedProductId !== 'none') {
       const prod = sellerProducts.find((p) => p.id === selectedProductId);
       if (prod) {
         setProductTitle(prod.title);
@@ -119,6 +121,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
           setGovernorate(prod.sellerGovernorate as Governorate);
         }
       }
+    } else if (selectedProductId === 'none') {
+      setProductTitle('');
+      setProductImage('');
     }
   }, [selectedProductId, sellerProducts]);
 
@@ -211,7 +216,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
     }
 
     if (!videoUrl || !videoUrl.trim()) {
-      setErrorMsg('يرجى تحديد أو رفع مقطع فيديو صالح للصنعة الحرفية أولاً');
+      setErrorMsg('يرجى تحديد أو رفع مقطع فيديو صالح أولاً');
       return;
     }
 
@@ -224,8 +229,10 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       setErrorMsg('يرجى كتابة عنوان جذاب لمقطع الفيديو');
       return;
     }
-    if (!productTitle.trim()) {
-      setErrorMsg('يرجى تحديد المنتج المعروض بالفيديو وتفاصيله');
+
+    const hasProduct = selectedProductId !== 'none';
+    if (hasProduct && selectedProductId === 'custom' && !productTitle.trim()) {
+      setErrorMsg('يرجى كتابة اسم المنتج المرتبط أو اختيار "بدون ربط بمنتج"');
       return;
     }
 
@@ -252,29 +259,30 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       };
 
       const createdReel = await craftReelsService.addReelAsync(userParam, {
-        title,
+        title: title.trim(),
         artisanName,
         artisanAvatar,
         workshopName,
         sellerId: sellerId || currentUser?.sellerId || `seller-${Date.now()}`,
         governorate,
-        craftType,
+        location: location.trim() || governorate,
+        contentType: contentType || 'places',
+        craftType: craftType || 'الصعيد',
         videoUrl: videoUrl.trim(),
         cloudinaryPublicId: cloudinaryPublicId,
         resourceType: 'video',
         posterUrl: effectivePoster,
-
         duration: duration || '0:30',
-        productId: selectedProductId === 'custom' ? `prod-${Date.now()}` : selectedProductId,
-        productTitle,
-        productPrice: Number(productPrice) || 200,
-        productOriginalPrice: Number(productOriginalPrice) || Math.round(Number(productPrice) * 1.2),
-        productImage: productImage || effectivePoster,
-        productRating,
-        inStock: true,
-        description: description || title,
-        hashtags: hashtags.length > 0 ? hashtags : ['#صناعة_يدوية', '#تراث_الصعيد'],
-        musicTrack: musicTrack || 'نغمات صعيدية أصيلة',
+        productId: hasProduct ? (selectedProductId === 'custom' ? `prod-${Date.now()}` : selectedProductId) : undefined,
+        productTitle: hasProduct ? productTitle.trim() : undefined,
+        productPrice: hasProduct ? (Number(productPrice) || 0) : undefined,
+        productOriginalPrice: hasProduct ? (Number(productOriginalPrice) || Math.round(Number(productPrice) * 1.2)) : undefined,
+        productImage: hasProduct ? (productImage || effectivePoster) : undefined,
+        productRating: hasProduct ? productRating : undefined,
+        inStock: hasProduct ? true : undefined,
+        description: description.trim() || title.trim(),
+        hashtags: hashtags.length > 0 ? hashtags : ['#الصعيد', '#وه_Stories'],
+        musicTrack: musicTrack.trim() || undefined,
         isVerifiedArtisan: true
       });
 
@@ -306,14 +314,14 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-base sm:text-xl font-black text-[#211d18] dark:text-[#f5f0e7] font-heritage">
-                  إضافة فيديو تفاعلي لورشة الصعيد (Craft Reel)
+                  إضافة حكاية أو فيديو جديد (وه Stories)
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-[#9a6a35] text-white text-[9px] sm:text-[10px] font-black">
-                  Shoppable Video
+                  Upper Egypt Stories
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mt-0.5 line-clamp-1 sm:line-clamp-none">
-                شارك لحظات الإبداع الحي في ورشتك واعرض القطعة للبيع المباشر للزبائن
+                شارك معالم الصعيد، تراثه، أسواقه، أكلاته، أو حكايات ناسه وحرفه مع الجميع
               </p>
             </div>
           </div>
@@ -507,7 +515,6 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                               const secs = Math.floor(result.duration % 60);
                               setDuration(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
                             }
-                            // Auto snapshot poster with zero latency
                             generatePosterFromVideo(result.url, result.thumbnailUrl);
                           }}
                           onUploadError={(err) => {
@@ -562,16 +569,10 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                                 : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:border-[#9a6a35]/50'
                             }`}
                           >
-                            <img
-                              src={preset.posterUrl}
-                              alt={preset.title}
-                              className="w-10 h-10 rounded-xl object-cover shrink-0"
-                            />
-                            <div className="min-w-0 flex-1">
+                            <span className="text-lg">{preset.emoji || '🎬'}</span>
+                            <div className="flex-1 min-w-0">
                               <p className="text-xs font-bold truncate">{preset.title}</p>
-                              <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                                {preset.governorate} • {preset.craftType}
-                              </p>
+                              <p className="text-[10px] text-gray-400 truncate">{preset.craftType}</p>
                             </div>
                           </button>
                         ))}
@@ -579,31 +580,141 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     )}
                   </div>
 
-                  {/* Step 2: Linked Product Selection */}
+                  {/* Step 2: Content Details */}
                   <div className="space-y-3 pt-2 border-t border-black/10 dark:border-white/10">
                     <label className="block text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                      ٢. المنتج المعروض للشراء في الفيديو (Shoppable Product)
+                      ٢. تفاصيل وحكاية المقطع (Upper Egypt Content)
                     </label>
 
-                    {sellerProducts.length > 0 ? (
-                      <div className="space-y-2">
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block">
-                          اختر من منتجات ورشتك الحالية أو أدخل منتجاً مخصصاً:
+                    <div>
+                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        عنوان الفيديو أو الحكاية:
+                      </label>
+                      <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="مثال: جولة في سوق الخميس الأسبوعي بمدينة إسنا"
+                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                          تصنيف المحتوى (Content Type):
                         </label>
                         <select
-                          value={selectedProductId}
-                          onChange={(e) => setSelectedProductId(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35] font-bold"
+                          value={contentType}
+                          onChange={(e) => setContentType(e.target.value)}
+                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
                         >
-                          <option value="custom">✏️ إدخال منتج مخصص يدوياً</option>
-                          {sellerProducts.map((prod) => (
-                            <option key={prod.id} value={prod.id}>
-                              {prod.title} — ({prod.price} ج.م)
-                            </option>
-                          ))}
+                          <option value="places">أماكن ومعالم (Places & Landmarks)</option>
+                          <option value="crafts">حرف وصناعات (Crafts & Industries)</option>
+                          <option value="heritage">تراث وآثار (Heritage & Archaeology)</option>
+                          <option value="events">فعاليات ومهرجانات (Events & Festivals)</option>
+                          <option value="food">أكل صعيدي (Food)</option>
+                          <option value="markets">أسواق (Markets)</option>
+                          <option value="people">حكايات الناس (People's Stories)</option>
+                          <option value="travel">رحلات وتجارب (Travel & Experiences)</option>
+                          <option value="other">أخرى (Other)</option>
                         </select>
                       </div>
-                    ) : null}
+
+                      <div>
+                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                          المحافظة:
+                        </label>
+                        <select
+                          value={governorate}
+                          onChange={(e) => setGovernorate(e.target.value as Governorate)}
+                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-medium text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                        >
+                          <option value="قنا">قنا</option>
+                          <option value="سوهاج">سوهاج</option>
+                          <option value="الأقصر">الأقصر</option>
+                          <option value="أسوان">أسوان</option>
+                          <option value="أسيوط">أسيوط</option>
+                          <option value="المنيا">المنيا</option>
+                          <option value="بني سويف">بني سويف</option>
+                          <option value="الفيوم">الفيوم</option>
+                          <option value="الوادي الجديد">الوادي الجديد</option>
+                          <option value="البحر الأحمر">البحر الأحمر</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                          الموقع / المكان بالتحديد (اختياري):
+                        </label>
+                        <input
+                          type="text"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          placeholder="مثال: معبد حتشبسوت، قرية تونس، سوق إسنا..."
+                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                          الوسوم والهاشتاج (Hashtags):
+                        </label>
+                        <input
+                          type="text"
+                          value={hashtagsStr}
+                          onChange={(e) => setHashtagsStr(e.target.value)}
+                          placeholder="#الصعيد, #وه_Stories, #أماكن_مصر"
+                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
+                        وصف الحكاية أو الفيديو:
+                      </label>
+                      <textarea
+                        rows={2}
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="اكتب نبذة شيقة وموجزة عن المكان، التجربة، أو الحكاية..."
+                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Step 3: Optional Linked Product */}
+                  <div className="space-y-3 pt-2 border-t border-black/10 dark:border-white/10">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                        ٣. ربط بمنتج (اختياري تماماً)
+                      </label>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                        غير إجباري
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block">
+                        هل ترغب بربط الفيديو بمنتج للشراء المباشر؟
+                      </label>
+                      <select
+                        value={selectedProductId}
+                        onChange={(e) => setSelectedProductId(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35] font-bold"
+                      >
+                        <option value="none">✨ بدون ربط بمنتج (محتوى مرئي وثقافي فقط)</option>
+                        <option value="custom">✏️ إدخال منتج معروض يدوياً</option>
+                        {sellerProducts.map((prod) => (
+                          <option key={prod.id} value={prod.id}>
+                            🛍️ {prod.title} — ({prod.price} ج.م)
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
                     {selectedProductId === 'custom' && (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
@@ -646,104 +757,6 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       </div>
                     )}
                   </div>
-
-                  {/* Step 3: Video Details */}
-                  <div className="space-y-3 pt-2 border-t border-black/10 dark:border-white/10">
-                    <label className="block text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                      ٣. تفاصيل وحكاية المقطع
-                    </label>
-
-                    <div>
-                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                        عنوان الفيديو:
-                      </label>
-                      <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="مثال: سر تشكيل طين قنا النيلي على الدولاب السريع"
-                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                          المحافظة:
-                        </label>
-                        <select
-                          value={governorate}
-                          onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-medium text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                        >
-                          <option value="قنا">قنا</option>
-                          <option value="سوهاج">سوهاج</option>
-                          <option value="الأقصر">الأقصر</option>
-                          <option value="أسوان">أسوان</option>
-                          <option value="أسيوط">أسيوط</option>
-                          <option value="المنيا">المنيا</option>
-                          <option value="بني سويف">بني سويف</option>
-                          <option value="الفيوم">الفيوم</option>
-                          <option value="الوادي الجديد">الوادي الجديد</option>
-                          <option value="البحر الأحمر">البحر الأحمر</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                          نوع الصنعة / الحرفة:
-                        </label>
-                        <input
-                          type="text"
-                          value={craftType}
-                          onChange={(e) => setCraftType(e.target.value)}
-                          placeholder="مثال: فخار وخزف نيلي"
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                        وصف حكاية الحرفة في الفيديو:
-                      </label>
-                      <textarea
-                        rows={2}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="اكتب نبذة شيقة عن خطوات الصنع والمواد الطبيعية المستخدمة..."
-                        className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                          الوسوم والهاشتاج (Hashtags):
-                        </label>
-                        <input
-                          type="text"
-                          value={hashtagsStr}
-                          onChange={(e) => setHashtagsStr(e.target.value)}
-                          placeholder="#فخار_قنا, #نول_أخميم"
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-[11px] text-gray-500 dark:text-gray-400 block mb-1">
-                          المقطوعة الصوتية / الموسيقى:
-                        </label>
-                        <input
-                          type="text"
-                          value={musicTrack}
-                          onChange={(e) => setMusicTrack(e.target.value)}
-                          placeholder="أنغام الناي الصعيدي مع الدف"
-                          className="w-full px-3 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-                        />
-                      </div>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Right Column: Live Interactive 9:16 Feed Preview Mockup */}
@@ -751,10 +764,10 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                   <div className="w-full flex items-center justify-between">
                     <span className="text-xs font-bold text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 flex items-center gap-1.5">
                       <Eye className="w-4 h-4 text-[#9a6a35]" />
-                      معاينة مباشرة كما ستظهر للزبائن:
+                      معاينة مباشرة كما ستظهر للجمهور:
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                      9:16 Reels Mode
+                    <span className="text-[10px] sm:text-[11px] font-bold text-[#9a6a35] bg-[#9a6a35]/10 px-2 py-0.5 rounded-full">
+                      وه Stories
                     </span>
                   </div>
 
@@ -792,48 +805,39 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     </div>
 
                     {/* Bottom Mockup Info */}
-                    <div className="absolute bottom-3 inset-x-3 z-10 space-y-1.5 sm:space-y-2">
-                      {/* Artisan Info */}
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <img
-                          src={artisanAvatar}
-                          alt={artisanName}
-                          className="w-6 h-6 sm:w-7 sm:h-7 rounded-full object-cover border border-white shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-white truncate drop-shadow-xs">
-                            {artisanName}
-                          </p>
-                          <p className="text-[9px] text-amber-300 truncate">{workshopName}</p>
-                        </div>
+                    <div className="absolute bottom-3 inset-x-3 z-10 space-y-2">
+                      {/* Location & Category Badges */}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] font-bold text-amber-300 bg-black/60 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-xs">
+                          📍 {location || governorate}
+                        </span>
+                        <span className="text-[9px] font-medium text-white/80 bg-white/20 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          {contentType}
+                        </span>
                       </div>
 
                       {/* Title */}
                       <p className="text-[11px] sm:text-xs font-bold text-white line-clamp-2 leading-tight drop-shadow-md">
-                        {title || 'عنوان فيديو الصنعة الحرفية...'}
+                        {title || 'عنوان حكاية الصعيد...'}
                       </p>
 
-                      {/* Soundtrack */}
-                      <div className="flex items-center gap-1 text-[9px] sm:text-[10px] text-gray-300 truncate">
-                        <Music className="w-3 h-3 text-amber-400 shrink-0" />
-                        <span className="truncate">{musicTrack}</span>
-                      </div>
-
-                      {/* Shoppable Product Card Overlay */}
-                      <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-between gap-1.5 sm:gap-2 shadow-lg">
-                        <img
-                          src={productImage || posterUrl || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=300&q=80'}
-                          alt="product"
-                          className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl object-cover shrink-0 border border-white/30"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] sm:text-[11px] font-bold text-white truncate">{productTitle || 'المنتج المعروض'}</p>
-                          <span className="text-[10px] sm:text-[11px] font-black text-amber-300">{productPrice} ج.م</span>
+                      {/* Optional Shoppable Product Card Overlay */}
+                      {selectedProductId !== 'none' && productTitle && (
+                        <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-between gap-1.5 sm:gap-2 shadow-lg">
+                          <img
+                            src={productImage || posterUrl || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=300&q=80'}
+                            alt="product"
+                            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl object-cover shrink-0 border border-white/30"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] sm:text-[11px] font-bold text-white truncate">{productTitle}</p>
+                            <span className="text-[10px] sm:text-[11px] font-black text-amber-300">{productPrice} ج.م</span>
+                          </div>
+                          <div className="px-2 py-1 bg-[#9a6a35] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-xs">
+                            شراء
+                          </div>
                         </div>
-                        <div className="px-2 py-1 bg-[#9a6a35] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-xs">
-                          شراء
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -862,10 +866,9 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                   ) : (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>نشر الفيديو في Craft Reels</span>
+                      <span>نشر في وه Stories</span>
                     </>
                   )}
-
                 </button>
               </div>
             </form>

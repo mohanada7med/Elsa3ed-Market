@@ -308,6 +308,7 @@ export type ActivePage =
   | 'wah-market'
   | 'products'
   | 'product-details'
+  | 'product-detail'
   | 'categories'
   | 'category-details'
   | 'sellers'
@@ -462,6 +463,18 @@ export interface PaymentConfig {
   updatedAt?: string;
 }
 
+export type ReelContentType =
+  | 'all'
+  | 'places'
+  | 'crafts'
+  | 'heritage'
+  | 'events'
+  | 'food'
+  | 'markets'
+  | 'people'
+  | 'travel'
+  | 'other';
+
 export interface CraftReelComment {
   id: string;
   userName: string;
@@ -475,12 +488,14 @@ export interface CraftReelComment {
 export interface CraftReel {
   id: string;
   title: string;
-  artisanName: string;
-  artisanAvatar: string;
-  workshopName: string;
-  sellerId: string;
+  contentType?: ReelContentType | string;
+  location?: string;
+  artisanName?: string;
+  artisanAvatar?: string;
+  workshopName?: string;
+  sellerId?: string;
   governorate: Governorate;
-  craftType: string;
+  craftType?: string;
   videoUrl: string;
   cloudinaryPublicId?: string;
   resourceType?: string;
@@ -489,17 +504,19 @@ export interface CraftReel {
   likesCount: number;
   viewsCount: number;
   sharesCount: number;
-  productId: string;
-  productTitle: string;
-  productPrice: number;
+  productId?: string;
+  productTitle?: string;
+  productPrice?: number;
   productOriginalPrice?: number;
-  productImage: string;
-  productRating: number;
-  inStock: boolean;
+  productImage?: string;
+  productRating?: number;
+  inStock?: boolean;
   description: string;
   hashtags: string[];
-  musicTrack: string;
+  musicTrack?: string;
   isVerifiedArtisan?: boolean;
+  isFeatured?: boolean;
+  isPinned?: boolean;
   createdAt: string;
   comments?: CraftReelComment[];
 }
