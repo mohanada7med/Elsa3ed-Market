@@ -29,6 +29,7 @@ import wahContentRoutes from './routes/wahContentRoutes.ts';
 import adminMediaRoutes from './routes/adminMediaRoutes.ts';
 import sellerRequestRoutes from './routes/sellerRequestRoutes.ts';
 import notificationRoutes from './routes/notificationRoutes.ts';
+import cloudinaryRoutes from './routes/cloudinaryRoutes.ts';
 
 
 export function createApp(): Express {
@@ -143,6 +144,7 @@ export function createApp(): Express {
     { prefix: '/notifications', router: notificationRoutes },
     { prefix: '/admin/media', router: adminMediaRoutes },
     { prefix: '/admin', router: adminRoutes },
+    { prefix: '/cloudinary', router: cloudinaryRoutes },
     { prefix: '', router: commonRoutes }
   ];
 

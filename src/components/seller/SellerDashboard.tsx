@@ -112,10 +112,10 @@ export const SellerDashboard: React.FC = () => {
         const images = await api.fetchCloudinaryImages();
         if (images && images.length > 0) {
           const formatted = images.map((img: any, index: number) => ({
-            id: `cloud-${index}`,
-            title: img.public_id || `صورة سحابية ${index + 1}`,
-            region: 'ورشة معتمدة',
-            craft: 'تراث صعيدي أصيل',
+            id: img.id || `cloud-${index}`,
+            title: img.title || (img.public_id ? img.public_id.split('/').pop() : `صورة تراثية ${index + 1}`),
+            region: img.region || 'ورشة معتمدة',
+            craft: img.craft || 'تراث صعيدي أصيل',
             url: img.secure_url || img.url
           }));
           setCloudImages(formatted);
@@ -1903,63 +1903,7 @@ export const SellerDashboard: React.FC = () => {
                     <Palette className="w-3.5 h-3.5" />
                     <span>المعرض التراثي ({cloudImages.length})</span>
                   </button>
-                  {coverPickerTab === 'presets' && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                          اختر من أحدث صورك المرفوعة على سحابة Cloudinary:
-                        </p>
-                        {isLoadingCloudImages && (
-                          <span className="text-xs text-[#9a6a35] flex items-center gap-1">
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            <span>جاري جلب الصور من الكلاود...</span>
-                          </span>
-                        )}
-                      </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
-                        {cloudImages.length === 0 && !isLoadingCloudImages ? (
-                          <p className="col-span-full text-center text-xs text-black/50 py-6">
-                            لم يتم العثور على صور مخزنة في حساب Cloudinary أو تأكد من إعدادات الـ API.
-                          </p>
-                        ) : (
-                          cloudImages.map((preset) => {
-                            const isSelected = sellerCoverImage === preset.url;
-                            return (
-                              <button
-                                type="button"
-                                key={preset.id}
-                                onClick={() => handleSelectPresetCover(preset.url, preset.title)}
-                                className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${isSelected
-                                    ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
-                                    : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60'
-                                  }`}
-                              >
-                                <div className="h-24 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
-                                  <img
-                                    src={preset.url}
-                                    alt={preset.title}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                                  {isSelected && (
-                                    <div className="absolute top-2 right-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
-                                      <Check className="w-3 h-3 stroke-[3]" />
-                                    </div>
-                                  )}
-                                  <div className="absolute bottom-1.5 right-2 left-2 text-white">
-                                    <span className="text-[10px] font-black text-amber-200 block truncate drop-shadow-xs">
-                                      {preset.title}
-                                    </span>
-                                  </div>
-                                </div>
-                              </button>
-                            );
-                          })
-                        )}
-                      </div>
-                    </div>
-                  )}
                   <button
                     type="button"
                     onClick={() => setCoverPickerTab('upload')}
@@ -1988,49 +1932,58 @@ export const SellerDashboard: React.FC = () => {
                 {/* TAB 1: CURATED PRESETS GALLERY */}
                 {coverPickerTab === 'presets' && (
                   <div className="space-y-3">
-                    <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                      اختر صورة غلاف موثقة وعالية الجودة تمثل طابع حرفتكم التراثية بالصعيد:
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {cloudImages.map((preset) => {
-                        const isSelected = sellerCoverImage === preset.url;
-                        return (
-                          <button
-                            type="button"
-                            key={preset.id}
-                            onClick={() => handleSelectPresetCover(preset.url, preset.title)}
-                            className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${isSelected
-                              ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
-                              : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
-                              }`}
-                          >
-                            <div className="h-24 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
-                              <img
-                                src={preset.url}
-                                alt={preset.title}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-black/60 dark:text-white/60 font-medium">
+                        اختر صورة غلاف موثقة تمثل طابع ورشتكم وحرفتكم التراثية الأصيلة:
+                      </p>
+                      {isLoadingCloudImages && (
+                        <span className="text-xs text-[#9a6a35] flex items-center gap-1">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>جاري جلب الصور السحابية...</span>
+                        </span>
+                      )}
+                    </div>
 
-                              {/* Selected Checkmark Badge */}
-                              {isSelected && (
-                                <div className="absolute top-2 right-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
-                                  <Check className="w-3 h-3 stroke-[3]" />
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
+                      {cloudImages.length === 0 && !isLoadingCloudImages ? (
+                        <p className="col-span-full text-center text-xs text-black/50 py-6">
+                          لم يتم العثور على صور في المعرض حالياً.
+                        </p>
+                      ) : (
+                        cloudImages.map((preset) => {
+                          const isSelected = sellerCoverImage === preset.url;
+                          return (
+                            <button
+                              type="button"
+                              key={preset.id}
+                              onClick={() => handleSelectPresetCover(preset.url, preset.title)}
+                              className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${isSelected
+                                ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
+                                : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
+                                }`}
+                            >
+                              <div className="h-24 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
+                                <img
+                                  src={preset.url}
+                                  alt={preset.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                                {isSelected && (
+                                  <div className="absolute top-2 right-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
+                                    <Check className="w-3 h-3 stroke-[3]" />
+                                  </div>
+                                )}
+                                <div className="absolute bottom-1.5 right-2 left-2 text-white">
+                                  <span className="text-[10px] font-bold text-amber-200 block truncate drop-shadow-xs">
+                                    {preset.title}
+                                  </span>
                                 </div>
-                              )}
-
-                              <div className="absolute bottom-1.5 right-2 left-2 text-white">
-                                <span className="text-[9px] font-bold block truncate drop-shadow-xs">
-                                  {preset.title}
-                                </span>
-                                <span className="text-[10px] font-black text-amber-200 block truncate drop-shadow-xs">
-                                  {preset.title}
-                                </span>
                               </div>
-                            </div>
-                          </button>
-                        );
-                      })}
+                            </button>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 )}
