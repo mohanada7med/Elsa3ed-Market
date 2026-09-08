@@ -3,26 +3,21 @@ import { useApp } from '../../context/AppContext';
 import {
   Building2,
   TrendingDown,
-  ShieldCheck,
   Truck,
   Sparkles,
   CheckCircle2,
   PhoneCall,
   MessageCircle,
   FileText,
-  Package,
-  Layers,
-  ArrowLeft,
   ChevronRight,
   Send,
-  Building,
   Award
 } from 'lucide-react';
 import { WHATSAPP_NUMBER, getWhatsAppUrl } from '../common/WhatsAppButton';
 import { Governorate } from '../../types';
 
 export const WholesalePage: React.FC = () => {
-  const { products, setActivePage, setSelectedProductId, addToast } = useApp();
+  const { setActivePage, addToast } = useApp();
 
   const [companyName, setCompanyName] = useState('');
   const [contactName, setContactName] = useState('');
@@ -93,50 +88,49 @@ export const WholesalePage: React.FC = () => {
     }, 600);
   };
 
-  // Curated products for wholesale highlights
-  const wholesaleFeatured = products.slice(0, 4);
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-12">
+    <div
+      dir="rtl"
+      className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-12"
+    >
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs font-bold text-[#73675B] dark:text-[#9C8F82]">
+      <nav className="flex items-center gap-2 text-xs font-medium text-[#211d18]/60 dark:text-[#f5f0e7]/60">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors"
+          className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-[#2D2A26] dark:text-[#FAF6F2]">البيع بالجملة وتوريدات الشركات (B2B)</span>
-      </div>
+        <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
+        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">البيع بالجملة وتوريدات الشركات (B2B)</span>
+      </nav>
 
       {/* Hero Section */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#2D221C] via-[#38281F] to-[#1C1410] text-white p-6 sm:p-12 border border-[#523C2F] shadow-2xl">
-        {/* Subtle decorative glow */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#B24C2B]/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-[2rem] overflow-hidden bg-[#211d18] text-[#f5f0e7] p-6 sm:p-12 border border-black/10 dark:border-white/10 shadow-xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#d5a56d]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#9a6a35]/20 text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold">
               <Building2 className="w-4 h-4" />
               <span>قطاع الأعمال، الفنادق، والبازارات السياحية</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-heritage leading-tight tracking-tight text-white">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif leading-tight tracking-tight text-white">
               توريدات الحرف الصعيدية الأصيلة <br />
-              <span className="text-amber-300">بأسعار الورش المباشرة</span>
+              <span className="text-[#d5a56d]">بأسعار الورش المباشرة</span>
             </h1>
 
-            <p className="text-sm sm:text-base text-[#DDD2C7] leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-base text-[#f5f0e7]/80 leading-relaxed max-w-2xl font-light">
               نوفر للفنادق والمنتجعات السياحية، معارض الديكور الداخلي، البازارات، والشركات حلول توريد متكاملة للكميات الكبيرة من أشهر ورش الصعيد مع إمكانية النقش والتخصيص وشحن الشاحنات الآمن.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#quotation-form"
-                className="px-6 py-3.5 rounded-2xl bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold text-sm shadow-lg shadow-[#B24C2B]/30 transition-all hover:scale-105 flex items-center gap-2"
+                className="px-7 py-3.5 rounded-[1.25rem] bg-[#9a6a35] hover:bg-[#7d5427] text-white font-black text-sm shadow-lg shadow-[#9a6a35]/30 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
                 <span>طلب عرض أسعار فوري</span>
@@ -146,7 +140,7 @@ export const WholesalePage: React.FC = () => {
                 href={getWhatsAppUrl('السلام عليكم، نود الاستفسار عن تفاصيل وأسعار طلبيات الجملة والتوريدات لـ (اسم المنشأة)...')}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm shadow-lg shadow-emerald-900/20 transition-all hover:scale-105 flex items-center gap-2"
+                className="px-7 py-3.5 rounded-[1.25rem] bg-[#25D366] hover:bg-[#20ba59] text-white font-black text-sm shadow-lg shadow-emerald-900/20 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>محادثة واتساب: {WHATSAPP_NUMBER}</span>
@@ -156,11 +150,11 @@ export const WholesalePage: React.FC = () => {
 
           <div className="lg:col-span-5 grid grid-cols-2 gap-3.5">
             <div className="bg-white/5 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/10 text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-amber-300 flex items-center justify-center mx-auto">
+              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-[#d5a56d] flex items-center justify-center mx-auto">
                 <TrendingDown className="w-5 h-5" />
               </div>
               <p className="text-xl sm:text-2xl font-black text-white">خصم حتى 40%</p>
-              <p className="text-xs text-[#BCB0A3]">على طلبيات الكميات الكبيرة وتوريدات المشاريع</p>
+              <p className="text-xs text-white/70">على طلبيات الكميات الكبيرة وتوريدات المشاريع</p>
             </div>
 
             <div className="bg-white/5 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/10 text-center space-y-2">
@@ -168,15 +162,15 @@ export const WholesalePage: React.FC = () => {
                 <Sparkles className="w-5 h-5" />
               </div>
               <p className="text-xl sm:text-2xl font-black text-white">تخصيص وهوية</p>
-              <p className="text-xs text-[#BCB0A3]">حفر شعار فندقك أو مؤسستك على القطع</p>
+              <p className="text-xs text-white/70">حفر شعار فندقك أو مؤسستك على القطع</p>
             </div>
 
             <div className="bg-white/5 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/10 text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-blue-400/20 text-blue-300 flex items-center justify-center mx-auto">
+              <div className="w-10 h-10 rounded-xl bg-sky-400/20 text-sky-300 flex items-center justify-center mx-auto">
                 <Truck className="w-5 h-5" />
               </div>
               <p className="text-xl sm:text-2xl font-black text-white">شحن وتصدير</p>
-              <p className="text-xs text-[#BCB0A3]">توصيل شاحنات مجهز لكافة الموانئ والمحافظات</p>
+              <p className="text-xs text-white/70">توصيل شاحنات مجهز لكافة الموانئ والمحافظات</p>
             </div>
 
             <div className="bg-white/5 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/10 text-center space-y-2">
@@ -184,7 +178,7 @@ export const WholesalePage: React.FC = () => {
                 <Award className="w-5 h-5" />
               </div>
               <p className="text-xl sm:text-2xl font-black text-white">أصالة 100%</p>
-              <p className="text-xs text-[#BCB0A3]">شهادات منشأ وفواتير ضريبية معتمدة</p>
+              <p className="text-xs text-white/70">شهادات منشأ وفواتير ضريبية معتمدة</p>
             </div>
           </div>
         </div>
@@ -193,91 +187,91 @@ export const WholesalePage: React.FC = () => {
       {/* Wholesale Pricing Tiers */}
       <div className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black font-heritage text-[#2D2A26] dark:text-[#FAF6F2]">
+          <h2 className="text-2xl sm:text-3xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
             شرائح وتخفيضات البيع بالجملة
           </h2>
-          <p className="text-sm text-[#73675B] dark:text-[#DDD2C7]">
+          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">
             نظام تسعير شفاف وتنافسي يتدرج بناءً على حجم الطلبية لخدمة كافة فئات التجار والمنشآت.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tier 1 */}
-          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs space-y-4 relative">
-            <div className="inline-block px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-xs font-bold">
+          <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg space-y-4 relative">
+            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الأولى: كميات صغيرة
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">من 5 إلى 15 قطعة</h3>
-            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">خصم 15%</p>
-            <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
+            <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">من 5 إلى 15 قطعة</h3>
+            <p className="text-3xl font-black text-[#9a6a35] dark:text-[#d5a56d]">خصم 15%</p>
+            <p className="text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
               مثالية للمتاجر الناشئة، البازارات الصغيرة، وهدايا الفعاليات الخاصة.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#352B24]">
+            <ul className="space-y-2 text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 pt-3 border-t border-black/10 dark:border-white/10">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>إمكانية تشكيل المنتجات من نفس الفئة</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>تغليف آمن ومحكم للنقل</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>توصيل سريع خلال 3-5 أيام عمل</span>
               </li>
             </ul>
           </div>
 
           {/* Tier 2 (Highlighted) */}
-          <div className="bg-[#FAF7F2] dark:bg-[#221C18] p-6 rounded-3xl border-2 border-[#B24C2B] dark:border-[#FF855D] shadow-lg relative transform md:-translate-y-2">
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#B24C2B] text-white text-[11px] font-bold py-1 px-4 rounded-full shadow-xs">
+          <div className="bg-white/90 dark:bg-[#151513]/95 backdrop-blur-xl p-6 rounded-[2rem] border-2 border-[#9a6a35] shadow-xl space-y-4 relative transform md:-translate-y-2">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#9a6a35] text-white text-[11px] font-black py-1 px-4 rounded-full shadow-md">
               الأكثر طلباً للفنادق والمطاعم
             </div>
-            <div className="inline-block px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-[#B24C2B] dark:text-[#FF855D] text-xs font-bold mt-2">
+            <div className="inline-block px-3 py-1 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold mt-2">
               الشريحة الثانية: كميات متوسطة
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">من 16 إلى 50 قطعة</h3>
-            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">خصم 25%</p>
-            <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
+            <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">من 16 إلى 50 قطعة</h3>
+            <p className="text-3xl font-black text-[#9a6a35] dark:text-[#d5a56d]">خصم 25%</p>
+            <p className="text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
               تناسب تأثيث وتجهيز الفنادق التراثية، المطاعم، والمجموعات الديكورية.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-200 dark:border-[#352B24]">
+            <ul className="space-y-2 text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 pt-3 border-t border-black/10 dark:border-white/10">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>إمكانية طلب عينة مدفوعة قبل الاعتماد</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>حفر شعار أو كود الفندق مجاناً</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>أولوية في جدول تصنيع الورش الحرفية</span>
               </li>
             </ul>
           </div>
 
           {/* Tier 3 */}
-          <div className="bg-white dark:bg-[#1B1613] p-6 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs space-y-4">
-            <div className="inline-block px-3 py-1 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs font-bold">
+          <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg space-y-4">
+            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الكبرى: توريدات وتصدير
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">أكثر من 50 قطعة</h3>
-            <p className="text-3xl font-black text-[#B24C2B] dark:text-[#FF855D]">تسعير ورش مخصص</p>
-            <p className="text-xs text-gray-600 dark:text-[#BCB0A3] leading-relaxed">
+            <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">أكثر من 50 قطعة</h3>
+            <p className="text-3xl font-black text-[#9a6a35] dark:text-[#d5a56d]">تسعير ورش مخصص</p>
+            <p className="text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
               لكبار المستوردين، الشركات الهندسية، وسلاسل القرى السياحية العالمية.
             </p>
-            <ul className="space-y-2 text-xs text-gray-700 dark:text-[#DDD2C7] pt-2 border-t border-gray-100 dark:border-[#352B24]">
+            <ul className="space-y-2 text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 pt-3 border-t border-black/10 dark:border-white/10">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>تخفيضات استثنائية تصل إلى 40%</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>مدير حساب مخصص لمتابعة مراحل الإنتاج</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>تجهيز أوراق التصدير والجمارك الكاملة</span>
               </li>
             </ul>
@@ -286,36 +280,36 @@ export const WholesalePage: React.FC = () => {
       </div>
 
       {/* Interactive Quotation Form Section */}
-      <div id="quotation-form" className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-10 shadow-lg">
+      <div id="quotation-form" className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-10 shadow-xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-5 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold">
               <PhoneCall className="w-3.5 h-3.5" />
               <span>تسعير سريع وتواصل مباشر</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-black font-heritage text-[#2D2A26] dark:text-[#FAF6F2] leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] leading-tight">
               اطلب عرض سعر لطلبية الجملة الآن
             </h2>
 
-            <p className="text-sm text-[#73675B] dark:text-[#DDD2C7] leading-relaxed">
+            <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
               املأ البيانات أدناه، وسيقوم مسؤول مبيعات الجملة في سوق وه بإعداد جدول الكميات والأسعار والتواصل معك هاتفياً وعبر الواتساب خلال أقل من 3 ساعات.
             </p>
 
             {/* Direct Contact Card */}
-            <div className="p-4 bg-[#FAF7F2] dark:bg-[#221C18] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-3">
-              <p className="text-xs font-bold text-[#B24C2B] dark:text-[#FF855D]">أو تواصل معنا مباشرة:</p>
+            <div className="p-5 bg-black/5 dark:bg-white/5 rounded-[1.5rem] border border-black/10 dark:border-white/10 space-y-3">
+              <p className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d]">أو تواصل معنا مباشرة:</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                   <MessageCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 block">واتساب مبيعات الجملة:</span>
+                  <span className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 block">واتساب مبيعات الجملة:</span>
                   <a
                     href={`https://wa.me/201158969931`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-400 hover:underline"
+                    className="text-base font-black font-mono text-emerald-700 dark:text-emerald-400 hover:underline"
                   >
                     01158969931
                   </a>
@@ -327,11 +321,11 @@ export const WholesalePage: React.FC = () => {
           {/* Form */}
           <div className="lg:col-span-7">
             {submitted ? (
-              <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-8 rounded-3xl text-center space-y-4">
-                <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 p-8 rounded-[2rem] text-center space-y-4">
+                <div className="w-16 h-16 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto">
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-emerald-900 dark:text-emerald-200">
+                <h3 className="text-xl font-black font-serif text-emerald-900 dark:text-emerald-200">
                   تم استلام طلبك بنجاح!
                 </h3>
                 <p className="text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 max-w-md mx-auto">
@@ -340,7 +334,7 @@ export const WholesalePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-2.5 bg-emerald-700 text-white text-xs font-bold rounded-xl hover:bg-emerald-800 transition-colors"
+                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl transition-colors cursor-pointer"
                 >
                   إرسال طلب إضافي
                 </button>
@@ -349,7 +343,7 @@ export const WholesalePage: React.FC = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       اسم المنشأة / الشركة / البازار <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -358,12 +352,12 @@ export const WholesalePage: React.FC = () => {
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="مثال: فندق قصر النيل، بازار الأقصر..."
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       اسم المسؤول للتواصل <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -372,14 +366,14 @@ export const WholesalePage: React.FC = () => {
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                       placeholder="الاسم الثلاثي"
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       رقم الهاتف / واتساب <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -388,18 +382,18 @@ export const WholesalePage: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="01XXXXXXXXX"
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none font-mono"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 font-mono"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       نوع النشاط
                     </label>
                     <select
                       value={businessType}
                       onChange={(e) => setBusinessType(e.target.value)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       {businessTypes.map((b) => (
                         <option key={b.id} value={b.id}>
@@ -412,13 +406,13 @@ export const WholesalePage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       المحافظة
                     </label>
                     <select
                       value={governorate}
                       onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       <option value="القاهرة">القاهرة</option>
                       <option value="الجيزة">الجيزة</option>
@@ -437,13 +431,13 @@ export const WholesalePage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                       الكمية التقديرية المطلوبة
                     </label>
                     <select
                       value={estimatedQuantity}
                       onChange={(e) => setEstimatedQuantity(e.target.value)}
-                      className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-3 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       <option value="5-15 قطعة (شريحة أولى)">5 - 15 قطعة (خصم 15%)</option>
                       <option value="16-50 قطعة (شريحة ثانية)">16 - 50 قطعة (خصم 25%)</option>
@@ -455,7 +449,7 @@ export const WholesalePage: React.FC = () => {
 
                 {/* Categories selector */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-2">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-2">
                     الحرف والمنتجات المراد طلبها:
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -466,10 +460,10 @@ export const WholesalePage: React.FC = () => {
                           key={cat}
                           type="button"
                           onClick={() => toggleCategory(cat)}
-                          className={`text-xs px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                          className={`text-xs px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
                             isSelected
-                              ? 'bg-[#B24C2B] text-white border-[#B24C2B] font-bold shadow-xs'
-                              : 'bg-gray-50 dark:bg-[#26201B] text-gray-700 dark:text-[#DDD2C7] border-gray-200 dark:border-[#352B24] hover:border-gray-300'
+                              ? 'bg-[#9a6a35] text-white border-[#9a6a35] font-bold shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
                           }`}
                         >
                           {isSelected && '✓ '}
@@ -481,7 +475,7 @@ export const WholesalePage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 dark:text-[#DDD2C7] mb-1">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1.5">
                     ملاحظات أو مواصفات خاصة (مقاسات، حفر شعار، موعد التسليم):
                   </label>
                   <textarea
@@ -489,14 +483,14 @@ export const WholesalePage: React.FC = () => {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="اكتب أي متطلبات خاصة بالقطع أو تفضيلات الألوان..."
-                    className="w-full text-xs bg-gray-50 dark:bg-[#26201B] text-gray-900 dark:text-white px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#3A3028] focus:border-[#B24C2B] focus:outline-none"
+                    className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 rounded-xl bg-[#B24C2B] hover:bg-[#9E4F36] disabled:bg-gray-400 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[48px]"
+                  className="w-full py-4 px-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[50px]"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'جاري التجهيز...' : 'إرسال طلب عرض السعر ومتابعته عبر واتساب'}</span>

@@ -35,10 +35,10 @@ export const WAHGovernorateCard: React.FC<WAHGovernorateCardProps> = ({
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="group relative flex flex-col items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] dark:hover:border-[var(--wah-primary,#E0633C)] shadow-[0_2px_8px_-2px_rgba(36,30,26,0.04)] hover:shadow-[0_12px_24px_-4px_rgba(36,30,26,0.1)] dark:hover:shadow-[0_12px_28px_-4px_rgba(0,0,0,0.5)] transition-all duration-250 cursor-pointer text-center select-none"
+      className="group relative flex flex-col items-center justify-between p-3.5 sm:p-4 rounded-[1.5rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl transition-all duration-250 cursor-pointer text-center select-none"
     >
       {/* Governorate Emblem / Photo Frame */}
-      <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden mb-3 border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] group-hover:border-[var(--wah-primary,#B24C2B)] shadow-xs group-hover:scale-105 transition-all duration-300 shrink-0">
+      <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden mb-3 border border-black/10 dark:border-white/10 group-hover:border-[#9a6a35] shadow-xs group-hover:scale-105 transition-all duration-300 shrink-0">
         <img
           src={image}
           alt={name}
@@ -50,19 +50,19 @@ export const WAHGovernorateCard: React.FC<WAHGovernorateCardProps> = ({
 
       {/* Governorate Info */}
       <div className="w-full space-y-1">
-        <h3 className="font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-sm group-hover:text-[var(--wah-primary,#B24C2B)] dark:group-hover:text-[var(--wah-primary,#E0633C)] transition-colors">
+        <h3 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-sm group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] transition-colors">
           محافظة {name}
         </h3>
-        <p className="text-[11px] font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] leading-snug">
+        <p className="text-[11px] font-bold text-[#9a6a35] dark:text-[#d5a56d] leading-snug">
           {famousCraft}
         </p>
-        <p className="text-[10px] text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] leading-tight line-clamp-2">
+        <p className="text-[10px] text-black/60 dark:text-white/60 leading-tight line-clamp-2">
           {famousItem}
         </p>
       </div>
 
       {/* Verified Artisans & Products Count */}
-      <div className="mt-3 pt-2.5 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] w-full text-[10px] text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-medium flex items-center justify-between gap-1 group-hover:text-[var(--wah-primary,#B24C2B)] dark:group-hover:text-[var(--wah-primary,#E0633C)] transition-colors">
+      <div className="mt-3 pt-2.5 border-t border-black/10 dark:border-white/10 w-full text-[10px] text-black/60 dark:text-white/60 font-medium flex items-center justify-between gap-1 group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] transition-colors">
         <span className="font-bold truncate">
           {sellersCount > 0 ? `${sellersCount} حرفي` : 'ورش قيد التوثيق'}
         </span>

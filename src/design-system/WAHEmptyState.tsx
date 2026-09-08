@@ -27,23 +27,23 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
 
   return (
     <div
-      className={`relative min-h-[300px] sm:min-h-[360px] flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-3xl border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] bg-white dark:bg-[var(--wah-surface,#1B1613)] overflow-hidden ${className}`}
+      className={`relative min-h-[300px] sm:min-h-[360px] flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl shadow-lg overflow-hidden ${className}`}
     >
       <WAHPattern type={pattern} opacity={0.05} />
 
       <div className="relative z-10 max-w-md mx-auto space-y-4">
         {renderedIcon && (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-[var(--wah-primary-light,rgba(178,76,43,0.1))] text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] flex items-center justify-center border border-[var(--wah-primary,#B24C2B)]/20 shadow-xs">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center border border-[#9a6a35]/30 shadow-xs">
             {renderedIcon}
           </div>
         )}
 
         <div className="space-y-1.5">
-          <h3 className="text-lg sm:text-xl font-black font-serif text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)]">
+          <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
             {title}
           </h3>
           {description && (
-            <p className="text-xs sm:text-sm text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] leading-relaxed">
+            <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 leading-relaxed">
               {description}
             </p>
           )}

@@ -46,24 +46,24 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
   // Shape classes
   const shapeClass = editorialShape
     ? 'rounded-tl-2xl rounded-br-2xl rounded-tr-md rounded-bl-md'
-    : 'rounded-xl';
+    : 'rounded-[1.25rem]';
 
-  // Variant classes mapped to centralized tokens
+  // Variant classes mapped to unified Wah design tokens
   const variantClasses: Record<ButtonVariant, string> = {
     primary:
-      'bg-[var(--wah-primary,#B24C2B)] hover:bg-[var(--wah-primary-hover,#963E21)] text-white shadow-xs hover:shadow-md border border-[var(--wah-primary,#B24C2B)] active:scale-[0.98]',
+      'bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-sm hover:shadow-md border border-transparent active:scale-[0.98]',
     secondary:
-      'bg-[var(--wah-surface-subtle,#F3ECE2)] hover:bg-[var(--wah-surface-muted,#EAE1D5)] dark:bg-[var(--wah-surface-subtle,#26201B)] dark:hover:bg-[var(--wah-surface-muted,#322923)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-border-hover,#CBBDB0)] active:scale-[0.98]',
+      'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 active:scale-[0.98]',
     outline:
-      'bg-transparent hover:bg-[var(--wah-primary-light,rgba(178,76,43,0.08))] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] border-1.5 border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] hover:text-[var(--wah-primary,#B24C2B)] dark:hover:text-[var(--wah-primary,#E0633C)] active:scale-[0.98]',
+      'bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] border border-black/15 dark:border-white/15 hover:border-[#9a6a35] hover:text-[#9a6a35] dark:hover:border-[#9a6a35] dark:hover:text-[#9a6a35] active:scale-[0.98]',
     ghost:
-      'bg-transparent hover:bg-[var(--wah-surface-subtle,#F3ECE2)] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] hover:text-[var(--wah-primary,#B24C2B)] dark:hover:text-[var(--wah-primary,#E0633C)] active:scale-[0.98]',
+      'bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] hover:text-[#9a6a35] dark:hover:text-[#9a6a35] active:scale-[0.98]',
     destructive:
-      'bg-[var(--wah-error,#B9382B)]/10 hover:bg-[var(--wah-error,#B9382B)]/20 text-[var(--wah-error,#B9382B)] border border-[var(--wah-error,#B9382B)]/30 active:scale-[0.98]',
+      'bg-[#B9382B]/10 hover:bg-[#B9382B]/20 text-[#B9382B] border border-[#B9382B]/30 active:scale-[0.98]',
     cta:
-      'bg-gradient-to-r from-[var(--wah-primary,#B24C2B)] to-[var(--wah-accent,#D97724)] hover:from-[var(--wah-primary-hover,#963E21)] hover:to-[var(--wah-accent-hover,#B86018)] text-white shadow-md hover:shadow-lg active:scale-[0.98]',
+      'bg-[#9a6a35] hover:bg-[#7d5427] dark:hover:bg-[#b88248] text-white shadow-md hover:shadow-lg active:scale-[0.98]',
     icon:
-      'bg-white dark:bg-[var(--wah-surface,#1B1613)] hover:bg-[var(--wah-surface-subtle,#F3ECE2)] dark:hover:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)]'
+      'bg-white/75 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-[#20201d] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
   };
 
   const renderedIcon = renderIcon(icon, 'w-4 h-4 shrink-0');
@@ -72,7 +72,7 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
     <motion.button
       whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wah-primary,#B24C2B)] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[var(--wah-surface,#1B1613)] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9a6a35] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#151513] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {loading ? (

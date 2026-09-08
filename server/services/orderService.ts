@@ -237,6 +237,57 @@ export async function createOrder(
     details: `تم إنشاء الطلب #${orderNumber} بإجمالي ${orderDocument.total} ج.م وطريقة الدفع ${paymentMethod}`
   });
 
+  // 9. Persistent Notifications
+  try {
+    // Notify Buyer
+    await createNotification({
+      userId: buyer.id,
+      title: `تم استلام طلبك التراثي #${orderNumber}`,
+      message: `شكراً لتسوقك من سوق الصعيد! تم تسجيل طلبك رقم #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م بنجاح وجاري متابعة التجهيز.`,
+      type: 'new_order',
+      link: 'orders',
+      metadata: { orderId: orderDocument.id, orderNumber }
+    });
+
+    // Notify relevant sellers
+    for (const sId of distinctSellerIds) {
+      let sellerUserId = sId;
+      if (isMongo && db) {
+        const sDoc = await db.collection('sellers').findOne({ id: sId });
+        if (sDoc?.userId) sellerUserId = sDoc.userId;
+      }
+      await createNotification({
+        userId: sellerUserId,
+        title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
+        message: `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
+        type: 'new_order',
+        link: 'seller-orders',
+        metadata: { orderId: orderDocument.id, orderNumber }
+      });
+    }
+
+    // Notify Admins
+    let adminUserIds: string[] = [];
+    if (isMongo && db) {
+      const adminDocs = await db.collection('users').find({ role: 'admin' }, { projection: { id: 1 } }).toArray();
+      adminUserIds = adminDocs.map((a: any) => a.id);
+    } else {
+      adminUserIds = memoryDb.users.filter((u) => u.role === 'admin').map((u) => u.id);
+    }
+    for (const adminId of adminUserIds) {
+      await createNotification({
+        userId: adminId,
+        title: `طلب شراء جديد #${orderNumber}`,
+        message: `تم إنشاء طلب شراء جديد #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م من المشتري ${buyer.name}.`,
+        type: 'new_order',
+        link: 'admin-orders',
+        metadata: { orderId: orderDocument.id, orderNumber }
+      });
+    }
+  } catch (notifErr) {
+    console.error('[OrderService] Error sending order creation notifications:', notifErr);
+  }
+
   return orderDocument;
 }
 
@@ -377,6 +428,36 @@ export async function cancelBuyerOrder(
     memoryDb.orders[memIdx] = order;
   }
 
+  // Send persistent notifications to buyer and sellers
+  try {
+    await createNotification({
+      userId: buyerId,
+      title: `تم إلغاء الطلب #${order.orderNumber}`,
+      message: `تم إلغاء طلبك رقم #${order.orderNumber} بنجاح واستعادة المنتجات.`,
+      type: 'order_status',
+      link: 'orders',
+      metadata: { orderId: order.id, orderNumber: order.orderNumber }
+    });
+
+    for (const sId of order.sellerIds || []) {
+      let sellerUserId = sId;
+      if (isMongo && db) {
+        const sDoc = await db.collection('sellers').findOne({ $or: [{ id: sId }, { userId: sId }] });
+        if (sDoc?.userId) sellerUserId = sDoc.userId;
+      }
+      await createNotification({
+        userId: sellerUserId,
+        title: `إلغاء طلب شراء #${order.orderNumber}`,
+        message: `قام العميل بإلغاء الطلب رقم #${order.orderNumber}. تم استرجاع كميات المخزون لمنتجات ورشتك تلقائياً.`,
+        type: 'order_status',
+        link: 'seller-orders',
+        metadata: { orderId: order.id, orderNumber: order.orderNumber }
+      });
+    }
+  } catch (notifErr) {
+    console.error('[OrderService] Error sending cancellation notifications:', notifErr);
+  }
+
   return order;
 }
 
@@ -486,6 +567,29 @@ export async function updateSellerOrderStatus(
   const memIdx = memoryDb.orders.findIndex((o) => o.id === orderId);
   if (memIdx >= 0) {
     memoryDb.orders[memIdx] = order;
+  }
+
+  // Send persistent notification to buyer
+  try {
+    const statusLabels: Record<string, string> = {
+      pending: 'قيد الانتظار',
+      confirmed: 'تم تأكيد طلبك',
+      processing: 'جاري تجهيز طلبك في الورشة',
+      shipped: 'تم شحن طلبك وهو في الطريق إليك',
+      delivered: 'تم توصيل طلبك بنجاح',
+      cancelled: 'تم إلغاء الطلب'
+    };
+    const statusLabel = statusLabels[newStatus] || newStatus;
+    await createNotification({
+      userId: order.buyerId,
+      title: `تحديث حالة طلبك #${order.orderNumber}`,
+      message: `حالة طلبك الآن: "${statusLabel}". ${note ? `ملاحظة الورشة: ${note}` : ''}`.trim(),
+      type: 'order_status',
+      link: 'orders',
+      metadata: { orderId: order.id, orderNumber: order.orderNumber, status: newStatus }
+    });
+  } catch (notifErr) {
+    console.error('[OrderService] Error sending order status notification to buyer:', notifErr);
   }
 
   await addAuditLog({
@@ -626,6 +730,32 @@ export async function updateAdminOrderStatus(
   const memIdx = memoryDb.orders.findIndex((o) => o.id === orderId);
   if (memIdx >= 0) {
     memoryDb.orders[memIdx] = order;
+  }
+
+  // Send persistent notification to buyer
+  try {
+    const statusLabels: Record<string, string> = {
+      pending: 'قيد الانتظار',
+      confirmed: 'تم تأكيد طلبك',
+      processing: 'جاري تجهيز طلبك في الورشة',
+      shipped: 'تم شحن طلبك وهو في الطريق إليك',
+      delivered: 'تم توصيل طلبك بنجاح',
+      cancelled: 'تم إلغاء الطلب'
+    };
+    let notifMsg = `تم تحديث حالة طلبك #${order.orderNumber} إلى "${statusLabels[order.status] || order.status}".`;
+    if (trackingNumber) {
+      notifMsg += ` رقم التتبع: ${trackingNumber}`;
+    }
+    await createNotification({
+      userId: order.buyerId,
+      title: `تحديث على طلبك #${order.orderNumber}`,
+      message: notifMsg,
+      type: 'order_status',
+      link: 'orders',
+      metadata: { orderId: order.id, orderNumber: order.orderNumber, status: order.status, trackingNumber }
+    });
+  } catch (notifErr) {
+    console.error('[OrderService] Error sending admin order update notification to buyer:', notifErr);
   }
 
   await addAuditLog({

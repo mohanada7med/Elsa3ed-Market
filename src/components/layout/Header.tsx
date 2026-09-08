@@ -55,38 +55,71 @@ const NotificationCenter: React.FC<{
   hoverBg,
 }) => {
     const [open, setOpen] = useState(false);
+    const {
+      currentUser,
+      currentRole,
+      notifications,
+      unreadNotificationsCount,
+      markNotificationAsRead,
+      markAllNotificationsAsRead,
+      setActivePage,
+      setIsAuthModalOpen,
+      setAuthModalTab
+    } = useApp();
 
-    const [notifications, setNotifications] =
-      useState<NotificationItem[]>([
-        {
-          id: '1',
-          title: 'أهلاً بيك في وه',
-          message:
-            'اكتشف منتجات وحكايات الصعيد من مكان واحد.',
-          time: 'دلوقتي',
-          unread: true,
-        },
-        {
-          id: '2',
-          title: 'اكتشف محافظات الصعيد',
-          message:
-            'شوف الأماكن والحكايات والحرف من محافظات الصعيد.',
-          time: 'منذ فترة',
-          unread: true,
-        },
-      ]);
+    const isGuest = currentRole === 'guest' || !currentUser?.id || currentUser.id === 'guest' || currentUser.id === 'guest-visitor';
+    const displayCount = isGuest ? 0 : unreadNotificationsCount;
+    const userNotifications = isGuest ? [] : notifications;
 
-    const unreadCount = notifications.filter(
-      (item) => item.unread
-    ).length;
+    const formatRelativeTime = (isoString?: string): string => {
+      if (!isoString) return 'الآن';
+      try {
+        const diff = Date.now() - new Date(isoString).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'الآن';
+        if (mins < 60) return `منذ ${mins} دقيقة`;
+        const hours = Math.floor(mins / 60);
+        if (hours < 24) return `منذ ${hours} ساعة`;
+        const days = Math.floor(hours / 24);
+        if (days === 1) return 'أمس';
+        return `منذ ${days} أيام`;
+      } catch {
+        return 'منذ فترة';
+      }
+    };
 
-    const markAllRead = () => {
-      setNotifications((prev) =>
-        prev.map((item) => ({
-          ...item,
-          unread: false,
-        }))
-      );
+    const handleNotificationClick = (item: any) => {
+      if (!item) return;
+      markNotificationAsRead(item.id);
+      setOpen(false);
+
+      const targetLink = item.link || item.actionPage;
+      if (targetLink && typeof targetLink === 'string') {
+        const validPages: Record<string, any> = {
+          'orders': 'orders',
+          'buyer-orders': 'orders',
+          'seller-orders': 'seller-orders',
+          'admin-orders': 'admin-dashboard',
+          'seller-dashboard': 'seller-dashboard',
+          'seller-products': 'seller-products',
+          'seller-payouts': 'seller-payouts',
+          'admin-sellers': 'admin-dashboard',
+          'admin-products': 'admin-dashboard',
+          'admin-payouts': 'admin-dashboard',
+          'admin-dashboard': 'admin-dashboard',
+          'buyer-account': 'buyer-account',
+          'account': 'buyer-account',
+          'products': 'products',
+          'map': 'map'
+        };
+
+        const resolvedPage = validPages[targetLink] || targetLink;
+        try {
+          setActivePage(resolvedPage as any);
+        } catch {
+          // Graceful fallback
+        }
+      }
     };
 
     return (
@@ -106,15 +139,15 @@ const NotificationCenter: React.FC<{
         >
           <Bell size={18} />
 
-          {unreadCount > 0 && (
+          {displayCount > 0 && (
             <span
-              className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+              className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold animate-pulse"
               style={{
                 backgroundColor: '#9a6a35',
                 color: '#fff',
               }}
             >
-              {unreadCount > 9 ? '9+' : unreadCount}
+              {displayCount > 9 ? '9+' : displayCount}
             </span>
           )}
         </button>
@@ -193,14 +226,14 @@ const NotificationCenter: React.FC<{
                         color: secondaryText,
                       }}
                     >
-                      آخر التحديثات والتنبيهات
+                      {isGuest ? 'تنبيهات المنصة' : 'آخر التحديثات والتنبيهات المباشرة'}
                     </p>
                   </div>
 
-                  {unreadCount > 0 && (
+                  {!isGuest && displayCount > 0 && (
                     <button
                       type="button"
-                      onClick={markAllRead}
+                      onClick={() => markAllNotificationsAsRead()}
                       className="flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
                       style={{
                         color: '#9a6a35',
@@ -214,90 +247,120 @@ const NotificationCenter: React.FC<{
 
                 {/* LIST */}
                 <div className="max-h-[55vh] overflow-y-auto">
-                  {notifications.length > 0 ? (
-                    notifications.map(
-                      (notification) => (
-                        <button
-                          key={notification.id}
-                          type="button"
-                          onClick={() => {
-                            setNotifications(
-                              (prev) =>
-                                prev.map((item) =>
-                                  item.id ===
-                                    notification.id
-                                    ? {
-                                      ...item,
-                                      unread:
-                                        false,
-                                    }
-                                    : item
-                                )
-                            );
-                          }}
-                          className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
-                          style={{
-                            borderColor,
-                            backgroundColor:
-                              notification.unread
-                                ? isDark
-                                  ? 'rgba(154,106,53,0.08)'
-                                  : 'rgba(154,106,53,0.05)'
-                                : 'transparent',
-                          }}
-                        >
-                          {/* ICON */}
-                          <div
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                  {isGuest ? (
+                    <div className="px-5 py-10 text-center">
+                      <Bell
+                        size={28}
+                        className="mx-auto opacity-30"
+                      />
+
+                      <p
+                        className="mt-3 text-sm font-semibold"
+                        style={{
+                          color: mainText,
+                        }}
+                      >
+                        سجل الدخول لعرض الإشعارات
+                      </p>
+
+                      <p
+                        className="mt-1 text-xs"
+                        style={{
+                          color: secondaryText,
+                        }}
+                      >
+                        ستظهر هنا تحديثات الطلبات والورشة والرسائل الخاصة بك
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpen(false);
+                          setAuthModalTab('login');
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="mt-4 inline-flex items-center justify-center rounded-xl px-4 py-2 text-xs font-semibold cursor-pointer"
+                        style={{
+                          backgroundColor: '#9a6a35',
+                          color: '#fff',
+                        }}
+                      >
+                        تسجيل الدخول
+                      </button>
+                    </div>
+                  ) : userNotifications.length > 0 ? (
+                    userNotifications.map(
+                      (notification) => {
+                        const isUnread = !notification.read && !notification.isRead;
+                        return (
+                          <button
+                            key={notification.id}
+                            type="button"
+                            onClick={() => handleNotificationClick(notification)}
+                            className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
                             style={{
+                              borderColor,
                               backgroundColor:
-                                isDark
-                                  ? 'rgba(154,106,53,0.16)'
-                                  : 'rgba(154,106,53,0.10)',
-                              color: '#9a6a35',
+                                isUnread
+                                  ? isDark
+                                    ? 'rgba(154,106,53,0.08)'
+                                    : 'rgba(154,106,53,0.05)'
+                                  : 'transparent',
                             }}
                           >
-                            <Bell size={16} />
-                          </div>
-
-                          {/* TEXT */}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <p className="text-xs font-bold">
-                                {notification.title}
-                              </p>
-
-                              {notification.unread && (
-                                <span
-                                  className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor:
-                                      '#9a6a35',
-                                  }}
-                                />
-                              )}
+                            {/* ICON */}
+                            <div
+                              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                              style={{
+                                backgroundColor:
+                                  isDark
+                                    ? 'rgba(154,106,53,0.16)'
+                                    : 'rgba(154,106,53,0.10)',
+                                color: '#9a6a35',
+                              }}
+                            >
+                              <Bell size={16} />
                             </div>
 
-                            <p
-                              className="mt-1 text-[11px] leading-5"
-                              style={{
-                                color: secondaryText,
-                              }}
-                            >
-                              {notification.message}
-                            </p>
+                            {/* TEXT */}
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="text-xs font-bold">
+                                  {notification.title}
+                                </p>
 
-                            <p
-                              className="mt-1 text-[10px]"
-                              style={{
-                                color: secondaryText,
-                              }}
-                            >
-                              {notification.time}
-                            </p>
-                          </div>
-                        </button>
-                      )
+                                {isUnread && (
+                                  <span
+                                    className="mt-1 h-2 w-2 shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor:
+                                        '#9a6a35',
+                                    }}
+                                  />
+                                )}
+                              </div>
+
+                              <p
+                                className="mt-1 text-[11px] leading-5"
+                                style={{
+                                  color: secondaryText,
+                                }}
+                              >
+                                {notification.message}
+                              </p>
+
+                              <p
+                                className="mt-1 text-[10px]"
+                                style={{
+                                  color: secondaryText,
+                                }}
+                              >
+                                {formatRelativeTime(notification.createdAt)}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      }
                     )
                   ) : (
                     <div className="px-5 py-10 text-center">
@@ -321,7 +384,7 @@ const NotificationCenter: React.FC<{
                           color: secondaryText,
                         }}
                       >
-                        هتظهر هنا أي تحديثات جديدة
+                        هتظهر هنا أي تحديثات جديدة لطلباتك وحسابك
                       </p>
                     </div>
                   )}

@@ -225,11 +225,11 @@ export const GovernorateDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+        className="min-h-screen w-full overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] transition-colors duration-500"
       >
         <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-5">
           <div className="text-center">
-            <div className="mx-auto mb-6 h-14 w-14 animate-spin rounded-full border-2 border-[#D8CCC1] border-t-[#B24C2B] dark:border-[#382D27] dark:border-t-[#D97857]" />
+            <div className="mx-auto mb-6 h-14 w-14 animate-spin rounded-full border-2 border-[#D8CCC1] border-t-[#9a6a35] dark:border-[#382D27] dark:border-t-[#d5a56d]" />
 
             <p className="text-sm font-bold tracking-wide text-[#73675B] dark:text-[#B8AAA0]">
               بنفتح أرشيف المحافظة...
@@ -244,11 +244,11 @@ export const GovernorateDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen w-full overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+        className="min-h-screen w-full overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] transition-colors duration-500"
       >
         <div className="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
           <div className="mx-auto max-w-xl rounded-[32px] border border-[#E4DBD2] bg-white p-10 text-center shadow-sm dark:border-[#382D27] dark:bg-[#1B1613]">
-            <Landmark className="mx-auto mb-5 h-12 w-12 text-[#B24C2B] dark:text-[#D97857]" />
+            <Landmark className="mx-auto mb-5 h-12 w-12 text-[#9a6a35] dark:text-[#d5a56d]" />
 
             <h1 className="mb-3 text-2xl font-black">
               المحافظة مش موجودة
@@ -260,7 +260,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
             <button
               onClick={() => setActivePage('governorates')}
-              className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#B24C2B] dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-[#D97857] dark:hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-[#d5a56d] dark:hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
               رجوع للمحافظات
@@ -274,7 +274,7 @@ export const GovernorateDetailPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen w-full overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+      className="min-h-screen w-full overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] transition-colors duration-500"
     >
       {/* =========================================================
           HERO — MUSEUM EXHIBITION
@@ -309,7 +309,7 @@ export const GovernorateDetailPage: React.FC = () => {
               <div className="flex items-start justify-between gap-5">
                 <div>
                   <div className="mb-3 flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-white/55">
-                    <span className="h-px w-10 bg-[#D97857]" />
+                    <span className="h-px w-10 bg-[#d5a56d]" />
                     ARCHIVE {orderFormatted}
                   </div>
 
@@ -355,7 +355,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <div className="mt-9 flex flex-wrap gap-3">
                   <button
                     onClick={() => scrollToSection('places')}
-                    className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-black text-[#241E1A] transition hover:-translate-y-0.5 hover:bg-[#D97857] hover:text-white"
+                    className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-black text-[#241E1A] transition hover:-translate-y-0.5 hover:bg-[#d5a56d] hover:text-white"
                   >
                     اكتشف المعالم
                     <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
@@ -400,7 +400,7 @@ export const GovernorateDetailPage: React.FC = () => {
           MUSEUM INDEX
       ========================================================= */}
 
-      <div className="sticky top-0 z-40 border-y border-[#E4DBD2]/80 bg-[#F6F1EA]/95 backdrop-blur-xl dark:border-[#382D27] dark:bg-[#0F0C0A]/95">
+      <div className="sticky top-0 z-40 border-y border-black/10 bg-[#eee8dc]/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0a]/90">
         <div className="mx-auto max-w-[1500px]">
           <div className="no-scrollbar flex overflow-x-auto">
             {sections.map((section) => {
@@ -454,7 +454,7 @@ export const GovernorateDetailPage: React.FC = () => {
         >
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.8fr] lg:gap-20">
             <div>
-              <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#B24C2B] dark:text-[#D97857]">
+              <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#9a6a35] dark:text-[#d5a56d]">
                 <span>01</span>
                 <span className="h-px w-10 bg-current" />
                 الحكاية
@@ -462,7 +462,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
               <h2 className="max-w-md text-4xl font-black leading-tight tracking-[-0.035em] sm:text-5xl">
                 المحافظة مش مجرد مكان.
-                <span className="block text-[#B24C2B] dark:text-[#D97857]">
+                <span className="block text-[#9a6a35] dark:text-[#d5a56d]">
                   دي ذاكرة.
                 </span>
               </h2>
@@ -537,7 +537,7 @@ export const GovernorateDetailPage: React.FC = () => {
                     key={item.title}
                     className="group rounded-[28px] border border-[#E4DBD2] bg-white p-7 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-[#241E1A]/5 dark:border-[#382D27] dark:bg-[#1B1613] dark:hover:shadow-black/20"
                   >
-                    <Icon className="mb-8 h-6 w-6 text-[#B24C2B] dark:text-[#D97857]" />
+                    <Icon className="mb-8 h-6 w-6 text-[#9a6a35] dark:text-[#d5a56d]" />
 
                     <h3 className="mb-3 text-lg font-black">
                       {item.title}
@@ -639,7 +639,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   onClick={() => navigateToCraft(craft)}
                   className="group grid w-full grid-cols-[60px_92px_1fr_auto] items-center gap-4 py-5 text-right transition hover:px-3 sm:grid-cols-[80px_150px_1fr_auto] sm:gap-6"
                 >
-                  <span className="text-xs font-black text-[#B24C2B] dark:text-[#D97857]">
+                  <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">
                     {String(index + 1).padStart(2, '0')}
                   </span>
 
@@ -663,7 +663,7 @@ export const GovernorateDetailPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857] sm:block" />
+                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] sm:block" />
                 </button>
               ))}
             </div>
@@ -770,7 +770,7 @@ export const GovernorateDetailPage: React.FC = () => {
                       {person.name || 'شخصية من المحافظة'}
                     </h3>
 
-                    <p className="mt-1 text-xs font-bold text-[#B24C2B] dark:text-[#D97857]">
+                    <p className="mt-1 text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d]">
                       {getPersonTitle(person)}
                     </p>
 
@@ -871,7 +871,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   className="group grid w-full gap-5 border-b border-[#E4DBD2] py-7 text-right last:border-b-0 dark:border-[#382D27] md:grid-cols-[120px_1fr_auto] md:items-center"
                 >
                   <div>
-                    <div className="text-2xl font-black text-[#B24C2B] dark:text-[#D97857]">
+                    <div className="text-2xl font-black text-[#9a6a35] dark:text-[#d5a56d]">
                       {String(index + 1).padStart(2, '0')}
                     </div>
 
@@ -881,7 +881,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-black transition group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857]">
+                    <h3 className="text-xl font-black transition group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d]">
                       {event.title || event.name || 'فعالية من المحافظة'}
                     </h3>
 
@@ -892,7 +892,7 @@ export const GovernorateDetailPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857] md:block" />
+                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] md:block" />
                 </button>
               ))}
             </div>
@@ -914,7 +914,7 @@ export const GovernorateDetailPage: React.FC = () => {
               <div className="max-w-2xl">
                 <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#E8B19D]">
                   <span>08</span>
-                  <span className="h-px w-10 bg-[#D97857]" />
+                  <span className="h-px w-10 bg-[#d5a56d]" />
                   MARKET
                 </div>
 
@@ -930,7 +930,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
               <button
                 onClick={() => setActivePage('market')}
-                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#241E1A] transition hover:-translate-y-1 hover:bg-[#D97857] hover:text-white"
+                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#241E1A] transition hover:-translate-y-1 hover:bg-[#d5a56d] hover:text-white"
               >
                 <Store className="h-4 w-4" />
                 ادخل السوق
@@ -999,7 +999,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   onClick={() => scrollToSection(section.id)}
                   className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-right transition hover:bg-[#F6F1EA] dark:hover:bg-[#2A211D]"
                 >
-                  <span className="text-[10px] font-black text-[#B24C2B] dark:text-[#D97857]">
+                  <span className="text-[10px] font-black text-[#9a6a35] dark:text-[#d5a56d]">
                     {section.number}
                   </span>
 
@@ -1048,7 +1048,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
       </div>
 
       <div className="max-w-3xl">
-        <div className="mb-4 flex items-center gap-3 text-[10px] font-black tracking-[0.2em] text-[#B24C2B] dark:text-[#D97857]">
+        <div className="mb-4 flex items-center gap-3 text-[10px] font-black tracking-[0.2em] text-[#9a6a35] dark:text-[#d5a56d]">
           <Icon className="h-4 w-4" />
           {eyebrow}
         </div>

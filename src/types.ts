@@ -101,6 +101,14 @@ export interface Seller {
   payoutAccount: string;
   status: SellerStatus;
   specialty: string;
+  userId?: string;
+  username?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  rejectedAt?: string;
+  rejectedBy?: string;
   rejectionReason?: string;
   suspensionReason?: string;
 }
@@ -256,6 +264,7 @@ export interface UserProfile {
   createdAt: string;
   sellerId?: string;
   sellerStatus?: SellerStatus;
+  seller?: any;
   mustChangePassword?: boolean;
 }
 

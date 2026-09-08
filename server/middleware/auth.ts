@@ -118,7 +118,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   let sellerStatus: SellerStatus | undefined = userProfile.sellerStatus;
   let sellerDetails: any = null;
 
-  if (userProfile.role === 'seller') {
+  if (sellerId || userProfile.role === 'seller' || userProfile.sellerStatus) {
     let sellerDoc: any = null;
     if (isMongo && db) {
       try {
@@ -145,8 +145,6 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
         rejectionReason: sellerDoc.rejectionReason,
         suspensionReason: sellerDoc.suspensionReason
       };
-    } else {
-      sellerStatus = sellerStatus || 'pending';
     }
   }
 
@@ -222,18 +220,8 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
     return next();
   }
 
-  if (req.user.role !== 'seller') {
-    return res.status(403).json({
-      success: false,
-      error: 'عفواً، هذه الميزة مخصصة للبائعين والحرفيين المعتمدين فقط',
-      code: 'FORBIDDEN_SELLER_ONLY'
-    });
-  }
-
-  // Server-side enforcement of Seller Status
-  let sellerStatus = req.user.sellerStatus;
-
   // Refresh status from database if not cached on user context
+  let sellerStatus = req.user.sellerStatus;
   if (!sellerStatus) {
     const { db, isMongo } = await getDatabase();
     const sellerId = req.user.sellerId || req.user.id;
@@ -250,14 +238,25 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
     if (!sellerDoc) {
       sellerDoc = memoryDb.sellers.find((s) => s.id === sellerId || (s as any).userId === req.user!.id);
     }
-    sellerStatus = sellerDoc?.status || 'pending';
+    sellerStatus = sellerDoc?.status;
     req.user.sellerStatus = sellerStatus;
+    if (sellerDoc && !req.user.seller) {
+      req.user.seller = {
+        id: sellerDoc.id,
+        brandName: sellerDoc.brandName || sellerDoc.name,
+        name: sellerDoc.name,
+        status: sellerDoc.status,
+        verified: sellerDoc.verified,
+        rejectionReason: sellerDoc.rejectionReason,
+        suspensionReason: sellerDoc.suspensionReason
+      };
+    }
   }
 
   if (sellerStatus === 'pending') {
     return res.status(403).json({
       success: false,
-      error: 'حساب البائع قيد المراجعة والاعتماد من قبل إدارة المنصة',
+      error: 'حساب ورشتك قيد المراجعة والاعتماد من قبل إدارة المنصة',
       code: 'SELLER_PENDING_APPROVAL',
       sellerStatus: 'pending'
     });
@@ -266,26 +265,27 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (sellerStatus === 'rejected') {
     return res.status(403).json({
       success: false,
-      error: 'تم رفض طلب انضمام البائع من قبل إدارة المنصة',
+      error: 'تم رفض طلب انضمام الورشة من قبل إدارة المنصة',
       code: 'SELLER_REJECTED',
-      sellerStatus: 'rejected'
+      sellerStatus: 'rejected',
+      reason: req.user.seller?.rejectionReason
     });
   }
 
   if (sellerStatus === 'suspended') {
     return res.status(403).json({
       success: false,
-      error: 'حساب البائع معلق حالياً، يرجى التواصل مع إدارة المنصة',
+      error: 'حساب الورشة معلق حالياً، يرجى التواصل مع إدارة المنصة',
       code: 'SELLER_SUSPENDED',
       sellerStatus: 'suspended'
     });
   }
 
-  if (sellerStatus !== 'approved') {
+  if (req.user.role !== 'seller' || sellerStatus !== 'approved') {
     return res.status(403).json({
       success: false,
-      error: 'حساب البائع غير معتمد بعد',
-      code: 'SELLER_NOT_APPROVED',
+      error: 'عفواً، هذه الميزة مخصصة لأصحاب الورش الحرفية المعتمدة فقط',
+      code: 'FORBIDDEN_SELLER_ONLY',
       sellerStatus
     });
   }

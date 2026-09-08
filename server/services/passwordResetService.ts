@@ -246,6 +246,19 @@ export async function completePasswordResetRequest(
     details: `قام المدير (${adminUser.name}) بإنشاء كلمة مرور مؤقتة للمستخدم (${request.username}) وتحديث حسابه للإلزام بتغييرها`
   });
 
+  // Send safe notification to user (zero secrets or credentials in message)
+  try {
+    await createNotification({
+      userId: request.userId,
+      title: 'تحديث بشأن طلب استعادة كلمة المرور',
+      message: 'تمت معالجة طلبك لاستعادة كلمة المرور بنجاح من قبل إدارة المنصة. يرجى تسجيل الدخول وتحديث كلمة المرور الخاصة بك.',
+      type: 'account',
+      link: 'buyer-account'
+    });
+  } catch (notifErr) {
+    Logger.warn('[PasswordResetService] Failed sending completion notification to user:', notifErr);
+  }
+
   return {
     success: true,
     message: `تم تعيين كلمة المرور المؤقتة بنجاح للمستخدم (${request.name || request.username})`,
@@ -305,6 +318,19 @@ export async function rejectPasswordResetRequest(
     status: 'تنبيه',
     details: `قام المدير (${adminUser.name}) برفض طلب استعادة كلمة المرور للمستخدم (${request.username})`
   });
+
+  // Send safe notification to user
+  try {
+    await createNotification({
+      userId: request.userId,
+      title: 'تحديث بشأن طلب استعادة كلمة المرور',
+      message: `تم رفض طلب استعادة كلمة المرور من قبل إدارة المنصة. ${updates.adminNotes ? `السبب: ${updates.adminNotes}` : ''}`.trim(),
+      type: 'account',
+      link: 'buyer-account'
+    });
+  } catch (notifErr) {
+    Logger.warn('[PasswordResetService] Failed sending rejection notification to user:', notifErr);
+  }
 
   return {
     success: true,

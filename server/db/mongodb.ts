@@ -306,6 +306,8 @@ async function seedMongoDatabase(database: Db) {
       database.collection('discounts').createIndex({ code: 1 }, { unique: true }),
       database.collection('favorites').createIndex({ buyerId: 1, productId: 1 }, { unique: true }),
       database.collection('notifications').createIndex({ userId: 1, createdAt: -1 }),
+      database.collection('notifications').createIndex({ userId: 1, isRead: 1 }),
+      database.collection('notifications').createIndex({ id: 1 }, { unique: true }),
       database.collection('stock_movements').createIndex({ sellerId: 1, createdAt: -1 }),
       database.collection('payouts').createIndex({ sellerId: 1, createdAt: -1 }),
       database.collection('payouts').createIndex({ status: 1, createdAt: -1 }),

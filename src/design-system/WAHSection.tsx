@@ -42,7 +42,7 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
       id={id}
       className={`relative py-12 sm:py-16 lg:py-20 overflow-hidden ${
         bgSurface
-          ? 'bg-[var(--wah-surface-subtle,#F3ECE2)]/60 dark:bg-[var(--wah-surface-subtle,#26201B)]/40 border-y border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]'
+          ? 'bg-black/5 dark:bg-white/5 border-y border-black/10 dark:border-white/10'
           : ''
       } ${className}`}
     >
@@ -54,25 +54,25 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10">
         {(title || badgeContent || action) && (
           <div
             className={`flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 sm:mb-12 ${headerClassName}`}
           >
             <div className="space-y-2 max-w-2xl text-right">
               {badgeContent && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--wah-primary-light,rgba(178,76,43,0.1))] border border-[var(--wah-primary,#B24C2B)]/20 text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] text-xs font-bold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/15 border border-[#9a6a35]/30 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold">
                   {renderedBadgeIcon}
                   <span>{badgeContent}</span>
                 </div>
               )}
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] font-serif tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif tracking-tight leading-snug">
                 {title}
               </h2>
 
               {subtitle && (
-                <p className="text-xs sm:text-sm lg:text-base text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm lg:text-base text-black/60 dark:text-white/60 font-medium leading-relaxed">
                   {subtitle}
                 </p>
               )}

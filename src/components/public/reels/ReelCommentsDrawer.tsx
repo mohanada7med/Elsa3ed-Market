@@ -158,7 +158,7 @@ export const ReelCommentsDrawer: React.FC<ReelCommentsDrawerProps> = ({
               <button
                 type="submit"
                 disabled={!commentText.trim()}
-                className="p-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-40 disabled:hover:bg-[#B24C2B] text-white rounded-xl transition-all cursor-pointer shrink-0"
+                className="p-2.5 bg-[#9a6a35] hover:bg-[#83592c] disabled:opacity-40 disabled:hover:bg-[#9a6a35] text-white rounded-xl transition-all cursor-pointer shrink-0"
                 aria-label="إرسال التعليق"
               >
                 <Send className="w-4 h-4 rotate-180" />

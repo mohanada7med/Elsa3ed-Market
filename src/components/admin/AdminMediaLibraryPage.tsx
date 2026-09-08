@@ -152,18 +152,18 @@ export const AdminMediaLibraryPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#1A1512] text-[#2D2621] dark:text-[#E5DDD3] p-4 sm:p-6 md:p-8" dir="rtl">
+    <div className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-6" dir="rtl">
       {/* Header Section */}
-      <div className="max-w-7xl mx-auto mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[#E8E0D5] dark:border-[#352B24]">
+      <div className="w-full mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-black/10 dark:border-white/10">
           <div>
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-[#8E422D]/10 dark:bg-[#FF8A65]/10 text-[#8E422D] dark:text-[#FF8A65] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-[#9a6a35]/10 dark:bg-[#d5a56d]/10 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center">
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div>
                 <h1 className="text-xl sm:text-2xl font-black font-serif">مكتبة وسائط منصة وه</h1>
-                <p className="text-xs sm:text-sm text-[#7A6E63] dark:text-[#A89D91]">
+                <p className="text-xs sm:text-sm text-black/60 dark:text-white/60">
                   إدارة وتوثيق الصور السحابية على Cloudinary وتصنيفها حسب الكيانات والمحافظات
                 </p>
               </div>
@@ -174,7 +174,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => loadMedia()}
               disabled={isLoading}
-              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] hover:bg-[#F3ECE2] text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl hover:bg-black/10 dark:bg-white/10 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
               title="تحديث القائمة"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -183,7 +183,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="min-h-[44px] px-4 py-2 rounded-xl bg-[#8E422D] hover:bg-[#753422] text-white font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all"
+              className="min-h-[44px] px-4 py-2 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>رفع وسائط جديدة</span>
@@ -195,7 +195,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
           {/* Search */}
           <div className="relative">
-            <Search className="w-4 h-4 text-[#8A7E72] absolute right-3.5 top-3.5" />
+            <Search className="w-4 h-4 text-black/50 dark:text-white/50 absolute right-3.5 top-3.5" />
             <input
               type="text"
               value={searchQuery}
@@ -204,7 +204,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setCurrentPage(1);
               }}
               placeholder="بحث بالاسم أو المعرف السحابي..."
-              className="w-full min-h-[44px] pr-10 pl-4 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm placeholder:text-[#9C8F82] focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] pr-10 pl-4 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs sm:text-sm placeholder:text-black/40 dark:text-white/40 focus:outline-none focus:border-[#9a6a35]"
             />
           </div>
 
@@ -216,7 +216,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedEntityType(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs sm:text-sm focus:outline-none focus:border-[#9a6a35]"
             >
               {ENTITY_TYPE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -234,7 +234,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedFolder(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs sm:text-sm focus:outline-none focus:border-[#9a6a35]"
             >
               {FOLDER_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -252,7 +252,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 setSelectedSort(e.target.value as any);
                 setCurrentPage(1);
               }}
-              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs sm:text-sm focus:outline-none focus:border-[#8E422D]"
+              className="w-full min-h-[44px] px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs sm:text-sm focus:outline-none focus:border-[#9a6a35]"
             >
               <option value="newest">الأحدث رفعاً</option>
               <option value="oldest">الأقدم رفعاً</option>
@@ -263,41 +263,41 @@ export const AdminMediaLibraryPage: React.FC = () => {
         </div>
 
         {/* Stats bar */}
-        <div className="flex items-center justify-between mt-4 text-xs text-[#7A6E63] dark:text-[#A89D91]">
-          <span>إجمالي الصور الموثقة: <strong className="text-[#8E422D] dark:text-[#FF8A65]">{totalItems}</strong></span>
+        <div className="flex items-center justify-between mt-4 text-xs text-black/60 dark:text-white/60">
+          <span>إجمالي الصور الموثقة: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{totalItems}</strong></span>
           <span>صفحة {currentPage} من {totalPages}</span>
         </div>
       </div>
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="max-w-7xl mx-auto mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-3">
+        <div className="w-full mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-3">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {/* Media Grid */}
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="w-8 h-8 text-[#8E422D] animate-spin" />
-            <p className="text-xs sm:text-sm text-[#7A6E63] dark:text-[#A89D91]">
+            <Loader2 className="w-8 h-8 text-[#9a6a35] animate-spin" />
+            <p className="text-xs sm:text-sm text-black/60 dark:text-white/60">
               جاري فحص ومزامنة الوسائط من Cloudinary...
             </p>
           </div>
         ) : mediaList.length === 0 ? (
-          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#201A16] p-8">
-            <ImageIcon className="w-12 h-12 text-[#A89D91] mx-auto mb-3 opacity-60" />
-            <h3 className="text-base font-bold text-[#2D2621] dark:text-[#E5DDD3] mb-1">
+          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-8">
+            <ImageIcon className="w-12 h-12 text-black/50 dark:text-white/50 mx-auto mb-3 opacity-60" />
+            <h3 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
               لا توجد وسائط مسجلة في هذا التصنيف
             </h3>
-            <p className="text-xs text-[#7A6E63] dark:text-[#A89D91] max-w-sm mx-auto mb-4">
+            <p className="text-xs text-black/60 dark:text-white/60 max-w-sm mx-auto mb-4">
               يمكنك رفع صور جديدة مباشرة وربطها بالمعالم أو الحرف أو المحافظات.
             </p>
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="min-h-[44px] px-5 py-2 rounded-xl bg-[#8E422D] hover:bg-[#753422] text-white text-xs sm:text-sm font-bold inline-flex items-center gap-2"
+              className="min-h-[44px] px-5 py-2 rounded-xl bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs sm:text-sm font-bold inline-flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span>رفع أول صورة</span>
@@ -310,7 +310,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
               return (
                 <div
                   key={item.id || item.publicId || url}
-                  className="rounded-2xl border border-[#E8E0D5] dark:border-[#352B24] bg-white dark:bg-[#26201B] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
+                  className="rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                 >
                   {/* Thumbnail */}
                   <div className="relative aspect-video sm:aspect-4/3 bg-black/5 overflow-hidden">
@@ -330,7 +330,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
                     {/* Cloudinary Folder Badge */}
                     {item.folder && (
-                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-[#8E422D]/90 backdrop-blur-xs text-white text-[9px] font-mono font-bold truncate max-w-[150px]">
+                      <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-[#9a6a35]/90 backdrop-blur-xs text-white text-[9px] font-mono font-bold truncate max-w-[150px]">
                         {item.folder.replace('WAH/', '')}
                       </span>
                     )}
@@ -348,12 +348,12 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   {/* Details */}
                   <div className="p-3 sm:p-4 space-y-2 flex-1 flex flex-col justify-between">
                     <div>
-                      <h4 className="text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E5DDD3] truncate" title={item.title || item.alt}>
+                      <h4 className="text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7] truncate" title={item.title || item.alt}>
                         {item.title || item.alt || 'صورة تراثية'}
                       </h4>
 
                       {/* Dimensions and Size */}
-                      <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-[#7A6E63] dark:text-[#A89D91] mt-1 font-mono" dir="ltr">
+                      <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-black/60 dark:text-white/60 mt-1 font-mono" dir="ltr">
                         {item.width && item.height && (
                           <span>{item.width} × {item.height}px</span>
                         )}
@@ -362,13 +362,13 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
                       {/* Public ID */}
                       {item.publicId && (
-                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-[#FAF7F2] dark:bg-[#1E1815] border border-[#E8E0D5] dark:border-[#352B24]">
-                          <span className="text-[10px] font-mono text-[#7A6E63] dark:text-[#A89D91] truncate ltr" dir="ltr">
+                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+                          <span className="text-[10px] font-mono text-black/60 dark:text-white/60 truncate ltr" dir="ltr">
                             {item.publicId}
                           </span>
                           <button
                             onClick={() => handleCopy(item.publicId!, item.id || item.publicId!)}
-                            className="p-1 text-[#8A7E72] hover:text-[#8E422D] shrink-0"
+                            className="p-1 text-black/50 dark:text-white/50 hover:text-[#9a6a35] shrink-0"
                             title="نسخ المعرف السحابي"
                           >
                             {copiedPublicId === (item.id || item.publicId) ? (
@@ -382,10 +382,10 @@ export const AdminMediaLibraryPage: React.FC = () => {
                     </div>
 
                     {/* Actions Bar */}
-                    <div className="pt-2 border-t border-[#E8E0D5] dark:border-[#332A22] flex items-center justify-between gap-2 mt-2">
+                    <div className="pt-2 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2 mt-2">
                       <button
                         onClick={() => handleCopy(url, `url-${item.id || item.publicId}`)}
-                        className="text-[11px] font-bold text-[#8E422D] dark:text-[#FF8A65] hover:underline flex items-center gap-1"
+                        className="text-[11px] font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline flex items-center gap-1"
                       >
                         {copiedPublicId === `url-${item.id || item.publicId}` ? (
                           <>
@@ -422,17 +422,17 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage <= 1 || isLoading}
-              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs font-bold disabled:opacity-40"
+              className="min-h-[40px] px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs font-bold disabled:opacity-40"
             >
               السابق
             </button>
-            <span className="text-xs font-bold text-[#7A6E63] dark:text-[#A89D91] px-2">
+            <span className="text-xs font-bold text-black/60 dark:text-white/60 px-2">
               {currentPage} / {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage >= totalPages || isLoading}
-              className="min-h-[40px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#26201B] text-xs font-bold disabled:opacity-40"
+              className="min-h-[40px] px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-xs font-bold disabled:opacity-40"
             >
               التالي
             </button>
@@ -443,15 +443,15 @@ export const AdminMediaLibraryPage: React.FC = () => {
       {/* Upload Modal */}
       {isUploadModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#26201B] rounded-2xl w-full max-w-lg border border-[#E8E0D5] dark:border-[#352B24] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b border-[#E8E0D5] dark:border-[#352B24] mb-4">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl w-full max-w-lg border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10 mb-4">
               <div className="flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-[#8E422D]" />
+                <ImageIcon className="w-5 h-5 text-[#9a6a35]" />
                 <h3 className="text-base font-bold">رفع وسائط إلى Cloudinary</h3>
               </div>
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="p-1 rounded-lg text-[#8A7E72] hover:bg-black/5"
+                className="p-1 rounded-lg text-black/50 dark:text-white/50 hover:bg-black/5"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -460,13 +460,13 @@ export const AdminMediaLibraryPage: React.FC = () => {
             {/* Folder / Entity Selection */}
             <div className="space-y-3 mb-4">
               <div>
-                <label className="block text-xs font-bold text-[#6B5E52] dark:text-[#A89D91] mb-1">
+                <label className="block text-xs font-bold text-[#6B5E52] dark:text-black/50 dark:text-white/50 mb-1">
                   نوع الكيان التراثي المستهدف
                 </label>
                 <select
                   value={uploadEntityType}
                   onChange={(e) => setUploadEntityType(e.target.value)}
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#1E1815] text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs sm:text-sm"
                 >
                   {ENTITY_TYPE_OPTIONS.filter((o) => o.value !== 'all').map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -477,7 +477,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#6B5E52] dark:text-[#A89D91] mb-1">
+                <label className="block text-xs font-bold text-[#6B5E52] dark:text-black/50 dark:text-white/50 mb-1">
                   المعرف اللطيف / الاسم (Slug)
                 </label>
                 <input
@@ -485,7 +485,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   value={uploadEntitySlug}
                   onChange={(e) => setUploadEntitySlug(e.target.value)}
                   placeholder="مثال: meidum-pyramid أو fayesh"
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#1E1815] text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -502,13 +502,13 @@ export const AdminMediaLibraryPage: React.FC = () => {
               helperText="سيتم تنظيم الملفات في مسار WAH/{category}/{slug}"
             />
 
-            <div className="mt-5 pt-4 border-t border-[#E8E0D5] dark:border-[#352B24] flex justify-end">
+            <div className="mt-5 pt-4 border-t border-black/10 dark:border-white/10 flex justify-end">
               <button
                 onClick={() => {
                   setIsUploadModalOpen(false);
                   loadMedia();
                 }}
-                className="min-h-[44px] px-6 py-2 rounded-xl bg-[#8E422D] hover:bg-[#753422] text-white text-xs sm:text-sm font-bold"
+                className="min-h-[44px] px-6 py-2 rounded-xl bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs sm:text-sm font-bold"
               >
                 إغلاق والعودة للمكتبة
               </button>
@@ -561,7 +561,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
       {/* Custom Non-blocking Delete Confirmation Modal */}
       {itemPendingDelete && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3 text-red-600">
               <div className="p-2 rounded-xl bg-red-100 dark:bg-red-950/50">
                 <Trash2 className="w-5 h-5" />
@@ -570,7 +570,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 <h3 className="text-base font-bold text-[#241E1A] dark:text-[#FAF6F2]">
                   تأكيد حذف الصورة
                 </h3>
-                <p className="text-xs text-[#73675B] dark:text-[#A89C90]">
+                <p className="text-xs text-black/60 dark:text-white/60 dark:text-[#A89C90]">
                   سيتم حذف الصورة نهائياً من التخزين السحابي وقاعدة البيانات
                 </p>
               </div>
@@ -582,7 +582,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 alt="معاينة"
                 className="w-16 h-16 object-cover rounded-lg shrink-0"
               />
-              <div className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">
+              <div className="text-xs text-black/60 dark:text-white/60 dark:text-[#A89C90] truncate">
                 <p className="font-bold text-[#241E1A] dark:text-[#FAF6F2] truncate">
                   {itemPendingDelete.title || itemPendingDelete.alt || 'صورة من المعرض'}
                 </p>
@@ -598,7 +598,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3] dark:border-[#352B24]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10">
               <button
                 type="button"
                 onClick={() => {
@@ -606,7 +606,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   setDeleteError(null);
                 }}
                 disabled={Boolean(deletingItemId)}
-                className="px-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
               >
                 إلغاء
               </button>

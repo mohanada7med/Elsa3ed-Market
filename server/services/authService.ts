@@ -13,6 +13,7 @@ import { storageService } from './storage/storageProvider.ts';
 import type { UserDocument, UserRole, SellerStatus } from '../models/types.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { createAuditLog } from './auditService.ts';
+import { notifyAdminsOnSellerRequest } from './sellerService.ts';
 import { Logger } from '../utils/logger.ts';
 
 const JWT_SECRET = process.env.AUTH_SECRET || process.env.JWT_SECRET || (process.env.NODE_ENV !== 'production' ? 'elsa3ed-dev-jwt-key' : '');
@@ -208,7 +209,7 @@ export async function register(params: {
     email: params.email,
     passwordHash,
     phone: params.phone,
-    role: params.role,
+    role: params.role === 'seller' ? 'buyer' : params.role,
     avatar: finalAvatar,
     profileImage: profileImageObj,
     governorate: params.governorate || 'قنا',
@@ -226,6 +227,16 @@ export async function register(params: {
     status: 'نجاح',
     details: `تم تسجيل حساب جديد بنجاح باسم مستخدم: (${createdUser.username}) وصلاحية (${createdUser.role})`
   });
+
+  if (params.role === 'seller') {
+    await notifyAdminsOnSellerRequest({
+      userId,
+      userName: params.name,
+      workshopName: params.workshopName || `ورشة ${params.name}`,
+      governorate: params.governorate || 'قنا',
+      isReapply: false
+    });
+  }
 
   const token = generateToken(createdUser);
   return {

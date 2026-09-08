@@ -17,8 +17,8 @@ export const PromotionsBanner: React.FC = () => {
   };
 
   return (
-    <section className="py-8 max-w-7xl mx-auto px-4 sm:px-6">
-      <div className="relative rounded-3xl bg-gradient-to-r from-[#943310] via-[#a33b13] to-[#78280a] text-white p-6 sm:p-10 shadow-xl overflow-hidden">
+    <section className="py-8 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12" dir="rtl">
+      <div className="relative rounded-[2rem] bg-gradient-to-r from-[#9a6a35] via-[#83592c] to-[#623f1a] text-white p-6 sm:p-10 shadow-xl overflow-hidden border border-white/10">
         {/* Background decorative patterns */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
@@ -30,7 +30,7 @@ export const PromotionsBanner: React.FC = () => {
               <span>مبادرة إحياء كنوز الجنوب</span>
             </div>
 
-            <h3 className="text-2xl sm:text-4xl font-black font-heritage leading-tight">
+            <h3 className="text-2xl sm:text-4xl font-black font-serif leading-tight">
               خصم خاص 15% على أول طلب للحرف اليدوية والفخار
             </h3>
 
@@ -53,7 +53,7 @@ export const PromotionsBanner: React.FC = () => {
                 type="button"
                 id="copy-coupon-btn"
                 onClick={handleCopyCoupon}
-                className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[38px]"
+                className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-bold transition-colors flex items-center gap-1 shrink-0 min-h-[38px] cursor-pointer"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-900" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? 'تم التفعيل!' : 'نسخ وتفعيل'}</span>
@@ -64,7 +64,7 @@ export const PromotionsBanner: React.FC = () => {
               type="button"
               id="promo-shop-now-btn"
               onClick={() => setActivePage('products')}
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-amber-100 text-[#943310] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 min-h-[44px]"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white hover:bg-white/90 text-[#211d18] text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 min-h-[44px] cursor-pointer"
             >
               <span>تسوق العروض المميزة</span>
               <ArrowLeft className="w-3.5 h-3.5" />

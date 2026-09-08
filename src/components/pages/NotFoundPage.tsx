@@ -1,26 +1,26 @@
 import React from 'react';
-import { Compass, Home, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Compass, Home, ShoppingBag } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const NotFoundPage: React.FC = () => {
   const { setActivePage } = useApp();
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-16" dir="rtl">
-      <div className="max-w-lg w-full bg-[var(--wah-surface,#FFFFFF)] dark:bg-[var(--wah-surface,#1B1613)] rounded-3xl p-8 sm:p-12 text-center border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] shadow-xl">
-        <div className="w-20 h-20 bg-[var(--wah-primary-light,#F7ECE6)] dark:bg-[var(--wah-primary-light,rgba(224,99,60,0.15))] text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] rounded-2xl flex items-center justify-center mx-auto mb-6 border border-[var(--wah-primary,#B24C2B)]/20 shadow-inner">
+    <div className="min-h-[75vh] flex items-center justify-center px-5 sm:px-8 py-16" dir="rtl">
+      <div className="max-w-lg w-full bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-8 sm:p-12 text-center border border-black/10 dark:border-white/10 shadow-xl">
+        <div className="w-20 h-20 bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] rounded-2xl flex items-center justify-center mx-auto mb-6 border border-[#9a6a35]/25">
           <Compass className="w-10 h-10" aria-hidden="true" />
         </div>
 
-        <span className="inline-block px-3 py-1 bg-[var(--wah-primary-light,#F7ECE6)] dark:bg-[var(--wah-primary-light,rgba(224,99,60,0.15))] text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] rounded-full text-xs font-bold tracking-wider uppercase mb-3 border border-[var(--wah-primary,#B24C2B)]/20">
+        <span className="inline-block px-3.5 py-1 bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] rounded-full text-xs font-bold tracking-wider uppercase mb-3 border border-[#9a6a35]/25">
           رمز الخطأ: 404
         </span>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] mb-3 font-serif">
+        <h1 className="text-3xl sm:text-4xl font-black text-[#211d18] dark:text-[#f5f0e7] mb-3 font-serif">
           الصفحة المطلوبة غير موجودة
         </h1>
 
-        <p className="text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] text-base leading-relaxed mb-8">
+        <p className="text-[#211d18]/70 dark:text-[#f5f0e7]/70 text-sm sm:text-base leading-relaxed mb-8">
           يبدو أنك سلكت مساراً غير موجود في أزقة وه. قد تكون الصفحة قد نُقلت أو تم تعديل رابطها.
         </p>
 
@@ -29,7 +29,7 @@ export const NotFoundPage: React.FC = () => {
             id="not-found-home-btn"
             type="button"
             onClick={() => setActivePage('home')}
-            className="flex items-center justify-center gap-2 bg-[var(--wah-primary,#B24C2B)] hover:bg-[var(--wah-primary-hover,#963E21)] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg cursor-pointer text-sm"
           >
             <Home className="w-5 h-5" aria-hidden="true" />
             <span>العودة للرئيسية</span>
@@ -39,7 +39,7 @@ export const NotFoundPage: React.FC = () => {
             id="not-found-products-btn"
             type="button"
             onClick={() => setActivePage('products')}
-            className="flex items-center justify-center gap-2 bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] hover:bg-[var(--wah-border,#E5DDD3)] dark:hover:bg-[var(--wah-border,#352B24)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] px-6 py-3 rounded-xl font-bold transition-colors border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer text-sm"
           >
             <ShoppingBag className="w-5 h-5" aria-hidden="true" />
             <span>تصفح المنتجات التراثية</span>

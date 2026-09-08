@@ -577,44 +577,43 @@ export const AuthModal: React.FC = () => {
   const inputClass = `
     w-full
     min-w-0
-    h-[56px]
-    sm:h-[60px]
-    rounded-[15px]
-    sm:rounded-[17px]
+    h-[54px]
+    sm:h-[58px]
+    rounded-2xl
     border
-    border-[#DDD2C8]
-    bg-[#FCFAF7]
+    border-black/10
+    bg-white/80
     px-11
     sm:px-12
     text-[15px]
     sm:text-[16px]
     font-medium
-    text-[#241B17]
+    text-[#211d18]
     outline-none
     transition-all
     duration-200
-    placeholder:text-[#9B8D83]
-    focus:border-[#B24C2B]
+    placeholder:text-black/35
+    focus:border-[#9a6a35]
     focus:bg-white
     focus:ring-4
-    focus:ring-[#B24C2B]/10
-    dark:border-[#40342C]
-    dark:bg-[#1A1512]
-    dark:text-[#FFF8F0]
-    dark:placeholder:text-[#82766D]
-    dark:focus:border-[#D06A47]
-    dark:focus:bg-[#1E1916]
-    dark:focus:ring-[#D06A47]/10
+    focus:ring-[#9a6a35]/10
+    dark:border-white/10
+    dark:bg-white/5
+    dark:text-[#f5f0e7]
+    dark:placeholder:text-white/30
+    dark:focus:border-[#9a6a35]
+    dark:focus:bg-[#151513]
+    dark:focus:ring-[#9a6a35]/10
   `;
 
   const labelClass = `
     mb-2
     block
-    text-[14px]
-    sm:text-[15px]
-    font-bold
-    text-[#493C34]
-    dark:text-[#E2D8D0]
+    text-[13px]
+    sm:text-[14px]
+    font-black
+    text-[#211d18]
+    dark:text-[#f5f0e7]
   `;
 
   const iconClass = `
@@ -624,32 +623,33 @@ export const AuthModal: React.FC = () => {
     sm:right-4
     top-1/2
     -translate-y-1/2
-    text-[#8F8177]
-    dark:text-[#8B7E75]
+    text-black/40
+    dark:text-white/40
   `;
 
   const primaryButton = `
     flex
-    min-h-[56px]
-    sm:min-h-[60px]
+    min-h-[54px]
+    sm:min-h-[58px]
     w-full
     items-center
     justify-center
     gap-2
-    rounded-[15px]
-    sm:rounded-[17px]
-    bg-[#B24C2B]
+    rounded-2xl
+    bg-[#211d18]
+    text-white
+    dark:bg-white
+    dark:text-black
     px-4
     sm:px-5
     text-[15px]
     sm:text-[16px]
-    font-bold
-    text-white
-    shadow-[0_10px_30px_rgba(178,76,43,0.18)]
+    font-black
+    shadow-lg
     transition-all
     duration-200
-    hover:bg-[#963E21]
-    hover:shadow-[0_14px_35px_rgba(178,76,43,0.25)]
+    hover:bg-[#9a6a35]
+    dark:hover:bg-[#d5a56d]
     active:scale-[0.99]
     disabled:cursor-not-allowed
     disabled:opacity-60
@@ -671,9 +671,9 @@ export const AuthModal: React.FC = () => {
         items-center
         justify-center
         overflow-hidden
-        bg-[#17120F]/70
-        px-2
-        py-2
+        bg-black/70
+        px-3
+        py-3
         sm:px-4
         sm:py-5
         md:px-6
@@ -695,16 +695,14 @@ export const AuthModal: React.FC = () => {
           sm:max-h-[calc(100dvh-40px)]
           flex-col
           overflow-hidden
-          rounded-[20px]
-          sm:rounded-[26px]
-          md:rounded-[30px]
+          rounded-[2rem]
           border
-          border-[#E6DDD4]
-          bg-[#FAF7F2]
-          shadow-[0_30px_100px_rgba(0,0,0,0.30)]
-          dark:border-[#3A3029]
-          dark:bg-[#181310]
-          dark:shadow-[0_30px_100px_rgba(0,0,0,0.65)]
+          border-black/10
+          bg-[#eee8dc]
+          shadow-2xl
+          dark:border-white/10
+          dark:bg-[#151513]
+          backdrop-blur-2xl
         "
       >
         {/* =================================================
@@ -717,20 +715,20 @@ export const AuthModal: React.FC = () => {
             shrink-0
             overflow-hidden
             border-b
-            border-[#E6DDD4]
-            bg-[#F3ECE5]
+            border-black/10
+            bg-white/70
             px-4
             pb-4
             pt-4
             sm:px-7
             sm:pb-6
             sm:pt-6
-            dark:border-[#352B24]
-            dark:bg-[#201914]
+            dark:border-white/10
+            dark:bg-[#1c1a17]/80
+            backdrop-blur-xl
           "
         >
           {/* Decorative circles */}
-
           <div
             className="
               pointer-events-none
@@ -741,7 +739,7 @@ export const AuthModal: React.FC = () => {
               w-48
               rounded-full
               border
-              border-[#B24C2B]/10
+              border-[#9a6a35]/15
             "
           />
 
@@ -755,25 +753,11 @@ export const AuthModal: React.FC = () => {
               w-32
               rounded-full
               border
-              border-[#B24C2B]/10
+              border-[#9a6a35]/15
             "
           />
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              -bottom-20
-              -right-10
-              h-40
-              w-40
-              rounded-full
-              bg-[#264653]/5
-            "
-          />
-
-          {/* Close */}
-
+          {/* Close Button */}
           <button
             id="auth-modal-close"
             type="button"
@@ -796,27 +780,27 @@ export const AuthModal: React.FC = () => {
               justify-center
               rounded-full
               border
-              border-[#DCD0C5]
-              bg-[#FAF7F2]/90
-              text-[#65574E]
+              border-black/10
+              bg-white/80
+              text-[#211d18]
               backdrop-blur-sm
               transition-all
-              hover:border-[#B24C2B]
-              hover:bg-[#B24C2B]
+              hover:border-[#9a6a35]
+              hover:bg-[#9a6a35]
               hover:text-white
-              dark:border-[#44382F]
-              dark:bg-[#181310]/90
-              dark:text-[#B8ACA2]
-              dark:hover:border-[#D06A47]
-              dark:hover:bg-[#B24C2B]
+              dark:border-white/10
+              dark:bg-white/5
+              dark:text-[#f5f0e7]
+              dark:hover:border-[#9a6a35]
+              dark:hover:bg-[#9a6a35]
               dark:hover:text-white
+              cursor-pointer
             "
           >
             <X size={18} />
           </button>
 
           {/* Brand */}
-
           <div className="relative z-10 flex min-w-0 items-center gap-3">
             <div
               className="
@@ -829,11 +813,10 @@ export const AuthModal: React.FC = () => {
                 items-center
                 justify-center
                 overflow-hidden
-                rounded-[14px]
-                sm:rounded-[16px]
-                bg-[#B24C2B]
+                rounded-2xl
+                bg-[#9a6a35]
                 text-white
-                shadow-[0_8px_25px_rgba(178,76,43,0.22)]
+                shadow-md
               "
             >
               <img
@@ -853,25 +836,24 @@ export const AuthModal: React.FC = () => {
                 className="
                   text-[9px]
                   sm:text-[10px]
-                  font-bold
+                  font-black
                   tracking-[0.25em]
-                  text-[#B24C2B]
-                  dark:text-[#D06A47]
+                  text-[#9a6a35]
                 "
               >
                 WAH
               </p>
 
-              <p className="mt-1 truncate text-[14px] sm:text-[15px] font-bold text-[#2A211C] dark:text-[#FFF8F0]">
+              <p className="mt-0.5 truncate text-[14px] sm:text-[16px] font-black text-[#211d18] dark:text-[#f5f0e7]">
                 من هنا تبدأ الحكاية
               </p>
             </div>
           </div>
 
           <div className="relative z-10 mt-3 flex items-center gap-2 sm:mt-4 sm:gap-3">
-            <span className="h-px w-6 sm:w-8 bg-[#B24C2B]" />
+            <span className="h-px w-6 sm:w-8 bg-[#9a6a35]" />
 
-            <span className="text-[11px] sm:text-[12px] font-medium text-[#786A61] dark:text-[#9F9289]">
+            <span className="text-[11px] sm:text-[12px] font-bold text-black/60 dark:text-white/60">
               حكايات الصعيد أقرب ليك
             </span>
           </div>
@@ -889,7 +871,6 @@ export const AuthModal: React.FC = () => {
             overflow-y-auto
             overscroll-contain
             [scrollbar-width:thin]
-            [scrollbar-color:#B8A99E_transparent]
           "
         >
           <div
@@ -913,10 +894,10 @@ export const AuthModal: React.FC = () => {
               <div className="mb-2 flex items-center gap-2">
                 <Sparkles
                   size={15}
-                  className="shrink-0 text-[#B24C2B]"
+                  className="shrink-0 text-[#9a6a35]"
                 />
 
-                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.1em] text-[#B24C2B] dark:text-[#D06A47]">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.1em] text-[#9a6a35]">
                   {forgotPassword
                     ? 'ACCOUNT RECOVERY'
                     : authModalTab === 'login'
@@ -929,10 +910,10 @@ export const AuthModal: React.FC = () => {
                 className="
                   text-[23px]
                   leading-tight
-                  font-bold
+                  font-black
                   tracking-tight
-                  text-[#211914]
-                  dark:text-[#FFF8F0]
+                  text-[#211d18]
+                  dark:text-[#f5f0e7]
                   sm:text-[28px]
                   md:text-[30px]
                 "
@@ -949,10 +930,11 @@ export const AuthModal: React.FC = () => {
                   mt-2
                   text-[13px]
                   leading-6
-                  text-[#776960]
-                  dark:text-[#A79B91]
+                  text-black/60
+                  dark:text-white/60
                   sm:text-[14px]
                   sm:leading-7
+                  font-medium
                 "
               >
                 {forgotPassword
@@ -975,7 +957,7 @@ export const AuthModal: React.FC = () => {
                   min-w-0
                   items-start
                   gap-2.5
-                  rounded-[15px]
+                  rounded-2xl
                   border
                   border-red-200
                   bg-red-50
@@ -1012,15 +994,15 @@ export const AuthModal: React.FC = () => {
               >
                 <div
                   className="
-                    rounded-[17px]
-                    sm:rounded-[20px]
+                    rounded-[1.5rem]
                     border
-                    border-[#E2D8CE]
-                    bg-[#F5EFE8]
+                    border-black/10
+                    bg-white/60
                     p-4
                     sm:p-5
-                    dark:border-[#392E27]
-                    dark:bg-[#211B18]
+                    dark:border-white/10
+                    dark:bg-white/5
+                    backdrop-blur-xl
                   "
                 >
                   <div className="mb-4 flex min-w-0 items-center gap-3 sm:mb-5">
@@ -1034,23 +1016,20 @@ export const AuthModal: React.FC = () => {
                         shrink-0
                         items-center
                         justify-center
-                        rounded-[13px]
-                        sm:rounded-[14px]
-                        bg-[#264653]/10
-                        text-[#264653]
-                        dark:bg-[#6C9AA4]/10
-                        dark:text-[#8EB8BF]
+                        rounded-2xl
+                        bg-[#9a6a35]/10
+                        text-[#9a6a35]
                       "
                     >
                       <KeyRound size={20} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[14px] sm:text-[15px] font-bold text-[#2B211B] dark:text-[#FFF8F0]">
+                      <p className="text-[14px] sm:text-[15px] font-black text-[#211d18] dark:text-[#f5f0e7]">
                         هنرجعك لحسابك
                       </p>
 
-                      <p className="mt-1 text-[11px] leading-5 text-[#81736A] dark:text-[#988C83] sm:text-[12px] sm:leading-6">
+                      <p className="mt-1 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-[12px] sm:leading-6 font-medium">
                         ابعت طلب للإدارة لاستعادة كلمة المرور.
                       </p>
                     </div>
@@ -1123,12 +1102,13 @@ export const AuthModal: React.FC = () => {
                     py-2
                     text-[13px]
                     sm:text-[14px]
-                    font-bold
-                    text-[#75675E]
+                    font-black
+                    text-black/60
+                    dark:text-white/60
                     transition-colors
-                    hover:text-[#B24C2B]
-                    dark:text-[#B8ACA2]
-                    dark:hover:text-[#D86A47]
+                    hover:text-[#9a6a35]
+                    dark:hover:text-[#9a6a35]
+                    cursor-pointer
                   "
                 >
                   <ArrowRight size={17} />
@@ -1146,11 +1126,14 @@ export const AuthModal: React.FC = () => {
                     mb-5
                     grid
                     grid-cols-2
-                    rounded-[15px]
-                    sm:rounded-[17px]
-                    bg-[#EFE7DF]
+                    rounded-2xl
+                    border
+                    border-black/10
+                    bg-white/50
                     p-1
-                    dark:bg-[#211B18]
+                    dark:border-white/10
+                    dark:bg-white/5
+                    backdrop-blur-xl
                   "
                 >
                   <button
@@ -1161,32 +1144,32 @@ export const AuthModal: React.FC = () => {
                     }
                     className={`
                       flex
-                      min-h-[48px]
-                      sm:min-h-[52px]
+                      min-h-[46px]
+                      sm:min-h-[48px]
                       items-center
                       justify-center
                       gap-1.5
                       sm:gap-2
-                      rounded-[12px]
-                      sm:rounded-[13px]
+                      rounded-xl
                       px-2
                       text-[13px]
                       sm:text-[14px]
-                      font-bold
+                      font-black
                       transition-all
+                      cursor-pointer
                       ${authModalTab === 'login'
                         ? `
-                              bg-[#FAF7F2]
-                              text-[#B24C2B]
-                              shadow-sm
-                              dark:bg-[#302721]
-                              dark:text-[#D86A47]
+                              bg-[#211d18]
+                              text-white
+                              dark:bg-white
+                              dark:text-black
+                              shadow-md
                             `
                         : `
-                              text-[#87786E]
-                              hover:text-[#B24C2B]
-                              dark:text-[#93877E]
-                              dark:hover:text-[#D86A47]
+                              text-black/60
+                              hover:text-[#9a6a35]
+                              dark:text-white/60
+                              dark:hover:text-[#9a6a35]
                             `
                       }
                     `}
@@ -1203,32 +1186,32 @@ export const AuthModal: React.FC = () => {
                     }
                     className={`
                       flex
-                      min-h-[48px]
-                      sm:min-h-[52px]
+                      min-h-[46px]
+                      sm:min-h-[48px]
                       items-center
                       justify-center
                       gap-1.5
                       sm:gap-2
-                      rounded-[12px]
-                      sm:rounded-[13px]
+                      rounded-xl
                       px-2
                       text-[13px]
                       sm:text-[14px]
-                      font-bold
+                      font-black
                       transition-all
+                      cursor-pointer
                       ${authModalTab === 'register'
                         ? `
-                              bg-[#FAF7F2]
-                              text-[#B24C2B]
-                              shadow-sm
-                              dark:bg-[#302721]
-                              dark:text-[#D86A47]
+                              bg-[#211d18]
+                              text-white
+                              dark:bg-white
+                              dark:text-black
+                              shadow-md
                             `
                         : `
-                              text-[#87786E]
-                              hover:text-[#B24C2B]
-                              dark:text-[#93877E]
-                              dark:hover:text-[#D86A47]
+                              text-black/60
+                              hover:text-[#9a6a35]
+                              dark:text-white/60
+                              dark:hover:text-[#9a6a35]
                             `
                       }
                     `}
@@ -1245,17 +1228,16 @@ export const AuthModal: React.FC = () => {
                 {authModalTab === 'login' && (
                   <form
                     onSubmit={handleLogin}
-                    className="space-y-4.5 sm:space-y-5"
+                    className="space-y-4 sm:space-y-5"
                   >
                     {/* Username */}
-
                     <div>
                       <label
                         htmlFor="login-username-input"
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -1290,32 +1272,29 @@ export const AuthModal: React.FC = () => {
                           min-w-0
                           items-start
                           gap-2
-                          rounded-[12px]
-                          sm:rounded-[13px]
+                          rounded-2xl
                           border
-                          border-[#B24C2B]/15
-                          bg-[#B24C2B]/6
-                          px-3
+                          border-[#9a6a35]/20
+                          bg-[#9a6a35]/10
+                          px-3.5
                           py-2.5
                           sm:py-3
                           text-[11px]
                           leading-5
                           sm:text-[12px]
                           sm:leading-6
-                          text-[#795D4F]
-                          dark:border-[#D06A47]/20
-                          dark:bg-[#D06A47]/8
-                          dark:text-[#C9A99A]
+                          text-[#211d18]
+                          dark:text-[#f5f0e7]
                         "
                       >
                         <Info
                           size={15}
-                          className="mt-0.5 shrink-0 text-[#B24C2B]"
+                          className="mt-0.5 shrink-0 text-[#9a6a35]"
                         />
 
                         <span className="min-w-0">
                           اكتب نفس اسم المستخدم اللي عملت بيه الحساب.
-                          <strong className="mr-1 text-[#B24C2B] dark:text-[#D06A47]">
+                          <strong className="mr-1 text-[#9a6a35]">
                             ينفع يكون بالعربي.
                           </strong>
                         </span>
@@ -1323,14 +1302,13 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Password */}
-
                     <div>
                       <label
                         htmlFor="login-password-input"
                         className={labelClass}
                       >
                         كلمة المرور
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -1380,12 +1358,14 @@ export const AuthModal: React.FC = () => {
                             items-center
                             justify-center
                             rounded-xl
-                            text-[#8D7E74]
+                            text-black/50
                             transition-all
-                            hover:bg-[#B24C2B]/10
-                            hover:text-[#B24C2B]
-                            dark:text-[#887C73]
-                            dark:hover:text-[#D86A47]
+                            hover:bg-black/5
+                            hover:text-[#9a6a35]
+                            dark:text-white/50
+                            dark:hover:bg-white/5
+                            dark:hover:text-[#9a6a35]
+                            cursor-pointer
                           "
                           aria-label={
                             showPassword
@@ -1414,16 +1394,16 @@ export const AuthModal: React.FC = () => {
                           text-[12px]
                           sm:text-[13px]
                           font-bold
-                          text-[#B24C2B]
+                          text-[#9a6a35]
                           transition-colors
-                          hover:text-[#963E21]
-                          dark:text-[#D86A47]
+                          hover:underline
+                          cursor-pointer
                         "
                       >
                         نسيت كلمة المرور؟
                       </button>
 
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#8B7D73] dark:text-[#93877E]">
+                      <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-black/50 dark:text-white/50 font-medium">
                         <ShieldCheck size={14} />
                         بياناتك محمية
                       </div>
@@ -1452,9 +1432,8 @@ export const AuthModal: React.FC = () => {
                     </button>
 
                     <div className="pt-0.5 text-center">
-                      <p className="text-[12px] sm:text-[13px] text-[#95877D] dark:text-[#8E8279]">
+                      <p className="text-[12px] sm:text-[13px] text-black/60 dark:text-white/60 font-medium">
                         مشترك جديد؟
-
                         <button
                           type="button"
                           onClick={() =>
@@ -1462,10 +1441,10 @@ export const AuthModal: React.FC = () => {
                           }
                           className="
                             mr-1.5
-                            font-bold
-                            text-[#B24C2B]
+                            font-black
+                            text-[#9a6a35]
                             hover:underline
-                            dark:text-[#D86A47]
+                            cursor-pointer
                           "
                         >
                           اعمل حسابك بسهولة
@@ -1482,10 +1461,9 @@ export const AuthModal: React.FC = () => {
                 {authModalTab === 'register' && (
                   <form
                     onSubmit={handleRegister}
-                    className="space-y-4.5 sm:space-y-5"
+                    className="space-y-4 sm:space-y-5"
                   >
                     {/* Role */}
-
                     <div>
                       <label className={labelClass}>
                         هتستخدم وه إزاي؟
@@ -1493,7 +1471,6 @@ export const AuthModal: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                         {/* Buyer */}
-
                         <button
                           id="role-buyer-select"
                           type="button"
@@ -1511,54 +1488,48 @@ export const AuthModal: React.FC = () => {
                             justify-center
                             gap-1.5
                             sm:gap-2
-                            rounded-[16px]
-                            sm:rounded-[18px]
+                            rounded-2xl
                             border
                             px-2
                             transition-all
+                            cursor-pointer
                             ${roleType === 'buyer'
                               ? `
-                                    border-[#B24C2B]
-                                    bg-[#B24C2B]/6
-                                    text-[#B24C2B]
-                                    shadow-[0_8px_25px_rgba(178,76,43,0.08)]
-                                    dark:border-[#C8613C]
-                                    dark:bg-[#C8613C]/10
-                                    dark:text-[#D86A47]
+                                    border-[#9a6a35]
+                                    bg-[#9a6a35]/10
+                                    text-[#9a6a35]
+                                    shadow-sm
                                   `
                               : `
-                                    border-[#DED4CA]
-                                    bg-[#FCFAF7]
-                                    text-[#7E7066]
-                                    hover:border-[#B24C2B]/40
-                                    dark:border-[#3A3029]
-                                    dark:bg-[#1C1714]
-                                    dark:text-[#9B8E84]
+                                    border-black/10
+                                    dark:border-white/10
+                                    bg-white/60
+                                    dark:bg-white/5
+                                    text-black/70
+                                    dark:text-white/70
+                                    hover:border-[#9a6a35]/40
                                   `
                             }
                           `}
                         >
                           {roleType === 'buyer' && (
-                            <span className="absolute left-2 top-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#B24C2B] text-white">
+                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#9a6a35] text-white">
                               <Check size={13} />
                             </span>
                           )}
 
-                          <UserRound
-                            size={22}
-                          />
+                          <UserRound size={22} />
 
-                          <span className="text-[14px] sm:text-[15px] font-bold">
+                          <span className="text-[14px] sm:text-[15px] font-black">
                             مشتري
                           </span>
 
-                          <span className="text-[10px] sm:text-[11px] opacity-70">
+                          <span className="text-[10px] sm:text-[11px] opacity-70 font-medium">
                             أكتشف واشتري
                           </span>
                         </button>
 
                         {/* Seller */}
-
                         <button
                           id="role-seller-select"
                           type="button"
@@ -1576,56 +1547,53 @@ export const AuthModal: React.FC = () => {
                             justify-center
                             gap-1.5
                             sm:gap-2
-                            rounded-[16px]
-                            sm:rounded-[18px]
+                            rounded-2xl
                             border
                             px-2
                             transition-all
+                            cursor-pointer
                             ${roleType === 'seller'
                               ? `
-                                    border-[#264653]
-                                    bg-[#264653]/6
-                                    text-[#264653]
-                                    shadow-[0_8px_25px_rgba(38,70,83,0.08)]
-                                    dark:border-[#719DA5]
-                                    dark:bg-[#719DA5]/10
-                                    dark:text-[#9BC4CA]
+                                    border-[#211d18]
+                                    dark:border-white
+                                    bg-[#211d18]/10
+                                    dark:bg-white/10
+                                    text-[#211d18]
+                                    dark:text-white
+                                    shadow-sm
                                   `
                               : `
-                                    border-[#DED4CA]
-                                    bg-[#FCFAF7]
-                                    text-[#7E7066]
-                                    hover:border-[#264653]/40
-                                    dark:border-[#3A3029]
-                                    dark:bg-[#1C1714]
-                                    dark:text-[#9B8E84]
+                                    border-black/10
+                                    dark:border-white/10
+                                    bg-white/60
+                                    dark:bg-white/5
+                                    text-black/70
+                                    dark:text-white/70
+                                    hover:border-black/30
                                   `
                             }
                           `}
                         >
                           {roleType === 'seller' && (
-                            <span className="absolute left-2 top-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#264653] text-white dark:bg-[#6C9AA4]">
+                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black">
                               <Check size={13} />
                             </span>
                           )}
 
                           <Store size={22} />
 
-                          <span className="text-[14px] sm:text-[15px] font-bold">
+                          <span className="text-[14px] sm:text-[15px] font-black">
                             بائع
                           </span>
 
-                          <span className="text-[10px] sm:text-[11px] opacity-70">
+                          <span className="text-[10px] sm:text-[11px] opacity-70 font-medium">
                             أعرض منتجاتي
                           </span>
                         </button>
                       </div>
                     </div>
 
-                    {/* =================================================
-                        AVATAR
-                    ================================================== */}
-
+                    {/* Avatar */}
                     <div
                       className="
                         flex
@@ -1633,15 +1601,15 @@ export const AuthModal: React.FC = () => {
                         items-center
                         gap-3
                         sm:gap-4
-                        rounded-[16px]
-                        sm:rounded-[18px]
+                        rounded-2xl
                         border
-                        border-[#E0D5CB]
-                        bg-[#F5EFE8]
+                        border-black/10
+                        bg-white/60
                         p-3
                         sm:p-4
-                        dark:border-[#392E27]
-                        dark:bg-[#201914]
+                        dark:border-white/10
+                        dark:bg-white/5
+                        backdrop-blur-xl
                       "
                     >
                       <button
@@ -1661,14 +1629,10 @@ export const AuthModal: React.FC = () => {
                           items-center
                           justify-center
                           overflow-hidden
-                          rounded-[15px]
-                          sm:rounded-[17px]
-                          bg-[#E6DCD2]
-                          text-[#89796E]
-                          ring-1
-                          ring-black/5
-                          dark:bg-[#2A211C]
-                          dark:ring-white/10
+                          rounded-2xl
+                          bg-black/5
+                          dark:bg-white/5
+                          cursor-pointer
                         "
                         aria-label="اختيار صورة الحساب"
                       >
@@ -1699,7 +1663,7 @@ export const AuthModal: React.FC = () => {
                             flex
                             items-center
                             justify-center
-                            bg-[#B24C2B]/90
+                            bg-[#9a6a35]/90
                             text-white
                             opacity-0
                             transition-opacity
@@ -1723,11 +1687,11 @@ export const AuthModal: React.FC = () => {
                       />
 
                       <div className="min-w-0">
-                        <p className="text-[13px] sm:text-[14px] font-bold text-[#30251F] dark:text-[#FFF8F0]">
+                        <p className="text-[13px] sm:text-[14px] font-black text-[#211d18] dark:text-[#f5f0e7]">
                           صورة الحساب
                         </p>
 
-                        <p className="mt-1 text-[11px] leading-5 text-[#887A70] dark:text-[#978B82] sm:text-[12px] sm:leading-6">
+                        <p className="mt-0.5 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-[12px] font-medium">
                           اختيارية — لو مش عايز ترفع صورة، هنستخدم الصورة الافتراضية.
                         </p>
 
@@ -1737,14 +1701,13 @@ export const AuthModal: React.FC = () => {
                             avatarInputRef.current?.click()
                           }
                           className="
-                            mt-0.5
-                            min-h-[32px]
+                            mt-1
                             text-[11px]
                             sm:text-[12px]
-                            font-bold
-                            text-[#B24C2B]
+                            font-black
+                            text-[#9a6a35]
                             hover:underline
-                            dark:text-[#D86A47]
+                            cursor-pointer
                           "
                         >
                           تغيير الصورة
@@ -1752,17 +1715,14 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        USERNAME
-                    ================================================== */}
-
+                    {/* Username */}
                     <div>
                       <label
                         htmlFor="register-username-input"
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -1793,27 +1753,25 @@ export const AuthModal: React.FC = () => {
                       <div
                         className="
                           mt-2
-                          rounded-[13px]
+                          rounded-2xl
                           border
-                          border-[#B24C2B]/15
-                          bg-[#B24C2B]/6
-                          px-3
+                          border-[#9a6a35]/20
+                          bg-[#9a6a35]/10
+                          px-3.5
                           py-2.5
-                          sm:px-4
                           sm:py-3
-                          dark:border-[#D06A47]/20
-                          dark:bg-[#D06A47]/8
+                          dark:border-[#9a6a35]/30
                         "
                       >
                         <div className="flex min-w-0 items-start gap-2">
                           <Info
                             size={16}
-                            className="mt-0.5 shrink-0 text-[#B24C2B]"
+                            className="mt-0.5 shrink-0 text-[#9a6a35]"
                           />
 
-                          <div className="min-w-0 text-[11px] leading-5 text-[#6E5448] dark:text-[#C9A99A] sm:text-[12px] sm:leading-6">
+                          <div className="min-w-0 text-[11px] leading-5 text-[#211d18] dark:text-[#f5f0e7] sm:text-[12px] font-medium">
                             <p>
-                              <strong className="text-[#B24C2B] dark:text-[#D06A47]">
+                              <strong className="text-[#9a6a35]">
                                 مهم:
                               </strong>{' '}
                               ده اسمك في وه والاسم اللي هتستخدمه لتسجيل الدخول بعد كده.
@@ -1827,17 +1785,14 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        NAME
-                    ================================================== */}
-
+                    {/* Name */}
                     <div>
                       <label
                         htmlFor="register-name-input"
                         className={labelClass}
                       >
                         الاسم بالكامل
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -1864,10 +1819,7 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        WORKSHOP
-                    ================================================== */}
-
+                    {/* Workshop */}
                     {roleType === 'seller' && (
                       <div>
                         <label
@@ -1875,7 +1827,7 @@ export const AuthModal: React.FC = () => {
                           className={labelClass}
                         >
                           اسم الورشة أو المشروع
-                          <span className="mr-1 text-[#B24C2B]">
+                          <span className="mr-1 text-[#9a6a35]">
                             *
                           </span>
                         </label>
@@ -1903,17 +1855,14 @@ export const AuthModal: React.FC = () => {
                       </div>
                     )}
 
-                    {/* =================================================
-                        PHONE
-                    ================================================== */}
-
+                    {/* Phone */}
                     <div>
                       <label
                         htmlFor="register-phone-input"
                         className={labelClass}
                       >
                         رقم الموبايل
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -1942,10 +1891,7 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        GOVERNORATE
-                    ================================================== */}
-
+                    {/* Governorate */}
                     <div>
                       <label
                         htmlFor="register-governorate-select"
@@ -2029,10 +1975,7 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        EMAIL
-                    ================================================== */}
-
+                    {/* Email */}
                     <div>
                       <label
                         htmlFor="register-email-input"
@@ -2040,7 +1983,7 @@ export const AuthModal: React.FC = () => {
                       >
                         البريد الإلكتروني
 
-                        <span className="mr-1 text-[11px] sm:text-[12px] font-normal text-[#9A8D82]">
+                        <span className="mr-1 text-[11px] sm:text-[12px] font-normal text-black/50 dark:text-white/50">
                           اختياري
                         </span>
                       </label>
@@ -2068,17 +2011,14 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* =================================================
-                        PASSWORD
-                    ================================================== */}
-
+                    {/* Password */}
                     <div>
                       <label
                         htmlFor="register-password-input"
                         className={labelClass}
                       >
                         كلمة المرور
-                        <span className="mr-1 text-[#B24C2B]">
+                        <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
                       </label>
@@ -2128,12 +2068,14 @@ export const AuthModal: React.FC = () => {
                             items-center
                             justify-center
                             rounded-xl
-                            text-[#8D7E74]
+                            text-black/50
                             transition-all
-                            hover:bg-[#B24C2B]/10
-                            hover:text-[#B24C2B]
-                            dark:text-[#887C73]
-                            dark:hover:text-[#D86A47]
+                            hover:bg-black/5
+                            hover:text-[#9a6a35]
+                            dark:text-white/50
+                            dark:hover:bg-white/5
+                            dark:hover:text-[#9a6a35]
+                            cursor-pointer
                           "
                           aria-label={
                             showRegisterPassword
@@ -2149,15 +2091,12 @@ export const AuthModal: React.FC = () => {
                         </button>
                       </div>
 
-                      <p className="mt-2 text-[11px] leading-5 text-[#918279] dark:text-[#91867D] sm:text-[12px]">
+                      <p className="mt-2 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-[12px] font-medium">
                         اختار كلمة مرور تقدر تفتكرها، ولازم تكون 6 أحرف على الأقل.
                       </p>
                     </div>
 
-                    {/* =================================================
-                        SUBMIT
-                    ================================================== */}
-
+                    {/* Submit */}
                     <button
                       id="auth-submit-btn"
                       type="submit"
@@ -2191,14 +2130,15 @@ export const AuthModal: React.FC = () => {
                         text-center
                         text-[11px]
                         leading-5
-                        text-[#918279]
-                        dark:text-[#91867D]
+                        text-black/60
+                        dark:text-white/60
                         sm:text-[12px]
+                        font-medium
                       "
                     >
                       <ShieldCheck
                         size={15}
-                        className="shrink-0"
+                        className="shrink-0 text-[#9a6a35]"
                       />
 
                       <span>

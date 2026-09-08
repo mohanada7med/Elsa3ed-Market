@@ -440,6 +440,181 @@ router.put('/sellers/:id', async (req: AuthenticatedRequest, res: Response) => {
   }
 });
 
+// ==================== SELLER APPROVAL REQUESTS (REST API) ====================
+
+// GET /api/admin/seller-requests - List seller approval requests with status filter
+router.get('/seller-requests', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status, search } = req.query;
+    const { db, isMongo } = await getDatabase();
+    let sellers: any[] = [];
+
+    const query: any = {};
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    if (isMongo && db) {
+      sellers = await db.collection('sellers').find(query).sort({ createdAt: -1 }).toArray();
+    } else {
+      sellers = memoryDb.sellers.filter((s) => {
+        if (status && status !== 'all' && s.status !== status) return false;
+        return true;
+      });
+    }
+
+    // Enrich with username and requestDate
+    const enriched = sellers.map(({ passwordHash, ...s }) => ({
+      id: s.id,
+      userId: s.userId || s.id,
+      userName: s.name,
+      username: s.username || s.name,
+      workshopName: s.brandName || s.name,
+      specialty: s.specialty || 'مشغولات تراثية',
+      governorate: s.governorate,
+      phone: s.phone,
+      email: s.email,
+      status: s.status || 'pending',
+      rejectionReason: s.rejectionReason,
+      suspensionReason: s.suspensionReason,
+      requestDate: s.createdAt || s.joinedDate,
+      createdAt: s.createdAt || s.joinedDate,
+      avatar: s.avatar,
+      coverImage: s.coverImage,
+      bio: s.bio,
+      story: s.story,
+      payoutMethod: s.payoutMethod,
+      payoutAccount: s.payoutAccount
+    }));
+
+    if (search && typeof search === 'string') {
+      const q = search.trim().toLowerCase();
+      const filtered = enriched.filter(
+        (r) =>
+          r.userName?.toLowerCase().includes(q) ||
+          r.workshopName?.toLowerCase().includes(q) ||
+          r.governorate?.toLowerCase().includes(q) ||
+          r.phone?.includes(q)
+      );
+      return res.json({ success: true, count: filtered.length, data: filtered });
+    }
+
+    res.json({
+      success: true,
+      count: enriched.length,
+      data: enriched
+    });
+  } catch (error: any) {
+    console.error('Error fetching admin seller requests:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'فشل في جلب طلبات اعتماد البائعين',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// GET /api/admin/seller-requests/:id - View details of a specific seller request
+router.get('/seller-requests/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const requestId = req.params.id;
+    const { db, isMongo } = await getDatabase();
+    let sellerDoc: any = null;
+
+    if (isMongo && db) {
+      sellerDoc = await db.collection('sellers').findOne({
+        $or: [{ id: requestId }, { userId: requestId }]
+      });
+    }
+
+    if (!sellerDoc) {
+      sellerDoc = memoryDb.sellers.find((s) => s.id === requestId || (s as any).userId === requestId);
+    }
+
+    if (!sellerDoc) {
+      return res.status(404).json({
+        success: false,
+        error: 'طلب الاعتماد غير موجود',
+        code: 'NOT_FOUND'
+      });
+    }
+
+    const { passwordHash, ...sanitized } = sellerDoc;
+    res.json({
+      success: true,
+      data: {
+        ...sanitized,
+        userId: sanitized.userId || sanitized.id,
+        userName: sanitized.name,
+        requestDate: sanitized.createdAt || sanitized.joinedDate
+      }
+    });
+  } catch (error: any) {
+    console.error('Error fetching seller request details:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'فشل في جلب تفاصيل طلب البائع',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// PATCH & POST /api/admin/seller-requests/:id/approve - Approve seller request
+const handleApproveRequest = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const requestId = req.params.id;
+    const updatedSeller = await adminUpdateSellerStatus(req.user!, requestId, 'approved');
+    const { passwordHash, ...sanitized } = updatedSeller as any;
+
+    res.json({
+      success: true,
+      message: 'تم اعتماد طلب البائع وترقية الحساب إلى بائع رسمي بنجاح',
+      data: sanitized
+    });
+  } catch (error: any) {
+    console.error('Error approving seller request:', error);
+    const isNotFound = error.message?.includes('غير موجود');
+    res.status(isNotFound ? 404 : 400).json({
+      success: false,
+      error: error.message || 'فشل في اعتماد طلب البائع',
+      code: isNotFound ? 'NOT_FOUND' : 'APPROVAL_ERROR'
+    });
+  }
+};
+router.patch('/seller-requests/:id/approve', handleApproveRequest);
+router.post('/seller-requests/:id/approve', handleApproveRequest);
+
+// PATCH & POST /api/admin/seller-requests/:id/reject - Reject seller request
+const handleRejectRequest = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const requestId = req.params.id;
+    const { reason } = req.body;
+    const updatedSeller = await adminUpdateSellerStatus(
+      req.user!,
+      requestId,
+      'rejected',
+      reason?.trim() || 'لم يستوفِ الملف المعايير التراثية المطلوبة'
+    );
+    const { passwordHash, ...sanitized } = updatedSeller as any;
+
+    res.json({
+      success: true,
+      message: 'تم رفض طلب البائع وإرسال إشعار للمستخدم بسبب الرفض بنجاح',
+      data: sanitized
+    });
+  } catch (error: any) {
+    console.error('Error rejecting seller request:', error);
+    const isNotFound = error.message?.includes('غير موجود');
+    res.status(isNotFound ? 404 : 400).json({
+      success: false,
+      error: error.message || 'فشل في رفض طلب البائع',
+      code: isNotFound ? 'NOT_FOUND' : 'REJECTION_ERROR'
+    });
+  }
+};
+router.patch('/seller-requests/:id/reject', handleRejectRequest);
+router.post('/seller-requests/:id/reject', handleRejectRequest);
+
 // ==================== ORDERS MANAGEMENT ====================
 
 // GET /api/admin/orders - List all orders with filters

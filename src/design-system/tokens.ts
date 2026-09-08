@@ -7,56 +7,56 @@ export const WAH_TOKENS = {
   colors: {
     light: {
       // Core Brand & Heritage
-      primary: '#B24C2B', // Artisanal Terracotta / Nile Silt Clay
-      primaryHover: '#963E21',
-      primaryActive: '#7A2F17',
-      primaryLight: '#F7ECE6',
-      secondary: '#264653', // Deep Nile Water / Slate Teal
-      secondaryHover: '#1E3640',
-      secondaryLight: '#E9F1F3',
-      accent: '#D97724', // Sunlit Desert Ochre / Honey Amber
-      accentHover: '#B86018',
-      accentLight: '#FDF3E7',
+      primary: '#9a6a35', // Heritage terracotta & burnt wood
+      primaryHover: '#7d5427',
+      primaryActive: '#623f1a',
+      primaryLight: '#f6ede3',
+      secondary: '#211d18', // Deep Basalt
+      secondaryHover: '#362f27',
+      secondaryLight: 'rgba(33, 29, 24, 0.08)',
+      accent: '#9a6a35', // Brand Accent
+      accentHover: '#7d5427',
+      accentLight: 'rgba(154, 106, 53, 0.12)',
 
       // Semantic Backgrounds & Surfaces
-      background: '#FAF7F2', // Warm Desert Sand Ivory
-      backgroundSecondary: '#F3ECE2', // Natural Stone / Sunned Clay
-      backgroundTertiary: '#EAE1D5', // Soft Sandstone
-      surface: '#FFFFFF', // Elevated Pure Surface
-      surfaceHover: '#F7F2EB',
-      surfaceActive: '#EFE7DC',
-      surfaceSubtle: '#F3ECE2',
-      surfaceMuted: '#EAE1D5',
+      background: '#eee8dc', // Warm earthy clay and sand
+      backgroundSecondary: '#e4ddd1',
+      backgroundTertiary: '#dad2c4',
+      surface: 'rgba(255, 255, 255, 0.75)', // Glassmorphic surface
+      surfaceHover: 'rgba(255, 255, 255, 0.85)',
+      surfaceActive: 'rgba(255, 255, 255, 0.95)',
+      surfaceSubtle: 'rgba(0, 0, 0, 0.035)',
+      surfaceMuted: 'rgba(0, 0, 0, 0.06)',
 
       // Semantic Foregrounds / Typography
-      foreground: '#241E1A', // Dark Basalt Earth (WCAG AAA)
-      foregroundSecondary: '#54493F', // High contrast secondary
-      foregroundMuted: '#73675B', // Weathered Sandstone (WCAG AA 5.8:1)
-      foregroundDisabled: '#9C8E80', // Desert Dust
+      foreground: '#211d18', // Deep dark primary text
+      foregroundSecondary: '#4a4137',
+      foregroundMuted: '#6e6255',
+      foregroundDisabled: '#9e9183',
 
       // Legacy Aliases
-      text: '#241E1A',
-      textMuted: '#73675B',
-      textSubtle: '#9C8E80',
+      text: '#211d18',
+      textMuted: '#6e6255',
+      textSubtle: '#9e9183',
 
       // Semantic Borders
-      border: '#E5DDD3', // Sun-baked Clay Border
-      borderSubtle: '#F0E9E0',
-      borderHover: '#CBBDB0',
-      borderStrong: '#B3A292',
+      border: 'rgba(0, 0, 0, 0.1)',
+      borderSubtle: 'rgba(0, 0, 0, 0.06)',
+      borderHover: 'rgba(154, 106, 53, 0.4)',
+      borderStrong: 'rgba(0, 0, 0, 0.2)',
 
       // Forms & Inputs
-      inputBackground: '#FFFFFF',
-      inputBorder: '#E5DDD3',
-      inputPlaceholder: '#8C7E72',
+      inputBackground: 'rgba(0, 0, 0, 0.035)',
+      inputBorder: 'rgba(0, 0, 0, 0.1)',
+      inputPlaceholder: 'rgba(33, 29, 24, 0.4)',
 
       // Cards
-      cardBackground: '#FFFFFF',
-      cardBorder: '#E5DDD3',
+      cardBackground: 'rgba(255, 255, 255, 0.75)',
+      cardBorder: 'rgba(0, 0, 0, 0.1)',
 
       // Overlays & Shadows
-      overlay: 'rgba(36, 30, 26, 0.6)',
-      shadow: 'rgba(36, 30, 26, 0.08)',
+      overlay: 'rgba(33, 29, 24, 0.6)',
+      shadow: 'rgba(154, 106, 53, 0.1)',
 
       // Status Colors (WCAG AA Compliant)
       success: '#286644', // Fertile Nile Agriculture Green
@@ -66,52 +66,52 @@ export const WAH_TOKENS = {
     },
     dark: {
       // Core Brand & Heritage
-      primary: '#E0633C', // Luminous Terracotta (WCAG AAA 7.2:1 against dark surface)
-      primaryHover: '#F07A54',
-      primaryActive: '#F59374',
-      primaryLight: 'rgba(224, 99, 60, 0.15)',
-      secondary: '#427B8C', // Luminous Nile Twilight
-      secondaryHover: '#5494A7',
-      secondaryLight: 'rgba(66, 123, 140, 0.15)',
-      accent: '#E68A35', // Golden Desert Flare
-      accentHover: '#F29C4E',
-      accentLight: 'rgba(230, 138, 53, 0.15)',
+      primary: '#9a6a35', // Heritage terracotta & burnt wood
+      primaryHover: '#d5a56d',
+      primaryActive: '#e6b983',
+      primaryLight: 'rgba(154, 106, 53, 0.2)',
+      secondary: '#f5f0e7',
+      secondaryHover: '#ded6c8',
+      secondaryLight: 'rgba(245, 240, 231, 0.1)',
+      accent: '#9a6a35',
+      accentHover: '#d5a56d',
+      accentLight: 'rgba(154, 106, 53, 0.2)',
 
       // Semantic Backgrounds & Surfaces
-      background: '#110E0C', // Deep Basalt Night
-      backgroundSecondary: '#1A1512',
-      backgroundTertiary: '#231D19',
-      surface: '#1B1613', // Deep Clay Slate
-      surfaceHover: '#26201B', // Dark Terracotta Wash
-      surfaceActive: '#302822',
-      surfaceSubtle: '#26201B',
-      surfaceMuted: '#322923',
+      background: '#0b0b0a', // Deep elegant dark background
+      backgroundSecondary: '#121210',
+      backgroundTertiary: '#1a1a17',
+      surface: 'rgba(21, 21, 19, 0.9)', // Glassmorphic dark card
+      surfaceHover: 'rgba(30, 30, 27, 0.95)',
+      surfaceActive: 'rgba(40, 40, 36, 0.95)',
+      surfaceSubtle: 'rgba(255, 255, 255, 0.04)',
+      surfaceMuted: 'rgba(255, 255, 255, 0.07)',
 
       // Semantic Foregrounds / Typography
-      foreground: '#F7F3EE', // Warm Alabaster Ivory (WCAG AAA 16.3:1)
-      foregroundSecondary: '#D8CFC5', // High-contrast secondary (11.2:1)
-      foregroundMuted: '#A89B8F', // Desert Twilight Dust (WCAG AA 6.9:1)
-      foregroundDisabled: '#7E7166', // Shadowed Silt
+      foreground: '#f5f0e7', // Soft eye-friendly light text
+      foregroundSecondary: '#ded6c8',
+      foregroundMuted: '#aba191',
+      foregroundDisabled: '#786f62',
 
       // Legacy Aliases
-      text: '#F7F3EE',
-      textMuted: '#A89B8F',
-      textSubtle: '#7E7166',
+      text: '#f5f0e7',
+      textMuted: '#aba191',
+      textSubtle: '#786f62',
 
       // Semantic Borders
-      border: '#352B24', // Deep Bronze Clay
-      borderSubtle: '#29211C',
-      borderHover: '#4D3E34',
-      borderStrong: '#665346',
+      border: 'rgba(255, 255, 255, 0.1)',
+      borderSubtle: 'rgba(255, 255, 255, 0.06)',
+      borderHover: 'rgba(154, 106, 53, 0.5)',
+      borderStrong: 'rgba(255, 255, 255, 0.2)',
 
       // Forms & Inputs
-      inputBackground: '#1F1916',
-      inputBorder: '#44372E',
-      inputPlaceholder: '#8A7D71', // Meets AA placeholder contrast
+      inputBackground: 'rgba(255, 255, 255, 0.04)',
+      inputBorder: 'rgba(255, 255, 255, 0.1)',
+      inputPlaceholder: '#aba191',
 
       // Cards
-      cardBackground: '#1B1613',
-      cardBorder: '#352B24',
+      cardBackground: 'rgba(21, 21, 19, 0.9)',
+      cardBorder: 'rgba(255, 255, 255, 0.1)',
 
       // Overlays & Shadows
       overlay: 'rgba(0, 0, 0, 0.75)',
@@ -141,7 +141,7 @@ export const WAH_TOKENS = {
     soft: '0 2px 8px -2px rgba(36, 30, 26, 0.05)',
     card: '0 6px 20px -4px rgba(36, 30, 26, 0.07)',
     cardHover: '0 12px 30px -6px rgba(36, 30, 26, 0.12)',
-    terracottaGlow: '0 8px 24px -4px rgba(178, 76, 43, 0.25)',
+    terracottaGlow: '0 8px 24px -4px rgba(154, 106, 53, 0.25)',
   }
 } as const;
 

@@ -27,6 +27,8 @@ import reelRoutes from './routes/reelRoutes.ts';
 import chatRoutes from './routes/chatRoutes.ts';
 import wahContentRoutes from './routes/wahContentRoutes.ts';
 import adminMediaRoutes from './routes/adminMediaRoutes.ts';
+import sellerRequestRoutes from './routes/sellerRequestRoutes.ts';
+import notificationRoutes from './routes/notificationRoutes.ts';
 
 
 export function createApp(): Express {
@@ -137,6 +139,8 @@ export function createApp(): Express {
     { prefix: '/cart', router: cartRoutes },
     { prefix: '/orders', router: orderRoutes },
     { prefix: '/seller', router: sellerRoutes },
+    { prefix: '/seller-requests', router: sellerRequestRoutes },
+    { prefix: '/notifications', router: notificationRoutes },
     { prefix: '/admin/media', router: adminMediaRoutes },
     { prefix: '/admin', router: adminRoutes },
     { prefix: '', router: commonRoutes }

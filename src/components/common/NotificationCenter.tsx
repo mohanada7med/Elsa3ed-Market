@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import {
@@ -56,7 +55,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
   const targetSellerId = currentUser?.sellerId || currentUser?.id;
 
-  const role = currentRole as 'admin' | 'seller' | 'buyer' | 'guest';
+  const role = currentRole as 'admin' | 'seller' | 'buyer';
 
   /* =========================================================
      LOAD NOTIFICATIONS
@@ -73,12 +72,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
   useEffect(() => {
     loadNotifications();
-
-    const interval = window.setInterval(() => {
-      loadNotifications();
-    }, 8000);
-
-    return () => window.clearInterval(interval);
+    const unsub = notificationService.subscribe(loadNotifications);
+    return () => {
+      unsub();
+    };
   }, [currentRole, targetSellerId]);
 
   /* =========================================================
@@ -275,12 +272,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'password_reset_requested':
         return (
-          <KeyRound className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+          <KeyRound className="h-4 w-4 text-[#9a6a35]" />
         );
 
       default:
         return (
-          <Bell className="h-4 w-4 text-[#B24C2B]" />
+          <Bell className="h-4 w-4 text-[#9a6a35]" />
         );
     }
   };
@@ -369,18 +366,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           lg:h-11
           rounded-xl
           border
-          border-[#E5DDD3]
-          dark:border-[#352B24]
-          bg-white
-          dark:bg-[#201A17]
-          text-[#73675B]
-          dark:text-[#C5BCB3]
+          border-black/10
+          dark:border-white/10
+          bg-white/80
+          dark:bg-white/5
+          text-black/70
+          dark:text-white/70
           transition-all
           duration-200
-          hover:border-[#B24C2B]
-          hover:text-[#B24C2B]
-          hover:bg-[#FAF7F2]
-          dark:hover:bg-[#2A2320]
+          hover:border-[#9a6a35]
+          hover:text-[#9a6a35]
+          hover:bg-white
+          dark:hover:bg-white/10
           active:scale-95
           cursor-pointer
           shadow-sm
@@ -396,7 +393,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         />
 
         {/* Unread Badge */}
-
         {unreadCount > 0 && (
           <motion.span
             initial={{
@@ -415,7 +411,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               h-[18px]
               px-1
               rounded-full
-              bg-[#B24C2B]
+              bg-[#9a6a35]
               text-white
               text-[9px]
               font-black
@@ -423,8 +419,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               items-center
               justify-center
               border-2
-              border-white
-              dark:border-[#15110E]
+              border-[#eee8dc]
+              dark:border-[#0b0b0a]
               shadow-md
             "
           >
@@ -467,59 +463,36 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             className="
               absolute
               z-[100]
-
-              /* Desktop */
               right-0
               top-[calc(100%+10px)]
               w-[420px]
-
-              /* Tablet */
               sm:w-[420px]
-
-              /* Mobile */
               max-w-[calc(100vw-16px)]
-
-              bg-white
-              dark:bg-[#1E1917]
-
+              bg-white/95
+              dark:bg-[#151513]/95
+              backdrop-blur-2xl
               border
-              border-[#E5DDD3]
-              dark:border-[#352B24]
-
-              rounded-2xl
-              sm:rounded-3xl
-
-              shadow-[0_20px_60px_rgba(45,42,38,0.18)]
-              dark:shadow-[0_20px_60px_rgba(0,0,0,0.45)]
-
+              border-black/10
+              dark:border-white/10
+              rounded-[1.5rem]
+              shadow-2xl
               overflow-hidden
-
               origin-top-right
-
               flex
               flex-col
-
               max-h-[min(680px,calc(100vh-90px))]
             "
           >
-            {/* =================================================
-                PANEL HEADER
-            ================================================= */}
-
+            {/* PANEL HEADER */}
             <div
               className="
-                px-3
-                py-3
-                sm:px-4
-                sm:py-4
-
-                bg-[#FAF7F2]
-                dark:bg-[#26201C]
-
+                px-4
+                py-3.5
+                bg-black/5
+                dark:bg-white/5
                 border-b
-                border-[#E5DDD3]
-                dark:border-[#352B24]
-
+                border-black/10
+                dark:border-white/10
                 flex
                 items-center
                 justify-between
@@ -532,15 +505,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     w-9
                     h-9
                     rounded-xl
-                    bg-[#B24C2B]/10
-                    dark:bg-[#B24C2B]/20
+                    bg-[#9a6a35]/10
                     flex
                     items-center
                     justify-center
                     shrink-0
                   "
                 >
-                  <Bell className="w-4 h-4 text-[#B24C2B]" />
+                  <Bell className="w-4 h-4 text-[#9a6a35]" />
                 </div>
 
                 <div className="min-w-0">
@@ -550,8 +522,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         text-[13px]
                         sm:text-sm
                         font-black
-                        text-[#2D2A26]
-                        dark:text-[#FAF6F2]
+                        text-[#211d18]
+                        dark:text-[#f5f0e7]
                         truncate
                       "
                     >
@@ -562,10 +534,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       <span
                         className="
                           shrink-0
-                          bg-[#B24C2B]
+                          bg-[#9a6a35]
                           text-white
                           text-[9px]
-                          font-bold
+                          font-black
                           px-1.5
                           py-0.5
                           rounded-full
@@ -581,9 +553,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       mt-0.5
                       text-[10px]
                       sm:text-[11px]
-                      text-[#73675B]
-                      dark:text-[#A89C90]
+                      text-black/60
+                      dark:text-white/60
                       truncate
+                      font-medium
                     "
                   >
                     {roleDescription}
@@ -603,8 +576,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   items-center
                   justify-center
                   rounded-lg
-                  text-[#8C7E72]
-                  hover:text-[#B24C2B]
+                  text-black/50
+                  dark:text-white/50
+                  hover:text-[#9a6a35]
                   hover:bg-black/5
                   dark:hover:bg-white/5
                   transition-colors
@@ -615,29 +589,15 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               </button>
             </div>
 
-            {/* =================================================
-                BROWSER NOTIFICATIONS
-            ================================================= */}
-
+            {/* BROWSER NOTIFICATIONS */}
             <div
               className="
-                px-3
+                px-4
                 py-2.5
-                sm:px-4
-
-                bg-gradient-to-r
-                from-amber-500/10
-                via-[#B24C2B]/10
-                to-amber-500/10
-
-                dark:from-amber-950/30
-                dark:via-[#B24C2B]/20
-                dark:to-amber-950/30
-
+                bg-[#9a6a35]/10
                 border-b
-                border-[#E5DDD3]
-                dark:border-[#352B24]
-
+                border-black/10
+                dark:border-white/10
                 flex
                 items-center
                 justify-between
@@ -650,7 +610,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     w-7
                     h-7
                     rounded-lg
-                    bg-[#B24C2B]
+                    bg-[#9a6a35]
                     text-white
                     flex
                     items-center
@@ -667,9 +627,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     className="
                       text-[10px]
                       sm:text-[11px]
-                      font-bold
-                      text-[#2D2A26]
-                      dark:text-[#FAF6F2]
+                      font-black
+                      text-[#211d18]
+                      dark:text-[#f5f0e7]
                       truncate
                     "
                   >
@@ -686,9 +646,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     className="
                       text-[9px]
                       sm:text-[10px]
-                      text-[#73675B]
-                      dark:text-[#A89C90]
+                      text-black/60
+                      dark:text-white/60
                       truncate
+                      font-medium
                     "
                   >
                     {browserNotificationPermission ===
@@ -721,23 +682,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         justify-center
                         transition-all
                         cursor-pointer
-
                         ${browserNotificationSettings.soundEnabled
-                          ? `
-                              bg-amber-100
-                              dark:bg-amber-900/40
-                              text-amber-800
-                              dark:text-amber-200
-                              border-amber-300
-                              dark:border-amber-700
-                            `
-                          : `
-                              bg-gray-100
-                              dark:bg-gray-800
-                              text-gray-400
-                              border-gray-200
-                              dark:border-gray-700
-                            `
+                          ? 'bg-[#9a6a35]/15 border-[#9a6a35]/30 text-[#9a6a35]'
+                          : 'bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 border-black/10 dark:border-white/10'
                         }
                       `}
                       title={
@@ -760,17 +707,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         h-7
                         px-2.5
                         rounded-lg
-                        bg-white
-                        dark:bg-[#2A2320]
+                        bg-white/80
+                        dark:bg-white/5
                         border
-                        border-[#B24C2B]/30
-                        hover:border-[#B24C2B]
-                        text-[#B24C2B]
-                        dark:text-[#FF855D]
-                        hover:bg-[#B24C2B]
+                        border-[#9a6a35]/30
+                        hover:border-[#9a6a35]
+                        text-[#9a6a35]
+                        hover:bg-[#9a6a35]
                         hover:text-white
                         text-[9px]
-                        font-bold
+                        font-black
                         transition-all
                         cursor-pointer
                       "
@@ -796,13 +742,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     className="
                       h-7
                       px-2.5
-                      bg-[#B24C2B]
-                      hover:bg-[#963E21]
-                      disabled:opacity-50
+                      bg-[#211d18]
+                      dark:bg-white
                       text-white
+                      dark:text-black
+                      hover:bg-[#9a6a35]
+                      dark:hover:bg-[#d5a56d]
+                      disabled:opacity-50
                       rounded-lg
                       text-[9px]
-                      font-bold
+                      font-black
                       transition-all
                       cursor-pointer
                       flex
@@ -822,22 +771,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               </div>
             </div>
 
-            {/* =================================================
-                FILTERS
-            ================================================= */}
-
+            {/* FILTERS */}
             <div
               className="
-                px-3
+                px-4
                 py-2
-
-                bg-white
-                dark:bg-[#1E1917]
-
+                bg-white/50
+                dark:bg-white/[0.02]
                 border-b
-                border-[#E5DDD3]
-                dark:border-[#352B24]
-
+                border-black/10
+                dark:border-white/10
                 flex
                 items-center
                 justify-between
@@ -849,23 +792,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   type="button"
                   onClick={() => setFilter('all')}
                   className={`
-                    px-2.5
-                    sm:px-3
+                    px-3
                     py-1.5
                     rounded-lg
                     text-[10px]
-                    font-bold
+                    font-black
                     transition-all
                     cursor-pointer
-
                     ${filter === 'all'
-                      ? 'bg-[#B24C2B] text-white'
-                      : `
-                          text-[#73675B]
-                          dark:text-[#A89C90]
-                          hover:bg-[#F3EFE9]
-                          dark:hover:bg-[#2A2420]
-                        `
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-xs'
+                      : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                     }
                   `}
                 >
@@ -876,23 +812,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   type="button"
                   onClick={() => setFilter('unread')}
                   className={`
-                    px-2.5
-                    sm:px-3
+                    px-3
                     py-1.5
                     rounded-lg
                     text-[10px]
-                    font-bold
+                    font-black
                     transition-all
                     cursor-pointer
-
                     ${filter === 'unread'
-                      ? 'bg-[#B24C2B] text-white'
-                      : `
-                          text-[#73675B]
-                          dark:text-[#A89C90]
-                          hover:bg-[#F3EFE9]
-                          dark:hover:bg-[#2A2420]
-                        `
+                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                     }
                   `}
                 >
@@ -908,8 +837,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       onClick={handleMarkAllAsRead}
                       className="
                         text-[10px]
-                        font-bold
-                        text-[#B24C2B]
+                        font-black
+                        text-[#9a6a35]
                         hover:underline
                         flex
                         items-center
@@ -918,7 +847,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       "
                     >
                       <CheckCheck className="w-3.5 h-3.5" />
-
                       <span className="hidden sm:inline">
                         قراءة الكل
                       </span>
@@ -932,8 +860,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       w-7
                       h-7
                       rounded-lg
-                      text-gray-400
-                      hover:text-red-500
+                      text-black/40
+                      dark:text-white/40
+                      hover:text-red-600
                       hover:bg-red-50
                       dark:hover:bg-red-950/20
                       flex
@@ -950,25 +879,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               )}
             </div>
 
-            {/* =================================================
-                NOTIFICATIONS LIST
-            ================================================= */}
-
+            {/* NOTIFICATIONS LIST */}
             <div
               className="
                 overflow-y-auto
                 overscroll-contain
                 divide-y
-                divide-[#F3EFE9]
-                dark:divide-[#2D2723]
-
+                divide-black/5
+                dark:divide-white/5
                 flex-1
-
                 min-h-0
-
                 max-h-[380px]
                 sm:max-h-[430px]
-
                 scrollbar-thin
               "
             >
@@ -984,38 +906,21 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       }
                       className={`
                         relative
-                        p-3
+                        p-3.5
                         sm:p-4
-
                         flex
                         items-start
-                        gap-2.5
-                        sm:gap-3
-
+                        gap-3
                         cursor-pointer
-
                         transition-colors
-
                         group
-
                         ${notification.read
-                          ? `
-                              bg-white
-                              dark:bg-[#1E1917]
-                              hover:bg-[#FAF7F2]
-                              dark:hover:bg-[#26201B]
-                            `
-                          : `
-                              bg-[#FFF8F3]
-                              dark:bg-[#2D201A]
-                              hover:bg-[#FDF2E9]
-                              dark:hover:bg-[#38261E]
-                            `
+                          ? 'bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                          : 'bg-[#9a6a35]/5 hover:bg-[#9a6a35]/10'
                         }
                       `}
                     >
                       {/* Unread indicator */}
-
                       {!notification.read && (
                         <div
                           className="
@@ -1024,37 +929,29 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                             top-3
                             bottom-3
                             w-1
-                            bg-[#B24C2B]
+                            bg-[#9a6a35]
                             rounded-l-full
                           "
                         />
                       )}
 
                       {/* Icon */}
-
                       <div
                         className="
                           w-9
                           h-9
                           sm:w-10
                           sm:h-10
-
                           rounded-xl
-                          sm:rounded-2xl
-
                           bg-white
-                          dark:bg-[#2A2320]
-
+                          dark:bg-[#1f1d1a]
                           border
-                          border-[#E5DDD3]
-                          dark:border-[#352B24]
-
+                          border-black/10
+                          dark:border-white/10
                           flex
                           items-center
                           justify-center
-
                           shrink-0
-
                           shadow-sm
                         "
                       >
@@ -1064,7 +961,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       </div>
 
                       {/* Content */}
-
                       <div className="flex-1 min-w-0">
                         <div
                           className="
@@ -1076,21 +972,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         >
                           <h4
                             className={`
-                              text-[11px]
+                              text-[12px]
                               sm:text-sm
-                              font-bold
+                              font-black
                               leading-5
                               truncate
-
                               ${notification.read
-                                ? `
-                                    text-[#2D2A26]
-                                    dark:text-[#FAF6F2]
-                                  `
-                                : `
-                                    text-[#B24C2B]
-                                    dark:text-[#FF855D]
-                                  `
+                                ? 'text-[#211d18] dark:text-[#f5f0e7]'
+                                : 'text-[#9a6a35]'
                               }
                             `}
                           >
@@ -1101,20 +990,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                             className="
                               text-[9px]
                               sm:text-[10px]
-                              text-[#8C7E72]
-                              dark:text-[#73675B]
-
+                              text-black/40
+                              dark:text-white/40
                               flex
                               items-center
                               gap-1
-
                               shrink-0
-
                               font-medium
                             "
                           >
                             <Clock className="w-2.5 h-2.5" />
-
                             <span>
                               {formatTimeAgo(
                                 notification.createdAt
@@ -1126,14 +1011,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         <p
                           className="
                             mt-0.5
-                            text-[10px]
+                            text-[11px]
                             sm:text-xs
-
-                            text-[#5E5248]
-                            dark:text-[#C5BCB3]
-
+                            text-black/70
+                            dark:text-white/70
                             line-clamp-2
-
                             leading-relaxed
                           "
                         >
@@ -1141,11 +1023,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         </p>
 
                         {/* Actions */}
-
                         <div
                           className="
-                            pt-1.5
-
+                            pt-2
                             flex
                             items-center
                             justify-between
@@ -1158,18 +1038,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                 inline-flex
                                 items-center
                                 gap-1
-
-                                text-[9px]
-                                sm:text-[10px]
-
-                                font-bold
-
-                                text-[#B24C2B]
-                                dark:text-[#FF855D]
+                                text-[10px]
+                                font-black
+                                text-[#9a6a35]
                               "
                             >
                               عرض التفاصيل
-
                               <ExternalLink className="w-3 h-3" />
                             </span>
                           ) : (
@@ -1189,24 +1063,15 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                 className="
                                   opacity-0
                                   group-hover:opacity-100
-
-                                  sm:opacity-0
-
                                   w-7
                                   h-7
-
                                   rounded-lg
-
-                                  text-[#B24C2B]
-
-                                  hover:bg-[#B24C2B]/10
-
+                                  text-[#9a6a35]
+                                  hover:bg-[#9a6a35]/10
                                   transition-all
-
                                   flex
                                   items-center
                                   justify-center
-
                                   cursor-pointer
                                 "
                                 title="تعليم كمقروء"
@@ -1226,24 +1091,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                               className="
                                 opacity-0
                                 group-hover:opacity-100
-
                                 w-7
                                 h-7
-
                                 rounded-lg
-
-                                text-gray-400
-
-                                hover:text-red-500
+                                text-black/40
+                                dark:text-white/40
+                                hover:text-red-600
                                 hover:bg-red-50
                                 dark:hover:bg-red-950/20
-
                                 transition-all
-
                                 flex
                                 items-center
                                 justify-center
-
                                 cursor-pointer
                               "
                               title="حذف الإشعار"
@@ -1257,17 +1116,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   )
                 )
               ) : (
-                /* =================================================
-                   EMPTY STATE
-                ================================================= */
-
+                /* EMPTY STATE */
                 <div
                   className="
                     px-6
                     py-12
-
                     text-center
-
                     flex
                     flex-col
                     items-center
@@ -1277,17 +1131,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     className="
                       w-14
                       h-14
-
                       rounded-2xl
-
-                      bg-[#FAF7F2]
-                      dark:bg-[#26201B]
-
+                      bg-black/5
+                      dark:bg-white/5
                       flex
                       items-center
                       justify-center
-
-                      text-[#B24C2B]/40
+                      text-[#9a6a35]/40
                     "
                   >
                     <Bell className="w-7 h-7" />
@@ -1296,13 +1146,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <h4
                     className="
                       mt-4
-
                       text-sm
-
-                      font-bold
-
-                      text-[#2D2A26]
-                      dark:text-[#FAF6F2]
+                      font-black
+                      text-[#211d18]
+                      dark:text-[#f5f0e7]
                     "
                   >
                     {filter === 'unread'
@@ -1313,16 +1160,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   <p
                     className="
                       mt-1.5
-
                       text-[10px]
                       sm:text-[11px]
-
-                      text-[#73675B]
-                      dark:text-[#A89C90]
-
+                      text-black/60
+                      dark:text-white/60
                       max-w-[280px]
-
                       leading-relaxed
+                      font-medium
                     "
                   >
                     ستصلك هنا كافة التنبيهات الخاصة
@@ -1332,22 +1176,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               )}
             </div>
 
-            {/* =================================================
-                FOOTER
-            ================================================= */}
-
+            {/* FOOTER */}
             <div
               className="
-                px-3
+                px-4
                 py-2.5
-
-                bg-[#FAF7F2]
-                dark:bg-[#26201C]
-
+                bg-black/5
+                dark:bg-white/5
                 border-t
-                border-[#E5DDD3]
-                dark:border-[#352B24]
-
+                border-black/10
+                dark:border-white/10
                 text-center
               "
             >
@@ -1355,14 +1193,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 className="
                   text-[9px]
                   sm:text-[10px]
-
-                  text-[#73675B]
-                  dark:text-[#A89C90]
-
+                  text-black/60
+                  dark:text-white/60
                   flex
                   items-center
                   justify-center
                   gap-1.5
+                  font-medium
                 "
               >
                 <span
@@ -1374,8 +1211,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     animate-pulse
                   "
                 />
-
-                نظام إشعارات وه الفوري
+                نظام إشعارات وَه الفوري
                 <span className="opacity-40">•</span>
                 تحديث تلقائي
               </span>

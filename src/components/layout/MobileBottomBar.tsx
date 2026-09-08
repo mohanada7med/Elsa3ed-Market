@@ -66,13 +66,13 @@ export const MobileBottomBar: React.FC = () => {
           pointer-events-auto
           max-w-md
           mx-auto
-          rounded-[26px]
-          bg-[#FAF7F2]/95
-          dark:bg-[#140F0D]/95
+          rounded-[2rem]
+          bg-white/80
+          dark:bg-[#151513]/90
           backdrop-blur-2xl
           border
-          border-amber-950/15
-          dark:border-amber-500/20
+          border-black/10
+          dark:border-white/10
           shadow-[0_16px_40px_rgba(0,0,0,0.12)]
           dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)]
           p-1.5
@@ -95,12 +95,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'home' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 الرئيسية
               </span>
             </button>
@@ -114,12 +114,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'seller-products' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 منتجاتي
               </span>
             </button>
@@ -130,10 +130,10 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('seller-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C45832] to-[#8F391E] text-white flex items-center justify-center shadow-lg shadow-[#C45832]/40 group-hover:scale-105 active:scale-95 transition-all">
-                <Store className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <Store className="w-5 h-5 text-[#9a6a35]" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-[#C45832] dark:text-[#FFA07A]">الورشة</span>
+              <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الورشة</span>
             </button>
 
             {/* 4. طلبات الورشة */}
@@ -145,12 +145,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'seller-orders' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 الطلبات
               </span>
             </button>
@@ -164,19 +164,19 @@ export const MobileBottomBar: React.FC = () => {
               {(activePage === 'messages' || activePage === 'seller-messages') && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               <div className="relative">
-                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#D18A25] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
+                  <span className="absolute -top-1.5 -right-2 bg-[#9a6a35] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
                     {chatUnreadCount}
                   </span>
                 )}
               </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 المحادثات
               </span>
             </button>
@@ -196,8 +196,8 @@ export const MobileBottomBar: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
                 الرئيسية
               </span>
             </button>
@@ -214,8 +214,8 @@ export const MobileBottomBar: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Package className={`relative z-10 w-4 h-4 ${activePage === 'admin-products' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-products' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Package className={`relative z-10 w-4 h-4 ${activePage === 'admin-products' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-products' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
                 المنتجات
               </span>
             </button>
@@ -226,10 +226,10 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('admin-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white flex items-center justify-center shadow-lg shadow-purple-700/40 group-hover:scale-105 active:scale-95 transition-all">
-                <ShieldAlert className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <ShieldAlert className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-purple-700 dark:text-purple-300">الإدارة</span>
+              <span className="text-[9px] font-black mt-0.5 text-purple-600 dark:text-purple-400">الإدارة</span>
             </button>
 
             <button
@@ -244,8 +244,8 @@ export const MobileBottomBar: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'admin-orders' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-orders' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'admin-orders' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-orders' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
                 الطلبات
               </span>
             </button>
@@ -262,8 +262,8 @@ export const MobileBottomBar: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Store className={`relative z-10 w-4 h-4 ${activePage === 'admin-sellers' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-sellers' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Store className={`relative z-10 w-4 h-4 ${activePage === 'admin-sellers' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-sellers' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
                 الورش
               </span>
             </button>
@@ -281,12 +281,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'home' && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 الرئيسية
               </span>
             </button>
@@ -301,12 +301,12 @@ export const MobileBottomBar: React.FC = () => {
               {(activePage === 'products' || activePage === 'product-details') && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' || activePage === 'product-details' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' || activePage === 'product-details' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' || activePage === 'product-details' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' || activePage === 'product-details' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 المقتنيات
               </span>
             </button>
@@ -318,10 +318,10 @@ export const MobileBottomBar: React.FC = () => {
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
               aria-label="أطلس الصعيد"
             >
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C45832] to-[#8F391E] text-white flex items-center justify-center shadow-xl shadow-[#C45832]/35 group-hover:scale-105 active:scale-95 transition-all">
-                <MapPin className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <MapPin className="w-5 h-5 text-[#9a6a35]" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-[#C45832] dark:text-[#FFA07A]">الصعيد</span>
+              <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الصعيد</span>
             </button>
 
             {/* 4. سلة المشتريات */}
@@ -334,19 +334,19 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'cart' && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               <div className="relative">
-                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-[#C45832] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 bg-[#9a6a35] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
               </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 السلة
               </span>
             </button>
@@ -361,16 +361,16 @@ export const MobileBottomBar: React.FC = () => {
               {isAccountActive && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               {!isAuthenticated ? (
-                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
               ) : (
-                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
               )}
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/60'}`}>
                 {!isAuthenticated ? 'دخول' : 'حسابي'}
               </span>
             </button>

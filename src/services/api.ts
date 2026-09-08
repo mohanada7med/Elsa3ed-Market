@@ -51,14 +51,14 @@ export function setStoredToken(token: string): void {
     if (token) {
       localStorage.setItem(TOKEN_KEY, token);
     }
-  } catch {}
+  } catch { }
 }
 
 export function clearStoredToken(): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.removeItem(TOKEN_KEY);
-  } catch {}
+  } catch { }
 }
 
 export interface ApiResponse<T> {
@@ -499,6 +499,52 @@ export const api = {
   },
 
   // Seller API
+  async applyToBecomeSeller(
+    user: { id: string; role: string },
+    data: {
+      workshopName: string;
+      specialty?: string;
+      governorate?: string;
+      phone: string;
+      email?: string;
+      bio?: string;
+      story?: string;
+      avatar?: string;
+      coverImage?: string;
+      payoutMethod?: string;
+      payoutAccount?: string;
+    }
+  ): Promise<any> {
+    const res = await fetch(`${API_BASE}/seller/apply`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في تقديم طلب انضمام الورشة');
+    }
+    return json.data;
+  },
+  // أضف هذه الدالة داخل api.ts
+  async fetchCloudinaryImages() {
+    try {
+      const response = await fetch('/api/cloudinary/images'); // استبدل الرابط بمسار الـ API الفعلي لديك في الباك إند
+      const data = await response.json();
+      return data.images || []; // ترجع مصفوفة الروابط السحابية
+    } catch (error) {
+      console.error('Failed to fetch Cloudinary images:', error);
+      return [];
+    }
+  },
+  async getSellerRequestStatus(user: { id: string; role: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/seller-requests/status`, {
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    return json.data || null;
+  },
+
   async getSellerProducts(user: { id: string; role: string; sellerId?: string }): Promise<Product[]> {
     const res = await fetch(`${API_BASE}/seller/products`, {
       headers: getAuthHeaders(user)
@@ -1309,6 +1355,35 @@ export const api = {
     return json.data;
   },
 
+  async approveSellerRequest(user: { id: string; role: string }, requestId: string): Promise<Seller> {
+    const res = await fetch(`${API_BASE}/admin/seller-requests/${requestId}/approve`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<Seller> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في اعتماد طلب البائع');
+    }
+    return json.data;
+  },
+
+  async rejectSellerRequest(
+    user: { id: string; role: string },
+    requestId: string,
+    reason: string
+  ): Promise<Seller> {
+    const res = await fetch(`${API_BASE}/admin/seller-requests/${requestId}/reject`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ reason })
+    });
+    const json: ApiResponse<Seller> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل في رفض طلب البائع');
+    }
+    return json.data;
+  },
+
   async updateAdminSellerProfile(
     user: { id: string; role: string },
     sellerId: string,
@@ -1768,23 +1843,101 @@ export const api = {
     return json.data?.favorites || [];
   },
 
-  async getNotifications(user: { id: string; role: string }): Promise<any[]> {
-    const res = await fetch(`${API_BASE}/auth/notifications`, {
-      credentials: 'include',
-      headers: getAuthHeaders(user)
-    });
-    const json: ApiResponse<any[]> = await res.json();
-    return json.data || [];
+  // ==================== REAL PERSISTENT NOTIFICATIONS API ====================
+  async getNotifications(limitOrUser?: number | { id?: string; role?: string }, maybeLimit?: number): Promise<any[]> {
+    try {
+      const limit = typeof limitOrUser === 'number' ? limitOrUser : (maybeLimit || 50);
+      const user = typeof limitOrUser === 'object' ? limitOrUser : undefined;
+      const res = await fetch(`${API_BASE}/notifications?limit=${limit}`, {
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (res.status === 401) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch {
+      return [];
+    }
+  },
+
+  async getUnreadNotificationsCount(user?: { id?: string; role?: string }): Promise<number> {
+    try {
+      const res = await fetch(`${API_BASE}/notifications/unread-count`, {
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (res.status === 401) return 0;
+      const json = await res.json();
+      return typeof json.count === 'number' ? json.count : 0;
+    } catch {
+      return 0;
+    }
+  },
+
+  async markNotificationAsRead(idOrUser: string | { id?: string; role?: string }, maybeId?: string): Promise<boolean> {
+    const id = typeof idOrUser === 'string' ? idOrUser : maybeId;
+    const user = typeof idOrUser === 'object' ? idOrUser : undefined;
+    if (!id) return false;
+    try {
+      const res = await fetch(`${API_BASE}/notifications/${encodeURIComponent(id)}/read`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      const json = await res.json();
+      return Boolean(json.success);
+    } catch {
+      return false;
+    }
   },
 
   async markNotificationRead(user: { id: string; role: string }, notificationId: string): Promise<boolean> {
-    const res = await fetch(`${API_BASE}/auth/notifications/${notificationId}/read`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: getAuthHeaders(user)
-    });
-    const json: ApiResponse<any> = await res.json();
-    return json.success || false;
+    return api.markNotificationAsRead(user, notificationId);
+  },
+
+  async markAllNotificationsAsRead(user?: { id?: string; role?: string }): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/notifications/read-all`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      const json = await res.json();
+      return Boolean(json.success);
+    } catch {
+      return false;
+    }
+  },
+
+  async deleteNotification(idOrUser: string | { id?: string; role?: string }, maybeId?: string): Promise<boolean> {
+    const id = typeof idOrUser === 'string' ? idOrUser : maybeId;
+    const user = typeof idOrUser === 'object' ? idOrUser : undefined;
+    if (!id) return false;
+    try {
+      const res = await fetch(`${API_BASE}/notifications/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      const json = await res.json();
+      return Boolean(json.success);
+    } catch {
+      return false;
+    }
+  },
+
+  async clearAllNotifications(user?: { id?: string; role?: string }): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/notifications/clear-all`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      const json = await res.json();
+      return Boolean(json.success);
+    } catch {
+      return false;
+    }
   },
 
   async validateCoupon(code: string, subtotal: number): Promise<any> {
@@ -2203,7 +2356,7 @@ export const api = {
           if (activeXhr) {
             try {
               activeXhr.abort();
-            } catch {}
+            } catch { }
           }
         });
       }
@@ -2219,7 +2372,7 @@ export const api = {
             return reject(
               new Error(
                 sigErr?.message ||
-                  'تعذر الحصول على ترخيص الرفع السحابي للفيديو. يرجى التأكد من تسجيل الدخول والمحاولة مجدداً.'
+                'تعذر الحصول على ترخيص الرفع السحابي للفيديو. يرجى التأكد من تسجيل الدخول والمحاولة مجدداً.'
               )
             );
           }

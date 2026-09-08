@@ -4,7 +4,14 @@ import { register, login, verifyToken } from '../services/authService.ts';
 import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword } from '../services/userService.ts';
 import { createPasswordResetRequest } from '../services/passwordResetService.ts';
 import { getUserFavorites, toggleFavorite } from '../services/favoriteService.ts';
-import { getUserNotifications, markNotificationAsRead } from '../services/notificationService.ts';
+import {
+  getUserNotifications,
+  getUnreadNotificationsCount,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+  clearAllUserNotifications
+} from '../services/notificationService.ts';
 import { requireAuth, invalidateAuthSession } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
@@ -267,11 +274,11 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
   const { passwordHash, ...sanitized } = user;
   let sellerStatus = user.sellerStatus;
   let sellerDetails: any = null;
+  let sellerDoc: any = null;
+  const sellerId = user.sellerId || (user.role === 'seller' ? user.id : null);
 
-  if (user.role === 'seller') {
+  if (sellerId || user.role === 'seller') {
     const { db, isMongo } = await getDatabase();
-    const sellerId = user.sellerId || user.id;
-    let sellerDoc: any = null;
     if (isMongo && db) {
       try {
         sellerDoc = await db.collection('sellers').findOne({
@@ -290,10 +297,19 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
         id: sellerDoc.id,
         brandName: sellerDoc.brandName || sellerDoc.name,
         name: sellerDoc.name,
+        governorate: sellerDoc.governorate,
+        specialty: sellerDoc.specialty,
+        phone: sellerDoc.phone,
+        email: sellerDoc.email,
+        bio: sellerDoc.bio,
+        story: sellerDoc.story,
+        avatar: sellerDoc.avatar,
+        coverImage: sellerDoc.coverImage,
         status: sellerDoc.status,
         verified: sellerDoc.verified,
         rejectionReason: sellerDoc.rejectionReason,
-        suspensionReason: sellerDoc.suspensionReason
+        suspensionReason: sellerDoc.suspensionReason,
+        joinedDate: sellerDoc.joinedDate
       };
     }
   }
@@ -303,7 +319,7 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
     data: {
       ...sanitized,
       mustChangePassword: Boolean(user.mustChangePassword),
-      sellerStatus: sellerStatus || 'pending',
+      sellerStatus: sellerStatus || (sellerDoc ? sellerDoc.status : undefined),
       seller: sellerDetails
     }
   });
@@ -577,28 +593,76 @@ router.post('/favorites/toggle', async (req: AuthenticatedRequest, res: Response
   res.json({ success: true, data: result });
 });
 
-// GET /api/auth/notifications
-router.get('/notifications', async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user?.id;
-  if (!userId) {
-    return res.json({ success: true, data: [] });
-  }
+// ==================== NOTIFICATIONS (AUTH-MOUNTED) ====================
 
-  const notifs = await getUserNotifications(userId);
-  res.json({ success: true, data: notifs });
+// GET /api/auth/notifications - Strictly requires authentication
+router.get('/notifications', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 50;
+    const notifs = await getUserNotifications(userId, limit);
+    res.json({ success: true, count: notifs.length, data: notifs });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || 'فشل في جلب الإشعارات', code: 'SERVER_ERROR' });
+  }
+});
+
+// GET /api/auth/notifications/unread-count
+router.get('/notifications/unread-count', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const count = await getUnreadNotificationsCount(userId);
+    res.json({ success: true, count });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || 'فشل في جلب عدد الإشعارات', code: 'SERVER_ERROR' });
+  }
+});
+
+// PATCH /api/auth/notifications/read-all
+router.patch('/notifications/read-all', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    await markAllNotificationsAsRead(userId);
+    res.json({ success: true, message: 'تم تحديد جميع الإشعارات كمقروءة' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || 'فشل في تحديث الإشعارات', code: 'SERVER_ERROR' });
+  }
 });
 
 // PATCH /api/auth/notifications/:id/read
-router.patch('/notifications/:id/read', async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user?.id;
-  const notificationId = req.params.id;
-
-  if (!userId || !notificationId) {
-    return res.status(400).json({ success: false, error: 'بيانات غير مكتملة' });
+router.patch('/notifications/:id/read', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const notificationId = req.params.id;
+    if (!notificationId) {
+      return res.status(400).json({ success: false, error: 'معرف الإشعار مطلوب', code: 'VALIDATION_ERROR' });
+    }
+    const success = await markNotificationAsRead(userId, notificationId);
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'الإشعار غير موجود أو لا تملك صلاحية الوصول إليه', code: 'NOT_FOUND' });
+    }
+    res.json({ success: true, message: 'تم تحديد الإشعار كمقروء' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || 'فشل في تحديث الإشعار', code: 'SERVER_ERROR' });
   }
+});
 
-  await markNotificationAsRead(userId, notificationId);
-  res.json({ success: true });
+// DELETE /api/auth/notifications/:id
+router.delete('/notifications/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const notificationId = req.params.id;
+    if (!notificationId) {
+      return res.status(400).json({ success: false, error: 'معرف الإشعار مطلوب', code: 'VALIDATION_ERROR' });
+    }
+    const success = await deleteNotification(userId, notificationId);
+    if (!success) {
+      return res.status(404).json({ success: false, error: 'الإشعار غير موجود أو لا تملك صلاحية حذفه', code: 'NOT_FOUND' });
+    }
+    res.json({ success: true, message: 'تم حذف الإشعار بنجاح' });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error?.message || 'فشل في حذف الإشعار', code: 'SERVER_ERROR' });
+  }
 });
 
 export default router;

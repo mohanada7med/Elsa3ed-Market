@@ -33,9 +33,9 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
       transition={{ duration: 0.35, ease: 'easeOut' }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       onClick={onClick}
-      className="group relative flex flex-col rounded-2xl bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] dark:hover:border-[var(--wah-primary,#E0633C)] shadow-[0_2px_8px_-2px_rgba(36,30,26,0.04)] hover:shadow-[0_12px_28px_-6px_rgba(36,30,26,0.12)] dark:hover:shadow-[0_12px_30px_-6px_rgba(0,0,0,0.6)] transition-all duration-300 overflow-hidden cursor-pointer"
+      className="group relative flex flex-col rounded-[1.5rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)]">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/5 dark:bg-white/5">
         <img
           src={image}
           alt={title}
@@ -43,13 +43,13 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
           loading="lazy"
         />
         <div className="absolute top-2.5 right-2.5 z-10">
-          <span className="bg-[var(--wah-primary,#B24C2B)] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-xs">
+          <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-xs">
             {category}
           </span>
         </div>
         <div className="absolute bottom-2.5 right-2.5 z-10">
-          <span className="bg-black/60 text-[var(--wah-accent-light,#FDF3E7)] text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-[var(--wah-accent,#D97724)]" />
+          <span className="bg-[#211d18]/80 text-[#f5f0e7] text-[10px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/10 flex items-center gap-1">
+            <MapPin className="w-3 h-3 text-[#9a6a35]" />
             <span>{originGovernorate}</span>
           </span>
         </div>
@@ -61,18 +61,18 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
         )}
       </div>
 
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between relative bg-white dark:bg-[var(--wah-surface,#1B1613)]">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-[#151513]/90">
         <WAHPattern type="pottery" opacity={0.03} />
         <div className="relative z-10 space-y-1.5">
-          <h3 className="font-bold text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] text-base group-hover:text-[var(--wah-primary,#B24C2B)] dark:group-hover:text-[var(--wah-primary,#E0633C)] transition-colors line-clamp-1">
+          <h3 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-base group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] transition-colors line-clamp-1">
             {title}
           </h3>
-          <p className="text-xs text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] line-clamp-2 leading-relaxed">
+          <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
             {shortDescription}
           </p>
         </div>
 
-        <div className="pt-3 mt-3 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] flex items-center justify-between text-xs font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] relative z-10">
+        <div className="pt-3 mt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] relative z-10">
           <span className="flex items-center gap-1">
             <Utensils className="w-3.5 h-3.5" />
             <span>وصفة وسر المطبخ</span>

@@ -32,8 +32,8 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
   onClick
 }) => {
   const shapeClass = editorialShape
-    ? 'rounded-tl-3xl rounded-br-3xl rounded-tr-xl rounded-bl-xl'
-    : 'rounded-2xl';
+    ? 'rounded-tl-[2rem] rounded-br-[2rem] rounded-tr-[1rem] rounded-bl-[1rem]'
+    : 'rounded-[1.5rem]';
 
   return (
     <motion.article
@@ -44,10 +44,10 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
       transition={{ duration: 0.35, ease: 'easeOut' }}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
       onClick={onClick}
-      className={`group relative flex flex-col bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] hover:border-[var(--wah-primary,#B24C2B)] dark:hover:border-[var(--wah-primary,#E0633C)] shadow-[0_2px_10px_-2px_rgba(36,30,26,0.04)] hover:shadow-[0_14px_30px_-6px_rgba(36,30,26,0.12)] dark:hover:shadow-[0_14px_34px_-6px_rgba(0,0,0,0.65)] transition-all duration-300 overflow-hidden cursor-pointer ${shapeClass}`}
+      className={`group relative flex flex-col bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer ${shapeClass}`}
     >
       {/* Editorial Photography */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)]">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/5 dark:bg-white/5">
         <img
           src={image}
           alt={title}
@@ -59,7 +59,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         {/* Top Badges */}
         <div className="absolute top-3 right-3 flex flex-wrap gap-1.5 z-10">
           {category && (
-            <span className="bg-[var(--wah-primary,#B24C2B)] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-xs">
+            <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-xs">
               {category}
             </span>
           )}
@@ -73,8 +73,8 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         {/* Governorate Bottom Tag */}
         {governorate && (
           <div className="absolute bottom-3 right-3 z-10">
-            <span className="bg-black/60 text-[var(--wah-accent-light,#FDF3E7)] text-[11px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/15 flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-[var(--wah-accent,#D97724)]" />
+            <span className="bg-[#211d18]/80 text-[#f5f0e7] text-[11px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/15 flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-[#9a6a35]" />
               <span>{governorate}</span>
             </span>
           </div>
@@ -89,29 +89,29 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
       </div>
 
       {/* Editorial Content */}
-      <div className="p-5 flex-1 flex flex-col justify-between relative bg-white dark:bg-[var(--wah-surface,#1B1613)]">
+      <div className="p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-[#151513]/90">
         <WAHPattern type="geometry" opacity={0.02} />
 
         <div className="relative z-10 space-y-2">
           {subtitle && (
-            <p className="text-xs font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] line-clamp-1">
+            <p className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] line-clamp-1">
               {subtitle}
             </p>
           )}
 
-          <h3 className="text-base sm:text-lg font-black font-serif text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] leading-snug group-hover:text-[var(--wah-primary,#B24C2B)] dark:group-hover:text-[var(--wah-primary,#E0633C)] transition-colors">
+          <h3 className="text-base sm:text-lg font-black font-serif text-[#211d18] dark:text-[#f5f0e7] leading-snug group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d] transition-colors">
             {title}
           </h3>
 
           {excerpt && (
-            <p className="text-xs sm:text-sm text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] line-clamp-2 leading-relaxed">
+            <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
               {excerpt}
             </p>
           )}
         </div>
 
         {/* Action Link Footer */}
-        <div className="pt-4 mt-4 border-t border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] flex items-center justify-between text-xs font-bold text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] group-hover:text-[var(--wah-primary-hover,#963E21)] relative z-10">
+        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] group-hover:text-[#7d5427] dark:group-hover:text-[#b88248] relative z-10">
           <span>اكتشف المزيد</span>
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
         </div>

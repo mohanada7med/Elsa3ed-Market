@@ -4,25 +4,17 @@ import { wahApi } from '../../services/api';
 import { CulturalCraft } from '../../types';
 import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
 import {
-  Hammer,
   MapPin,
-  Sparkles,
   ArrowLeft,
   Share2,
   ChevronLeft,
-  Layers,
-  ShoppingBag,
-  Info,
   ShieldCheck,
-  CheckCircle2,
-  Users
 } from 'lucide-react';
 
 export const CulturalCraftDetailPage: React.FC = () => {
   const {
     selectedCraftSlug,
     navigateToGovernorate,
-    navigateToPerson,
     navigateToProduct,
     setActivePage,
     addToast
@@ -65,10 +57,13 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#B24C2B] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm font-bold text-[#73675B]">جاري تحميل أسرار الصنعة...</p>
+      <div
+        dir="rtl"
+        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-[#211d18] dark:text-[#f5f0e7]"
+      >
+        <div className="text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-[#9a6a35] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-bold">جاري تحميل أسرار الصنعة...</p>
         </div>
       </div>
     );
@@ -76,13 +71,17 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
   if (!craft) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6 text-center">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">الحرفة غير موجودة</h2>
-          <p className="text-sm text-[#73675B] mb-4">لم نتمكن من العثور على بيانات هذه الحرفة</p>
+      <div
+        dir="rtl"
+        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-center text-[#211d18] dark:text-[#f5f0e7]"
+      >
+        <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
+          <h2 className="text-2xl font-black font-serif">الحرفة غير موجودة</h2>
+          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">لم نتمكن من العثور على بيانات هذه الحرفة</p>
           <button
+            type="button"
             onClick={() => setActivePage('cultural-crafts')}
-            className="px-5 py-2.5 rounded-xl bg-[#B24C2B] text-white font-bold text-sm"
+            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             العودة لكافة الحرف
           </button>
@@ -92,22 +91,25 @@ export const CulturalCraftDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] text-[#241E1A] dark:text-[#FAF6F2] font-sans pb-16">
+    <div
+      dir="rtl"
+      className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] pb-16"
+    >
       {/* Hero Header */}
-      <div className="relative h-[320px] sm:h-[440px] w-full bg-[#1A1614] overflow-hidden">
+      <div className="relative h-[340px] sm:h-[460px] w-full bg-stone-950 overflow-hidden">
         <img
           src={craft.coverImage || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1600'}
           alt={craft.title}
-          className="w-full h-full object-cover opacity-70"
+          className="w-full h-full object-cover opacity-75"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#110E0C] via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0a] via-black/40 to-transparent" />
 
         {/* Top Controls */}
-        <div className="absolute top-6 left-0 right-0 px-4 sm:px-8 max-w-7xl mx-auto flex items-center justify-between">
+        <div className="absolute top-6 left-0 right-0 px-5 sm:px-8 max-w-[1600px] mx-auto flex items-center justify-between">
           <button
             type="button"
             onClick={() => setActivePage('cultural-crafts')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 rotate-180" />
             <span>موسوعة الحرف</span>
@@ -117,7 +119,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigateToGovernorate(craft.governorateId || craft.governorates?.[0] || 'qena')}
-              className="px-3.5 py-2 rounded-xl bg-[#B24C2B]/90 hover:bg-[#B24C2B] text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+              className="px-4 py-2 rounded-full bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md"
             >
               <MapPin className="w-3.5 h-3.5" />
               <span>محافظة {craft.governorateName || (craft.governorates && craft.governorates.length > 0 ? craft.governorates.join('، ') : 'الصعيد')}</span>
@@ -126,7 +128,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={handleShare}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+              className="p-2 sm:px-3.5 sm:py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
               title="مشاركة الحرفة"
             >
               <Share2 className="w-4 h-4" />
@@ -136,13 +138,13 @@ export const CulturalCraftDetailPage: React.FC = () => {
         </div>
 
         {/* Title Content */}
-        <div className="absolute bottom-6 sm:bottom-10 right-0 left-0 px-4 sm:px-8 max-w-7xl mx-auto">
+        <div className="absolute bottom-6 sm:bottom-10 right-0 left-0 px-5 sm:px-8 max-w-[1600px] mx-auto">
           <div className="flex items-center gap-2 flex-wrap mb-3">
-            <span className="px-3 py-1 rounded-full bg-amber-600/90 text-white text-xs font-bold">
+            <span className="px-3.5 py-1 rounded-full bg-[#9a6a35] text-white text-xs font-bold shadow-md">
               {craft.category}
             </span>
             {craft.preservationStatus && (
-              <span className="px-3 py-1 rounded-full bg-emerald-600/90 text-white text-xs font-bold flex items-center gap-1">
+              <span className="px-3.5 py-1 rounded-full bg-emerald-600/90 text-white text-xs font-bold flex items-center gap-1 shadow-md">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>{craft.preservationStatus}</span>
               </span>
@@ -153,47 +155,47 @@ export const CulturalCraftDetailPage: React.FC = () => {
             {craft.title}
           </h1>
 
-          <p className="text-sm sm:text-base text-amber-100/90 max-w-2xl leading-relaxed drop-shadow-sm">
+          <p className="text-sm sm:text-base text-amber-100/90 max-w-2xl leading-relaxed drop-shadow-sm font-light">
             {craft.shortDescription}
           </p>
         </div>
       </div>
 
       {/* Main Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12">
+      <div className="max-w-[1600px] mx-auto px-5 sm:px-8 pt-8 sm:pt-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Info */}
           <div className="lg:col-span-8 space-y-8">
             {/* History Section */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24]">
-              <h2 className="text-xl sm:text-2xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2] mb-4">
+            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+              <h2 className="text-xl sm:text-2xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-4">
                 أصل وتاريخ الصنعة
               </h2>
-              <div className="text-sm sm:text-base text-[#73675B] dark:text-[#A89C90] leading-relaxed space-y-4 whitespace-pre-line font-serif">
+              <div className="text-sm sm:text-base text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed space-y-4 whitespace-pre-line font-serif">
                 {craft.history || craft.shortDescription}
               </div>
             </div>
 
-            {/* Stages of Crafting (مراحل الصنعة) */}
+            {/* Stages of Crafting */}
             {((craft.stages && craft.stages.length > 0) || (craft.manufacturingStages && craft.manufacturingStages.length > 0)) && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24]">
-                <h3 className="text-lg sm:text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2] mb-6">
+              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+                <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-6">
                   مراحل الصنعة خطوة بخطوة
                 </h3>
                 <div className="space-y-4">
                   {(craft.stages || craft.manufacturingStages || []).map((stage, idx) => (
                     <div
                       key={idx}
-                      className="p-4 sm:p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex items-start gap-4"
+                      className="p-4 sm:p-5 rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-start gap-4"
                     >
-                      <span className="w-8 h-8 rounded-xl bg-[#B24C2B] text-white font-bold flex items-center justify-center shrink-0 text-sm">
+                      <span className="w-8 h-8 rounded-xl bg-[#9a6a35] text-white font-bold flex items-center justify-center shrink-0 text-sm">
                         {stage.stepNumber || idx + 1}
                       </span>
                       <div>
-                        <h4 className="text-sm sm:text-base font-bold text-[#241E1A] dark:text-[#FAF6F2] mb-1">
+                        <h4 className="text-sm sm:text-base font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-1">
                           {stage.title}
                         </h4>
-                        <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#A89C90] leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
                           {stage.description}
                         </p>
                       </div>
@@ -227,17 +229,18 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
             {/* Available Products in Marketplace */}
             {craft.relatedProducts && craft.relatedProducts.length > 0 && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24]">
+              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="text-lg sm:text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
+                    <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
                       منتجات أصيلة من هذه الحرفة بسوق وه
                     </h3>
-                    <p className="text-xs text-[#73675B]">صُنعت بأيدي شيوخ الصنعة في {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</p>
+                    <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60">صُنعت بأيدي شيوخ الصنعة في {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setActivePage('products')}
-                    className="text-xs font-bold text-[#B24C2B] hover:underline"
+                    className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
                   >
                     السوق بالكامل ←
                   </button>
@@ -248,19 +251,19 @@ export const CulturalCraftDetailPage: React.FC = () => {
                     <div
                       key={prod.id}
                       onClick={() => navigateToProduct(prod.id)}
-                      className="group p-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] cursor-pointer transition-all"
+                      className="group p-3 rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#9a6a35] cursor-pointer transition-all"
                     >
-                      <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-[#E5DDD3]">
+                      <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-black/10">
                         <img
                           src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400'}
                           alt={prod.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                       </div>
-                      <h4 className="text-xs font-bold text-[#241E1A] dark:text-[#FAF6F2] truncate group-hover:text-[#B24C2B]">
+                      <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] truncate group-hover:text-[#9a6a35]">
                         {prod.title}
                       </h4>
-                      <p className="text-xs font-black text-[#B24C2B] mt-1">{prod.price} ج.م</p>
+                      <p className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] mt-1">{prod.price} ج.م</p>
                     </div>
                   ))}
                 </div>
@@ -271,15 +274,15 @@ export const CulturalCraftDetailPage: React.FC = () => {
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             {/* Raw Materials */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 border border-[#E5DDD3] dark:border-[#352B24]">
-              <h3 className="text-base font-bold mb-3 text-[#241E1A] dark:text-[#FAF6F2]">
+            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-black font-serif mb-3 text-[#211d18] dark:text-[#f5f0e7]">
                 الخامات والمصادر الطبيعية:
               </h3>
               <div className="flex flex-wrap gap-2">
                 {craft.materials?.map((item, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-200 dark:border-amber-800/40"
+                    className="px-3 py-1.5 rounded-xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold border border-[#9a6a35]/25"
                   >
                     {item}
                   </span>
@@ -289,14 +292,14 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
             {/* Tools Used */}
             {((craft.toolsUsed && craft.toolsUsed.length > 0) || (craft.tools && craft.tools.length > 0)) && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 border border-[#E5DDD3] dark:border-[#352B24]">
-                <h3 className="text-base font-bold mb-3 text-[#241E1A] dark:text-[#FAF6F2]">
+              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+                <h3 className="text-base font-black font-serif mb-3 text-[#211d18] dark:text-[#f5f0e7]">
                   أدوات الصنعة التقليدية:
                 </h3>
                 <div className="space-y-2">
                   {(craft.toolsUsed || craft.tools || []).map((tool, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-[#73675B] dark:text-[#A89C90]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#B24C2B]" />
+                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-[#211d18]/80 dark:text-[#f5f0e7]/80">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#9a6a35]" />
                       <span>{tool}</span>
                     </div>
                   ))}
@@ -305,17 +308,17 @@ export const CulturalCraftDetailPage: React.FC = () => {
             )}
 
             {/* Explore Governorate CTA */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 border border-[#E5DDD3] dark:border-[#352B24]">
-              <h3 className="text-base font-bold mb-2 text-[#241E1A] dark:text-[#FAF6F2]">
+            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-black font-serif mb-2 text-[#211d18] dark:text-[#f5f0e7]">
                 معقل الصنعة
               </h3>
-              <p className="text-xs text-[#73675B] mb-4">
+              <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 mb-4">
                 تنتشر ورش هذه الحرفة في قرى ومراكز محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}.
               </p>
               <button
                 type="button"
                 onClick={() => navigateToGovernorate(craft.governorateId || craft.governorates?.[0] || 'qena')}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <span>دليل محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

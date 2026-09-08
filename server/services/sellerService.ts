@@ -1,8 +1,10 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { SellerDocument, ProductDocument, OrderDocument, SellerStatus } from '../models/types.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
+import { invalidateAuthSession } from '../middleware/auth.ts';
 import { createAuditLog } from './auditService.ts';
 import { cacheService } from './cacheService.ts';
+import { createNotification } from './notificationService.ts';
 
 /**
  * Get aggregated real statistics for a seller dashboard.
@@ -386,15 +388,28 @@ export async function adminUpdateSellerStatus(
     updatePayload.suspensionReason = reason?.trim() || 'تم تعليق الحساب لمخالفة سياسات التوريد أو الجودة';
   }
 
+  // Determine user updates
+  const userUpdates: any = {
+    sellerStatus: status,
+    updatedAt: now
+  };
+
+  if (status === 'approved') {
+    userUpdates.role = 'seller';
+    userUpdates.sellerId = sellerId;
+  } else if (status === 'rejected') {
+    userUpdates.role = 'buyer';
+  }
+
   if (isMongo && db) {
     try {
       // 1. Update seller in sellers collection
       await db.collection('sellers').updateOne({ id: sellerId }, { $set: updatePayload });
 
-      // 2. Sync sellerStatus to users collection
+      // 2. Sync sellerStatus and role to users collection
       await db.collection('users').updateMany(
         { $or: [{ sellerId: sellerId }, { id: seller.userId }, { email: seller.email }] },
-        { $set: { sellerStatus: status, updatedAt: now } }
+        { $set: userUpdates }
       );
     } catch (e) {
       console.error('[SellerService] MongoDB update status error:', e);
@@ -412,6 +427,50 @@ export async function adminUpdateSellerStatus(
   );
   if (memUser) {
     (memUser as any).sellerStatus = status;
+    if (status === 'approved') {
+      (memUser as any).role = 'seller';
+      (memUser as any).sellerId = sellerId;
+    } else if (status === 'rejected') {
+      (memUser as any).role = 'buyer';
+    }
+  }
+
+  // Invalidate cached auth sessions for this user so changes take effect immediately
+  if (seller.userId) {
+    invalidateAuthSession(seller.userId);
+  }
+  invalidateAuthSession(sellerId);
+
+  // Send persistent notification to the applicant/seller user
+  const targetUserId = seller.userId || sellerId;
+  try {
+    if (status === 'approved') {
+      await createNotification({
+        userId: targetUserId,
+        title: 'تهانينا! تم اعتماد حساب ورشتك كبائع رسمي',
+        message: `تمت مراجعة واعتماد ورشة "${seller.brandName || seller.name}" بنجاح من قبل الإدارة العليا. يمكنك الآن إدارة منتجاتك واستقبال طلبات العملاء من لوحة التحكم.`,
+        type: 'system',
+        link: 'seller-dashboard'
+      });
+    } else if (status === 'rejected') {
+      await createNotification({
+        userId: targetUserId,
+        title: 'تحديث بشأن طلب اعتماد ورشتك الحرفية',
+        message: `تم رفض طلب اعتماد ورشة "${seller.brandName || seller.name}". سبب الرفض: ${reason?.trim() || updatePayload.rejectionReason || 'عدم استيفاء المعايير التراثية المطلوبة'}. يمكنك تعديل بياناتك وإعادة تقديم الطلب من صفحة حسابك.`,
+        type: 'system',
+        link: 'buyer-account'
+      });
+    } else if (status === 'suspended') {
+      await createNotification({
+        userId: targetUserId,
+        title: 'تم تعليق حساب الورشة مؤقتاً',
+        message: `تم تعليق حساب ورشة "${seller.brandName || seller.name}". سبب التعليق: ${reason?.trim() || updatePayload.suspensionReason || 'مخالفة معايير الجودة والتوريد'}.`,
+        type: 'system',
+        link: 'buyer-account'
+      });
+    }
+  } catch (notifErr) {
+    console.error('[SellerService] Error creating status change notification:', notifErr);
   }
 
   const updatedSeller = { ...seller, ...updatePayload };
@@ -437,4 +496,41 @@ export async function adminUpdateSellerStatus(
   });
 
   return updatedSeller;
+}
+
+/**
+ * Helper to dispatch persistent notifications to all administrators when a seller application is submitted.
+ */
+export async function notifyAdminsOnSellerRequest(params: {
+  userId: string;
+  userName: string;
+  workshopName: string;
+  governorate?: string;
+  isReapply?: boolean;
+}): Promise<void> {
+  try {
+    const { db, isMongo } = await getDatabase();
+    let adminUserIds: string[] = [];
+    if (isMongo && db) {
+      const adminDocs = await db.collection('users').find({ role: 'admin' }, { projection: { id: 1 } }).toArray();
+      adminUserIds = adminDocs.map((a: any) => a.id);
+    } else {
+      adminUserIds = memoryDb.users.filter((u) => u.role === 'admin').map((u) => u.id);
+    }
+
+    const title = params.isReapply ? 'إعادة تقديم طلب اعتماد ورشة' : 'طلب اعتماد ورشة حرفية جديد';
+    const message = `قام المستخدم ${params.userName} ${params.isReapply ? 'بإعادة تقديم' : 'بتقديم'} طلب اعتماد ورشة "${params.workshopName}" في محافظة ${params.governorate || 'الصعيد'}. يرجى مراجعة الطلب واتخاذ القرار.`;
+
+    for (const adminId of adminUserIds) {
+      await createNotification({
+        userId: adminId,
+        title,
+        message,
+        type: 'system',
+        link: 'admin-sellers'
+      });
+    }
+  } catch (err) {
+    console.error('[SellerService] Error notifying admins on seller request:', err);
+  }
 }

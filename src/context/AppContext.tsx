@@ -20,7 +20,7 @@ import {
   WahEcosystemStats
 } from '../types.ts';
 import { api, wahApi } from '../services/api.ts';
-import { notificationService } from '../services/notificationService.ts';
+import { notificationService, AppNotification, normalizeNotification } from '../services/notificationService.ts';
 import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
 
 export interface ToastNotification {
@@ -182,6 +182,19 @@ interface AppContextType {
   rejectProduct: (id: string, reason: string) => Promise<void>;
 
   // Seller Actions
+  applyToBecomeSeller: (data: {
+    workshopName: string;
+    specialty?: string;
+    governorate?: string;
+    phone: string;
+    email?: string;
+    bio?: string;
+    story?: string;
+    avatar?: string;
+    coverImage?: string;
+    payoutMethod?: string;
+    payoutAccount?: string;
+  }) => Promise<any>;
   approveSeller: (sellerId: string) => Promise<void> | void;
   rejectSeller: (sellerId: string, reason?: string) => Promise<void> | void;
   suspendSeller: (sellerId: string, reason?: string) => Promise<void> | void;
@@ -238,6 +251,16 @@ interface AppContextType {
   requestBrowserNotificationPermission: () => Promise<NotificationPermission | 'unsupported'>;
   updateBrowserNotificationSettings: (partial: Partial<BrowserNotificationSettings>) => void;
   sendTestBrowserNotification: () => void;
+
+  // Real Persistent Database Notifications
+  notifications: AppNotification[];
+  unreadNotificationsCount: number;
+  isNotificationsLoading: boolean;
+  refreshNotifications: () => Promise<void>;
+  markNotificationAsRead: (id: string) => Promise<void>;
+  markAllNotificationsAsRead: () => Promise<void>;
+  deleteNotification: (id: string) => Promise<void>;
+  clearAllNotifications: () => Promise<void>;
 
   // Live Chat & Real-Time Messaging
   chatUnreadCount: number;
@@ -1022,6 +1045,121 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   }, [setActivePage]);
 
+  // Real Persistent Database Notifications State
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState<number>(0);
+  const [isNotificationsLoading, setIsNotificationsLoading] = useState<boolean>(false);
+
+  const refreshNotifications = useCallback(async () => {
+    // Only authenticated users can load notifications. Guests MUST NOT make requests.
+    if (
+      currentRole === 'guest' ||
+      !currentUser?.id ||
+      currentUser.id === 'guest' ||
+      currentUser.id === 'guest-visitor' ||
+      authState !== 'AUTHENTICATED'
+    ) {
+      setNotifications([]);
+      setUnreadNotificationsCount(0);
+      notificationService.clearMemory();
+      return;
+    }
+
+    try {
+      setIsNotificationsLoading(true);
+      const [rawList, unreadCount] = await Promise.all([
+        api.getNotifications(50),
+        api.getUnreadNotificationsCount()
+      ]);
+
+      const normalized = (rawList || []).map(normalizeNotification);
+      setNotifications(normalized);
+      setUnreadNotificationsCount(typeof unreadCount === 'number' ? unreadCount : 0);
+      notificationService.setNotifications(normalized);
+    } catch (err) {
+      console.warn('[AppContext] Failed to refresh notifications:', err);
+    } finally {
+      setIsNotificationsLoading(false);
+    }
+  }, [currentRole, currentUser?.id, authState]);
+
+  const markNotificationAsRead = useCallback(async (id: string) => {
+    if (!id) return;
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true, isRead: true } : n))
+    );
+    setUnreadNotificationsCount((prev) => Math.max(0, prev - 1));
+    await notificationService.markAsRead(id);
+  }, []);
+
+  const markAllNotificationsAsRead = useCallback(async () => {
+    setNotifications((prev) =>
+      prev.map((n) => ({ ...n, read: true, isRead: true }))
+    );
+    setUnreadNotificationsCount(0);
+    await notificationService.markAllAsRead();
+  }, []);
+
+  const deleteNotification = useCallback(async (id: string) => {
+    if (!id) return;
+    const itemToDelete = notifications.find((n) => n.id === id);
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    if (itemToDelete && !itemToDelete.read) {
+      setUnreadNotificationsCount((prev) => Math.max(0, prev - 1));
+    }
+    await notificationService.deleteNotification(id);
+  }, [notifications]);
+
+  const clearAllNotifications = useCallback(async () => {
+    setNotifications([]);
+    setUnreadNotificationsCount(0);
+    await notificationService.clearAll();
+  }, []);
+
+  // Sync notificationService subscriber to AppContext state
+  useEffect(() => {
+    const unsubscribe = notificationService.subscribe(() => {
+      const list = notificationService.getNotifications(currentRole, currentUser?.sellerId || currentUser?.id);
+      setNotifications(list);
+      setUnreadNotificationsCount(list.filter((n) => !n.read).length);
+    });
+    return unsubscribe;
+  }, [currentRole, currentUser?.id, currentUser?.sellerId]);
+
+  // Refresh notifications whenever authentication state changes or window receives focus
+  useEffect(() => {
+    if (authState === 'AUTHENTICATED' && currentUser?.id && currentRole !== 'guest') {
+      refreshNotifications();
+
+      // Lightweight periodic check every 35s only when page is active and authenticated
+      const interval = setInterval(() => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+          refreshNotifications();
+        }
+      }, 35000);
+
+      const onVisibilityChange = () => {
+        if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+          refreshNotifications();
+        }
+      };
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', onVisibilityChange);
+      }
+
+      return () => {
+        clearInterval(interval);
+        if (typeof document !== 'undefined') {
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+        }
+      };
+    } else {
+      setNotifications([]);
+      setUnreadNotificationsCount(0);
+      notificationService.clearMemory();
+    }
+  }, [authState, currentUser?.id, currentRole, refreshNotifications]);
+
   // Sync cart & favorites to localStorage (Buyers and guests only)
   useEffect(() => {
     if (currentRole === 'seller' || currentRole === 'admin') {
@@ -1480,16 +1618,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentRole(data.user.role || 'buyer');
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
+      const isPendingSeller = data.user.sellerStatus === 'pending' || params.role === 'seller';
       addToast(
         'إنشاء الحساب',
-        data.user.role === 'seller'
-          ? `تم تسجيل حساب ورشتكم بنجاح! مرحباً بك يا ${data.user.username || data.user.name}. طلبكم قيد المراجعة والاعتماد.`
+        isPendingSeller
+          ? `تم تسجيل طلب انضمام ورشتكم بنجاح! طلبكم قيد المراجعة والاعتماد من قبل إدارة المنصة.`
           : `تم تسجيل حسابك بنجاح! مرحباً بك يا ${data.user.username || data.user.name}.`,
         'success'
       );
       refreshSellers();
-      if (data.user.role === 'seller') {
+      if (data.user.role === 'seller' && data.user.sellerStatus === 'approved') {
         setActivePage('seller-dashboard');
+      } else if (isPendingSeller) {
+        setActivePage('buyer-account');
       }
     }
   };
@@ -2023,16 +2164,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       addToast('تمت الموافقة بنجاح', `تم اعتماد المنتج "${approved.title}" ونشره بالسوق العام للجمهور`, 'success');
-      try {
-        notificationService.notifyProductApprovalStatus({
-          productId: approved.id,
-          productTitle: approved.title,
-          status: 'approved',
-          sellerId: approved.sellerId
-        });
-      } catch (errNotif) {
-        console.warn('Notification trigger error:', errNotif);
-      }
+      refreshNotifications();
       refreshAuditLogs();
     } catch (err) {
       console.error('Error approving product:', err);
@@ -2049,17 +2181,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setProducts((prev) => prev.filter((p) => p.id !== id));
 
       addToast('تم رفض المنتج', `تم رفض إدراج المنتج وإرسال سبب الرفض للورشة: "${reason}"`, 'warning');
-      try {
-        notificationService.notifyProductApprovalStatus({
-          productId: rejected.id,
-          productTitle: rejected.title,
-          status: 'rejected',
-          reason,
-          sellerId: rejected.sellerId
-        });
-      } catch (errNotif) {
-        console.warn('Notification trigger error:', errNotif);
-      }
+      refreshNotifications();
       refreshAuditLogs();
     } catch (err) {
       console.error('Error rejecting product:', err);
@@ -2067,6 +2189,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Seller Actions
+  const applyToBecomeSeller = async (data: {
+    workshopName: string;
+    specialty?: string;
+    governorate?: string;
+    phone: string;
+    email?: string;
+    bio?: string;
+    story?: string;
+    avatar?: string;
+    coverImage?: string;
+    payoutMethod?: string;
+    payoutAccount?: string;
+  }) => {
+    try {
+      const result = await api.applyToBecomeSeller({ id: currentUser.id, role: currentRole }, data);
+      const freshUser = await api.getMe();
+      if (freshUser && freshUser.id) {
+        setCurrentUser(freshUser);
+        setCurrentRole(freshUser.role || 'buyer');
+      }
+      addToast('تم تقديم الطلب', 'تم إرسال طلب انضمام ورشتك بنجاح للإدارة وسيمت مراجعته وتدقيقه', 'success');
+      refreshSellers();
+      return result;
+    } catch (err: any) {
+      console.error('Error applying to become seller:', err);
+      addToast('خطأ', err.message || 'تعذر تقديم طلب الانضمام كبائع', 'error');
+      throw err;
+    }
+  };
+
   const approveSeller = async (sellerId: string) => {
     try {
       const updated = await api.updateAdminSellerStatus({ id: currentUser.id, role: 'admin' }, sellerId, 'approved');
@@ -2077,6 +2229,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addAuditLog('اعتماد بائع', seller?.brandName || sellerId, 'تم اعتماد الحرفي وإصدار رخصة البيع الموثقة');
       addToast('تم اعتماد البائع', `تم توثيق متجر "${seller?.brandName || ''}" بنجاح`, 'success');
       refreshSellers();
+      if (currentUser?.sellerId === sellerId || currentUser?.id === (updated as any)?.userId) {
+        const freshUser = await api.getMe();
+        if (freshUser && freshUser.id) {
+          setCurrentUser(freshUser);
+          setCurrentRole(freshUser.role);
+        }
+      }
     } catch (err: any) {
       addToast('خطأ', err.message || 'تعذر اعتماد البائع', 'error');
     }
@@ -2092,6 +2251,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       addAuditLog('رفض بائع', seller?.brandName || sellerId, `تم رفض طلب الانضمام${reason ? ` - السبب: ${reason}` : ''}`, 'تنبيه');
       addToast('تم الرفض', 'تم رفض طلب انضمام البائع بنجاح', 'warning');
       refreshSellers();
+      if (currentUser?.sellerId === sellerId || currentUser?.id === (updated as any)?.userId) {
+        const freshUser = await api.getMe();
+        if (freshUser && freshUser.id) {
+          setCurrentUser(freshUser);
+          setCurrentRole(freshUser.role);
+        }
+      }
     } catch (err: any) {
       addToast('خطأ', err.message || 'تعذر رفض البائع', 'error');
     }
@@ -2268,23 +2434,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         })
       );
 
-      // Trigger Platform & Native Web Browser Push Notification
+      // Trigger native web browser push notification if supported
       try {
-        notificationService.notifyNewOrder({
-          orderId: createdOrder.id,
-          orderNumber: createdOrder.orderNumber || createdOrder.id,
-          total: createdOrder.total,
-          itemsCount: normalized.items.length,
-          governorate: resolvedAddress.governorate,
-          sellerIds: normalized.items.map((i: any) => i.product?.sellerId).filter(Boolean)
-        });
         browserNotificationService.notifyNewOrder(
           createdOrder.orderNumber || createdOrder.id,
           createdOrder.total,
           currentRole === 'seller'
         );
       } catch (errNotif) {
-        console.warn('Could not trigger notification for new order:', errNotif);
+        console.warn('Could not trigger browser notification for new order:', errNotif);
       }
 
       addToast(
@@ -2293,6 +2451,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         'success'
       );
 
+      refreshNotifications();
       refreshAuditLogs();
       return createdOrder;
     } catch (err: any) {
@@ -2311,22 +2470,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           note
         );
         setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
-        try {
-          notificationService.notifyOrderStatus({
-            orderId,
-            orderNumber: updated.orderNumber || orderId,
-            newStatus,
-            buyerId: updated.buyerId,
-            sellerId: currentUser.sellerId || currentUser.id
-          });
-          browserNotificationService.notifyOrderStatus(
-            updated.orderNumber || orderId,
-            newStatus,
-            false
-          );
-        } catch (eN) {
-          console.warn('Notification error on order status:', eN);
-        }
       } else if (currentRole === 'admin') {
         const updated = await api.updateAdminOrderStatus(
           { id: currentUser.id, role: 'admin' },
@@ -2335,23 +2478,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           note
         );
         setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
-        try {
-          notificationService.notifyOrderStatus({
-            orderId,
-            orderNumber: updated.orderNumber || orderId,
-            newStatus,
-            buyerId: updated.buyerId
-          });
-          browserNotificationService.notifyOrderStatus(
-            updated.orderNumber || orderId,
-            newStatus,
-            false
-          );
-        } catch (eN) {
-          console.warn('Notification error on order status:', eN);
-        }
       }
       addToast('تحديث حالة الطلب', `تم تغيير حالة الطلب بنجاح إلى: "${newStatus}"`, 'success');
+      refreshNotifications();
       refreshAuditLogs();
     } catch (err) {
       console.error('[AppContext] Error updating order status:', err);
@@ -2610,6 +2739,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         approveProduct,
         rejectProduct,
 
+        applyToBecomeSeller,
         approveSeller,
         rejectSeller,
         suspendSeller,
@@ -2650,6 +2780,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         requestBrowserNotificationPermission,
         updateBrowserNotificationSettings,
         sendTestBrowserNotification,
+
+        notifications,
+        unreadNotificationsCount,
+        isNotificationsLoading,
+        refreshNotifications,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
+        deleteNotification,
+        clearAllNotifications,
 
         chatUnreadCount,
         refreshChatUnreadCount,

@@ -4,6 +4,7 @@ import { createAuditLog } from './auditService.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { cacheService } from './cacheService.ts';
 import { Logger } from '../utils/logger.ts';
+import { createNotification, notifyAdmins, resolveSellerUserId } from './notificationService.ts';
 
 export interface PublicProductFilters {
   categoryId?: string;
@@ -306,6 +307,21 @@ export async function createProduct(
     metadata: { productId: newProduct.id, status: initialStatus, price: newProduct.price }
   });
 
+  // Notify Admins if product was submitted for review
+  if (initialStatus === 'pending') {
+    try {
+      await notifyAdmins({
+        title: 'منتج حرفي جديد بانتظار الاعتماد',
+        message: `أضافت الورشة "${sellerName}" منتجاً جديداً "${newProduct.title}" وهو بانتظار المراجعة والاعتماد.`,
+        type: 'product',
+        link: 'admin-products',
+        metadata: { productId: newProduct.id, sellerId }
+      });
+    } catch (notifErr) {
+      console.error('[ProductService] Error notifying admins on new product:', notifErr);
+    }
+  }
+
   return newProduct;
 }
 
@@ -360,6 +376,19 @@ export async function submitProductForReview(sellerUser: AuthenticatedUser, prod
     metadata: { productId, previousStatus: product.approvalStatus, newStatus: 'pending' }
   });
 
+  // Notify Admins on product re-submission
+  try {
+    await notifyAdmins({
+      title: 'إعادة تقديم منتج للمراجعة',
+      message: `قدمت الورشة المنتج "${product.title}" للمراجعة والاعتماد بعد التعديل.`,
+      type: 'product',
+      link: 'admin-products',
+      metadata: { productId, sellerId }
+    });
+  } catch (notifErr) {
+    console.error('[ProductService] Error notifying admins on product submission:', notifErr);
+  }
+
   return updatedProduct;
 }
 
@@ -413,6 +442,21 @@ export async function approveProduct(adminUser: AuthenticatedUser, productId: st
     details: `وافق المدير ${adminUser.name} على نشر المنتج "${product.title}" وأصبح متاحاً للجمهور بالسوق العام`,
     metadata: { productId, sellerId: product.sellerId, approvedAt: nowStr }
   });
+
+  // Notify Seller about product approval
+  try {
+    const sellerUserId = await resolveSellerUserId(product.sellerId);
+    await createNotification({
+      userId: sellerUserId,
+      title: 'تم اعتماد ونشر منتجك بنجاح',
+      message: `وافقت إدارة المنصة على منتجك "${product.title}" وأصبح معروضاً للجمهور في سوق الصعيد.`,
+      type: 'product',
+      link: 'seller-products',
+      metadata: { productId }
+    });
+  } catch (notifErr) {
+    console.error('[ProductService] Error notifying seller on product approval:', notifErr);
+  }
 
   return approvedProduct;
 }
@@ -475,6 +519,21 @@ export async function rejectProduct(
     details: `رفض المدير ${adminUser.name} إدراج المنتج "${product.title}". السبب: "${rejectionReason.trim()}"`,
     metadata: { productId, sellerId: product.sellerId, rejectionReason: rejectionReason.trim() }
   });
+
+  // Notify Seller about product rejection
+  try {
+    const sellerUserId = await resolveSellerUserId(product.sellerId);
+    await createNotification({
+      userId: sellerUserId,
+      title: 'تحديث بشأن اعتماد منتجك',
+      message: `تعذر اعتماد منتج "${product.title}". السبب: ${rejectionReason.trim()}. يمكنك تعديل تفاصيل المنتج وإعادة إرساله للمراجعة.`,
+      type: 'product',
+      link: 'seller-products',
+      metadata: { productId, rejectionReason: rejectionReason.trim() }
+    });
+  } catch (notifErr) {
+    console.error('[ProductService] Error notifying seller on product rejection:', notifErr);
+  }
 
   return rejectedProduct;
 }

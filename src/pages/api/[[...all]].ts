@@ -1,7 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createApp } from '../../../server/app.ts';
 
-const app = createApp();
+let appInstance: any = null;
+function getApp() {
+  if (!appInstance || process.env.NODE_ENV !== 'production') {
+    appInstance = createApp();
+  }
+  return appInstance;
+}
 
 export const config = {
   api: {
@@ -11,5 +17,5 @@ export const config = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return app(req, res);
+  return getApp()(req, res);
 }

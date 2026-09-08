@@ -29,17 +29,17 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
 
   const variantClasses: Record<BadgeVariant, string> = {
     terracotta:
-      'bg-[var(--wah-primary-light,rgba(178,76,43,0.1))] text-[var(--wah-primary,#B24C2B)] dark:text-[var(--wah-primary,#E0633C)] border border-[var(--wah-primary,#B24C2B)]/25',
+      'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30',
     nile:
-      'bg-[var(--wah-secondary-light,rgba(38,70,83,0.1))] text-[var(--wah-secondary,#264653)] dark:text-[var(--wah-secondary,#427B8C)] border border-[var(--wah-secondary,#264653)]/25',
+      'bg-cyan-500/10 text-cyan-800 dark:text-cyan-300 border border-cyan-500/25',
     ochre:
-      'bg-[var(--wah-accent-light,rgba(217,119,36,0.1))] text-[var(--wah-accent,#D97724)] dark:text-[var(--wah-accent,#E68A35)] border border-[var(--wah-accent,#D97724)]/25',
+      'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30',
     stone:
-      'bg-[var(--wah-surface-subtle,#F3ECE2)] dark:bg-[var(--wah-surface-subtle,#26201B)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]',
+      'bg-black/5 dark:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10',
     success:
-      'bg-[var(--wah-success,#286644)]/10 text-[var(--wah-success,#286644)] dark:text-[#489E6E] border border-[var(--wah-success,#286644)]/25',
+      'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25',
     outline:
-      'bg-transparent text-[var(--wah-text-muted,#73675B)] dark:text-[var(--wah-text-muted,#A89B8F)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)]'
+      'bg-transparent text-black/60 dark:text-white/60 border border-black/10 dark:border-white/10'
   };
 
   return (

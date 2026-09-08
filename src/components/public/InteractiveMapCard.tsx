@@ -304,7 +304,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full rounded-3xl bg-[#FAF7F2] dark:bg-[#181310] border-2 border-amber-300/70 dark:border-amber-900/40 shadow-xl overflow-hidden select-none transition-all duration-300 ${
+      className={`relative w-full rounded-[2rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-xl overflow-hidden select-none transition-all duration-300 ${
         isExpandedHeight ? 'h-[620px] sm:h-[750px]' : 'h-[440px] sm:h-[540px] md:h-[620px]'
       } ${className}`}
       onMouseDown={handleMouseDown}
@@ -326,19 +326,19 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap pointer-events-auto">
           {/* Glass Search Input */}
           <div className="relative flex items-center">
-            <Search className="w-3.5 h-3.5 text-[#8C7A6B] absolute right-2.5 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-[#211d18]/50 dark:text-[#f5f0e7]/50 absolute right-2.5 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="بحث بالخريطة..."
-              className="w-28 sm:w-44 bg-white/90 dark:bg-[#201A16]/90 backdrop-blur-md text-xs font-bold text-[#241E1A] dark:text-[#F7F3EE] rounded-2xl pl-6 pr-8 py-1.5 sm:py-2 border border-[#E5DDD3] dark:border-[#352B24] shadow-xs outline-none focus:w-36 sm:focus:w-52 transition-all"
+              className="w-28 sm:w-44 bg-white/90 dark:bg-[#151513]/90 backdrop-blur-md text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] rounded-xl pl-6 pr-8 py-1.5 sm:py-2 border border-black/10 dark:border-white/10 shadow-xs outline-none focus:w-36 sm:focus:w-52 transition-all focus:border-[#9a6a35]"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute left-2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="absolute left-2 text-[#211d18]/50 dark:text-[#f5f0e7]/50 hover:text-[#9a6a35] cursor-pointer"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -346,14 +346,14 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
           </div>
 
           {/* Marker Filter Chips (Scrollable on small screens) */}
-          <div className="flex items-center gap-1 bg-white/90 dark:bg-[#201A16]/90 backdrop-blur-md p-1 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs overflow-x-auto no-scrollbar max-w-[210px] sm:max-w-none">
+          <div className="flex items-center gap-1 bg-white/90 dark:bg-[#151513]/90 backdrop-blur-md p-1 rounded-xl border border-black/10 dark:border-white/10 shadow-xs overflow-x-auto no-scrollbar max-w-[210px] sm:max-w-none">
             <button
               type="button"
               onClick={() => setActiveCategory('all')}
-              className={`px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeCategory === 'all'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[#241E1A]'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
             >
               الكل ({markers.length})
@@ -362,10 +362,10 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
             <button
               type="button"
               onClick={() => setActiveCategory('place')}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeCategory === 'place'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[#241E1A]'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
               title="الصروح والمعالم"
             >
@@ -376,10 +376,10 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
             <button
               type="button"
               onClick={() => setActiveCategory('craft')}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeCategory === 'craft'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[#241E1A]'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
               title="الحرف والورش"
             >
@@ -390,10 +390,10 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
             <button
               type="button"
               onClick={() => setActiveCategory('food')}
-              className={`flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeCategory === 'food'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'text-[#73675B] dark:text-[#A89B8F] hover:text-[#241E1A]'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
               title="سفرة وخيرات البلد"
             >
@@ -404,11 +404,11 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
         </div>
 
         {/* Right/End: Zoom & Navigation Tools (Pointer events enabled) */}
-        <div className="flex items-center gap-1 self-end sm:self-auto pointer-events-auto bg-white/90 dark:bg-[#201A16]/90 backdrop-blur-md p-1 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
+        <div className="flex items-center gap-1 self-end sm:self-auto pointer-events-auto bg-white/90 dark:bg-[#151513]/90 backdrop-blur-md p-1 rounded-xl border border-black/10 dark:border-white/10 shadow-xs">
           <button
             type="button"
             onClick={handleZoomIn}
-            className="p-1 sm:p-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-stone-800 text-[#4A3E34] dark:text-[#D5C9BD] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] transition-colors cursor-pointer"
             title="تكبير الخريطة"
           >
             <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -417,7 +417,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
           <button
             type="button"
             onClick={handleZoomOut}
-            className="p-1 sm:p-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-stone-800 text-[#4A3E34] dark:text-[#D5C9BD] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] transition-colors cursor-pointer"
             title="تصغير الخريطة"
           >
             <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -426,18 +426,18 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="p-1 sm:p-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-stone-800 text-[#4A3E34] dark:text-[#D5C9BD] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] transition-colors cursor-pointer"
             title="إعادة ضبط الرؤية"
           >
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
 
-          <div className="hidden sm:block w-[1px] h-4 bg-[#E5DDD3] dark:bg-[#352B24]" />
+          <div className="hidden sm:block w-[1px] h-4 bg-black/10 dark:border-white/10" />
 
           <button
             type="button"
             onClick={() => setIsExpandedHeight((prev) => !prev)}
-            className="hidden sm:block p-1.5 rounded-xl hover:bg-amber-100 dark:hover:bg-stone-800 text-[#4A3E34] dark:text-[#D5C9BD] transition-colors cursor-pointer"
+            className="hidden sm:block p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] transition-colors cursor-pointer"
             title={isExpandedHeight ? 'تصغير حجم البطاقة' : 'توسيع حجم البطاقة'}
           >
             {isExpandedHeight ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -450,8 +450,8 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
           Hidden on small screens (md:block) to prevent clutter!
          ========================================================= */}
       <div className="hidden md:block absolute bottom-4 inset-x-4 z-30 pointer-events-none">
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 bg-white/95 dark:bg-[#1E1815]/95 backdrop-blur-md p-2 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-lg pointer-events-auto">
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 text-xs font-black text-[#B24C2B] dark:text-[#E88E72] shrink-0 border-l border-[#E5DDD3] dark:border-[#352B24]">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 bg-white/95 dark:bg-[#151513]/95 backdrop-blur-xl p-2 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg pointer-events-auto">
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] shrink-0 border-l border-black/10 dark:border-white/10">
             <Ship className="w-4 h-4" />
             <span>محطات النيل:</span>
           </div>
@@ -470,11 +470,11 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 border ${
                     isCurrent
-                      ? 'bg-[#B24C2B] text-white border-[#B24C2B] shadow-xs scale-105'
-                      : 'bg-[#FAF7F2] dark:bg-[#26201B] text-[#55473E] dark:text-[#C5B8AC] border-[#E8DFC5] dark:border-[#382B22] hover:border-[#B24C2B]'
+                      ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-xs scale-105'
+                      : 'bg-black/5 dark:bg-white/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
                   }`}
                 >
-                  <span className="w-4 h-4 rounded-full bg-amber-400 text-black text-[10px] font-black flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-[#9a6a35] text-white text-[10px] font-black flex items-center justify-center">
                     {idx + 1}
                   </span>
                   <span>{gov.name}</span>
@@ -801,7 +801,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.96 }}
             transition={{ duration: 0.22 }}
-            className="hidden sm:block absolute top-20 left-4 z-40 max-w-[320px] w-full bg-white/95 dark:bg-[#1E1815]/95 backdrop-blur-md rounded-2xl border-2 border-amber-300/80 dark:border-amber-900/60 shadow-2xl overflow-hidden pointer-events-auto"
+            className="hidden sm:block absolute top-20 left-4 z-40 max-w-[320px] w-full bg-white/95 dark:bg-[#151513]/95 backdrop-blur-xl rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden pointer-events-auto"
           >
             {/* Header: Photo banner */}
             <div className="relative h-28 overflow-hidden bg-stone-900">
@@ -825,7 +825,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
               {/* Category Badge & Governorate */}
               <div className="absolute bottom-2.5 right-3 left-3 text-white">
                 <div className="flex items-center gap-1.5 mb-1">
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-black">
+                  <span className="px-2 py-0.5 rounded-full bg-[#9a6a35] text-white text-[10px] font-black">
                     {itemData.typeLabel}
                   </span>
                   {itemData.governorateName && (
@@ -842,7 +842,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
 
             {/* Content Body */}
             <div className="p-3.5 space-y-2.5">
-              <p className="text-xs text-[#55473E] dark:text-[#C5B8AC] leading-relaxed line-clamp-2">
+              <p className="text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed line-clamp-2">
                 {itemData.shortDescription}
               </p>
 
@@ -852,7 +852,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                   {itemData.highlights.slice(0, 3).map((tag, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded-md bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-[9px] font-bold text-[#73675B] dark:text-[#A89B8F]"
+                      className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[9px] font-bold text-[#211d18]/70 dark:text-[#f5f0e7]/70"
                     >
                       #{tag}
                     </span>
@@ -861,13 +861,13 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
               )}
 
               {/* Quick Action Buttons */}
-              <div className="pt-2 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-2">
+              <div className="pt-2 border-t border-black/10 dark:border-white/10 flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     if (itemData.slug) onNavigateToDossier(itemData.slug);
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-[#B24C2B] hover:bg-[#853014] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                  className="flex-1 py-2.5 px-3 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-md"
                 >
                   <Landmark className="w-3.5 h-3.5" />
                   <span>فتح الدليل الكامل</span>
@@ -878,10 +878,10 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                   onClick={() => {
                     if (itemData.governorateName) onShopGovernorate(itemData.governorateName);
                   }}
-                  className="py-2 px-3 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-amber-100 text-[#241E1A] dark:text-[#F7F3EE] text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
+                  className="py-2.5 px-3 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold flex items-center justify-center gap-1 transition-colors cursor-pointer border border-black/10 dark:border-white/10"
                   title="تسوّق منتجات الورشة"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5 text-[#B24C2B]" />
+                  <ShoppingBag className="w-3.5 h-3.5 text-[#9a6a35]" />
                   <span>المتجر</span>
                 </button>
               </div>
@@ -914,14 +914,14 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-              className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-[#1A1412] rounded-t-3xl border-t-2 border-amber-400 dark:border-amber-800 shadow-2xl overflow-hidden max-h-[82vh] flex flex-col pointer-events-auto"
+              className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-t-[2rem] border-t border-black/10 dark:border-white/10 shadow-2xl overflow-hidden max-h-[82vh] flex flex-col pointer-events-auto"
             >
               {/* Drag Handle Indicator */}
               <div
                 className="pt-3 pb-1.5 flex justify-center cursor-pointer"
                 onClick={handleDismissInspector}
               >
-                <div className="w-12 h-1.5 rounded-full bg-stone-300 dark:bg-stone-600" />
+                <div className="w-12 h-1.5 rounded-full bg-black/20 dark:bg-white/20" />
               </div>
 
               {/* Sheet Scrollable Body */}
@@ -948,7 +948,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                   {/* Badges on image */}
                   <div className="absolute bottom-2.5 right-3 left-3 text-white">
                     <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-black text-[11px] font-black">
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#9a6a35] text-white text-[11px] font-black">
                         {itemData.typeLabel}
                       </span>
                       {itemData.governorateName && (
@@ -964,7 +964,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                 </div>
 
                 {/* Description */}
-                <p className="text-xs sm:text-sm text-[#4A3E34] dark:text-[#D5C9BD] leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed">
                   {itemData.shortDescription}
                 </p>
 
@@ -974,7 +974,7 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                     {itemData.highlights.slice(0, 4).map((tag, i) => (
                       <span
                         key={i}
-                        className="px-2 py-0.5 rounded-lg bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-[10px] font-bold text-[#73675B] dark:text-[#A89B8F]"
+                        className="px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[10px] font-bold text-[#211d18]/70 dark:text-[#f5f0e7]/70"
                       >
                         #{tag}
                       </span>
@@ -985,29 +985,29 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                 {/* If governorate, show 3 stats pills */}
                 {itemData.stats && (
                   <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                    <div className="bg-amber-50 dark:bg-stone-900/90 p-2 rounded-xl border border-amber-200 dark:border-stone-800">
-                      <span className="block text-base font-black text-[#B24C2B]">{itemData.stats.placesCount || 0}</span>
-                      <span className="text-[10px] text-stone-500 font-bold">معالم وصروح</span>
+                    <div className="bg-black/5 dark:bg-white/5 p-2 rounded-xl border border-black/10 dark:border-white/10">
+                      <span className="block text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">{itemData.stats.placesCount || 0}</span>
+                      <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-bold">معالم وصروح</span>
                     </div>
-                    <div className="bg-amber-50 dark:bg-stone-900/90 p-2 rounded-xl border border-amber-200 dark:border-stone-800">
-                      <span className="block text-base font-black text-[#B24C2B]">{itemData.stats.craftsCount || 0}</span>
-                      <span className="text-[10px] text-stone-500 font-bold">حرف وورش</span>
+                    <div className="bg-black/5 dark:bg-white/5 p-2 rounded-xl border border-black/10 dark:border-white/10">
+                      <span className="block text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">{itemData.stats.craftsCount || 0}</span>
+                      <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-bold">حرف وورش</span>
                     </div>
-                    <div className="bg-amber-50 dark:bg-stone-900/90 p-2 rounded-xl border border-amber-200 dark:border-stone-800">
-                      <span className="block text-base font-black text-[#B24C2B]">{itemData.stats.productsCount || 0}</span>
-                      <span className="text-[10px] text-stone-500 font-bold">منتجات بالسوق</span>
+                    <div className="bg-black/5 dark:bg-white/5 p-2 rounded-xl border border-black/10 dark:border-white/10">
+                      <span className="block text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">{itemData.stats.productsCount || 0}</span>
+                      <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-bold">منتجات بالسوق</span>
                     </div>
                   </div>
                 )}
 
                 {/* Thumb-friendly CTA Buttons */}
-                <div className="pt-2 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-2">
+                <div className="pt-2 border-t border-black/10 dark:border-white/10 flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => {
                       if (itemData.slug) onNavigateToDossier(itemData.slug);
                     }}
-                    className="flex-1 py-3 px-4 rounded-xl bg-[#B24C2B] hover:bg-[#853014] text-white text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                    className="flex-1 py-3 px-4 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-black flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
                   >
                     <Landmark className="w-4 h-4" />
                     <span>فتح الدليل التوثيقي</span>
@@ -1018,9 +1018,9 @@ export const InteractiveMapCard: React.FC<InteractiveMapCardProps> = ({
                     onClick={() => {
                       if (itemData.governorateName) onShopGovernorate(itemData.governorateName);
                     }}
-                    className="py-3 px-4 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-amber-100 text-[#241E1A] dark:text-[#F7F3EE] text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
+                    className="py-3 px-4 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs sm:text-sm font-black flex items-center justify-center gap-1.5 transition-colors cursor-pointer border border-black/10 dark:border-white/10"
                   >
-                    <ShoppingBag className="w-4 h-4 text-[#B24C2B]" />
+                    <ShoppingBag className="w-4 h-4 text-[#9a6a35]" />
                     <span>تسوّق</span>
                   </button>
                 </div>

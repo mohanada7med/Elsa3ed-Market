@@ -595,10 +595,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {/* Label and Header */}
       {label && (
         <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-          <label className="block text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E5DDD3]">
+          <label className="block text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
             {label}
             {multiple && (
-              <span className="text-[11px] font-normal text-[#8A7E72] dark:text-[#A89D91] mr-1.5">
+              <span className="text-[11px] font-normal text-black/50 dark:text-white/50 dark:text-black/50 dark:text-white/50 mr-1.5">
                 ({currentItems.length} من {maxFiles} {mediaCategory === 'video' ? 'فيديوهات' : 'وسائط'})
               </span>
             )}
@@ -606,7 +606,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
           {/* Media Category Pill Badge */}
           <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EADCCB] dark:bg-[#362A22] text-[#8E422D] dark:text-[#FF8A65]">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EADCCB] dark:bg-[#362A22] text-[#9a6a35] dark:text-[#d5a56d]">
               {mediaCategory === 'video' ? (
                 <>
                   <Video className="w-3 h-3" />
@@ -677,14 +677,14 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       )}
 
       {/* Mode Selector Tabs (Device Upload vs External URL) */}
-      <div className="flex items-center gap-1.5 p-1 bg-[#F3ECE2] dark:bg-[#201A16] rounded-xl mb-3 border border-[#E8E0D5] dark:border-[#352B24] w-full">
+      <div className="flex items-center gap-1.5 p-1 bg-black/10 dark:bg-white/10 dark:bg-[#201A16] rounded-xl mb-3 border border-black/10 dark:border-white/10 w-full">
         <button
           type="button"
           onClick={() => setActiveMode('device')}
           className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
             activeMode === 'device'
-              ? 'bg-white dark:bg-[#2C241F] text-[#8E422D] dark:text-[#FF8A65] shadow-xs'
-              : 'text-[#6B5E52] dark:text-[#A89D91] hover:text-[#2D2621]'
+              ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
+              : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
           }`}
         >
           <Upload className="w-4 h-4 shrink-0" />
@@ -696,8 +696,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           onClick={() => setActiveMode('url')}
           className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
             activeMode === 'url'
-              ? 'bg-white dark:bg-[#2C241F] text-[#8E422D] dark:text-[#FF8A65] shadow-xs'
-              : 'text-[#6B5E52] dark:text-[#A89D91] hover:text-[#2D2621]'
+              ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
+              : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
           }`}
         >
           <LinkIcon className="w-4 h-4 shrink-0" />
@@ -723,11 +723,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             }}
             className={`w-full border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center transition-all select-none flex flex-col items-center justify-center gap-3 ${
               isDragging
-                ? 'border-[#8E422D] bg-[#8E422D]/10 dark:bg-[#8E422D]/20 scale-[0.99]'
-                : 'border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#231C18]'
+                ? 'border-[#9a6a35] bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 scale-[0.99]'
+                : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
             }`}
           >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#EADCCB] dark:bg-[#362A22] flex items-center justify-center text-[#8E422D] dark:text-[#FF8A65] shadow-2xs">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#EADCCB] dark:bg-[#362A22] flex items-center justify-center text-[#9a6a35] dark:text-[#d5a56d] shadow-2xs">
               {mediaCategory === 'video' ? (
                 <Video className="w-6 h-6 sm:w-7 sm:h-7" />
               ) : (
@@ -736,7 +736,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             </div>
 
             <div className="max-w-md">
-              <h4 className="text-sm sm:text-base font-bold text-[#2D2621] dark:text-[#E5DDD3]">
+              <h4 className="text-sm sm:text-base font-bold text-[#211d18] dark:text-[#f5f0e7]">
                 {mediaCategory === 'video'
                   ? 'اختر أو اسحب مقطع فيديو توثيقي'
                   : mediaCategory === 'image'
@@ -745,7 +745,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     : 'اختر صورة الغلاف الرئيسية'
                   : 'اختر الصور أو مقاطع الفيديو'}
               </h4>
-              <p className="text-[11px] sm:text-xs text-[#7A6E63] dark:text-[#A89D91] mt-1 leading-relaxed">
+              <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 mt-1 leading-relaxed">
                 {mediaCategory === 'video'
                   ? 'صيغ الفيديو: MP4, WebM, MOV حتى 150 ميجابايت • مجلد WAH/videos'
                   : 'الصور المدعومة: JPG, PNG, WEBP (حتى 10 ميجابايت) • معاينة سريعة قبل الرفع'}
@@ -760,7 +760,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   if (isAdmin && !disabled && !isUploading) fileInputRef.current?.click();
                 }}
                 disabled={disabled || !isAdmin || isUploading}
-                className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#8E422D] hover:bg-[#733524] text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
               >
                 {mediaCategory === 'video' ? (
                   <>
@@ -775,7 +775,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 )}
               </button>
 
-              <span className="hidden sm:inline text-xs text-[#8A7E72]">أو اسحب وأفلت هنا</span>
+              <span className="hidden sm:inline text-xs text-black/50 dark:text-white/50">أو اسحب وأفلت هنا</span>
             </div>
           </div>
         </div>
@@ -783,15 +783,15 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* STAGING AREA: Local Previews with Real Progress & Retry */}
       {stagedFiles.length > 0 && (
-        <div className="mb-4 p-3 sm:p-5 rounded-2xl border-2 border-[#8E422D] bg-[#FFFBF7] dark:bg-[#261E1A] shadow-md space-y-3.5">
+        <div className="mb-4 p-3 sm:p-5 rounded-2xl border-2 border-[#9a6a35] bg-[#FFFBF7] dark:bg-[#261E1A] shadow-md space-y-3.5">
           {/* Header with counter and cancel */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-[#E8E0D5] dark:border-[#3D332A]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-black/10 dark:border-white/10 dark:border-[#3D332A]">
             <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8E422D] dark:text-[#FF8A65]">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#9a6a35] dark:text-[#d5a56d]">
                 <Sparkles className="w-4 h-4" />
                 <span>معاينة الوسائط قبل الرفع النهائي إلى Cloudinary</span>
               </div>
-              <p className="text-[11px] text-[#7A6E63] dark:text-[#A89D91]">
+              <p className="text-[11px] text-black/60 dark:text-white/60">
                 جاهز للرفع: {stagedFiles.length} ملف • يمكنك تعديل النص البديل أو إزالة أي ملف قبل الاعتماد
               </p>
             </div>
@@ -800,7 +800,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               type="button"
               onClick={cancelStaging}
               disabled={isUploading}
-              className="self-end sm:self-center min-h-[36px] px-3 py-1 rounded-lg text-xs font-bold text-[#7A6E63] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-1 cursor-pointer"
+              className="self-end sm:self-center min-h-[36px] px-3 py-1 rounded-lg text-xs font-bold text-black/60 dark:text-white/60 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-1 cursor-pointer"
               title="إلغاء جميع الملفات"
               aria-label="إلغاء جميع الملفات المجهزة"
             >
@@ -811,9 +811,9 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
           {/* Aggregate Upload Progress Bar */}
           {isUploading && (
-            <div className="p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#201A16] border border-[#E8E0D5] dark:border-[#352B24] space-y-1.5">
+            <div className="p-3 rounded-xl bg-black/5 dark:bg-white/5 dark:bg-[#201A16] border border-black/10 dark:border-white/10 space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold">
-                <span className="text-[#8E422D] dark:text-[#FF8A65] flex items-center gap-1.5">
+                <span className="text-[#9a6a35] dark:text-[#d5a56d] flex items-center gap-1.5">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   <span>جاري الرفع إلى السحابة... ({completedStagedCount} من {totalStagedCount} اكتملت)</span>
                 </span>
@@ -821,7 +821,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-[#8E422D] h-full transition-all duration-300 rounded-full"
+                  className="bg-[#9a6a35] h-full transition-all duration-300 rounded-full"
                   style={{ width: `${averageProgress}%` }}
                 />
               </div>
@@ -833,7 +833,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             {stagedFiles.map((sf) => (
               <div
                 key={sf.id}
-                className="p-3 rounded-xl bg-white dark:bg-[#1E1815] border border-[#E8E0D5] dark:border-[#352B24] flex flex-col justify-between gap-2.5 shadow-2xs"
+                className="p-3 rounded-xl bg-white dark:bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col justify-between gap-2.5 shadow-2xs"
               >
                 <div className="flex gap-3">
                   {/* Thumbnail / Video Preview */}
@@ -860,14 +860,14 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   {/* Metadata and Alt Text */}
                   <div className="flex-1 min-w-0 space-y-1.5 text-right">
                     <div className="flex items-start justify-between gap-1">
-                      <p className="text-xs font-bold text-[#2D2621] dark:text-[#E5DDD3] truncate" title={sf.file.name}>
+                      <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] truncate" title={sf.file.name}>
                         {sf.file.name}
                       </p>
                       <button
                         type="button"
                         onClick={() => removeStagedFile(sf.id)}
                         disabled={isUploading}
-                        className="p-1 rounded-md text-[#8A7E72] hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer shrink-0"
+                        className="p-1 rounded-md text-black/50 dark:text-white/50 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer shrink-0"
                         title="إزالة من قائمة الرفع"
                         aria-label="إزالة الملف من القائمة"
                       >
@@ -875,7 +875,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                       </button>
                     </div>
 
-                    <p className="text-[10px] text-[#7A6E63] dark:text-[#A89D91]">
+                    <p className="text-[10px] text-black/60 dark:text-white/60">
                       الحجم: {(sf.sizeBytes / (1024 * 1024)).toFixed(2)} ميجابايت • {sf.isVideo ? 'فيديو' : 'صورة'}
                     </p>
 
@@ -890,7 +890,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                       }}
                       placeholder="النص البديل (Alt text)"
                       disabled={isUploading}
-                      className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#26201B] outline-none min-h-[36px]"
+                      className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 outline-none min-h-[36px]"
                     />
                   </div>
                 </div>
@@ -899,13 +899,13 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 <div className="pt-1.5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between gap-2">
                   <div className="text-[11px] font-bold">
                     {sf.status === 'pending' && (
-                      <span className="text-[#8A7E72] flex items-center gap-1">
+                      <span className="text-black/50 dark:text-white/50 flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
                         <span>بانتظار بدء الرفع</span>
                       </span>
                     )}
                     {sf.status === 'uploading' && (
-                      <span className="text-[#8E422D] dark:text-[#FF8A65] flex items-center gap-1 font-bold">
+                      <span className="text-[#9a6a35] dark:text-[#d5a56d] flex items-center gap-1 font-bold">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         <span>جاري الرفع... {sf.progress}%</span>
                       </span>
@@ -941,12 +941,12 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           </div>
 
           {/* Staging Bottom Actions */}
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5 pt-2 border-t border-[#E8E0D5] dark:border-[#3D332A]">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2.5 pt-2 border-t border-black/10 dark:border-white/10 dark:border-[#3D332A]">
             <button
               type="button"
               onClick={cancelStaging}
               disabled={isUploading}
-              className="w-full sm:w-auto min-h-[44px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] text-xs font-bold text-[#7A6E63] hover:bg-gray-100 dark:hover:bg-[#332A22] cursor-pointer flex items-center justify-center"
+              className="w-full sm:w-auto min-h-[44px] px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#332A22] cursor-pointer flex items-center justify-center"
             >
               إلغاء المعاينة
             </button>
@@ -954,7 +954,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               type="button"
               onClick={executeStagedUpload}
               disabled={isUploading}
-              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#8E422D] hover:bg-[#753422] text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
             >
               {isUploading ? (
                 <>
@@ -974,9 +974,9 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* REPLACEMENT STAGING MODAL: Preview Before Replace */}
       {stagedReplacement && stagedReplacement.localPreviewUrl && (
-        <div className="mb-4 p-4 rounded-2xl border-2 border-[#8E422D] bg-[#FFFBF7] dark:bg-[#261E1A] shadow-lg space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-[#E8E0D5] dark:border-[#3D332A]">
-            <span className="text-xs sm:text-sm font-bold text-[#8E422D] dark:text-[#FF8A65] flex items-center gap-1.5">
+        <div className="mb-4 p-4 rounded-2xl border-2 border-[#9a6a35] bg-[#FFFBF7] dark:bg-[#261E1A] shadow-lg space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10 dark:border-[#3D332A]">
+            <span className="text-xs sm:text-sm font-bold text-[#9a6a35] dark:text-[#d5a56d] flex items-center gap-1.5">
               <RefreshCw className="w-4 h-4" />
               <span>معاينة استبدال الوسيط قبل التطبيق بالسحابة</span>
             </span>
@@ -992,8 +992,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-[#7A6E63] block">الوسيط الحالي (سيُستبدل ويُحذف بأمان):</span>
-              <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/5 border border-[#E8E0D5]">
+              <span className="text-[11px] font-bold text-black/60 dark:text-white/60 block">الوسيط الحالي (سيُستبدل ويُحذف بأمان):</span>
+              <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/5 border border-black/10 dark:border-white/10">
                 {isVideoUrl(stagedReplacement.targetCurrentUrl) ? (
                   <video src={stagedReplacement.targetCurrentUrl} className="w-full h-full object-cover" muted />
                 ) : (
@@ -1014,12 +1014,12 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2 pt-2 border-t border-[#E8E0D5] dark:border-[#3D332A]">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10 dark:border-[#3D332A]">
             <button
               type="button"
               onClick={cancelReplacement}
               disabled={isUploading}
-              className="w-full sm:w-auto min-h-[44px] px-4 py-2 rounded-xl border border-[#D9CFBE] text-xs font-bold text-[#7A6E63] cursor-pointer flex items-center justify-center"
+              className="w-full sm:w-auto min-h-[44px] px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 cursor-pointer flex items-center justify-center"
             >
               إلغاء الاستبدال
             </button>
@@ -1056,14 +1056,14 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 onChange={(e) => setUrlInput(e.target.value)}
                 placeholder="https://images.unsplash.com/... أو رابط وسيط خارجي"
                 disabled={disabled || isUploading || !isAdmin}
-                className="w-full bg-[#FAF7F2] dark:bg-[#231C18] text-xs sm:text-sm rounded-xl px-4 py-3 border border-[#D9CFBE] dark:border-[#3D332A] text-[#2D2621] dark:text-[#E5DDD3] placeholder:text-[#9C8F82] focus:outline-none focus:border-[#8E422D] min-h-[44px]"
+                className="w-full bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5 text-xs sm:text-sm rounded-xl px-4 py-3 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:text-white/40 focus:outline-none focus:border-[#9a6a35] min-h-[44px]"
                 dir="ltr"
               />
             </div>
             <button
               type="submit"
               disabled={disabled || isUploading || !urlInput.trim() || !isAdmin}
-              className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#8E422D] hover:bg-[#753422] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+              className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
             >
               {isUploading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1078,7 +1078,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* Alt Text Input (for SEO & Accessibility) */}
       <div className="mb-3">
-        <label className="block text-[11px] sm:text-xs font-semibold text-[#6B5E52] dark:text-[#A89D91] mb-1">
+        <label className="block text-[11px] sm:text-xs font-semibold text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mb-1">
           النص البديل المعبر (Alt Text) للتوثيق ومحركات البحث
         </label>
         <div className="relative">
@@ -1088,7 +1088,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             onChange={(e) => setAltInput(e.target.value)}
             placeholder={getSuggestedAlt()}
             disabled={disabled || !isAdmin}
-            className="w-full bg-[#FAF7F2] dark:bg-[#231C18] text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-[#D9CFBE] dark:border-[#3D332A] text-[#2D2621] dark:text-[#E5DDD3] placeholder:text-[#9C8F82] focus:outline-none focus:border-[#8E422D] min-h-[44px]"
+            className="w-full bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5 text-xs sm:text-sm rounded-xl px-3.5 py-2.5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:text-white/40 focus:outline-none focus:border-[#9a6a35] min-h-[44px]"
           />
         </div>
       </div>
@@ -1120,7 +1120,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {/* SINGLE IMAGE / VIDEO PREVIEW MODE (Responsive Media Card)                 */}
       {/* ========================================================================= */}
       {!multiple && currentItems.length > 0 && (
-        <div className="relative rounded-2xl overflow-hidden border border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#231C18] p-3 sm:p-4">
+        <div className="relative rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5 p-3 sm:p-4">
           <div className="relative w-full aspect-video sm:aspect-21/9 max-h-[260px] rounded-xl overflow-hidden bg-black/10 flex items-center justify-center">
             {isVideoUrl(currentItems[0].url) ? (
               <video
@@ -1142,7 +1142,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
             {/* Type & Cloudinary Badges */}
             <div className="absolute top-2 right-2 flex items-center gap-1.5">
-              <span className="px-2.5 py-1 rounded-lg bg-[#8E422D]/90 backdrop-blur-xs text-white text-[10px] font-bold shadow-xs">
+              <span className="px-2.5 py-1 rounded-lg bg-[#9a6a35]/90 backdrop-blur-xs text-white text-[10px] font-bold shadow-xs">
                 {isVideoUrl(currentItems[0].url) ? 'فيديو موثق' : 'صورة موثقة'}
               </span>
               <span className="px-2 py-1 rounded-lg bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold">
@@ -1163,12 +1163,12 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           </div>
 
           {/* Metadata & Mobile Action Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 pt-3 border-t border-[#E8E0D5] dark:border-[#332A22]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 pt-3 border-t border-black/10 dark:border-white/10">
             <div className="min-w-0 flex-1">
-              <p className="text-xs sm:text-sm font-bold text-[#2D2621] dark:text-[#E5DDD3] truncate">
+              <p className="text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">
                 {currentItems[0].item?.title || currentItems[0].item?.alt || entityTitle || 'صورة الغلاف'}
               </p>
-              <p className="text-[10px] text-[#7A6E63] dark:text-[#A89D91] truncate font-mono mt-0.5 text-left" dir="ltr">
+              <p className="text-[10px] text-black/60 dark:text-white/60 truncate font-mono mt-0.5 text-left" dir="ltr">
                 {currentItems[0].item?.publicId || currentItems[0].url}
               </p>
             </div>
@@ -1184,7 +1184,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     )
                   }
                   disabled={disabled || isUploading}
-                  className="flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#2B231E] hover:bg-[#F3ECE2] text-[#2D2621] dark:text-[#E5DDD3] text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="flex-1 sm:flex-initial min-h-[44px] px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl hover:bg-black/10 dark:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>استبدال</span>
@@ -1210,7 +1210,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {/* ========================================================================= */}
       {multiple && currentItems.length > 0 && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs font-bold text-[#7A6E63] dark:text-[#A89D91] px-1">
+          <div className="flex items-center justify-between text-xs font-bold text-black/60 dark:text-white/60 px-1">
             <span>صور وفيديوهات المعرض التوثيقي ({currentItems.length})</span>
             <span>الترتيب من اليمين إلى اليسار</span>
           </div>
@@ -1225,8 +1225,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   key={img.item?.id || `${img.url}-${idx}`}
                   className={`relative rounded-2xl overflow-hidden border transition-all ${
                     isPrimary
-                      ? 'border-[#8E422D] shadow-xs dark:border-[#FF8A65]/60 bg-[#FFFBF7] dark:bg-[#2A201A]'
-                      : 'border-[#D9CFBE] dark:border-[#3D332A] bg-[#FAF7F2] dark:bg-[#231C18]'
+                      ? 'border-[#9a6a35] shadow-xs dark:border-[#d5a56d]/60 bg-[#FFFBF7] dark:bg-black/5 dark:bg-white/5'
+                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
                   } p-3 flex flex-col justify-between gap-2.5`}
                 >
                   {/* Thumbnail / Video */}
@@ -1258,7 +1258,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
                     {/* Primary Badge */}
                     {isPrimary && (
-                      <div className="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-[#8E422D] text-white text-[11px] font-bold flex items-center gap-1 shadow-xs">
+                      <div className="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-[#9a6a35] text-white text-[11px] font-bold flex items-center gap-1 shadow-xs">
                         <Star className="w-3.5 h-3.5 fill-current" />
                         <span>الغلاف الرئيسي ✓</span>
                       </div>
@@ -1283,7 +1283,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
                   {/* Card Controls & Touch Reordering */}
                   {isAdmin && (
-                    <div className="space-y-2 pt-2 border-t border-[#E8E0D5] dark:border-[#332A22]">
+                    <div className="space-y-2 pt-2 border-t border-black/10 dark:border-white/10">
                       {/* Top Action Row: Set primary / Status */}
                       <div className="flex items-center justify-between gap-1.5">
                         {!isPrimary ? (
@@ -1291,7 +1291,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                             type="button"
                             onClick={() => handleSetPrimary(idx)}
                             disabled={disabled}
-                            className="flex-1 min-h-[36px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#EADCCB] dark:bg-[#362A22] text-[#8E422D] dark:text-[#FF8A65] hover:bg-[#8E422D] hover:text-white transition-all cursor-pointer flex items-center justify-center gap-1"
+                            className="flex-1 min-h-[36px] px-2.5 py-1.5 rounded-xl text-xs font-bold bg-[#EADCCB] dark:bg-[#362A22] text-[#9a6a35] dark:text-[#d5a56d] hover:bg-[#9a6a35] hover:text-white transition-all cursor-pointer flex items-center justify-center gap-1"
                             title="تعيين كصورة رئيسية"
                           >
                             <Star className="w-3.5 h-3.5" />
@@ -1311,7 +1311,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                               triggerReplacePicker(img.item?.id || img.url, img.url)
                             }
                             disabled={disabled || isUploading}
-                            className="min-h-[36px] min-w-[36px] p-1.5 rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] bg-white dark:bg-[#2B231E] text-[#2D2621] dark:text-[#E5DDD3] hover:bg-[#FAF7F2] cursor-pointer flex items-center justify-center"
+                            className="min-h-[36px] min-w-[36px] p-1.5 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:bg-white/5 cursor-pointer flex items-center justify-center"
                             title="استبدال"
                             aria-label="استبدال هذا الوسيط"
                           >
@@ -1333,13 +1333,13 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
                       {/* Reordering Controls (Touch-Friendly min 44px) */}
                       <div className="flex items-center gap-1.5 pt-1">
-                        <span className="text-[11px] text-[#8A7E72] font-semibold whitespace-nowrap">الترتيب:</span>
+                        <span className="text-[11px] text-black/50 dark:text-white/50 font-semibold whitespace-nowrap">الترتيب:</span>
                         <div className="grid grid-cols-2 gap-1.5 flex-1">
                           <button
                             type="button"
                             onClick={() => handleMove(idx, 'forward')}
                             disabled={idx === 0 || disabled}
-                            className="min-h-[40px] px-2 py-1 rounded-xl bg-white dark:bg-[#2B231E] border border-[#D9CFBE] dark:border-[#3D332A] text-[#2D2621] dark:text-[#E5DDD3] disabled:opacity-30 flex items-center justify-center gap-1 text-xs font-bold cursor-pointer"
+                            className="min-h-[40px] px-2 py-1 rounded-xl bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] disabled:opacity-30 flex items-center justify-center gap-1 text-xs font-bold cursor-pointer"
                             title="تقديم للأمام"
                             aria-label="تقديم للأمام"
                           >
@@ -1351,7 +1351,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                             type="button"
                             onClick={() => handleMove(idx, 'backward')}
                             disabled={idx === currentItems.length - 1 || disabled}
-                            className="min-h-[40px] px-2 py-1 rounded-xl bg-white dark:bg-[#2B231E] border border-[#D9CFBE] dark:border-[#3D332A] text-[#2D2621] dark:text-[#E5DDD3] disabled:opacity-30 flex items-center justify-center gap-1 text-xs font-bold cursor-pointer"
+                            className="min-h-[40px] px-2 py-1 rounded-xl bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] disabled:opacity-30 flex items-center justify-center gap-1 text-xs font-bold cursor-pointer"
                             title="تأخير للخلف"
                             aria-label="تأخير للخلف"
                           >
@@ -1372,7 +1372,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* Helper text */}
       {helperText && (
-        <p className="text-[11px] text-[#7A6E63] dark:text-[#A89D91] mt-1.5">
+        <p className="text-[11px] text-black/60 dark:text-white/60 mt-1.5">
           {helperText}
         </p>
       )}
@@ -1380,23 +1380,23 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {/* SAFE DELETE CONFIRMATION MODAL */}
       {itemPendingDelete && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#201A16] rounded-2xl w-full max-w-sm border border-[#E8E0D5] dark:border-[#352B24] p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl w-full max-w-sm border border-black/10 dark:border-white/10 p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
             <div className="flex items-center gap-3 text-red-600">
               <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-950/60 flex items-center justify-center">
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-sm text-[#2D2621] dark:text-[#FAF6F2]">
+                <h4 className="font-bold text-sm text-[#211d18] dark:text-[#FAF6F2]">
                   تأكيد حذف الوسيط
                 </h4>
-                <p className="text-[11px] text-[#7A6E63]">
+                <p className="text-[11px] text-black/60 dark:text-white/60">
                   سيتم حذف الملف من Cloudinary وقاعدة البيانات نهائياً
                 </p>
               </div>
             </div>
 
             {/* Thumbnail Preview */}
-            <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/10 border border-[#E8E0D5]">
+            <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/10 border border-black/10 dark:border-white/10">
               {isVideoUrl(itemPendingDelete.url) ? (
                 <video src={itemPendingDelete.url} className="w-full h-full object-cover" muted />
               ) : (
@@ -1409,7 +1409,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 type="button"
                 onClick={() => setItemPendingDelete(null)}
                 disabled={isUploading}
-                className="flex-1 min-h-[44px] rounded-xl border border-[#D9CFBE] dark:border-[#3D332A] text-xs font-bold text-[#7A6E63] hover:bg-gray-100 dark:hover:bg-[#332A22]"
+                className="flex-1 min-h-[44px] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#332A22]"
               >
                 تراجع
               </button>
@@ -1439,7 +1439,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       {/* Image Lightbox Preview Modal */}
       {previewModalUrl && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="relative max-w-4xl max-h-[92vh] w-full bg-[#1F1A16] rounded-2xl p-2 sm:p-4 overflow-hidden flex flex-col items-center shadow-2xl border border-white/10">
+          <div className="relative max-w-4xl max-h-[92vh] w-full bg-black/5 dark:bg-white/5 rounded-2xl p-2 sm:p-4 overflow-hidden flex flex-col items-center shadow-2xl border border-white/10">
             <button
               type="button"
               onClick={() => setPreviewModalUrl(null)}

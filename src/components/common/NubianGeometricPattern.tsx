@@ -5,7 +5,7 @@ interface NubianGeometricPatternProps {
   opacity?: number;
   /** Custom CSS classes for positioning and styling */
   className?: string;
-  /** Base stroke/fill color (default: warm terracotta #B24C2B) */
+  /** Base stroke/fill color (default: warm terracotta #9a6a35) */
   color?: string;
   /** Pattern variant: 'tapestry' | 'triangles' | 'frieze' | 'diamonds' */
   variant?: 'tapestry' | 'triangles' | 'frieze' | 'diamonds';
@@ -16,7 +16,7 @@ interface NubianGeometricPatternProps {
 export const NubianGeometricPattern: React.FC<NubianGeometricPatternProps> = ({
   opacity = 0.14,
   className = '',
-  color = '#B24C2B',
+  color = '#9a6a35',
   variant = 'tapestry',
   scale = 1
 }) => {
@@ -49,7 +49,7 @@ export const NubianGeometricPattern: React.FC<NubianGeometricPatternProps> = ({
             <polygon points="24,2 46,28 2,28" fill={color} fillOpacity="0.25" stroke={color} strokeWidth="1.5" strokeLinejoin="round" />
             <polygon points="24,8 40,26 8,26" fill={color} fillOpacity="0.45" stroke={color} strokeWidth="1" />
             <polygon points="24,14 34,24 14,24" fill={color} fillOpacity="0.75" />
-            <circle cx="24" cy="20" r="2.5" fill="#FAF7F2" />
+            <circle cx="24" cy="20" r="2.5" fill="#eee8dc" />
             
             {/* Corner stepped accents */}
             <polygon points="0,32 0,18 14,32" fill={color} fillOpacity="0.35" />
@@ -104,7 +104,7 @@ export const NubianGeometricPattern: React.FC<NubianGeometricPatternProps> = ({
               />
               {/* Inner chevron */}
               <polygon points="30,16 42,28 18,28" fill={color} fillOpacity="0.6" stroke={color} strokeWidth="1" />
-              <circle cx="30" cy="22" r="2.5" fill="#FAF7F2" />
+              <circle cx="30" cy="22" r="2.5" fill="#eee8dc" />
 
               {/* Corner accent points */}
               <circle cx="6" cy="6" r="2" fill={color} fillOpacity="0.7" />
@@ -168,7 +168,7 @@ export const NubianGeometricPattern: React.FC<NubianGeometricPatternProps> = ({
                 fillOpacity="0.55"
               />
               {/* Center Sun Disc */}
-              <circle cx="40" cy="40" r="4" fill="#FAF7F2" stroke={color} strokeWidth="1.5" />
+              <circle cx="40" cy="40" r="4" fill="#eee8dc" stroke={color} strokeWidth="1.5" />
 
               {/* Corner triangles that form diamonds at intersections */}
               <polygon points="0,0 18,0 0,18" fill={color} fillOpacity="0.35" stroke={color} strokeWidth="1" />
@@ -256,7 +256,7 @@ export const NubianGeometricPattern: React.FC<NubianGeometricPatternProps> = ({
             />
 
             {/* Central Sun Eye */}
-            <circle cx="42" cy="42" r="3.5" fill="#FAF7F2" stroke={color} strokeWidth="1.5" />
+            <circle cx="42" cy="42" r="3.5" fill="#eee8dc" stroke={color} strokeWidth="1.5" />
             <circle cx="42" cy="42" r="6.5" fill="none" stroke={color} strokeWidth="1" strokeDasharray="1.5 1.5" />
 
             {/* Corner Connecting Nubian Triangles */}

@@ -21,14 +21,14 @@ export const WAHCard: React.FC<WAHCardProps> = ({
   ...props
 }) => {
   const shapeClass = editorialShape
-    ? 'rounded-tl-3xl rounded-br-3xl rounded-tr-xl rounded-bl-xl'
-    : 'rounded-2xl';
+    ? 'rounded-tl-[2rem] rounded-br-[2rem] rounded-tr-[1rem] rounded-bl-[1rem]'
+    : 'rounded-[1.5rem]';
 
   return (
     <motion.div
       whileHover={hoverable ? { y: -4, transition: { duration: 0.22, ease: 'easeOut' } } : undefined}
-      className={`relative bg-white dark:bg-[var(--wah-surface,#1B1613)] border border-[var(--wah-border,#E5DDD3)] dark:border-[var(--wah-border,#352B24)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] shadow-[0_2px_10px_-2px_rgba(36,30,26,0.04)] dark:shadow-[0_2px_12px_-2px_rgba(0,0,0,0.4)] ${
-        hoverable ? 'hover:border-[var(--wah-border-hover,#CBBDB0)] dark:hover:border-[var(--wah-primary,#E0633C)] hover:shadow-[0_12px_28px_-6px_rgba(36,30,26,0.08)] dark:hover:shadow-[0_12px_32px_-6px_rgba(0,0,0,0.6)]' : ''
+      className={`relative bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] shadow-lg ${
+        hoverable ? 'hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 hover:shadow-xl' : ''
       } transition-all duration-250 overflow-hidden ${shapeClass} ${className}`}
       {...props}
     >

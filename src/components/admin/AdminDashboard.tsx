@@ -1360,11 +1360,11 @@ export const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div className="max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8">
       {/* Admin Header */}
-      <div className="bg-[#2D2A26] rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-[#443E38]">
+      <div className="bg-[#211d18] dark:bg-[#151513] rounded-[2rem] p-6 sm:p-8 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-black/10 dark:border-white/10">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#B24C2B]/30 border border-[#B24C2B]/50 flex items-center justify-center text-[#B24C2B] shrink-0">
+          <div className="w-14 h-14 rounded-2xl overflow-hidden bg-[#9a6a35]/30 border border-[#9a6a35]/50 flex items-center justify-center text-[#9a6a35] dark:text-[#d5a56d] shrink-0">
             {currentUser.profileImage?.secureUrl || currentUser.avatar ? (
               <img
                 src={currentUser.profileImage?.secureUrl || currentUser.avatar}
@@ -1390,7 +1390,7 @@ export const AdminDashboard: React.FC = () => {
                 تغيير الصورة الشخصية
               </button>
             </div>
-            <p className="text-xs text-[#E5DDD3]/80 mt-1">
+            <p className="text-xs text-white/80 mt-1">
               مراقبة المنظومة، مراجعة وتوثيق أصالة المنتجات التراثية، إدارة التصنيفات والمراجعات، وشحنات الصعيد
             </p>
           </div>
@@ -1405,13 +1405,13 @@ export const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-[#E5DDD3] dark:border-[#352B24] overflow-x-auto pb-2 no-scrollbar px-1">
+      <div className="flex items-center gap-2 border-b border-black/10 dark:border-white/10 overflow-x-auto pb-2 no-scrollbar px-1">
         <button
           type="button"
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'overview'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <TrendingUp className="w-4 h-4" />
@@ -1422,8 +1422,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('approvals')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap relative cursor-pointer ${activeTab === 'approvals'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Package className="w-4 h-4" />
@@ -1439,8 +1439,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('categories')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'categories'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Layers className="w-4 h-4" />
@@ -1452,8 +1452,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-craft-stories"
           onClick={() => setActiveTab('craft-stories')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'craft-stories'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Sparkles className="w-4 h-4 text-amber-500" />
@@ -1475,11 +1475,11 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-media-library"
           onClick={() => setActiveTab('media-library')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'media-library'
-            ? 'bg-[#8E422D] text-white shadow-xs'
-            : 'bg-[#FDF8F5] dark:bg-[#1B1613] text-[#8E422D] dark:text-[#E0633C] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
-          <ImageIcon className="w-4 h-4 text-[#8E422D] dark:text-[#E0633C]" />
+          <ImageIcon className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
           <span>مكتبة وسائط Cloudinary</span>
         </button>
 
@@ -1491,8 +1491,8 @@ export const AdminDashboard: React.FC = () => {
             setAdminReels(craftReelsService.getReels());
           }}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'craft-reels'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Film className="w-4 h-4 text-amber-500" />
@@ -1503,8 +1503,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('reviews')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'reviews'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <MessageSquare className="w-4 h-4" />
@@ -1516,8 +1516,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-sellers"
           onClick={() => setActiveTab('sellers')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'sellers'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Store className="w-4 h-4" />
@@ -1533,8 +1533,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('orders')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'orders'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Truck className="w-4 h-4" />
@@ -1546,8 +1546,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-payouts"
           onClick={() => setActiveTab('payouts')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'payouts'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <CreditCard className="w-4 h-4" />
@@ -1558,8 +1558,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('coupons')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'coupons'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Tag className="w-4 h-4" />
@@ -1573,8 +1573,8 @@ export const AdminDashboard: React.FC = () => {
             fetchAdminPaymentSettings();
           }}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'payment-settings'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <CreditCard className="w-4 h-4 text-emerald-500" />
@@ -1585,8 +1585,8 @@ export const AdminDashboard: React.FC = () => {
           type="button"
           onClick={() => setActiveTab('audit')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'audit'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <FileText className="w-4 h-4" />
@@ -1598,8 +1598,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-users"
           onClick={() => setActiveTab('users')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'users'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Users className="w-4 h-4" />
@@ -1611,8 +1611,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-password-resets"
           onClick={() => setActiveTab('password-resets')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap relative cursor-pointer ${activeTab === 'password-resets'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <KeyRound className="w-4 h-4 text-amber-500" />
@@ -1629,8 +1629,8 @@ export const AdminDashboard: React.FC = () => {
           id="admin-tab-notifications"
           onClick={() => setActiveTab('notifications')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'notifications'
-            ? 'bg-[#B24C2B] text-white shadow-xs'
-            : 'bg-white dark:bg-[#1B1613] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]'
+            ? 'bg-[#9a6a35] text-white shadow-md'
+            : 'bg-white/80 dark:bg-[#151513]/90 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/5 dark:hover:bg-white/5 border border-black/10 dark:border-white/10'
             }`}
         >
           <Bell className="w-4 h-4 text-amber-500" />
@@ -1649,10 +1649,10 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Overview Top Header with Refresh Button */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E5DDD3] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
             <div>
-              <h2 className="font-black text-lg text-[#2D2A26]">نظرة عامة على أداء منصة وه</h2>
-              <p className="text-xs text-[#73675B] mt-0.5">
+              <h2 className="font-black text-lg text-[#211d18] dark:text-[#f5f0e7]">نظرة عامة على أداء منصة وه</h2>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
                 مؤشرات حية للمبيعات، الورش الحرفية، طابور الاعتماد وشحنات الصعيد
               </p>
             </div>
@@ -1669,27 +1669,27 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
-              <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">إجمالي حجم مبيعات المنصة (GMV)</span>
-              <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي حجم مبيعات المنصة (GMV)</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
                 {orders.length > 0 ? `إجمالي ${orders.length} طلب مسجل` : 'مؤشر المبيعات المباشرة'}
               </span>
             </div>
 
-            <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
-              <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">إجمالي الحرفيين والورش</span>
-              <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{sellers.length} ورشة</span>
-              <span className="text-[10px] text-[#B24C2B] dark:text-[#E0633C] font-bold block mt-1">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي الحرفيين والورش</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{sellers.length} ورشة</span>
+              <span className="text-[10px] text-[#9a6a35] dark:text-[#d5a56d] font-bold block mt-1">
                 {new Set(sellers.map((s) => s.governorate).filter(Boolean)).size > 0
                   ? `تغطي ${new Set(sellers.map((s) => s.governorate).filter(Boolean)).size} محافظات صعيدية`
                   : 'شبكة الورش الحرفية'}
               </span>
             </div>
 
-            <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
-              <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">المنتجات الحرفية النشطة</span>
-              <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">المنتجات الحرفية النشطة</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
                 {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
               </span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
@@ -1699,10 +1699,10 @@ export const AdminDashboard: React.FC = () => {
               </span>
             </div>
 
-            <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
-              <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">طلبات الشحن المنفذة</span>
-              <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{orders.length} شحنة</span>
-              <span className="text-[10px] text-[#73675B] dark:text-[#A89B8F] block mt-1">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">طلبات الشحن المنفذة</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length} شحنة</span>
+              <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mt-1">
                 {orders.length > 0
                   ? `${orders.filter((o) => o.status === 'delivered').length} شحنة مكتملة التسليم`
                   : 'شحن مباشر من الورش'}
@@ -1711,22 +1711,22 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Pending Queue Highlight */}
-          <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 shadow-xs space-y-4">
+          <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-[#2D2A26] dark:text-[#FAF6F2]">طابور المراجعة السريعة للمنتجات الجديدة</h3>
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور المراجعة السريعة للمنتجات الجديدة</h3>
               <button
                 type="button"
                 onClick={() => setActiveTab('approvals')}
-                className="text-xs font-bold text-[#B24C2B] dark:text-[#E0633C] hover:underline cursor-pointer"
+                className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
               >
                 فتح قائمة الاعتماد الكاملة ({pendingProducts.length})
               </button>
             </div>
 
             {pendingProducts.length === 0 ? (
-              <div className="text-center py-8 bg-[#FAF7F2] dark:bg-[#201A16] rounded-2xl border border-dashed border-[#E5DDD3] dark:border-[#352B24]">
+              <div className="text-center py-8 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
                 <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
-                <p className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2]">لا توجد طلبات معلقة حالياً - تم فحص جميع المنتجات المدرجة</p>
+                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد طلبات معلقة حالياً - تم فحص جميع المنتجات المدرجة</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -1739,14 +1739,14 @@ export const AdminDashboard: React.FC = () => {
                       <img
                         src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                         alt=""
-                        className="w-14 h-14 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24]"
+                        className="w-14 h-14 rounded-xl object-cover border border-black/10 dark:border-white/10"
                       />
                       <div>
-                        <h4 className="font-bold text-sm text-[#2D2A26] dark:text-[#FAF6F2]">{prod.title}</h4>
-                        <p className="text-xs text-[#73675B] dark:text-[#A89B8F]">
+                        <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
+                        <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                           الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: {prod.price} ج.م
                         </p>
-                        <p className="text-[11px] text-[#B24C2B] dark:text-[#E0633C] mt-0.5">
+                        <p className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] mt-0.5">
                           الخامات: {prod.specifications?.material || 'خامات طبيعية'} • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
                         </p>
                       </div>
@@ -1782,11 +1782,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 2: APPROVALS QUEUE & CATALOG AUDIT */}
       {activeTab === 'approvals' && (
-        <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 shadow-xs space-y-6">
+        <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26] dark:text-[#FAF6F2]">طابور فحص واعتماد المنتجات التراثية</h3>
-              <p className="text-xs text-[#73675B] dark:text-[#A89B8F]">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور فحص واعتماد المنتجات التراثية</h3>
+              <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                 يجب فحص كل قطعة للتأكد من أصالتها ومطابقتها للمواصفات التراثية قبل إتاحتها للمشترين في المتجر العام
               </p>
             </div>
@@ -1802,17 +1802,17 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-add-new-product-btn"
                 onClick={openAdminAddProductModal}
-                className="px-4 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                className="px-4 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة منتج كمدير</span>
               </button>
 
-              <div className="flex items-center gap-1.5 bg-[#F3EFE9] dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
+              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
                 <button
                   type="button"
                   onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#2D2A26] dark:bg-[#3D332B] text-white' : 'text-[#73675B] dark:text-[#A89B8F]'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#211d18] text-white dark:bg-white dark:text-black' : 'text-black/60 dark:text-white/60'
                     }`}
                 >
                   الكل ({adminProducts.length})
@@ -1820,7 +1820,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStatusFilter('pending')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-[#73675B] dark:text-[#A89B8F]'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
                     }`}
                 >
                   <span>قيد المراجعة</span>
@@ -1831,7 +1831,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStatusFilter('approved')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-[#73675B] dark:text-[#A89B8F]'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
                     }`}
                 >
                   معتمد
@@ -1839,7 +1839,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setStatusFilter('rejected')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-[#73675B] dark:text-[#A89B8F]'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
                     }`}
                 >
                   مرفوض
@@ -1850,22 +1850,22 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Search bar */}
           <div className="relative">
-            <Search className="w-4 h-4 text-[#73675B] dark:text-[#A89B8F] absolute right-3.5 top-3" />
+            <Search className="w-4 h-4 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 absolute right-3.5 top-3" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="بحث باسم المنتج، الورشة، أو المحافظة..."
-              className="w-full pr-10 pl-4 py-2.5 bg-[#FAF7F2] dark:bg-[#1F1916] border border-[#E5DDD3] dark:border-[#352B24] text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#B24C2B] dark:focus:border-[#E0633C]"
+              className="w-full pr-10 pl-4 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
             />
           </div>
 
           {/* Products List */}
           <div className="space-y-4">
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-12 bg-[#FAF7F2] dark:bg-[#201A16] border border-dashed border-[#E5DDD3] dark:border-[#352B24] rounded-2xl">
-                <Package className="w-8 h-8 text-[#73675B] dark:text-[#A89B8F] mx-auto mb-2 opacity-50" />
-                <p className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2]">لا توجد منتجات تطابق الفلتر الحالي</p>
+              <div className="text-center py-12 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                <Package className="w-8 h-8 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mx-auto mb-2 opacity-50" />
+                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد منتجات تطابق الفلتر الحالي</p>
               </div>
             ) : (
               filteredProducts.map((prod) => (
@@ -1875,7 +1875,7 @@ export const AdminDashboard: React.FC = () => {
                     ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/60'
                     : prod.approvalStatus === 'rejected'
                       ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60'
-                      : 'bg-[#FAF7F2] dark:bg-[#1E1916] border-[#E5DDD3] dark:border-[#352B24]'
+                      : 'bg-black/5 dark:bg-white/5 dark:bg-[#1E1916] border-black/10 dark:border-white/10'
                     }`}
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -1883,20 +1883,20 @@ export const AdminDashboard: React.FC = () => {
                       <img
                         src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
                         alt={prod.title}
-                        className="w-16 h-16 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
+                        className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0"
                       />
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="font-bold text-sm text-[#2D2A26] dark:text-[#FAF6F2]">{prod.title}</h4>
+                          <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
                           {getStatusBadge(prod.approvalStatus)}
-                          <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-[#B24C2B] dark:text-[#E0633C] px-2 py-0.5 rounded font-bold">
+                          <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded font-bold">
                             {prod.categoryName}
                           </span>
                         </div>
-                        <p className="text-xs text-[#73675B] dark:text-[#A89B8F]">
-                          الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: <strong className="text-[#B24C2B] dark:text-[#E0633C]">{prod.price} ج.م</strong>
+                        <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
+                          الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{prod.price} ج.م</strong>
                         </p>
-                        <p className="text-[11px] text-[#73675B] dark:text-[#A89B8F]">
+                        <p className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                           الخامات: {prod.specifications?.material || 'خامات طبيعية'} • أسلوب الصنع: {prod.specifications?.craftsmanship || 'يدوية'}
                         </p>
                       </div>
@@ -1908,10 +1908,10 @@ export const AdminDashboard: React.FC = () => {
                         type="button"
                         id={`admin-edit-prod-${prod.id}`}
                         onClick={() => openAdminEditProductModal(prod)}
-                        className="px-3.5 py-2 bg-[#F3EFE9] dark:bg-[#26201B] hover:bg-[#EDE7DF] dark:hover:bg-[#322923] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                        className="px-3.5 py-2 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] hover:bg-black/5 dark:bg-white/5 dark:hover:bg-[#322923] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
                         title="تعديل بيانات المنتج كمدير"
                       >
-                        <Edit2 className="w-3.5 h-3.5 text-[#B24C2B] dark:text-[#E0633C]" />
+                        <Edit2 className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
                         <span>تعديل</span>
                       </button>
 
@@ -1972,11 +1972,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB: CATEGORIES MANAGEMENT (PHASE 4) */}
       {activeTab === 'categories' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-6">
+        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">إدارة التصنيفات والحرف التراثية</h3>
-              <p className="text-xs text-[#73675B]">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة التصنيفات والحرف التراثية</h3>
+              <p className="text-xs text-black/60 dark:text-white/60">
                 تصنيف القطع الحرفية حسب نوع الفن (فخار، نسيج، خوص، نحاس، حلي، خشب، مأكولات)
               </p>
             </div>
@@ -1990,7 +1990,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={openAddCategoryModal}
-                className="px-4 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
+                className="px-4 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة تصنيف تراثي جديد</span>
@@ -2002,31 +2002,31 @@ export const AdminDashboard: React.FC = () => {
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#E5DDD3] space-y-3 flex flex-col justify-between"
+                className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2.5">
                       <span className="text-2xl">{cat.icon || '🏺'}</span>
                       <div>
-                        <h4 className="font-bold text-sm text-[#2D2A26]">{cat.name}</h4>
-                        {cat.nameEn && <span className="text-[10px] text-[#73675B] block font-mono">{cat.nameEn}</span>}
+                        <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{cat.name}</h4>
+                        {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-mono">{cat.nameEn}</span>}
                       </div>
                     </div>
-                    <span className="text-[11px] font-bold font-mono bg-amber-100 text-[#B24C2B] px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold font-mono bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded-full">
                       {cat.productCount || 0} منتج
                     </span>
                   </div>
-                  <p className="text-xs text-[#73675B] line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
                     {cat.description || 'الحرف اليدوية والفنون التراثية الأصيلة بمحافظات الصعيد.'}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => openEditCategoryModal(cat)}
-                    className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-[#E5DDD3] text-xs font-bold flex items-center gap-1"
+                    className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-black/10 dark:border-white/10 text-xs font-bold flex items-center gap-1"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     <span>تعديل</span>
@@ -2052,17 +2052,17 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB: CRAFT STORIES MANAGEMENT (قصص الصنعة وأسرار الأجداد) */}
       {activeTab === 'craft-stories' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-6">
+        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-base text-[#2D2A26]">قصص الصنعة وأسرار الأجداد (قاعدة البيانات)</h3>
-                <span className="bg-amber-100 text-[#943310] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">قصص الصنعة وأسرار الأجداد (قاعدة البيانات)</h3>
+                <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[10px] font-bold px-2 py-0.5 rounded-full">
                   craft_stories collection
                 </span>
               </div>
-              <p className="text-xs text-[#73675B] mt-1">
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
                 إدارة أطلس الحرف التراثية وأسرار الحرفيين المعروضة في واجهة المتجر الرئيسية، مع إمكانية التعديل والإضافة والإخفاء الفوري.
               </p>
             </div>
@@ -2078,7 +2078,7 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-add-craft-story-btn"
                 onClick={openAddCraftStoryModal}
-                className="px-4 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2"
+                className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة قصة صنعة جديدة</span>
@@ -2088,17 +2088,17 @@ export const AdminDashboard: React.FC = () => {
 
           {isLoadingCraftStories && craftStories.length === 0 ? (
             <div className="py-12 text-center text-gray-500 text-xs flex flex-col items-center gap-3">
-              <RefreshCw className="w-6 h-6 animate-spin text-[#943310]" />
+              <RefreshCw className="w-6 h-6 animate-spin text-[#9a6a35] dark:text-[#d5a56d]" />
               <span>جاري تحميل قصص الصنعة من قاعدة البيانات...</span>
             </div>
           ) : craftStories.length === 0 ? (
-            <div className="p-8 text-center bg-[#FAF7F2] rounded-2xl border border-dashed border-[#E5DDD3] space-y-3">
+            <div className="p-8 text-center bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-3">
               <Sparkles className="w-8 h-8 text-amber-500 mx-auto" />
               <p className="text-sm font-bold text-gray-700">لا توجد قصص صنعة مسجلة حالياً في قاعدة البيانات</p>
               <button
                 type="button"
                 onClick={openAddCraftStoryModal}
-                className="px-4 py-2 bg-[#943310] text-white text-xs font-bold rounded-xl"
+                className="px-4 py-2 bg-[#9a6a35] text-white text-xs font-bold rounded-xl shadow-xs"
               >
                 إضافة القصة الأولى الآن
               </button>
@@ -2108,7 +2108,7 @@ export const AdminDashboard: React.FC = () => {
               {craftStories.map((story) => (
                 <div
                   key={story.id}
-                  className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-[#E5DDD3] hover:border-amber-700/30'
+                  className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-black/10 dark:border-white/10 hover:border-amber-700/30'
                     }`}
                 >
                   <div className="p-5 space-y-4">
@@ -2126,7 +2126,7 @@ export const AdminDashboard: React.FC = () => {
 
                       <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[10px] font-bold text-[#943310] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                          <span className="text-[10px] font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                             {story.governorate}
                           </span>
                           <span
@@ -2145,7 +2145,7 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
 
-                    <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-[#FAF7F2] p-2.5 rounded-xl border border-[#ebdccd]">
+                    <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[#ebdccd]">
                       {story.description}
                     </p>
 
@@ -2173,7 +2173,7 @@ export const AdminDashboard: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="px-5 py-3 bg-[#faf7f2] border-t border-[#E5DDD3] flex items-center justify-between gap-2">
+                  <div className="px-5 py-3 bg-black/5 dark:bg-white/5 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
                     <button
                       type="button"
                       onClick={() => handleToggleCraftStoryActive(story)}
@@ -2189,7 +2189,7 @@ export const AdminDashboard: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => openEditCraftStoryModal(story)}
-                        className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-[#E5DDD3] text-xs font-bold flex items-center gap-1"
+                        className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-black/10 dark:border-white/10 text-xs font-bold flex items-center gap-1"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         <span>تعديل</span>
@@ -2215,8 +2215,8 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'craft-reels' && (
         <div className="space-y-6 animate-in fade-in">
           {/* Header Banner */}
-          <div className="relative rounded-3xl bg-gradient-to-r from-[#2D2A26] via-[#352B24] to-[#2D2A26] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-[#4A3E35]">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-[#B24C2B]/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative rounded-3xl bg-gradient-to-r from-[#211d18] via-[#28221c] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="space-y-2 max-w-2xl">
@@ -2244,7 +2244,7 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   id="admin-upload-reel-btn"
                   onClick={() => setIsAdminReelUploadOpen(true)}
-                  className="px-5 py-3 bg-gradient-to-r from-[#B24C2B] to-[#9E4F36] hover:from-[#9E4F36] hover:to-[#863F28] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                  className="px-5 py-3 bg-gradient-to-r from-[#9a6a35] to-[#7d5427] hover:from-[#7d5427] hover:to-[#623f1a] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
                   <span>إضافة فيديو كحرفي/إدارة</span>
@@ -2255,43 +2255,43 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Quick Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[#73675B] mb-2">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إجمالي مقاطع الفيديو</span>
-                <Film className="w-4 h-4 text-[#B24C2B]" />
+                <Film className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
               </div>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">{adminReels.length} مقطع</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminReels.length} مقطع</span>
               <span className="text-[10px] text-emerald-700 font-bold block mt-1">تغطي 7 محافظات صعيدية</span>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[#73675B] mb-2">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إجمالي المشاهدات</span>
                 <Eye className="w-4 h-4 text-amber-600" />
               </div>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
                 {adminReels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
               </span>
               <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات كاملة وتفاعلية</span>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[#73675B] mb-2">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إجمالي الإعجابات</span>
                 <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
               </div>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
                 {adminReels.reduce((acc, r) => acc + r.likesCount, 0).toLocaleString()}
               </span>
-              <span className="text-[10px] text-[#73675B] block mt-1">تفاعل جمهور المنصة</span>
+              <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل جمهور المنصة</span>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <div className="flex items-center justify-between text-xs text-[#73675B] mb-2">
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>الورش الممثلة بالفيديو</span>
                 <Store className="w-4 h-4 text-indigo-600" />
               </div>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
                 {new Set(adminReels.map((r) => r.artisanName)).size} ورشة
               </span>
               <span className="text-[10px] text-indigo-700 font-bold block mt-1">حرفيون موثقون</span>
@@ -2299,15 +2299,15 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Search and Filters Bar */}
-          <div className="bg-white rounded-2xl border border-[#E5DDD3] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Governorate Filter */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
               <button
                 type="button"
                 onClick={() => setAdminReelGovFilter('all')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === 'all'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'bg-[#F3EFE9] text-[#73675B] hover:bg-[#EDE7DF]'
+                  ? 'bg-[#9a6a35] text-white shadow-md'
+                  : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
                   }`}
               >
                 كل المحافظات ({adminReels.length})
@@ -2321,8 +2321,8 @@ export const AdminDashboard: React.FC = () => {
                     type="button"
                     onClick={() => setAdminReelGovFilter(gov)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === gov
-                      ? 'bg-[#B24C2B] text-white shadow-xs'
-                      : 'bg-[#F3EFE9] text-[#73675B] hover:bg-[#EDE7DF]'
+                      ? 'bg-[#9a6a35] text-white shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
                       }`}
                   >
                     {gov} ({count})
@@ -2333,13 +2333,13 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Search Input */}
             <div className="relative min-w-[240px]">
-              <Search className="w-4 h-4 text-[#73675B] absolute right-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={adminReelSearchTerm}
                 onChange={(e) => setAdminReelSearchTerm(e.target.value)}
                 placeholder="ابحث بالفيديو، الحرفي، المنتج..."
-                className="w-full pl-8 pr-9 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] transition-colors"
+                className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
               />
               {adminReelSearchTerm && (
                 <button
@@ -2379,7 +2379,7 @@ export const AdminDashboard: React.FC = () => {
                 .map((reel) => (
                   <div
                     key={reel.id}
-                    className="bg-white rounded-3xl border border-[#E5DDD3] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                    className="bg-white rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
                   >
                     {/* 9:16 Video Thumbnail Container */}
                     <div
@@ -2420,7 +2420,7 @@ export const AdminDashboard: React.FC = () => {
                             </span>
                           )}
                         </div>
-                        <span className="bg-[#B24C2B] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                        <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                           {reel.governorate}
                         </span>
                       </div>
@@ -2437,22 +2437,22 @@ export const AdminDashboard: React.FC = () => {
                     </div>
 
                     {/* Bottom Metadata & Actions */}
-                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-[#FAF7F2]/40">
+                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-white/5/40">
                       {/* Linked Product */}
-                      <div className="p-2.5 bg-white rounded-2xl border border-[#E5DDD3] flex items-center justify-between gap-2 shadow-2xs">
+                      <div className="p-2.5 bg-white rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
                         <img
                           src={reel.productImage}
                           alt={reel.productTitle}
                           className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-bold text-[#2D2A26] truncate">{reel.productTitle}</p>
-                          <span className="text-xs font-black text-[#B24C2B]">{reel.productPrice} ج.م</span>
+                          <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
+                          <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">{reel.productPrice} ج.م</span>
                         </div>
                       </div>
 
                       {/* Engagement Stats & Database Sync Badge */}
-                      <div className="flex items-center justify-between text-xs text-[#73675B] pt-1">
+                      <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">
                         <div className="flex items-center gap-3">
                           <span className="flex items-center gap-1 text-[11px]">
                             <Eye className="w-3.5 h-3.5 text-gray-500" />
@@ -2469,14 +2469,14 @@ export const AdminDashboard: React.FC = () => {
                       </div>
 
                       {/* Actions Buttons: View, Edit, Delete (Full Admin Control) */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-[#E5DDD3]">
+                      <div className="flex items-center gap-2 pt-2 border-t border-black/10 dark:border-white/10">
                         <button
                           type="button"
                           onClick={() => {
                             setAdminSelectedReelPreviewId(reel.id);
                             setIsAdminReelPreviewOpen(true);
                           }}
-                          className="flex-1 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                          className="flex-1 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
                         >
                           <Play className="w-3.5 h-3.5 fill-white" />
                           <span>معاينة وتشغيل</span>
@@ -2488,7 +2488,7 @@ export const AdminDashboard: React.FC = () => {
                             setAdminEditingReel(reel);
                             setIsAdminReelEditOpen(true);
                           }}
-                          className="p-2 text-gray-600 hover:text-[#B24C2B] hover:bg-[#FAF7F2] rounded-xl transition-colors cursor-pointer border border-[#E5DDD3]"
+                          className="p-2 text-gray-600 hover:text-[#9a6a35] dark:text-[#d5a56d] hover:bg-black/5 dark:bg-white/5 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
                           title="تعديل الفيديو والمنتج والورشة بالكامل (أدمن)"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -2508,10 +2508,10 @@ export const AdminDashboard: React.FC = () => {
                 ))}
             </div>
           ) : (
-            <div className="bg-white rounded-3xl p-12 text-center border border-[#E5DDD3] space-y-4">
+            <div className="bg-white rounded-3xl p-12 text-center border border-black/10 dark:border-white/10 space-y-4">
               <Film className="w-16 h-16 text-gray-300 mx-auto" />
-              <h4 className="text-base font-bold text-[#2D2A26]">لا توجد مقاطع فيديو مطابقة للبحث</h4>
-              <p className="text-xs text-[#73675B] max-w-md mx-auto">
+              <h4 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد مقاطع فيديو مطابقة للبحث</h4>
+              <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
                 يمكنك رفع مقطع فيديو جديد لأي حرفي أو مسح كلمة البحث لرؤية كافة مقاطع الورش.
               </p>
             </div>
@@ -2521,11 +2521,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB: REVIEWS MODERATION (PHASE 4) */}
       {activeTab === 'reviews' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-6">
+        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">إشراف ومراجعة تقييمات المشترين</h3>
-              <p className="text-xs text-[#73675B]">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إشراف ومراجعة تقييمات المشترين</h3>
+              <p className="text-xs text-black/60 dark:text-white/60">
                 مراجعة تعليقات العملاء، شارة الشراء المؤكد، ومنع التقييمات العشوائية أو غير اللائقة
               </p>
             </div>
@@ -2538,19 +2538,19 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="space-y-3">
             {reviews.length === 0 ? (
-              <div className="text-center py-12 bg-[#FAF7F2] border border-dashed border-[#E5DDD3] rounded-2xl">
-                <MessageSquare className="w-8 h-8 text-[#73675B] mx-auto mb-2 opacity-50" />
-                <p className="text-xs font-bold text-[#2D2A26]">لا توجد مراجعات مسجلة حتى الآن</p>
+              <div className="text-center py-12 bg-black/5 dark:bg-white/5 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                <MessageSquare className="w-8 h-8 text-black/60 dark:text-white/60 mx-auto mb-2 opacity-50" />
+                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد مراجعات مسجلة حتى الآن</p>
               </div>
             ) : (
               reviews.map((rev) => (
                 <div
                   key={rev.id}
-                  className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E5DDD3] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-xs text-[#2D2A26]">{rev.userName || 'مشتري معتمد'}</span>
+                      <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7]">{rev.userName || 'مشتري معتمد'}</span>
                       {rev.verifiedPurchase && (
                         <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
                           <BadgeCheck className="w-3 h-3 text-emerald-600" />
@@ -2566,13 +2566,13 @@ export const AdminDashboard: React.FC = () => {
                           />
                         ))}
                       </div>
-                      <span className="text-[10px] text-[#73675B] font-mono">{rev.date}</span>
+                      <span className="text-[10px] text-black/60 dark:text-white/60 font-mono">{rev.date}</span>
                     </div>
 
-                    <p className="text-xs text-[#2D2A26] leading-relaxed">"{rev.comment}"</p>
+                    <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">"{rev.comment}"</p>
 
-                    <div className="text-[11px] text-[#73675B] flex items-center gap-3">
-                      <span>المنتج المستهدف: <strong className="text-[#B24C2B]">{rev.productTitle || rev.productId}</strong></span>
+                    <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
+                      <span>المنتج المستهدف: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{rev.productTitle || rev.productId}</strong></span>
                       <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
                     </div>
                   </div>
@@ -2606,17 +2606,17 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'sellers' && (
         <div className="space-y-6">
           {/* Header & Stats Banner */}
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-lg text-[#2D2A26] font-heritage">إدارة الورش واعتماد الحرفيين</h3>
+                <h3 className="font-bold text-lg text-[#211d18] dark:text-[#f5f0e7] font-heritage">إدارة الورش واعتماد الحرفيين</h3>
                 {pendingSellersCount > 0 && (
                   <span className="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black px-2.5 py-0.5 rounded-full animate-pulse">
                     {pendingSellersCount} طلب جديد بالانتظار
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#73675B] mt-0.5">
+              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
                 مراجعة طلبات انضمام الورش، توثيق الحرفيين الصعايدة، واعتماد أو تعليق الحسابات
               </p>
             </div>
@@ -2632,7 +2632,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Filter Tabs & Search Bar */}
-          <div className="bg-white rounded-2xl border border-[#E5DDD3] p-4 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Status Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
               <button
@@ -2640,8 +2640,8 @@ export const AdminDashboard: React.FC = () => {
                 id="filter-sellers-all"
                 onClick={() => setSellerStatusFilter('all')}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'all'
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'bg-[#F3EFE9] text-[#73675B] hover:bg-[#EDE7DF]'
+                  ? 'bg-[#9a6a35] text-white shadow-md'
+                  : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
                   }`}
               >
                 الكل ({sellers.length})
@@ -2701,14 +2701,14 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Search Input */}
             <div className="relative min-w-[240px]">
-              <Search className="w-4 h-4 text-[#73675B] absolute right-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 id="seller-search-input"
                 value={sellerSearchTerm}
                 onChange={(e) => setSellerSearchTerm(e.target.value)}
                 placeholder="ابحث بالاسم، الورشة، المحافظة..."
-                className="w-full pl-8 pr-9 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] transition-colors"
+                className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
               />
               {sellerSearchTerm && (
                 <button
@@ -2725,10 +2725,10 @@ export const AdminDashboard: React.FC = () => {
           {/* Sellers Cards Grid / List */}
           <div className="space-y-3">
             {filteredSellers.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-[#E5DDD3] p-12 text-center shadow-xs">
-                <Store className="w-12 h-12 text-[#73675B]/40 mx-auto mb-3" />
-                <h4 className="font-bold text-sm text-[#2D2A26]">لا توجد ورش مطابقة لمعايير البحث</h4>
-                <p className="text-xs text-[#73675B] mt-1">
+              <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-12 text-center shadow-xs">
+                <Store className="w-12 h-12 text-black/60 dark:text-white/60/40 mx-auto mb-3" />
+                <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">لا توجد ورش مطابقة لمعايير البحث</h4>
+                <p className="text-xs text-black/60 dark:text-white/60 mt-1">
                   جرب تغيير حالة الفرز أو مسح كلمة البحث لرؤية كافة الورش المسجلة
                 </p>
               </div>
@@ -2737,18 +2737,18 @@ export const AdminDashboard: React.FC = () => {
                 <div
                   key={s.id}
                   id={`seller-card-${s.id}`}
-                  className="bg-white rounded-2xl border border-[#E5DDD3] p-5 shadow-xs hover:border-[#B24C2B]/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-5 shadow-sm text-[#211d18] dark:text-[#f5f0e7] hover:border-[#9a6a35]/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                   {/* Seller Info Column */}
                   <div className="flex items-start gap-4">
                     <img
                       src={s.avatar}
                       alt={s.brandName}
-                      className="w-14 h-14 rounded-2xl object-cover border border-[#E5DDD3] shrink-0"
+                      className="w-14 h-14 rounded-2xl object-cover border border-black/10 dark:border-white/10 shrink-0"
                     />
                     <div className="space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h4 className="font-bold text-base text-[#2D2A26]">{s.brandName}</h4>
+                        <h4 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">{s.brandName}</h4>
 
                         {/* Status Badge */}
                         {s.status === 'approved' && (
@@ -2776,17 +2776,19 @@ export const AdminDashboard: React.FC = () => {
                           </span>
                         )}
 
-                        <span className="bg-[#F3EFE9] text-[#73675B] text-[10px] font-semibold px-2 py-0.5 rounded-md">
+                        <span className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 text-[10px] font-semibold px-2 py-0.5 rounded-md">
                           محافظة {s.governorate}
                         </span>
                       </div>
 
                       {/* Details & Specs */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#73675B]">
-                        <span>صاحب الورشة: <strong className="text-[#2D2A26]">{s.name}</strong></span>
-                        <span>الحرفة: <strong className="text-[#2D2A26]">{s.specialty || 'مشغولات تراثية'}</strong></span>
-                        <span>الهاتف: <strong className="text-[#2D2A26] font-mono">{s.phone}</strong></span>
-                        {s.email && <span>البريد: <strong className="text-[#2D2A26]">{s.email}</strong></span>}
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-black/60 dark:text-white/60">
+                        <span>صاحب الورشة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.name}</strong></span>
+                        <span>معرف المستخدم: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono text-[11px]">{s.userId || s.id}</strong></span>
+                        <span>الحرفة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.specialty || 'مشغولات تراثية'}</strong></span>
+                        <span>الهاتف: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono">{s.phone}</strong></span>
+                        {s.email && <span>البريد: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.email}</strong></span>}
+                        {s.createdAt && <span>تاريخ التقديم: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.createdAt.split('T')[0]}</strong></span>}
                       </div>
 
                       {/* Reasons display if rejected or suspended */}
@@ -2807,13 +2809,13 @@ export const AdminDashboard: React.FC = () => {
                   <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
                     <button
                       type="button"
-                      id={`admin-edit-seller-${s.id}`}
+                      id={`admin-view-seller-${s.id}`}
                       onClick={() => openEditSellerModal(s)}
-                      className="px-3.5 py-2 bg-[#F3EFE9] hover:bg-[#EDE7DF] text-[#2D2A26] border border-[#E5DDD3] rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-                      title="تعديل بيانات الورشة والغلاف كمدير"
+                      className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                      title="معاينة تفاصيل طلب الورشة وتعديل الغلاف"
                     >
-                      <Edit2 className="w-3.5 h-3.5 text-[#B24C2B]" />
-                      <span>تعديل الورشة والغلاف</span>
+                      <Eye className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                      <span>معاينة التفاصيل</span>
                     </button>
 
                     {/* Action buttons based on current state */}
@@ -2885,11 +2887,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 4: ORDERS */}
       {activeTab === 'orders' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5DDD3] pb-4">
+        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">سجل طلبات وشحنات المنصة</h3>
-              <p className="text-xs text-[#73675B]">متابعة المعاملات ومطابقة وتأكيد التحويلات المالية (InstaPay / فودافون كاش)</p>
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">سجل طلبات وشحنات المنصة</h3>
+              <p className="text-xs text-black/60 dark:text-white/60">متابعة المعاملات ومطابقة وتأكيد التحويلات المالية (InstaPay / فودافون كاش)</p>
             </div>
 
             {/* Summary Counters & Refresh */}
@@ -2929,8 +2931,8 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 onClick={() => setOrderPaymentFilter(tab.id as any)}
                 className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${orderPaymentFilter === tab.id
-                  ? 'bg-[#943310] text-white'
-                  : 'bg-[#FAF7F2] text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
+                  ? 'bg-[#9a6a35] text-white'
+                  : 'bg-black/5 dark:bg-white/5 text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
                   }`}
               >
                 {tab.label}
@@ -2938,9 +2940,9 @@ export const AdminDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="wah-table-container overflow-x-auto rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
             <table className="w-full text-xs text-right">
-              <thead className="bg-[#F3EFE9] text-[#73675B] border-b border-[#E5DDD3]">
+              <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
                 <tr>
                   <th className="py-3 px-4 font-bold">رقم الطلب</th>
                   <th className="py-3 px-4 font-bold">المشتري</th>
@@ -2952,7 +2954,7 @@ export const AdminDashboard: React.FC = () => {
                   <th className="py-3 px-4 font-bold text-center">إجراءات التحقق والشحن</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5DDD3]">
+              <tbody className="divide-y divide-black/10 dark:divide-white/10">
                 {orders
                   .filter((ord) => {
                     if (orderPaymentFilter === 'all') return true;
@@ -2965,11 +2967,11 @@ export const AdminDashboard: React.FC = () => {
                   .map((ord) => {
                     const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
                     return (
-                      <tr key={ord.id} className={`hover:bg-[#FAF7F2] ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
-                        <td className="py-3 px-4 font-mono font-bold text-[#B24C2B]">
+                      <tr key={ord.id} className={`hover:bg-black/5 dark:bg-white/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
+                        <td className="py-3 px-4 font-mono font-bold text-[#9a6a35] dark:text-[#d5a56d]">
                           #{ord.orderNumber || ord.id}
                         </td>
-                        <td className="py-3 px-4 font-bold text-[#2D2A26]">
+                        <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
                           {ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}
                           <span className="block text-[10px] text-gray-500 font-normal">
                             {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone} • {ord.shippingAddress?.governorate || 'المحافظة'}
@@ -2997,7 +2999,7 @@ export const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="py-3 px-4">
                           {ord.paymentReference ? (
-                            <div className="bg-[#FAF7F2] p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
+                            <div className="bg-black/5 dark:bg-white/5 p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
                               <span className="text-[10px] text-gray-500 block">المرجع / الحساب:</span>
                               {ord.paymentReference}
                             </div>
@@ -3005,7 +3007,7 @@ export const AdminDashboard: React.FC = () => {
                             <span className="text-[10px] text-gray-400">غير مدخل</span>
                           )}
                         </td>
-                        <td className="py-3 px-4 font-black text-[#B24C2B] text-sm">{ord.total} ج.م</td>
+                        <td className="py-3 px-4 font-black text-[#9a6a35] dark:text-[#d5a56d] text-sm">{ord.total} ج.م</td>
                         <td className="py-3 px-4">
                           {ord.paymentStatus === 'payment_pending_verification' ? (
                             <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-[10px] font-bold inline-flex items-center gap-1 animate-pulse">
@@ -3032,7 +3034,7 @@ export const AdminDashboard: React.FC = () => {
                           <select
                             value={ord.status}
                             onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
-                            className="px-2 py-1 bg-white border border-[#E5DDD3] rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
+                            className="px-2 py-1 bg-white border border-black/10 dark:border-white/10 rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
                           >
                             <option value="pending">جديد (Pending)</option>
                             <option value="confirmed">تأكيد (Confirmed)</option>
@@ -3082,14 +3084,14 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB: PAYMENT SETTINGS */}
       {activeTab === 'payment-settings' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E5DDD3] pb-4">
+        <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
             <div>
-              <h3 className="font-bold text-base sm:text-lg text-[#2D2A26] flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-[#943310]" />
+              <h3 className="font-bold text-base sm:text-lg text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 <span>إعدادات وسائل الدفع وحسابات المنصة (InstaPay & المحافظ)</span>
               </h3>
-              <p className="text-xs text-[#73675B] mt-1">
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
                 قم بضبط معرفات وحسابات استلام أموال الطلبات التي تظهر للعملاء في صفحة إتمام الشراء.
               </p>
             </div>
@@ -3219,7 +3221,7 @@ export const AdminDashboard: React.FC = () => {
             <button
               type="submit"
               disabled={isSavingPaymentSettings}
-              className="px-8 py-3.5 bg-[#943310] hover:bg-[#7c280a] text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+              className="px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
             >
               {isSavingPaymentSettings ? (
                 <span>جاري حفظ الإعدادات...</span>
@@ -3237,10 +3239,10 @@ export const AdminDashboard: React.FC = () => {
       {/* TAB 5: COUPONS */}
       {activeTab === 'coupons' && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E5DDD3] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">إدارة قسائم وأكواد الخصم</h3>
-              <p className="text-xs text-[#73675B] mt-0.5">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة قسائم وأكواد الخصم</h3>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
                 توليد ومتابعة كوبونات الخصم الترويجية، فترات الصلاحية، وشروط الحد الأدنى
               </p>
             </div>
@@ -3254,24 +3256,24 @@ export const AdminDashboard: React.FC = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <div className="lg:col-span-5">
-              <form onSubmit={handleCreateCoupon} className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-4">
-                <h3 className="font-bold text-base text-[#2D2A26]">إنشاء كود خصم ترويجي جديد</h3>
+              <form onSubmit={handleCreateCoupon} className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
+                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إنشاء كود خصم ترويجي جديد</h3>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">رمز الكوبون (بالأحرف اللاتينية)</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">رمز الكوبون (بالأحرف اللاتينية)</label>
                   <input
                     type="text"
                     required
                     value={newCode}
                     onChange={(e) => setNewCode(e.target.value)}
                     placeholder="مثال: UPPEREGYPT25"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs font-mono uppercase outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono uppercase outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-[#2D2A26] mb-1">نسبة الخصم (%)</label>
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">نسبة الخصم (%)</label>
                     <input
                       type="number"
                       required
@@ -3279,26 +3281,26 @@ export const AdminDashboard: React.FC = () => {
                       max={90}
                       value={newDiscount}
                       onChange={(e) => setNewDiscount(Number(e.target.value))}
-                      className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#2D2A26] mb-1">الحد الأدنى للطلب (ج.م)</label>
+                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الحد الأدنى للطلب (ج.م)</label>
                     <input
                       type="number"
                       required
                       min={0}
                       value={newMinOrder}
                       onChange={(e) => setNewMinOrder(Number(e.target.value))}
-                      className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-[#9a6a35] hover:bg-[#7d5427] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   <span>تفعيل ونشر الكوبون</span>
@@ -3307,15 +3309,15 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="lg:col-span-7">
-              <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-4">
-                <h3 className="font-bold text-base text-[#2D2A26]">أكواد الخصم النشطة في النظام</h3>
+              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
+                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">أكواد الخصم النشطة في النظام</h3>
 
                 <div className="space-y-3">
                   {coupons.map((c, i) => (
-                    <div key={i} className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3] flex items-center justify-between">
+                    <div key={i} className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between">
                       <div>
-                        <span className="font-mono font-black text-sm text-[#B24C2B] block">{c.code}</span>
-                        <span className="text-xs text-[#73675B]">
+                        <span className="font-mono font-black text-sm text-[#9a6a35] dark:text-[#d5a56d] block">{c.code}</span>
+                        <span className="text-xs text-black/60 dark:text-white/60">
                           خصم <strong>{c.discount}%</strong> • للطلبات فوق {c.minOrder} ج.م
                         </span>
                       </div>
@@ -3334,11 +3336,11 @@ export const AdminDashboard: React.FC = () => {
 
       {/* TAB 6: AUDIT LOGS */}
       {activeTab === 'audit' && (
-        <div className="bg-white rounded-3xl border border-[#E5DDD3] p-6 shadow-xs space-y-4">
+        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-base text-[#2D2A26]">سجل العمليات والرقابة الأمنية (Audit Logs)</h3>
-              <p className="text-xs text-[#73675B]">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">سجل العمليات والرقابة الأمنية (Audit Logs)</h3>
+              <p className="text-xs text-black/60 dark:text-white/60">
                 سجل تفصيلي لجميع إجراءات الاعتماد، الرفض، ونشر المنتجات موثق بالوقت والمستخدم
               </p>
             </div>
@@ -3348,9 +3350,9 @@ export const AdminDashboard: React.FC = () => {
             />
           </div>
 
-          <div className="wah-table-container overflow-x-auto rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
+          <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
             <table className="w-full text-xs text-right">
-              <thead className="bg-[#F3EFE9] text-[#73675B] border-b border-[#E5DDD3]">
+              <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
                 <tr>
                   <th className="py-3 px-4 font-bold">الوقت والتاريخ</th>
                   <th className="py-3 px-4 font-bold">المستخدم والصفة</th>
@@ -3360,17 +3362,17 @@ export const AdminDashboard: React.FC = () => {
                   <th className="py-3 px-4 font-bold">الحالة</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5DDD3]">
+              <tbody className="divide-y divide-black/10 dark:divide-white/10">
                 {auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-[#FAF7F2]">
-                    <td className="py-3 px-4 font-mono text-[#73675B] whitespace-nowrap">{log.timestamp}</td>
-                    <td className="py-3 px-4 font-bold text-[#2D2A26]">
+                  <tr key={log.id} className="hover:bg-black/5 dark:bg-white/5">
+                    <td className="py-3 px-4 font-mono text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
+                    <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
                       {log.userName}
-                      <span className="block text-[10px] text-[#73675B] font-normal">{log.userRole}</span>
+                      <span className="block text-[10px] text-black/60 dark:text-white/60 font-normal">{log.userRole}</span>
                     </td>
-                    <td className="py-3 px-4 font-bold text-[#B24C2B]">{log.action}</td>
-                    <td className="py-3 px-4 text-[#2D2A26]">{log.resource}</td>
-                    <td className="py-3 px-4 text-[#73675B] max-w-xs">{log.details}</td>
+                    <td className="py-3 px-4 font-bold text-[#9a6a35] dark:text-[#d5a56d]">{log.action}</td>
+                    <td className="py-3 px-4 text-[#211d18] dark:text-[#f5f0e7]">{log.resource}</td>
+                    <td className="py-3 px-4 text-black/60 dark:text-white/60 max-w-xs">{log.details}</td>
                     <td className="py-3 px-4">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${log.status === 'نجاح'
@@ -3396,36 +3398,36 @@ export const AdminDashboard: React.FC = () => {
         <div className="space-y-6">
           {/* Quick Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">إجمالي المستخدمين</span>
-              <span className="text-2xl font-black text-[#2D2A26] font-mono">{adminUsers.length}</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">إجمالي المستخدمين</span>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminUsers.length}</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">المشترون (Buyers)</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المشترون (Buyers)</span>
               <span className="text-2xl font-black text-blue-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'buyer').length}
               </span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">الورش الحرفية (Sellers)</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">الورش الحرفية (Sellers)</span>
               <span className="text-2xl font-black text-amber-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'seller').length}
               </span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">المديرون (Admins)</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المديرون (Admins)</span>
               <span className="text-2xl font-black text-purple-700 font-mono">
                 {adminUsers.filter((u) => u.role === 'admin').length}
               </span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">حسابات نشطة</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات نشطة</span>
               <span className="text-2xl font-black text-emerald-700 font-mono">
                 {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
               </span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-[#E5DDD3] shadow-xs">
-              <span className="text-[11px] text-[#73675B] block mb-1">حسابات معلقة</span>
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات معلقة</span>
               <span className="text-2xl font-black text-rose-700 font-mono">
                 {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
               </span>
@@ -3433,7 +3435,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Search, Filters & Action Bar */}
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#E5DDD3] shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
               <input
@@ -3442,7 +3444,7 @@ export const AdminDashboard: React.FC = () => {
                 value={userSearchTerm}
                 onChange={(e) => setUserSearchTerm(e.target.value)}
                 placeholder="بحث بالاسم، اسم المستخدم، البريد، أو الهاتف..."
-                className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
               />
             </div>
 
@@ -3453,13 +3455,13 @@ export const AdminDashboard: React.FC = () => {
               />
 
               {/* Role filter */}
-              <div className="flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl px-2 py-1">
-                <Filter className="w-3.5 h-3.5 text-[#73675B]" />
+              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                <Filter className="w-3.5 h-3.5 text-black/60 dark:text-white/60" />
                 <select
                   id="admin-users-role-filter"
                   value={userRoleFilter}
                   onChange={(e) => setUserRoleFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
                 >
                   <option value="all">جميع الأدوار</option>
                   <option value="buyer">المشترون</option>
@@ -3469,12 +3471,12 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Status filter */}
-              <div className="flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl px-2 py-1">
+              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                 <select
                   id="admin-users-status-filter"
                   value={userStatusFilter}
                   onChange={(e) => setUserStatusFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
                 >
                   <option value="all">جميع الحالات</option>
                   <option value="active">الحسابات النشطة فقط</option>
@@ -3483,12 +3485,12 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Governorate filter */}
-              <div className="flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl px-2 py-1">
+              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                 <select
                   id="admin-users-gov-filter"
                   value={userGovernorateFilter}
                   onChange={(e) => setUserGovernorateFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
                 >
                   <option value="all">جميع المحافظات</option>
                   <option value="قنا">قنا</option>
@@ -3512,7 +3514,7 @@ export const AdminDashboard: React.FC = () => {
                 id="admin-users-refresh-btn"
                 onClick={fetchAdminUsers}
                 disabled={isLoadingUsers}
-                className="p-2.5 bg-[#FAF7F2] hover:bg-[#E5DDD3] text-[#2D2A26] rounded-xl border border-[#E5DDD3] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                className="p-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                 title="تحديث البيانات"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} />
@@ -3524,7 +3526,7 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-add-user-btn"
                 onClick={() => setIsCreateUserModalOpen(true)}
-                className="px-3.5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>إضافة مستخدم جديد</span>
@@ -3533,10 +3535,10 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Users Table */}
-          <div className="bg-white dark:bg-[#1C1816] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs overflow-hidden">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
             <div className="wah-table-container overflow-x-auto">
               <table className="w-full text-right text-xs">
-                <thead className="bg-[#FAF7F2] border-b border-[#E5DDD3] text-[#73675B]">
+                <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
                   <tr>
                     <th className="py-3.5 px-4 font-bold">المستخدم</th>
                     <th className="py-3.5 px-4 font-bold">الدور</th>
@@ -3547,11 +3549,11 @@ export const AdminDashboard: React.FC = () => {
                     <th className="py-3.5 px-4 font-bold text-center">التحكم والإجراءات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E5DDD3]">
+                <tbody className="divide-y divide-black/10 dark:divide-white/10">
                   {isLoadingUsers ? (
                     <tr>
                       <td colSpan={7} className="py-12 text-center text-gray-500">
-                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#B24C2B]" />
+                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
                         <span>جاري تحميل بيانات المستخدمين من قاعدة البيانات...</span>
                       </td>
                     </tr>
@@ -3566,14 +3568,14 @@ export const AdminDashboard: React.FC = () => {
                       const isCurrentAdmin = currentUser.id === u.id;
                       const isSuspended = u.status === 'suspended' || u.status === 'blocked';
                       return (
-                        <tr key={u.id} className="hover:bg-[#FAF7F2]/60 transition-colors">
+                        <tr key={u.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className="relative shrink-0">
                                 <img
                                   src={u.profileImage?.secureUrl || u.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
                                   alt={u.name}
-                                  className="w-10 h-10 rounded-xl object-cover border border-[#E5DDD3]"
+                                  className="w-10 h-10 rounded-xl object-cover border border-black/10 dark:border-white/10"
                                 />
                                 <span
                                   className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
@@ -3583,9 +3585,9 @@ export const AdminDashboard: React.FC = () => {
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="font-bold text-[#2D2A26] truncate">{u.name}</span>
+                                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{u.name}</span>
                                   {isCurrentAdmin && (
-                                    <span className="bg-amber-100 text-[#B24C2B] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                                    <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
                                       أنت
                                     </span>
                                   )}
@@ -3619,7 +3621,7 @@ export const AdminDashboard: React.FC = () => {
                               <span>{isSuspended ? 'معلق / مجمد' : 'نشط'}</span>
                             </span>
                           </td>
-                          <td className="py-3 px-4 font-medium text-[#2D2A26]">{u.governorate || 'غير محدد'}</td>
+                          <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">{u.governorate || 'غير محدد'}</td>
                           <td className="py-3 px-4 font-mono text-gray-600">{u.phone || '---'}</td>
                           <td className="py-3 px-4 text-gray-500 text-[11px]">
                             {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
@@ -3632,7 +3634,7 @@ export const AdminDashboard: React.FC = () => {
                                 id={`view-user-${u.id}`}
                                 onClick={() => openUserDetails(u.id)}
                                 title="عرض بيانات الحساب بالكامل"
-                                className="p-2 bg-[#FAF7F2] hover:bg-[#E5DDD3] text-[#2D2A26] border border-[#E5DDD3] rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                               >
                                 <Eye className="w-3.5 h-3.5 text-gray-600" />
                                 <span className="hidden xl:inline">عرض</span>
@@ -3723,13 +3725,13 @@ export const AdminDashboard: React.FC = () => {
       {activeTab === 'password-resets' && (
         <div className="space-y-6 animate-in fade-in">
           {/* Header & Metrics Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-[#E5DDD3] shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
             <div>
-              <h2 className="text-base sm:text-lg font-black text-[#2D2A26] flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-[#B24C2B]" />
+              <h2 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 <span>طلبات إعادة تعيين كلمات المرور</span>
               </h2>
-              <p className="text-xs text-[#73675B] mt-1">
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
                 استعراض ومراجعة طلبات المستخدمين الذين نسوا كلمات مرورهم، وإنشاء كلمات مرور مؤقتة وتزويدهم بها لمتابعة الدخول.
               </p>
             </div>
@@ -3740,13 +3742,13 @@ export const AdminDashboard: React.FC = () => {
                 <span>طلبات معلقة: {passwordResets.filter((r) => r.status === 'pending').length}</span>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl px-2 py-1">
+              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                 <Filter className="w-3.5 h-3.5 text-gray-400" />
                 <select
                   id="admin-password-resets-filter"
                   value={passwordResetFilter}
                   onChange={(e) => setPasswordResetFilter(e.target.value as any)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#2D2A26]"
+                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
                 >
                   <option value="all">جميع الطلبات ({passwordResets.length})</option>
                   <option value="pending">طلبات معلقة ({passwordResets.filter((r) => r.status === 'pending').length})</option>
@@ -3765,10 +3767,10 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Table */}
-          <div className="bg-white dark:bg-[#1C1816] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs overflow-hidden">
+          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
             <div className="wah-table-container overflow-x-auto">
               <table className="w-full text-right text-xs">
-                <thead className="bg-[#FAF7F2] border-b border-[#E5DDD3] text-[#73675B]">
+                <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
                   <tr>
                     <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
                     <th className="py-3.5 px-4 font-bold">رقم الهاتف</th>
@@ -3779,11 +3781,11 @@ export const AdminDashboard: React.FC = () => {
                     <th className="py-3.5 px-4 font-bold text-center">الإجراءات</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E5DDD3]">
+                <tbody className="divide-y divide-black/10 dark:divide-white/10">
                   {isLoadingPasswordResets ? (
                     <tr>
                       <td colSpan={7} className="py-12 text-center text-gray-500">
-                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#B24C2B]" />
+                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
                         <span>جاري تحميل طلبات استعادة كلمة المرور...</span>
                       </td>
                     </tr>
@@ -3798,10 +3800,10 @@ export const AdminDashboard: React.FC = () => {
                       const isPending = r.status === 'pending';
                       const isCompleted = r.status === 'completed';
                       return (
-                        <tr key={r.id} className="hover:bg-[#FAF7F2]/60 transition-colors">
+                        <tr key={r.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
                           <td className="py-3 px-4">
                             <div>
-                              <span className="font-bold text-[#2D2A26] block">
+                              <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">
                                 {r.name || r.username}
                               </span>
                               <span className="text-[11px] text-gray-500 font-mono">
@@ -3833,7 +3835,7 @@ export const AdminDashboard: React.FC = () => {
                               </span>
                             )}
                           </td>
-                          <td className="py-3 px-4 font-medium text-[#2D2A26]">
+                          <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">
                             {r.handledByAdminName ? (
                               <span className="inline-flex items-center gap-1">
                                 <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
@@ -3854,7 +3856,7 @@ export const AdminDashboard: React.FC = () => {
                                     type="button"
                                     id={`complete-reset-btn-${r.id}`}
                                     onClick={() => openCreateTempPasswordModal(r)}
-                                    className="px-3 py-1.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                                    className="px-3 py-1.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
                                   >
                                     <Key className="w-3.5 h-3.5" />
                                     <span>إنشاء كلمة مرور جديدة</span>
@@ -3906,9 +3908,9 @@ export const AdminDashboard: React.FC = () => {
       {/* Category Add / Edit Modal (Phase 4) */}
       {isCategoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26]">
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">
                 {editingCategory ? 'تعديل التصنيف التراثي' : 'إضافة تصنيف تراثي جديد'}
               </h3>
               <button
@@ -3923,48 +3925,48 @@ export const AdminDashboard: React.FC = () => {
             <form onSubmit={handleSaveCategory} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">اسم التصنيف (عربي) *</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">اسم التصنيف (عربي) *</label>
                   <input
                     type="text"
                     required
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                     placeholder="مثال: فخار وخزف قنا"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">الاسم بالإنجليزية</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الاسم بالإنجليزية</label>
                   <input
                     type="text"
                     value={categoryNameEn}
                     onChange={(e) => setCategoryNameEn(e.target.value)}
                     placeholder="e.g. Pottery & Ceramics"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">الأيقونة (Emoji أو رمز)</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الأيقونة (Emoji أو رمز)</label>
                   <input
                     type="text"
                     value={categoryIcon}
                     onChange={(e) => setCategoryIcon(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-center text-lg outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-center text-lg outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المعرف (Slug)</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المعرف (Slug)</label>
                   <input
                     type="text"
                     value={categorySlug}
                     onChange={(e) => setCategorySlug(e.target.value)}
                     placeholder="cat-pottery"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs font-mono outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -3980,28 +3982,28 @@ export const AdminDashboard: React.FC = () => {
               />
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">وصف الحرفة والتراث</label>
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">وصف الحرفة والتراث</label>
                 <textarea
                   rows={2}
                   value={categoryDesc}
                   onChange={(e) => setCategoryDesc(e.target.value)}
                   placeholder="نبذة عن الحرفة وتاريخها بمحافظات الصعيد..."
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsCategoryModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B]"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingCat}
-                  className="px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-xl shadow-xs disabled:opacity-50"
+                  className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs disabled:opacity-50"
                 >
                   {isSubmittingCat ? 'جاري الحفظ...' : 'حفظ التصنيف'}
                 </button>
@@ -4014,11 +4016,11 @@ export const AdminDashboard: React.FC = () => {
       {/* Craft Story Add / Edit Modal (قصص الصنعة وأسرار الأجداد) */}
       {isCraftStoryModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-xl w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-xl w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-base text-[#2D2A26]">
+                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">
                   {editingCraftStory ? 'تعديل قصة الصنعة التراثية' : 'إضافة قصة صنعة جديدة في الداتا بيز'}
                 </h3>
               </div>
@@ -4033,82 +4035,82 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleSaveCraftStory} className="space-y-3.5 text-right">
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">عنوان الحرفة التراثية *</label>
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">عنوان الحرفة التراثية *</label>
                 <input
                   type="text"
                   required
                   value={craftTitle}
                   onChange={(e) => setCraftTitle(e.target.value)}
                   placeholder="مثال: فخار قنا وأسيوط (طين النيل العذب)"
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">العنوان الفرعي وسر الحرفة</label>
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">العنوان الفرعي وسر الحرفة</label>
                 <input
                   type="text"
                   value={craftSubtitle}
                   onChange={(e) => setCraftSubtitle(e.target.value)}
                   placeholder="مثال: سر البرودة والنكهة الخالدة منذ عهد الفراعنة"
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المحافظة *</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المحافظة *</label>
                   <input
                     type="text"
                     required
                     value={craftGovernorate}
                     onChange={(e) => setCraftGovernorate(e.target.value)}
                     placeholder="مثال: قنا"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">المركز / المدينة</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المركز / المدينة</label>
                   <input
                     type="text"
                     value={craftCity}
                     onChange={(e) => setCraftCity(e.target.value)}
                     placeholder="مثال: نقادة أو أخميم"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">القرية التراثية</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">القرية التراثية</label>
                   <input
                     type="text"
                     value={craftVillage}
                     onChange={(e) => setCraftVillage(e.target.value)}
                     placeholder="مثال: قرية الجرنة أو طوخ"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">عمر الحرفة التقديري</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">عمر الحرفة التقديري</label>
                   <input
                     type="text"
                     value={craftHistoryAge}
                     onChange={(e) => setCraftHistoryAge(e.target.value)}
                     placeholder="مثال: أكثر من 5000 عام"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">حالة التوثيق المعتمد</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">حالة التوثيق المعتمد</label>
                   <select
                     value={craftVerificationStatus}
                     onChange={(e) => setCraftVerificationStatus(e.target.value as any)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     <option value="verified">توثيق معتمد (Verified)</option>
                     <option value="pending_review">قيد المراجعة (Pending Review)</option>
@@ -4119,11 +4121,11 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">القسم التراثي المرتبط</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">القسم التراثي المرتبط</label>
                   <select
                     value={craftCategoryId}
                     onChange={(e) => setCraftCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -4134,13 +4136,13 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">ترتيب الظهور (رقم)</label>
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">ترتيب الظهور (رقم)</label>
                   <input
                     type="number"
                     min="1"
                     value={craftDisplayOrder}
                     onChange={(e) => setCraftDisplayOrder(Number(e.target.value) || 1)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -4157,20 +4159,20 @@ export const AdminDashboard: React.FC = () => {
               />
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">قصة وتوثيق الحرفة التراثية *</label>
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">قصة وتوثيق الحرفة التراثية *</label>
                 <textarea
                   required
                   rows={3}
                   value={craftDescription}
                   onChange={(e) => setCraftDescription(e.target.value)}
                   placeholder="اكتب بالتفصيل قصة الصنعة وأسرار توارثها التاريخي بين الأجيال..."
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                     الخامات الطبيعية والبيئية (خامة في كل سطر)
                   </label>
                   <textarea
@@ -4178,12 +4180,12 @@ export const AdminDashboard: React.FC = () => {
                     value={craftMaterialsText}
                     onChange={(e) => setCraftMaterialsText(e.target.value)}
                     placeholder="طمي النيل العذب&#10;رمال الصحراء الشرقية&#10;سعف النخيل"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                     مراحل وتقنيات الصنعة اليدوية (مرحلة في كل سطر)
                   </label>
                   <textarea
@@ -4191,13 +4193,13 @@ export const AdminDashboard: React.FC = () => {
                     value={craftTechniquesText}
                     onChange={(e) => setCraftTechniquesText(e.target.value)}
                     placeholder="التشكيل على الدولاب الخشبي&#10;التجفيف الشمسي البطيء&#10;الحرق في أفران بلدي"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                   أسرار ومميزات الحرفة (ميزة واحدة في كل سطر)
                 </label>
                 <textarea
@@ -4205,13 +4207,13 @@ export const AdminDashboard: React.FC = () => {
                   value={craftKeyFeaturesText}
                   onChange={(e) => setCraftKeyFeaturesText(e.target.value)}
                   placeholder="تبريد طبيعي فوري عبر مسام الفخار&#10;صناعة يدوية 100%&#10;آمن وصحي وخالٍ من الرصاص"
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                     المصادر والمراجع التاريخية (اسم المصدر | الرابط)
                   </label>
                   <textarea
@@ -4219,12 +4221,12 @@ export const AdminDashboard: React.FC = () => {
                     value={craftSourcesText}
                     onChange={(e) => setCraftSourcesText(e.target.value)}
                     placeholder="أطلس المأثورات الشعبية المصرية | https://...&#10;سجلات اليونسكو لحصر التراث"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                     الإحداثيات الجغرافية (خط العرض , خط الطول)
                   </label>
                   <input
@@ -4232,7 +4234,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftCoordinatesText}
                     onChange={(e) => setCraftCoordinatesText(e.target.value)}
                     placeholder="مثال: 26.155, 32.716"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#943310]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -4243,18 +4245,18 @@ export const AdminDashboard: React.FC = () => {
                   id="craft-active-toggle"
                   checked={craftActive}
                   onChange={(e) => setCraftActive(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#943310] focus:ring-[#943310]"
+                  className="w-4 h-4 rounded text-[#9a6a35] dark:text-[#d5a56d] focus:ring-[#9a6a35]"
                 />
                 <label htmlFor="craft-active-toggle" className="text-xs font-bold text-gray-800 cursor-pointer">
                   تفعيل ظهور هذه القصة في الصفحة الرئيسية فوراً
                 </label>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsCraftStoryModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B]"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60"
                 >
                   إلغاء
                 </button>
@@ -4262,7 +4264,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   id="submit-craft-story-btn"
                   disabled={isSubmittingCraftStory}
-                  className="px-5 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs disabled:opacity-50"
+                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 transition-all cursor-pointer"
                 >
                   {isSubmittingCraftStory ? 'جاري الحفظ في قاعدة البيانات...' : 'حفظ في الداتا بيز'}
                 </button>
@@ -4275,8 +4277,8 @@ export const AdminDashboard: React.FC = () => {
       {/* Reject Product Modal with Reason Requirement */}
       {rejectingProductId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
               <h3 className="font-bold text-base text-rose-900 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-rose-600" />
                 <span>رفض إدراج المنتج وتسجيل السبب</span>
@@ -4291,27 +4293,27 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <form onSubmit={handleConfirmReject} className="space-y-4">
-              <p className="text-xs text-[#73675B] leading-relaxed">
+              <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
                 يرجى كتابة سبب واضح لرفض المنتج. سيظهر هذا السبب للحرفي في لوحة تحكمه حتى يتمكن من تعديل البيانات وإعادة الإرسال.
               </p>
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">سبب الرفض (إلزامي) *</label>
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">سبب الرفض (إلزامي) *</label>
                 <textarea
                   required
                   rows={4}
                   value={rejectionReasonInput}
                   onChange={(e) => setRejectionReasonInput(e.target.value)}
                   placeholder="مثال: يرجى كتابة تفاصيل دقيقة عن نوع الطين أو أسلوب الصنع اليدوي..."
-                  className="w-full p-3 bg-[#FAF7F2] border border-rose-200 rounded-xl text-xs outline-none focus:border-rose-500"
+                  className="w-full p-3 bg-black/5 dark:bg-white/5 border border-rose-200 rounded-xl text-xs outline-none focus:border-rose-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setRejectingProductId(null)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B]"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60"
                 >
                   إلغاء
                 </button>
@@ -4331,8 +4333,8 @@ export const AdminDashboard: React.FC = () => {
       {/* Seller Action Modal (Reject or Suspend with Reason) */}
       {selectedSellerForAction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
               <h3 className={`font-bold text-base flex items-center gap-2 ${selectedSellerForAction.action === 'reject' ? 'text-rose-900' : 'text-orange-900'
                 }`}>
                 {selectedSellerForAction.action === 'reject' ? (
@@ -4357,14 +4359,14 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <form onSubmit={handleConfirmSellerAction} className="space-y-4">
-              <p className="text-xs text-[#73675B] leading-relaxed">
+              <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
                 {selectedSellerForAction.action === 'reject'
                   ? 'يرجى تدوين سبب واضح لرفض طلب انضمام هذه الورشة. سيتم حفظ السبب وإظهاره للحرفي في لوحة تحكمه.'
                   : 'يرجى تدوين سبب تعليق نشاط الورشة (مثل: ملاحظات جودة أو تأخر توريد). سيتوقف ظهور منتجات الورشة مؤقتاً.'}
               </p>
 
               <div>
-                <label className="block text-xs font-bold text-[#2D2A26] mb-1">
+                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
                   سبب الإجراء الإداري (إلزامي) *
                 </label>
                 <textarea
@@ -4377,18 +4379,18 @@ export const AdminDashboard: React.FC = () => {
                       ? 'مثال: المشغولات المقدمة لا تتبع الحرف التراثية الصعيدية المعتمدة...'
                       : 'مثال: تكرار شكاوى المشترين بشأن مطابقة المنتج للمواصفات...'
                   }
-                  className={`w-full p-3 bg-[#FAF7F2] border rounded-xl text-xs outline-none ${selectedSellerForAction.action === 'reject'
+                  className={`w-full p-3 bg-black/5 dark:bg-white/5 border rounded-xl text-xs outline-none ${selectedSellerForAction.action === 'reject'
                     ? 'border-rose-200 focus:border-rose-500'
                     : 'border-orange-200 focus:border-orange-500'
                     }`}
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setSelectedSellerForAction(null)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B]"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60"
                 >
                   إلغاء
                 </button>
@@ -4416,10 +4418,10 @@ export const AdminDashboard: React.FC = () => {
       {/* User Details Modal (Safe Display with Quick Actions) */}
       {selectedUserForDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#B24C2B]" />
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 <span>تفاصيل حساب المستخدم</span>
               </h3>
               <button
@@ -4431,7 +4433,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3]">
+            <div className="flex items-center gap-4 p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
               <div className="relative shrink-0">
                 <img
                   src={selectedUserForDetails.profileImage?.secureUrl || selectedUserForDetails.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
@@ -4445,7 +4447,7 @@ export const AdminDashboard: React.FC = () => {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-base text-[#2D2A26] truncate">{selectedUserForDetails.name}</h4>
+                <h4 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] truncate">{selectedUserForDetails.name}</h4>
                 <p className="text-xs text-gray-500 font-mono">@{selectedUserForDetails.username || 'بدون اسم مستخدم'}</p>
                 <p className="text-xs text-gray-500 truncate">{selectedUserForDetails.email || 'البريد الإلكتروني غير مسجل'}</p>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -4467,11 +4469,11 @@ export const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                 <span className="text-gray-500 block mb-0.5">رقم الهاتف:</span>
-                <span className="font-bold font-mono text-[#2D2A26]">{selectedUserForDetails.phone || 'غير مسجل'}</span>
+                <span className="font-bold font-mono text-[#211d18] dark:text-[#f5f0e7]">{selectedUserForDetails.phone || 'غير مسجل'}</span>
               </div>
               <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                 <span className="text-gray-500 block mb-0.5">المحافظة:</span>
-                <span className="font-bold text-[#2D2A26]">{selectedUserForDetails.governorate || 'غير محدد'}</span>
+                <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{selectedUserForDetails.governorate || 'غير محدد'}</span>
               </div>
               <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                 <span className="text-gray-500 block mb-0.5">معرف الحساب (ID):</span>
@@ -4498,7 +4500,7 @@ export const AdminDashboard: React.FC = () => {
             )}
 
             {/* Quick Action Buttons inside Details Modal */}
-            <div className="pt-2 border-t border-[#E5DDD3] flex flex-wrap items-center justify-between gap-2">
+            <div className="pt-2 border-t border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -4559,9 +4561,9 @@ export const AdminDashboard: React.FC = () => {
       {/* Edit User Modal */}
       {selectedUserForEdit && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-blue-600" />
                 <span>تعديل بيانات الحساب: {selectedUserForEdit.name}</span>
               </h3>
@@ -4577,23 +4579,23 @@ export const AdminDashboard: React.FC = () => {
             <form onSubmit={handleSaveEditUser} className="space-y-3.5 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">الاسم الكامل *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الاسم الكامل *</label>
                   <input
                     type="text"
                     required
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">اسم المستخدم (@Username) *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">اسم المستخدم (@Username) *</label>
                   <input
                     type="text"
                     required
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -4601,23 +4603,23 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">رقم الهاتف *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">رقم الهاتف *</label>
                   <input
                     type="text"
                     required
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">البريد الإلكتروني</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">البريد الإلكتروني</label>
                   <input
                     type="email"
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -4625,12 +4627,12 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">الدور والصلاحية *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الدور والصلاحية *</label>
                   <select
                     value={editRole}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditRole(e.target.value as any)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="buyer">مشتري (Buyer)</option>
                     <option value="seller">ورشة وبائع (Seller)</option>
@@ -4638,23 +4640,23 @@ export const AdminDashboard: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">حالة الحساب *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">حالة الحساب *</label>
                   <select
                     value={editStatus}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditStatus(e.target.value as any)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="active">نشط (Active)</option>
                     <option value="suspended">معلق / مجمد (Suspended)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">المحافظة *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المحافظة *</label>
                   <select
                     value={editGovernorate}
                     onChange={(e) => setEditGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -4699,12 +4701,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setSelectedUserForEdit(null)}
                   disabled={isUpdatingUser}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -4735,9 +4737,9 @@ export const AdminDashboard: React.FC = () => {
       {/* Reset Password Modal */}
       {selectedUserForResetPassword && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-md w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
                 <Key className="w-5 h-5 text-amber-600" />
                 <span>تعيين كلمة مرور جديدة</span>
               </h3>
@@ -4750,22 +4752,22 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E5DDD3] text-xs">
+            <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-xs">
               <span className="text-gray-500 block mb-0.5">الحساب المستهدف:</span>
-              <span className="font-bold text-[#2D2A26]">{selectedUserForResetPassword.name}</span>
+              <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{selectedUserForResetPassword.name}</span>
               <span className="text-gray-500 font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
             </div>
 
             <form onSubmit={handleConfirmResetPassword} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#2D2A26] mb-1">كلمة المرور الجديدة (6 خانات على الأقل) *</label>
+                <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">كلمة المرور الجديدة (6 خانات على الأقل) *</label>
                 <input
                   type="text"
                   required
                   value={newPasswordInput}
                   onChange={(e) => setNewPasswordInput(e.target.value)}
                   placeholder="أدخل كلمة المرور الجديدة..."
-                  className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                   dir="ltr"
                 />
               </div>
@@ -4777,18 +4779,18 @@ export const AdminDashboard: React.FC = () => {
                     const randomPass = `Sa3ed@${Math.floor(1000 + Math.random() * 9000)}`;
                     setNewPasswordInput(randomPass);
                   }}
-                  className="text-[11px] text-[#B24C2B] hover:underline font-bold"
+                  className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] hover:underline font-bold"
                 >
                   ⚡ توليد كلمة مرور قوية تلقائياً
                 </button>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setSelectedUserForResetPassword(null)}
                   disabled={isResettingPassword}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -4819,10 +4821,10 @@ export const AdminDashboard: React.FC = () => {
       {/* Create User Directly by Admin Modal */}
       {isCreateUserModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-[#B24C2B]" />
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-4 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto my-auto text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 <span>إضافة مستخدم جديد إلى المنصة</span>
               </h3>
               <button
@@ -4836,14 +4838,14 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleCreateNewUser} className="space-y-3 text-xs">
               <div>
-                <label className="block font-bold text-[#2D2A26] mb-1">نوع الحساب والصلاحية *</label>
+                <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">نوع الحساب والصلاحية *</label>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setNewUserRole('buyer')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'buyer'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : 'bg-[#FAF7F2] text-[#73675B] border-[#E5DDD3]'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     مشتري موثق
@@ -4853,7 +4855,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('seller')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'seller'
                       ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                      : 'bg-[#FAF7F2] text-[#73675B] border-[#E5DDD3]'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     ورشة وبائع
@@ -4863,7 +4865,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('admin')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'admin'
                       ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
-                      : 'bg-[#FAF7F2] text-[#73675B] border-[#E5DDD3]'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     مدير منصة
@@ -4873,25 +4875,25 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">الاسم الكامل *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الاسم الكامل *</label>
                   <input
                     type="text"
                     required
                     value={newUserName}
                     onChange={(e) => setNewUserName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">اسم المستخدم (@Username) *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">اسم المستخدم (@Username) *</label>
                   <input
                     type="text"
                     required
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
                     placeholder="ahmed_abdallah"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -4899,25 +4901,25 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">رقم الهاتف *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">رقم الهاتف *</label>
                   <input
                     type="text"
                     required
                     value={newUserPhone}
                     onChange={(e) => setNewUserPhone(e.target.value)}
                     placeholder="01012345678"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">البريد الإلكتروني (اختياري)</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">البريد الإلكتروني (اختياري)</label>
                   <input
                     type="email"
                     value={newUserEmail}
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     placeholder="user@example.com"
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -4925,22 +4927,22 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">كلمة المرور *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">كلمة المرور *</label>
                   <input
                     type="password"
                     required
                     value={newUserPassword}
                     onChange={(e) => setNewUserPassword(e.target.value)}
                     placeholder="لا تقل عن 6 خانات..."
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2D2A26] mb-1">المحافظة *</label>
+                  <label className="block font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المحافظة *</label>
                   <select
                     value={newUserGovernorate}
                     onChange={(e) => setNewUserGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -4986,12 +4988,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsCreateUserModalOpen(false)}
                   disabled={isCreatingUser}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -4999,7 +5001,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   id="submit-create-user-btn"
                   disabled={isCreatingUser}
-                  className="px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                  className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                 >
                   {isCreatingUser ? (
                     <>
@@ -5093,10 +5095,10 @@ export const AdminDashboard: React.FC = () => {
       {/* Modal 1: Create New Temporary Password Modal */}
       {isCreateTempPasswordModalOpen && selectedResetForAction && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-3">
-              <h3 className="font-bold text-base text-[#2D2A26] flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-[#B24C2B]" />
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <KeyRound className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 <span>إنشاء كلمة مرور جديدة</span>
               </h3>
               <button
@@ -5109,21 +5111,21 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Target User Info */}
-            <div className="p-3 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3] text-xs space-y-1">
+            <div className="p-3 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">اسم المستخدم:</span>
-                <span className="font-bold font-mono text-[#2D2A26]">@{selectedResetForAction.username}</span>
+                <span className="font-bold font-mono text-[#211d18] dark:text-[#f5f0e7]">@{selectedResetForAction.username}</span>
               </div>
               {selectedResetForAction.name && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">الاسم الكامل:</span>
-                  <span className="font-bold text-[#2D2A26]">{selectedResetForAction.name}</span>
+                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{selectedResetForAction.name}</span>
                 </div>
               )}
               {selectedResetForAction.phone && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500">رقم الهاتف:</span>
-                  <span className="font-bold font-mono text-[#2D2A26]">{selectedResetForAction.phone}</span>
+                  <span className="font-bold font-mono text-[#211d18] dark:text-[#f5f0e7]">{selectedResetForAction.phone}</span>
                 </div>
               )}
             </div>
@@ -5131,7 +5133,7 @@ export const AdminDashboard: React.FC = () => {
             <form onSubmit={handleConfirmCompleteReset} className="space-y-4 text-xs">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="font-bold text-[#2D2A26]">
+                  <label className="font-bold text-[#211d18] dark:text-[#f5f0e7]">
                     كلمة المرور المؤقتة *
                   </label>
                   <button
@@ -5144,7 +5146,7 @@ export const AdminDashboard: React.FC = () => {
                       }
                       setTempPasswordInput(generated);
                     }}
-                    className="text-[11px] text-[#B24C2B] hover:underline font-bold cursor-pointer"
+                    className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] hover:underline font-bold cursor-pointer"
                   >
                     ⚡ توليد كلمة مرور قوية تلقائياً
                   </button>
@@ -5156,7 +5158,7 @@ export const AdminDashboard: React.FC = () => {
                     value={tempPasswordInput}
                     onChange={(e) => setTempPasswordInput(e.target.value)}
                     placeholder="اكتب أو ولد كلمة المرور المؤقتة"
-                    className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                   <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -5167,11 +5169,11 @@ export const AdminDashboard: React.FC = () => {
                 ℹ️ ستُعرض كلمة المرور المؤقتة لك في الخطوة التالية لنسخها وتزويد المستخدم بها. سيتم إجبار المستخدم على تغييرها عند أول تسجيل دخول.
               </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsCreateTempPasswordModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl"
                 >
                   إلغاء
                 </button>
@@ -5180,7 +5182,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   disabled={isSubmittingTempPassword}
                   id="confirm-submit-temp-password-btn"
-                  className="px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] disabled:opacity-60 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   {isSubmittingTempPassword ? (
                     <>
@@ -5200,14 +5202,14 @@ export const AdminDashboard: React.FC = () => {
       {/* Modal 2: "Show Once" Temporary Password Display */}
       {completedTempPasswordInfo && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-md w-full p-5 sm:p-6 space-y-4 shadow-2xl overflow-y-auto my-auto">
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-[#E5DDD3] pb-3">
+            <div className="flex items-center gap-3 border-b border-black/10 dark:border-white/10 pb-3">
               <div className="w-10 h-10 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
-                <h3 className="font-black text-base text-[#2D2A26]">تم إنشاء كلمة المرور المؤقتة</h3>
+                <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">تم إنشاء كلمة المرور المؤقتة</h3>
                 <p className="text-xs text-emerald-700 font-medium">تم تحديث الحساب وتشفير كلمة المرور بنجاح</p>
               </div>
             </div>
@@ -5224,16 +5226,16 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* User & Password Box */}
-            <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3] space-y-2.5 text-xs">
+            <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs">
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <span className="text-gray-500">اسم المستخدم:</span>
-                <span className="font-bold font-mono text-base text-[#2D2A26]">@{completedTempPasswordInfo.username}</span>
+                <span className="font-bold font-mono text-base text-[#211d18] dark:text-[#f5f0e7]">@{completedTempPasswordInfo.username}</span>
               </div>
 
               {completedTempPasswordInfo.phone && (
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                   <span className="text-gray-500">رقم الهاتف للتواصل:</span>
-                  <span className="font-bold font-mono text-sm text-[#2D2A26]">{completedTempPasswordInfo.phone}</span>
+                  <span className="font-bold font-mono text-sm text-[#211d18] dark:text-[#f5f0e7]">{completedTempPasswordInfo.phone}</span>
                 </div>
               )}
 
@@ -5241,7 +5243,7 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-gray-500 block mb-1">كلمة المرور المؤقتة الجديدة:</span>
                 <div className="flex items-center gap-2">
                   <div
-                    className="flex-1 p-3 bg-white border-2 border-dashed border-[#B24C2B] rounded-xl font-mono text-center text-base sm:text-lg font-black tracking-wider text-[#2D2A26] select-all select-text"
+                    className="flex-1 p-3 bg-white border-2 border-dashed border-[#9a6a35] rounded-xl font-mono text-center text-base sm:text-lg font-black tracking-wider text-[#211d18] dark:text-[#f5f0e7] select-all select-text"
                     dir="ltr"
                   >
                     {completedTempPasswordInfo.temporaryPassword}
@@ -5252,7 +5254,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={copyTempPassword}
                     className={`p-3 rounded-xl border transition-all flex items-center justify-center shrink-0 cursor-pointer ${isCopiedTempPassword
                       ? 'bg-emerald-600 border-emerald-600 text-white'
-                      : 'bg-[#B24C2B] hover:bg-[#9E4F36] border-[#B24C2B] text-white'
+                      : 'bg-[#9a6a35] hover:bg-[#7d5427] border-[#9a6a35] text-white'
                       }`}
                     title="نسخ كلمة المرور"
                   >
@@ -5276,7 +5278,7 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="close-temp-password-modal-btn"
                 onClick={() => setCompletedTempPasswordInfo(null)}
-                className="w-full py-3 bg-[#2D2A26] hover:bg-[#443E38] text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>تم النسخ والتزويد - إغلاق النافذة</span>
               </button>
@@ -5288,16 +5290,16 @@ export const AdminDashboard: React.FC = () => {
       {/* Modal 3: Admin Workshop Profile & Cover Image Editor */}
       {selectedSellerForEditProfile && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-4">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-                  <Store className="w-5 h-5 text-[#B24C2B]" />
+                  <Store className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 </div>
                 <div>
-                  <h3 className="font-black text-base text-[#2D2A26]">تعديل بيانات وغلاف الورشة (تحكم الإدارة)</h3>
-                  <p className="text-xs text-[#73675B]">تعديل ملف الورشة، هوية الحرفي، غلاف المعرض، وصلاحيات الحساب</p>
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">تعديل بيانات وغلاف الورشة (تحكم الإدارة)</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">تعديل ملف الورشة، هوية الحرفي، غلاف المعرض، وصلاحيات الحساب</p>
                 </div>
               </div>
               <button
@@ -5311,17 +5313,17 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleSaveAdminSellerProfile} className="space-y-4">
               {/* Cover Image Customizer Section */}
-              <div className="space-y-3 p-4 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3]">
+              <div className="space-y-3 p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4 text-[#B24C2B]" />
-                    <span className="text-xs font-bold text-[#2D2A26]">صورة غلاف الورشة في قسم الحرف المعتمدة:</span>
+                    <ImageIcon className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
+                    <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">صورة غلاف الورشة في قسم الحرف المعتمدة:</span>
                   </div>
-                  <span className="text-[11px] text-[#73675B]">تظهر كخلفية لبطاقة الورشة وصفحتها</span>
+                  <span className="text-[11px] text-black/60 dark:text-white/60">تظهر كخلفية لبطاقة الورشة وصفحتها</span>
                 </div>
 
                 {/* Live Preview Card */}
-                <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden border border-[#E5DDD3] shadow-inner group">
+                <div className="relative w-full h-36 sm:h-44 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-inner group">
                   <img
                     src={
                       sellerEditCoverMode === 'preset'
@@ -5359,11 +5361,11 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 {/* Cover Mode Selector */}
-                <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-[#E5DDD3] text-xs font-bold">
+                <div className="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold">
                   <button
                     type="button"
                     onClick={() => setSellerEditCoverMode('preset')}
-                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'preset' ? 'bg-[#B24C2B] text-white shadow-xs' : 'text-[#73675B] hover:bg-gray-50'
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'preset' ? 'bg-[#9a6a35] text-white shadow-md' : 'text-black/60 dark:text-white/60 hover:bg-gray-50'
                       }`}
                   >
                     نماذج التراث الصعيدي (8)
@@ -5371,7 +5373,7 @@ export const AdminDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSellerEditCoverMode('url')}
-                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'url' ? 'bg-[#B24C2B] text-white shadow-xs' : 'text-[#73675B] hover:bg-gray-50'
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'url' ? 'bg-[#9a6a35] text-white shadow-md' : 'text-black/60 dark:text-white/60 hover:bg-gray-50'
                       }`}
                   >
                     رابط صورة مخصص (URL)
@@ -5379,7 +5381,7 @@ export const AdminDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setSellerEditCoverMode('upload')}
-                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'upload' ? 'bg-[#B24C2B] text-white shadow-xs' : 'text-[#73675B] hover:bg-gray-50'
+                    className={`flex-1 py-1.5 rounded-lg transition-all text-center ${sellerEditCoverMode === 'upload' ? 'bg-[#9a6a35] text-white shadow-md' : 'text-black/60 dark:text-white/60 hover:bg-gray-50'
                       }`}
                   >
                     رفع من الجهاز
@@ -5399,19 +5401,19 @@ export const AdminDashboard: React.FC = () => {
                             setSellerEditCoverImage(preset.url);
                           }}
                           className={`cursor-pointer relative rounded-xl overflow-hidden border-2 transition-all group/preset ${isSelected
-                            ? 'border-[#B24C2B] ring-2 ring-[#B24C2B]/30 shadow-md scale-[1.02]'
-                            : 'border-[#E5DDD3] hover:border-[#B24C2B]/60'
+                            ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
+                            : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60'
                             }`}
                         >
                           <img src={preset.url} alt={preset.title} className="w-full h-16 object-cover" />
                           <div className="p-1.5 bg-white space-y-0.5">
-                            <p className="text-[10px] font-bold text-[#2D2A26] truncate">{preset.title}</p>
-                            <span className="text-[9px] text-[#B24C2B] bg-amber-50 px-1 py-0.2 rounded inline-block font-semibold">
+                            <p className="text-[10px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{preset.title}</p>
+                            <span className="text-[9px] text-[#9a6a35] dark:text-[#d5a56d] bg-amber-50 px-1 py-0.2 rounded inline-block font-semibold">
                               {preset.region}
                             </span>
                           </div>
                           {isSelected && (
-                            <div className="absolute top-1 left-1 bg-[#B24C2B] text-white p-0.5 rounded-full shadow-xs">
+                            <div className="absolute top-1 left-1 bg-[#9a6a35] text-white p-0.5 rounded-full shadow-xs">
                               <Check className="w-3 h-3" />
                             </div>
                           )}
@@ -5438,33 +5440,33 @@ export const AdminDashboard: React.FC = () => {
               {/* Form Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">اسم الورشة / المتجر:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">اسم الورشة / المتجر:</label>
                   <input
                     type="text"
                     required
                     value={sellerEditBrandName}
                     onChange={(e) => setSellerEditBrandName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">اسم الصانع / الحرفي المسئول:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">اسم الصانع / الحرفي المسئول:</label>
                   <input
                     type="text"
                     required
                     value={sellerEditName}
                     onChange={(e) => setSellerEditName(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">المحافظة:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">المحافظة:</label>
                   <select
                     value={sellerEditGovernorate}
                     onChange={(e) => setSellerEditGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
                       <option key={gov} value={gov}>
@@ -5475,44 +5477,44 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الحرفة التراثية والتخصص:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الحرفة التراثية والتخصص:</label>
                   <input
                     type="text"
                     value={sellerEditSpecialty}
                     onChange={(e) => setSellerEditSpecialty(e.target.value)}
                     placeholder="مثال: فخار وخزف طمي نيل، تلي أسيوطي..."
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">رقم الهاتف:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">رقم الهاتف:</label>
                   <input
                     type="text"
                     value={sellerEditPhone}
                     onChange={(e) => setSellerEditPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">البريد الإلكتروني:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">البريد الإلكتروني:</label>
                   <input
                     type="email"
                     value={sellerEditEmail}
                     onChange={(e) => setSellerEditEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">حالة الورشة في المنصة:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">حالة الورشة في المنصة:</label>
                   <select
                     value={sellerEditStatus}
                     onChange={(e) => setSellerEditStatus(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] font-bold"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="approved">معتمد ومفعل (Approved)</option>
                     <option value="pending">قيد المراجعة (Pending)</option>
@@ -5522,12 +5524,12 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">رابط الصورة الرمزية (Avatar):</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">رابط الصورة الرمزية (Avatar):</label>
                   <input
                     type="url"
                     value={sellerEditAvatar}
                     onChange={(e) => setSellerEditAvatar(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -5535,26 +5537,26 @@ export const AdminDashboard: React.FC = () => {
 
               {/* Story & Bio */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#2D2A26]">قصة الورشة ونبذة عن الحرفة:</label>
+                <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">قصة الورشة ونبذة عن الحرفة:</label>
                 <textarea
                   rows={3}
                   value={sellerEditBio}
                   onChange={(e) => setSellerEditBio(e.target.value)}
                   placeholder="اكتب نبذة عن تاريخ الورشة والتقنيات التراثية المستخدمة..."
-                  className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] resize-none"
+                  className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
               {/* Payout Details */}
-              <div className="p-3 bg-[#FAF7F2] rounded-xl border border-[#E5DDD3] space-y-2">
-                <span className="text-xs font-bold text-[#2D2A26] block">بيانات تحويل المستحقات والأرباح:</span>
+              <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 space-y-2">
+                <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] block">بيانات تحويل المستحقات والأرباح:</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] text-[#73675B] block mb-1">طريقة التحويل:</label>
+                    <label className="text-[11px] text-black/60 dark:text-white/60 block mb-1">طريقة التحويل:</label>
                     <select
                       value={sellerEditPayoutMethod}
                       onChange={(e) => setSellerEditPayoutMethod(e.target.value as 'instapay' | 'vodafone_cash' | 'bank_transfer')}
-                      className="w-full px-3 py-1.5 bg-white border border-[#E5DDD3] rounded-lg text-xs outline-none focus:border-[#B24C2B]"
+                      className="w-full px-3 py-1.5 bg-white border border-black/10 dark:border-white/10 rounded-lg text-xs outline-none focus:border-[#9a6a35]"
                     >
                       <option value="instapay">انستاباي (InstaPay)</option>
                       <option value="vodafone_cash">فودافون كاش / محافظ إلكترونية</option>
@@ -5562,13 +5564,13 @@ export const AdminDashboard: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] text-[#73675B] block mb-1">عنوان / رقم الحساب:</label>
+                    <label className="text-[11px] text-black/60 dark:text-white/60 block mb-1">عنوان / رقم الحساب:</label>
                     <input
                       type="text"
                       value={sellerEditPayoutAccount}
                       onChange={(e) => setSellerEditPayoutAccount(e.target.value)}
                       placeholder="اسم المستخدم أو رقم المحفظة أو الآيبان"
-                      className="w-full px-3 py-1.5 bg-white border border-[#E5DDD3] rounded-lg text-xs outline-none focus:border-[#B24C2B] font-mono"
+                      className="w-full px-3 py-1.5 bg-white border border-black/10 dark:border-white/10 rounded-lg text-xs outline-none focus:border-[#9a6a35] font-mono"
                     />
                   </div>
                 </div>
@@ -5581,20 +5583,20 @@ export const AdminDashboard: React.FC = () => {
                   id="admin-seller-verified-toggle"
                   checked={sellerEditVerified}
                   onChange={(e) => setSellerEditVerified(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#B24C2B] focus:ring-[#B24C2B]"
+                  className="w-4 h-4 rounded text-[#9a6a35] dark:text-[#d5a56d] focus:ring-[#9a6a35]"
                 />
-                <label htmlFor="admin-seller-verified-toggle" className="text-xs font-bold text-[#2D2A26] cursor-pointer flex items-center gap-1">
+                <label htmlFor="admin-seller-verified-toggle" className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] cursor-pointer flex items-center gap-1">
                   <BadgeCheck className="w-4 h-4 text-emerald-600" />
                   <span>ورشة معتمدة رسمياً وموثقة من إدارة منصة وه</span>
                 </label>
               </div>
 
               {/* Footer Actions */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setSelectedSellerForEditProfile(null)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -5603,7 +5605,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   disabled={isUpdatingSellerProfile}
                   id="confirm-admin-save-seller-btn"
-                  className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   {isUpdatingSellerProfile ? (
                     <>
@@ -5626,18 +5628,18 @@ export const AdminDashboard: React.FC = () => {
       {/* Modal 4: Admin Product Add & Edit Modal */}
       {adminProductModalOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs animate-in fade-in overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-[#E5DDD3] max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
+          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 max-w-2xl w-full p-5 sm:p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh] my-auto">
             {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#E5DDD3] pb-4">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-                  <Package className="w-5 h-5 text-[#B24C2B]" />
+                  <Package className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
                 </div>
                 <div>
-                  <h3 className="font-black text-base text-[#2D2A26]">
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">
                     {editingAdminProduct ? 'تعديل بيانات المنتج كمدير' : 'إضافة منتج تراثي جديد كمدير'}
                   </h3>
-                  <p className="text-xs text-[#73675B]">تحكم كامل بأسعار ومواصفات وتصنيف وحالة نشر المنتج</p>
+                  <p className="text-xs text-black/60 dark:text-white/60">تحكم كامل بأسعار ومواصفات وتصنيف وحالة نشر المنتج</p>
                 </div>
               </div>
               <button
@@ -5652,31 +5654,31 @@ export const AdminDashboard: React.FC = () => {
             <form onSubmit={handleAdminSaveProduct} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">عنوان المنتج بالعربية:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">عنوان المنتج بالعربية:</label>
                   <input
                     type="text"
                     required
                     value={prodTitle}
                     onChange={(e) => setProdTitle(e.target.value)}
                     placeholder="مثال: قلة قناوية فخار مسامي أصيل"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">العنوان بالإنجليزية (اختياري):</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">العنوان بالإنجليزية (اختياري):</label>
                   <input
                     type="text"
                     value={prodTitleEn}
                     onChange={(e) => setProdTitleEn(e.target.value)}
                     placeholder="Authentic Qena Clay Pot"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">القسم والتصنيف:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">القسم والتصنيف:</label>
                   <select
                     value={prodCategoryId}
                     onChange={(e) => {
@@ -5684,7 +5686,7 @@ export const AdminDashboard: React.FC = () => {
                       const cat = categories.find((c) => c.id === e.target.value);
                       if (cat) setProdCategoryName(cat.name);
                     }}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -5695,11 +5697,11 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الورشة / الحرفي التابع له المنتج:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الورشة / الحرفي التابع له المنتج:</label>
                   <select
                     value={prodSellerId}
                     onChange={(e) => setProdSellerId(e.target.value)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {sellers.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -5710,47 +5712,47 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">السعر الحالي (ج.م):</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">السعر الحالي (ج.م):</label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={prodPrice}
                     onChange={(e) => setProdPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] font-bold"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">السعر قبل الخصم (اختياري):</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">السعر قبل الخصم (اختياري):</label>
                   <input
                     type="number"
                     min="0"
                     value={prodOriginalPrice || ''}
                     onChange={(e) => setProdOriginalPrice(e.target.value ? Number(e.target.value) : undefined)}
                     placeholder="اتركه فارغاً إن لم يكن هناك خصم"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الكمية المتوفرة في المخزون:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الكمية المتوفرة في المخزون:</label>
                   <input
                     type="number"
                     min="0"
                     required
                     value={prodStockCount}
                     onChange={(e) => setProdStockCount(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">محافظة المنشأ الأصلي:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">محافظة المنشأ الأصلي:</label>
                   <select
                     value={prodOriginGovernorate}
                     onChange={(e) => setProdOriginGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
                       <option key={gov} value={gov}>
@@ -5775,70 +5777,70 @@ export const AdminDashboard: React.FC = () => {
               {/* Specifications */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الخامات والمكونات:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الخامات والمكونات:</label>
                   <input
                     type="text"
                     value={prodMaterial}
                     onChange={(e) => setProdMaterial(e.target.value)}
                     placeholder="مثال: طمي نيل طبيعي، صوف غنم يدوي..."
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">أسلوب الصنعة والتقنية:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">أسلوب الصنعة والتقنية:</label>
                   <input
                     type="text"
                     value={prodCraftsmanship}
                     onChange={(e) => setProdCraftsmanship(e.target.value)}
                     placeholder="مثال: تشكيل يدوي على الدولاب وحرق أفران حطب"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الأبعاد والمقاسات:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الأبعاد والمقاسات:</label>
                   <input
                     type="text"
                     value={prodDimensions}
                     onChange={(e) => setProdDimensions(e.target.value)}
                     placeholder="مثال: 30 × 20 سم"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-[#2D2A26]">الوزن التقريبي:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">الوزن التقريبي:</label>
                   <input
                     type="text"
                     value={prodWeight}
                     onChange={(e) => setProdWeight(e.target.value)}
                     placeholder="مثال: 1.2 كجم"
-                    className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
 
               {/* Description */}
               <div className="space-y-1">
-                <label className="text-xs font-bold text-[#2D2A26]">وصف وتفاصيل المنتج التراثي:</label>
+                <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">وصف وتفاصيل المنتج التراثي:</label>
                 <textarea
                   rows={3}
                   value={prodDescription}
                   onChange={(e) => setProdDescription(e.target.value)}
                   placeholder="اكتب وصفاً دقيقاً للمنتج وأصالته واستخداماته..."
-                  className="w-full px-3 py-2 bg-[#FAF7F2] border border-[#E5DDD3] rounded-xl text-xs outline-none focus:border-[#B24C2B] resize-none"
+                  className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
               {/* Status and Flags */}
-              <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#E5DDD3] space-y-3">
+              <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-[#2D2A26]">حالة الاعتماد والنشر:</label>
+                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">حالة الاعتماد والنشر:</label>
                   <select
                     value={prodApprovalStatus}
                     onChange={(e) => setProdApprovalStatus(e.target.value as any)}
-                    className="px-3 py-1.5 bg-white border border-[#E5DDD3] rounded-xl text-xs font-bold outline-none focus:border-[#B24C2B]"
+                    className="px-3 py-1.5 bg-white border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold outline-none focus:border-[#9a6a35]"
                   >
                     <option value="approved">معتمد ومتاح للمشترين (Approved)</option>
                     <option value="pending">قيد المراجعة (Pending)</option>
@@ -5847,23 +5849,23 @@ export const AdminDashboard: React.FC = () => {
                   </select>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 pt-1 border-t border-[#E5DDD3]">
-                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#2D2A26] cursor-pointer">
+                <div className="flex flex-wrap items-center gap-4 pt-1 border-t border-black/10 dark:border-white/10">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={prodIsHandmade}
                       onChange={(e) => setProdIsHandmade(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#B24C2B] focus:ring-[#B24C2B]"
+                      className="w-4 h-4 rounded text-[#9a6a35] dark:text-[#d5a56d] focus:ring-[#9a6a35]"
                     />
                     <span>صناعة يدوية 100% (Handmade)</span>
                   </label>
 
-                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#2D2A26] cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={prodIsHeritage}
                       onChange={(e) => setProdIsHeritage(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#B24C2B] focus:ring-[#B24C2B]"
+                      className="w-4 h-4 rounded text-[#9a6a35] dark:text-[#d5a56d] focus:ring-[#9a6a35]"
                     />
                     <span>منتج صعيدي أصيل موثق (Heritage)</span>
                   </label>
@@ -5871,11 +5873,11 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Footer Actions */}
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5DDD3]">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setAdminProductModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-[#73675B] hover:bg-gray-100 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 rounded-xl cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -5884,7 +5886,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   disabled={isAdminSubmittingProduct}
                   id="confirm-admin-save-product-btn"
-                  className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-6 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] disabled:opacity-60 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   {isAdminSubmittingProduct ? (
                     <>

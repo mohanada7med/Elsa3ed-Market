@@ -381,33 +381,33 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   };
 
   return (
-    <div id={id} className={`bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24] ${className}`}>
+    <div id={id} className={`bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg ${className}`}>
       {/* Header with Title, Tabs, and Admin Trigger */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="p-1.5 rounded-lg bg-[#B24C2B]/10 text-[#B24C2B]">
+            <span className="p-1.5 rounded-lg bg-[#9a6a35]/10 text-[#9a6a35]">
               <Camera className="w-5 h-5" />
             </span>
-            <h3 className="text-lg sm:text-2xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
+            <h3 className="text-lg sm:text-2xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
               {title}
             </h3>
           </div>
-          <p className="text-xs text-[#73675B] dark:text-[#A89C90]">
+          <p className="text-xs text-black/60 dark:text-white/60">
             معرض موثق سحابياً على Cloudinary يبرز تفاصيل {entityTitle || 'المعلم الأصيل'}
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* Photos / Videos View Mode Switcher */}
-          <div className="flex items-center p-1 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24]">
+          <div className="flex items-center p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
             <button
               type="button"
               onClick={() => setActiveTab('photos')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                 activeTab === 'photos'
-                  ? 'bg-white dark:bg-[#1E1917] text-[#B24C2B] shadow-xs'
-                  : 'text-[#73675B] hover:text-[#241E1A] dark:hover:text-white'
+                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-xs'
+                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
               }`}
             >
               <ImageIcon className="w-3.5 h-3.5" />
@@ -418,10 +418,10 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('videos')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                   activeTab === 'videos'
-                    ? 'bg-white dark:bg-[#1E1917] text-[#B24C2B] shadow-xs'
-                    : 'text-[#73675B] hover:text-[#241E1A] dark:hover:text-white'
+                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-xs'
+                    : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
                 }`}
               >
                 <Film className="w-3.5 h-3.5" />
@@ -452,7 +452,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                   setAdminActiveTab('gallery');
                   setAdminModalOpen(true);
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#8E422D] hover:bg-[#733524] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#9a6a35] hover:bg-[#83592c] text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
                 title="إدارة المعرض والوسائط"
               >
                 <Settings2 className="w-3.5 h-3.5" />
@@ -469,12 +469,12 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {activeTab === 'photos' && (
         <>
           {localGallery.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-dashed border-[#D9CFBE] dark:border-[#3D332A] text-center">
-              <Camera className="w-10 h-10 text-[#A89C90] mx-auto mb-2 opacity-60" />
-              <p className="text-sm font-bold text-[#73675B] dark:text-[#A89C90] mb-1">
+            <div className="p-8 rounded-2xl bg-black/5 dark:bg-white/5 border border-dashed border-black/10 dark:border-white/10 text-center">
+              <Camera className="w-10 h-10 text-black/50 dark:text-white/50 mx-auto mb-2 opacity-60" />
+              <p className="text-sm font-bold text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mb-1">
                 لا توجد صور في المعرض التوثيقي حتى الآن
               </p>
-              <p className="text-xs text-[#73675B]/80 mb-4">
+              <p className="text-xs text-black/60 dark:text-white/60/80 mb-4">
                 سيتم إضافة صور فوتوغرافية عالية الجودة لهذا المعلم قريباً.
               </p>
               {isAdmin && (
@@ -501,7 +501,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     <div
                       key={idx}
                       onClick={() => openLightbox(idx)}
-                      className="group relative aspect-4/3 rounded-2xl overflow-hidden bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] cursor-pointer shadow-xs hover:shadow-md transition-all"
+                      className="group relative aspect-4/3 rounded-2xl overflow-hidden bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 cursor-pointer shadow-xs hover:shadow-md transition-all"
                     >
                       <img
                         src={imgUrl}
@@ -527,7 +527,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                       {/* Cover Badge */}
                       {isCover && (
-                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#8E422D] text-white text-[10px] font-bold flex items-center gap-1 shadow-xs">
+                        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#9a6a35] text-white text-[10px] font-bold flex items-center gap-1 shadow-xs">
                           <Star className="w-3 h-3 fill-current" />
                           <span>الغلاف</span>
                         </div>
@@ -560,7 +560,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 <button
                   type="button"
                   onClick={() => openLightbox(0)}
-                  className="text-xs font-bold text-[#B24C2B] hover:text-[#8E422D] flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="text-xs font-bold text-[#9a6a35] hover:underline flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Maximize2 className="w-4 h-4" />
                   <span>فتح المعرض التفاعلي بالحجم الكامل ({localGallery.length} صور)</span>
@@ -577,12 +577,12 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {activeTab === 'videos' && (
         <div className="space-y-4">
           {allVideos.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-dashed border-[#D9CFBE] dark:border-[#3D332A] text-center">
-              <Film className="w-10 h-10 text-[#A89C90] mx-auto mb-2 opacity-60" />
-              <p className="text-sm font-bold text-[#73675B] dark:text-[#A89C90] mb-1">
+            <div className="p-8 rounded-2xl bg-black/5 dark:bg-white/5 border border-dashed border-black/20 dark:border-white/20 text-center">
+              <Film className="w-10 h-10 text-black/40 dark:text-white/40 mx-auto mb-2 opacity-60" />
+              <p className="text-sm font-bold text-black/60 dark:text-white/60 mb-1">
                 لا توجد مقاطع فيديو توثيقية مرفوعة بعد
               </p>
-              <p className="text-xs text-[#73675B]/80 mb-4">
+              <p className="text-xs text-black/50 dark:text-white/50 mb-4">
                 يمكن لمدير النظام رفع فيديوهات توثيقية مباشرة وحفظها في WAH/videos.
               </p>
               {isAdmin && (
@@ -592,7 +592,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     setAdminActiveTab('video');
                     setAdminModalOpen(true);
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8E422D] text-white text-xs font-bold hover:bg-[#733524] transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#9a6a35] text-white text-xs font-bold hover:bg-[#83592c] transition-colors cursor-pointer"
                 >
                   <Video className="w-4 h-4" />
                   <span>رفع فيديو توثيقي جديد</span>
@@ -603,14 +603,14 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
             <div className="space-y-4">
               {/* Primary Selected Video Player */}
               {selectedVideoUrl && (
-                <div className="relative rounded-2xl overflow-hidden bg-black aspect-video max-h-[500px] border border-[#D9CFBE] dark:border-[#3D332A] shadow-lg flex items-center justify-center">
+                <div className="relative rounded-2xl overflow-hidden bg-black aspect-video max-h-[500px] border border-black/10 dark:border-white/10 shadow-lg flex items-center justify-center">
                   <video
                     src={selectedVideoUrl}
                     controls
                     className="w-full h-full object-contain"
                     poster={localCover || undefined}
                   />
-                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-[#8E422D]/90 backdrop-blur-xs text-white text-[11px] font-bold flex items-center gap-1.5 shadow-xs pointer-events-none">
+                  <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-[#9a6a35]/90 backdrop-blur-xs text-white text-[11px] font-bold flex items-center gap-1.5 shadow-xs pointer-events-none">
                     <Video className="w-3.5 h-3.5 text-amber-300" />
                     <span>توثيق مرئي أصيل</span>
                   </div>
@@ -620,7 +620,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
               {/* Video playlist / thumbnails if multiple videos exist */}
               {allVideos.length > 1 && (
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-[#73675B]">قائمة الفيديوهات المتوفرة:</h4>
+                  <h4 className="text-xs font-bold text-black/60 dark:text-white/60">قائمة الفيديوهات المتوفرة:</h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {allVideos.map((vid, idx) => {
                       const isSelected = vid === selectedVideoUrl;
@@ -630,8 +630,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                           onClick={() => setSelectedVideoUrl(vid)}
                           className={`relative aspect-video rounded-xl overflow-hidden bg-black/40 border-2 cursor-pointer transition-all ${
                             isSelected
-                              ? 'border-[#B24C2B] shadow-md'
-                              : 'border-transparent hover:border-[#D9CFBE]'
+                              ? 'border-[#9a6a35] shadow-md'
+                              : 'border-transparent hover:border-black/20'
                           }`}
                         >
                           <video src={vid} className="w-full h-full object-cover" muted />
@@ -797,7 +797,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     setLightboxZoom(1);
                   }}
                   className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden shrink-0 border-2 transition-all cursor-pointer ${
-                    isActive ? 'border-[#B24C2B] scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
+                    isActive ? 'border-[#9a6a35] scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
                   }`}
                 >
                   <img src={img} alt="مصغرة" className="w-full h-full object-cover" />
@@ -813,18 +813,18 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* ========================================================================= */}
       {adminModalOpen && isAdmin && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#FAF7F2] dark:bg-[#1E1917] rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden border border-[#D9CFBE] dark:border-[#3D332A] shadow-2xl">
+          <div className="bg-black/5 dark:bg-white/5 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden border border-black/10 dark:border-white/10 shadow-2xl">
             {/* Modal Header */}
-            <div className="p-5 border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between bg-white dark:bg-[#231C18]">
+            <div className="p-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-white dark:bg-[#231C18]">
               <div className="flex items-center gap-2.5">
-                <span className="p-2 rounded-xl bg-[#8E422D]/10 text-[#8E422D]">
+                <span className="p-2 rounded-xl bg-[#9a6a35]/10 text-[#9a6a35]">
                   <Settings2 className="w-5 h-5" />
                 </span>
                 <div>
                   <h3 className="text-base sm:text-lg font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
                     إدارة معرض وصور وفيديوهات: {entityTitle}
                   </h3>
-                  <p className="text-[11px] text-[#73675B] dark:text-[#A89C90]">
+                  <p className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                     المجلد السحابي: WAH/{entityType === 'cultural-craft' ? 'crafts' : 'places'}/{entitySlug || entityId}
                   </p>
                 </div>
@@ -833,21 +833,21 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
               <button
                 type="button"
                 onClick={() => setAdminModalOpen(false)}
-                className="p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-[#73675B] cursor-pointer"
+                className="p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-black/60 dark:text-white/60 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Admin Tabs */}
-            <div className="px-6 pt-4 border-b border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-4 bg-[#FAF7F2] dark:bg-[#1E1917]">
+            <div className="px-6 pt-4 border-b border-black/10 dark:border-white/10 flex items-center gap-4 bg-black/5 dark:bg-white/5">
               <button
                 type="button"
                 onClick={() => setAdminActiveTab('gallery')}
                 className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
                   adminActiveTab === 'gallery'
-                    ? 'border-[#8E422D] text-[#8E422D]'
-                    : 'border-transparent text-[#73675B] hover:text-[#241E1A]'
+                    ? 'border-[#9a6a35] text-[#9a6a35]'
+                    : 'border-transparent text-black/60 dark:text-white/60 hover:text-[#241E1A]'
                 }`}
               >
                 <ImageIcon className="w-4 h-4" />
@@ -859,8 +859,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 onClick={() => setAdminActiveTab('video')}
                 className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
                   adminActiveTab === 'video'
-                    ? 'border-[#8E422D] text-[#8E422D]'
-                    : 'border-transparent text-[#73675B] hover:text-[#241E1A]'
+                    ? 'border-[#9a6a35] text-[#9a6a35]'
+                    : 'border-transparent text-black/60 dark:text-white/60 hover:text-[#241E1A]'
                 }`}
               >
                 <Film className="w-4 h-4" />
@@ -880,7 +880,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     </h4>
 
                     {localGallery.length === 0 ? (
-                      <p className="text-xs text-[#73675B] py-4 text-center">لا توجد صور حالية بالمعرض.</p>
+                      <p className="text-xs text-black/60 dark:text-white/60 py-4 text-center">لا توجد صور حالية بالمعرض.</p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                         {localGallery.map((imgUrl, idx) => {
@@ -890,14 +890,14 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                               key={idx}
                               className={`rounded-2xl p-2.5 border bg-white dark:bg-[#26201B] flex flex-col justify-between gap-2 transition-all ${
                                 isCover
-                                  ? 'border-[#8E422D] shadow-xs'
-                                  : 'border-[#E5DDD3] dark:border-[#352B24]'
+                                  ? 'border-[#9a6a35] shadow-xs'
+                                  : 'border-black/10 dark:border-white/10'
                               }`}
                             >
                               <div className="relative aspect-video rounded-xl overflow-hidden bg-black/10">
                                 <img src={imgUrl} alt="صورة" className="w-full h-full object-cover" />
                                 {isCover && (
-                                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#8E422D] text-white text-[10px] font-bold flex items-center gap-1 shadow-xs">
+                                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-[#9a6a35] text-white text-[10px] font-bold flex items-center gap-1 shadow-xs">
                                     <Star className="w-3 h-3 fill-current" />
                                     <span>الغلاف الرئيسي</span>
                                   </div>
@@ -905,14 +905,14 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                               </div>
 
                               {/* Card Action Buttons */}
-                              <div className="flex items-center justify-between gap-1 pt-1 border-t border-[#E5DDD3] dark:border-[#352B24]">
+                              <div className="flex items-center justify-between gap-1 pt-1 border-t border-black/10 dark:border-white/10">
                                 {/* Reorder */}
                                 <div className="flex items-center gap-1">
                                   <button
                                     type="button"
                                     onClick={() => handleMoveImage(idx, 'left')}
                                     disabled={idx === 0 || isProcessing}
-                                    className="p-1.5 rounded-md bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs disabled:opacity-30 cursor-pointer"
+                                    className="p-1.5 rounded-md bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs disabled:opacity-30 cursor-pointer"
                                     title="تحريك لليمين"
                                   >
                                     <ChevronRight className="w-3.5 h-3.5" />
@@ -921,7 +921,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                                     type="button"
                                     onClick={() => handleMoveImage(idx, 'right')}
                                     disabled={idx === localGallery.length - 1 || isProcessing}
-                                    className="p-1.5 rounded-md bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs disabled:opacity-30 cursor-pointer"
+                                    className="p-1.5 rounded-md bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs disabled:opacity-30 cursor-pointer"
                                     title="تحريك لليسار"
                                   >
                                     <ChevronLeft className="w-3.5 h-3.5" />
@@ -962,9 +962,9 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                   </div>
 
                   {/* Upload New Image to Gallery */}
-                  <div className="pt-4 border-t border-[#E5DDD3] dark:border-[#352B24]">
+                  <div className="pt-4 border-t border-black/10 dark:border-white/10">
                     <h4 className="text-xs font-bold text-[#241E1A] dark:text-[#FAF6F2] mb-2 flex items-center gap-1.5">
-                      <Plus className="w-4 h-4 text-[#8E422D]" />
+                      <Plus className="w-4 h-4 text-[#9a6a35]" />
                       <span>رفع صور جديدة إلى المعرض (Cloudinary):</span>
                     </h4>
                     <AdminMediaUploader
@@ -1005,13 +1005,13 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     </h4>
 
                     {allVideos.length === 0 ? (
-                      <p className="text-xs text-[#73675B] py-4 text-center">لا توجد مقاطع فيديو مخصصة لهذا الكيان حالياً.</p>
+                      <p className="text-xs text-black/60 dark:text-white/60 py-4 text-center">لا توجد مقاطع فيديو مخصصة لهذا الكيان حالياً.</p>
                     ) : (
                       <div className="space-y-3">
                         {allVideos.map((vidUrl, idx) => (
                           <div
                             key={idx}
-                            className="p-3 rounded-2xl bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                            className="p-3 rounded-2xl bg-white dark:bg-[#26201B] border border-black/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                           >
                             <div className="flex items-center gap-3">
                               <div className="w-16 h-12 rounded-lg bg-black overflow-hidden relative shrink-0">
@@ -1024,7 +1024,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                                 <span className="text-xs font-bold text-[#241E1A] dark:text-[#FAF6F2] block">
                                   مقطع فيديو {idx + 1}
                                 </span>
-                                <span className="text-[10px] text-[#73675B] truncate block font-mono" dir="ltr">
+                                <span className="text-[10px] text-black/60 dark:text-white/60 truncate block font-mono" dir="ltr">
                                   {vidUrl}
                                 </span>
                               </div>
@@ -1046,9 +1046,9 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                   </div>
 
                   {/* Upload New Video */}
-                  <div className="pt-4 border-t border-[#E5DDD3] dark:border-[#352B24]">
+                  <div className="pt-4 border-t border-black/10 dark:border-white/10">
                     <h4 className="text-xs font-bold text-[#241E1A] dark:text-[#FAF6F2] mb-2 flex items-center gap-1.5">
-                      <Video className="w-4 h-4 text-[#8E422D]" />
+                      <Video className="w-4 h-4 text-[#9a6a35]" />
                       <span>رفع مقطع فيديو جديد (يُحفظ في مجلد WAH/videos):</span>
                     </h4>
                     <AdminMediaUploader
@@ -1080,14 +1080,14 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-between bg-white dark:bg-[#231C18]">
-              <span className="text-xs text-[#73675B]">
+            <div className="p-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between bg-white dark:bg-[#231C18]">
+              <span className="text-xs text-black/60 dark:text-white/60">
                 التعديلات تُحفظ فوراً في السحابة وقاعدة البيانات.
               </span>
               <button
                 type="button"
                 onClick={() => setAdminModalOpen(false)}
-                className="px-5 py-2 rounded-xl bg-[#8E422D] text-white text-xs font-bold hover:bg-[#733524] transition-colors cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-[#9a6a35] text-white text-xs font-bold hover:bg-[#733524] transition-colors cursor-pointer"
               >
                 إغلاق اللوحة
               </button>
@@ -1099,7 +1099,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* Non-blocking Gallery Image Delete Confirmation Dialog */}
       {imagePendingDelete && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#26201B] border border-black/10 dark:border-white/10 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3 text-red-600">
               <div className="p-2.5 rounded-xl bg-red-100 dark:bg-red-950/50">
                 <Trash2 className="w-5 h-5" />
@@ -1108,7 +1108,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 <h3 className="text-base font-bold text-[#241E1A] dark:text-[#FAF6F2]">
                   تأكيد حذف الصورة
                 </h3>
-                <p className="text-xs text-[#73675B] dark:text-[#A89C90]">
+                <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                   حذف الصورة من معرض المكان وتحديث التخزين
                 </p>
               </div>
@@ -1122,12 +1122,12 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3] dark:border-[#352B24]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10">
               <button
                 type="button"
                 onClick={() => setImagePendingDelete(null)}
                 disabled={isProcessing}
-                className="px-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
               >
                 إلغاء
               </button>
@@ -1157,7 +1157,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* Non-blocking Video Delete Confirmation Dialog */}
       {videoPendingDelete && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white dark:bg-[#26201B] border border-black/10 dark:border-white/10 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3 text-red-600">
               <div className="p-2.5 rounded-xl bg-red-100 dark:bg-red-950/50">
                 <Trash2 className="w-5 h-5" />
@@ -1166,18 +1166,18 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 <h3 className="text-base font-bold text-[#241E1A] dark:text-[#FAF6F2]">
                   تأكيد إزالة الفيديو
                 </h3>
-                <p className="text-xs text-[#73675B] dark:text-[#A89C90]">
+                <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
                   إزالة هذا المقطع من قائمة فيديوهات المكان
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5DDD3] dark:border-[#352B24]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/10 dark:border-white/10">
               <button
                 type="button"
                 onClick={() => setVideoPendingDelete(null)}
                 disabled={isProcessing}
-                className="px-4 py-2 rounded-xl bg-[#FAF7F2] dark:bg-[#1E1917] border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
               >
                 إلغاء
               </button>

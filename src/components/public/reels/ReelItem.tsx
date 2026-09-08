@@ -215,7 +215,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       {/* 1. Top Smooth Progress Bar */}
       <div className="absolute top-0 inset-x-0 z-30 h-0.5 bg-white/20">
         <div
-          className="h-full bg-[#B24C2B] transition-all duration-100 ease-linear"
+          className="h-full bg-[#9a6a35] transition-all duration-100 ease-linear"
           style={{ width: `${videoProgress}%` }}
         />
       </div>
@@ -229,7 +229,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               {reelIndex + 1} / {totalReels}
             </span>
           )}
-          <span className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#B24C2B]/80 backdrop-blur-xs text-[10px] font-bold text-white shadow-xs">
+          <span className="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#9a6a35]/80 backdrop-blur-xs text-[10px] font-bold text-white shadow-xs">
             <Sparkles className="w-2.5 h-2.5" />
             <span>ريلز الصعيد</span>
           </span>
@@ -296,7 +296,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
                   videoRef.current.play().catch(() => {});
                 }
               }}
-              className="px-3 py-1.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md"
+              className="px-3 py-1.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-lg flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>إعادة المحاولة</span>

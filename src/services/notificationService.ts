@@ -1,23 +1,39 @@
 import { Governorate, OrderStatus, ProductStatus } from '../types.ts';
 import { browserNotificationService } from './browserNotificationService.ts';
+import { api } from './api.ts';
 
 export type NotificationType =
+  | 'seller_request'
+  | 'seller_approved'
+  | 'seller_rejected'
   | 'new_order'
+  | 'order_status'
   | 'order_status_changed'
   | 'order_cancelled'
-  | 'product_approved'
-  | 'product_rejected'
-  | 'product_pending_review'
-  | 'low_stock'
+  | 'payment_status'
+  | 'payout_request'
   | 'payout_requested'
+  | 'payout_response'
   | 'payout_approved'
   | 'payout_paid'
   | 'payout_rejected'
+  | 'password_request'
+  | 'password_reset_requested'
+  | 'password_response'
+  | 'account'
+  | 'system'
+  | 'order'
+  | 'product'
+  | 'product_approved'
+  | 'product_rejected'
+  | 'product_pending_review'
+  | 'promotion'
+  | 'low_stock'
   | 'new_review'
   | 'new_seller_registered'
-  | 'password_reset_requested'
   | 'system_alert'
-  | 'reel_liked';
+  | 'reel_liked'
+  | 'chat_message';
 
 export interface AppNotification {
   id: string;
@@ -27,7 +43,9 @@ export interface AppNotification {
   message: string;
   type: NotificationType;
   read: boolean;
+  isRead?: boolean;
   createdAt: string;
+  link?: string;
   actionUrl?: string;
   actionPage?: string;
   actionTab?: string;
@@ -45,381 +63,218 @@ export interface AppNotification {
     rating?: number;
     reviewId?: string;
     reelId?: string;
+    [key: string]: any;
   };
 }
 
-const STORAGE_KEY = 'saeed_platform_notifications_v1';
+export function normalizeNotification(doc: any): AppNotification {
+  const isRead = Boolean(doc.isRead !== undefined ? doc.isRead : doc.read);
+  return {
+    id: doc.id || doc._id || `notif-${Date.now()}`,
+    recipientRole: doc.recipientRole || 'all',
+    recipientId: doc.userId || doc.recipientId,
+    title: doc.title || '',
+    message: doc.message || '',
+    type: doc.type || 'system',
+    read: isRead,
+    isRead,
+    createdAt: doc.createdAt || new Date().toISOString(),
+    link: doc.link || doc.actionPage,
+    actionPage: doc.link || doc.actionPage,
+    actionUrl: doc.actionUrl,
+    actionTab: doc.actionTab,
+    metadata: doc.metadata || doc.data || {}
+  };
+}
 
 class NotificationService {
   private notifications: AppNotification[] = [];
+  private listeners: Set<() => void> = new Set();
+  private isFetching = false;
 
   constructor() {
-    this.loadFromStorage();
+    // Clean up any legacy mock seeds from previous versions
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('saeed_platform_notifications_v1');
+      } catch {}
+    }
   }
 
-  private loadFromStorage() {
-    if (typeof window === 'undefined') {
-      this.notifications = [];
-      return;
-    }
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        this.notifications = JSON.parse(stored);
-      } else {
-        this.notifications = [
-          {
-            id: 'seed-1',
-            recipientRole: 'all',
-            title: 'أهلاً بيك في وه',
-            message: 'اكتشف منتجات وحكايات الصعيد من مكان واحد.',
-            type: 'system_alert',
-            read: false,
-            createdAt: new Date().toISOString(),
-            actionPage: 'products'
-          },
-          {
-            id: 'seed-2',
-            recipientRole: 'all',
-            title: 'اكتشف أطلس الصعيد',
-            message: 'شوف الأماكن والحكايات والحرف من محافظات الصعيد.',
-            type: 'system_alert',
-            read: false,
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-            actionPage: 'map'
-          }
-        ];
-        this.saveToStorage();
+  public subscribe(fn: () => void): () => void {
+    this.listeners.add(fn);
+    return () => {
+      this.listeners.delete(fn);
+    };
+  }
+
+  private notifyListeners() {
+    for (const fn of this.listeners) {
+      try {
+        fn();
+      } catch (e) {
+        console.error('[NotificationService] Listener error:', e);
       }
-    } catch {
-      this.notifications = [];
-    }
-  }
-
-  private saveToStorage() {
-    if (typeof window === 'undefined') return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.notifications));
-    } catch (e) {
-      console.warn('Failed to save notifications to localStorage:', e);
     }
   }
 
   /**
-   * Get notifications for a user based on role and seller/user ID
+   * Fetch real notifications from the database for the authenticated session.
+   */
+  async fetchFromDatabase(limit: number = 50): Promise<AppNotification[]> {
+    if (this.isFetching) return this.notifications;
+    this.isFetching = true;
+    try {
+      const rawDocs = await api.getNotifications(limit);
+      if (Array.isArray(rawDocs)) {
+        this.notifications = rawDocs.map(normalizeNotification);
+        this.notifyListeners();
+      }
+    } catch (err) {
+      console.warn('[NotificationService] Failed to load database notifications:', err);
+    } finally {
+      this.isFetching = false;
+    }
+    return this.notifications;
+  }
+
+  /**
+   * Set notifications explicitly (e.g. from AppContext).
+   */
+  setNotifications(list: AppNotification[]) {
+    this.notifications = list;
+    this.notifyListeners();
+  }
+
+  /**
+   * Clear notifications from memory on logout.
+   */
+  clearMemory() {
+    this.notifications = [];
+    this.notifyListeners();
+  }
+
+  /**
+   * Get notifications for a user based on role and seller/user ID.
+   * For guests, returns empty list.
    */
   getNotifications(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): AppNotification[] {
+    if (role === 'guest') {
+      return [];
+    }
     if (role === 'admin') {
-      return this.notifications.filter((n) => n.recipientRole === 'admin' || n.recipientRole === 'all');
+      return this.notifications.filter((n) => n.recipientRole === 'admin' || n.recipientRole === 'all' || !n.recipientRole);
     }
     if (role === 'seller') {
       return this.notifications.filter(
         (n) =>
-          (n.recipientRole === 'seller' && (!n.recipientId || !targetId || n.recipientId === targetId || n.recipientId === 'seller-1')) ||
-          n.recipientRole === 'all'
+          (n.recipientRole === 'seller' && (!n.recipientId || !targetId || n.recipientId === targetId)) ||
+          n.recipientRole === 'all' ||
+          !n.recipientRole
       );
     }
     if (role === 'buyer') {
       return this.notifications.filter(
-        (n) => (n.recipientRole === 'buyer' && (!n.recipientId || n.recipientId === targetId)) || n.recipientRole === 'all'
+        (n) => (n.recipientRole === 'buyer' && (!n.recipientId || n.recipientId === targetId)) || n.recipientRole === 'all' || !n.recipientRole
       );
     }
-    return this.notifications.filter((n) => n.recipientRole === 'all');
+    return this.notifications;
   }
 
   getUnreadCount(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): number {
+    if (role === 'guest') return 0;
     const list = this.getNotifications(role, targetId);
     return list.filter((n) => !n.read).length;
   }
 
-  markAsRead(id: string) {
-    this.notifications = this.notifications.map((n) => (n.id === id ? { ...n, read: true } : n));
-    this.saveToStorage();
+  async markAsRead(id: string) {
+    if (!id) return;
+    this.notifications = this.notifications.map((n) =>
+      n.id === id ? { ...n, read: true, isRead: true } : n
+    );
+    this.notifyListeners();
+
+    try {
+      await api.markNotificationAsRead(id);
+    } catch (e) {
+      console.warn('[NotificationService] Failed to mark as read on server:', e);
+    }
   }
 
-  markAllAsRead(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string) {
-    const idsToMark = new Set(this.getNotifications(role, targetId).map((n) => n.id));
-    this.notifications = this.notifications.map((n) => (idsToMark.has(n.id) ? { ...n, read: true } : n));
-    this.saveToStorage();
+  async markAllAsRead(role?: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string) {
+    this.notifications = this.notifications.map((n) => ({
+      ...n,
+      read: true,
+      isRead: true
+    }));
+    this.notifyListeners();
+
+    try {
+      await api.markAllNotificationsAsRead();
+    } catch (e) {
+      console.warn('[NotificationService] Failed to mark all as read on server:', e);
+    }
   }
 
-  deleteNotification(id: string) {
+  async deleteNotification(id: string) {
+    if (!id) return;
     this.notifications = this.notifications.filter((n) => n.id !== id);
-    this.saveToStorage();
+    this.notifyListeners();
+
+    try {
+      await api.deleteNotification(id);
+    } catch (e) {
+      console.warn('[NotificationService] Failed to delete on server:', e);
+    }
   }
 
-  clearAll(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string) {
-    const idsToRemove = new Set(this.getNotifications(role, targetId).map((n) => n.id));
-    this.notifications = this.notifications.filter((n) => !idsToRemove.has(n.id));
-    this.saveToStorage();
+  async clearAll(role?: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string) {
+    this.notifications = [];
+    this.notifyListeners();
+
+    try {
+      await api.clearAllNotifications();
+    } catch (e) {
+      console.warn('[NotificationService] Failed to clear all on server:', e);
+    }
   }
 
-  /**
-   * Add a new notification
-   */
-  addNotification(notification: Omit<AppNotification, 'id' | 'createdAt' | 'read'>): AppNotification {
+  // Compat helpers to avoid breaking any callers
+  notifyNewOrder(orderIdOrParams: any, orderNumber?: string, amount?: number, sellerIds?: string[]) {
+    // Handled by backend orderService.ts
+  }
+
+  notifyOrderStatus(params: { orderId: string; orderNumber?: string; newStatus: string; buyerId?: string; sellerId?: string }) {
+    // Handled by backend orderService.ts
+  }
+
+  notifyProductApprovalStatus(sellerIdOrParams: any, productTitle?: string, status?: 'approved' | 'rejected', reason?: string) {
+    // Handled by backend productService.ts
+  }
+
+  notifyPayoutStatus(sellerId: string, amount: number, status: 'approved' | 'paid' | 'rejected', reason?: string) {
+    // Handled by backend payoutService.ts
+  }
+
+  notifyLowStock(sellerId: string, productTitle: string, currentStock: number) {
+    // Optional helper
+  }
+
+  notifyNewReview(sellerId: string, productTitle: string, rating: number, comment: string) {
+    // Optional helper
+  }
+
+  addNotification(notification: any): AppNotification {
     const newNotif: AppNotification = {
       ...notification,
       id: `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       createdAt: new Date().toISOString(),
-      read: false
+      read: false,
+      isRead: false
     };
-
     this.notifications = [newNotif, ...this.notifications];
-    this.saveToStorage();
-
-    // Trigger Browser Push Notification & Sound Alert
-    try {
-      const notifCategory: 'order' | 'message' | 'stock' | 'system' =
-        newNotif.type === 'new_order' || newNotif.type === 'order_status_changed' || newNotif.type === 'order_cancelled'
-          ? 'order'
-          : newNotif.type === 'low_stock'
-          ? 'stock'
-          : 'system';
-
-      browserNotificationService.sendNotification({
-        title: newNotif.title,
-        body: newNotif.message,
-        type: notifCategory,
-        actionPage: newNotif.actionPage,
-        actionTab: newNotif.actionTab,
-        metadata: newNotif.metadata,
-        tag: newNotif.id
-      });
-    } catch {
-      // Graceful fallback
-    }
-
+    this.notifyListeners();
     return newNotif;
-  }
-
-  // System Helpers for Triggers
-  notifyNewOrder(
-    orderIdOrParams: string | { orderId: string; orderNumber: string; total?: number; amount?: number; itemsCount?: number; governorate?: string; sellerIds?: string[] },
-    orderNumber?: string,
-    amount?: number,
-    sellerIds?: string[]
-  ) {
-    let resolvedOrderId = '';
-    let resolvedOrderNumber = '';
-    let resolvedAmount = 0;
-    let resolvedSellerIds: string[] | undefined = undefined;
-
-    if (typeof orderIdOrParams === 'object') {
-      resolvedOrderId = orderIdOrParams.orderId;
-      resolvedOrderNumber = orderIdOrParams.orderNumber || orderIdOrParams.orderId;
-      resolvedAmount = orderIdOrParams.total || orderIdOrParams.amount || 0;
-      resolvedSellerIds = orderIdOrParams.sellerIds;
-    } else {
-      resolvedOrderId = orderIdOrParams;
-      resolvedOrderNumber = orderNumber || orderIdOrParams;
-      resolvedAmount = amount || 0;
-      resolvedSellerIds = sellerIds;
-    }
-
-    // Notify Admin
-    this.addNotification({
-      recipientRole: 'admin',
-      title: `طلب شراء جديد #${resolvedOrderNumber}`,
-      message: `تم إنشاء طلب شراء جديد رقم #${resolvedOrderNumber} بإجمالي ${resolvedAmount.toLocaleString()} ج.م بانتظار المتابعة.`,
-      type: 'new_order',
-      actionPage: 'admin-dashboard',
-      actionTab: 'orders',
-      metadata: { orderId: resolvedOrderId, orderNumber: resolvedOrderNumber, amount: resolvedAmount }
-    });
-
-    // Notify Sellers
-    if (resolvedSellerIds && resolvedSellerIds.length > 0) {
-      resolvedSellerIds.forEach((sId) => {
-        this.addNotification({
-          recipientRole: 'seller',
-          recipientId: sId,
-          title: `طلب شراء جديد لمنتجات ورشتك #${resolvedOrderNumber}`,
-          message: `لديك طلب جديد يحتوي على منتجات من ورشتك بقيمة تقريبية ${resolvedAmount.toLocaleString()} ج.م. يرجى تجهيز الطرد.`,
-          type: 'new_order',
-          actionPage: 'seller-dashboard',
-          actionTab: 'orders',
-          metadata: { orderId: resolvedOrderId, orderNumber: resolvedOrderNumber, amount: resolvedAmount, sellerId: sId }
-        });
-      });
-    } else {
-      this.addNotification({
-        recipientRole: 'seller',
-        title: `طلب شراء جديد #${resolvedOrderNumber}`,
-        message: `لديك طلب جديد يحتوي على منتجات من ورشتك بقيمة ${resolvedAmount.toLocaleString()} ج.م.`,
-        type: 'new_order',
-        actionPage: 'seller-dashboard',
-        actionTab: 'orders',
-        metadata: { orderId: resolvedOrderId, orderNumber: resolvedOrderNumber, amount: resolvedAmount }
-      });
-    }
-  }
-
-  notifyOrderStatus(params: {
-    orderId: string;
-    orderNumber?: string;
-    newStatus: string;
-    buyerId?: string;
-    sellerId?: string;
-  }) {
-    const statusLabels: Record<string, string> = {
-      pending: 'قيد المراجعة والانتظار',
-      processing: 'جاري التجهيز والإعداد في الورشة',
-      shipped: 'تم الشحن وفي طريقها للتسليم',
-      delivered: 'تم التوصيل بنجاح',
-      cancelled: 'تم الإلغاء'
-    };
-    const label = statusLabels[params.newStatus] || params.newStatus;
-
-    // Notify Buyer
-    if (params.buyerId) {
-      this.addNotification({
-        recipientRole: 'buyer',
-        recipientId: params.buyerId,
-        title: `تحديث حالة طلبك #${params.orderNumber || params.orderId}`,
-        message: `تم تحديث حالة طلبك إلى: "${label}".`,
-        type: 'order_status_changed',
-        actionPage: 'buyer-account',
-        actionTab: 'orders',
-        metadata: { orderId: params.orderId, orderNumber: params.orderNumber }
-      });
-    }
-
-    // Notify Seller
-    if (params.sellerId) {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: params.sellerId,
-        title: `تحديث حالة الطلب #${params.orderNumber || params.orderId}`,
-        message: `تم تحديث حالة الطلب إلى "${label}".`,
-        type: 'order_status_changed',
-        actionPage: 'seller-dashboard',
-        actionTab: 'orders',
-        metadata: { orderId: params.orderId, orderNumber: params.orderNumber }
-      });
-    }
-  }
-
-  notifyProductApprovalStatus(
-    sellerIdOrParams: string | { sellerId?: string; productId?: string; productTitle: string; status: 'approved' | 'rejected'; reason?: string },
-    productTitle?: string,
-    status?: 'approved' | 'rejected',
-    reason?: string
-  ) {
-    let resolvedSellerId = 'seller-1';
-    let resolvedTitle = '';
-    let resolvedStatus: 'approved' | 'rejected' = 'approved';
-    let resolvedReason: string | undefined = undefined;
-
-    if (typeof sellerIdOrParams === 'object') {
-      resolvedSellerId = sellerIdOrParams.sellerId || 'seller-1';
-      resolvedTitle = sellerIdOrParams.productTitle;
-      resolvedStatus = sellerIdOrParams.status;
-      resolvedReason = sellerIdOrParams.reason;
-    } else {
-      resolvedSellerId = sellerIdOrParams;
-      resolvedTitle = productTitle || '';
-      resolvedStatus = status || 'approved';
-      resolvedReason = reason;
-    }
-
-    if (resolvedStatus === 'approved') {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: resolvedSellerId,
-        title: 'تمت الموافقة على منتجك بنجاح!',
-        message: `تم اعتماد منتجك "${resolvedTitle}" من قِبل إدارة المنصة وهو الآن معروض للشراء.`,
-        type: 'product_approved',
-        actionPage: 'seller-dashboard',
-        actionTab: 'products',
-        metadata: { productTitle: resolvedTitle, sellerId: resolvedSellerId }
-      });
-    } else {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: resolvedSellerId,
-        title: 'تم رفض اعتماد المنتج',
-        message: `تعذر اعتماد منتج "${resolvedTitle}". ${resolvedReason ? `السبب: ${resolvedReason}` : 'يرجى مراجعة المعايير وتعديل البيانات.'}`,
-        type: 'product_rejected',
-        actionPage: 'seller-dashboard',
-        actionTab: 'products',
-        metadata: { productTitle: resolvedTitle, sellerId: resolvedSellerId }
-      });
-    }
-  }
-
-  notifyPayoutStatus(sellerId: string, amount: number, status: 'approved' | 'paid' | 'rejected', reason?: string) {
-    if (status === 'paid') {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: sellerId,
-        title: 'تم تحويل مستحقاتك المالية',
-        message: `تم تحويل مبلغ ${amount.toLocaleString()} ج.م إلى حسابك المسجل بنجاح.`,
-        type: 'payout_paid',
-        actionPage: 'seller-dashboard',
-        actionTab: 'payouts',
-        metadata: { amount, sellerId }
-      });
-    } else if (status === 'approved') {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: sellerId,
-        title: 'تمت الموافقة على طلب سحب الأرباح',
-        message: `تمت الموافقة على طلب السحب بقيمة ${amount.toLocaleString()} ج.م وجارٍ تنفيذ التحويل.`,
-        type: 'payout_approved',
-        actionPage: 'seller-dashboard',
-        actionTab: 'payouts',
-        metadata: { amount, sellerId }
-      });
-    } else if (status === 'rejected') {
-      this.addNotification({
-        recipientRole: 'seller',
-        recipientId: sellerId,
-        title: 'تم رفض طلب سحب الأرباح',
-        message: `تم رفض طلب السحب بقيمة ${amount.toLocaleString()} ج.م. ${reason ? `السبب: ${reason}` : ''}`,
-        type: 'payout_rejected',
-        actionPage: 'seller-dashboard',
-        actionTab: 'payouts',
-        metadata: { amount, sellerId }
-      });
-    }
-  }
-
-  notifyLowStock(sellerId: string, productTitle: string, currentStock: number) {
-    this.addNotification({
-      recipientRole: 'seller',
-      recipientId: sellerId,
-      title: 'تنبيه: اقتراب نفاد المخزون',
-      message: `متبقي ${currentStock} قطع فقط من "${productTitle}". يرجى تحديث المخزون بالورشة لتفادي إيقاف البيع.`,
-      type: 'low_stock',
-      actionPage: 'seller-dashboard',
-      actionTab: 'inventory',
-      metadata: { productTitle, stockCount: currentStock, sellerId }
-    });
-  }
-
-  notifyNewReview(sellerId: string, productTitle: string, rating: number, comment: string) {
-    this.addNotification({
-      recipientRole: 'seller',
-      recipientId: sellerId,
-      title: `تقييم جديد (${rating} نجوم) لمنتجك`,
-      message: `تم تقييم منتج "${productTitle}": "${comment.substring(0, 70)}${comment.length > 70 ? '...' : ''}"`,
-      type: 'new_review',
-      actionPage: 'seller-dashboard',
-      actionTab: 'products',
-      metadata: { productTitle, rating, sellerId }
-    });
-
-    // Notify Admin about new review
-    this.addNotification({
-      recipientRole: 'admin',
-      title: `تقييم مضاف لمنتج "${productTitle}"`,
-      message: `أضاف أحد المشترين تقييم (${rating}★): "${comment.substring(0, 60)}..."`,
-      type: 'new_review',
-      actionPage: 'admin-dashboard',
-      actionTab: 'reviews',
-      metadata: { productTitle, rating }
-    });
   }
 }
 
