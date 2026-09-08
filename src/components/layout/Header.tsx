@@ -1064,48 +1064,50 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
               </button>
 
-              {/* CHAT - DESKTOP */}
+              {/* CHAT - DESKTOP (للمسجلين فقط) */}
+              {isAuthenticated && (
+                <button
+                  id="nav-chat-btn"
+                  type="button"
+                  onClick={() =>
+                    navigate('messages')
+                  }
+                  aria-label="الرسائل"
+                  className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <MessageCircle size={18} />
 
-              <button
-                id="nav-chat-btn"
-                type="button"
-                onClick={() =>
-                  navigate('messages')
-                }
-                aria-label="الرسائل"
-                className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <MessageCircle size={18} />
+                  {chatUnreadCount > 0 && (
+                    <span
+                      className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                      style={{
+                        backgroundColor:
+                          '#9a6a35',
+                        color: '#fff',
+                      }}
+                    >
+                      {chatUnreadCount > 99
+                        ? '99+'
+                        : chatUnreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
 
-                {chatUnreadCount > 0 && (
-                  <span
-                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
-                    style={{
-                      backgroundColor:
-                        '#9a6a35',
-                      color: '#fff',
-                    }}
-                  >
-                    {chatUnreadCount > 99
-                      ? '99+'
-                      : chatUnreadCount}
-                  </span>
-                )}
-              </button>
-
-              {/* NOTIFICATIONS */}
-
-              <NotificationCenter
-                isDark={isDark}
-                mainText={mainText}
-                secondaryText={secondaryText}
-                borderColor={borderColor}
-                hoverBg={hoverBg}
-              />
+              {/* NOTIFICATIONS (للمسجلين فقط) */}
+              {isAuthenticated && (
+                <NotificationCenter
+                  isDark={isDark}
+                  mainText={mainText}
+                  secondaryText={secondaryText}
+                  borderColor={borderColor}
+                  hoverBg={hoverBg}
+                />
+              )}
 
               {/* CART */}
 
