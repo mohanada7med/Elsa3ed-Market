@@ -19,10 +19,18 @@ async function startServer() {
     return handle(req, res);
   });
 
-  // Graceful shutdown handling
+  // Graceful shutdown handling & large upload streaming timeout configuration
   const server = app.listen(PORT, '0.0.0.0', () => {
     Logger.info(`[Elsa3ed Market] Next.js + Node.js server running at http://0.0.0.0:${PORT} in [${env.NODE_ENV}] mode`);
   });
+
+  // Ensure Node HTTP server allows ample time for 1GB video upload processing
+  server.timeout = 15 * 60 * 1000; // 15 minutes
+  server.keepAliveTimeout = 65 * 1000;
+  server.headersTimeout = 66 * 1000;
+  if ('requestTimeout' in server) {
+    (server as any).requestTimeout = 15 * 60 * 1000;
+  }
 
   const shutdown = () => {
     Logger.info('[Server] Gracefully shutting down...');

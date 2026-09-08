@@ -39,7 +39,7 @@ export function validateAndGetEnv(): EnvConfig {
   const AUTH_SECRET = process.env.AUTH_SECRET?.trim() || (NODE_ENV !== 'production' ? 'elsa3ed-dev-session-key-not-for-prod' : 'elsa3ed-prod-session-fallback-secret-2026');
   const ENABLE_RATE_LIMITING = process.env.ENABLE_RATE_LIMITING !== 'false';
   const CACHE_TTL_SECONDS = Number(process.env.CACHE_TTL_SECONDS) || 300;
-  const MAX_UPLOAD_SIZE_MB = Number(process.env.MAX_UPLOAD_SIZE_MB) || 5;
+  const MAX_UPLOAD_SIZE_MB = Number(process.env.MAX_UPLOAD_SIZE_MB) || 1024;
 
   // Verification checks
   const missingConfigs: string[] = [];

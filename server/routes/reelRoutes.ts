@@ -1,6 +1,8 @@
 import express from 'express';
 import type { Response } from 'express';
 import multer from 'multer';
+import fs from 'fs';
+import os from 'os';
 import { requireAuth } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
@@ -13,11 +15,21 @@ import { uploadLimiter } from '../middleware/rateLimiter.ts';
 
 const router = express.Router();
 
-// Configure Multer for streaming/binary multipart video uploads (up to 250MB fallback)
+export const MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024; // Exactly 1 GB (1,073,741,824 bytes)
+
+// Configure Multer for streaming/binary multipart video uploads (up to 1GB disk buffer to protect Node RAM)
 const videoMulter = multer({
-  storage: multer.memoryStorage(),
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, os.tmpdir());
+    },
+    filename: (_req, file, cb) => {
+      const unique = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      cb(null, `reel_${unique}_${file.originalname || 'video.mp4'}`);
+    }
+  }),
   limits: {
-    fileSize: 250 * 1024 * 1024 // 250 MB
+    fileSize: MAX_VIDEO_SIZE_BYTES // Exactly 1 GB
   },
   fileFilter: (_req, file, cb) => {
     const allowedMimes = [
@@ -134,6 +146,14 @@ const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) =
       });
     }
 
+    const fileSize = Number(req.body?.fileSize || req.query?.fileSize);
+    if (fileSize && (isNaN(fileSize) || fileSize > MAX_VIDEO_SIZE_BYTES)) {
+      return res.status(400).json({
+        success: false,
+        error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
+      });
+    }
+
     if (!cloudinaryStorage.isAvailable()) {
       return res.json({
         success: true,
@@ -176,6 +196,55 @@ const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) =
 router.get('/upload-signature', requireAuth, handleUploadSignature);
 router.post('/upload-signature', requireAuth, handleUploadSignature);
 
+// GET & POST /api/reels/verify-upload - Verify if an uploaded video exists and is ready on Cloudinary
+const handleVerifyUpload = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user || (user.role !== 'seller' && user.role !== 'admin')) {
+      return res.status(403).json({
+        success: false,
+        error: 'غير مصرح بالتحقق من أصول الفيديو'
+      });
+    }
+
+    const targetKey = (req.body?.publicId || req.body?.fileKey || req.query?.publicId || req.query?.fileKey) as string;
+
+    if (!targetKey || typeof targetKey !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'المعرف السحابي للملف مطلوب'
+      });
+    }
+
+    // Security check: sellers can only verify assets in their own folder
+    if (user.role === 'seller') {
+      const sellerId = user.sellerId || user.id;
+      const cleanSellerId = sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
+      if (!targetKey.includes(cleanSellerId) && !targetKey.includes(sellerId)) {
+        return res.status(403).json({
+          success: false,
+          error: 'غير مصرح بالتحقق من ملف لا ينتمي لورشتك'
+        });
+      }
+    }
+
+    const verification = await cloudinaryStorage.verifyVideoAsset(targetKey);
+    return res.json({
+      success: true,
+      data: verification
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Asset verification error:', err?.message || err);
+    return res.status(500).json({
+      success: false,
+      error: 'فشل في التحقق من حالة الفيديو السحابي'
+    });
+  }
+};
+
+router.post('/verify-upload', requireAuth, handleVerifyUpload);
+router.get('/verify-upload', requireAuth, handleVerifyUpload);
+
 // POST /api/reels/upload-video - Upload Reel Video to Cloudinary/Storage with isolated seller/admin folders
 router.post(
   '/upload-video',
@@ -187,7 +256,7 @@ router.post(
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به (250 ميجابايت)'
+            error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
           });
         }
         return res.status(400).json({
@@ -213,7 +282,12 @@ router.post(
       let mimeType = 'video/mp4';
 
       if (req.file) {
-        uploadData = req.file.buffer;
+        if ((req.file as any).path) {
+          uploadData = fs.readFileSync((req.file as any).path);
+          fs.unlink((req.file as any).path, () => {});
+        } else {
+          uploadData = req.file.buffer;
+        }
         filename = req.file.originalname || filename;
         mimeType = req.file.mimetype || mimeType;
       } else if (req.body?.video) {

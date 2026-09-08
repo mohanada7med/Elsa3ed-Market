@@ -86,7 +86,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   onEntityGalleryChange
 }) => {
   const { currentUser, currentRole } = useApp();
-  const isAdmin = currentRole === 'admin';
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const authUser = {
+    id: currentUser?.id || 'admin',
+    role: isAdmin ? 'admin' : (currentUser?.role || currentRole || 'admin')
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
@@ -214,8 +218,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       }
 
       if (isVideo) {
-        if (file.size > 150 * 1024 * 1024) {
-          setErrorMessage(`مقطع الفيديو "${file.name}" يتجاوز الحد الأقصى المسموح به (150 ميجابايت)`);
+        if (file.size > 1024 * 1024 * 1024) {
+          setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
           return;
         }
       } else {
@@ -273,7 +277,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   const uploadSingleItem = async (item: StagedFile, isFirst: boolean): Promise<MediaItem> => {
     const isVideo = item.isVideo || item.file.type.startsWith('video/');
     return await api.uploadAdminMedia(
-      currentUser || {},
+      authUser,
       {
         file: item.file,
         filename: item.file.name,
@@ -388,7 +392,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     try {
       setIsUploading(true);
 
-      const media = await api.saveAdminMediaUrl(currentUser || {}, {
+      const media = await api.saveAdminMediaUrl(authUser, {
         url: cleanUrl,
         entityType,
         entitySlug,
@@ -438,8 +442,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     const allowedVideoMimes = ['video/mp4', 'video/webm', 'video/quicktime'];
     const isVideo = file.type.startsWith('video/') || allowedVideoMimes.includes(file.type.toLowerCase());
 
-    if (isVideo && file.size > 150 * 1024 * 1024) {
-      setErrorMessage('الفيديو البديل يتجاوز 150 ميجابايت');
+    if (isVideo && file.size > 1024 * 1024 * 1024) {
+      setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
       return;
     }
     if (!isVideo && (!allowedImageMimes.includes(file.type.toLowerCase()) || file.size > 10 * 1024 * 1024)) {
@@ -458,7 +462,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
     try {
       const updatedMedia = await api.replaceAdminMedia(
-        currentUser || {},
+        authUser,
         stagedReplacement.targetIdOrUrl,
         stagedReplacement.file
       );
@@ -503,7 +507,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       if (itemToRemove?.id || itemToRemove?.publicId) {
         try {
-          await api.deleteAdminMedia(currentUser || {}, itemToRemove.id || itemToRemove.publicId!);
+          await api.deleteAdminMedia(authUser, itemToRemove.id || itemToRemove.publicId!);
         } catch (delErr: any) {
           console.warn('Cloudinary delete warning:', delErr?.message || delErr);
         }
@@ -537,7 +541,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
     if (selected.item?.id) {
       try {
-        await api.setPrimaryAdminMedia(currentUser || {}, selected.item.id);
+        await api.setPrimaryAdminMedia(authUser, selected.item.id);
       } catch (err) {
         console.warn('Primary sync warning:', err);
       }
@@ -563,7 +567,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
     if (entityId) {
       try {
-        await api.reorderGalleryMedia(currentUser || {}, {
+        await api.reorderGalleryMedia(authUser, {
           entityType,
           entityId,
           galleryUrls: reorderedUrls
@@ -747,7 +751,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               </h4>
               <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 mt-1 leading-relaxed">
                 {mediaCategory === 'video'
-                  ? 'صيغ الفيديو: MP4, WebM, MOV حتى 150 ميجابايت • مجلد WAH/videos'
+                  ? 'صيغ الفيديو: MP4, WebM, MOV حتى 1 جيجابايت • مجلد WAH/videos'
                   : 'الصور المدعومة: JPG, PNG, WEBP (حتى 10 ميجابايت) • معاينة سريعة قبل الرفع'}
               </p>
             </div>

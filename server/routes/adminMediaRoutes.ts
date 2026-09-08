@@ -35,11 +35,11 @@ router.use((req: AuthenticatedRequest, res: Response, next) => {
   next();
 });
 
-// Configure Multer for in-memory file streaming with strict limits
+// Configure Multer with 1GB limit for media uploads
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 150 * 1024 * 1024 // 150MB max file size for images and videos
+    fileSize: 1024 * 1024 * 1024 // 1 GB (1,073,741,824 bytes) max file size
   },
   fileFilter: (_req, file, cb) => {
     const allowedImageMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
@@ -78,7 +78,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم الملف يتجاوز الحد المسموح (150 ميجابايت)',
+            error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.',
             code: 'FILE_TOO_LARGE'
           });
         }

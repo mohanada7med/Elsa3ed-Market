@@ -74,11 +74,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       return;
     }
 
-    if (process.env.CLOUDINARY_URL && !isPlaceholderValue(process.env.CLOUDINARY_URL)) {
-      cloudinary.config();
-      this.isConfigured = true;
-      Logger.info('[Cloudinary] Configured via CLOUDINARY_URL');
-    } else if (
+    if (
       !isPlaceholderValue(process.env.CLOUDINARY_CLOUD_NAME) &&
       !isPlaceholderValue(process.env.CLOUDINARY_API_KEY) &&
       !isPlaceholderValue(process.env.CLOUDINARY_API_SECRET)
@@ -91,6 +87,12 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       });
       this.isConfigured = true;
       Logger.info('[Cloudinary] Configured via individual credentials');
+    } else if (process.env.CLOUDINARY_URL && !isPlaceholderValue(process.env.CLOUDINARY_URL)) {
+      cloudinary.config({
+        secure: true
+      });
+      this.isConfigured = true;
+      Logger.info('[Cloudinary] Configured via CLOUDINARY_URL');
     }
   }
 
@@ -224,8 +226,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       if (Buffer.isBuffer(uploadPayload)) {
         if (isVideo) {
           uploadOptions.resource_type = 'video';
-          uploadOptions.chunk_size = 6000000; // 6MB chunk size for video stream
-          uploadOptions.timeout = 300000; // 5 min timeout
+          uploadOptions.chunk_size = 20000000; // 20MB chunk size for video stream
+          uploadOptions.timeout = 600000; // 10 min timeout for large 1GB video processing
         } else {
           uploadOptions.resource_type = 'image';
           uploadOptions.allowed_formats = ['jpg', 'jpeg', 'png', 'webp'];
@@ -243,8 +245,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
         });
       } else if (isVideo) {
         uploadOptions.resource_type = 'video';
-        uploadOptions.chunk_size = 6000000; // 6MB chunk size for reliable video streaming uploads
-        uploadOptions.timeout = 300000; // 5 min timeout
+        uploadOptions.chunk_size = 20000000; // 20MB chunk size for reliable video streaming uploads
+        uploadOptions.timeout = 600000; // 10 min timeout for large 1GB video processing
         uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
       } else {
         uploadOptions.resource_type = 'image';
@@ -327,9 +329,18 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
 
     const config = cloudinary.config();
-    const apiKey = config.api_key;
-    const apiSecret = config.api_secret;
-    const cloudName = config.cloud_name;
+    let apiKey = config.api_key || process.env.CLOUDINARY_API_KEY;
+    let apiSecret = config.api_secret || process.env.CLOUDINARY_API_SECRET;
+    let cloudName = config.cloud_name || process.env.CLOUDINARY_CLOUD_NAME;
+
+    if ((!apiKey || !apiSecret || !cloudName) && process.env.CLOUDINARY_URL) {
+      const match = process.env.CLOUDINARY_URL.match(/cloudinary:\/\/([^:]+):([^@]+)@(.*)/);
+      if (match) {
+        apiKey = apiKey || match[1];
+        apiSecret = apiSecret || match[2];
+        cloudName = cloudName || match[3];
+      }
+    }
 
     if (!apiKey || !apiSecret || !cloudName) {
       throw new Error('بيانات مصادقة Cloudinary غير مكتملة في بيئة العمل');
@@ -380,6 +391,87 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
     return cloudinary.url(fileKey, { secure: true });
   }
+
+  /**
+   * Verify whether a video asset exists and is ready in Cloudinary.
+   * Enables client asynchronous polling during post-100% video processing.
+   */
+  async verifyVideoAsset(publicId: string): Promise<{
+    exists: boolean;
+    isReady: boolean;
+    status: 'ready' | 'processing' | 'pending' | 'not_found' | 'error';
+    url?: string;
+    thumbnailUrl?: string;
+    duration?: number;
+    bytes?: number;
+    format?: string;
+    width?: number;
+    height?: number;
+    message?: string;
+  }> {
+    this.configure();
+    if (!this.isConfigured || !isCloudinaryAvailable()) {
+      return { exists: false, isReady: false, status: 'error', message: 'خدمة التخزين السحابي غير متصلة' };
+    }
+    try {
+      const cleanKey = extractCloudinaryPublicId(publicId) || publicId;
+      const resource = await cloudinary.api.resource(cleanKey, {
+        resource_type: 'video'
+      });
+
+      if (resource && (resource.secure_url || resource.url)) {
+        const rawStatus = (resource.status || '').toLowerCase();
+        const isProcessing = rawStatus === 'processing' || rawStatus === 'pending';
+        const isReady = !isProcessing && Boolean(resource.secure_url || resource.url);
+        const rawUrl = resource.secure_url || resource.url;
+
+        // Automatically derive instant Cloudinary video poster thumbnail (frame at 1.0s, high quality jpg)
+        let thumbnailUrl: string | undefined;
+        if (rawUrl) {
+          thumbnailUrl = rawUrl.includes('/video/upload/')
+            ? rawUrl.replace('/video/upload/', '/video/upload/so_1.0/').replace(/\.[^/.]+$/, '.jpg')
+            : rawUrl.replace(/\.[^/.]+$/, '.jpg');
+        }
+
+        return {
+          exists: true,
+          isReady,
+          status: isReady ? 'ready' : 'processing',
+          url: rawUrl,
+          thumbnailUrl,
+          duration: resource.duration,
+          bytes: resource.bytes,
+          format: resource.format,
+          width: resource.width,
+          height: resource.height,
+          message: isReady ? 'تم تجهيز الفيديو بنجاح' : 'الفيديو قيد المعالجة السحابية'
+        };
+      }
+
+      return { exists: false, isReady: false, status: 'processing', message: 'جاري تجميع أجزاء الفيديو' };
+    } catch (err: any) {
+      const errMsg = err?.message || String(err);
+      const isNotFound = errMsg.toLowerCase().includes('not found') || err?.http_code === 404;
+
+      if (isNotFound) {
+        // Asset is still being stitched by Cloudinary workers
+        return {
+          exists: false,
+          isReady: false,
+          status: 'processing',
+          message: 'جاري معالجة وتجميع الفيديو في السحابة'
+        };
+      }
+
+      Logger.warn(`[Cloudinary] Asset verification for ${publicId}: ${errMsg}`);
+      return {
+        exists: false,
+        isReady: false,
+        status: 'error',
+        message: 'تعذر التحقق من حالة الفيديو'
+      };
+    }
+  }
 }
 
 /**
@@ -401,5 +493,4 @@ export function extractCloudinaryPublicId(urlOrKey: string): string | null {
   return null;
 }
 
-export const cloudinaryStorage = new CloudinaryStorageProvider();
-
+export const cloudinaryStorage = new CloudinaryStorageProvider();

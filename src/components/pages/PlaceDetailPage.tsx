@@ -701,53 +701,72 @@ export const PlaceDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="rounded-3xl overflow-hidden">
-            <VisitorMediaGallery
-              id="place-media-gallery"
-              title={`معرض وتوثيق ${place.title}`}
-              entityType="heritage-place"
-              entityId={place.id || place.slug}
-              entitySlug={place.slug}
-              entityTitle={place.title}
-              coverImage={place.coverImage}
-              gallery={gallery}
-              videoUrl={(place as any).videoUrl}
-              videos={(place as any).videos || []}
-              onGalleryChange={(updatedGallery) => {
-                setPlace((prev) =>
-                  prev
-                    ? {
+          <div className="relative group p-4 sm:p-6 lg:p-8 rounded-[3rem] bg-gradient-to-b from-black/[0.04] via-black/[0.01] to-transparent dark:from-white/[0.04] dark:via-white/[0.01] dark:to-transparent border border-black/10 dark:border-white/10 backdrop-blur-2xl">
+
+            {/* إضاءة خلفية سينمائية تفاعلية */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[#9a6a35]/10 rounded-full blur-[120px] pointer-events-none group-hover:bg-[#9a6a35]/20 transition-all duration-700" />
+
+            {/* شريط علوي بتصميم فني فاخر */}
+            <div className="relative z-10 flex items-center justify-between mb-6 px-2">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-[#9a6a35]" />
+                <span className="text-[11px] font-black tracking-[0.3em] text-[#9a6a35] uppercase">
+                  Cinematic Archive
+                </span>
+              </div>
+              <span className="text-xs font-serif italic text-black/40 dark:text-white/40">
+                Visual Journey & Documentation
+              </span>
+            </div>
+
+            {/* حاوية المعرض الرئيسية */}
+            <div className="relative z-10 rounded-[2.2rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+              <VisitorMediaGallery
+                id="place-media-gallery"
+                title={`معرض وتوثيق ${place.title}`}
+                entityType="heritage-place"
+                entityId={place.id || place.slug}
+                entitySlug={place.slug}
+                entityTitle={place.title}
+                coverImage={place.coverImage}
+                gallery={gallery}
+                videoUrl={(place as any).videoUrl}
+                videos={(place as any).videos || []}
+                onGalleryChange={(updatedGallery) => {
+                  setPlace((prev) =>
+                    prev
+                      ? {
                         ...prev,
                         gallery: updatedGallery,
                         galleryImages: updatedGallery,
                       }
-                    : null
-                );
-              }}
-              onCoverChange={(newCover) => {
-                setPlace((prev) =>
-                  prev
-                    ? {
+                      : null
+                  );
+                }}
+                onCoverChange={(newCover) => {
+                  setPlace((prev) =>
+                    prev
+                      ? {
                         ...prev,
                         coverImage: newCover,
                       }
-                    : null
-                );
-              }}
-              onVideoChange={(newVideo, updatedVideos) => {
-                setPlace((prev) =>
-                  prev
-                    ? ({
+                      : null
+                  );
+                }}
+                onVideoChange={(newVideo, updatedVideos) => {
+                  setPlace((prev) =>
+                    prev
+                      ? ({
                         ...prev,
                         videoUrl: newVideo || undefined,
                         videos: updatedVideos,
                       } as any)
-                    : null
-                );
-              }}
-            />
-          </div>
-        </section>
+                      : null
+                  );
+                }}
+              />
+            </div>
+          </div>        </section>
 
         {/* VISITOR GUIDE */}
         <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">

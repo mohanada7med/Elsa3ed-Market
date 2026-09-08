@@ -122,7 +122,23 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
     }
   }, [selectedProductId, sellerProducts]);
 
-  const generatePosterFromVideo = (videoSrc: string) => {
+  const generatePosterFromVideo = (videoSrc: string, directThumbnail?: string) => {
+    if (directThumbnail) {
+      setPosterUrl(directThumbnail);
+      setIsGeneratingPoster(false);
+      return;
+    }
+
+    // If it's a Cloudinary video URL, instantly derive standard Cloudinary poster JPG URL (zero memory, zero latency)
+    if (videoSrc.includes('res.cloudinary.com')) {
+      const cldPoster = videoSrc.includes('/video/upload/')
+        ? videoSrc.replace('/video/upload/', '/video/upload/so_1.0/').replace(/\.[^/.]+$/, '.jpg')
+        : videoSrc.replace(/\.[^/.]+$/, '.jpg');
+      setPosterUrl(cldPoster);
+      setIsGeneratingPoster(false);
+      return;
+    }
+
     setIsGeneratingPoster(true);
     const video = document.createElement('video');
     video.src = videoSrc;
@@ -486,8 +502,13 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             setCloudinaryPublicId(result.cloudinaryPublicId);
                             setIsUploadingVideo(false);
                             setErrorMsg(null);
-                            // Auto snapshot poster
-                            generatePosterFromVideo(result.url);
+                            if (result.duration && !isNaN(result.duration)) {
+                              const mins = Math.floor(result.duration / 60);
+                              const secs = Math.floor(result.duration % 60);
+                              setDuration(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
+                            }
+                            // Auto snapshot poster with zero latency
+                            generatePosterFromVideo(result.url, result.thumbnailUrl);
                           }}
                           onUploadError={(err) => {
                             setIsUploadingVideo(false);

@@ -294,7 +294,7 @@ export const ALLOWED_VIDEO_EXTENSIONS = [
   '.avi'
 ];
 
-export const MAX_VIDEO_FILE_SIZE_BYTES = 150 * 1024 * 1024; // 150 MB
+export const MAX_VIDEO_FILE_SIZE_BYTES = 1024 * 1024 * 1024; // 1 GB (1,073,741,824 bytes)
 
 export function validateVideo(
   data: string | Buffer,
@@ -323,8 +323,8 @@ export function validateVideo(
         return { valid: false, error: 'فشل معالجة بيانات الفيديو' };
       }
     }
-  } else if (Buffer.isBuffer(data)) {
-    buffer = data;
+  } else if (Buffer.isBuffer(data) || (data && typeof (data as any).length === 'number')) {
+    buffer = data as Buffer;
   } else {
     return { valid: false, error: 'بيانات الفيديو غير صالحة' };
   }
@@ -333,7 +333,7 @@ export function validateVideo(
   if (sizeBytes > MAX_VIDEO_FILE_SIZE_BYTES) {
     return {
       valid: false,
-      error: `حجم الفيديو (${Math.round(sizeBytes / (1024 * 1024))} ميجابايت) يتجاوز الحد المسموح (150 ميجابايت)`
+      error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
     };
   }
 

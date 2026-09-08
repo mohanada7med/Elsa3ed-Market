@@ -17,7 +17,18 @@ import {
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
 
-export type VideoUploadState = 'idle' | 'selected' | 'uploading' | 'processing' | 'success' | 'error' | 'cancelled';
+export type VideoUploadState =
+  | 'idle'
+  | 'validating'
+  | 'selected'
+  | 'uploading'
+  | 'uploaded'
+  | 'processing'
+  | 'completed'
+  | 'success'
+  | 'failed'
+  | 'error'
+  | 'cancelled';
 
 export interface VideoUploadProgressProps {
   id?: string;
@@ -26,7 +37,7 @@ export interface VideoUploadProgressProps {
   targetSellerId?: string;
   sellerId?: string;
   currentUser?: any;
-  maxSizeBytes?: number; // default 2GB (Cloudinary chunked upload)
+  maxSizeBytes?: number; // default exactly 1GB (1,073,741,824 bytes)
   onUploadSuccess: (result: {
     url: string;
     fileKey: string;
@@ -35,6 +46,7 @@ export interface VideoUploadProgressProps {
     format?: string;
     fileSize?: number;
     filename?: string;
+    thumbnailUrl?: string;
   }) => void;
   onUploadStart?: () => void;
   onUploadCancel?: () => void;
@@ -50,7 +62,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   targetSellerId,
   sellerId,
   currentUser,
-  maxSizeBytes = 2048 * 1024 * 1024, // 2GB
+  maxSizeBytes = 1024 * 1024 * 1024, // Exactly 1 GB (1,073,741,824 bytes)
   onUploadSuccess,
   onUploadStart,
   onUploadCancel,
@@ -63,7 +75,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   const effectiveSellerId = sellerId || targetSellerId;
 
   const [uploadState, setUploadState] = useState<VideoUploadState>(
-    initialVideoUrl ? 'success' : 'idle'
+    initialVideoUrl ? 'completed' : 'idle'
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(initialVideoUrl || '');
@@ -102,7 +114,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
       if (initialCloudinaryPublicId) {
         setUploadedPublicId(initialCloudinaryPublicId);
       }
-      setUploadState('success');
+      setUploadState('completed');
     }
   }, [initialVideoUrl, initialCloudinaryPublicId]);
 
@@ -115,6 +127,23 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   };
 
   const handleFileSelect = (file: File) => {
+    setUploadState('validating');
+
+    // Rule 1: Immediate 1GB validation check
+    if (file.size > maxSizeBytes) {
+      setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+      setUploadState('failed');
+      onUploadError?.('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+      return;
+    }
+
+    if (file.size <= 0) {
+      setErrorMessage('الملف المحدد فارغ أو تالف.');
+      setUploadState('failed');
+      onUploadError?.('الملف المحدد فارغ أو تالف.');
+      return;
+    }
+
     // Validate format
     const validMimes = [
       'video/mp4',
@@ -130,20 +159,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
     if (!isMimeValid && !isExtValid) {
       setErrorMessage('صيغة الفيديو غير مدعومة. يرجى اختيار ملف MP4 أو WebM أو MOV.');
-      setUploadState('error');
-      return;
-    }
-
-    // Validate size (up to 2GB)
-    if (file.size > maxSizeBytes) {
-      setErrorMessage(`حجم الفيديو (${formatFileSize(file.size)}) يتجاوز الحد الأقصى المسموح (${formatFileSize(maxSizeBytes)}).`);
-      setUploadState('error');
-      return;
-    }
-
-    if (file.size <= 0) {
-      setErrorMessage('الملف المحدد فارغ أو تالف.');
-      setUploadState('error');
+      setUploadState('failed');
+      onUploadError?.('صيغة الفيديو غير مدعومة. يرجى اختيار ملف MP4 أو WebM أو MOV.');
       return;
     }
 
@@ -152,6 +169,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
       URL.revokeObjectURL(previewUrl);
     }
 
+    // Zero-copy reference for local preview (does not load whole video into memory)
     const localUrl = URL.createObjectURL(file);
     setSelectedFile(file);
     setPreviewUrl(localUrl);
@@ -159,7 +177,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
     setLoadedBytes(0);
     setProgressPercent(0);
     setCurrentChunk(1);
-    setTotalChunks(Math.ceil(file.size / (6 * 1024 * 1024)) || 1);
+    const estimatedChunkSize = file.size <= 20 * 1024 * 1024 ? file.size : (file.size <= 100 * 1024 * 1024 ? 10 * 1024 * 1024 : 20 * 1024 * 1024);
+    setTotalChunks(Math.ceil(file.size / estimatedChunkSize) || 1);
     setErrorMessage('');
     setUploadState('selected');
   };
@@ -192,8 +211,12 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
           setProgressPercent(percentage);
           if (curChunk) setCurrentChunk(curChunk);
           if (totChunks) setTotalChunks(totChunks);
-          if (state === 'processing') {
+          if (state === 'uploaded') {
+            setUploadState('uploaded');
+          } else if (state === 'processing') {
             setUploadState('processing');
+          } else if (state === 'uploading') {
+            setUploadState('uploading');
           }
         },
         onCancelRef: (cancelFn) => {
@@ -204,7 +227,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
       setUploadedUrl(result.url);
       setUploadedPublicId(result.cloudinaryPublicId);
       setProgressPercent(100);
-      setUploadState('success');
+      setUploadState('completed');
 
       onUploadSuccess({
         url: result.url,
@@ -213,7 +236,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
         duration: result.duration || videoDuration || undefined,
         format: result.format,
         fileSize: targetFile.size,
-        filename: targetFile.name
+        filename: targetFile.name,
+        thumbnailUrl: (result as any).thumbnailUrl
       });
     } catch (err: any) {
       if (err?.message === 'تم إلغاء عملية الرفع') {
@@ -244,7 +268,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   const handleRemoveVideo = async () => {
     // Clean up uploaded Cloudinary asset if previously uploaded in this session
     if (uploadedPublicId && user) {
-      api.deleteReelAsset(user, uploadedPublicId).catch(() => {});
+      api.deleteReelAsset(user, uploadedPublicId).catch(() => { });
     }
 
     if (previewUrl && previewUrl.startsWith('blob:')) {
@@ -272,7 +296,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => { });
       setIsPlaying(true);
     }
   };
@@ -305,11 +329,10 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             const file = e.dataTransfer.files?.[0];
             if (file) handleFileSelect(file);
           }}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
-            disabled
-              ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
-              : 'border-amber-300 hover:border-amber-500 bg-amber-50/40 hover:bg-amber-50/80 shadow-xs'
-          }`}
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${disabled
+            ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+            : 'border-amber-300 hover:border-amber-500 bg-amber-50/40 hover:bg-amber-50/80 shadow-xs'
+            }`}
         >
           <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-amber-100/80 flex items-center justify-center text-amber-700 shadow-inner">
             <Upload className="w-7 h-7 animate-pulse" />
@@ -453,6 +476,32 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
         </div>
       )}
 
+      {/* UPLOADED STATE: Exact 100% bytes transfer confirmation */}
+      {uploadState === 'uploaded' && (
+        <div className="border border-emerald-300 bg-emerald-50/60 rounded-xl p-5 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-emerald-950">تم رفع الفيديو 100%</h4>
+                <p className="text-xs text-emerald-800 mt-0.5">
+                  تم استلام كامل بيانات الفيديو بنجاح وجاري بدء المعالجة السحابية...
+                </p>
+              </div>
+            </div>
+            <span className="text-sm font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full font-sans">
+              100%
+            </span>
+          </div>
+
+          <div className="relative w-full h-3 bg-emerald-200/70 rounded-full overflow-hidden">
+            <div className="h-full w-full bg-emerald-600 rounded-full" />
+          </div>
+        </div>
+      )}
+
       {/* PROCESSING STATE: 100% Uploaded, Cloudinary / Server processing */}
       {uploadState === 'processing' && (
         <div className="border border-blue-200 bg-blue-50/60 rounded-xl p-5 shadow-sm space-y-4">
@@ -462,14 +511,14 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
                 <Sparkles className="w-5 h-5 animate-spin" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-gray-900">تم اكتمال الرفع — جاري المعالجة السحابية</h4>
+                <h4 className="text-sm font-bold text-gray-900">جاري معالجة الفيديو...</h4>
                 <p className="text-xs text-blue-800 mt-0.5">
-                  جاري ضغط وترميز الفيديو وتوثيق الرابط الآمن على Cloudinary...
+                  جاري ضغط وترميز الفيديو وتجهيز الغلاف سحابياً (لن يتم إعادة رفع الملف)...
                 </p>
               </div>
             </div>
-            <span className="text-sm font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">
-              100%
+            <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2.5 py-1 rounded-full">
+              قيد التجهيز
             </span>
           </div>
 
@@ -479,8 +528,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
         </div>
       )}
 
-      {/* SUCCESS STATE: Video successfully stored */}
-      {uploadState === 'success' && (
+      {/* SUCCESS / COMPLETED STATE: Video successfully stored */}
+      {(uploadState === 'success' || uploadState === 'completed') && (
         <div className="border border-emerald-200 bg-emerald-50/40 rounded-xl p-4 shadow-sm space-y-3">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5">
@@ -488,7 +537,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-emerald-950">✓ تم رفع الفيديو وتوثيقه بنجاح</h4>
+                <h4 className="text-sm font-bold text-emerald-950">✓ تم رفع الفيديو بنجاح وتوثيقه</h4>
                 <p className="text-xs text-emerald-700">
                   تم حفظ الفيديو سحابياً برابط دائم ومؤمن
                 </p>
@@ -537,8 +586,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
         </div>
       )}
 
-      {/* ERROR STATE */}
-      {uploadState === 'error' && (
+      {/* ERROR / FAILED STATE */}
+      {(uploadState === 'error' || uploadState === 'failed') && (
         <div className="border border-red-200 bg-red-50/80 rounded-xl p-4 shadow-sm space-y-3">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
