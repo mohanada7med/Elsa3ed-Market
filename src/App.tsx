@@ -50,6 +50,8 @@ import { EventDetailPage } from './components/pages/EventDetailPage';
 import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
 import { CulturalCmsAdminPage } from './components/pages/CulturalCmsAdminPage';
 import { AdminMapEditorPage } from './components/pages/AdminMapEditorPage';
+import { DialectDictionaryPage } from './components/pages/DialectDictionaryPage';
+import { PanoramicToursPage } from './components/pages/PanoramicToursPage';
 
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
@@ -234,6 +236,18 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'محرر إحداثيات الخريطة التفاعلية (GIS) | وه',
           description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
+        });
+        break;
+      case 'dialect-dictionary':
+        updatePageSEO({
+          title: 'معجم اللهجة والأمثال الصعيدية (الصعيدي الفصيح) | وه',
+          description: 'توثيق تفاعلي حي لمفردات وحِكَم وأمثال صعيد مصر، وجذورها القبطية والفرعونية والعربية مع النطق الصوتي واختبار اللهجة.'
+        });
+        break;
+      case 'panoramic-tours':
+        updatePageSEO({
+          title: 'جولات بانورامية 360° للمعالم التراثية | وه',
+          description: 'جولات افتراضية تفاعلية بتقنية 360 درجة لمعابد ومعالم وقرى صعيد مصر من دندرة وأبو سمبل والكرنك إلى النوبة وأبيدوس.'
         });
         break;
       default:
@@ -490,6 +504,8 @@ const MainContent: React.FC = () => {
             {activePage === 'global-search' && <GlobalSearchResultsPage />}
             {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && <CulturalCmsAdminPage />}
             {activePage === 'admin-map-editor' && <AdminMapEditorPage />}
+            {activePage === 'dialect-dictionary' && <DialectDictionaryPage />}
+            {activePage === 'panoramic-tours' && <PanoramicToursPage />}
 
             {!PAGE_ROUTES[activePage] && <NotFoundPage />}
           </motion.div>

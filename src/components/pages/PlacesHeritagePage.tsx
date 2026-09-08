@@ -352,6 +352,37 @@ export const PlacesHeritagePage: React.FC = () => {
       </section>
 
       {/* =====================================================
+          360° PANORAMIC TOURS CALLOUT BANNER
+      ===================================================== */}
+      <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 mb-8">
+        <div className="relative overflow-hidden rounded-3xl border border-[#9a6a35]/30 bg-gradient-to-r from-[#201813] via-[#2A2019] to-[#17120E] text-white p-6 sm:p-8 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/30 text-[#E2B98A] text-xs font-black">
+                <Compass size={14} />
+                <span>تجربة افتراضية حية جديدة</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black font-serif text-[#F8F4EE]">
+                جولات بانورامية 360° تفاعلية لمعالم صعيد مصر
+              </h3>
+              <p className="text-xs sm:text-sm text-[#C4B4A4] leading-relaxed">
+                عِش هيبة معبد دندرة، وأبو سمبل، والكرنك، وجزر النوبة من الداخل عبر تقنية الرؤية الدائرية 360 درجة مع نقاط الشرح التفاعلية وأصوات الأجواء النيلية.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setActivePage('panoramic-tours')}
+              className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[#9a6a35] hover:bg-[#835728] text-white font-black text-xs sm:text-sm transition-all shadow-lg hover:shadow-[#9a6a35]/30 cursor-pointer shrink-0"
+            >
+              <span>بدء الجولات البانورامية الآن</span>
+              <Compass size={16} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================
           FLOATING FILTERS BAR
       ===================================================== */}
       <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">

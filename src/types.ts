@@ -295,6 +295,8 @@ export type ActivePage =
   | 'event-details'
   | 'global-search'
   | 'cultural-cms'
+  | 'dialect-dictionary'
+  | 'panoramic-tours'
   | 'wah-market'
   | 'products'
   | 'product-details'

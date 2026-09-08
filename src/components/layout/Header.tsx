@@ -613,6 +613,16 @@ export const Header: React.FC = () => {
         isNew: true,
       },
       {
+        id: 'dialect-dictionary',
+        label: 'معجم الصعيدي الفصيح',
+        isNew: true,
+      },
+      {
+        id: 'panoramic-tours',
+        label: 'بانوراما 360°',
+        isNew: true,
+      },
+      {
         id: 'sellers',
         label: 'البائعين',
       },
@@ -882,6 +892,48 @@ export const Header: React.FC = () => {
                     }}
                   >
                     جديد
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('dialect-dictionary')
+                  }
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'dialect-dictionary'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  معجم الصعيدي
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('panoramic-tours')
+                  }
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'panoramic-tours'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  بانوراما 360°
+                  <span
+                    className="rounded-full px-2 py-0.5 text-[9px] font-black"
+                    style={{
+                      backgroundColor:
+                        '#9a6a35',
+                      color: '#fff',
+                    }}
+                  >
+                    افتراضي
                   </span>
                 </button>
               </div>
