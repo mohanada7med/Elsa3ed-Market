@@ -27,6 +27,15 @@ import {
 } from 'lucide-react';
 
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
+import {
+  HeritagePlace,
+  CulturalCraft,
+  WahStory,
+  LocalPerson,
+  UpperEgyptFood,
+  CulturalEvent,
+  Product,
+} from '../../types';
 
 const NILE_ORDER_MAP: Record<string, number> = {
   'bani-suef': 1,
@@ -54,17 +63,18 @@ export const GovernorateDetailPage: React.FC = () => {
     addToast,
   } = useApp();
 
-  const [governorate, setGovernorate] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeSection, setActiveSection] = useState('overview');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const slug =
     selectedGovernorateSlug ||
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/governorates/')
       ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
       : null) ||
     'qena';
+
+  const cachedGov = wahApi.getCachedGovernorateBySlug(slug);
+  const [governorate, setGovernorate] = useState<any>(() => cachedGov || null);
+  const [loading, setLoading] = useState(() => !cachedGov);
+  const [activeSection, setActiveSection] = useState('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const orderNumber = governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
   const orderFormatted = String(orderNumber).padStart(2, '0');
@@ -74,17 +84,19 @@ export const GovernorateDetailPage: React.FC = () => {
 
     const loadGovernorate = async () => {
       try {
-        setLoading(true);
+        if (!cachedGov) {
+          setLoading(true);
+        }
 
         const data = await wahApi.getGovernorateBySlug(slug);
 
-        if (mounted) {
+        if (mounted && data) {
           setGovernorate(data);
         }
       } catch (error) {
         console.error('Failed to load governorate:', error);
 
-        if (mounted) {
+        if (mounted && !governorate) {
           addToast?.(
             'error',
             'حصلت مشكلة في تحميل بيانات المحافظة'
@@ -568,13 +580,13 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {places.length > 0 ? (
             <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-12">
-              {places.slice(0, 6).map((place: any, index: number) => {
+              {places.slice(0, 6).map((place: HeritagePlace, index: number) => {
                 const large = index === 0 || index === 3;
 
                 return (
                   <button
-                    key={place.id || index}
-                    onClick={() => navigateToPlace(place)}
+                    key={place.id || place.slug || index}
+                    onClick={() => navigateToPlace(place.slug || place.id)}
                     className={`group relative overflow-hidden rounded-[30px] text-right ${large
                         ? 'min-h-[480px] lg:col-span-7'
                         : 'min-h-[330px] lg:col-span-5'
@@ -601,7 +613,7 @@ export const GovernorateDetailPage: React.FC = () => {
                       </div>
 
                       <h3 className="text-2xl font-black text-white sm:text-3xl">
-                        {place.title || place.name}
+                        {place.title}
                       </h3>
 
                       <div className="mt-4 flex items-center gap-2 text-xs font-bold text-white/70 transition group-hover:text-white">
@@ -633,10 +645,10 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {crafts.length > 0 ? (
             <div className="mt-12 divide-y divide-[#E4DBD2] border-y border-[#E4DBD2] dark:divide-[#382D27] dark:border-[#382D27]">
-              {crafts.slice(0, 7).map((craft: any, index: number) => (
+              {crafts.slice(0, 7).map((craft: CulturalCraft, index: number) => (
                 <button
-                  key={craft.id || index}
-                  onClick={() => navigateToCraft(craft)}
+                  key={craft.id || craft.slug || index}
+                  onClick={() => navigateToCraft(craft.slug || craft.id)}
                   className="group grid w-full grid-cols-[60px_92px_1fr_auto] items-center gap-4 py-5 text-right transition hover:px-3 sm:grid-cols-[80px_150px_1fr_auto] sm:gap-6"
                 >
                   <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">
@@ -646,19 +658,19 @@ export const GovernorateDetailPage: React.FC = () => {
                   <div className="h-20 overflow-hidden rounded-2xl sm:h-24">
                     <img
                       src={getImage(craft)}
-                      alt={craft.title || craft.name}
+                      alt={craft.title}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                     />
                   </div>
 
                   <div>
                     <h3 className="text-lg font-black sm:text-2xl">
-                      {craft.title || craft.name || 'حرفة تراثية'}
+                      {craft.title || 'حرفة تراثية'}
                     </h3>
 
                     <p className="mt-1 line-clamp-2 text-xs leading-6 text-[#73675B] dark:text-[#B8AAA0] sm:text-sm">
-                      {craft.description ||
-                        craft.shortDescription ||
+                      {craft.shortDescription ||
+                        craft.history ||
                         'صنعة متوارثة من أهل المكان.'}
                     </p>
                   </div>
@@ -687,10 +699,10 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {stories.length > 0 ? (
             <div className="mt-12 grid gap-6 lg:grid-cols-3">
-              {stories.slice(0, 6).map((story: any, index: number) => (
+              {stories.slice(0, 6).map((story: WahStory, index: number) => (
                 <button
-                  key={story.id || index}
-                  onClick={() => navigateToStory(story)}
+                  key={story.id || story.slug || index}
+                  onClick={() => navigateToStory(story.slug || story.id)}
                   className={`group relative overflow-hidden rounded-[30px] border border-[#E4DBD2] bg-white text-right dark:border-[#382D27] dark:bg-[#1B1613] ${index === 0 ? 'lg:row-span-2' : ''
                     }`}
                 >
@@ -714,13 +726,12 @@ export const GovernorateDetailPage: React.FC = () => {
                     </div>
 
                     <h3 className="text-xl font-black text-white sm:text-2xl">
-                      {story.title || story.name || 'حكاية من الصعيد'}
+                      {story.title || 'حكاية من الصعيد'}
                     </h3>
 
                     <p className="mt-2 line-clamp-2 text-xs leading-6 text-white/65">
-                      {story.shortDescription ||
-                        story.description ||
-                        story.excerpt ||
+                      {story.excerpt ||
+                        story.content ||
                         'حكاية من ذاكرة المكان.'}
                     </p>
                   </div>
@@ -747,10 +758,10 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {people.length > 0 ? (
             <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {people.slice(0, 8).map((person: any, index: number) => (
+              {people.slice(0, 8).map((person: LocalPerson, index: number) => (
                 <button
-                  key={person.id || index}
-                  onClick={() => navigateToPerson(person)}
+                  key={person.id || person.slug || index}
+                  onClick={() => navigateToPerson(person.slug || person.id)}
                   className="group overflow-hidden rounded-[28px] border border-[#E4DBD2] bg-white text-right transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:border-[#382D27] dark:bg-[#1B1613] dark:hover:shadow-black/20"
                 >
                   <div className="relative aspect-[4/5] overflow-hidden">
@@ -803,10 +814,10 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {foods.length > 0 ? (
             <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {foods.slice(0, 8).map((food: any, index: number) => (
+              {foods.slice(0, 8).map((food: UpperEgyptFood, index: number) => (
                 <button
-                  key={food.id || index}
-                  onClick={() => navigateToFood(food)}
+                  key={food.id || food.slug || index}
+                  onClick={() => navigateToFood(food.slug || food.id)}
                   className="group relative min-h-[330px] overflow-hidden rounded-[28px] text-right"
                 >
                   <img
@@ -864,10 +875,10 @@ export const GovernorateDetailPage: React.FC = () => {
 
           {events.length > 0 ? (
             <div className="mt-12 border-y border-[#E4DBD2] dark:border-[#382D27]">
-              {events.slice(0, 7).map((event: any, index: number) => (
+              {events.slice(0, 7).map((event: CulturalEvent, index: number) => (
                 <button
-                  key={event.id || index}
-                  onClick={() => navigateToEvent(event)}
+                  key={event.id || event.slug || index}
+                  onClick={() => navigateToEvent(event.slug || event.id)}
                   className="group grid w-full gap-5 border-b border-[#E4DBD2] py-7 text-right last:border-b-0 dark:border-[#382D27] md:grid-cols-[120px_1fr_auto] md:items-center"
                 >
                   <div>
@@ -882,12 +893,11 @@ export const GovernorateDetailPage: React.FC = () => {
 
                   <div>
                     <h3 className="text-xl font-black transition group-hover:text-[#9a6a35] dark:group-hover:text-[#d5a56d]">
-                      {event.title || event.name || 'فعالية من المحافظة'}
+                      {event.title || 'فعالية من المحافظة'}
                     </h3>
 
                     <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
                       {event.description ||
-                        event.shortDescription ||
                         'موعد من مواسم المكان.'}
                     </p>
                   </div>
@@ -940,16 +950,16 @@ export const GovernorateDetailPage: React.FC = () => {
 
             {products.length > 0 && (
               <div className="relative z-10 mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {products.slice(0, 4).map((product: any, index: number) => (
+                {products.slice(0, 4).map((product: Product, index: number) => (
                   <button
                     key={product.id || index}
-                    onClick={() => navigateToProduct(product)}
+                    onClick={() => navigateToProduct(product.id)}
                     className="group overflow-hidden rounded-[24px] border border-white/10 bg-white/5 text-right backdrop-blur-sm transition hover:bg-white/10"
                   >
                     <div className="aspect-square overflow-hidden">
                       <img
                         src={getImage(product)}
-                        alt={product.title || product.name}
+                        alt={product.title}
                         className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                       />
                     </div>
@@ -960,7 +970,7 @@ export const GovernorateDetailPage: React.FC = () => {
                       </div>
 
                       <h3 className="line-clamp-1 text-sm font-black text-white">
-                        {product.title || product.name || 'منتج من الصعيد'}
+                        {product.title || 'منتج من الصعيد'}
                       </h3>
                     </div>
                   </button>

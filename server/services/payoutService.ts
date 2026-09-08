@@ -8,9 +8,9 @@ import type {
   SellerDocument,
   OrderDocument
 } from '../models/types.ts';
-import type { AuthenticatedUser } from '../middleware/auth.ts';
-import { createNotification } from './notificationService.ts';
+import { createNotification, notifyAdmins } from './notificationService.ts';
 import { addAuditLog } from './auditService.ts';
+import { AuthenticatedUser } from '../middleware/auth.ts';
 
 /**
  * Calculates a seller's real-time financial balance directly from actual order history and payouts.
@@ -213,25 +213,20 @@ export async function createSellerPayoutRequest(
 
   memoryDb.payouts.unshift(payoutDoc);
 
-  // 5. Create Admin Notification immediately
+  // 5. Notify all platform administrators dynamically
   const formattedAmount = normalizedAmount.toLocaleString('ar-EG');
   const sellerDisplayName = seller.brandName || seller.name || sellerUser.name;
-  
-  await createNotification({
-    userId: 'user-admin-1', // Default platform admin ID
-    title: 'طلب صرف مستحقات جديد',
-    message: `البائع ${sellerDisplayName} طلب صرف مستحقات بقيمة ${formattedAmount} جنيه.`,
-    type: 'system',
-    link: 'admin-payouts'
-  });
 
-  // Also create notification for generic 'admin' target
-  await createNotification({
-    userId: 'admin',
+  await notifyAdmins({
     title: 'طلب صرف مستحقات جديد',
     message: `البائع ${sellerDisplayName} طلب صرف مستحقات بقيمة ${formattedAmount} جنيه.`,
-    type: 'system',
-    link: 'admin-payouts'
+    type: 'payout_request',
+    link: 'admin-payouts',
+    metadata: {
+      payoutId: payoutDoc.id,
+      sellerId: seller.id,
+      amount: normalizedAmount
+    }
   });
 
   // 6. Create Seller Notification

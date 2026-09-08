@@ -26,6 +26,55 @@ import type {
 
 const router = express.Router();
 
+// ==========================================
+// FAST IN-MEMORY CACHE FOR WAH ENCYCLOPEDIA
+// ==========================================
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+  ttlMs: number;
+}
+
+const wahServerCache = new Map<string, CacheEntry>();
+
+function getWahCached(key: string): any | null {
+  const entry = wahServerCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > entry.ttlMs) {
+    wahServerCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setWahCache(key: string, data: any, ttlSeconds = 300): void {
+  wahServerCache.set(key, {
+    data,
+    timestamp: Date.now(),
+    ttlMs: ttlSeconds * 1000,
+  });
+}
+
+export function invalidateWahCache(prefix?: string): void {
+  if (!prefix) {
+    wahServerCache.clear();
+    return;
+  }
+  for (const key of wahServerCache.keys()) {
+    if (key.startsWith(prefix) || key.includes(prefix)) {
+      wahServerCache.delete(key);
+    }
+  }
+}
+
+// Automatically purge cache on any data modification request
+router.use((req, res, next) => {
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    invalidateWahCache();
+  }
+  next();
+});
+
 // Helper to ensure MongoDB collection fallback safely
 async function getMongoOrMemory() {
   const { db, isMongo } = await getDatabase();
@@ -39,8 +88,14 @@ async function getMongoOrMemory() {
 // GET all governorates
 router.get('/governorates', async (req: Request, res: Response) => {
   try {
-    const { db, isMongo } = await getMongoOrMemory();
     const { status, search } = req.query;
+    const cacheKey = `govs_${status || 'all'}_${search || 'all'}`;
+    const cached = getWahCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
+    const { db, isMongo } = await getMongoOrMemory();
 
     if (isMongo && db) {
       const query: any = {};
@@ -53,7 +108,9 @@ router.get('/governorates', async (req: Request, res: Response) => {
         ];
       }
       const govs = await db.collection<GovernorateDoc>('wah_governorates').find(query).toArray();
-      return res.json({ success: true, count: govs.length, data: govs });
+      const responseData = { success: true, count: govs.length, data: govs };
+      setWahCache(cacheKey, responseData, 300);
+      return res.json(responseData);
     }
 
     // In-memory fallback
@@ -63,7 +120,9 @@ router.get('/governorates', async (req: Request, res: Response) => {
       const q = search.toLowerCase();
       list = list.filter((g) => g.name.toLowerCase().includes(q) || g.shortIntro.toLowerCase().includes(q));
     }
-    return res.json({ success: true, count: list.length, data: list });
+    const responseData = { success: true, count: list.length, data: list };
+    setWahCache(cacheKey, responseData, 300);
+    return res.json(responseData);
   } catch (err: any) {
     Logger.error('[WAH Content] Error fetching governorates:', err);
     return res.status(500).json({ success: false, error: 'فشل جلب قائمة المحافظات', code: 'SERVER_ERROR' });
@@ -74,6 +133,16 @@ router.get('/governorates', async (req: Request, res: Response) => {
 router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف المحافظة غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
+
+    const cacheKey = `gov_detail_${slugOrId}`;
+    const cached = getWahCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
 
     let gov: GovernorateDoc | null = null;
@@ -249,7 +318,9 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       products
     };
 
-    return res.json({ success: true, data: populatedGov });
+    const responseData = { success: true, data: populatedGov };
+    setWahCache(cacheKey, responseData, 300);
+    return res.json(responseData);
   } catch (err: any) {
     Logger.error('[WAH Content] Error fetching single governorate:', err);
     return res.status(500).json({ success: false, error: 'فشل جلب بيانات المحافظة', code: 'SERVER_ERROR' });
@@ -648,6 +719,12 @@ router.delete('/villages/:id', requireAdmin, async (req: AuthenticatedRequest, r
 router.get('/places', async (req: Request, res: Response) => {
   try {
     const { governorate, category, search, status } = req.query;
+    const cacheKey = `places_${governorate || 'all'}_${category || 'all'}_${status || 'all'}_${search || 'all'}`;
+    const cached = getWahCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
 
     if (isMongo && db) {
@@ -661,14 +738,18 @@ router.get('/places', async (req: Request, res: Response) => {
         query.title = { $regex: search, $options: 'i' };
       }
       const places = await db.collection<HeritagePlaceDoc>('wah_heritage_places').find(query).toArray();
-      return res.json({ success: true, count: places.length, data: places });
+      const responseData = { success: true, count: places.length, data: places };
+      setWahCache(cacheKey, responseData, 300);
+      return res.json(responseData);
     }
 
     let list = memoryDb.heritagePlaces;
     if (governorate) list = list.filter((p) => p.governorateName === governorate || p.governorateId === governorate);
     if (category) list = list.filter((p) => p.category === category);
     if (status) list = list.filter((p) => p.status === status);
-    return res.json({ success: true, count: list.length, data: list });
+    const responseData = { success: true, count: list.length, data: list };
+    setWahCache(cacheKey, responseData, 300);
+    return res.json(responseData);
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب المعالم التراثية' });
   }
@@ -677,6 +758,16 @@ router.get('/places', async (req: Request, res: Response) => {
 router.get('/places/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف المعلم غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
+
+    const cacheKey = `place_detail_${slugOrId}`;
+    const cached = getWahCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
 
     let place: HeritagePlaceDoc | null = null;
@@ -689,7 +780,9 @@ router.get('/places/:slugOrId', async (req: Request, res: Response) => {
     }
 
     if (!place) return res.status(404).json({ success: false, error: 'المعلم التراثي غير موجود' });
-    return res.json({ success: true, data: place });
+    const responseData = { success: true, data: place };
+    setWahCache(cacheKey, responseData, 300);
+    return res.json(responseData);
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب تفاصيل المعلم' });
   }
@@ -831,6 +924,9 @@ router.get('/crafts', async (req: Request, res: Response) => {
 router.get('/crafts/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف الحرفة غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
     const { db, isMongo } = await getMongoOrMemory();
 
     let craft: CulturalCraftDoc | null = null;
@@ -1081,6 +1177,9 @@ router.get('/stories', async (req: Request, res: Response) => {
 router.get('/stories/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف القصة غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
     const { db, isMongo } = await getMongoOrMemory();
 
     let story: WahStoryDoc | null = null;
@@ -1228,6 +1327,9 @@ router.get('/people', async (req: Request, res: Response) => {
 router.get('/people/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف الشخصية غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
     const { db, isMongo } = await getMongoOrMemory();
 
     const normalizePerson = (p: any) => ({
@@ -1370,6 +1472,9 @@ router.get('/food', async (req: Request, res: Response) => {
 router.get('/food/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف الوصفة غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
     const { db, isMongo } = await getMongoOrMemory();
 
     const normalizeFood = (f: any) => ({
@@ -1505,6 +1610,9 @@ router.get('/events', async (req: Request, res: Response) => {
 router.get('/events/:slugOrId', async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
+    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
+      return res.status(400).json({ success: false, error: 'معرف الفعالية غير صالح', code: 'INVALID_IDENTIFIER' });
+    }
     const { db, isMongo } = await getMongoOrMemory();
 
     let event: CulturalEventDoc | null = null;
@@ -1733,59 +1841,74 @@ router.put('/settings', requireAdmin, async (req: AuthenticatedRequest, res: Res
 
 router.get('/map', async (req: Request, res: Response) => {
   try {
+    const cached = getWahCached('map_payload');
+    if (cached) {
+      return res.json(cached);
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
 
     if (isMongo && db) {
-      const govs = await db.collection<GovernorateDoc>('wah_governorates').find({ status: { $ne: 'archived' } }).toArray();
-
-      const mapData = await Promise.all(
-        govs.map(async (gov) => {
-          const [placesCount, craftsCount, storiesCount, foodsCount, eventsCount, productsCount, artisansCount, reelsCount] = await Promise.all([
-            db.collection('wah_heritage_places').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('wah_cultural_crafts').countDocuments({ governorates: gov.name, status: { $ne: 'archived' } }),
-            db.collection('wah_stories').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('wah_food').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('wah_events').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('products').countDocuments({ sellerGovernorate: gov.name }),
-            db.collection('wah_local_people').countDocuments({ $or: [{ governorateId: gov.id }, { governorateName: gov.name }], status: { $ne: 'archived' } }),
-            db.collection('reels').countDocuments({ $or: [{ governorate: gov.name }], status: { $ne: 'archived' } })
-          ]);
-
-          return {
-            id: gov.id,
-            name: gov.name,
-            slug: gov.slug,
-            nickname: gov.nickname || `${gov.name} الأصيلة`,
-            region: gov.region || 'جنوب الصعيد',
-            nileSegment: gov.nileSegment || 'مجرى النيل الخالد',
-            shortIntro: gov.shortIntro,
-            coverImage: gov.coverImage,
-            capitalCity: gov.capitalCity,
-            famousFor: gov.famousFor || [],
-            coordinates: gov.mapCoordinates || { lat: 26.0, lng: 32.0 },
-            stats: {
-              placesCount,
-              craftsCount,
-              storiesCount,
-              foodsCount,
-              eventsCount,
-              productsCount,
-              artisansCount,
-              reelsCount
-            }
-          };
-        })
-      );
-
-      // Fetch dynamic markers across collections
-      const [places, crafts, foods, events, people, stories] = await Promise.all([
+      // Fetch all required data in ONE single parallel batch instead of 80+ roundtrips
+      const [govs, places, crafts, foods, events, people, stories, products, reels] = await Promise.all([
+        db.collection<GovernorateDoc>('wah_governorates').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<HeritagePlaceDoc>('wah_heritage_places').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<CulturalCraftDoc>('wah_cultural_crafts').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<UpperEgyptFoodDoc>('wah_food').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<CulturalEventDoc>('wah_events').find({ status: { $ne: 'archived' } }).toArray(),
         db.collection<LocalPersonDoc>('wah_local_people').find({ status: { $ne: 'archived' } }).toArray(),
-        db.collection<WahStoryDoc>('wah_stories').find({ status: { $ne: 'archived' } }).toArray()
+        db.collection<WahStoryDoc>('wah_stories').find({ status: { $ne: 'archived' } }).toArray(),
+        db.collection('products').find({ approvalStatus: 'approved' }, { projection: { sellerGovernorate: 1, 'specifications.originGovernorate': 1 } }).toArray(),
+        db.collection('reels').find({ status: { $ne: 'archived' } }, { projection: { governorate: 1 } }).toArray()
       ]);
+
+      // Calculate stats per governorate directly in-memory in microseconds
+      const mapData = govs.map((gov) => {
+        const placesCount = places.filter(p => (p.governorateId === gov.id || p.governorateName === gov.name)).length;
+        const craftsCount = crafts.filter(c => {
+          if (Array.isArray(c.governorates)) {
+            return c.governorates.includes(gov.name) || c.governorates.includes(gov.id);
+          }
+          return c.governorateName === gov.name || c.governorateId === gov.id;
+        }).length;
+        const storiesCount = stories.filter(s => (s.governorateId === gov.id || s.governorateName === gov.name)).length;
+        const foodsCount = foods.filter(f => (
+          f.governorateId === gov.id ||
+          f.governorateName === gov.name ||
+          ((f as any).governorates && (f as any).governorates.includes(gov.name))
+        )).length;
+        const eventsCount = events.filter(e => (e.governorateId === gov.id || e.governorateName === gov.name)).length;
+        const productsCount = products.filter((p: any) => (
+          p.sellerGovernorate === gov.name ||
+          p.specifications?.originGovernorate === gov.name
+        )).length;
+        const artisansCount = people.filter(p => (p.governorateId === gov.id || p.governorateName === gov.name)).length;
+        const reelsCount = reels.filter((r: any) => r.governorate === gov.name).length;
+
+        return {
+          id: gov.id,
+          name: gov.name,
+          slug: gov.slug,
+          nickname: gov.nickname || `${gov.name} الأصيلة`,
+          region: gov.region || 'جنوب الصعيد',
+          nileSegment: gov.nileSegment || 'مجرى النيل الخالد',
+          shortIntro: gov.shortIntro,
+          coverImage: gov.coverImage,
+          capitalCity: gov.capitalCity,
+          famousFor: gov.famousFor || [],
+          coordinates: gov.mapCoordinates || { lat: 26.0, lng: 32.0 },
+          stats: {
+            placesCount,
+            craftsCount,
+            storiesCount,
+            foodsCount,
+            eventsCount,
+            productsCount,
+            artisansCount,
+            reelsCount
+          }
+        };
+      });
 
       const govCoordsMap = new Map<string, { lat: number; lng: number }>();
       mapData.forEach(g => {
@@ -1947,14 +2070,18 @@ router.get('/map', async (req: Request, res: Response) => {
         reelsCount: mapData.reduce((acc, g) => acc + (g.stats.reelsCount || 0), 0)
       };
 
-      return res.json({
+      const responsePayload = {
         success: true,
         data: mapData,
         governorates: mapData,
         markers,
         featuredPlaces,
         stats: totalStats
-      });
+      };
+
+      setWahCache('map_payload', responsePayload, 300);
+
+      return res.json(responsePayload);
     }
 
     // Fallback in-memory

@@ -185,13 +185,19 @@ export const UpperEgyptMapPage: React.FC = () => {
     addToCart,
   } = useApp();
 
+  const cachedPayload = wahApi.getCachedMapPayload();
+
   const [governorates, setGovernorates] = useState<
     MapGovernorateData[]
-  >([]);
+  >(() => (cachedPayload?.governorates && cachedPayload.governorates.length > 0 ? cachedPayload.governorates : []));
 
-  const [markers, setMarkers] = useState<MapMarkerItem[]>([]);
+  const [markers, setMarkers] = useState<MapMarkerItem[]>(
+    () => (cachedPayload?.markers && cachedPayload.markers.length > 0 ? cachedPayload.markers : [])
+  );
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(
+    () => !cachedPayload || !cachedPayload.governorates || cachedPayload.governorates.length === 0
+  );
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 

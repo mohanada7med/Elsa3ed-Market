@@ -43,10 +43,10 @@ interface AppContextType {
   setSelectedSellerId: (id: string | null) => void;
   selectedOrderId: string | null;
   setSelectedOrderId: (id: string | null) => void;
-  navigateToProduct: (productId: string) => void;
-  navigateToCategory: (categoryId: string) => void;
-  navigateToSeller: (sellerId: string) => void;
-  navigateToOrder: (orderId: string) => void;
+  navigateToProduct: (productIdOrObj: string | { id?: string; slug?: string }) => void;
+  navigateToCategory: (categoryIdOrObj: string | { id?: string; slug?: string }) => void;
+  navigateToSeller: (sellerIdOrObj: string | { id?: string }) => void;
+  navigateToOrder: (orderIdOrObj: string | { id?: string }) => void;
 
   // WAH Cultural Ecosystem Navigation
   selectedGovernorateSlug: string | null;
@@ -63,13 +63,13 @@ interface AppContextType {
   setSelectedFoodSlug: (slug: string | null) => void;
   selectedEventSlug: string | null;
   setSelectedEventSlug: (slug: string | null) => void;
-  navigateToGovernorate: (slug: string) => void;
-  navigateToPlace: (slug: string) => void;
-  navigateToCraft: (slug: string) => void;
-  navigateToStory: (slug: string) => void;
-  navigateToPerson: (slug: string) => void;
-  navigateToFood: (slug: string) => void;
-  navigateToEvent: (slug: string) => void;
+  navigateToGovernorate: (slugOrGov: string | { slug?: string; id?: string }) => void;
+  navigateToPlace: (slugOrPlace: string | { slug?: string; id?: string }) => void;
+  navigateToCraft: (slugOrCraft: string | { slug?: string; id?: string }) => void;
+  navigateToStory: (slugOrStory: string | { slug?: string; id?: string }) => void;
+  navigateToPerson: (slugOrPerson: string | { slug?: string; id?: string }) => void;
+  navigateToFood: (slugOrFood: string | { slug?: string; id?: string }) => void;
+  navigateToEvent: (slugOrEvent: string | { slug?: string; id?: string }) => void;
 
   // WAH Platform Ecosystem Live Statistics (100% Real Database Source)
   wahStats: WahEcosystemStats | null;
@@ -570,66 +570,80 @@ function getInitialNavigationState(): {
     };
   }
 
+  // Helper to validate clean URL slug / ID candidates
+  const isValidRouteIdentifier = (val: string | null | undefined): boolean => {
+    if (!val) return false;
+    const trimmed = val.trim();
+    if (!trimmed || trimmed.includes('[object') || trimmed === 'undefined' || trimmed === 'null') {
+      return false;
+    }
+    return true;
+  };
+
+  const sanitizeStoredSlug = (val: string | null | undefined): string | null => {
+    return isValidRouteIdentifier(val) ? val!.trim() : null;
+  };
+
   // 2. Dynamic RESTful Path-based Routes with URL decoding
   // Governorates: /governorates or /governorates/:slug
   if (rawPath === '/governorates' || rawPath.startsWith('/governorates/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/governorates/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/governorates/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug: rawCandidate!.trim() };
     }
     return { page: 'governorates', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // Heritage Places: /places or /places/:slug
-  if (rawPath === '/places' || rawPath.startsWith('/places/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/places/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug: slug };
+  // Heritage Places: /places, /places/:slug, /heritage/places, /heritage/places/:slug
+  if (rawPath === '/places' || rawPath.startsWith('/places/') || rawPath === '/heritage/places' || rawPath.startsWith('/heritage/places/')) {
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/heritage/places/') ? decodeURIComponent(rawPath.split('/')[3] || '') : (rawPath.startsWith('/places/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null));
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug: rawCandidate!.trim() };
     }
     return { page: 'places', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Cultural Crafts: /cultural-crafts or /cultural-crafts/:slug
   if (rawPath === '/cultural-crafts' || rawPath.startsWith('/cultural-crafts/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/cultural-crafts/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/cultural-crafts/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug: rawCandidate!.trim() };
     }
     return { page: 'cultural-crafts', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Stories: /stories or /stories/:slug
   if (rawPath === '/stories' || rawPath.startsWith('/stories/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/stories/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/stories/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug: rawCandidate!.trim() };
     }
     return { page: 'stories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // People: /people or /people/:slug
   if (rawPath === '/people' || rawPath.startsWith('/people/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/people/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'person-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, personSlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/people/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'person-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, personSlug: rawCandidate!.trim() };
     }
     return { page: 'people', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Food: /food or /food/:slug
   if (rawPath === '/food' || rawPath.startsWith('/food/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/food/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'food-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, foodSlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/food/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'food-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, foodSlug: rawCandidate!.trim() };
     }
     return { page: 'food', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Events: /events or /events/:slug
   if (rawPath === '/events' || rawPath.startsWith('/events/')) {
-    const slug = slugFromQuery || (rawPath.startsWith('/events/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (slug) {
-      return { page: 'event-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, eventSlug: slug };
+    const rawCandidate = slugFromQuery || (rawPath.startsWith('/events/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (isValidRouteIdentifier(rawCandidate)) {
+      return { page: 'event-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, eventSlug: rawCandidate!.trim() };
     }
     return { page: 'events', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
@@ -685,18 +699,18 @@ function getInitialNavigationState(): {
     if (saved && PAGE_ROUTES[saved] && saved !== 'home') {
       return {
         page: saved,
-        productId: sessionStorage.getItem('elsa3ed_selected_product_id'),
-        categoryId: sessionStorage.getItem('elsa3ed_selected_category_id'),
-        sellerId: sessionStorage.getItem('elsa3ed_selected_seller_id'),
-        orderId: sessionStorage.getItem('elsa3ed_selected_order_id'),
+        productId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_product_id')),
+        categoryId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_category_id')),
+        sellerId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_seller_id')),
+        orderId: sanitizeStoredSlug(sessionStorage.getItem('elsa3ed_selected_order_id')),
         searchQuery: queryTerm,
-        governorateSlug: sessionStorage.getItem('wah_selected_governorate_slug'),
-        placeSlug: sessionStorage.getItem('wah_selected_place_slug'),
-        craftSlug: sessionStorage.getItem('wah_selected_craft_slug'),
-        storySlug: sessionStorage.getItem('wah_selected_story_slug'),
-        personSlug: sessionStorage.getItem('wah_selected_person_slug'),
-        foodSlug: sessionStorage.getItem('wah_selected_food_slug'),
-        eventSlug: sessionStorage.getItem('wah_selected_event_slug')
+        governorateSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_governorate_slug')),
+        placeSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_place_slug')),
+        craftSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_craft_slug')),
+        storySlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_story_slug')),
+        personSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_person_slug')),
+        foodSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_food_slug')),
+        eventSlug: sanitizeStoredSlug(sessionStorage.getItem('wah_selected_event_slug'))
       };
     }
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
@@ -1878,7 +1892,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const isFavorite = (productId: string) => favorites.includes(productId);
 
   // Navigation helpers
-  const navigateToProduct = (productId: string) => {
+  // Safe identifier extraction helper to guard against [object Object] and ambiguous values
+  const safeExtractIdentifier = (val: any): string | null => {
+    if (!val) return null;
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      if (!trimmed || trimmed.includes('[object') || trimmed === 'undefined' || trimmed === 'null') {
+        return null;
+      }
+      return trimmed;
+    }
+    if (typeof val === 'object') {
+      const candidate = val.slug || val.id;
+      if (typeof candidate === 'string') {
+        const trimmed = candidate.trim();
+        if (trimmed && !trimmed.includes('[object') && trimmed !== 'undefined' && trimmed !== 'null') {
+          return trimmed;
+        }
+      }
+    }
+    return null;
+  };
+
+  const navigateToProduct = (productIdOrObj: string | { id?: string; slug?: string }) => {
+    const productId = safeExtractIdentifier(productIdOrObj);
+    if (!productId) {
+      console.warn('Invalid productId passed to navigateToProduct:', productIdOrObj);
+      setActivePageState('market');
+      return;
+    }
     setSelectedProductId(productId);
     setActivePageState('product-details');
     try {
@@ -1890,7 +1932,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToCategory = (categoryId: string) => {
+  const navigateToCategory = (categoryIdOrObj: string | { id?: string; slug?: string }) => {
+    const categoryId = safeExtractIdentifier(categoryIdOrObj);
+    if (!categoryId) {
+      console.warn('Invalid categoryId passed to navigateToCategory:', categoryIdOrObj);
+      setActivePageState('market');
+      return;
+    }
     setSelectedCategoryId(categoryId);
     setSelectedCategoryFilter(categoryId);
     setActivePageState('category-details');
@@ -1903,7 +1951,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToSeller = (sellerId: string) => {
+  const navigateToSeller = (sellerIdOrObj: string | { id?: string }) => {
+    const sellerId = safeExtractIdentifier(sellerIdOrObj);
+    if (!sellerId) {
+      console.warn('Invalid sellerId passed to navigateToSeller:', sellerIdOrObj);
+      setActivePageState('market');
+      return;
+    }
     setSelectedSellerId(sellerId);
     setActivePageState('seller-details');
     try {
@@ -1915,7 +1969,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToOrder = (orderId: string) => {
+  const navigateToOrder = (orderIdOrObj: string | { id?: string }) => {
+    const orderId = safeExtractIdentifier(orderIdOrObj);
+    if (!orderId) {
+      console.warn('Invalid orderId passed to navigateToOrder:', orderIdOrObj);
+      return;
+    }
     setSelectedOrderId(orderId);
     setActivePageState('order-details');
     try {
@@ -1928,7 +1987,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // WAH Cultural Ecosystem Navigation Helpers
-  const navigateToGovernorate = (slug: string) => {
+  const navigateToGovernorate = (slugOrGov: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrGov);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToGovernorate:', slugOrGov);
+      setActivePageState('governorates');
+      return;
+    }
     setSelectedGovernorateSlug(slug);
     setActivePageState('governorate-details');
     try {
@@ -1938,7 +2003,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToPlace = (slug: string) => {
+  const navigateToPlace = (slugOrPlace: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrPlace);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToPlace:', slugOrPlace);
+      setActivePageState('places');
+      return;
+    }
     setSelectedPlaceSlug(slug);
     setActivePageState('place-details');
     try {
@@ -1948,7 +2019,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToCraft = (slug: string) => {
+  const navigateToCraft = (slugOrCraft: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrCraft);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToCraft:', slugOrCraft);
+      setActivePageState('cultural-crafts');
+      return;
+    }
     setSelectedCraftSlug(slug);
     setActivePageState('cultural-craft-details');
     try {
@@ -1958,7 +2035,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToStory = (slug: string) => {
+  const navigateToStory = (slugOrStory: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrStory);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToStory:', slugOrStory);
+      setActivePageState('stories');
+      return;
+    }
     setSelectedStorySlug(slug);
     setActivePageState('story-details');
     try {
@@ -1968,7 +2051,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToPerson = (slug: string) => {
+  const navigateToPerson = (slugOrPerson: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrPerson);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToPerson:', slugOrPerson);
+      setActivePageState('people');
+      return;
+    }
     setSelectedPersonSlug(slug);
     setActivePageState('person-details');
     try {
@@ -1978,7 +2067,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToFood = (slug: string) => {
+  const navigateToFood = (slugOrFood: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrFood);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToFood:', slugOrFood);
+      setActivePageState('food');
+      return;
+    }
     setSelectedFoodSlug(slug);
     setActivePageState('food-details');
     try {
@@ -1988,7 +2083,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToEvent = (slug: string) => {
+  const navigateToEvent = (slugOrEvent: string | { slug?: string; id?: string }) => {
+    const slug = safeExtractIdentifier(slugOrEvent);
+    if (!slug) {
+      console.warn('Invalid identifier passed to navigateToEvent:', slugOrEvent);
+      setActivePageState('events');
+      return;
+    }
     setSelectedEventSlug(slug);
     setActivePageState('event-details');
     try {

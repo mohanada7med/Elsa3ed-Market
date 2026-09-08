@@ -19,8 +19,9 @@ import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 export const GovernoratesPage: React.FC = () => {
   const { navigateToGovernorate, setActivePage, wahStats } = useApp();
 
-  const [governorates, setGovernorates] = useState<WahGovernorate[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const cachedGovs = wahApi.getCachedGovernorates();
+  const [governorates, setGovernorates] = useState<WahGovernorate[]>(() => (cachedGovs && cachedGovs.length > 0 ? cachedGovs : []));
+  const [isLoading, setIsLoading] = useState<boolean>(() => !cachedGovs || cachedGovs.length === 0);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [regionFilter, setRegionFilter] = useState<
@@ -30,19 +31,31 @@ export const GovernoratesPage: React.FC = () => {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
     const fetchGovernorates = async () => {
       try {
-        setIsLoading(true);
+        if (!cachedGovs || cachedGovs.length === 0) {
+          setIsLoading(true);
+        }
+
         const data = await wahApi.getGovernorates();
-        setGovernorates(data);
+
+        if (active && Array.isArray(data) && data.length > 0) {
+          setGovernorates(data);
+        }
       } catch (error) {
         console.warn('Could not load governorates:', error);
       } finally {
-        setIsLoading(false);
+        if (active) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchGovernorates();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const getRegion = (
