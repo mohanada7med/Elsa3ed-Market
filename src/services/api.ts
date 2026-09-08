@@ -2742,25 +2742,103 @@ export const api = {
 // WAH PLATFORM CULTURAL CLIENT API
 // ==========================================
 
+const sanitizeWahSlug = (val: any): string | null => {
+  if (!val) return null;
+  if (typeof val === 'string') {
+    const trimmed = val.trim();
+    if (!trimmed || trimmed.includes('[object') || trimmed === 'undefined' || trimmed === 'null') {
+      return null;
+    }
+    return trimmed;
+  }
+  if (typeof val === 'object') {
+    const candidate = val.slug || val.id;
+    if (typeof candidate === 'string') {
+      const trimmed = candidate.trim();
+      if (trimmed && !trimmed.includes('[object') && trimmed !== 'undefined' && trimmed !== 'null') {
+        return trimmed;
+      }
+    }
+  }
+  return null;
+};
+
+// In-memory client cache for instant page rendering and smooth navigation
+const clientWahCache = new Map<string, { data: any; timestamp: number }>();
+
+function getClientCache<T>(key: string, maxAgeMs = 300000): T | null {
+  const item = clientWahCache.get(key);
+  if (!item) return null;
+  if (Date.now() - item.timestamp > maxAgeMs) {
+    return null;
+  }
+  return item.data as T;
+}
+
+function setClientCache(key: string, data: any): void {
+  clientWahCache.set(key, { data, timestamp: Date.now() });
+}
+
+export function clearClientWahCache(): void {
+  clientWahCache.clear();
+}
+
 export const wahApi = {
+  // Synchronous cache access helpers
+  getCachedGovernorates(): WahGovernorate[] | null {
+    return getClientCache<WahGovernorate[]>('govs_all', 600000);
+  },
+
+  getCachedGovernorateBySlug(slug: string | { slug?: string; id?: string }): WahGovernorate | null {
+    const cleanSlug = sanitizeWahSlug(slug);
+    if (!cleanSlug) return null;
+    return getClientCache<WahGovernorate>(`gov_${cleanSlug}`, 600000);
+  },
+
+  getCachedPlaces(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }): HeritagePlace[] | null {
+    const key = `places_${params?.governorate || 'all'}_${params?.category || 'all'}_${params?.status || 'all'}`;
+    return getClientCache<HeritagePlace[]>(key, 600000);
+  },
+
+  getCachedPlaceBySlug(slug: string | { slug?: string; id?: string }): HeritagePlace | null {
+    const cleanSlug = sanitizeWahSlug(slug);
+    if (!cleanSlug) return null;
+    return getClientCache<HeritagePlace>(`place_${cleanSlug}`, 600000);
+  },
+
   // 1. Governorates
-  async getGovernorates(): Promise<WahGovernorate[]> {
+  async getGovernorates(forceRefresh = false): Promise<WahGovernorate[]> {
+    const cached = getClientCache<WahGovernorate[]>('govs_all', 300000);
+    if (cached && !forceRefresh) return cached;
     try {
       const res = await fetch(`${API_BASE}/wah/governorates`);
       const json = await res.json();
-      return json.success && Array.isArray(json.data) ? json.data : [];
+      const list = json.success && Array.isArray(json.data) ? json.data : [];
+      if (list.length > 0) {
+        setClientCache('govs_all', list);
+      }
+      return list.length > 0 ? list : (cached || []);
     } catch {
-      return [];
+      return cached || [];
     }
   },
 
-  async getGovernorateBySlug(slug: string): Promise<WahGovernorate | null> {
+  async getGovernorateBySlug(slug: string | { slug?: string; id?: string }, forceRefresh = false): Promise<WahGovernorate | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/governorates/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const cached = getClientCache<WahGovernorate>(`gov_${cleanSlug}`, 300000);
+      if (cached && !forceRefresh) return cached;
+      const res = await fetch(`${API_BASE}/wah/governorates/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
-      return json.success && json.data ? json.data : null;
+      const data = json.success && json.data ? json.data : null;
+      if (data) {
+        setClientCache(`gov_${cleanSlug}`, data);
+      }
+      return data || cached;
     } catch {
-      return null;
+      const cleanSlug = sanitizeWahSlug(slug);
+      return cleanSlug ? getClientCache<WahGovernorate>(`gov_${cleanSlug}`, 600000) : null;
     }
   },
 
@@ -2772,11 +2850,15 @@ export const wahApi = {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.message || 'فشل حفظ المحافظة');
+    clientWahCache.clear();
     return json.data;
   },
 
   // 2. Heritage Places
-  async getPlaces(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }): Promise<HeritagePlace[]> {
+  async getPlaces(params?: { governorate?: string; governorateId?: string; category?: string; status?: string }, forceRefresh = false): Promise<HeritagePlace[]> {
+    const key = `places_${params?.governorate || 'all'}_${params?.category || 'all'}_${params?.status || 'all'}`;
+    const cached = getClientCache<HeritagePlace[]>(key, 300000);
+    if (cached && !forceRefresh) return cached;
     try {
       const query = new URLSearchParams();
       if (params?.governorate) query.set('governorate', params.governorate);
@@ -2785,19 +2867,32 @@ export const wahApi = {
       if (params?.status) query.set('status', params.status);
       const res = await fetch(`${API_BASE}/wah/places?${query.toString()}`);
       const json = await res.json();
-      return json.success && Array.isArray(json.data) ? json.data : [];
+      const list = json.success && Array.isArray(json.data) ? json.data : [];
+      if (list.length > 0) {
+        setClientCache(key, list);
+      }
+      return list.length > 0 ? list : (cached || []);
     } catch {
-      return [];
+      return cached || [];
     }
   },
 
-  async getPlaceBySlug(slug: string): Promise<HeritagePlace | null> {
+  async getPlaceBySlug(slug: string | { slug?: string; id?: string }, forceRefresh = false): Promise<HeritagePlace | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/places/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const cached = getClientCache<HeritagePlace>(`place_${cleanSlug}`, 300000);
+      if (cached && !forceRefresh) return cached;
+      const res = await fetch(`${API_BASE}/wah/places/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
-      return json.success && json.data ? json.data : null;
+      const data = json.success && json.data ? json.data : null;
+      if (data) {
+        setClientCache(`place_${cleanSlug}`, data);
+      }
+      return data || cached;
     } catch {
-      return null;
+      const cleanSlug = sanitizeWahSlug(slug);
+      return cleanSlug ? getClientCache<HeritagePlace>(`place_${cleanSlug}`, 600000) : null;
     }
   },
 
@@ -2809,6 +2904,7 @@ export const wahApi = {
     });
     const json = await res.json();
     if (!json.success) throw new Error(json.message || 'فشل حفظ المعلم التراثي');
+    clientWahCache.clear();
     return json.data;
   },
 
@@ -2831,9 +2927,11 @@ export const wahApi = {
     return this.getCrafts();
   },
 
-  async getCraftBySlug(slug: string): Promise<CulturalCraft | null> {
+  async getCraftBySlug(slug: string | { slug?: string; id?: string }): Promise<CulturalCraft | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/crafts/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const res = await fetch(`${API_BASE}/wah/crafts/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {
@@ -2868,9 +2966,11 @@ export const wahApi = {
     }
   },
 
-  async getStoryBySlug(slug: string): Promise<WahStory | null> {
+  async getStoryBySlug(slug: string | { slug?: string; id?: string }): Promise<WahStory | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/stories/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const res = await fetch(`${API_BASE}/wah/stories/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {
@@ -2905,9 +3005,11 @@ export const wahApi = {
     }
   },
 
-  async getPersonBySlug(slug: string): Promise<LocalPerson | null> {
+  async getPersonBySlug(slug: string | { slug?: string; id?: string }): Promise<LocalPerson | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/people/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const res = await fetch(`${API_BASE}/wah/people/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {
@@ -2945,9 +3047,11 @@ export const wahApi = {
     return this.getFood(params);
   },
 
-  async getFoodBySlug(slug: string): Promise<UpperEgyptFood | null> {
+  async getFoodBySlug(slug: string | { slug?: string; id?: string }): Promise<UpperEgyptFood | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/food/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const res = await fetch(`${API_BASE}/wah/food/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {
@@ -2982,9 +3086,11 @@ export const wahApi = {
     }
   },
 
-  async getEventBySlug(slug: string): Promise<CulturalEvent | null> {
+  async getEventBySlug(slug: string | { slug?: string; id?: string }): Promise<CulturalEvent | null> {
     try {
-      const res = await fetch(`${API_BASE}/wah/events/${slug}`);
+      const cleanSlug = sanitizeWahSlug(slug);
+      if (!cleanSlug) return null;
+      const res = await fetch(`${API_BASE}/wah/events/${encodeURIComponent(cleanSlug)}`);
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {
@@ -3018,7 +3124,15 @@ export const wahApi = {
     }
   },
 
-  async getFullMapPayload(): Promise<MapPayload> {
+  getCachedMapPayload(): MapPayload | null {
+    return getClientCache<MapPayload>('map_payload', 600000);
+  },
+
+  async getFullMapPayload(forceRefresh = false): Promise<MapPayload> {
+    const cached = getClientCache<MapPayload>('map_payload', 300000);
+    if (cached && !forceRefresh) {
+      return cached;
+    }
     try {
       const res = await fetch(`${API_BASE}/wah/map`);
       const json = await res.json();
@@ -3026,7 +3140,7 @@ export const wahApi = {
         const governorates = Array.isArray(json.governorates)
           ? json.governorates
           : (Array.isArray(json.data) ? json.data : []);
-        return {
+        const payload: MapPayload = {
           governorates,
           markers: Array.isArray(json.markers) ? json.markers : [],
           featuredPlaces: Array.isArray(json.featuredPlaces) ? json.featuredPlaces : [],
@@ -3042,8 +3156,10 @@ export const wahApi = {
             reelsCount: 0
           }
         };
+        setClientCache('map_payload', payload);
+        return payload;
       }
-      return {
+      return cached || {
         governorates: [],
         markers: [],
         featuredPlaces: [],
@@ -3059,9 +3175,8 @@ export const wahApi = {
           reelsCount: 0
         }
       };
-    } catch (err) {
-      console.warn('Failed to load full map payload:', err);
-      return {
+    } catch {
+      return cached || {
         governorates: [],
         markers: [],
         featuredPlaces: [],
@@ -3143,7 +3258,9 @@ export const wahApi = {
   },
 
   async deletePlace(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE}/wah/places/${id}`, {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف المعلم التراثي غير صالح');
+    const res = await fetch(`${API_BASE}/wah/places/${encodeURIComponent(cleanId)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });
@@ -3153,9 +3270,11 @@ export const wahApi = {
   },
 
   async deleteCraft(id: string, options?: { force?: boolean }, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف الحرفة غير صالح');
     const query = new URLSearchParams();
     if (options?.force) query.set('force', 'true');
-    const res = await fetch(`${API_BASE}/wah/crafts/${id}?${query.toString()}`, {
+    const res = await fetch(`${API_BASE}/wah/crafts/${encodeURIComponent(cleanId)}?${query.toString()}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });
@@ -3165,7 +3284,9 @@ export const wahApi = {
   },
 
   async deleteStory(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE}/wah/stories/${id}`, {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف القصة غير صالح');
+    const res = await fetch(`${API_BASE}/wah/stories/${encodeURIComponent(cleanId)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });
@@ -3175,7 +3296,9 @@ export const wahApi = {
   },
 
   async deletePerson(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE}/wah/people/${id}`, {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف الشخصية غير صالح');
+    const res = await fetch(`${API_BASE}/wah/people/${encodeURIComponent(cleanId)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });
@@ -3185,7 +3308,9 @@ export const wahApi = {
   },
 
   async deleteFood(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE}/wah/food/${id}`, {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف الوصفة غير صالح');
+    const res = await fetch(`${API_BASE}/wah/food/${encodeURIComponent(cleanId)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });
@@ -3195,7 +3320,9 @@ export const wahApi = {
   },
 
   async deleteEvent(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE}/wah/events/${id}`, {
+    const cleanId = sanitizeWahSlug(id);
+    if (!cleanId) throw new Error('معرف الفعالية غير صالح');
+    const res = await fetch(`${API_BASE}/wah/events/${encodeURIComponent(cleanId)}`, {
       method: 'DELETE',
       headers: getAuthHeaders(user)
     });

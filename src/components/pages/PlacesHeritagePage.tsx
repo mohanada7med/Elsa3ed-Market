@@ -63,8 +63,9 @@ const getImage = (place: HeritagePlace) =>
 export const PlacesHeritagePage: React.FC = () => {
   const { navigateToPlace, setActivePage } = useApp();
 
-  const [places, setPlaces] = useState<HeritagePlace[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const cachedPlaces = wahApi.getCachedPlaces();
+  const [places, setPlaces] = useState<HeritagePlace[]>(() => (cachedPlaces && cachedPlaces.length > 0 ? cachedPlaces : []));
+  const [isLoading, setIsLoading] = useState<boolean>(() => !cachedPlaces || cachedPlaces.length === 0);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] =
@@ -76,20 +77,18 @@ export const PlacesHeritagePage: React.FC = () => {
     let active = true;
 
     const loadPlaces = async () => {
-      setIsLoading(true);
+      if (!cachedPlaces || cachedPlaces.length === 0) {
+        setIsLoading(true);
+      }
 
       try {
         const data = await wahApi.getPlaces();
 
-        if (active) {
-          setPlaces(Array.isArray(data) ? data : []);
+        if (active && Array.isArray(data) && data.length > 0) {
+          setPlaces(data);
         }
       } catch (error) {
         console.warn('Could not load places:', error);
-
-        if (active) {
-          setPlaces([]);
-        }
       } finally {
         if (active) {
           setIsLoading(false);

@@ -21,6 +21,7 @@ import {
   ArrowLeft,
   Bell,
   Check,
+  UserPlus,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ActivePage } from '@/src/types';
@@ -98,7 +99,7 @@ const NotificationCenter: React.FC<{
           aria-label="الإشعارات"
           aria-expanded={open}
           onClick={() => setOpen((prev) => !prev)}
-          className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+          className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
           style={{
             backgroundColor: hoverBg,
             color: mainText,
@@ -124,7 +125,7 @@ const NotificationCenter: React.FC<{
             <>
               {/* MOBILE BACKDROP */}
               <motion.div
-                className="fixed inset-0 z-[400] bg-black/30 sm:hidden"
+                className="fixed inset-x-0 bottom-0 top-16 sm:top-[78px] lg:top-[94px] z-[400] bg-black/30 sm:hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -758,14 +759,20 @@ export const Header: React.FC = () => {
             MAIN ROW
             =================================================== */}
 
-        <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+        <div className="relative mx-auto max-w-[1600px] px-3 sm:px-6 lg:px-12">
           <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
 
             {/* =================================================
-                LEFT
+                LEFT / START AREA (Actions & Navigation)
+                In RTL: Starts on the physical right (Menu button)
+                In LTR: Starts on the physical left (Menu button)
+                On Desktop (lg): Normal flex container with desktop nav links
                 ================================================= */}
 
-            <div className="flex min-w-0 items-center">
+            <div
+              id="header-start-actions"
+              className="absolute start-0 ltr:left-0 rtl:right-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center px-1 sm:max-w-[calc(50%-55px)] sm:px-2.5 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+            >
 
               {/* MOBILE MENU */}
 
@@ -776,13 +783,43 @@ export const Header: React.FC = () => {
                   setMobileMenuOpen(true)
                 }
                 aria-label="فتح القائمة"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 lg:hidden cursor-pointer"
+                title="فتح القائمة"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 sm:h-10 sm:w-10 lg:hidden cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
                 }}
               >
-                <Menu size={21} />
+                <Menu size={20} className="sm:w-[21px] sm:h-[21px]" />
+              </button>
+
+              {/* MOBILE NIGHT MODE TOGGLE (Always visible outside) */}
+
+              <button
+                id="mobile-header-theme-toggle-btn"
+                type="button"
+                onClick={toggleTheme}
+                aria-label={
+                  isDark
+                    ? 'تفعيل الوضع الفاتح'
+                    : 'تفعيل الوضع الداكن (النايت مود)'
+                }
+                title={
+                  isDark
+                    ? 'تفعيل الوضع الفاتح'
+                    : 'الوضع الداكن (النايت مود)'
+                }
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                {isDark ? (
+                  <Sun size={19} className="text-amber-400" />
+                ) : (
+                  <Moon size={19} />
+                )}
               </button>
 
               {/* DESKTOP NAV */}
@@ -851,73 +888,93 @@ export const Header: React.FC = () => {
             </div>
 
             {/* =================================================
-                LOGO
+                CENTER LOGO (Fixed True Horizontal Center on all screens)
+                Guaranteed independent from left/right button width & count.
+                Protected with z-20 and priority spacing.
                 ================================================= */}
 
-            <button
-              id="brand-logo"
-              type="button"
-              onClick={() =>
-                navigate('home')
-              }
-              aria-label="وه - الرئيسية"
-              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
+            <div
+              id="header-center-logo"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-auto select-none"
             >
-              <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
-                alt="وه"
-                draggable={false}
-                className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
-              />
-            </button>
-
-            {/* =================================================
-                RIGHT ACTIONS
-                ================================================= */}
-
-            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-
-              {/* SEARCH */}
-
               <button
-                id="search-trigger-btn"
+                id="brand-logo"
                 type="button"
                 onClick={() =>
-                  setSearchOverlayOpen(true)
+                  navigate('home')
                 }
-                aria-label="بحث"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
+                aria-label="وه - الرئيسية"
+                className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
               >
-                <Search size={18} />
+                <img
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                  alt="وه"
+                  draggable={false}
+                  className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
+                />
               </button>
+            </div>
 
-              {/* THEME */}
+            {/* =================================================
+                RIGHT / END AREA (Action Buttons)
+                In RTL: Ends on the physical left (Search, Theme, Bell, Cart, User)
+                In LTR: Ends on the physical right (Search, Theme, Bell, Cart, User)
+                Hard max-width prevents ever encroaching or overlapping the center logo.
+                On Desktop (lg): Normal flex container with desktop actions
+                ================================================= */}
 
-              <button
-                id="header-theme-toggle-btn"
-                type="button"
-                onClick={toggleTheme}
-                aria-label={
-                  isDark
-                    ? 'تفعيل الوضع الفاتح'
-                    : 'تفعيل الوضع الداكن'
-                }
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                {isDark ? (
-                  <Sun size={18} className="text-amber-400" />
-                ) : (
-                  <Moon size={18} />
-                )}
-              </button>
+            <div
+              id="header-end-actions"
+              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+            >
+              <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
+
+                {/* SEARCH */}
+
+                <button
+                  id="search-trigger-btn"
+                  type="button"
+                  onClick={() =>
+                    setSearchOverlayOpen(true)
+                  }
+                  aria-label="بحث"
+                  className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <Search size={18} />
+                </button>
+
+                {/* THEME (DESKTOP) */}
+
+                <button
+                  id="header-theme-toggle-btn"
+                  type="button"
+                  onClick={toggleTheme}
+                  aria-label={
+                    isDark
+                      ? 'تفعيل الوضع الفاتح'
+                      : 'تفعيل الوضع الداكن'
+                  }
+                  title={
+                    isDark
+                      ? 'تفعيل الوضع الفاتح'
+                      : 'تفعيل الوضع الداكن'
+                  }
+                  className="hidden lg:flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:h-11 lg:w-11 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  {isDark ? (
+                    <Sun size={18} className="text-amber-400" />
+                  ) : (
+                    <Moon size={18} />
+                  )}
+                </button>
 
               {/* FAVORITES - TABLET/DESKTOP */}
 
@@ -1006,7 +1063,7 @@ export const Header: React.FC = () => {
                   setIsCartDrawerOpen(true)
                 }
                 aria-label="السلة"
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+                className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -1048,7 +1105,7 @@ export const Header: React.FC = () => {
                     }}
                     title="الملف الشخصي"
                     aria-label="الملف الشخصي"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 cursor-pointer sm:h-10 lg:h-11"
+                    className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full p-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer sm:h-10 sm:w-10 lg:h-11 lg:w-11"
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
@@ -1057,7 +1114,7 @@ export const Header: React.FC = () => {
                     <img
                       src={profileImage}
                       alt={displayName}
-                      className="h-8 w-8 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                      className="h-7.5 w-7.5 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
                     />
                   </button>
 
@@ -1079,7 +1136,7 @@ export const Header: React.FC = () => {
                     }
                     aria-haspopup="menu"
                     aria-label="قائمة الحساب"
-                    className="flex h-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:h-10 sm:gap-1.5 lg:h-11 cursor-pointer"
+                    className="hidden sm:flex h-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:gap-1.5 lg:h-11 cursor-pointer"
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
@@ -1333,6 +1390,25 @@ export const Header: React.FC = () => {
                 </div>
               ) : (
                 <>
+                  {/* MOBILE REGISTRATION / AUTH BUTTON (Directly visible on the outside) */}
+                  <button
+                    id="header-register-mobile-btn"
+                    type="button"
+                    onClick={() => {
+                      setAuthModalTab('register');
+                      setIsAuthModalOpen(true);
+                    }}
+                    title="تسجيل جديد / تسجيل الدخول"
+                    aria-label="تسجيل جديد / تسجيل الدخول"
+                    className="flex sm:hidden h-8.5 items-center gap-1.5 shrink-0 rounded-full px-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                    style={{
+                      backgroundColor: '#9a6a35',
+                    }}
+                  >
+                    <UserPlus size={14} />
+                    <span>تسجيل</span>
+                  </button>
+
                   <button
                     id="header-login-btn"
                     type="button"
@@ -1340,7 +1416,7 @@ export const Header: React.FC = () => {
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
-                    className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-80 transition-opacity"
+                    className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-4 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap shrink-0"
                     style={{
                       color: mainText,
                       border: `1px solid ${borderColor}`,
@@ -1358,7 +1434,7 @@ export const Header: React.FC = () => {
                       );
                       setIsAuthModalOpen(true);
                     }}
-                    className="hidden h-10 items-center justify-center rounded-full px-5 text-sm font-bold lg:flex cursor-pointer hover:opacity-90 transition-opacity"
+                    className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-5 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
                     style={{
                       backgroundColor:
                         '#9a6a35',
@@ -1372,6 +1448,7 @@ export const Header: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
         {/* ===================================================
             DESKTOP NAV

@@ -33,9 +33,6 @@ export const PlaceDetailPage: React.FC = () => {
   const isAdmin =
     currentRole === 'admin' || currentUser?.role === 'admin';
 
-  const [place, setPlace] = useState<HeritagePlace | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
   const slug =
     selectedPlaceSlug ||
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/places/')
@@ -43,11 +40,17 @@ export const PlaceDetailPage: React.FC = () => {
       : null) ||
     'dendera-temple';
 
+  const cachedPlace = wahApi.getCachedPlaceBySlug(slug);
+  const [place, setPlace] = useState<HeritagePlace | null>(() => cachedPlace || null);
+  const [isLoading, setIsLoading] = useState(() => !cachedPlace);
+
   useEffect(() => {
     let isMounted = true;
 
     const fetchPlace = async () => {
-      setIsLoading(true);
+      if (!cachedPlace) {
+        setIsLoading(true);
+      }
 
       try {
         const data = await wahApi.getPlaceBySlug(slug);
