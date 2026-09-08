@@ -659,6 +659,8 @@ export const AuthModal: React.FC = () => {
      RENDER
   ========================================================= */
 
+  if (!isAuthModalOpen) return null;
+
   return (
     <div
       id="auth-modal-backdrop"
@@ -666,7 +668,7 @@ export const AuthModal: React.FC = () => {
       className="
         fixed
         inset-0
-        z-[100]
+        z-[160]
         flex
         items-center
         justify-center

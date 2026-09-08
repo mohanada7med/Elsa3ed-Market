@@ -1824,12 +1824,17 @@ export const api = {
   },
 
   async getFavorites(user: { id: string; role: string }): Promise<string[]> {
-    const res = await fetch(`${API_BASE}/auth/favorites`, {
-      credentials: 'include',
-      headers: getAuthHeaders(user)
-    });
-    const json: ApiResponse<string[]> = await res.json();
-    return json.data || [];
+    try {
+      const res = await fetch(`${API_BASE}/auth/favorites`, {
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (!res.ok) return [];
+      const json: ApiResponse<string[]> = await res.json();
+      return Array.isArray(json.data) ? json.data : [];
+    } catch {
+      return [];
+    }
   },
 
   async toggleFavorite(user: { id: string; role: string }, productId: string): Promise<string[]> {
@@ -1839,8 +1844,14 @@ export const api = {
       headers: getAuthHeaders(user),
       body: JSON.stringify({ productId })
     });
+    if (!res.ok) {
+      throw new Error(`Failed to toggle favorite on server: ${res.status}`);
+    }
     const json: ApiResponse<{ isFavorite: boolean; favorites: string[] }> = await res.json();
-    return json.data?.favorites || [];
+    if (!json.success || !json.data || !Array.isArray(json.data.favorites)) {
+      throw new Error(json.error || 'Invalid response from server');
+    }
+    return json.data.favorites;
   },
 
   // ==================== REAL PERSISTENT NOTIFICATIONS API ====================

@@ -1389,13 +1389,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         const remoteCart = await api.getCart({ id: currentUser.id, role: 'buyer' });
         if (remoteCart && Array.isArray(remoteCart.items)) {
-          const mappedItems: CartItem[] = remoteCart.items.map((it: any) => ({
-            product: it.product,
-            quantity: it.quantity,
-            selectedColor: it.selectedColor,
-            customNote: it.customNote
-          }));
-          setCart(mappedItems);
+          const mappedItems: CartItem[] = remoteCart.items
+            .filter((it: any) => it && (it.product || it.productId))
+            .map((it: any) => ({
+              product: it.product,
+              quantity: it.quantity || 1,
+              selectedColor: it.selectedColor,
+              customNote: it.customNote
+            }));
+
+          setCart((prevCart) => {
+            if (mappedItems.length === 0) {
+              return prevCart;
+            }
+            const map = new Map<string, CartItem>();
+            mappedItems.forEach((item) => {
+              if (item.product?.id) {
+                map.set(item.product.id, item);
+              }
+            });
+            prevCart.forEach((item) => {
+              if (item.product?.id && !map.has(item.product.id)) {
+                map.set(item.product.id, item);
+              }
+            });
+            const merged = Array.from(map.values());
+            try {
+              localStorage.setItem('saeed_cart', JSON.stringify(merged));
+            } catch { }
+            return merged;
+          });
         }
       } catch (e) {
         console.warn('[AppContext] Could not fetch remote cart:', e);
@@ -1406,6 +1429,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         localStorage.removeItem('saeed_cart');
       } catch { }
+    }
+  }, [currentRole, currentUser.id]);
+
+  // Fetch Buyer Favorites from backend
+  const refreshFavorites = useCallback(async () => {
+    if (currentRole === 'buyer' && currentUser.id && currentUser.id !== 'guest-visitor') {
+      try {
+        const remoteFavs = await api.getFavorites({ id: currentUser.id, role: 'buyer' });
+        if (remoteFavs && Array.isArray(remoteFavs)) {
+          setFavorites((prev) => {
+            const merged = Array.from(new Set([...prev, ...remoteFavs]));
+            try {
+              localStorage.setItem('saeed_favorites', JSON.stringify(merged));
+            } catch { }
+            return merged;
+          });
+        }
+      } catch (e) {
+        console.warn('[AppContext] Could not fetch remote favorites:', e);
+      }
     }
   }, [currentRole, currentUser.id]);
 
@@ -1438,6 +1481,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else if (currentRole === 'buyer') {
       refreshOrders();
       refreshCart();
+      refreshFavorites();
     }
   }, [
     isAuthChecking,
@@ -1450,7 +1494,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshAdminProducts,
     refreshAuditLogs,
     refreshReviews,
-    refreshCart
+    refreshCart,
+    refreshFavorites
   ]);
 
   // Live Chat: Unread counter fetch
@@ -1870,25 +1915,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     const exists = favorites.includes(productId);
+    const newFavorites = exists
+      ? favorites.filter((id) => id !== productId)
+      : [...favorites, productId];
+
+    setFavorites(newFavorites);
+    try {
+      localStorage.setItem('saeed_favorites', JSON.stringify(newFavorites));
+    } catch { }
+
     if (exists) {
-      setFavorites((prev) => prev.filter((id) => id !== productId));
       addToast('المفضلة', 'تمت إزالة المنتج من المفضلة', 'info');
     } else {
-      setFavorites((prev) => [...prev, productId]);
       const prod = products.find((p) => p.id === productId) || adminProducts.find((p) => p.id === productId);
       addToast('المفضلة', `تمت إضافة "${prod?.title || 'المنتج'}" إلى المفضلة ❤️`, 'success');
     }
 
-    try {
-      const updatedFavs = await api.toggleFavorite(
-        { id: currentUser.id, role: currentRole },
-        productId
-      );
-      if (updatedFavs && Array.isArray(updatedFavs)) {
-        setFavorites(updatedFavs);
+    if (isAuthenticated && currentRole === 'buyer' && currentUser?.id && currentUser.id !== 'guest-visitor') {
+      try {
+        const updatedFavs = await api.toggleFavorite(
+          { id: currentUser.id, role: currentRole },
+          productId
+        );
+        if (updatedFavs && Array.isArray(updatedFavs)) {
+          setFavorites(updatedFavs);
+          try {
+            localStorage.setItem('saeed_favorites', JSON.stringify(updatedFavs));
+          } catch { }
+        }
+      } catch (e) {
+        console.warn('[AppContext] Could not sync favorite to server:', e);
+        // Keep optimistic update
       }
-    } catch {
-      // Keep optimistic update
     }
   };
 

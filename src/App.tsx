@@ -86,10 +86,27 @@ const MainContent: React.FC = () => {
     isAuthenticated,
     currentUser,
     currentRole,
+    isCartDrawerOpen,
+    isAuthModalOpen,
     setIsAuthModalOpen,
     setAuthModalTab
   } = useApp();
   const selectedProduct = products.find((p) => p.id === selectedProductId);
+
+  // Global scroll lock effect when Cart Drawer or Auth Modal is open
+  useEffect(() => {
+    const isLocked = isAuthModalOpen || (isCartDrawerOpen && (currentRole === 'buyer' || !isAuthenticated));
+    if (isLocked) {
+      const prevBodyOverflow = document.body.style.overflow;
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBodyOverflow;
+        document.documentElement.style.overflow = prevHtmlOverflow;
+      };
+    }
+  }, [isAuthModalOpen, isCartDrawerOpen, currentRole, isAuthenticated]);
 
   // Dynamic SEO meta updates on page transition (called unconditionally at top of component)
   useEffect(() => {

@@ -21,6 +21,8 @@ import { motion, AnimatePresence } from 'motion/react';
 export const CartPage: React.FC = () => {
   const {
     cart,
+    products,
+    adminProducts,
     cartCount,
     cartSubtotal,
     shippingFee,
@@ -194,8 +196,9 @@ export const CartPage: React.FC = () => {
             <div className="lg:col-span-8 space-y-3 sm:space-y-4">
               <AnimatePresence>
                 {cart.map((item, idx) => {
-                  const prod = item.product;
-                  const prodId = prod?.id || `cart-item-${idx}`;
+                  const fallbackProd = (item as any).productId ? (products.find((p) => p.id === (item as any).productId) || adminProducts.find((p) => p.id === (item as any).productId)) : null;
+                  const prod = item.product || fallbackProd;
+                  const prodId = prod?.id || (item as any).productId || `cart-item-${idx}`;
                   const title = prod?.title || 'منتج تراثي أصيل';
                   const img = prod?.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80';
                   const sellerName = prod?.sellerName || 'ورشة الصعيد';
