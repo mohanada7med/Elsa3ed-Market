@@ -676,6 +676,16 @@ export const Header: React.FC = () => {
         isNew: true,
       },
       {
+        id: 'dialect-dictionary',
+        label: 'معجم الصعيدي الفصيح',
+        isNew: true,
+      },
+      {
+        id: 'panoramic-tours',
+        label: 'بانوراما 360°',
+        isNew: true,
+      },
+      {
         id: 'sellers',
         label: 'البائعين',
       },
@@ -944,6 +954,48 @@ export const Header: React.FC = () => {
                     جديد
                   </span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('dialect-dictionary')
+                  }
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'dialect-dictionary'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  معجم الصعيدي
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('panoramic-tours')
+                  }
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'panoramic-tours'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  بانوراما 360°
+                  <span
+                    className="rounded-full px-2 py-0.5 text-[9px] font-black"
+                    style={{
+                      backgroundColor:
+                        '#9a6a35',
+                      color: '#fff',
+                    }}
+                  >
+                    افتراضي
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -965,7 +1017,7 @@ export const Header: React.FC = () => {
                 className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
               >
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%80_%D9%88%D9%87_copy.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
                   alt="وه"
                   draggable={false}
                   className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"

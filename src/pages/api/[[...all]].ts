@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createApp } from '../../../server/app.ts';
 
-let appInstance: any = null;
+let cachedApp: ReturnType<typeof createApp> | null = null;
+
 function getApp() {
-  if (!appInstance || process.env.NODE_ENV !== 'production') {
-    appInstance = createApp();
+  if (!cachedApp) {
+    cachedApp = createApp();
   }
-  return appInstance;
+  return cachedApp;
 }
 
 export const config = {
@@ -17,5 +18,6 @@ export const config = {
 };
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return getApp()(req, res);
+  const app = getApp();
+  return app(req, res);
 }

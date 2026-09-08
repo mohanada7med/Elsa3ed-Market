@@ -268,6 +268,30 @@ export const PlaceDetailPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActivePage('panoramic-tours')}
+              aria-label="جولة بانورامية 360°"
+              title="استكشف جولات بانورامية 360° للمعالم"
+              className="
+                h-10 px-3.5
+                rounded-full
+                border border-[#9a6a35]/40
+                bg-[#9a6a35]/10
+                hover:bg-[#9a6a35]
+                hover:text-white
+                text-[#9a6a35]
+                text-xs
+                font-bold
+                flex items-center gap-1.5
+                transition-all
+                cursor-pointer
+              "
+            >
+              <Compass className="w-4 h-4 shrink-0" />
+              <span className="hidden sm:inline">بانوراما 360°</span>
+            </button>
+
             {isAdmin && (
               <button
                 type="button"
