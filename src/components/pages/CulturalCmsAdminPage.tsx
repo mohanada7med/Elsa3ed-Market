@@ -208,6 +208,18 @@ export const CulturalCmsAdminPage: React.FC = () => {
     }
   }, [selectedGovId]);
 
+  const filteredGovernorates = useMemo(() => {
+    return governorates.filter((gov) => {
+      const matchSearch =
+        !globalGovSearch.trim() ||
+        gov.name.toLowerCase().includes(globalGovSearch.toLowerCase()) ||
+        gov.shortIntro?.toLowerCase().includes(globalGovSearch.toLowerCase()) ||
+        gov.famousFor?.some((f) => f.toLowerCase().includes(globalGovSearch.toLowerCase()));
+      const matchStatus = govStatusFilter === 'all' || gov.status === govStatusFilter;
+      return matchSearch && matchStatus;
+    });
+  }, [governorates, globalGovSearch, govStatusFilter]);
+
   if (!currentUser || currentUser.role !== 'admin') {
     return (
       <div
@@ -366,18 +378,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
       </span>
     );
   };
-
-  const filteredGovernorates = useMemo(() => {
-    return governorates.filter((gov) => {
-      const matchSearch =
-        !globalGovSearch.trim() ||
-        gov.name.toLowerCase().includes(globalGovSearch.toLowerCase()) ||
-        gov.shortIntro?.toLowerCase().includes(globalGovSearch.toLowerCase()) ||
-        gov.famousFor?.some((f) => f.toLowerCase().includes(globalGovSearch.toLowerCase()));
-      const matchStatus = govStatusFilter === 'all' || gov.status === govStatusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [governorates, globalGovSearch, govStatusFilter]);
 
   return (
     <div

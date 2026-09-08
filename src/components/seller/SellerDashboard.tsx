@@ -62,39 +62,6 @@ import {
   MessageSquare
 } from 'lucide-react';
 
-// Curated Heritage Craft Workshop Cover Presets
-// Curated Heritage Craft Workshop Cover Presets (Linked to your Cloudinary)
-// استبدل التعريف الثابت بـ State جديدة داخل SellerDashboard:
-const [cloudImages, setCloudImages] = useState<Array<{ id: string; title: string; url: string }>>([]);
-const [isLoadingCloudImages, setIsLoadingCloudImages] = useState(false);
-
-// جلب الصور من حسابك على Cloudinary عند تحميل الصفحة أو الانتقال لإعدادات الغلاف
-useEffect(() => {
-  const loadCloudImages = async () => {
-    setIsLoadingCloudImages(true);
-    try {
-      const images = await api.fetchCloudinaryImages();
-      if (images && images.length > 0) {
-        // تحويل النتائج إلى الشكل المتوافق مع المعرض
-        const formatted = images.map((img: any, index: number) => ({
-          id: `cloud-${index}`,
-          title: img.public_id || `صورة سحابية ${index + 1}`,
-          region: 'ورشة معتمدة',
-          craft: 'تراث صعيدي أصيل',
-          url: img.secure_url || img.url
-        }));
-        setCloudImages(formatted);
-      }
-    } catch (err) {
-      console.error('Error loading cloud images:', err);
-    } finally {
-      setIsLoadingCloudImages(false);
-    }
-  };
-
-  loadCloudImages();
-}, []);
-
 export const SellerDashboard: React.FC = () => {
   const {
     activePage,
@@ -133,6 +100,35 @@ export const SellerDashboard: React.FC = () => {
   const [isSellerReelEditOpen, setIsSellerReelEditOpen] = useState(false);
   const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
   const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
+
+  // Curated Heritage Craft Workshop Cover Presets (Linked to Cloudinary)
+  const [cloudImages, setCloudImages] = useState<Array<{ id: string; title: string; url: string }>>([]);
+  const [isLoadingCloudImages, setIsLoadingCloudImages] = useState(false);
+
+  useEffect(() => {
+    const loadCloudImages = async () => {
+      setIsLoadingCloudImages(true);
+      try {
+        const images = await api.fetchCloudinaryImages();
+        if (images && images.length > 0) {
+          const formatted = images.map((img: any, index: number) => ({
+            id: `cloud-${index}`,
+            title: img.public_id || `صورة سحابية ${index + 1}`,
+            region: 'ورشة معتمدة',
+            craft: 'تراث صعيدي أصيل',
+            url: img.secure_url || img.url
+          }));
+          setCloudImages(formatted);
+        }
+      } catch (err) {
+        console.error('Error loading cloud images:', err);
+      } finally {
+        setIsLoadingCloudImages(false);
+      }
+    };
+
+    loadCloudImages();
+  }, []);
 
   const effectiveSellerId = currentUser?.sellerId || currentUser?.id;
 

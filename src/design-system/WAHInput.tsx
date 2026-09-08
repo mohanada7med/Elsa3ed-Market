@@ -10,7 +10,8 @@ export interface WAHInputProps extends React.InputHTMLAttributes<HTMLInputElemen
 
 export const WAHInput = React.forwardRef<HTMLInputElement, WAHInputProps>(
   ({ label, error, helperText, icon, className = '', id, ...props }, ref) => {
-    const inputId = id || React.useId();
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
     const renderedIcon = renderIcon(icon, 'w-4 h-4 shrink-0');
 
     return (
@@ -66,7 +67,8 @@ export interface WAHTextareaProps extends React.TextareaHTMLAttributes<HTMLTextA
 
 export const WAHTextarea = React.forwardRef<HTMLTextAreaElement, WAHTextareaProps>(
   ({ label, error, helperText, className = '', id, ...props }, ref) => {
-    const textareaId = id || React.useId();
+    const generatedId = React.useId();
+    const textareaId = id || generatedId;
 
     return (
       <div className="w-full space-y-1.5 text-right">
