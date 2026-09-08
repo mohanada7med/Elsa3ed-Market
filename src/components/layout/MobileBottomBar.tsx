@@ -1,9 +1,9 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import {
-  Home,
+  Compass,
   ShoppingBag,
-  Grid,
+  Layers,
   Heart,
   User,
   Film,
@@ -11,12 +11,13 @@ import {
   ShieldAlert,
   LogIn,
   Package,
-  Boxes,
   ClipboardList,
-  ShieldCheck,
-  Users,
-  MessageSquare
+  MessageSquare,
+  MapPin,
+  Flame,
+  Sparkles
 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export const MobileBottomBar: React.FC = () => {
   const {
@@ -37,11 +38,11 @@ export const MobileBottomBar: React.FC = () => {
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
     } else if (currentRole === 'seller') {
-      setActivePage('seller-dashboard');
+      setActivePage('seller-dashboard' as any);
     } else if (currentRole === 'admin') {
-      setActivePage('admin-dashboard');
+      setActivePage('admin-dashboard' as any);
     } else {
-      setActivePage('buyer-account');
+      setActivePage('buyer-account' as any);
     }
   };
 
@@ -54,310 +55,327 @@ export const MobileBottomBar: React.FC = () => {
   return (
     <div
       id="mobile-bottom-navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FAF7F2]/95 dark:bg-[#110E0C]/95 backdrop-blur-lg border-t border-[#E5DDD3] dark:border-[#352B24] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1.5 safe-area-pb"
+      dir="rtl"
+      className="lg:hidden fixed bottom-3 inset-x-3 sm:inset-x-6 z-40 select-none pointer-events-none pb-[env(safe-area-inset-bottom)]"
       role="navigation"
       aria-label="شريط التنقل السريع للهواتف"
     >
-      <div className="flex items-center justify-around max-w-lg mx-auto">
-        {/* ==================== SELLER SPECIFIC NAVIGATION ==================== */}
+      <nav
+        className="
+          pointer-events-auto
+          max-w-md
+          mx-auto
+          rounded-[26px]
+          bg-[#FAF7F2]/95
+          dark:bg-[#140F0D]/95
+          backdrop-blur-2xl
+          border
+          border-amber-950/15
+          dark:border-amber-500/20
+          shadow-[0_16px_40px_rgba(0,0,0,0.12)]
+          dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)]
+          p-1.5
+          flex
+          items-center
+          justify-between
+          transition-colors
+          duration-300
+        "
+      >
+        {/* ==================== SELLER NAVIGATION ==================== */}
         {isAuthenticated && currentRole === 'seller' ? (
           <>
-            {/* Home / Market */}
+            {/* 1. الرئيسية */}
             <button
               type="button"
-              id="mobile-bar-seller-home"
-              onClick={() => setActivePage('home')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'home'
-                  ? 'text-amber-700 dark:text-amber-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="الرئيسية"
+              onClick={() => setActivePage('home' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <Home className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">الرئيسية</span>
+              {activePage === 'home' && (
+                <motion.div
+                  layoutId="sellerActivePill"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                الرئيسية
+              </span>
             </button>
 
-            {/* My Products */}
+            {/* 2. منتجات الورشة */}
             <button
               type="button"
-              id="mobile-bar-seller-products"
-              onClick={() => setActivePage('seller-products')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'seller-products'
-                  ? 'text-amber-700 dark:text-amber-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="منتجات الورشة"
+              onClick={() => setActivePage('seller-products' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <Package className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">منتجاتي</span>
+              {activePage === 'seller-products' && (
+                <motion.div
+                  layoutId="sellerActivePill"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                منتجاتي
+              </span>
             </button>
 
-            {/* Center Highlight: Seller Dashboard */}
+            {/* 3. الزر المركزي المميز: لوحة الورشة */}
             <button
               type="button"
-              id="mobile-bar-seller-dash"
-              onClick={() => setActivePage('seller-dashboard')}
-              className="relative -top-2 flex flex-col items-center justify-center cursor-pointer group"
-              aria-label="لوحة تحكم الورشة"
+              onClick={() => setActivePage('seller-dashboard' as any)}
+              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-amber-700 dark:bg-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-700/30 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C45832] to-[#8F391E] text-white flex items-center justify-center shadow-lg shadow-[#C45832]/40 group-hover:scale-105 active:scale-95 transition-all">
                 <Store className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 font-bold text-amber-700 dark:text-amber-400">لوحة الورشة</span>
+              <span className="text-[9px] font-black mt-0.5 text-[#C45832] dark:text-[#FFA07A]">الورشة</span>
             </button>
 
-            {/* Seller Orders */}
+            {/* 4. طلبات الورشة */}
             <button
               type="button"
-              id="mobile-bar-seller-orders"
-              onClick={() => setActivePage('seller-orders')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'seller-orders'
-                  ? 'text-amber-700 dark:text-amber-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="طلبات الورشة"
+              onClick={() => setActivePage('seller-orders' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <ClipboardList className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">الطلبات</span>
+              {activePage === 'seller-orders' && (
+                <motion.div
+                  layoutId="sellerActivePill"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                الطلبات
+              </span>
             </button>
 
-            {/* Seller Live Messages */}
+            {/* 5. الرسائل */}
             <button
               type="button"
-              id="mobile-bar-seller-messages"
-              onClick={() => setActivePage('messages')}
-              className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all min-w-[50px] min-h-[48px] cursor-pointer ${
-                activePage === 'messages' || activePage === 'seller-messages'
-                  ? 'text-amber-700 dark:text-amber-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="رسائل الورشة"
+              onClick={() => setActivePage('messages' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
+              {(activePage === 'messages' || activePage === 'seller-messages') && (
+                <motion.div
+                  layoutId="sellerActivePill"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
               <div className="relative">
-                <MessageSquare className="w-5 h-5" />
+                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-amber-600 text-white text-[9px] font-bold px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 bg-[#D18A25] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
                     {chatUnreadCount}
                   </span>
                 )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight">الرسائل</span>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                المحادثات
+              </span>
             </button>
           </>
         ) : isAuthenticated && currentRole === 'admin' ? (
-          /* ==================== ADMIN SPECIFIC NAVIGATION ==================== */
+          /* ==================== ADMIN NAVIGATION ==================== */
           <>
-            {/* Home / Market */}
             <button
               type="button"
-              id="mobile-bar-admin-home"
-              onClick={() => setActivePage('home')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'home'
-                  ? 'text-purple-700 dark:text-purple-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="الرئيسية"
+              onClick={() => setActivePage('home' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <Home className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">الرئيسية</span>
+              {activePage === 'home' && (
+                <motion.div
+                  layoutId="adminActivePill"
+                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+                الرئيسية
+              </span>
             </button>
 
-            {/* Products Management */}
             <button
               type="button"
-              id="mobile-bar-admin-products"
-              onClick={() => setActivePage('admin-products')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'admin-products'
-                  ? 'text-purple-700 dark:text-purple-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="إدارة المنتجات"
+              onClick={() => setActivePage('admin-products' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <Package className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">المنتجات</span>
+              {activePage === 'admin-products' && (
+                <motion.div
+                  layoutId="adminActivePill"
+                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Package className={`relative z-10 w-4 h-4 ${activePage === 'admin-products' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-products' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+                المنتجات
+              </span>
             </button>
 
-            {/* Center Highlight: Admin Dashboard */}
+            {/* المركز: لوحة الإدارة */}
             <button
               type="button"
-              id="mobile-bar-admin-dash"
-              onClick={() => setActivePage('admin-dashboard')}
-              className="relative -top-2 flex flex-col items-center justify-center cursor-pointer group"
-              aria-label="لوحة الإدارة العليا"
+              onClick={() => setActivePage('admin-dashboard' as any)}
+              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-purple-700 dark:bg-purple-600 text-white flex items-center justify-center shadow-lg shadow-purple-700/30 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-700 to-purple-900 text-white flex items-center justify-center shadow-lg shadow-purple-700/40 group-hover:scale-105 active:scale-95 transition-all">
                 <ShieldAlert className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-0.5 font-bold text-purple-700 dark:text-purple-400">الإدارة</span>
+              <span className="text-[9px] font-black mt-0.5 text-purple-700 dark:text-purple-300">الإدارة</span>
             </button>
 
-            {/* Orders Management */}
             <button
               type="button"
-              id="mobile-bar-admin-orders"
-              onClick={() => setActivePage('admin-orders')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'admin-orders'
-                  ? 'text-purple-700 dark:text-purple-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="إدارة الطلبات"
+              onClick={() => setActivePage('admin-orders' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <ClipboardList className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">الطلبات</span>
+              {activePage === 'admin-orders' && (
+                <motion.div
+                  layoutId="adminActivePill"
+                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'admin-orders' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-orders' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+                الطلبات
+              </span>
             </button>
 
-            {/* Users & Sellers */}
             <button
               type="button"
-              id="mobile-bar-admin-users"
-              onClick={() => setActivePage('admin-sellers')}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all min-w-[56px] min-h-[48px] cursor-pointer ${
-                activePage === 'admin-sellers'
-                  ? 'text-purple-700 dark:text-purple-400 font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82]'
-              }`}
-              aria-label="الورش والبائعين"
+              onClick={() => setActivePage('admin-sellers' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
             >
-              <Users className="w-5 h-5" />
-              <span className="text-[10px] mt-1 tracking-tight">الورش</span>
+              {activePage === 'admin-sellers' && (
+                <motion.div
+                  layoutId="adminActivePill"
+                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Store className={`relative z-10 w-4 h-4 ${activePage === 'admin-sellers' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-sellers' ? 'text-purple-700 dark:text-purple-400' : 'text-stone-600 dark:text-stone-400'}`}>
+                الورش
+              </span>
             </button>
           </>
         ) : (
           /* ==================== BUYER & GUEST SHOPPING NAVIGATION ==================== */
           <>
-            {/* 1. Home */}
+            {/* 1. الرئيسية */}
             <button
               type="button"
-              id="mobile-bar-home"
-              onClick={() => setActivePage('home')}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
-                activePage === 'home'
-                  ? 'text-[#B24C2B] dark:text-[#FF855D] font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
+              onClick={() => setActivePage('home' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
               aria-label="الرئيسية"
-              aria-current={activePage === 'home' ? 'page' : undefined}
             >
-              <div className="relative">
-                <Home className="w-5 h-5 transition-transform active:scale-90" />
-                {isAuthenticated && activePage === 'home' && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B24C2B] dark:bg-[#FF855D] rounded-full" />
-                )}
-              </div>
-              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">الرئيسية</span>
+              {activePage === 'home' && (
+                <motion.div
+                  layoutId="mobileActiveTab"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                الرئيسية
+              </span>
             </button>
 
-            {/* 2. Products / Market */}
+            {/* 2. المقتنيات والمعروضات */}
             <button
               type="button"
-              id="mobile-bar-products"
-              onClick={() => setActivePage('products')}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
-                activePage === 'products' || activePage === 'product-details'
-                  ? 'text-[#B24C2B] dark:text-[#FF855D] font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
-              aria-label="المتجر"
-              aria-current={activePage === 'products' ? 'page' : undefined}
+              onClick={() => setActivePage('products' as any)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
+              aria-label="المقتنيات"
             >
-              <div className="relative">
-                <Grid className="w-5 h-5 transition-transform active:scale-90" />
-                {isAuthenticated && (activePage === 'products' || activePage === 'product-details') && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B24C2B] dark:bg-[#FF855D] rounded-full" />
-                )}
-              </div>
-              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">المتجر</span>
+              {(activePage === 'products' || activePage === 'product-details') && (
+                <motion.div
+                  layoutId="mobileActiveTab"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' || activePage === 'product-details' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' || activePage === 'product-details' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                المقتنيات
+              </span>
             </button>
 
-            {/* 3. Craft Reels */}
+            {/* 3. الزر المركزي البارز: أطلس محافظات الصعيد */}
             <button
               type="button"
-              id="mobile-bar-reels"
-              onClick={() => setActivePage('reels')}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
-                activePage === 'reels'
-                  ? 'text-[#B24C2B] dark:text-[#FF855D] font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
-              aria-label="فيديوهات الحرف"
-              aria-current={activePage === 'reels' ? 'page' : undefined}
+              onClick={() => setActivePage('map' as any)}
+              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
+              aria-label="أطلس الصعيد"
             >
-              <div className="relative">
-                <Film className="w-5 h-5 transition-transform active:scale-90" />
-                <span className="absolute -top-1 -right-2 bg-gradient-to-r from-rose-500 to-amber-500 text-white text-[7px] font-black px-1 rounded-full">
-                  Reels
-                </span>
-                {isAuthenticated && activePage === 'reels' && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B24C2B] dark:bg-[#FF855D] rounded-full" />
-                )}
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C45832] to-[#8F391E] text-white flex items-center justify-center shadow-xl shadow-[#C45832]/35 group-hover:scale-105 active:scale-95 transition-all">
+                <MapPin className="w-5 h-5" />
               </div>
-              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">الفيديوهات</span>
+              <span className="text-[9px] font-black mt-0.5 text-[#C45832] dark:text-[#FFA07A]">الصعيد</span>
             </button>
 
-            {/* 4. Cart Button */}
+            {/* 4. سلة المشتريات */}
             <button
               type="button"
-              id="mobile-bar-cart"
-              onClick={() => {
-                setIsCartDrawerOpen(true);
-              }}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
-                activePage === 'cart'
-                  ? 'text-[#B24C2B] dark:text-[#FF855D] font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
-              aria-label={`سلة المشتريات، ${cartCount} عناصر`}
+              onClick={() => setIsCartDrawerOpen(true)}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
+              aria-label="سلة المقتنيات"
             >
+              {activePage === 'cart' && (
+                <motion.div
+                  layoutId="mobileActiveTab"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
               <div className="relative">
-                <ShoppingBag className="w-5 h-5 transition-transform active:scale-90" />
+                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-2 bg-[#B24C2B] dark:bg-[#FF855D] text-white text-[9px] font-black px-1 min-w-[15px] h-[15px] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2.5 bg-[#C45832] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
-                {isAuthenticated && activePage === 'cart' && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B24C2B] dark:bg-[#FF855D] rounded-full" />
-                )}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight font-medium truncate max-w-full">السلة</span>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
+                السلة
+              </span>
             </button>
 
-            {/* 5. Account / Login */}
+            {/* 5. الحساب / تسجيل الدخول */}
             <button
               type="button"
-              id="mobile-bar-account"
               onClick={handleAccountClick}
-              className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all min-h-[44px] cursor-pointer ${
-                isAccountActive
-                  ? 'text-[#B24C2B] dark:text-[#FF855D] font-bold'
-                  : 'text-[#73675B] dark:text-[#9C8F82] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2]'
-              }`}
+              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
               aria-label={isAuthenticated ? 'حسابي' : 'تسجيل الدخول'}
-              aria-current={isAccountActive ? 'page' : undefined}
             >
-              <div className="relative">
-                {!isAuthenticated ? (
-                  <LogIn className="w-5 h-5 transition-transform active:scale-90" />
-                ) : (
-                  <User className="w-5 h-5 transition-transform active:scale-90" />
-                )}
-                {isAuthenticated && isAccountActive && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#B24C2B] dark:bg-[#FF855D] rounded-full" />
-                )}
-              </div>
-              <span className="text-[10px] mt-1 tracking-tight truncate max-w-full">
+              {isAccountActive && (
+                <motion.div
+                  layoutId="mobileActiveTab"
+                  className="absolute inset-0 rounded-2xl bg-[#C45832]/10 dark:bg-[#C45832]/20 border border-[#C45832]/30"
+                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                />
+              )}
+              {!isAuthenticated ? (
+                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              ) : (
+                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-500 dark:text-stone-400'}`} />
+              )}
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-[#C45832] dark:text-[#FFA07A]' : 'text-stone-600 dark:text-stone-400'}`}>
                 {!isAuthenticated ? 'دخول' : 'حسابي'}
               </span>
             </button>
           </>
         )}
-      </div>
+      </nav>
     </div>
   );
 };

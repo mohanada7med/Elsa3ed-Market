@@ -11,21 +11,21 @@ export const ToastContainer: React.FC = () => {
       <AnimatePresence>
         {toasts.map((toast) => {
           let Icon = CheckCircle2;
-          let borderClass = 'border-emerald-500/40 bg-emerald-50 text-emerald-950';
-          let iconColor = 'text-emerald-600';
+          let borderClass = 'border-emerald-300 dark:border-emerald-800/60 bg-emerald-50 dark:bg-[#12241A] text-emerald-950 dark:text-emerald-100 shadow-md';
+          let iconColor = 'text-emerald-600 dark:text-emerald-400';
 
           if (toast.type === 'error') {
             Icon = AlertCircle;
-            borderClass = 'border-rose-500/40 bg-rose-50 text-rose-950';
-            iconColor = 'text-rose-600';
+            borderClass = 'border-rose-300 dark:border-rose-800/60 bg-rose-50 dark:bg-[#281315] text-rose-950 dark:text-rose-100 shadow-md';
+            iconColor = 'text-rose-600 dark:text-rose-400';
           } else if (toast.type === 'warning') {
             Icon = AlertTriangle;
-            borderClass = 'border-amber-500/40 bg-amber-50 text-amber-950';
-            iconColor = 'text-amber-600';
+            borderClass = 'border-amber-300 dark:border-amber-800/60 bg-amber-50 dark:bg-[#271C0F] text-amber-950 dark:text-amber-100 shadow-md';
+            iconColor = 'text-amber-600 dark:text-amber-400';
           } else if (toast.type === 'info') {
             Icon = Info;
-            borderClass = 'border-orange-500/40 bg-orange-50 text-orange-950';
-            iconColor = 'text-orange-600';
+            borderClass = 'border-orange-300 dark:border-orange-800/60 bg-orange-50 dark:bg-[#261710] text-orange-950 dark:text-orange-100 shadow-md';
+            iconColor = 'text-orange-600 dark:text-orange-400';
           }
 
           return (

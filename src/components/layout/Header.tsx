@@ -1,33 +1,361 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { NotificationCenter } from '../common/NotificationCenter';
 import {
-  ShoppingBag,
-  Heart,
-  MessageSquare,
-  Search,
   Menu,
   X,
-  User,
-  ShieldAlert,
-  Store,
-  Sparkles,
-  ChevronDown,
-  Film,
-  LogOut,
-  PackageCheck,
-  Compass,
-  Info,
-  Layers,
-  ArrowRight,
-  ArrowLeft,
-  LogIn,
-  UserPlus,
+  Search,
   Sun,
-  Moon
+  Moon,
+  Heart,
+  ShoppingBag,
+  MessageCircle,
+  UserCircle,
+  ChevronDown,
+  LogOut,
+  Package,
+  LayoutDashboard,
+  Sparkles,
+  Play,
+  Store,
+  ShieldCheck,
+  ArrowLeft,
+  Bell,
+  Check,
 } from 'lucide-react';
-
 import { motion, AnimatePresence } from 'motion/react';
+import { ActivePage } from '@/src/types';
+
+/* =========================================================
+   TYPES
+   ========================================================= */
+
+type NotificationItem = {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  unread?: boolean;
+};
+
+/* =========================================================
+   NOTIFICATION CENTER
+   ========================================================= */
+
+const NotificationCenter: React.FC<{
+  isDark: boolean;
+  mainText: string;
+  secondaryText: string;
+  borderColor: string;
+  hoverBg: string;
+}> = ({
+  isDark,
+  mainText,
+  secondaryText,
+  borderColor,
+  hoverBg,
+}) => {
+    const [open, setOpen] = useState(false);
+
+    const [notifications, setNotifications] =
+      useState<NotificationItem[]>([
+        {
+          id: '1',
+          title: 'أهلاً بيك في وه',
+          message:
+            'اكتشف منتجات وحكايات الصعيد من مكان واحد.',
+          time: 'دلوقتي',
+          unread: true,
+        },
+        {
+          id: '2',
+          title: 'اكتشف محافظات الصعيد',
+          message:
+            'شوف الأماكن والحكايات والحرف من محافظات الصعيد.',
+          time: 'منذ فترة',
+          unread: true,
+        },
+      ]);
+
+    const unreadCount = notifications.filter(
+      (item) => item.unread
+    ).length;
+
+    const markAllRead = () => {
+      setNotifications((prev) =>
+        prev.map((item) => ({
+          ...item,
+          unread: false,
+        }))
+      );
+    };
+
+    return (
+      <div className="relative shrink-0">
+        {/* BELL */}
+        <button
+          id="header-notifications-btn"
+          type="button"
+          aria-label="الإشعارات"
+          aria-expanded={open}
+          onClick={() => setOpen((prev) => !prev)}
+          className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+          style={{
+            backgroundColor: hoverBg,
+            color: mainText,
+          }}
+        >
+          <Bell size={18} />
+
+          {unreadCount > 0 && (
+            <span
+              className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+              style={{
+                backgroundColor: '#B24C2B',
+                color: '#fff',
+              }}
+            >
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </button>
+
+        <AnimatePresence>
+          {open && (
+            <>
+              {/* MOBILE BACKDROP */}
+              <motion.div
+                className="fixed inset-0 z-[400] bg-black/30 sm:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setOpen(false)}
+              />
+
+              {/* NOTIFICATION PANEL */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: -8,
+                  scale: 0.97,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  y: -8,
+                  scale: 0.97,
+                }}
+                transition={{
+                  duration: 0.16,
+                }}
+                className="
+                fixed
+                left-3
+                right-3
+                top-[74px]
+                z-[410]
+                overflow-hidden
+                rounded-2xl
+                border
+                shadow-2xl
+                sm:absolute
+                sm:left-auto
+                sm:right-0
+                sm:top-[calc(100%+10px)]
+                sm:w-[350px]
+              "
+                style={{
+                  backgroundColor: isDark
+                    ? '#201914'
+                    : '#FFFDF9',
+                  borderColor,
+                }}
+              >
+                {/* HEADER */}
+                <div
+                  className="flex items-center justify-between border-b px-4 py-3"
+                  style={{
+                    borderColor,
+                  }}
+                >
+                  <div>
+                    <h3 className="text-sm font-bold">
+                      الإشعارات
+                    </h3>
+
+                    <p
+                      className="mt-0.5 text-[11px]"
+                      style={{
+                        color: secondaryText,
+                      }}
+                    >
+                      آخر التحديثات والتنبيهات
+                    </p>
+                  </div>
+
+                  {unreadCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={markAllRead}
+                      className="flex items-center gap-1 text-[11px] font-semibold"
+                      style={{
+                        color: '#B24C2B',
+                      }}
+                    >
+                      <Check size={13} />
+                      قراءة الكل
+                    </button>
+                  )}
+                </div>
+
+                {/* LIST */}
+                <div className="max-h-[55vh] overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map(
+                      (notification) => (
+                        <button
+                          key={notification.id}
+                          type="button"
+                          onClick={() => {
+                            setNotifications(
+                              (prev) =>
+                                prev.map((item) =>
+                                  item.id ===
+                                    notification.id
+                                    ? {
+                                      ...item,
+                                      unread:
+                                        false,
+                                    }
+                                    : item
+                                )
+                            );
+                          }}
+                          className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors"
+                          style={{
+                            borderColor,
+                            backgroundColor:
+                              notification.unread
+                                ? isDark
+                                  ? 'rgba(178,76,43,0.08)'
+                                  : 'rgba(178,76,43,0.05)'
+                                : 'transparent',
+                          }}
+                        >
+                          {/* ICON */}
+                          <div
+                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                            style={{
+                              backgroundColor:
+                                isDark
+                                  ? 'rgba(178,76,43,0.16)'
+                                  : 'rgba(178,76,43,0.10)',
+                              color: '#B24C2B',
+                            }}
+                          >
+                            <Bell size={16} />
+                          </div>
+
+                          {/* TEXT */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <p className="text-xs font-bold">
+                                {notification.title}
+                              </p>
+
+                              {notification.unread && (
+                                <span
+                                  className="mt-1 h-2 w-2 shrink-0 rounded-full"
+                                  style={{
+                                    backgroundColor:
+                                      '#B24C2B',
+                                  }}
+                                />
+                              )}
+                            </div>
+
+                            <p
+                              className="mt-1 text-[11px] leading-5"
+                              style={{
+                                color: secondaryText,
+                              }}
+                            >
+                              {notification.message}
+                            </p>
+
+                            <p
+                              className="mt-1 text-[10px]"
+                              style={{
+                                color: secondaryText,
+                              }}
+                            >
+                              {notification.time}
+                            </p>
+                          </div>
+                        </button>
+                      )
+                    )
+                  ) : (
+                    <div className="px-5 py-10 text-center">
+                      <Bell
+                        size={28}
+                        className="mx-auto opacity-30"
+                      />
+
+                      <p
+                        className="mt-3 text-sm font-semibold"
+                        style={{
+                          color: mainText,
+                        }}
+                      >
+                        مفيش إشعارات
+                      </p>
+
+                      <p
+                        className="mt-1 text-xs"
+                        style={{
+                          color: secondaryText,
+                        }}
+                      >
+                        هتظهر هنا أي تحديثات جديدة
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* FOOTER */}
+                <div
+                  className="border-t p-2"
+                  style={{
+                    borderColor,
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="w-full rounded-xl py-2.5 text-xs font-semibold"
+                    style={{
+                      backgroundColor: hoverBg,
+                      color: mainText,
+                    }}
+                  >
+                    إغلاق
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  };
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 export const Header: React.FC = () => {
   const {
@@ -47,931 +375,1817 @@ export const Header: React.FC = () => {
     setShowIntroVideo,
     theme,
     toggleTheme,
-    chatUnreadCount
+    chatUnreadCount,
   } = useApp();
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] =
+    useState(false);
 
-  // Close dropdown on outside click
+  const [userDropdownOpen, setUserDropdownOpen] =
+    useState(false);
+
+  const [searchOverlayOpen, setSearchOverlayOpen] =
+    useState(false);
+
+  const dropdownRef =
+    useRef<HTMLDivElement>(null);
+
+  const searchInputRef =
+    useRef<HTMLInputElement>(null);
+
+  /* =========================================================
+     CLOSE ACCOUNT DROPDOWN
+     ========================================================= */
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (
+      event: PointerEvent
+    ) => {
+      const target = event.target as Node;
+
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
+      ) {
         setUserDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener(
+      'pointerdown',
+      handleClickOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        'pointerdown',
+        handleClickOutside
+      );
+    };
   }, []);
 
-  // Focus mobile search input when opened
-  useEffect(() => {
-    if (mobileSearchOpen) {
-      setTimeout(() => mobileSearchInputRef.current?.focus(), 100);
-    }
-  }, [mobileSearchOpen]);
+  /* =========================================================
+     SEARCH FOCUS
+     ========================================================= */
 
-  // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
-    if (mobileMenuOpen) {
+    if (!searchOverlayOpen) return;
+
+    const timer = setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [searchOverlayOpen]);
+
+  /* =========================================================
+     BODY LOCK
+     ========================================================= */
+
+  useEffect(() => {
+    if (
+      mobileMenuOpen ||
+      searchOverlayOpen
+    ) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
+
     return () => {
       document.body.style.overflow = '';
     };
-  }, [mobileMenuOpen]);
+  }, [
+    mobileMenuOpen,
+    searchOverlayOpen,
+  ]);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      setActivePage('products');
-      setMobileSearchOpen(false);
-    }
+  /* =========================================================
+     ESC
+     ========================================================= */
+
+  useEffect(() => {
+    const handleKeyDown = (
+      event: KeyboardEvent
+    ) => {
+      if (event.key !== 'Escape') return;
+
+      setMobileMenuOpen(false);
+      setSearchOverlayOpen(false);
+      setUserDropdownOpen(false);
+    };
+
+    document.addEventListener(
+      'keydown',
+      handleKeyDown
+    );
+
+    return () => {
+      document.removeEventListener(
+        'keydown',
+        handleKeyDown
+      );
+    };
+  }, []);
+
+  /* =========================================================
+     SEARCH
+     ========================================================= */
+
+  const handleSearchSubmit = (
+    event: React.FormEvent
+  ) => {
+    event.preventDefault();
+
+    if (!searchQuery.trim()) return;
+
+    setActivePage('products');
+    setSearchOverlayOpen(false);
   };
 
-  // Navigation links tailored per authenticated role
-  const roleNavLinks = React.useMemo(() => {
-    if (isAuthenticated && currentRole === 'seller') {
+  /* =========================================================
+     NAV LINKS
+     ========================================================= */
+
+  const roleNavLinks = (() => {
+    if (currentRole === 'seller') {
       return [
-        { id: 'seller-dashboard', label: 'لوحة التحكم' },
-        { id: 'seller-products', label: 'منتجات الورشة' },
-        { id: 'seller-inventory', label: 'إدارة المخزون' },
-        { id: 'seller-orders', label: 'طلبات الورشة' },
-        { id: 'seller-analytics', label: 'المبيعات' },
-        { id: 'seller-account', label: 'إعدادات الحساب' }
+        {
+          id: 'seller-dashboard',
+          label: 'لوحة التحكم',
+          icon: LayoutDashboard,
+        },
+        {
+          id: 'seller-products',
+          label: 'منتجاتي',
+          icon: Package,
+        },
+        {
+          id: 'seller-inventory',
+          label: 'المخزون',
+          icon: Store,
+        },
+        {
+          id: 'seller-orders',
+          label: 'الطلبات',
+          icon: ShoppingBag,
+        },
+        {
+          id: 'seller-analytics',
+          label: 'الإحصائيات',
+          icon: Sparkles,
+        },
+        {
+          id: 'seller-account',
+          label: 'حسابي',
+          icon: UserCircle,
+        },
       ];
     }
-    if (isAuthenticated && currentRole === 'admin') {
+
+    if (currentRole === 'admin') {
       return [
-        { id: 'admin-dashboard', label: 'لوحة الإدارة' },
-        { id: 'admin-buyers', label: 'المستخدمون' },
-        { id: 'admin-products', label: 'إدارة المنتجات' },
-        { id: 'admin-sellers', label: 'الورش والحرفيون' },
-        { id: 'admin-orders', label: 'إدارة الطلبات' },
-        { id: 'admin-reports', label: 'التقارير' },
-        { id: 'admin-audit-logs', label: 'سجل الرقابة' }
+        {
+          id: 'admin-dashboard',
+          label: 'لوحة التحكم',
+          icon: LayoutDashboard,
+        },
+        {
+          id: 'admin-buyers',
+          label: 'المشترين',
+          icon: UserCircle,
+        },
+        {
+          id: 'admin-products',
+          label: 'المنتجات',
+          icon: Package,
+        },
+        {
+          id: 'admin-sellers',
+          label: 'البائعين',
+          icon: Store,
+        },
+        {
+          id: 'admin-orders',
+          label: 'الطلبات',
+          icon: ShoppingBag,
+        },
+        {
+          id: 'admin-reports',
+          label: 'التقارير',
+          icon: Sparkles,
+        },
+        {
+          id: 'admin-audit-logs',
+          label: 'سجل النشاط',
+          icon: ShieldCheck,
+        },
       ];
     }
-    return [
-      { id: 'home', label: 'الرئيسية' },
-      { id: 'products', label: 'كافة المنتجات' },
-      { id: 'categories', label: 'التصنيفات التراثية' },
-      { id: 'map', label: 'رحلة محافظات الصعيد', isNew: true },
-      { id: 'crafts', label: 'حكايات الحرف' },
-      { id: 'reels', label: 'فيديوهات الحرف', isNew: true },
-      { id: 'sellers', label: 'الورش والحرفيون' },
-      ...(isAuthenticated && currentRole === 'buyer'
-        ? [
-          { id: 'cart', label: 'سلة المشتريات' },
-          { id: 'orders', label: 'طلباتي' }
-        ]
-        : [{ id: 'about', label: 'عن وه' }])
+
+    const links: any[] = [
+      {
+        id: 'home',
+        label: 'الرئيسية',
+      },
+      {
+        id: 'products',
+        label: 'المنتجات',
+      },
+      {
+        id: 'categories',
+        label: 'التصنيفات',
+      },
+      {
+        id: 'map',
+        label: 'محافظات الصعيد',
+        isNew: true,
+      },
+      {
+        id: 'crafts',
+        label: 'الحرف',
+      },
+      {
+        id: 'reels',
+        label: 'الحكايات',
+        isNew: true,
+      },
+      {
+        id: 'sellers',
+        label: 'البائعين',
+      },
     ];
-  }, [isAuthenticated, currentRole]);
+
+    if (
+      isAuthenticated &&
+      currentRole === 'buyer'
+    ) {
+      links.push({
+        id: 'cart',
+        label: 'السلة',
+      });
+
+      links.push({
+        id: 'orders',
+        label: 'طلباتي',
+      });
+    }
+
+    links.push({
+      id: 'about',
+      label: 'عن وه',
+    });
+
+    return links;
+  })();
+
+  /* =========================================================
+     NAVIGATE
+     ========================================================= */
+
+  const navigate = (page: string) => {
+    setActivePage(page as ActivePage);
+    setMobileMenuOpen(false);
+    setUserDropdownOpen(false);
+  };
+
+  /* =========================================================
+     USER
+     ========================================================= */
+
+  const displayName =
+    currentUser?.name ||
+    currentUser?.username ||
+    'حسابي';
+
+  const profileImage =
+    currentUser?.profileImage?.secureUrl ||
+    (currentUser as any)?.avatar ||
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png';
+
+  /* =========================================================
+     COLORS
+     ========================================================= */
+
+  const isDark = theme === 'dark';
+
+  const headerBg = isDark
+    ? '#15110E'
+    : '#FAF7F2';
+
+  const mainText = isDark
+    ? '#FFF8F0'
+    : '#1C1613';
+
+  const secondaryText = isDark
+    ? '#E1D4C7'
+    : '#5B4C42';
+
+  const borderColor = isDark
+    ? 'rgba(255,248,240,0.10)'
+    : 'rgba(28,22,19,0.10)';
+
+  const hoverBg = isDark
+    ? 'rgba(255,255,255,0.07)'
+    : 'rgba(28,22,19,0.05)';
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF7F2]/95 dark:bg-[#1A1614]/95 backdrop-blur-md border-b border-[#E5DDD3] dark:border-[#352B24] shadow-xs transition-colors duration-200">
-      {/* Top Heritage Notice Bar */}
-      <div className="bg-[#B24C2B] text-[#FAF7F2] text-[11px] sm:text-xs md:text-sm py-1.5 sm:py-2 px-3 sm:px-4 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4">
-          <div className="flex items-center gap-2 overflow-hidden flex-1 min-w-0">
-            {/* Seamless Moving Marquee Ticker */}
-            <div className="overflow-hidden whitespace-nowrap flex-1 min-w-0" dir="ltr">
-              <div className="animate-marquee cursor-default select-none flex">
-                <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 shrink-0" dir="rtl">
-                  <span className="font-medium">
-                    شحن مباشر ومضمون من ورش الصعيد في قنا وسوهاج وأسوان وأسيوط لباب بيتك
-                  </span>
-                  <span className="text-amber-300/80 text-xs">✦</span>
-                  <span className="font-medium text-amber-100/90 hidden xs:inline">
-                    دعم مباشر لأكثر من 15 ورشة وحرفي مصري أصيل
-                  </span>
-                  <span className="text-amber-300/80 text-xs hidden xs:inline">✦</span>
-                </div>
-                <div className="flex items-center gap-3 sm:gap-4 px-3 sm:px-4 shrink-0" dir="rtl" aria-hidden="true">
-                  <span className="font-medium">
-                    شحن مباشر ومضمون من ورش الصعيد في قنا وسوهاج وأسوان وأسيوط لباب بيتك
-                  </span>
-                  <span className="text-amber-300/80 text-xs">✦</span>
-                  <span className="font-medium text-amber-100/90 hidden xs:inline">
-                    دعم مباشر لأكثر من 15 ورشة وحرفي مصري أصيل
-                  </span>
-                  <span className="text-amber-300/80 text-xs hidden xs:inline">✦</span>
-                </div>
-              </div>
-            </div>
-          </div>
+    <>
+      {/* =====================================================
+          HEADER
+          ===================================================== */}
 
-          <div className="hidden md:flex items-center gap-3 lg:gap-4 text-xs font-medium shrink-0">
-            <button
-              type="button"
-              id="header-play-intro-btn"
-              onClick={() => setShowIntroVideo(true)}
-              className="flex items-center gap-1.5 hover:text-amber-200 transition-colors cursor-pointer"
-              aria-label="شاهد وثائقي الصعيد وفنون الحرف اليدوية"
+      <header
+        dir="rtl"
+        className="sticky top-0 z-[100] w-full overflow-visible"
+        style={{
+          backgroundColor: headerBg,
+          color: mainText,
+          borderBottom: `1px solid ${borderColor}`,
+        }}
+      >
+        {/* ===================================================
+            TOP BAR
+            =================================================== */}
+
+        <div
+          className="hidden border-b lg:block "
+          style={{
+            borderColor,
+          }}
+        >
+          <div className="mx-auto flex h-9 max-w-[1500px] items-center justify-between px-6 ">
+            <div
+              className="flex items-center gap-2 text-xs"
+              style={{
+                color: secondaryText,
+              }}
             >
-              <Film className="w-3.5 h-3.5" />
-              <span>شاهد وثائقي الصعيد</span>
-            </button>
-            <span className="text-white/30">|</span>
-            <button
-              type="button"
-              id="header-theme-toggle-top"
-              onClick={toggleTheme}
-              className="flex items-center gap-1.5 hover:text-amber-200 transition-colors cursor-pointer text-xs"
-              aria-label={theme === 'dark' ? 'التحويل إلى الوضع المضيء النهاري' : 'التحويل إلى الوضع الداكن الليلي'}
-            >
-              {theme === 'dark' ? (
-                <>
-                  <Sun className="w-3.5 h-3.5 text-amber-300" />
-                  <span>الوضع المضيء</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-3.5 h-3.5 text-amber-200" />
-                  <span>الوضع الداكن</span>
-                </>
-              )}
-            </button>
-            <span className="text-white/30 hidden lg:inline">|</span>
-            <div className="hidden lg:flex items-center gap-2">
-              <span className="font-bold">
-                على امتداد النيل.. من أسوان مرورًا بالأقصر وقنا وسوهاج حتى أسيوط
+              <Sparkles size={13} />
+
+              <span>
+                من قلب الصعيد... حكاية بتبدأ
               </span>
+            </div>
+
+            <div
+              className="flex items-center gap-5 text-xs"
+              style={{
+                color: secondaryText,
+              }}
+            >
+              <span>أصالة</span>
+              <span>•</span>
+              <span>حرفة</span>
+              <span>•</span>
+              <span>حكاية</span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18 lg:h-20 gap-2 sm:gap-4 lg:gap-6">
-          {/* Logo Section */}
-          <div
-            id="brand-logo"
-            role="button"
-            tabIndex={0}
-            aria-label="وه - العودة إلى الصفحة الرئيسية"
-            onClick={() => setActivePage('home')}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setActivePage('home');
-              }
-            }}
-            className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 cursor-pointer group shrink-0 select-none"
-          >
-            <div className="w-15 h-15 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-30 lg:h-30 flex items-center justify-center group-hover:scale-105 shrink-0 transition-transform duration-200">
-              <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
-                alt="شعار وه"
-                className="w-full h-full object-contain drop-shadow-xs"
-              />
-            </div>
-            <div className="flex flex-col justify-center">
+        {/* ===================================================
+            MAIN ROW
+            =================================================== */}
 
-              <span className="hidden sm:block text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89C90] font-medium tracking-wide mt-1">
-                العالم الرقمي لصعيد مصر
-              </span>
-            </div>
-          </div>
+        <div className="mx-auto max-w-[1500px] px-2 sm:px-5 lg:px-6">
+          <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
 
-          {/* Search Input (Desktop & Tablets >= lg) */}
-          <div className="hidden lg:flex flex-1 max-w-sm xl:max-w-md 2xl:max-w-lg mx-2 xl:mx-4">
-            <form onSubmit={handleSearchSubmit} className="relative w-full" role="search">
-              <input
-                type="text"
-                id="desktop-search-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن: فخار قنا، كليم أخميم، عسل سدر..."
-                aria-label="البحث في وه"
-                className="w-full bg-[#F3EFE9] dark:bg-[#26201B] hover:bg-[#EDE7DF] dark:hover:bg-[#2D2723] focus:bg-white dark:focus:bg-[#1E1917] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#73675B] rounded-xl pl-16 pr-4 py-2 sm:py-2.5 border border-[#E5DDD3] dark:border-[#352B24] focus:border-[#B24C2B] focus:ring-2 focus:ring-[#B24C2B]/20 outline-none transition-all"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute left-9 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-[#B24C2B] rounded-full transition-colors cursor-pointer"
-                  aria-label="مسح نص البحث"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
+            {/* =================================================
+                LEFT
+                ================================================= */}
+
+            <div className="flex min-w-0 items-center">
+
+              {/* MOBILE MENU */}
+
               <button
-                type="submit"
-                id="desktop-search-btn"
-                className="absolute left-1.5 top-1/2 -translate-y-1/2 p-2 text-[#B24C2B] hover:text-[#9E4F36] rounded-lg hover:bg-amber-100/50 dark:hover:bg-amber-900/30 transition-colors cursor-pointer"
-                aria-label="تنفيذ البحث"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </form>
-          </div>
-
-          {/* Action Controls Area */}
-          <div className="flex items-center gap-1 sm:gap-2 md:gap-2.5 shrink-0">
-            {/* Mobile/Tablet Search Toggle (< lg) */}
-            <button
-              type="button"
-              id="mobile-search-toggle"
-              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-              className={`lg:hidden p-2 sm:p-2.5 rounded-xl transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center ${mobileSearchOpen
-                ? 'bg-[#B24C2B] text-white'
-                : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] border border-transparent hover:border-[#E5DDD3] dark:hover:border-[#352B24]'
-                }`}
-              aria-label={mobileSearchOpen ? 'إغلاق شريط البحث' : 'فتح شريط البحث'}
-            >
-              {mobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
-            </button>
-
-            {/* Theme Toggle Button (Light/Dark Mode) */}
-            <button
-              type="button"
-              id="header-theme-toggle-btn"
-              onClick={toggleTheme}
-              className="p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-all flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px]"
-              title={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
-              aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري المضيء' : 'التبديل إلى الوضع الليلي الداكن'}
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 animate-spin-slow transition-transform hover:rotate-90" />
-              ) : (
-                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] hover:text-[#B24C2B] transition-colors" />
-              )}
-            </button>
-
-            {/* Notification Center (Active for Seller, Admin and logged-in Buyers) */}
-            {isAuthenticated && (
-              <NotificationCenter />
-            )}
-
-            {/* Live Chat Messages Button (Visible when Authenticated or for Buyers/Sellers) */}
-            {isAuthenticated && (
-              <button
+                id="mobile-menu-toggle"
                 type="button"
-                id="nav-chat-btn"
-                onClick={() => {
-                  if (currentRole === 'seller') {
-                    setActivePage('seller-dashboard');
-                  } else {
-                    setActivePage('messages');
-                  }
+                onClick={() =>
+                  setMobileMenuOpen(true)
+                }
+                aria-label="فتح القائمة"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 lg:hidden"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
                 }}
-                className={`relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors flex items-center justify-center cursor-pointer border ${activePage === 'messages' || activePage === 'seller-messages'
-                  ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
-                  : 'border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B]'
-                  } min-h-[44px] min-w-[44px]`}
-                title="المحادثات المباشرة"
-                aria-label={`المحادثات المباشرة، ${chatUnreadCount} رسائل غير مقروءة`}
               >
-                <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] dark:text-[#A89C90] hover:text-[#B24C2B]" />
-                {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs animate-pulse">
-                    {chatUnreadCount}
-                  </span>
-                )}
+                <Menu size={21} />
               </button>
-            )}
 
-            {/* Favorites Icon (Buyers and Guests only - Hidden for Seller & Admin) */}
-            {(currentRole === 'buyer' || !isAuthenticated) && (
-              <button
-                type="button"
-                id="nav-favorites-btn"
-                onClick={() => setActivePage('favorites')}
-                className="relative p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors hidden sm:flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] min-h-[44px] min-w-[44px]"
-                title="المفضلة"
-                aria-label={`قائمة المفضلة، ${favorites.length} عناصر محفوظة`}
-              >
-                <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-[#73675B] dark:text-[#A89C90] hover:text-[#B24C2B]" />
-                {favorites.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#B24C2B] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
-                    {favorites.length}
-                  </span>
-                )}
-              </button>
-            )}
+              {/* DESKTOP NAV */}
 
-            {/* Shopping Cart Button (Buyers and Guests only - Hidden for Seller & Admin) */}
-            {(currentRole === 'buyer' || !isAuthenticated) && (
-              <button
-                type="button"
-                id="nav-cart-btn"
-                onClick={() => setIsCartDrawerOpen(true)}
-                className="relative flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl shadow-xs transition-all min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer"
-                aria-label={`سلة المشتريات، ${cartCount} عناصر مضافة`}
-              >
-                <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-xs sm:text-sm font-bold hidden md:inline">السلة</span>
-                {cartCount > 0 && (
-                  <span className="bg-amber-300 text-[#2D2A26] text-[11px] sm:text-xs font-black px-1.5 sm:px-2 py-0.5 rounded-full min-w-[18px] sm:min-w-[20px] text-center leading-none">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
-            )}
+              <div className="hidden items-center gap-5 lg:flex">
 
-            {/* Authentication States */}
-            {!isAuthenticated ? (
-              /* GUEST: Show responsive Login & Register buttons */
-              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   type="button"
-                  id="header-login-btn"
-                  onClick={() => {
-
-                    setAuthModalTab('login');
-                    setIsAuthModalOpen(true);
+                  onClick={() =>
+                    navigate('home')
+                  }
+                  className="whitespace-nowrap text-sm font-medium"
+                  style={{
+                    color:
+                      activePage === 'home'
+                        ? '#B24C2B'
+                        : mainText,
                   }}
-                  className="px-2.5 sm:px-3.5 md:px-4 py-2 sm:py-2.5 bg-white dark:bg-[#26201B] hover:bg-[#F3EFE9] dark:hover:bg-[#2D2723] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all flex items-center gap-1.5 sm:gap-2 min-h-[40px] sm:min-h-[44px] cursor-pointer"
-                  aria-label="تسجيل الدخول إلى حسابك"
                 >
-                  <LogIn className="w-4 h-4 text-[#B24C2B]" />
-                  <span className="hidden xs:inline">تسجيل الدخول</span>
-                  <span className="xs:hidden">دخول</span>
+                  الرئيسية
                 </button>
 
                 <button
                   type="button"
-                  id="header-register-btn"
-                  onClick={() => {
-                    setAuthModalTab('register');
-                    setIsAuthModalOpen(true);
+                  onClick={() =>
+                    navigate('products')
+                  }
+                  className="whitespace-nowrap text-sm font-medium"
+                  style={{
+                    color:
+                      activePage === 'products'
+                        ? '#B24C2B'
+                        : mainText,
                   }}
-                  className="hidden xl:flex px-4 py-2.5 bg-[#F3EFE9] dark:bg-[#2A2320] hover:bg-[#E5DDD3] dark:hover:bg-[#352D29] text-[#B24C2B] dark:text-[#FF855D] border border-[#B24C2B]/30 text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all items-center gap-1.5 min-h-[44px] cursor-pointer"
-                  aria-label="إنشاء حساب جديد في وه"
                 >
-                  <UserPlus className="w-4 h-4" />
-                  <span>إنشاء حساب</span>
+                  المنتجات
                 </button>
-              </div>
-            ) : (
-              /* LOGGED-IN: User Profile Dropdown Button */
-              <div className="relative" ref={dropdownRef}>
+
                 <button
                   type="button"
-                  id="user-menu-btn"
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2.5 p-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] rounded-xl bg-white dark:bg-[#26201B] transition-colors cursor-pointer min-h-[40px] sm:min-h-[44px]"
-                  aria-label={`قائمة الحساب: ${currentUser.name || currentUser.username}`}
-                  aria-expanded={userDropdownOpen}
-                  aria-haspopup="true"
+                  onClick={() =>
+                    navigate('map')
+                  }
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium"
+                  style={{
+                    color:
+                      activePage === 'map'
+                        ? '#B24C2B'
+                        : mainText,
+                  }}
                 >
-                  <img
-                    src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
-                    alt={currentUser.name || currentUser.username}
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
-                  />
-                  <div className="text-right hidden md:block max-w-[120px] lg:max-w-[150px]">
-                    <span className="text-xs sm:text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] block leading-tight truncate">
-                      {currentUser.username || currentUser.name}
-                    </span>
-                    <span className="text-[10px] sm:text-[11px] text-[#73675B] dark:text-[#A89C90] block font-medium truncate">
-                      {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'حرفي وورشة' : 'حسابي'}
-                    </span>
-                  </div>
-                  <ChevronDown className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2D2A26] dark:text-[#FAF6F2] transition-transform duration-200 ${userDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
+                  محافظات الصعيد
 
-                {/* Dropdown Menu */}
-                <AnimatePresence>
-                  {userDropdownOpen && (
-                    <motion.div
-                      id="user-dropdown-menu"
-                      initial={{ opacity: 0, scale: 0.95, y: -4 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: -4 }}
-                      transition={{ duration: 0.15, ease: "easeOut" }}
-                      className="absolute left-0 mt-2 w-64 sm:w-72 bg-white dark:bg-[#201B18] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl shadow-xl py-2 z-50 origin-top-left"
-                    >
-                      <div className="px-4 py-3 border-b border-[#F3EFE9] dark:border-[#2D2723]">
-                        <p className="text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] truncate">
-                          {currentUser.name || currentUser.username}
-                        </p>
-                        {currentUser.email ? (
-                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">{currentUser.email}</p>
-                        ) : (
-                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] truncate">@{currentUser.username}</p>
-                        )}
-                        <span
-                          className={`inline-block mt-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${currentRole === 'admin'
-                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300'
-                            : currentRole === 'seller'
-                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                              : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300'
-                            }`}
-                        >
-                          {currentRole === 'admin' ? 'مدير المنصة' : currentRole === 'seller' ? 'ورشة معتمدة' : 'مشتري موثق'}
-                        </span>
-                      </div>
-
-                      {/* Universal Profile & Settings link */}
-                      <button
-                        type="button"
-                        id="user-profile-link"
-                        onClick={() => {
-                          setActivePage('buyer-account');
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
-                        aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
-                      >
-                        <User className="w-4 h-4 text-[#B24C2B]" />
-                        <span>الملف الشخصي وإعدادات الحساب</span>
-                      </button>
-
-                      {/* Live Chat Messages Link in Dropdown */}
-                      <button
-                        type="button"
-                        id="user-messages-link"
-                        onClick={() => {
-                          if (currentRole === 'seller') {
-                            setActivePage('seller-dashboard');
-                          } else {
-                            setActivePage('messages');
-                          }
-                          setUserDropdownOpen(false);
-                        }}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center justify-between font-medium transition-colors cursor-pointer"
-                        aria-label="المحادثات المباشرة مع الحرفيين"
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <MessageSquare className="w-4 h-4 text-amber-600" />
-                          <span>المحادثات المباشرة</span>
-                        </div>
-                        {chatUnreadCount > 0 && (
-                          <span className="text-[10px] bg-amber-600 text-white font-bold px-2 py-0.5 rounded-full">
-                            {chatUnreadCount}
-                          </span>
-                        )}
-                      </button>
-
-                      {/* Buyer Links */}
-                      {currentRole === 'buyer' && (
-                        <>
-                          <button
-                            type="button"
-                            id="user-orders-link"
-                            onClick={() => {
-                              setActivePage('orders');
-                              setUserDropdownOpen(false);
-                            }}
-                            className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
-                            aria-label="الانتقال إلى طلباتي وتتبع الشحنات"
-                          >
-                            <PackageCheck className="w-4 h-4 text-[#B24C2B]" />
-                            <span>طلباتي وتتبع الشحنات</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            id="user-favorites-link"
-                            onClick={() => {
-                              setActivePage('favorites');
-                              setUserDropdownOpen(false);
-                            }}
-                            className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center gap-2.5 font-medium transition-colors cursor-pointer"
-                            aria-label={`الانتقال إلى قائمة المفضلة، ${favorites.length} عناصر`}
-                          >
-                            <Heart className="w-4 h-4 text-[#B24C2B]" />
-                            <span>قائمة المفضلة ({favorites.length})</span>
-                          </button>
-                        </>
-                      )}
-
-                      {/* Seller Links */}
-                      {currentRole === 'seller' && (
-                        <button
-                          type="button"
-                          id="seller-dash-link"
-                          onClick={() => {
-                            setActivePage('seller-dashboard');
-                            setUserDropdownOpen(false);
-                          }}
-                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-amber-900 dark:text-amber-300 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40 flex items-center gap-2.5 transition-colors cursor-pointer"
-                          aria-label="الانتقال إلى لوحة تحكم الورشة والمنتجات"
-                        >
-                          <Store className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                          <span>لوحة تحكم الورشة والمنتجات</span>
-                        </button>
-                      )}
-
-                      {/* Admin Links */}
-                      {currentRole === 'admin' && (
-                        <button
-                          type="button"
-                          id="admin-dash-link"
-                          onClick={() => {
-                            setActivePage('admin-dashboard');
-                            setUserDropdownOpen(false);
-                          }}
-                          className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-purple-900 dark:text-purple-300 font-bold hover:bg-purple-50 dark:hover:bg-purple-950/40 flex items-center gap-2.5 transition-colors cursor-pointer"
-                          aria-label="الانتقال إلى لوحة إدارة المنصة والرقابة"
-                        >
-                          <ShieldAlert className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                          <span>لوحة إدارة المنصة والرقابة</span>
-                        </button>
-                      )}
-
-                      {/* Theme toggle in menu */}
-                      <button
-                        type="button"
-                        id="user-dropdown-theme-toggle"
-                        onClick={toggleTheme}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#2A2420] flex items-center justify-between font-medium transition-colors cursor-pointer"
-                        aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري' : 'التبديل إلى الوضع الداكن'}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          {theme === 'dark' ? (
-                            <Sun className="w-4 h-4 text-amber-400" />
-                          ) : (
-                            <Moon className="w-4 h-4 text-[#B24C2B]" />
-                          )}
-                          <span>المظهر: {theme === 'dark' ? 'الوضع الداكن' : 'الوضع النهاري'}</span>
-                        </div>
-                        <span className="text-[11px] px-2 py-0.5 rounded-md bg-[#F3EFE9] dark:bg-[#2D2723] border border-[#E5DDD3] dark:border-[#352B24] text-[#73675B] dark:text-[#A89C90] font-bold">
-                          {theme === 'dark' ? 'ليلي 🌙' : 'نهاري ☀️'}
-                        </span>
-                      </button>
-
-                      <div className="border-t border-[#F3EFE9] dark:border-[#2D2723] my-1" />
-
-                      {/* Logout */}
-                      <button
-                        type="button"
-                        id="auth-logout-btn"
-                        onClick={() => {
-                          setUserDropdownOpen(false);
-                          logout();
-                        }}
-                        className="w-full text-right px-4 py-2.5 text-xs sm:text-sm text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center gap-2.5 font-bold transition-colors cursor-pointer"
-                        aria-label="تسجيل الخروج من الحساب"
-                      >
-                        <LogOut className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                        <span>تسجيل الخروج</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-
-            {/* Mobile Hamburger Button (< md) */}
-            <button
-              type="button"
-              id="mobile-menu-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 sm:p-2.5 text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] rounded-xl transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
-              aria-label={mobileMenuOpen ? 'إغلاق القائمة الرئيسية' : 'فتح القائمة الرئيسية'}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Expandable Mobile/Tablet Search Bar */}
-        <AnimatePresence>
-          {mobileSearchOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="lg:hidden pb-3 overflow-hidden"
-            >
-              <form onSubmit={handleSearchSubmit} className="relative w-full" role="search">
-                <input
-                  ref={mobileSearchInputRef}
-                  type="text"
-                  id="mobile-search-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="ابحث عن: فخار قنا، كليم، عسل سدر..."
-                  aria-label="البحث عن منتجات الصعيد"
-                  className="w-full bg-[#F3EFE9] dark:bg-[#26201B] text-xs sm:text-sm text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72] dark:placeholder:text-[#73675B] rounded-xl pl-10 pr-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] focus:border-[#B24C2B] outline-none"
-                />
-                <button
-                  type="submit"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-[#B24C2B] cursor-pointer"
-                  aria-label="تنفيذ البحث"
-                >
-                  <Search className="w-4 h-4" />
-                </button>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Desktop Secondary Navigation Bar (md+) */}
-        <nav className="hidden md:flex items-center gap-1.5 pb-2.5 sm:pb-3 border-t border-[#E5DDD3]/70 dark:border-[#352B24]/70 pt-2.5 overflow-x-auto no-scrollbar" aria-label="روابط التنقل الرئيسية">
-          {roleNavLinks.map((link) => {
-            const isActive = activePage === link.id;
-            return (
-              <button
-                key={link.id}
-                type="button"
-                id={`nav-link-${link.id}`}
-                onClick={() => setActivePage(link.id as any)}
-                aria-label={`الانتقال إلى صفحة ${link.label}`}
-                aria-current={isActive ? 'page' : undefined}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${isActive
-                  ? 'bg-[#B24C2B] text-white shadow-xs'
-                  : 'text-[#54493F] dark:text-[#C5B8AC] hover:text-[#B24C2B] dark:hover:text-[#FF855D] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B]'
-                  }`}
-              >
-                <span>{link.label}</span>
-                {'isNew' in link && (link as any).isNew && (
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black animate-pulse ${isActive ? 'bg-amber-300 text-[#2D2A26]' : 'bg-[#B24C2B] text-white'
-                    }`}>
+                  <span
+                    className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
+                    }}
+                  >
                     جديد
                   </span>
+                </button>
+              </div>
+            </div>
+
+            {/* =================================================
+                LOGO
+                ================================================= */}
+
+            <button
+              id="brand-logo"
+              type="button"
+              onClick={() =>
+                navigate('home')
+              }
+              aria-label="وه - الرئيسية"
+              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95"
+            >
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                alt="وه"
+                draggable={false}
+                className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
+              />
+            </button>
+
+            {/* =================================================
+                RIGHT ACTIONS
+                ================================================= */}
+
+            <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
+
+              {/* SEARCH */}
+
+              <button
+                id="search-trigger-btn"
+                type="button"
+                onClick={() =>
+                  setSearchOverlayOpen(true)
+                }
+                aria-label="بحث"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <Search size={18} />
+              </button>
+
+              {/* THEME */}
+
+              <button
+                id="header-theme-toggle-btn"
+                type="button"
+                onClick={toggleTheme}
+                aria-label={
+                  isDark
+                    ? 'تفعيل الوضع الفاتح'
+                    : 'تفعيل الوضع الداكن'
+                }
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                {isDark ? (
+                  <Sun size={18} />
+                ) : (
+                  <Moon size={18} />
                 )}
               </button>
-            );
-          })}
 
-          {/* Quick Role Badges on the far left */}
-          {isAuthenticated && currentRole === 'seller' && (
-            <button
-              type="button"
-              id="nav-quick-seller"
-              onClick={() => setActivePage('seller-dashboard')}
-              aria-label="الانتقال السريع إلى لوحة تحكم ورشتك"
-              className="mr-auto flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors shrink-0 cursor-pointer"
-            >
-              <Store className="w-3.5 h-3.5" />
-              <span>لوحة تحكم ورشتك</span>
-            </button>
-          )}
+              {/* FAVORITES - TABLET/DESKTOP */}
 
-          {isAuthenticated && currentRole === 'admin' && (
-            <button
-              type="button"
-              id="nav-quick-admin"
-              onClick={() => setActivePage('admin-dashboard')}
-              aria-label="الانتقال السريع إلى لوحة الإدارة العليا"
-              className="mr-auto flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors shrink-0 cursor-pointer"
-            >
-              <ShieldAlert className="w-3.5 h-3.5" />
-              <span>لوحة الإدارة العليا</span>
-            </button>
-          )}
+              <button
+                id="nav-favorites-btn"
+                type="button"
+                onClick={() =>
+                  navigate('favorites')
+                }
+                aria-label="المفضلة"
+                className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <Heart size={18} />
 
-          {isAuthenticated && currentRole === 'buyer' && (
-            <button
-              type="button"
-              id="nav-quick-orders"
-              onClick={() => setActivePage('orders')}
-              aria-label="الانتقال السريع إلى متابعة طلباتي"
-              className="mr-auto flex items-center gap-1.5 px-3.5 py-1.5 sm:py-2 bg-[#F3EFE9] dark:bg-[#26201B] text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#E5DDD3] dark:hover:bg-[#2D2723] rounded-xl text-xs font-bold border border-[#E5DDD3] dark:border-[#352B24] transition-colors shrink-0 cursor-pointer"
-            >
-              <PackageCheck className="w-3.5 h-3.5 text-[#B24C2B]" />
-              <span>متابعة طلباتي</span>
-            </button>
-          )}
-        </nav>
-      </div>
-
-      {/* Mobile Drawer Menu Overlay & Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            {/* Backdrop overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileMenuOpen(false)}
-              className="fixed inset-0 top-16 sm:top-20 bg-black/60 z-30 backdrop-blur-xs"
-              aria-hidden="true"
-            />
-
-            {/* Drawer Content */}
-            <motion.div
-              id="mobile-drawer"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22, ease: "easeInOut" }}
-              className="md:hidden relative z-40 bg-[#FAF7F2] dark:bg-[#1A1614] border-b border-[#E5DDD3] dark:border-[#352B24] px-4 py-4 space-y-3.5 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
-              role="dialog"
-              aria-label="قائمة التنقل للهواتف"
-            >
-              {/* User Card on Mobile Drawer */}
-              {isAuthenticated ? (
-                <div className="flex items-center justify-between p-3.5 bg-white dark:bg-[#201B18] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-2xs">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src={currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
-                      alt={currentUser.name || currentUser.username}
-                      className="w-10 h-10 rounded-xl object-cover border border-[#E5DDD3] dark:border-[#352B24] shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <span className="text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] block leading-tight truncate">
-                        {currentUser.name || currentUser.username}
-                      </span>
-                      <span className="text-xs text-[#73675B] dark:text-[#A89C90] block truncate">
-                        {currentUser.email || `@${currentUser.username}`}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    id="mobile-logout-btn"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      logout();
+                {favorites.length > 0 && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
                     }}
-                    aria-label="تسجيل الخروج من الحساب"
-                    className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-xl border border-rose-200 dark:border-rose-900/50 shrink-0 cursor-pointer"
                   >
-                    خروج
+                    {favorites.length > 99
+                      ? '99+'
+                      : favorites.length}
+                  </span>
+                )}
+              </button>
+
+              {/* CHAT - DESKTOP */}
+
+              <button
+                id="nav-chat-btn"
+                type="button"
+                onClick={() =>
+                  navigate('messages')
+                }
+                aria-label="الرسائل"
+                className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <MessageCircle size={18} />
+
+                {chatUnreadCount > 0 && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
+                    }}
+                  >
+                    {chatUnreadCount > 99
+                      ? '99+'
+                      : chatUnreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* =================================================
+                  NOTIFICATIONS
+                  IMPORTANT:
+                  NOW VISIBLE ON MOBILE TOO
+                  ================================================= */}
+
+              <NotificationCenter
+                isDark={isDark}
+                mainText={mainText}
+                secondaryText={secondaryText}
+                borderColor={borderColor}
+                hoverBg={hoverBg}
+              />
+
+              {/* CART */}
+
+              <button
+                id="nav-cart-btn"
+                type="button"
+                onClick={() =>
+                  setIsCartDrawerOpen(true)
+                }
+                aria-label="السلة"
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <ShoppingBag size={18} />
+
+                {cartCount > 0 && (
+                  <span
+                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
+                    }}
+                  >
+                    {cartCount > 99
+                      ? '99+'
+                      : cartCount}
+                  </span>
+                )}
+              </button>
+
+              {/* =================================================
+                  USER
+                  ================================================= */}
+
+              {isAuthenticated ? (
+                <div
+                  ref={dropdownRef}
+                  className="relative shrink-0"
+                >
+                  <button
+                    id="user-menu-btn"
+                    type="button"
+                    onPointerDown={(event) =>
+                      event.stopPropagation()
+                    }
+                    onClick={(event) => {
+                      event.stopPropagation();
+
+                      setUserDropdownOpen(
+                        (prev) => !prev
+                      );
+                    }}
+                    aria-expanded={
+                      userDropdownOpen
+                    }
+                    aria-haspopup="menu"
+                    aria-label="قائمة الحساب"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-auto sm:gap-2 lg:h-11"
+                    style={{
+                      backgroundColor: hoverBg,
+                      color: mainText,
+                    }}
+                  >
+                    <img
+                      src={profileImage}
+                      alt={displayName}
+                      className="h-8 w-8 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                    />
+
+                    <span className="hidden max-w-[100px] truncate text-sm font-semibold xl:block">
+                      {displayName}
+                    </span>
+
+                    <ChevronDown
+                      size={15}
+                      className={`hidden transition-transform duration-200 xl:block ${userDropdownOpen
+                        ? 'rotate-180'
+                        : ''
+                        }`}
+                    />
                   </button>
+
+                  {/* USER DROPDOWN */}
+
+                  <AnimatePresence>
+                    {userDropdownOpen && (
+                      <motion.div
+                        id="user-dropdown-menu"
+                        role="menu"
+                        initial={{
+                          opacity: 0,
+                          y: -8,
+                          scale: 0.97,
+                        }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          scale: 1,
+                        }}
+                        exit={{
+                          opacity: 0,
+                          y: -8,
+                          scale: 0.97,
+                        }}
+                        transition={{
+                          duration: 0.16,
+                        }}
+                        onPointerDown={(event) =>
+                          event.stopPropagation()
+                        }
+                        className="absolute left-0 top-[calc(100%+10px)] z-[500] w-[270px] overflow-hidden rounded-2xl border shadow-2xl"
+                        style={{
+                          backgroundColor:
+                            isDark
+                              ? '#201914'
+                              : '#FFFDF9',
+                          borderColor,
+                        }}
+                      >
+                        {/* USER INFO */}
+
+                        <div
+                          className="border-b p-4"
+                          style={{
+                            borderColor,
+                          }}
+                        >
+                          <div className="flex items-center gap-3">
+
+                            <img
+                              src={profileImage}
+                              alt={displayName}
+                              className="h-11 w-11 rounded-full object-cover"
+                            />
+
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-bold">
+                                {displayName}
+                              </p>
+
+                              <p
+                                className="mt-0.5 text-xs"
+                                style={{
+                                  color:
+                                    secondaryText,
+                                }}
+                              >
+                                {currentRole ===
+                                  'admin'
+                                  ? 'مدير النظام'
+                                  : currentRole ===
+                                    'seller'
+                                    ? 'بائع'
+                                    : 'مشتري'}
+                              </p>
+                            </div>
+
+                          </div>
+                        </div>
+
+                        {/* MENU */}
+
+                        <div className="p-2">
+
+                          <button
+                            id="user-profile-link"
+                            type="button"
+                            onClick={() =>
+                              navigate(
+                                'profile'
+                              )
+                            }
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            style={{
+                              color: mainText,
+                            }}
+                          >
+                            <UserCircle size={18} />
+                            <span>حسابي</span>
+                          </button>
+
+                          <button
+                            id="user-messages-link"
+                            type="button"
+                            onClick={() =>
+                              navigate(
+                                'messages'
+                              )
+                            }
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            style={{
+                              color: mainText,
+                            }}
+                          >
+                            <MessageCircle
+                              size={18}
+                            />
+                            <span>الرسائل</span>
+                          </button>
+
+                          <button
+                            id="user-orders-link"
+                            type="button"
+                            onClick={() =>
+                              navigate('orders')
+                            }
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            style={{
+                              color: mainText,
+                            }}
+                          >
+                            <Package size={18} />
+                            <span>طلباتي</span>
+                          </button>
+
+                          <button
+                            id="user-favorites-link"
+                            type="button"
+                            onClick={() =>
+                              navigate(
+                                'favorites'
+                              )
+                            }
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            style={{
+                              color: mainText,
+                            }}
+                          >
+                            <Heart size={18} />
+                            <span>المفضلة</span>
+                          </button>
+
+                          {currentRole ===
+                            'seller' && (
+                              <button
+                                id="seller-dash-link"
+                                type="button"
+                                onClick={() =>
+                                  navigate(
+                                    'seller-dashboard'
+                                  )
+                                }
+                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                                style={{
+                                  color:
+                                    mainText,
+                                }}
+                              >
+                                <Store size={18} />
+                                <span>
+                                  لوحة البائع
+                                </span>
+                              </button>
+                            )}
+
+                          {currentRole ===
+                            'admin' && (
+                              <button
+                                id="admin-dash-link"
+                                type="button"
+                                onClick={() =>
+                                  navigate(
+                                    'admin-dashboard'
+                                  )
+                                }
+                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                                style={{
+                                  color:
+                                    mainText,
+                                }}
+                              >
+                                <ShieldCheck
+                                  size={18}
+                                />
+                                <span>
+                                  لوحة الإدارة
+                                </span>
+                              </button>
+                            )}
+
+                          <div
+                            className="my-2 border-t"
+                            style={{
+                              borderColor,
+                            }}
+                          />
+
+                          <button
+                            id="auth-logout-btn"
+                            type="button"
+                            onClick={() => {
+                              setUserDropdownOpen(
+                                false
+                              );
+
+                              logout();
+                            }}
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            style={{
+                              color:
+                                '#B24C2B',
+                            }}
+                          >
+                            <LogOut size={18} />
+                            <span>
+                              تسجيل الخروج
+                            </span>
+                          </button>
+
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 p-2 bg-[#F3EFE9] dark:bg-[#26201B] rounded-2xl">
+                <>
                   <button
+                    id="header-login-btn"
                     type="button"
-                    id="mobile-login-btn"
                     onClick={() => {
-                      setMobileMenuOpen(false);
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
-                    aria-label="تسجيل الدخول إلى حسابك"
-                    className="py-2.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] text-xs sm:text-sm font-bold rounded-xl text-center shadow-2xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer border border-[#E5DDD3] dark:border-[#352B24]"
+                    className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-semibold sm:flex"
+                    style={{
+                      color: mainText,
+                      border: `1px solid ${borderColor}`,
+                    }}
                   >
-                    <LogIn className="w-4 h-4 text-[#B24C2B]" />
-                    <span>تسجيل الدخول</span>
+                    دخول
                   </button>
+
                   <button
+                    id="header-register-btn"
                     type="button"
-                    id="mobile-register-btn"
                     onClick={() => {
-                      setMobileMenuOpen(false);
-                      setAuthModalTab('register');
+                      setAuthModalTab(
+                        'register'
+                      );
                       setIsAuthModalOpen(true);
                     }}
-                    aria-label="إنشاء حساب جديد في وه"
-                    className="py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white text-xs sm:text-sm font-bold rounded-xl text-center shadow-xs min-h-[44px] flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="hidden h-10 items-center justify-center rounded-full px-5 text-sm font-semibold lg:flex"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
+                    }}
                   >
-                    <UserPlus className="w-4 h-4" />
-                    <span>إنشاء حساب</span>
+                    إنشاء حساب
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ===================================================
+            DESKTOP NAV
+            =================================================== */}
+
+        <div
+          className="hidden border-t lg:block"
+          style={{
+            borderColor,
+          }}
+        >
+          <nav className="mx-auto flex h-12 max-w-[1500px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
+            {roleNavLinks.map(
+              (link: any) => {
+                const Icon = link.icon;
+
+                return (
+                  <button
+                    key={link.id}
+                    type="button"
+                    onClick={() =>
+                      navigate(link.id)
+                    }
+                    className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-medium"
+                    style={{
+                      color:
+                        activePage ===
+                          link.id
+                          ? '#B24C2B'
+                          : mainText,
+                    }}
+                  >
+                    {Icon && (
+                      <Icon size={15} />
+                    )}
+
+                    <span>
+                      {link.label}
+                    </span>
+
+                    {link.isNew && (
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                        style={{
+                          backgroundColor:
+                            '#B24C2B',
+                          color: '#fff',
+                        }}
+                      >
+                        جديد
+                      </span>
+                    )}
+                  </button>
+                );
+              }
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {/* =====================================================
+          SEARCH OVERLAY
+          ===================================================== */}
+
+      <AnimatePresence>
+        {searchOverlayOpen && (
+          <motion.div
+            className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28"
+            style={{
+              backgroundColor: isDark
+                ? 'rgba(10,8,6,0.94)'
+                : 'rgba(250,247,242,0.96)',
+            }}
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+          >
+            <motion.div
+              className="w-full max-w-[680px]"
+              initial={{
+                opacity: 0,
+                y: -20,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -20,
+              }}
+            >
+              <div className="mb-5 flex items-center justify-between">
+
+                <div>
+                  <p
+                    className="text-xs font-medium"
+                    style={{
+                      color:
+                        '#B24C2B',
+                    }}
+                  >
+                    وه
+                  </p>
+
+                  <h2 className="mt-1 text-xl font-bold sm:text-2xl">
+                    بتدور على إيه؟
+                  </h2>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSearchOverlayOpen(
+                      false
+                    )
+                  }
+                  aria-label="إغلاق البحث"
+                  className="flex h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor:
+                      hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form
+                onSubmit={
+                  handleSearchSubmit
+                }
+              >
+                <div
+                  className="flex items-center gap-3 rounded-2xl border px-4 shadow-xl"
+                  style={{
+                    backgroundColor:
+                      isDark
+                        ? '#201914'
+                        : '#FFFDF9',
+                    borderColor,
+                  }}
+                >
+                  <Search
+                    size={21}
+                    className="shrink-0"
+                    style={{
+                      color:
+                        secondaryText,
+                    }}
+                  />
+
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) =>
+                      setSearchQuery(
+                        e.target.value
+                      )
+                    }
+                    placeholder="ابحث عن منتج، حرفة، مكان..."
+                    className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base"
+                    style={{
+                      color: mainText,
+                    }}
+                  />
+
+                  <button
+                    type="submit"
+                    className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-semibold sm:flex"
+                    style={{
+                      backgroundColor:
+                        '#B24C2B',
+                      color: '#fff',
+                    }}
+                  >
+                    بحث
+                    <ArrowLeft size={16} />
                   </button>
                 </div>
-              )}
+              </form>
 
-              {/* Theme Switcher Row in Drawer */}
-              <div className="p-3 bg-[#F3EFE9] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-2xl flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  {theme === 'dark' ? (
-                    <Moon className="w-5 h-5 text-amber-400" />
-                  ) : (
-                    <Sun className="w-5 h-5 text-amber-600" />
-                  )}
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-[#2D2A26] dark:text-[#FAF6F2] block">مظهر المنصة</span>
-                    <span className="text-[11px] text-[#73675B] dark:text-[#A89C90] block">
-                      {theme === 'dark' ? 'الوضع الداكن (الليلي)' : 'الوضع المضيء (النهاري)'}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  id="mobile-theme-toggle-btn"
-                  onClick={toggleTheme}
-                  aria-label={theme === 'dark' ? 'التبديل إلى الوضع النهاري' : 'التبديل إلى الوضع الداكن'}
-                  className="px-3 py-1.5 bg-white dark:bg-[#1E1917] text-[#2D2A26] dark:text-[#FAF6F2] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] rounded-xl text-xs font-bold shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
-                >
-                  {theme === 'dark' ? (
-                    <>
-                      <Sun className="w-3.5 h-3.5 text-amber-400" />
-                      <span>نهاري</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="w-3.5 h-3.5 text-[#B24C2B]" />
-                      <span>داكن</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              <div className="mt-7">
 
-              {/* Navigation Links in Drawer */}
-              <div className="space-y-1">
-                {roleNavLinks.map((link) => {
-                  const isActive = activePage === link.id;
-                  return (
-                    <button
-                      key={link.id}
-                      type="button"
-                      id={`mobile-nav-${link.id}`}
-                      onClick={() => {
-                        setActivePage(link.id as any);
-                        setMobileMenuOpen(false);
-                      }}
-                      aria-label={`الانتقال إلى صفحة ${link.label}`}
-                      aria-current={isActive ? 'page' : undefined}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-right transition-colors min-h-[44px] cursor-pointer ${isActive
-                        ? 'bg-[#B24C2B] text-white'
-                        : 'text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B]'
-                        }`}
-                    >
-                      <span>{link.label}</span>
-                      <ArrowLeft className="w-4 h-4 opacity-70" />
-                    </button>
-                  );
-                })}
-
-                {/* Documentary Trigger */}
-                <button
-                  type="button"
-                  id="mobile-intro-btn"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setShowIntroVideo(true);
+                <p
+                  className="mb-3 text-xs font-semibold"
+                  style={{
+                    color:
+                      secondaryText,
                   }}
-                  aria-label="مشاهدة الفيلم الوثائقي عن تراث وحرف الصعيد"
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100/80 dark:hover:bg-amber-900/50 transition-colors min-h-[44px] cursor-pointer"
                 >
-                  <div className="flex items-center gap-2">
-                    <Film className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                    <span>شاهد وثائقي الصعيد</span>
-                  </div>
-                  <ArrowLeft className="w-4 h-4 opacity-70" />
+                  ممكن تدور على
+                </p>
+
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    'فخار',
+                    'كليم',
+                    'هدايا',
+                    'حرف يدوية',
+                    'أسيوط',
+                    'سوهاج',
+                    'الأقصر',
+                    'أسوان',
+                  ].map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery(
+                          tag
+                        );
+                        setActivePage(
+                          'products'
+                        );
+                        setSearchOverlayOpen(
+                          false
+                        );
+                      }}
+                      className="rounded-full border px-3.5 py-2 text-xs font-medium sm:text-sm"
+                      style={{
+                        color: mainText,
+                        borderColor,
+                        backgroundColor:
+                          hoverBg,
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* =====================================================
+          MOBILE DRAWER
+          ===================================================== */}
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-[700] bg-black/50 lg:hidden"
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              onClick={() =>
+                setMobileMenuOpen(false)
+              }
+            />
+
+            <motion.aside
+              dir="rtl"
+              className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden"
+              style={{
+                backgroundColor:
+                  isDark
+                    ? '#15110E'
+                    : '#FAF7F2',
+                color: mainText,
+                paddingBottom:
+                  'env(safe-area-inset-bottom)',
+              }}
+              initial={{
+                x: '100%',
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: '100%',
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+              }}
+            >
+
+              {/* MOBILE HEADER */}
+
+              <div
+                className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20"
+                style={{
+                  backgroundColor:
+                    isDark
+                      ? '#15110E'
+                      : '#FAF7F2',
+                  borderColor,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMobileMenuOpen(
+                      false
+                    )
+                  }
+                  aria-label="إغلاق القائمة"
+                  className="flex h-10 w-10 items-center justify-center rounded-full"
+                  style={{
+                    backgroundColor:
+                      hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <X size={20} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('home')
+                  }
+                  className="flex items-center"
+                >
+                  <img
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                    alt="وه"
+                    className="h-11 w-auto object-contain sm:h-12"
+                  />
                 </button>
               </div>
 
-              {/* Role-Specific Protected Links in Drawer */}
-              {isAuthenticated && (
-                <div className="border-t border-[#E5DDD3] dark:border-[#352B24] pt-2 space-y-1">
+              <div className="p-4">
+
+                {/* ACCOUNT */}
+
+                {isAuthenticated ? (
+                  <div
+                    className="mb-5 rounded-2xl border p-4"
+                    style={{
+                      borderColor,
+                      backgroundColor:
+                        hoverBg,
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+
+                      <img
+                        src={profileImage}
+                        alt={displayName}
+                        className="h-12 w-12 shrink-0 rounded-full object-cover"
+                      />
+
+                      <div className="min-w-0">
+
+                        <p className="truncate text-sm font-bold">
+                          {displayName}
+                        </p>
+
+                        <p
+                          className="mt-1 text-xs"
+                          style={{
+                            color:
+                              secondaryText,
+                          }}
+                        >
+                          {currentRole ===
+                            'admin'
+                            ? 'مدير النظام'
+                            : currentRole ===
+                              'seller'
+                              ? 'حساب بائع'
+                              : 'حساب مشتري'}
+                        </p>
+
+                      </div>
+                    </div>
+
+                    <button
+                      id="mobile-account-link"
+                      type="button"
+                      onClick={() =>
+                        navigate('profile')
+                      }
+                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
+                      style={{
+                        backgroundColor:
+                          '#B24C2B',
+                        color: '#fff',
+                      }}
+                    >
+                      <UserCircle size={17} />
+                      حسابي
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mb-5 grid grid-cols-2 gap-2">
+
+                    <button
+                      id="mobile-login-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(
+                          false
+                        );
+                        setAuthModalTab(
+                          'login'
+                        );
+                        setIsAuthModalOpen(
+                          true
+                        );
+                      }}
+                      className="rounded-xl border py-3 text-sm font-semibold"
+                      style={{
+                        borderColor,
+                        color: mainText,
+                      }}
+                    >
+                      دخول
+                    </button>
+
+                    <button
+                      id="mobile-register-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(
+                          false
+                        );
+                        setAuthModalTab(
+                          'register'
+                        );
+                        setIsAuthModalOpen(
+                          true
+                        );
+                      }}
+                      className="rounded-xl py-3 text-sm font-semibold"
+                      style={{
+                        backgroundColor:
+                          '#B24C2B',
+                        color: '#fff',
+                      }}
+                    >
+                      إنشاء حساب
+                    </button>
+
+                  </div>
+                )}
+
+                {/* NAVIGATION */}
+
+                <div className="space-y-1">
+                  {roleNavLinks.map(
+                    (link: any) => {
+                      const Icon =
+                        link.icon;
+
+                      const isActive =
+                        activePage ===
+                        link.id;
+
+                      return (
+                        <button
+                          key={link.id}
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              link.id
+                            )
+                          }
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-right"
+                          style={{
+                            backgroundColor:
+                              isActive
+                                ? isDark
+                                  ? 'rgba(178,76,43,0.18)'
+                                  : 'rgba(178,76,43,0.09)'
+                                : 'transparent',
+                            color:
+                              isActive
+                                ? '#B24C2B'
+                                : mainText,
+                          }}
+                        >
+                          {Icon && (
+                            <Icon
+                              size={19}
+                              className="shrink-0"
+                            />
+                          )}
+
+                          <span className="flex-1 text-sm font-semibold">
+                            {link.label}
+                          </span>
+
+                          {link.isNew && (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+                              style={{
+                                backgroundColor:
+                                  '#B24C2B',
+                                color:
+                                  '#fff',
+                              }}
+                            >
+                              جديد
+                            </span>
+                          )}
+
+                          <ArrowLeft
+                            size={15}
+                            className="opacity-40"
+                          />
+                        </button>
+                      );
+                    }
+                  )}
+                </div>
+
+                {/* MOBILE ACCOUNT SHORTCUTS */}
+
+                {isAuthenticated && (
+                  <div
+                    className="my-5 border-t pt-4"
+                    style={{
+                      borderColor,
+                    }}
+                  >
+                    <p
+                      className="mb-2 px-3 text-xs font-bold"
+                      style={{
+                        color:
+                          secondaryText,
+                      }}
+                    >
+                      اختصارات الحساب
+                    </p>
+
+                    <button
+                      id="mobile-intro-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(
+                          false
+                        );
+                        setShowIntroVideo(
+                          true
+                        );
+                      }}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      style={{
+                        color: mainText,
+                      }}
+                    >
+                      <Play size={18} />
+                      <span>
+                        شوف حكاية وه
+                      </span>
+                    </button>
+
+                    {currentRole ===
+                      'seller' && (
+                        <button
+                          id="mobile-seller-link"
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              'seller-dashboard'
+                            )
+                          }
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                          style={{
+                            color: mainText,
+                          }}
+                        >
+                          <Store size={18} />
+                          <span>
+                            لوحة البائع
+                          </span>
+                        </button>
+                      )}
+
+                    {currentRole ===
+                      'admin' && (
+                        <button
+                          id="mobile-admin-link"
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              'admin-dashboard'
+                            )
+                          }
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                          style={{
+                            color: mainText,
+                          }}
+                        >
+                          <ShieldCheck
+                            size={18}
+                          />
+                          <span>
+                            لوحة الإدارة
+                          </span>
+                        </button>
+                      )}
+
+                    {/* FAVORITES */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate(
+                          'favorites'
+                        )
+                      }
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      style={{
+                        color: mainText,
+                      }}
+                    >
+                      <Heart size={18} />
+
+                      <span>
+                        المفضلة
+                      </span>
+
+                      {favorites.length >
+                        0 && (
+                          <span
+                            className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={{
+                              backgroundColor:
+                                '#B24C2B',
+                              color: '#fff',
+                            }}
+                          >
+                            {favorites.length}
+                          </span>
+                        )}
+                    </button>
+
+                    {/* MESSAGES */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        navigate(
+                          'messages'
+                        )
+                      }
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      style={{
+                        color: mainText,
+                      }}
+                    >
+                      <MessageCircle
+                        size={18}
+                      />
+
+                      <span>
+                        الرسائل
+                      </span>
+
+                      {chatUnreadCount >
+                        0 && (
+                          <span
+                            className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={{
+                              backgroundColor:
+                                '#B24C2B',
+                              color: '#fff',
+                            }}
+                          >
+                            {chatUnreadCount}
+                          </span>
+                        )}
+                    </button>
+
+                    {/* MOBILE NOTIFICATIONS */}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(
+                          false
+                        );
+
+                        setTimeout(() => {
+                          document
+                            .getElementById(
+                              'header-notifications-btn'
+                            )
+                            ?.click();
+                        }, 100);
+                      }}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      style={{
+                        color: mainText,
+                      }}
+                    >
+                      <Bell size={18} />
+
+                      <span>
+                        الإشعارات
+                      </span>
+
+                      <span
+                        className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                        style={{
+                          backgroundColor:
+                            '#B24C2B',
+                          color: '#fff',
+                        }}
+                      >
+                        جديد
+                      </span>
+                    </button>
+                  </div>
+                )}
+
+                {/* DISCOVER */}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(
+                      false
+                    );
+                    setShowIntroVideo(
+                      true
+                    );
+                  }}
+                  className="mt-4 flex w-full items-center justify-between rounded-2xl border p-4 text-right"
+                  style={{
+                    borderColor,
+                    backgroundColor:
+                      hoverBg,
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-full"
+                      style={{
+                        backgroundColor:
+                          'rgba(178,76,43,0.12)',
+                        color:
+                          '#B24C2B',
+                      }}
+                    >
+                      <Sparkles
+                        size={18}
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-bold">
+                        اكتشف وه
+                      </p>
+
+                      <p
+                        className="mt-1 text-[11px]"
+                        style={{
+                          color:
+                            secondaryText,
+                        }}
+                      >
+                        من الصعيد... لكل مصر
+                      </p>
+                    </div>
+                  </div>
+
+                  <ArrowLeft
+                    size={17}
+                    style={{
+                      color:
+                        secondaryText,
+                    }}
+                  />
+                </button>
+
+                {/* LOGOUT */}
+
+                {isAuthenticated && (
                   <button
                     type="button"
-                    id="mobile-account-link"
                     onClick={() => {
-                      setActivePage('buyer-account');
-                      setMobileMenuOpen(false);
+                      setMobileMenuOpen(
+                        false
+                      );
+                      logout();
                     }}
-                    aria-label="الانتقال إلى الملف الشخصي وإعدادات الحساب"
-                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-[#2D2A26] dark:text-[#FAF6F2] hover:bg-[#F3EFE9] dark:hover:bg-[#26201B] min-h-[44px] cursor-pointer"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
+                    style={{
+                      color:
+                        '#B24C2B',
+                      backgroundColor:
+                        isDark
+                          ? 'rgba(178,76,43,0.10)'
+                          : 'rgba(178,76,43,0.06)',
+                    }}
                   >
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-[#B24C2B]" />
-                      <span>الملف الشخصي وإعدادات الحساب</span>
-                    </div>
-                    <ArrowLeft className="w-4 h-4 opacity-70" />
+                    <LogOut size={17} />
+                    تسجيل الخروج
                   </button>
+                )}
 
-                  {currentRole === 'seller' && (
-                    <button
-                      type="button"
-                      id="mobile-seller-link"
-                      onClick={() => {
-                        setActivePage('seller-dashboard');
-                        setMobileMenuOpen(false);
-                      }}
-                      aria-label="الانتقال إلى لوحة تحكم الورشة"
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-amber-900 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 min-h-[44px] cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Store className="w-4 h-4 text-amber-700 dark:text-amber-400" />
-                        <span>لوحة تحكم الورشة والمنتجات</span>
-                      </div>
-                      <ArrowLeft className="w-4 h-4 opacity-70" />
-                    </button>
-                  )}
+                {/* FOOTER */}
 
-                  {currentRole === 'admin' && (
-                    <button
-                      type="button"
-                      id="mobile-admin-link"
-                      onClick={() => {
-                        setActivePage('admin-dashboard');
-                        setMobileMenuOpen(false);
-                      }}
-                      aria-label="الانتقال إلى لوحة إدارة المنصة والرقابة"
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold text-purple-900 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 min-h-[44px] cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <ShieldAlert className="w-4 h-4 text-purple-700 dark:text-purple-400" />
-                        <span>لوحة إدارة المنصة والرقابة</span>
-                      </div>
-                      <ArrowLeft className="w-4 h-4 opacity-70" />
-                    </button>
-                  )}
+                <div
+                  className="mt-6 border-t pt-5 text-center"
+                  style={{
+                    borderColor,
+                  }}
+                >
+                  <p
+                    className="text-[11px]"
+                    style={{
+                      color:
+                        secondaryText,
+                    }}
+                  >
+                    وه — حكاية الصعيد في إيدك
+                  </p>
                 </div>
-              )}
-            </motion.div>
+
+              </div>
+            </motion.aside>
           </>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 };

@@ -249,8 +249,8 @@ const MainContent: React.FC = () => {
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] transition-colors duration-300">
       <div>
-    
-      
+
+
         <Header />
 
         <AnimatePresence mode="wait">

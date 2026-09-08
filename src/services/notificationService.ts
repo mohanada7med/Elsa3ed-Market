@@ -67,7 +67,29 @@ class NotificationService {
       if (stored) {
         this.notifications = JSON.parse(stored);
       } else {
-        this.notifications = [];
+        this.notifications = [
+          {
+            id: 'seed-1',
+            recipientRole: 'all',
+            title: 'أهلاً بيك في وه',
+            message: 'اكتشف منتجات وحكايات الصعيد من مكان واحد.',
+            type: 'system_alert',
+            read: false,
+            createdAt: new Date().toISOString(),
+            actionPage: 'products'
+          },
+          {
+            id: 'seed-2',
+            recipientRole: 'all',
+            title: 'اكتشف أطلس الصعيد',
+            message: 'شوف الأماكن والحكايات والحرف من محافظات الصعيد.',
+            type: 'system_alert',
+            read: false,
+            createdAt: new Date(Date.now() - 3600000).toISOString(),
+            actionPage: 'map'
+          }
+        ];
+        this.saveToStorage();
       }
     } catch {
       this.notifications = [];
@@ -102,7 +124,7 @@ class NotificationService {
         (n) => (n.recipientRole === 'buyer' && (!n.recipientId || n.recipientId === targetId)) || n.recipientRole === 'all'
       );
     }
-    return [];
+    return this.notifications.filter((n) => n.recipientRole === 'all');
   }
 
   getUnreadCount(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): number {

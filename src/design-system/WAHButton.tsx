@@ -72,7 +72,7 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
     <motion.button
       whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wah-primary,#B24C2B)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wah-primary,#B24C2B)] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[var(--wah-surface,#1B1613)] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {loading ? (

@@ -336,6 +336,7 @@ export type ActivePage =
   | 'admin-discounts'
   | 'admin-reports'
   | 'admin-audit-logs'
+  | 'market'
   | 'admin-settings';
 
 export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';

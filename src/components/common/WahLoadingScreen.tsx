@@ -4,7 +4,7 @@ export const WahLoadingScreen: React.FC = () => {
   return (
     <div
       id="wah-auth-loading-screen"
-      className="fixed inset-0 z-[9999] flex min-h-screen flex-col items-center justify-center bg-[#FAF7F2]"
+      className="fixed inset-0 z-[9999] flex min-h-screen flex-col items-center justify-center bg-[#FAF7F2] dark:bg-[#110E0C] transition-colors"
       role="status"
       aria-label="جاري التحقق من الجلسة..."
     >
@@ -18,7 +18,7 @@ export const WahLoadingScreen: React.FC = () => {
       />
 
       {/* Brand Tagline */}
-      <p className="mt-2 text-sm font-medium text-[#7A746D]">
+      <p className="mt-2 text-sm font-medium text-[#7A746D] dark:text-[#A89C90]">
         العالم الرقمي لصعيد مصر
       </p>
 

@@ -1,7 +1,52 @@
-import React, { useState, useRef } from 'react';
-import { useApp, DEFAULT_USER_AVATAR } from '../../context/AppContext';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
-import { X, Lock, Mail, User, Phone, Store, ShieldAlert, ArrowLeft, CheckCircle2, Camera, RefreshCw } from 'lucide-react';
+import {
+  X,
+  Eye,
+  EyeOff,
+  User,
+  Lock,
+  Phone,
+  Mail,
+  MapPin,
+  Store,
+  Camera,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  UserRound,
+  KeyRound,
+  Info,
+} from 'lucide-react';
+
+/* =========================================================
+   DEFAULT AVATAR
+========================================================= */
+
+const DEFAULT_AVATAR =
+  'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
+
+/* =========================================================
+   USERNAME VALIDATION
+========================================================= */
+
+const USERNAME_REGEX =
+  /^[\p{L}\p{N}_\- ]+$/u;
+
+const MIN_USERNAME_LENGTH = 2;
+const MAX_USERNAME_LENGTH = 40;
+
+/* =========================================================
+   COMPONENT
+========================================================= */
 
 export const AuthModal: React.FC = () => {
   const {
@@ -11,701 +56,2162 @@ export const AuthModal: React.FC = () => {
     setAuthModalTab,
     login,
     register,
-    addToast
+    addToast,
   } = useApp();
 
-  const [roleType, setRoleType] = useState<'buyer' | 'seller'>('buyer');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [governorate, setGovernorate] = useState('قنا');
-  const [workshopName, setWorkshopName] = useState('');
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [forgotSubmitted, setForgotSubmitted] = useState(false);
-  const [forgotIdentifier, setForgotIdentifier] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [roleType, setRoleType] =
+    useState<'buyer' | 'seller'>('buyer');
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const [username, setUsername] =
+    useState('');
+
+  const [password, setPassword] =
+    useState('');
+
+  const [name, setName] =
+    useState('');
+
+  const [phone, setPhone] =
+    useState('');
+
+  const [email, setEmail] =
+    useState('');
+
+  const [governorate, setGovernorate] =
+    useState('');
+
+  const [workshopName, setWorkshopName] =
+    useState('');
+
+  const [forgotPassword, setForgotPassword] =
+    useState(false);
+
+  const [forgotIdentifier, setForgotIdentifier] =
+    useState('');
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [showRegisterPassword, setShowRegisterPassword] =
+    useState(false);
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [error, setError] =
+    useState('');
+
+  const [avatarPreview, setAvatarPreview] =
+    useState<string>(DEFAULT_AVATAR);
+
+  const avatarInputRef =
+    useRef<HTMLInputElement>(null);
+
+  /* =========================================================
+     PREVENT BACKGROUND SCROLL
+  ========================================================= */
+
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+
+    const previousBodyOverflow =
+      document.body.style.overflow;
+
+    const previousHtmlOverflow =
+      document.documentElement.style.overflow;
+
+    const previousBodyPaddingRight =
+      document.body.style.paddingRight;
+
+    const scrollbarWidth =
+      window.innerWidth -
+      document.documentElement.clientWidth;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight =
+        `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      document.body.style.overflow =
+        previousBodyOverflow;
+
+      document.documentElement.style.overflow =
+        previousHtmlOverflow;
+
+      document.body.style.paddingRight =
+        previousBodyPaddingRight;
+    };
+  }, [isAuthModalOpen]);
+
+  /* =========================================================
+     ESCAPE KEY
+  ========================================================= */
+
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+
+    const handleEscape = (
+      event: KeyboardEvent
+    ) => {
+      if (
+        event.key === 'Escape' &&
+        !submitting
+      ) {
+        setIsAuthModalOpen(false);
+      }
+    };
+
+    document.addEventListener(
+      'keydown',
+      handleEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        'keydown',
+        handleEscape
+      );
+    };
+  }, [
+    isAuthModalOpen,
+    submitting,
+    setIsAuthModalOpen,
+  ]);
+
+  if (!isAuthModalOpen) {
+    return null;
+  }
+
+  /* =========================================================
+     CLOSE MODAL
+  ========================================================= */
+
+  const closeModal = () => {
+    if (submitting) return;
+
+    setIsAuthModalOpen(false);
+
+    setForgotPassword(false);
+    setError('');
+
+    setShowPassword(false);
+    setShowRegisterPassword(false);
+
+    setAvatarPreview(DEFAULT_AVATAR);
+  };
+
+  /* =========================================================
+     SWITCH TAB
+  ========================================================= */
+
+  const switchTab = (
+    tab: 'login' | 'register'
+  ) => {
+    if (submitting) return;
+
+    setAuthModalTab(tab);
+
+    setForgotPassword(false);
+    setError('');
+
+    if (tab === 'register') {
+      setAvatarPreview(DEFAULT_AVATAR);
+    }
+  };
+
+  /* =========================================================
+     USERNAME
+  ========================================================= */
+
+  const handleUsernameChange = (
+    value: string
+  ) => {
+    const cleanedValue =
+      value
+        .replace(/[^\p{L}\p{N}_\- ]/gu, '')
+        .slice(0, MAX_USERNAME_LENGTH);
+
+    setUsername(cleanedValue);
+  };
+
+  /* =========================================================
+     AVATAR
+  ========================================================= */
+
+  const handleAvatarChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file =
+      event.target.files?.[0];
+
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setErrorMessage('يرجى اختيار ملف صورة صالح (JPG أو PNG أو WebP)');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage('حجم الصورة يجب ألا يتجاوز 5 ميجابايت');
+      setError(
+        'من فضلك اختار صورة صحيحة.'
+      );
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setAvatarPreview(event.target?.result as string);
-      setErrorMessage(null);
+    if (
+      file.size >
+      5 * 1024 * 1024
+    ) {
+      setError(
+        'حجم الصورة لازم يكون أقل من 5 ميجابايت.'
+      );
+      return;
+    }
+
+    setError('');
+
+    const reader =
+      new FileReader();
+
+    reader.onloadend = () => {
+      if (
+        typeof reader.result ===
+        'string'
+      ) {
+        setAvatarPreview(
+          reader.result
+        );
+      }
     };
+
     reader.readAsDataURL(file);
   };
 
-  if (!isAuthModalOpen) return null;
+  /* =========================================================
+     LOGIN
+  ========================================================= */
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
+  const handleLogin = async (
+    event: React.FormEvent
+  ) => {
+    event.preventDefault();
 
-    if (isForgotPassword) {
-      if (!forgotIdentifier.trim()) {
-        setErrorMessage('من فضلك اكتب اسم المستخدم');
-        return;
-      }
-      setIsSubmitting(true);
-      try {
-        await api.requestPasswordReset(forgotIdentifier.trim());
-        setForgotSubmitted(true);
-        addToast('طلب إعادة تعيين كلمة المرور', 'تم إرسال طلبك إلى الإدارة بنجاح', 'success');
-      } catch (err: any) {
-        setErrorMessage(err?.message || 'فشل في إرسال طلب استعادة كلمة المرور');
-      } finally {
-        setIsSubmitting(false);
-      }
+    setError('');
+
+    const normalizedUsername =
+      username.trim();
+
+    if (!normalizedUsername) {
+      setError(
+        'من فضلك اكتب اسم المستخدم.'
+      );
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      if (authModalTab === 'login') {
-        if (!username.trim()) {
-          throw new Error('من فضلك اكتب اسم المستخدم');
-        }
-        if (!password) {
-          throw new Error('من فضلك اكتب كلمة المرور');
-        }
-        await login(username, password);
-      } else {
-        if (!username.trim()) {
-          throw new Error('من فضلك اكتب اسم المستخدم');
-        }
-        if (!name.trim()) {
-          throw new Error('من فضلك اكتب الاسم الكامل');
-        }
-        if (!password || password.length < 6) {
-          throw new Error('كلمة المرور يجب ألا تقل عن 6 خانات');
-        }
-        if (!phone.trim()) {
-          throw new Error('من فضلك اكتب رقم الهاتف');
-        }
-        if (roleType === 'seller' && !workshopName.trim()) {
-          throw new Error('اسم الورشة أو العلامة الحرفية مطلوب لتسجيل البائع');
-        }
+    if (
+      normalizedUsername.length <
+      MIN_USERNAME_LENGTH
+    ) {
+      setError(
+        'اسم المستخدم قصير جدًا.'
+      );
+      return;
+    }
 
-        await register({
-          username: username.trim(),
-          name: name.trim(),
-          email: email.trim() ? email.trim() : undefined,
-          password,
-          phone: phone.trim(),
-          role: roleType,
-          avatar: avatarPreview || undefined,
-          governorate,
-          workshopName: roleType === 'seller' ? workshopName.trim() : undefined
-        });
-      }
+    if (
+      !USERNAME_REGEX.test(
+        normalizedUsername
+      )
+    ) {
+      setError(
+        'اسم المستخدم يحتوي على رموز غير مسموحة.'
+      );
+      return;
+    }
+
+    if (!password) {
+      setError(
+        'من فضلك اكتب كلمة المرور.'
+      );
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      await login(
+        normalizedUsername,
+        password
+      );
+
+      setIsAuthModalOpen(false);
+
+      setUsername('');
+      setPassword('');
+      setError('');
     } catch (err: any) {
-      setErrorMessage(err.message || 'فشلت العملية. يرجى المحاولة مرة أخرى.');
+      setError(
+        err?.message ||
+        'اسم المستخدم أو كلمة المرور غير صحيحة.'
+      );
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    setIsAuthModalOpen(false);
-    setIsForgotPassword(false);
-    setForgotSubmitted(false);
-    setErrorMessage(null);
-    setAvatarPreview(null);
+  /* =========================================================
+     REGISTER
+  ========================================================= */
+
+  const handleRegister = async (
+    event: React.FormEvent
+  ) => {
+    event.preventDefault();
+
+    setError('');
+
+    const normalizedUsername =
+      username.trim();
+
+    const normalizedName =
+      name.trim();
+
+    const normalizedPhone =
+      phone.trim();
+
+    const normalizedWorkshop =
+      workshopName.trim();
+
+    if (!normalizedUsername) {
+      setError(
+        'من فضلك اكتب اسم المستخدم.'
+      );
+      return;
+    }
+
+    if (
+      normalizedUsername.length <
+      MIN_USERNAME_LENGTH
+    ) {
+      setError(
+        'اسم المستخدم لازم يكون حرفين على الأقل.'
+      );
+      return;
+    }
+
+    if (
+      normalizedUsername.length >
+      MAX_USERNAME_LENGTH
+    ) {
+      setError(
+        'اسم المستخدم طويل جدًا.'
+      );
+      return;
+    }
+
+    if (
+      !USERNAME_REGEX.test(
+        normalizedUsername
+      )
+    ) {
+      setError(
+        'اسم المستخدم يسمح بالعربي والإنجليزي والأرقام والمسافات فقط.'
+      );
+      return;
+    }
+
+    if (!normalizedName) {
+      setError(
+        'من فضلك اكتب الاسم بالكامل.'
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      setError(
+        'كلمة المرور لازم تكون 6 أحرف على الأقل.'
+      );
+      return;
+    }
+
+    if (!normalizedPhone) {
+      setError(
+        'من فضلك اكتب رقم الموبايل.'
+      );
+      return;
+    }
+
+    if (
+      roleType === 'seller' &&
+      !normalizedWorkshop
+    ) {
+      setError(
+        'من فضلك اكتب اسم الورشة أو المشروع.'
+      );
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      await register({
+        username:
+          normalizedUsername,
+
+        password,
+
+        name:
+          normalizedName,
+
+        phone:
+          normalizedPhone,
+
+        email:
+          email.trim() ||
+          undefined,
+
+        governorate:
+          governorate ||
+          undefined,
+
+        role:
+          roleType,
+
+        workshopName:
+          roleType === 'seller'
+            ? normalizedWorkshop
+            : undefined,
+
+        avatar:
+          avatarPreview ||
+          DEFAULT_AVATAR,
+      });
+
+      addToast(
+        'تم إنشاء الحساب بنجاح 🎉',
+        'success'
+      );
+
+      setIsAuthModalOpen(false);
+
+      setUsername('');
+      setPassword('');
+      setName('');
+      setPhone('');
+      setEmail('');
+      setGovernorate('');
+      setWorkshopName('');
+
+      setRoleType('buyer');
+
+      setAvatarPreview(
+        DEFAULT_AVATAR
+      );
+
+      if (
+        avatarInputRef.current
+      ) {
+        avatarInputRef.current.value =
+          '';
+      }
+    } catch (err: any) {
+      setError(
+        err?.message ||
+        'حصلت مشكلة أثناء إنشاء الحساب. حاول تاني.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  /* =========================================================
+     FORGOT PASSWORD
+  ========================================================= */
+
+  const handleForgotPassword =
+    async (
+      event: React.FormEvent
+    ) => {
+      event.preventDefault();
+
+      setError('');
+
+      if (
+        !forgotIdentifier.trim()
+      ) {
+        setError(
+          'اكتب اسم المستخدم أو البريد الإلكتروني.'
+        );
+        return;
+      }
+
+      try {
+        setSubmitting(true);
+
+        await api.requestPasswordReset(
+          forgotIdentifier.trim()
+        );
+
+        addToast(
+          'تم إرسال طلب استعادة كلمة المرور للإدارة.',
+          'success'
+        );
+
+        setForgotPassword(false);
+        setForgotIdentifier('');
+      } catch (err: any) {
+        setError(
+          err?.message ||
+          'حصلت مشكلة أثناء إرسال طلب استعادة كلمة المرور.'
+        );
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+  /* =========================================================
+     DESIGN TOKENS
+  ========================================================= */
+
+  const inputClass = `
+    w-full
+    min-w-0
+    h-[56px]
+    sm:h-[60px]
+    rounded-[15px]
+    sm:rounded-[17px]
+    border
+    border-[#DDD2C8]
+    bg-[#FCFAF7]
+    px-11
+    sm:px-12
+    text-[15px]
+    sm:text-[16px]
+    font-medium
+    text-[#241B17]
+    outline-none
+    transition-all
+    duration-200
+    placeholder:text-[#9B8D83]
+    focus:border-[#B24C2B]
+    focus:bg-white
+    focus:ring-4
+    focus:ring-[#B24C2B]/10
+    dark:border-[#40342C]
+    dark:bg-[#1A1512]
+    dark:text-[#FFF8F0]
+    dark:placeholder:text-[#82766D]
+    dark:focus:border-[#D06A47]
+    dark:focus:bg-[#1E1916]
+    dark:focus:ring-[#D06A47]/10
+  `;
+
+  const labelClass = `
+    mb-2
+    block
+    text-[14px]
+    sm:text-[15px]
+    font-bold
+    text-[#493C34]
+    dark:text-[#E2D8D0]
+  `;
+
+  const iconClass = `
+    pointer-events-none
+    absolute
+    right-3.5
+    sm:right-4
+    top-1/2
+    -translate-y-1/2
+    text-[#8F8177]
+    dark:text-[#8B7E75]
+  `;
+
+  const primaryButton = `
+    flex
+    min-h-[56px]
+    sm:min-h-[60px]
+    w-full
+    items-center
+    justify-center
+    gap-2
+    rounded-[15px]
+    sm:rounded-[17px]
+    bg-[#B24C2B]
+    px-4
+    sm:px-5
+    text-[15px]
+    sm:text-[16px]
+    font-bold
+    text-white
+    shadow-[0_10px_30px_rgba(178,76,43,0.18)]
+    transition-all
+    duration-200
+    hover:bg-[#963E21]
+    hover:shadow-[0_14px_35px_rgba(178,76,43,0.25)]
+    active:scale-[0.99]
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+  `;
+
+  /* =========================================================
+     RENDER
+  ========================================================= */
 
   return (
     <div
       id="auth-modal-backdrop"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto"
+      dir="rtl"
+      className="
+        fixed
+        inset-0
+        z-[100]
+        flex
+        items-center
+        justify-center
+        overflow-hidden
+        bg-[#17120F]/70
+        px-2
+        py-2
+        sm:px-4
+        sm:py-5
+        md:px-6
+        backdrop-blur-xl
+      "
     >
-      <div className="relative w-full max-w-md bg-white dark:bg-[#1B1613] rounded-2xl shadow-2xl border border-[#ede4d8] dark:border-[#352B24] overflow-hidden max-h-[92vh] flex flex-col my-auto">
-        {/* Modal Header */}
-        <div className="bg-gradient-to-r from-[#943310] to-[#b4431a] p-5 sm:p-6 text-white text-center relative shrink-0">
+      {/* =====================================================
+          MODAL
+      ===================================================== */}
+
+      <div
+        className="
+          relative
+          flex
+          w-full
+          min-w-0
+          max-w-[540px]
+          max-h-[calc(100dvh-16px)]
+          sm:max-h-[calc(100dvh-40px)]
+          flex-col
+          overflow-hidden
+          rounded-[20px]
+          sm:rounded-[26px]
+          md:rounded-[30px]
+          border
+          border-[#E6DDD4]
+          bg-[#FAF7F2]
+          shadow-[0_30px_100px_rgba(0,0,0,0.30)]
+          dark:border-[#3A3029]
+          dark:bg-[#181310]
+          dark:shadow-[0_30px_100px_rgba(0,0,0,0.65)]
+        "
+      >
+        {/* =================================================
+            BRAND HEADER
+        ================================================== */}
+
+        <div
+          className="
+            relative
+            shrink-0
+            overflow-hidden
+            border-b
+            border-[#E6DDD4]
+            bg-[#F3ECE5]
+            px-4
+            pb-4
+            pt-4
+            sm:px-7
+            sm:pb-6
+            sm:pt-6
+            dark:border-[#352B24]
+            dark:bg-[#201914]
+          "
+        >
+          {/* Decorative circles */}
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -left-16
+              -top-20
+              h-48
+              w-48
+              rounded-full
+              border
+              border-[#B24C2B]/10
+            "
+          />
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -left-8
+              -top-12
+              h-32
+              w-32
+              rounded-full
+              border
+              border-[#B24C2B]/10
+            "
+          />
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -bottom-20
+              -right-10
+              h-40
+              w-40
+              rounded-full
+              bg-[#264653]/5
+            "
+          />
+
+          {/* Close */}
+
           <button
-            type="button"
             id="auth-modal-close"
-            onClick={handleClose}
-            className="absolute top-4 left-4 p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
+            type="button"
+            onClick={closeModal}
+            disabled={submitting}
             aria-label="إغلاق"
+            className="
+              absolute
+              left-2.5
+              top-2.5
+              sm:left-4
+              sm:top-4
+              z-20
+              flex
+              h-10
+              w-10
+              sm:h-11
+              sm:w-11
+              items-center
+              justify-center
+              rounded-full
+              border
+              border-[#DCD0C5]
+              bg-[#FAF7F2]/90
+              text-[#65574E]
+              backdrop-blur-sm
+              transition-all
+              hover:border-[#B24C2B]
+              hover:bg-[#B24C2B]
+              hover:text-white
+              dark:border-[#44382F]
+              dark:bg-[#181310]/90
+              dark:text-[#B8ACA2]
+              dark:hover:border-[#D06A47]
+              dark:hover:bg-[#B24C2B]
+              dark:hover:text-white
+            "
           >
-            <X className="w-5 h-5" />
+            <X size={18} />
           </button>
 
-          <div className="w-12 h-12 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center mx-auto mb-2 text-xl font-heritage font-black">
-            وه
+          {/* Brand */}
+
+          <div className="relative z-10 flex min-w-0 items-center gap-3">
+            <div
+              className="
+                flex
+                h-12
+                w-12
+                sm:h-14
+                sm:w-14
+                shrink-0
+                items-center
+                justify-center
+                overflow-hidden
+                rounded-[14px]
+                sm:rounded-[16px]
+                bg-[#B24C2B]
+                text-white
+                shadow-[0_8px_25px_rgba(178,76,43,0.22)]
+              "
+            >
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                alt="WAH"
+                className="
+                  h-full
+                  w-full
+                  object-contain
+                  p-1
+                "
+              />
+            </div>
+
+            <div className="min-w-0">
+              <p
+                className="
+                  text-[9px]
+                  sm:text-[10px]
+                  font-bold
+                  tracking-[0.25em]
+                  text-[#B24C2B]
+                  dark:text-[#D06A47]
+                "
+              >
+                WAH
+              </p>
+
+              <p className="mt-1 truncate text-[14px] sm:text-[15px] font-bold text-[#2A211C] dark:text-[#FFF8F0]">
+                من هنا تبدأ الحكاية
+              </p>
+            </div>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black font-heritage">
-            {isForgotPassword
-              ? 'استعادة كلمة المرور'
-              : authModalTab === 'login'
-              ? 'تسجيل الدخول إلى وه'
-              : 'إنشاء حساب جديد'}
-          </h2>
-          <p className="text-xs sm:text-sm text-amber-200/90 mt-1">
-            {isForgotPassword
-              ? 'أدخل اسم المستخدم أو بريدك الإلكتروني المسجل'
-              : 'منصة وه — العالم الرقمي وتراث وحرف صعيد مصر'}
-          </p>
+
+          <div className="relative z-10 mt-3 flex items-center gap-2 sm:mt-4 sm:gap-3">
+            <span className="h-px w-6 sm:w-8 bg-[#B24C2B]" />
+
+            <span className="text-[11px] sm:text-[12px] font-medium text-[#786A61] dark:text-[#9F9289]">
+              حكايات الصعيد أقرب ليك
+            </span>
+          </div>
         </div>
 
-        {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-6">
-          {/* FORGOT PASSWORD SCREEN */}
-          {isForgotPassword ? (
-            <div>
-              {forgotSubmitted ? (
-                <div className="text-center py-6 space-y-4">
-                  <CheckCircle2 className="w-14 h-14 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                  <h3 className="font-bold text-base text-gray-800 dark:text-[#FAF6F2]">تم إرسال طلبك إلى الإدارة.</h3>
-                  <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F] leading-relaxed max-w-sm mx-auto">
-                    سيقوم المسؤول بمراجعة الطلب وإنشاء كلمة مرور جديدة لك.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(false);
-                      setForgotSubmitted(false);
-                      setForgotIdentifier('');
-                    }}
-                    className="mt-4 px-6 py-2.5 bg-[#943310] hover:bg-[#7c280a] text-white rounded-xl text-sm font-bold shadow-md transition-colors cursor-pointer"
-                  >
-                    العودة لتسجيل الدخول
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="mb-2">
-                    <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-[#FAF6F2]">نسيت كلمة المرور؟</h3>
-                    <p className="text-xs text-gray-500 dark:text-[#A89B8F] mt-1">
-                      أدخل اسم المستخدم المسجل في المنصة وسيقوم فريق الإدارة بمراجعة الطلب وإنشاء كلمة مرور جديدة لحسابك.
-                    </p>
-                  </div>
+        {/* =================================================
+            SCROLLABLE CONTENT
+        ================================================== */}
 
-                  {errorMessage && (
-                    <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-2">
-                      <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 dark:text-red-400" />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
+        <div
+          className="
+            min-h-0
+            flex-1
+            overflow-x-hidden
+            overflow-y-auto
+            overscroll-contain
+            [scrollbar-width:thin]
+            [scrollbar-color:#B8A99E_transparent]
+          "
+        >
+          <div
+            className="
+              mx-auto
+              w-full
+              min-w-0
+              px-4
+              py-5
+              sm:px-7
+              sm:py-7
+              md:px-8
+              md:py-8
+            "
+          >
+            {/* =================================================
+                HEADING
+            ================================================== */}
 
-                  <div>
-                    <label className="block text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1.5">
-                      اسم المستخدم
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        required
-                        value={forgotIdentifier}
-                        onChange={(e) => setForgotIdentifier(e.target.value)}
-                        placeholder="اكتب اسم المستخدم"
-                        autoComplete="username"
-                        className="w-full pl-3 pr-10 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[48px]"
-                      />
-                      <User className="w-5 h-5 text-gray-400 absolute right-3 top-3.5" />
-                    </div>
-                  </div>
+            <div className="mb-5 sm:mb-7">
+              <div className="mb-2 flex items-center gap-2">
+                <Sparkles
+                  size={15}
+                  className="shrink-0 text-[#B24C2B]"
+                />
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    aria-label="إرسال طلب إعادة تعيين كلمة المرور"
-                    className="w-full py-3 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors min-h-[48px] flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>جاري إرسال الطلب...</span>
-                      </>
-                    ) : (
-                      <span>إرسال طلب إعادة تعيين كلمة المرور</span>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsForgotPassword(false);
-                      setErrorMessage(null);
-                    }}
-                    aria-label="الرجوع إلى نموذج تسجيل الدخول"
-                    className="w-full text-center text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F] hover:text-[#943310] dark:hover:text-[#E0633C] font-medium py-2 cursor-pointer transition-colors"
-                  >
-                    العودة لتسجيل الدخول
-                  </button>
-                </form>
-              )}
-            </div>
-          ) : (
-            <div>
-              {/* Tab switch between Login & Register */}
-              <div className="flex border-b border-gray-200 dark:border-[#352B24] mb-5">
-                <button
-                  type="button"
-                  id="tab-login"
-                  role="tab"
-                  aria-selected={authModalTab === 'login'}
-                  aria-label="تبويب تسجيل الدخول"
-                  onClick={() => {
-                    setAuthModalTab('login');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 pb-2.5 text-sm sm:text-base font-bold text-center border-b-2 transition-colors cursor-pointer ${
-                    authModalTab === 'login'
-                      ? 'border-[#943310] text-[#943310] dark:border-[#E0633C] dark:text-[#E0633C]'
-                      : 'border-transparent text-gray-500 dark:text-[#A89B8F] hover:text-gray-800 dark:hover:text-[#FAF6F2]'
-                  }`}
-                >
-                  تسجيل الدخول
-                </button>
-                <button
-                  type="button"
-                  id="tab-register"
-                  role="tab"
-                  aria-selected={authModalTab === 'register'}
-                  aria-label="تبويب إنشاء حساب جديد"
-                  onClick={() => {
-                    setAuthModalTab('register');
-                    setErrorMessage(null);
-                  }}
-                  className={`flex-1 pb-2.5 text-sm sm:text-base font-bold text-center border-b-2 transition-colors cursor-pointer ${
-                    authModalTab === 'register'
-                      ? 'border-[#943310] text-[#943310] dark:border-[#E0633C] dark:text-[#E0633C]'
-                      : 'border-transparent text-gray-500 dark:text-[#A89B8F] hover:text-gray-800 dark:hover:text-[#FAF6F2]'
-                  }`}
-                >
-                  حساب جديد
-                </button>
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.1em] text-[#B24C2B] dark:text-[#D06A47]">
+                  {forgotPassword
+                    ? 'ACCOUNT RECOVERY'
+                    : authModalTab === 'login'
+                      ? 'WELCOME BACK'
+                      : 'JOIN WAH'}
+                </span>
               </div>
 
-              {/* Error Alert Box */}
-              {errorMessage && (
-                <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 rounded-xl text-red-700 dark:text-red-300 text-xs sm:text-sm flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 shrink-0 text-red-500 dark:text-red-400" />
-                  <span>{errorMessage}</span>
-                </div>
-              )}
+              <h2
+                className="
+                  text-[23px]
+                  leading-tight
+                  font-bold
+                  tracking-tight
+                  text-[#211914]
+                  dark:text-[#FFF8F0]
+                  sm:text-[28px]
+                  md:text-[30px]
+                "
+              >
+                {forgotPassword
+                  ? 'استعادة كلمة المرور'
+                  : authModalTab === 'login'
+                    ? 'أهلاً بيك في وه'
+                    : 'انضم لعيلة وه'}
+              </h2>
 
-              {/* ========================================================= */}
-              {/* LOGIN FORM (EXTREMELY SIMPLE FOR SENIORS & NON-TECH USERS) */}
-              {/* ========================================================= */}
-              {authModalTab === 'login' && (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Field 1: Username */}
-                  <div>
-                    <label
-                      htmlFor="login-username-input"
-                      className="block text-sm sm:text-base font-bold text-gray-800 dark:text-[#FAF6F2] mb-1.5"
+              <p
+                className="
+                  mt-2
+                  text-[13px]
+                  leading-6
+                  text-[#776960]
+                  dark:text-[#A79B91]
+                  sm:text-[14px]
+                  sm:leading-7
+                "
+              >
+                {forgotPassword
+                  ? 'اكتب بيانات حسابك وهنساعدك في استعادته.'
+                  : authModalTab === 'login'
+                    ? 'كمل رحلتك واكتشف حكايات الصعيد.'
+                    : 'اعمل حسابك بسهولة وابدأ رحلتك مع وه.'}
+              </p>
+            </div>
+
+            {/* =================================================
+                ERROR
+            ================================================== */}
+
+            {error && (
+              <div
+                className="
+                  mb-5
+                  flex
+                  min-w-0
+                  items-start
+                  gap-2.5
+                  rounded-[15px]
+                  border
+                  border-red-200
+                  bg-red-50
+                  px-3.5
+                  py-3
+                  text-[13px]
+                  font-medium
+                  leading-6
+                  text-red-700
+                  dark:border-red-900/40
+                  dark:bg-red-950/20
+                  dark:text-red-300
+                  sm:px-4
+                  sm:py-3.5
+                  sm:text-[14px]
+                "
+              >
+                <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-red-500" />
+
+                <span className="min-w-0 break-words">
+                  {error}
+                </span>
+              </div>
+            )}
+
+            {/* =================================================
+                FORGOT PASSWORD
+            ================================================== */}
+
+            {forgotPassword ? (
+              <form
+                onSubmit={handleForgotPassword}
+                className="space-y-4 sm:space-y-5"
+              >
+                <div
+                  className="
+                    rounded-[17px]
+                    sm:rounded-[20px]
+                    border
+                    border-[#E2D8CE]
+                    bg-[#F5EFE8]
+                    p-4
+                    sm:p-5
+                    dark:border-[#392E27]
+                    dark:bg-[#211B18]
+                  "
+                >
+                  <div className="mb-4 flex min-w-0 items-center gap-3 sm:mb-5">
+                    <div
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        sm:h-12
+                        sm:w-12
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-[13px]
+                        sm:rounded-[14px]
+                        bg-[#264653]/10
+                        text-[#264653]
+                        dark:bg-[#6C9AA4]/10
+                        dark:text-[#8EB8BF]
+                      "
                     >
-                      اسم المستخدم
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="login-username-input"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="اكتب اسم المستخدم"
-                        aria-label="أدخل اسم المستخدم لتسجيل الدخول"
-                        autoComplete="username"
-                        className="w-full pl-3 pr-11 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] dark:focus:border-[#E0633C] focus:bg-white dark:focus:bg-[#1E1917] min-h-[48px] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
-                      />
-                      <User className="w-5 h-5 text-gray-400 absolute right-3.5 top-3.5" />
+                      <KeyRound size={20} />
+                    </div>
+
+                    <div className="min-w-0">
+                      <p className="text-[14px] sm:text-[15px] font-bold text-[#2B211B] dark:text-[#FFF8F0]">
+                        هنرجعك لحسابك
+                      </p>
+
+                      <p className="mt-1 text-[11px] leading-5 text-[#81736A] dark:text-[#988C83] sm:text-[12px] sm:leading-6">
+                        ابعت طلب للإدارة لاستعادة كلمة المرور.
+                      </p>
                     </div>
                   </div>
 
-                  {/* Field 2: Password */}
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
+                  <label
+                    htmlFor="forgot-identifier-input"
+                    className={labelClass}
+                  >
+                    اسم المستخدم أو البريد الإلكتروني
+                  </label>
+
+                  <div className="relative">
+                    <User
+                      size={19}
+                      className={iconClass}
+                    />
+
+                    <input
+                      id="forgot-identifier-input"
+                      type="text"
+                      value={forgotIdentifier}
+                      onChange={(e) =>
+                        setForgotIdentifier(
+                          e.target.value
+                        )
+                      }
+                      placeholder="مثال: محمد123"
+                      className={inputClass}
+                      autoComplete="username"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className={primaryButton}
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2
+                        size={20}
+                        className="animate-spin"
+                      />
+                      جاري الإرسال...
+                    </>
+                  ) : (
+                    <>
+                      إرسال الطلب
+                      <ArrowLeft size={18} />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForgotPassword(false);
+                    setError('');
+                  }}
+                  className="
+                    flex
+                    min-h-[46px]
+                    sm:min-h-[48px]
+                    w-full
+                    items-center
+                    justify-center
+                    gap-2
+                    py-2
+                    text-[13px]
+                    sm:text-[14px]
+                    font-bold
+                    text-[#75675E]
+                    transition-colors
+                    hover:text-[#B24C2B]
+                    dark:text-[#B8ACA2]
+                    dark:hover:text-[#D86A47]
+                  "
+                >
+                  <ArrowRight size={17} />
+                  رجوع لتسجيل الدخول
+                </button>
+              </form>
+            ) : (
+              <>
+                {/* =================================================
+                    TABS
+                ================================================== */}
+
+                <div
+                  className="
+                    mb-5
+                    grid
+                    grid-cols-2
+                    rounded-[15px]
+                    sm:rounded-[17px]
+                    bg-[#EFE7DF]
+                    p-1
+                    dark:bg-[#211B18]
+                  "
+                >
+                  <button
+                    id="tab-login"
+                    type="button"
+                    onClick={() =>
+                      switchTab('login')
+                    }
+                    className={`
+                      flex
+                      min-h-[48px]
+                      sm:min-h-[52px]
+                      items-center
+                      justify-center
+                      gap-1.5
+                      sm:gap-2
+                      rounded-[12px]
+                      sm:rounded-[13px]
+                      px-2
+                      text-[13px]
+                      sm:text-[14px]
+                      font-bold
+                      transition-all
+                      ${authModalTab === 'login'
+                        ? `
+                              bg-[#FAF7F2]
+                              text-[#B24C2B]
+                              shadow-sm
+                              dark:bg-[#302721]
+                              dark:text-[#D86A47]
+                            `
+                        : `
+                              text-[#87786E]
+                              hover:text-[#B24C2B]
+                              dark:text-[#93877E]
+                              dark:hover:text-[#D86A47]
+                            `
+                      }
+                    `}
+                  >
+                    <User size={17} />
+                    <span>تسجيل الدخول</span>
+                  </button>
+
+                  <button
+                    id="tab-register"
+                    type="button"
+                    onClick={() =>
+                      switchTab('register')
+                    }
+                    className={`
+                      flex
+                      min-h-[48px]
+                      sm:min-h-[52px]
+                      items-center
+                      justify-center
+                      gap-1.5
+                      sm:gap-2
+                      rounded-[12px]
+                      sm:rounded-[13px]
+                      px-2
+                      text-[13px]
+                      sm:text-[14px]
+                      font-bold
+                      transition-all
+                      ${authModalTab === 'register'
+                        ? `
+                              bg-[#FAF7F2]
+                              text-[#B24C2B]
+                              shadow-sm
+                              dark:bg-[#302721]
+                              dark:text-[#D86A47]
+                            `
+                        : `
+                              text-[#87786E]
+                              hover:text-[#B24C2B]
+                              dark:text-[#93877E]
+                              dark:hover:text-[#D86A47]
+                            `
+                      }
+                    `}
+                  >
+                    <Sparkles size={16} />
+                    <span>إنشاء حساب</span>
+                  </button>
+                </div>
+
+                {/* =================================================
+                    LOGIN
+                ================================================== */}
+
+                {authModalTab === 'login' && (
+                  <form
+                    onSubmit={handleLogin}
+                    className="space-y-4.5 sm:space-y-5"
+                  >
+                    {/* Username */}
+
+                    <div>
+                      <label
+                        htmlFor="login-username-input"
+                        className={labelClass}
+                      >
+                        اسم المستخدم
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
+                      </label>
+
+                      <div className="relative">
+                        <User
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="login-username-input"
+                          type="text"
+                          value={username}
+                          onChange={(e) =>
+                            handleUsernameChange(
+                              e.target.value
+                            )
+                          }
+                          placeholder="مثال: محمد123"
+                          className={inputClass}
+                          autoComplete="username"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                        />
+                      </div>
+
+                      <div
+                        className="
+                          mt-2
+                          flex
+                          min-w-0
+                          items-start
+                          gap-2
+                          rounded-[12px]
+                          sm:rounded-[13px]
+                          border
+                          border-[#B24C2B]/15
+                          bg-[#B24C2B]/6
+                          px-3
+                          py-2.5
+                          sm:py-3
+                          text-[11px]
+                          leading-5
+                          sm:text-[12px]
+                          sm:leading-6
+                          text-[#795D4F]
+                          dark:border-[#D06A47]/20
+                          dark:bg-[#D06A47]/8
+                          dark:text-[#C9A99A]
+                        "
+                      >
+                        <Info
+                          size={15}
+                          className="mt-0.5 shrink-0 text-[#B24C2B]"
+                        />
+
+                        <span className="min-w-0">
+                          اكتب نفس اسم المستخدم اللي عملت بيه الحساب.
+                          <strong className="mr-1 text-[#B24C2B] dark:text-[#D06A47]">
+                            ينفع يكون بالعربي.
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Password */}
+
+                    <div>
                       <label
                         htmlFor="login-password-input"
-                        className="text-sm sm:text-base font-bold text-gray-800 dark:text-[#FAF6F2]"
+                        className={labelClass}
                       >
                         كلمة المرور
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
                       </label>
+
+                      <div className="relative">
+                        <Lock
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="login-password-input"
+                          type={
+                            showPassword
+                              ? 'text'
+                              : 'password'
+                          }
+                          value={password}
+                          onChange={(e) =>
+                            setPassword(
+                              e.target.value
+                            )
+                          }
+                          placeholder="اكتب كلمة المرور"
+                          className={`${inputClass} pl-11 sm:pl-12`}
+                          autoComplete="current-password"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowPassword(
+                              !showPassword
+                            )
+                          }
+                          className="
+                            absolute
+                            left-1.5
+                            sm:left-2
+                            top-1/2
+                            flex
+                            h-10
+                            w-10
+                            sm:h-11
+                            sm:w-11
+                            -translate-y-1/2
+                            items-center
+                            justify-center
+                            rounded-xl
+                            text-[#8D7E74]
+                            transition-all
+                            hover:bg-[#B24C2B]/10
+                            hover:text-[#B24C2B]
+                            dark:text-[#887C73]
+                            dark:hover:text-[#D86A47]
+                          "
+                          aria-label={
+                            showPassword
+                              ? 'إخفاء كلمة المرور'
+                              : 'إظهار كلمة المرور'
+                          }
+                        >
+                          {showPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
                       <button
                         type="button"
                         onClick={() => {
-                          setIsForgotPassword(true);
-                          setForgotSubmitted(false);
-                          setErrorMessage(null);
+                          setForgotPassword(true);
+                          setError('');
                         }}
-                        aria-label="استعادة كلمة المرور المنسية"
-                        className="text-xs sm:text-sm text-[#943310] dark:text-[#E0633C] hover:underline font-medium cursor-pointer"
+                        className="
+                          min-h-[42px]
+                          text-[12px]
+                          sm:text-[13px]
+                          font-bold
+                          text-[#B24C2B]
+                          transition-colors
+                          hover:text-[#963E21]
+                          dark:text-[#D86A47]
+                        "
                       >
                         نسيت كلمة المرور؟
                       </button>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="password"
-                        id="login-password-input"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="اكتب كلمة المرور"
-                        aria-label="أدخل كلمة المرور الخاصة بحسابك"
-                        autoComplete="current-password"
-                        className="w-full pl-3 pr-11 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm sm:text-base outline-none focus:border-[#943310] dark:focus:border-[#E0633C] focus:bg-white dark:focus:bg-[#1E1917] min-h-[48px] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 transition-colors"
-                      />
-                      <Lock className="w-5 h-5 text-gray-400 absolute right-3.5 top-3.5" />
-                    </div>
-                  </div>
 
-                  {/* Main Action Button */}
-                  <button
-                    type="submit"
-                    id="auth-submit-btn"
-                    disabled={isSubmitting}
-                    aria-label="تأكيد تسجيل الدخول إلى وه"
-                    className="w-full py-3.5 mt-2 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-base font-bold shadow-md transition-colors flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
-                  >
-                    <span>{isSubmitting ? 'جاري التحقق...' : 'تسجيل الدخول'}</span>
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-
-                  {/* Switch to Registration */}
-                  <div className="text-center pt-3 border-t border-gray-100 dark:border-[#352B24]">
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F]">
-                      ليس لديك حساب؟{' '}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAuthModalTab('register');
-                          setErrorMessage(null);
-                        }}
-                        aria-label="الانتقال إلى نموذج إنشاء حساب جديد"
-                        className="font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
-                      >
-                        إنشاء حساب جديد
-                      </button>
-                    </p>
-                  </div>
-                </form>
-              )}
-
-              {/* ========================================================= */}
-              {/* REGISTRATION FORM (BUYER OR SELLER)                       */}
-              {/* ========================================================= */}
-              {authModalTab === 'register' && (
-                <form onSubmit={handleSubmit} className="space-y-3.5">
-                  {/* Account Type Selector (Buyer vs Seller) */}
-                  <div className="grid grid-cols-2 gap-2 mb-2 bg-[#FAF7F2] dark:bg-[#26201B] p-1.5 rounded-xl border border-[#ebdccd] dark:border-[#352B24]">
-                    <button
-                      type="button"
-                      id="role-buyer-select"
-                      onClick={() => setRoleType('buyer')}
-                      aria-label="اختيار نوع الحساب: مشتري ومتسوق"
-                      className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        roleType === 'buyer'
-                          ? 'bg-[#943310] text-white shadow-xs'
-                          : 'text-gray-600 dark:text-[#A89B8F] hover:text-gray-900 dark:hover:text-[#FAF6F2]'
-                      }`}
-                    >
-                      <User className="w-4 h-4" />
-                      <span>مشتري / متسوق</span>
-                    </button>
-                    <button
-                      type="button"
-                      id="role-seller-select"
-                      onClick={() => setRoleType('seller')}
-                      aria-label="اختيار نوع الحساب: بائع وورشة صعيدية"
-                      className={`py-2.5 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        roleType === 'seller'
-                          ? 'bg-amber-600 text-white shadow-xs'
-                          : 'text-gray-600 dark:text-[#A89B8F] hover:text-gray-900 dark:hover:text-[#FAF6F2]'
-                      }`}
-                    >
-                      <Store className="w-4 h-4" />
-                      <span>بائع / ورشة صعيدية</span>
-                    </button>
-                  </div>
-
-                  {/* Profile Picture Selection (Optional) with Default Preview */}
-                  <div className="flex flex-col items-center justify-center p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-2xl border border-[#ebdccd] dark:border-[#352B24] text-center">
-                    <div className="relative group">
-                      <img
-                        src={avatarPreview || DEFAULT_USER_AVATAR}
-                        alt="صورة الملف الشخصي"
-                        className="w-20 h-20 rounded-full object-cover border-2 border-[#943310]/40 shadow-xs bg-white dark:bg-[#1B1613]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => avatarInputRef.current?.click()}
-                        title="اختيار صورة شخصية"
-                        className="absolute bottom-0 right-0 p-1.5 bg-[#943310] hover:bg-[#78280b] text-white rounded-full shadow-md transition-transform hover:scale-110 cursor-pointer"
-                      >
-                        <Camera className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <input
-                      type="file"
-                      ref={avatarInputRef}
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleAvatarChange}
-                      className="hidden"
-                      id="register-avatar-input"
-                    />
-
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => avatarInputRef.current?.click()}
-                        className="text-xs font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
-                      >
-                        {avatarPreview ? 'تغيير الصورة' : 'اختيار صورة شخصية (اختياري)'}
-                      </button>
-                      {avatarPreview && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAvatarPreview(null);
-                            if (avatarInputRef.current) avatarInputRef.current.value = '';
-                          }}
-                          className="text-xs text-rose-600 dark:text-rose-400 hover:underline cursor-pointer"
-                        >
-                          استعادة الافتراضية
-                        </button>
-                      )}
-                    </div>
-                    <span className="text-[10px] text-gray-500 dark:text-[#A89B8F] mt-0.5">
-                      {avatarPreview ? 'تم تحديد صورة مخصصة' : 'إذا لم تختر صورة، سيتم استخدام الصورة الافتراضية للمنصة'}
-                    </span>
-                  </div>
-
-                  {/* Field: Username (Supports Arabic) */}
-                  <div>
-                    <label
-                      htmlFor="register-username-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
-                    >
-                      اسم المستخدم (باللغة العربية أو الإنجليزية)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="register-username-input"
-                        required
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="اكتب اسم المستخدم (مثال: محمد أو أحمد123)"
-                        aria-label="اسم المستخدم الجديد"
-                        autoComplete="username"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
-                      />
-                      <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-                    </div>
-                  </div>
-
-                  {/* Field: Full Name */}
-                  <div>
-                    <label
-                      htmlFor="register-name-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
-                    >
-                      الاسم الكامل
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="register-name-input"
-                        required
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="اكتب اسمك بالكامل"
-                        aria-label="الاسم الكامل للشخص"
-                        autoComplete="name"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
-                      />
-                      <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-                    </div>
-                  </div>
-
-                  {/* Field: Workshop Name (If Seller) */}
-                  {roleType === 'seller' && (
-                    <div>
-                      <label
-                        htmlFor="register-workshop-input"
-                        className="block text-xs sm:text-sm font-bold text-amber-900 dark:text-amber-300 mb-1"
-                      >
-                        اسم الورشة أو العلامة الحرفية
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          id="register-workshop-input"
-                          required
-                          value={workshopName}
-                          onChange={(e) => setWorkshopName(e.target.value)}
-                          placeholder="مثال: فواخير قنا الأصيلة"
-                          aria-label="اسم الورشة أو البراند الحرفي الصعيدي"
-                          className="w-full pl-3 pr-10 py-2.5 bg-amber-50/60 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700/50 rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-amber-700/60 dark:placeholder:text-amber-400/50 outline-none focus:border-amber-600 dark:focus:border-amber-500 min-h-[44px]"
-                        />
-                        <Store className="w-4 h-4 text-amber-600 dark:text-amber-400 absolute right-3 top-3" />
+                      <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#8B7D73] dark:text-[#93877E]">
+                        <ShieldCheck size={14} />
+                        بياناتك محمية
                       </div>
                     </div>
-                  )}
 
-                  {/* Phone & Governorate Grid */}
-                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      id="auth-submit-btn"
+                      type="submit"
+                      disabled={submitting}
+                      className={primaryButton}
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2
+                            size={21}
+                            className="animate-spin"
+                          />
+                          جاري الدخول...
+                        </>
+                      ) : (
+                        <>
+                          دخول
+                          <ArrowLeft size={19} />
+                        </>
+                      )}
+                    </button>
+
+                    <div className="pt-0.5 text-center">
+                      <p className="text-[12px] sm:text-[13px] text-[#95877D] dark:text-[#8E8279]">
+                        مشترك جديد؟
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            switchTab('register')
+                          }
+                          className="
+                            mr-1.5
+                            font-bold
+                            text-[#B24C2B]
+                            hover:underline
+                            dark:text-[#D86A47]
+                          "
+                        >
+                          اعمل حسابك بسهولة
+                        </button>
+                      </p>
+                    </div>
+                  </form>
+                )}
+
+                {/* =================================================
+                    REGISTER
+                ================================================== */}
+
+                {authModalTab === 'register' && (
+                  <form
+                    onSubmit={handleRegister}
+                    className="space-y-4.5 sm:space-y-5"
+                  >
+                    {/* Role */}
+
+                    <div>
+                      <label className={labelClass}>
+                        هتستخدم وه إزاي؟
+                      </label>
+
+                      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                        {/* Buyer */}
+
+                        <button
+                          id="role-buyer-select"
+                          type="button"
+                          onClick={() =>
+                            setRoleType('buyer')
+                          }
+                          className={`
+                            relative
+                            flex
+                            min-h-[84px]
+                            sm:min-h-[92px]
+                            min-w-0
+                            flex-col
+                            items-center
+                            justify-center
+                            gap-1.5
+                            sm:gap-2
+                            rounded-[16px]
+                            sm:rounded-[18px]
+                            border
+                            px-2
+                            transition-all
+                            ${roleType === 'buyer'
+                              ? `
+                                    border-[#B24C2B]
+                                    bg-[#B24C2B]/6
+                                    text-[#B24C2B]
+                                    shadow-[0_8px_25px_rgba(178,76,43,0.08)]
+                                    dark:border-[#C8613C]
+                                    dark:bg-[#C8613C]/10
+                                    dark:text-[#D86A47]
+                                  `
+                              : `
+                                    border-[#DED4CA]
+                                    bg-[#FCFAF7]
+                                    text-[#7E7066]
+                                    hover:border-[#B24C2B]/40
+                                    dark:border-[#3A3029]
+                                    dark:bg-[#1C1714]
+                                    dark:text-[#9B8E84]
+                                  `
+                            }
+                          `}
+                        >
+                          {roleType === 'buyer' && (
+                            <span className="absolute left-2 top-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#B24C2B] text-white">
+                              <Check size={13} />
+                            </span>
+                          )}
+
+                          <UserRound
+                            size={22}
+                          />
+
+                          <span className="text-[14px] sm:text-[15px] font-bold">
+                            مشتري
+                          </span>
+
+                          <span className="text-[10px] sm:text-[11px] opacity-70">
+                            أكتشف واشتري
+                          </span>
+                        </button>
+
+                        {/* Seller */}
+
+                        <button
+                          id="role-seller-select"
+                          type="button"
+                          onClick={() =>
+                            setRoleType('seller')
+                          }
+                          className={`
+                            relative
+                            flex
+                            min-h-[84px]
+                            sm:min-h-[92px]
+                            min-w-0
+                            flex-col
+                            items-center
+                            justify-center
+                            gap-1.5
+                            sm:gap-2
+                            rounded-[16px]
+                            sm:rounded-[18px]
+                            border
+                            px-2
+                            transition-all
+                            ${roleType === 'seller'
+                              ? `
+                                    border-[#264653]
+                                    bg-[#264653]/6
+                                    text-[#264653]
+                                    shadow-[0_8px_25px_rgba(38,70,83,0.08)]
+                                    dark:border-[#719DA5]
+                                    dark:bg-[#719DA5]/10
+                                    dark:text-[#9BC4CA]
+                                  `
+                              : `
+                                    border-[#DED4CA]
+                                    bg-[#FCFAF7]
+                                    text-[#7E7066]
+                                    hover:border-[#264653]/40
+                                    dark:border-[#3A3029]
+                                    dark:bg-[#1C1714]
+                                    dark:text-[#9B8E84]
+                                  `
+                            }
+                          `}
+                        >
+                          {roleType === 'seller' && (
+                            <span className="absolute left-2 top-2 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#264653] text-white dark:bg-[#6C9AA4]">
+                              <Check size={13} />
+                            </span>
+                          )}
+
+                          <Store size={22} />
+
+                          <span className="text-[14px] sm:text-[15px] font-bold">
+                            بائع
+                          </span>
+
+                          <span className="text-[10px] sm:text-[11px] opacity-70">
+                            أعرض منتجاتي
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* =================================================
+                        AVATAR
+                    ================================================== */}
+
+                    <div
+                      className="
+                        flex
+                        min-w-0
+                        items-center
+                        gap-3
+                        sm:gap-4
+                        rounded-[16px]
+                        sm:rounded-[18px]
+                        border
+                        border-[#E0D5CB]
+                        bg-[#F5EFE8]
+                        p-3
+                        sm:p-4
+                        dark:border-[#392E27]
+                        dark:bg-[#201914]
+                      "
+                    >
+                      <button
+                        type="button"
+                        onClick={() =>
+                          avatarInputRef.current?.click()
+                        }
+                        className="
+                          group
+                          relative
+                          flex
+                          h-[60px]
+                          w-[60px]
+                          sm:h-[68px]
+                          sm:w-[68px]
+                          shrink-0
+                          items-center
+                          justify-center
+                          overflow-hidden
+                          rounded-[15px]
+                          sm:rounded-[17px]
+                          bg-[#E6DCD2]
+                          text-[#89796E]
+                          ring-1
+                          ring-black/5
+                          dark:bg-[#2A211C]
+                          dark:ring-white/10
+                        "
+                        aria-label="اختيار صورة الحساب"
+                      >
+                        <img
+                          src={
+                            avatarPreview ||
+                            DEFAULT_AVATAR
+                          }
+                          alt="الصورة الشخصية"
+                          className="
+                            h-full
+                            w-full
+                            object-cover
+                          "
+                          onError={(event) => {
+                            event.currentTarget.onerror =
+                              null;
+
+                            event.currentTarget.src =
+                              DEFAULT_AVATAR;
+                          }}
+                        />
+
+                        <span
+                          className="
+                            absolute
+                            inset-0
+                            flex
+                            items-center
+                            justify-center
+                            bg-[#B24C2B]/90
+                            text-white
+                            opacity-0
+                            transition-opacity
+                            group-hover:opacity-100
+                            group-focus-visible:opacity-100
+                          "
+                        >
+                          <Camera size={20} />
+                        </span>
+                      </button>
+
+                      <input
+                        ref={avatarInputRef}
+                        id="register-avatar-input"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        className="hidden"
+                        onChange={
+                          handleAvatarChange
+                        }
+                      />
+
+                      <div className="min-w-0">
+                        <p className="text-[13px] sm:text-[14px] font-bold text-[#30251F] dark:text-[#FFF8F0]">
+                          صورة الحساب
+                        </p>
+
+                        <p className="mt-1 text-[11px] leading-5 text-[#887A70] dark:text-[#978B82] sm:text-[12px] sm:leading-6">
+                          اختيارية — لو مش عايز ترفع صورة، هنستخدم الصورة الافتراضية.
+                        </p>
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            avatarInputRef.current?.click()
+                          }
+                          className="
+                            mt-0.5
+                            min-h-[32px]
+                            text-[11px]
+                            sm:text-[12px]
+                            font-bold
+                            text-[#B24C2B]
+                            hover:underline
+                            dark:text-[#D86A47]
+                          "
+                        >
+                          تغيير الصورة
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* =================================================
+                        USERNAME
+                    ================================================== */}
+
+                    <div>
+                      <label
+                        htmlFor="register-username-input"
+                        className={labelClass}
+                      >
+                        اسم المستخدم
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
+                      </label>
+
+                      <div className="relative">
+                        <User
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="register-username-input"
+                          type="text"
+                          value={username}
+                          onChange={(e) =>
+                            handleUsernameChange(
+                              e.target.value
+                            )
+                          }
+                          placeholder="مثال: محمد123"
+                          className={inputClass}
+                          autoComplete="username"
+                          autoCapitalize="none"
+                          spellCheck={false}
+                        />
+                      </div>
+
+                      <div
+                        className="
+                          mt-2
+                          rounded-[13px]
+                          border
+                          border-[#B24C2B]/15
+                          bg-[#B24C2B]/6
+                          px-3
+                          py-2.5
+                          sm:px-4
+                          sm:py-3
+                          dark:border-[#D06A47]/20
+                          dark:bg-[#D06A47]/8
+                        "
+                      >
+                        <div className="flex min-w-0 items-start gap-2">
+                          <Info
+                            size={16}
+                            className="mt-0.5 shrink-0 text-[#B24C2B]"
+                          />
+
+                          <div className="min-w-0 text-[11px] leading-5 text-[#6E5448] dark:text-[#C9A99A] sm:text-[12px] sm:leading-6">
+                            <p>
+                              <strong className="text-[#B24C2B] dark:text-[#D06A47]">
+                                مهم:
+                              </strong>{' '}
+                              ده اسمك في وه والاسم اللي هتستخدمه لتسجيل الدخول بعد كده.
+                            </p>
+
+                            <p className="mt-1 text-[10px] opacity-80 sm:text-[11px]">
+                              ينفع تكتبه بالعربي أو الإنجليزي، زي: محمد123 أو mohanad.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* =================================================
+                        NAME
+                    ================================================== */}
+
+                    <div>
+                      <label
+                        htmlFor="register-name-input"
+                        className={labelClass}
+                      >
+                        الاسم بالكامل
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
+                      </label>
+
+                      <div className="relative">
+                        <UserRound
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="register-name-input"
+                          type="text"
+                          value={name}
+                          onChange={(e) =>
+                            setName(
+                              e.target.value
+                            )
+                          }
+                          placeholder="اكتب اسمك بالكامل"
+                          className={inputClass}
+                          autoComplete="name"
+                        />
+                      </div>
+                    </div>
+
+                    {/* =================================================
+                        WORKSHOP
+                    ================================================== */}
+
+                    {roleType === 'seller' && (
+                      <div>
+                        <label
+                          htmlFor="register-workshop-input"
+                          className={labelClass}
+                        >
+                          اسم الورشة أو المشروع
+                          <span className="mr-1 text-[#B24C2B]">
+                            *
+                          </span>
+                        </label>
+
+                        <div className="relative">
+                          <Store
+                            size={20}
+                            className={iconClass}
+                          />
+
+                          <input
+                            id="register-workshop-input"
+                            type="text"
+                            value={workshopName}
+                            onChange={(e) =>
+                              setWorkshopName(
+                                e.target.value
+                              )
+                            }
+                            placeholder="مثال: ورشة فخار"
+                            className={inputClass}
+                            autoComplete="organization"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* =================================================
+                        PHONE
+                    ================================================== */}
+
                     <div>
                       <label
                         htmlFor="register-phone-input"
-                        className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
+                        className={labelClass}
                       >
-                        رقم الهاتف
+                        رقم الموبايل
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
                       </label>
+
                       <div className="relative">
-                        <input
-                          type="tel"
-                          id="register-phone-input"
-                          required
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="010XXXXXXXX"
-                          aria-label="رقم الهاتف للتواصل والطلبات"
-                          autoComplete="tel"
-                          className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
+                        <Phone
+                          size={20}
+                          className={iconClass}
                         />
-                        <Phone className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+
+                        <input
+                          id="register-phone-input"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) =>
+                            setPhone(
+                              e.target.value
+                            )
+                          }
+                          placeholder="01xxxxxxxxx"
+                          className={inputClass}
+                          autoComplete="tel"
+                          inputMode="tel"
+                          dir="ltr"
+                        />
                       </div>
                     </div>
+
+                    {/* =================================================
+                        GOVERNORATE
+                    ================================================== */}
 
                     <div>
                       <label
                         htmlFor="register-governorate-select"
-                        className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
+                        className={labelClass}
                       >
                         المحافظة
                       </label>
-                      <select
-                        id="register-governorate-select"
-                        value={governorate}
-                        aria-label="اختر محافظتك في صعيد مصر"
-                        onChange={(e) => setGovernorate(e.target.value)}
-                        className="w-full py-2.5 px-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px] cursor-pointer"
+
+                      <div className="relative">
+                        <MapPin
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <select
+                          id="register-governorate-select"
+                          value={governorate}
+                          onChange={(e) =>
+                            setGovernorate(
+                              e.target.value
+                            )
+                          }
+                          className={`${inputClass} cursor-pointer appearance-none`}
+                        >
+                          <option value="">
+                            اختار المحافظة
+                          </option>
+
+                          <option value="أسيوط">
+                            أسيوط
+                          </option>
+
+                          <option value="سوهاج">
+                            سوهاج
+                          </option>
+
+                          <option value="قنا">
+                            قنا
+                          </option>
+
+                          <option value="الأقصر">
+                            الأقصر
+                          </option>
+
+                          <option value="أسوان">
+                            أسوان
+                          </option>
+
+                          <option value="المنيا">
+                            المنيا
+                          </option>
+
+                          <option value="بني سويف">
+                            بني سويف
+                          </option>
+
+                          <option value="الفيوم">
+                            الفيوم
+                          </option>
+
+                          <option value="الوادي الجديد">
+                            الوادي الجديد
+                          </option>
+
+                          <option value="القاهرة">
+                            القاهرة
+                          </option>
+
+                          <option value="الجيزة">
+                            الجيزة
+                          </option>
+
+                          <option value="الإسكندرية">
+                            الإسكندرية
+                          </option>
+
+                          <option value="أخرى">
+                            محافظة أخرى
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* =================================================
+                        EMAIL
+                    ================================================== */}
+
+                    <div>
+                      <label
+                        htmlFor="register-email-input"
+                        className={labelClass}
                       >
-                        <option value="قنا" className="dark:bg-[#1B1613]">قنا</option>
-                        <option value="سوهاج" className="dark:bg-[#1B1613]">سوهاج</option>
-                        <option value="أسوان" className="dark:bg-[#1B1613]">أسوان</option>
-                        <option value="الأقصر" className="dark:bg-[#1B1613]">الأقصر</option>
-                        <option value="أسيوط" className="dark:bg-[#1B1613]">أسيوط</option>
-                        <option value="المنيا" className="dark:bg-[#1B1613]">المنيا</option>
-                        <option value="بني سويف" className="dark:bg-[#1B1613]">بني سويف</option>
-                        <option value="الوادي الجديد" className="dark:bg-[#1B1613]">الوادي الجديد</option>
-                        <option value="القاهرة" className="dark:bg-[#1B1613]">القاهرة</option>
-                        <option value="الجيزة" className="dark:bg-[#1B1613]">الجيزة</option>
-                        <option value="الإسكندرية" className="dark:bg-[#1B1613]">الإسكندرية</option>
-                      </select>
+                        البريد الإلكتروني
+
+                        <span className="mr-1 text-[11px] sm:text-[12px] font-normal text-[#9A8D82]">
+                          اختياري
+                        </span>
+                      </label>
+
+                      <div className="relative">
+                        <Mail
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="register-email-input"
+                          type="email"
+                          value={email}
+                          onChange={(e) =>
+                            setEmail(
+                              e.target.value
+                            )
+                          }
+                          placeholder="example@email.com"
+                          className={inputClass}
+                          autoComplete="email"
+                          dir="ltr"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Field: Optional Email */}
-                  <div>
-                    <label
-                      htmlFor="register-email-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
-                    >
-                      البريد الإلكتروني <span className="text-gray-400 font-normal">(اختياري)</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        id="register-email-input"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="name@example.com (اختياري)"
-                        aria-label="البريد الإلكتروني (اختياري)"
-                        autoComplete="email"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
-                      />
-                      <Mail className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-                    </div>
-                  </div>
+                    {/* =================================================
+                        PASSWORD
+                    ================================================== */}
 
-                  {/* Field: Password */}
-                  <div>
-                    <label
-                      htmlFor="register-password-input"
-                      className="block text-xs sm:text-sm font-bold text-gray-800 dark:text-[#FAF6F2] mb-1"
-                    >
-                      كلمة المرور
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="password"
-                        id="register-password-input"
-                        required
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="اكتب كلمة المرور (6 خانات على الأقل)"
-                        aria-label="أنشئ كلمة مرور مكونة من 6 خانات على الأقل"
-                        autoComplete="new-password"
-                        className="w-full pl-3 pr-10 py-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
-                      />
-                      <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    id="auth-submit-btn"
-                    disabled={isSubmitting}
-                    aria-label={roleType === 'seller' ? 'تأكيد تسجيل ورشة حرفية جديدة' : 'تأكيد إنشاء حساب مشتري جديد'}
-                    className="w-full py-3.5 mt-2 bg-[#943310] hover:bg-[#7c280a] disabled:opacity-60 text-white rounded-xl text-sm sm:text-base font-bold shadow-md transition-colors flex items-center justify-center gap-2 min-h-[48px] cursor-pointer"
-                  >
-                    <span>
-                      {isSubmitting
-                        ? 'جاري إنشاء الحساب...'
-                        : roleType === 'seller'
-                        ? 'تسجيل ورشة جديدة'
-                        : 'إنشاء الحساب'}
-                    </span>
-                    <ArrowLeft className="w-4 h-4" />
-                  </button>
-
-                  {/* Switch to Login */}
-                  <div className="text-center pt-2 border-t border-gray-100 dark:border-[#352B24]">
-                    <p className="text-xs sm:text-sm text-gray-600 dark:text-[#A89B8F]">
-                      لديك حساب بالفعل؟{' '}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAuthModalTab('login');
-                          setErrorMessage(null);
-                        }}
-                        aria-label="الانتقال إلى تسجيل الدخول"
-                        className="font-bold text-[#943310] dark:text-[#E0633C] hover:underline cursor-pointer"
+                    <div>
+                      <label
+                        htmlFor="register-password-input"
+                        className={labelClass}
                       >
-                        تسجيل الدخول
-                      </button>
-                    </p>
-                  </div>
-                </form>
-              )}
-            </div>
-          )}
+                        كلمة المرور
+                        <span className="mr-1 text-[#B24C2B]">
+                          *
+                        </span>
+                      </label>
+
+                      <div className="relative">
+                        <Lock
+                          size={20}
+                          className={iconClass}
+                        />
+
+                        <input
+                          id="register-password-input"
+                          type={
+                            showRegisterPassword
+                              ? 'text'
+                              : 'password'
+                          }
+                          value={password}
+                          onChange={(e) =>
+                            setPassword(
+                              e.target.value
+                            )
+                          }
+                          placeholder="6 أحرف على الأقل"
+                          className={`${inputClass} pl-11 sm:pl-12`}
+                          autoComplete="new-password"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setShowRegisterPassword(
+                              !showRegisterPassword
+                            )
+                          }
+                          className="
+                            absolute
+                            left-1.5
+                            sm:left-2
+                            top-1/2
+                            flex
+                            h-10
+                            w-10
+                            sm:h-11
+                            sm:w-11
+                            -translate-y-1/2
+                            items-center
+                            justify-center
+                            rounded-xl
+                            text-[#8D7E74]
+                            transition-all
+                            hover:bg-[#B24C2B]/10
+                            hover:text-[#B24C2B]
+                            dark:text-[#887C73]
+                            dark:hover:text-[#D86A47]
+                          "
+                          aria-label={
+                            showRegisterPassword
+                              ? 'إخفاء كلمة المرور'
+                              : 'إظهار كلمة المرور'
+                          }
+                        >
+                          {showRegisterPassword ? (
+                            <EyeOff size={20} />
+                          ) : (
+                            <Eye size={20} />
+                          )}
+                        </button>
+                      </div>
+
+                      <p className="mt-2 text-[11px] leading-5 text-[#918279] dark:text-[#91867D] sm:text-[12px]">
+                        اختار كلمة مرور تقدر تفتكرها، ولازم تكون 6 أحرف على الأقل.
+                      </p>
+                    </div>
+
+                    {/* =================================================
+                        SUBMIT
+                    ================================================== */}
+
+                    <button
+                      id="auth-submit-btn"
+                      type="submit"
+                      disabled={submitting}
+                      className={primaryButton}
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2
+                            size={21}
+                            className="animate-spin"
+                          />
+
+                          جاري إنشاء الحساب...
+                        </>
+                      ) : (
+                        <>
+                          إنشاء الحساب
+                          <ArrowLeft size={19} />
+                        </>
+                      )}
+                    </button>
+
+                    <div
+                      className="
+                        flex
+                        items-center
+                        justify-center
+                        gap-2
+                        pb-1
+                        text-center
+                        text-[11px]
+                        leading-5
+                        text-[#918279]
+                        dark:text-[#91867D]
+                        sm:text-[12px]
+                      "
+                    >
+                      <ShieldCheck
+                        size={15}
+                        className="shrink-0"
+                      />
+
+                      <span>
+                        بياناتك محمية ويمكنك تعديلها لاحقًا.
+                      </span>
+                    </div>
+                  </form>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default AuthModal;

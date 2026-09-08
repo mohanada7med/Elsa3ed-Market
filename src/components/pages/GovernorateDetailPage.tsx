@@ -1,42 +1,37 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
-import { WahGovernorate, HeritagePlace, CulturalCraft, WahStory, LocalPerson, UpperEgyptFood, CulturalEvent, Product } from '../../types';
-import {
-  MapPin,
-  Compass,
-  Landmark,
-  Hammer,
-  Utensils,
-  BookOpen,
-  Calendar,
-  Users,
-  ShoppingBag,
-  ArrowLeft,
-  Share2,
-  Sparkles,
-  ChevronLeft,
-  ExternalLink,
-  Store
-} from 'lucide-react';
-import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
-const CATEGORY_LABELS: Record<string, string> = {
-  temple: 'معبد فرعوني',
-  tomb: 'مقابر أثرية',
-  monastery: 'دير قبطي',
-  mosque: 'مسجد أثري',
-  museum: 'متحف قومي',
-  heritage_village: 'قرية تراثية',
-  nature: 'محمية طبيعية',
-  cultural_center: 'مركز ثقافي',
-  historical: 'معلم تاريخي'
-};
+import {
+  ArrowLeft,
+  ArrowUpLeft,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Compass,
+  Crown,
+  Eye,
+  Flame,
+  Landmark,
+  MapPin,
+  Menu,
+  Mountain,
+  Package,
+  ScrollText,
+  Search,
+  Sparkles,
+  Store,
+  Utensils,
+  Users,
+  X,
+} from 'lucide-react';
+
+import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export const GovernorateDetailPage: React.FC = () => {
   const {
     selectedGovernorateSlug,
-    navigateToGovernorate,
     navigateToPlace,
     navigateToCraft,
     navigateToStory,
@@ -45,46 +40,182 @@ export const GovernorateDetailPage: React.FC = () => {
     navigateToEvent,
     navigateToProduct,
     setActivePage,
-    addToast
+    addToast,
   } = useApp();
 
-  const [governorate, setGovernorate] = useState<WahGovernorate | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'places' | 'crafts' | 'stories' | 'people' | 'food' | 'events' | 'products'>('overview');
-  const [isLoading, setIsLoading] = useState(true);
+  const [governorate, setGovernorate] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const slug = selectedGovernorateSlug || 'qena';
 
   useEffect(() => {
-    const fetchGov = async () => {
-      setIsLoading(true);
+    let mounted = true;
+
+    const loadGovernorate = async () => {
       try {
+        setLoading(true);
+
         const data = await wahApi.getGovernorateBySlug(slug);
-        if (data) {
+
+        if (mounted) {
           setGovernorate(data);
         }
-      } catch (err) {
-        console.warn('Could not load governorate details:', err);
+      } catch (error) {
+        console.error('Failed to load governorate:', error);
+
+        if (mounted) {
+          addToast?.(
+            'error',
+            'حصلت مشكلة في تحميل بيانات المحافظة'
+          );
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
-    fetchGov();
-  }, [slug]);
 
-  const handleShare = () => {
-    const url = `${window.location.origin}/governorates?slug=${encodeURIComponent(slug)}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(url);
-      addToast('تم نسخ الرابط', 'تم نسخ رابط المحافظة بنجاح، يمكنك مشاركته الآن', 'success');
-    }
+    loadGovernorate();
+
+    return () => {
+      mounted = false;
+    };
+  }, [slug, addToast]);
+
+  const places = governorate?.places || [];
+  const crafts = governorate?.crafts || [];
+  const stories = governorate?.stories || [];
+  const people = governorate?.people || [];
+  const foods = governorate?.foods || [];
+  const events = governorate?.events || [];
+  const products = governorate?.products || [];
+
+  const sections = useMemo(
+    () => [
+      {
+        id: 'overview',
+        number: '01',
+        label: 'الحكاية',
+        icon: ScrollText,
+      },
+      {
+        id: 'places',
+        number: '02',
+        label: 'المعالم',
+        icon: Landmark,
+        count: places.length,
+      },
+      {
+        id: 'crafts',
+        number: '03',
+        label: 'الصنايع',
+        icon: Sparkles,
+        count: crafts.length,
+      },
+      {
+        id: 'stories',
+        number: '04',
+        label: 'الحكايات',
+        icon: ScrollText,
+        count: stories.length,
+      },
+      {
+        id: 'people',
+        number: '05',
+        label: 'الناس',
+        icon: Users,
+        count: people.length,
+      },
+      {
+        id: 'food',
+        number: '06',
+        label: 'الأكل',
+        icon: Utensils,
+        count: foods.length,
+      },
+      {
+        id: 'events',
+        number: '07',
+        label: 'المواسم',
+        icon: CalendarDays,
+        count: events.length,
+      },
+      {
+        id: 'market',
+        number: '08',
+        label: 'السوق',
+        icon: Store,
+        count: products.length,
+      },
+    ],
+    [
+      places.length,
+      crafts.length,
+      stories.length,
+      people.length,
+      foods.length,
+      events.length,
+      products.length,
+    ]
+  );
+
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    setMobileMenuOpen(false);
+
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
-  if (isLoading) {
+  const getImage = (item: any, fallback?: string) => {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#B24C2B] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm font-bold text-[#73675B]">جاري تحميل موسوعة المحافظة...</p>
+      item?.coverImage ||
+      item?.imageUrl ||
+      item?.photoUrl ||
+      item?.thumbnailUrl ||
+      item?.images?.[0] ||
+      fallback ||
+      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=1200&q=80'
+    );
+  };
+
+  const getPersonImage = (person: any) =>
+    person?.photoUrl ||
+    person?.avatarUrl ||
+    person?.imageUrl ||
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+
+  const getFoodTitle = (food: any) => food?.title || food?.name || 'أكلة من الصعيد';
+
+  const getPersonTitle = (person: any) =>
+    person?.craftTitle ||
+    person?.craftOrSkill ||
+    person?.titleOrRole ||
+    person?.title ||
+    'شخصية من الصعيد';
+
+  const getEventDate = (event: any) =>
+    event?.eventDate || event?.timeOfYear || event?.startDate || 'موعد الموسم';
+
+  if (loading) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-screen bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+      >
+        <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-5">
+          <div className="text-center">
+            <div className="mx-auto mb-6 h-14 w-14 animate-spin rounded-full border-2 border-[#D8CCC1] border-t-[#B24C2B] dark:border-[#382D27] dark:border-t-[#D97857]" />
+
+            <p className="text-sm font-bold tracking-wide text-[#73675B] dark:text-[#B8AAA0]">
+              بنفتح أرشيف المحافظة...
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -92,15 +223,27 @@ export const GovernorateDetailPage: React.FC = () => {
 
   if (!governorate) {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6 text-center">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">المحافظة غير موجودة</h2>
-          <p className="text-sm text-[#73675B] mb-4">لم نعثر على بيانات لهذه المحافظة</p>
+      <div
+        dir="rtl"
+        className="min-h-screen bg-[#F6F1EA] px-5 py-24 text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+      >
+        <div className="mx-auto max-w-xl rounded-[32px] border border-[#E4DBD2] bg-white p-10 text-center shadow-sm dark:border-[#382D27] dark:bg-[#1B1613]">
+          <Landmark className="mx-auto mb-5 h-12 w-12 text-[#B24C2B] dark:text-[#D97857]" />
+
+          <h1 className="mb-3 text-2xl font-black">
+            المحافظة مش موجودة
+          </h1>
+
+          <p className="mb-7 text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
+            حاول ترجع للخريطة واختار محافظة تانية.
+          </p>
+
           <button
             onClick={() => setActivePage('governorates')}
-            className="px-5 py-2.5 rounded-xl bg-[#B24C2B] text-white font-bold text-sm"
+            className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#B24C2B] dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-[#D97857] dark:hover:text-white"
           >
-            العودة لكافة المحافظات
+            <ArrowLeft className="h-4 w-4" />
+            رجوع للمحافظات
           </button>
         </div>
       </div>
@@ -108,577 +251,811 @@ export const GovernorateDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] text-[#241E1A] dark:text-[#FAF6F2] font-sans pb-16">
-      {/* Hero Header */}
-      <div className="relative h-[320px] sm:h-[420px] lg:h-[480px] w-full bg-[#1A1614] overflow-hidden">
-        <img
-          src={governorate.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1600'}
-          alt={`محافظة ${governorate.name}`}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#110E0C] via-black/40 to-transparent" />
+    <div
+      dir="rtl"
+      className="min-h-screen overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+    >
+      {/* =========================================================
+          HERO — MUSEUM EXHIBITION
+      ========================================================= */}
 
-        {/* Top Floating Bar */}
-        <div className="absolute top-6 left-0 right-0 px-4 sm:px-8 max-w-7xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => setActivePage('governorates')}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer"
-          >
-            <ChevronLeft className="w-4 h-4 rotate-180" />
-            <span>كافة المحافظات</span>
-          </button>
+      <section className="relative px-4 pb-8 pt-4 sm:px-6 lg:px-8 lg:pt-8">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="relative min-h-[620px] overflow-hidden rounded-[32px] bg-[#241E1A] shadow-[0_30px_80px_rgba(36,30,26,0.18)] dark:bg-[#1B1613] sm:rounded-[42px] lg:min-h-[680px]">
+            {/* Image */}
+            <div className="absolute inset-0 lg:left-[29%]">
+              <img
+                src={getImage(governorate)}
+                alt={governorate.name}
+                className="h-full w-full object-cover"
+              />
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setActivePage('map')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer"
-            >
-              <Compass className="w-4 h-4 text-amber-400" />
-              <span className="hidden xs:inline">الخريطة التفاعلية</span>
-            </button>
+              <div className="absolute inset-0 bg-gradient-to-l from-[#241E1A] via-[#241E1A]/75 to-transparent lg:from-[#241E1A] lg:via-[#241E1A]/40 lg:to-transparent" />
 
-            <button
-              type="button"
-              onClick={handleShare}
-              className="p-2 sm:px-3 sm:py-2 rounded-xl bg-black/50 hover:bg-black/70 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
-              title="مشاركة رابط المحافظة"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="hidden sm:inline">مشاركة</span>
-            </button>
-          </div>
-        </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#241E1A]/90 via-transparent to-[#241E1A]/10" />
+            </div>
 
-        {/* Title Content */}
-        <div className="absolute bottom-6 sm:bottom-10 right-0 left-0 px-4 sm:px-8 max-w-7xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-600/90 text-white text-xs font-bold mb-3 backdrop-blur-xs">
-            <MapPin className="w-3.5 h-3.5" />
-            <span>العاصمة: {governorate.capitalCity || governorate.name}</span>
-          </div>
+            {/* Decorative museum line */}
+            <div className="absolute bottom-8 right-8 top-8 hidden w-px bg-white/15 lg:block" />
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white font-serif tracking-tight mb-2 drop-shadow-md">
-            محافظة {governorate.name}
-          </h1>
+            {/* Pattern */}
+            <div className="pointer-events-none absolute left-0 top-0 opacity-20">
+              <NubianGeometricPattern />
+            </div>
 
-          <p className="text-sm sm:text-base text-amber-100/90 max-w-2xl leading-relaxed drop-shadow-sm">
-            {governorate.shortIntro}
-          </p>
-        </div>
-      </div>
-
-      {/* Sticky Tab Navigation Bar */}
-      <div className="sticky top-16 sm:top-20 z-30 bg-white/95 dark:bg-[#1E1917]/95 backdrop-blur-md border-b border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 flex items-center gap-2 overflow-x-auto no-scrollbar py-2.5">
-          {[
-            { id: 'overview', label: 'نظرة عامة وتاريخ', icon: Landmark },
-            { id: 'places', label: `المعالم التراثية (${governorate.places?.length || 0})`, icon: Landmark },
-            { id: 'crafts', label: `الحرف التراثية (${governorate.crafts?.length || 0})`, icon: Hammer },
-            { id: 'stories', label: `وه بيحكي (${governorate.stories?.length || 0})`, icon: BookOpen },
-            { id: 'people', label: `ناس الصعيد (${governorate.people?.length || 0})`, icon: Users },
-            { id: 'food', label: `أكل الصعيد (${governorate.foods?.length || 0})`, icon: Utensils },
-            { id: 'events', label: `الفعاليات والمواسم (${governorate.events?.length || 0})`, icon: Calendar },
-            { id: 'products', label: `سوق المحافظة (${governorate.products?.length || 0})`, icon: ShoppingBag }
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-[#B24C2B] text-white shadow-xs'
-                    : 'text-[#73675B] dark:text-[#A89C90] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Main Tabbed Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-12">
-        {/* Tab 1: Overview & History */}
-        {activeTab === 'overview' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-8 space-y-8">
-              {/* History Text */}
-              <div className="relative bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24] overflow-hidden shadow-xs">
-                <NubianGeometricPattern
-                  opacity={0.12}
-                  color="#B24C2B"
-                  variant="diamonds"
-                  className="text-[#B24C2B] dark:text-[#E0633C]"
-                />
-                <div className="absolute top-0 inset-x-0">
-                  <NubianGeometricPattern
-                    variant="frieze"
-                    opacity={0.25}
-                    color="#B24C2B"
-                    className="text-[#B24C2B]"
-                  />
-                </div>
-                <div className="relative z-10 pt-2">
-                  <h2 className="text-xl sm:text-2xl font-black font-heritage text-[#241E1A] dark:text-[#FAF6F2] mb-4">
-                    تاريخ وأصالة محافظة {governorate.name}
-                  </h2>
-                  <div className="text-sm sm:text-base text-[#73675B] dark:text-[#A89C90] leading-relaxed space-y-4 whitespace-pre-line font-heritage">
-                    {governorate.history || governorate.shortIntro}
+            {/* Content */}
+            <div className="relative z-10 flex min-h-[620px] flex-col justify-between p-6 sm:p-10 lg:min-h-[680px] lg:w-[57%] lg:p-16">
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <div className="mb-3 flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-white/55">
+                    <span className="h-px w-10 bg-[#D97857]" />
+                    ARCHIVE 01
                   </div>
+
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-md">
+                    <Compass className="h-3.5 w-3.5" />
+                    أرشيف الصعيد
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setActivePage('governorates')}
+                  className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-white hover:text-[#241E1A]"
+                  aria-label="رجوع"
+                >
+                  <ArrowLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" />
+                </button>
+              </div>
+
+              <div className="max-w-2xl">
+                <div className="mb-5 flex items-end gap-4">
+                  <span className="text-[72px] font-black leading-none tracking-[-0.08em] text-white/10 sm:text-[110px]">
+                    01
+                  </span>
+
+                  <div className="mb-2 h-px flex-1 bg-white/15" />
+                </div>
+
+                <p className="mb-4 text-sm font-bold text-[#E8B19D]">
+                  {governorate.capitalCity
+                    ? `العاصمة • ${governorate.capitalCity}`
+                    : 'من أرشيف الصعيد'}
+                </p>
+
+                <h1 className="max-w-3xl text-5xl font-black leading-[0.95] tracking-[-0.045em] text-white sm:text-7xl lg:text-[92px]">
+                  {governorate.name}
+                </h1>
+
+                <p className="mt-7 max-w-xl text-base leading-8 text-white/70 sm:text-lg">
+                  {governorate.shortIntro ||
+                    'حكاية مكان، وذاكرة ناس، وتراث لسه عايش.'}
+                </p>
+
+                <div className="mt-9 flex flex-wrap gap-3">
+                  <button
+                    onClick={() => scrollToSection('places')}
+                    className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-black text-[#241E1A] transition hover:-translate-y-0.5 hover:bg-[#D97857] hover:text-white"
+                  >
+                    اكتشف المعالم
+                    <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
+                  </button>
+
+                  <button
+                    onClick={() => scrollToSection('market')}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-md transition hover:bg-white/15"
+                  >
+                    <Store className="h-4 w-4" />
+                    سوق المحافظة
+                  </button>
                 </div>
               </div>
 
-              {/* Cultural Traditions & Folk Customs */}
-              {governorate.culturalTraditions && governorate.culturalTraditions.length > 0 && (
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 border border-[#E5DDD3] dark:border-[#352B24]">
-                  <h3 className="text-lg sm:text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2] mb-4">
-                    عادات وتقاليد متوارثة
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {governorate.culturalTraditions.map((trad, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3.5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] text-xs sm:text-sm font-semibold flex items-center gap-2.5"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-[#B24C2B]" />
-                        <span>{trad}</span>
-                      </div>
-                    ))}
+              <div className="grid grid-cols-2 gap-3 pt-8 sm:grid-cols-4">
+                {[
+                  ['المعالم', places.length],
+                  ['الصنايع', crafts.length],
+                  ['الحكايات', stories.length],
+                  ['الشخصيات', people.length],
+                ].map(([label, count]) => (
+                  <div
+                    key={String(label)}
+                    className="border-r border-white/15 pr-4 first:border-r-0"
+                  >
+                    <div className="text-2xl font-black text-white sm:text-3xl">
+                      {count}
+                    </div>
+                    <div className="mt-1 text-xs font-bold text-white/45">
+                      {label}
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Sidebar Highlights */}
-            <div className="lg:col-span-4 space-y-6">
-              {/* Famous For Card */}
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 border border-[#E5DDD3] dark:border-[#352B24]">
-                <h3 className="text-base font-bold mb-3 text-[#241E1A] dark:text-[#FAF6F2]">
-                  تشتهر المحافظة بـ:
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {governorate.famousFor?.map((item, idx) => (
+      {/* =========================================================
+          MUSEUM INDEX
+      ========================================================= */}
+
+      <div className="sticky top-0 z-40 border-y border-[#E4DBD2]/80 bg-[#F6F1EA]/95 backdrop-blur-xl dark:border-[#382D27] dark:bg-[#0F0C0A]/95">
+        <div className="mx-auto max-w-[1500px]">
+          <div className="no-scrollbar flex overflow-x-auto">
+            {sections.map((section) => {
+              const Icon = section.icon;
+              const active = activeSection === section.id;
+
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`group flex min-w-max items-center gap-3 border-l border-[#E4DBD2] px-4 py-4 text-right transition first:border-l-0 dark:border-[#382D27] sm:px-6 ${active
+                    ? 'bg-[#241E1A] text-white dark:bg-[#FFF8F1] dark:text-[#17120F]'
+                    : 'text-[#73675B] hover:bg-white hover:text-[#241E1A] dark:text-[#B8AAA0] dark:hover:bg-[#1B1613] dark:hover:text-white'
+                    }`}
+                >
+                  <span className="text-[10px] font-black opacity-40">
+                    {section.number}
+                  </span>
+
+                  <Icon className="h-4 w-4" />
+
+                  <span className="text-xs font-black">
+                    {section.label}
+                  </span>
+
+                  {typeof section.count === 'number' && (
                     <span
-                      key={idx}
-                      className="px-3 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-200 dark:border-amber-800/40"
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-black ${active
+                        ? 'bg-white/10'
+                        : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
+                        }`}
                     >
-                      {item}
+                      {section.count}
                     </span>
-                  ))}
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
+        {/* =======================================================
+            OVERVIEW
+        ======================================================= */}
+
+        <section
+          id="overview"
+          className="scroll-mt-20 py-16 sm:py-24 lg:py-32"
+        >
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.8fr] lg:gap-20">
+            <div>
+              <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#B24C2B] dark:text-[#D97857]">
+                <span>01</span>
+                <span className="h-px w-10 bg-current" />
+                الحكاية
+              </div>
+
+              <h2 className="max-w-md text-4xl font-black leading-tight tracking-[-0.035em] sm:text-5xl">
+                المحافظة مش مجرد مكان.
+                <span className="block text-[#B24C2B] dark:text-[#D97857]">
+                  دي ذاكرة.
+                </span>
+              </h2>
+
+              <p className="mt-6 max-w-md text-sm leading-8 text-[#73675B] dark:text-[#B8AAA0]">
+                رحلة جوه تفاصيل المكان، من الحجر والشارع لحد الصنعة والحكاية
+                والأكل والناس.
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="absolute -right-3 top-6 h-full w-px bg-[#D8CCC1] dark:bg-[#382D27]" />
+
+              <div className="pr-7 sm:pr-12">
+                <span className="text-6xl font-black leading-none text-[#241E1A]/10 dark:text-white/10 sm:text-8xl">
+                  “
+                </span>
+
+                <p className="mt-[-18px] text-2xl font-bold leading-[1.8] tracking-[-0.02em] text-[#332A24] dark:text-[#F3E8DF] sm:text-3xl lg:text-4xl">
+                  {governorate.history ||
+                    governorate.shortIntro ||
+                    'كل شارع هنا شايل حكاية، وكل حكاية بتفتح باب على جزء من تاريخ الصعيد.'}
+                </p>
+
+                <div className="mt-9 flex flex-wrap gap-3">
+                  {(governorate.famousFor || [])
+                    .slice(0, 5)
+                    .map((item: any, index: number) => (
+                      <span
+                        key={index}
+                        className="rounded-full border border-[#DDD1C7] bg-white px-4 py-2 text-xs font-bold text-[#5F534A] dark:border-[#382D27] dark:bg-[#1B1613] dark:text-[#C8BAB0]"
+                      >
+                        {typeof item === 'string'
+                          ? item
+                          : item?.name || item?.title}
+                      </span>
+                    ))}
                 </div>
               </div>
-
-              {/* Quick Links into sections */}
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 border border-[#E5DDD3] dark:border-[#352B24] space-y-3">
-                <h3 className="text-base font-bold mb-1 text-[#241E1A] dark:text-[#FAF6F2]">
-                  استكشف تراث {governorate.name}
-                </h3>
-                <button
-                  onClick={() => setActiveTab('places')}
-                  className="w-full text-right p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] text-xs font-bold flex items-center justify-between transition-colors"
-                >
-                  <span>أشهر المعالم والآثار</span>
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#B24C2B]" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('crafts')}
-                  className="w-full text-right p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] text-xs font-bold flex items-center justify-between transition-colors"
-                >
-                  <span>الحرف والورش التاريخية</span>
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#B24C2B]" />
-                </button>
-                <button
-                  onClick={() => setActiveTab('products')}
-                  className="w-full text-right p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] text-xs font-bold flex items-center justify-between transition-colors"
-                >
-                  <span>منتجات ورش {governorate.name} بالسوق</span>
-                  <ArrowLeft className="w-3.5 h-3.5 text-[#B24C2B]" />
-                </button>
-              </div>
             </div>
           </div>
-        )}
 
-        {/* Tab 2: Places */}
-        {activeTab === 'places' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">المعالم التراثية في {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">معالم فرعونية، قبطية، إسلامية وطبيعية موثقة</p>
-              </div>
-            </div>
+          {/* Cultural strip */}
+          {governorate.culturalTraditions && (
+            <div className="mt-16 grid gap-5 lg:grid-cols-3">
+              {[
+                {
+                  icon: Crown,
+                  title: 'الهوية',
+                  text:
+                    typeof governorate.culturalTraditions === 'string'
+                      ? governorate.culturalTraditions
+                      : 'تقاليد متوارثة بتتغير مع الزمن من غير ما تفقد روحها.',
+                },
+                {
+                  icon: Mountain,
+                  title: 'المكان',
+                  text: governorate.shortIntro || 'جغرافيا صنعت شخصية المكان.',
+                },
+                {
+                  icon: Flame,
+                  title: 'الذاكرة',
+                  text:
+                    governorate.history ||
+                    'حكايات متوارثة من جيل لجيل.',
+                },
+              ].map((item) => {
+                const Icon = item.icon;
 
-            {(!governorate.places || governorate.places.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">جاري استكمال توثيق معالم هذه المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {governorate.places.map((place) => (
+                return (
                   <div
-                    key={place.id}
-                    onClick={() => navigateToPlace(place.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                    key={item.title}
+                    className="group rounded-[28px] border border-[#E4DBD2] bg-white p-7 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-[#241E1A]/5 dark:border-[#382D27] dark:bg-[#1B1613] dark:hover:shadow-black/20"
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={place.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=600'}
-                        alt={place.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-bold">
-                        {CATEGORY_LABELS[place.category] || place.category}
-                      </span>
-                    </div>
-                    <div className="p-5 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold group-hover:text-[#B24C2B] transition-colors mb-2">
-                          {place.title}
-                        </h3>
-                        <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 leading-relaxed">
-                          {place.shortDescription || place.description}
-                        </p>
-                      </div>
-                      <div className="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                        <span>استكشف المعلم</span>
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                    <Icon className="mb-8 h-6 w-6 text-[#B24C2B] dark:text-[#D97857]" />
 
-        {/* Tab 3: Crafts */}
-        {activeTab === 'crafts' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">حرف وورش {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">صناعات يدوية عريقة ورثها الأبناء عن الأجداد</p>
-              </div>
-            </div>
+                    <h3 className="mb-3 text-lg font-black">
+                      {item.title}
+                    </h3>
 
-            {(!governorate.crafts || governorate.crafts.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">جاري توثيق ورش وحرف هذه المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {governorate.crafts.map((craft) => (
-                  <div
-                    key={craft.id}
-                    onClick={() => navigateToCraft(craft.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={craft.coverImage || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600'}
-                        alt={craft.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-amber-600/90 text-white text-[11px] font-bold">
-                        {craft.category || 'حرفة يدوية أصيلة'}
-                      </span>
-                    </div>
-                    <div className="p-5 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold group-hover:text-[#B24C2B] transition-colors mb-2">
-                          {craft.title}
-                        </h3>
-                        <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 leading-relaxed mb-3">
-                          {craft.shortDescription}
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          {craft.materials?.slice(0, 3).map((m, i) => (
-                            <span key={i} className="text-[10px] bg-[#FAF7F2] dark:bg-[#26201B] px-2 py-0.5 rounded-md text-[#73675B]">
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                        <span>أسرار الصنعة ومراحلها</span>
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tab 4: Stories */}
-        {activeTab === 'stories' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">وه بيحكي — حكايات {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">مرويات شعبية، أساطير النيل، وسير الصمود والحكمة</p>
-              </div>
-            </div>
-
-            {(!governorate.stories || governorate.stories.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">جاري جمع الحكايات الشفاهية من شيوخ المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {governorate.stories.map((story) => (
-                  <div
-                    key={story.id}
-                    onClick={() => navigateToStory(story.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] p-6 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300">
-                          {story.category}
-                        </span>
-                        {(story.narrator || story.authorName) && (
-                          <span className="text-xs text-[#73675B]">راوي الحكاية: {story.narrator || story.authorName}</span>
-                        )}
-                      </div>
-                      <h3 className="text-xl font-bold font-serif group-hover:text-[#B24C2B] transition-colors mb-2">
-                        {story.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#A89C90] leading-relaxed line-clamp-3">
-                        {story.excerpt || story.content}
-                      </p>
-                    </div>
-                    <div className="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                      <span>اقرأ الحكاية كاملة</span>
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tab 5: People */}
-        {activeTab === 'people' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">ناس {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">شيوخ الصنعة وحراس التراث ورموز الصعيد</p>
-              </div>
-            </div>
-
-            {(!governorate.people || governorate.people.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">جاري توثيق مسيرات شيوخ الصنعة في هذه المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {governorate.people.map((person) => (
-                  <div
-                    key={person.id}
-                    onClick={() => navigateToPerson(person.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] p-5 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div className="flex items-center gap-4 mb-4">
-                      <img
-                        src={person.photoUrl || (person as any).avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200'}
-                        alt={person.name}
-                        className="w-16 h-16 rounded-2xl object-cover border border-[#E5DDD3]"
-                      />
-                      <div>
-                        <h3 className="text-base font-bold group-hover:text-[#B24C2B] transition-colors">
-                          {person.name}
-                        </h3>
-                        <p className="text-xs text-[#B24C2B] font-semibold">{person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole}</p>
-                        {person.yearsOfExperience && (
-                          <p className="text-[11px] text-[#73675B]">{person.yearsOfExperience} عاماً من الخبرة</p>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-3 leading-relaxed mb-4">
-                      {person.bio || (person as any).biography}
+                    <p className="text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
+                      {item.text}
                     </p>
-                    <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                      <span>الملف الكامل والمقتنيات</span>
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                    </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tab 6: Food */}
-        {activeTab === 'food' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">طعم وأكلات {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">المذاق الصعيدي الأصيل ومخبوزات الفرن البلدي</p>
-              </div>
+                );
+              })}
             </div>
+          )}
+        </section>
 
-            {(!governorate.foods || governorate.foods.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">جاري توثيق وصفات المطبخ الصعيدي لهذه المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {governorate.foods.map((food) => (
-                  <div
-                    key={food.id}
-                    onClick={() => navigateToFood(food.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+        {/* =======================================================
+            PLACES
+        ======================================================= */}
+
+        <section id="places" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="02"
+            eyebrow="PLACES"
+            title="أماكن تستاهل تتشاف"
+            description="من المعابد للمساجد والأديرة والقرى، كل مكان له شخصية وحكاية."
+            icon={Landmark}
+          />
+
+          {places.length > 0 ? (
+            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-12">
+              {places.slice(0, 6).map((place: any, index: number) => {
+                const large = index === 0 || index === 3;
+
+                return (
+                  <button
+                    key={place.id || index}
+                    onClick={() => navigateToPlace(place)}
+                    className={`group relative overflow-hidden rounded-[30px] text-right ${large
+                      ? 'min-h-[480px] lg:col-span-7'
+                      : 'min-h-[330px] lg:col-span-5'
+                      }`}
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={food.coverImage || 'https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600'}
-                        alt={food.title || food.name || 'أكلة تراثية'}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-600/90 text-white text-[11px] font-bold">
-                        {food.category || (food as any).occasionOrTradition || 'أكلات وتراث الصعيد'}
+                    <img
+                      src={getImage(place)}
+                      alt={place.title}
+                      className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+
+                    <div className="absolute left-6 top-6">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-xs font-black text-white backdrop-blur-md">
+                        {String(index + 1).padStart(2, '0')}
                       </span>
                     </div>
-                    <div className="p-5 flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="text-lg font-bold group-hover:text-[#B24C2B] transition-colors mb-2">
-                          {food.title || food.name}
-                        </h3>
-                        <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 leading-relaxed mb-3">
-                          {food.story || (food as any).originStory || food.description}
-                        </p>
-                      </div>
-                      <div className="pt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                        <span>الوصفة التراثية والمكونات</span>
-                        <ArrowLeft className="w-3.5 h-3.5" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Tab 7: Events */}
-        {activeTab === 'events' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">فعاليات ومواسم {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">الموالد الشعبية، مواسم الحصاد، ومعارض الحرف التراثية</p>
-              </div>
-            </div>
-
-            {(!governorate.events || governorate.events.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <p className="text-sm text-[#73675B]">لا توجد فعاليات مسجلة حالياً لهذه المحافظة</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {governorate.events.map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={() => navigateToEvent(event.slug)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] p-6 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300">
-                          {event.category}
-                        </span>
-                        <span className="text-xs text-[#73675B] flex items-center gap-1">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <span>{event.eventDate || event.timeOfYear || event.startDate}</span>
-                        </span>
+                    <div className="absolute inset-x-6 bottom-6">
+                      <div className="mb-3 flex items-center gap-2 text-xs font-bold text-white/60">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {place.governorateName || governorate.name}
                       </div>
-                      <h3 className="text-xl font-bold font-serif group-hover:text-[#B24C2B] transition-colors mb-2">
-                        {event.title}
+
+                      <h3 className="text-2xl font-black text-white sm:text-3xl">
+                        {place.title || place.name}
                       </h3>
-                      <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#A89C90] leading-relaxed line-clamp-3">
-                        {event.description}
-                      </p>
+
+                      <div className="mt-4 flex items-center gap-2 text-xs font-bold text-white/70 transition group-hover:text-white">
+                        اكتشف المكان
+                        <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
+                      </div>
                     </div>
-                    <div className="pt-4 mt-4 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between text-xs font-bold text-[#B24C2B]">
-                      <span>تفاصيل الفعالية ومواعيدها</span>
-                      <ArrowLeft className="w-3.5 h-3.5" />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنضيف معالم المحافظة للأرشيف." />
+          )}
+        </section>
+
+        {/* =======================================================
+            CRAFTS
+        ======================================================= */}
+
+        <section id="crafts" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="03"
+            eyebrow="CRAFTS"
+            title="الصنعة لسه عايشة"
+            description="إيد بتشتغل، وخبرة بتتنقل، وتفاصيل اتولدت في الصعيد ولسه مستمرة."
+            icon={Sparkles}
+          />
+
+          {crafts.length > 0 ? (
+            <div className="mt-12 divide-y divide-[#E4DBD2] border-y border-[#E4DBD2] dark:divide-[#382D27] dark:border-[#382D27]">
+              {crafts.slice(0, 7).map((craft: any, index: number) => (
+                <button
+                  key={craft.id || index}
+                  onClick={() => navigateToCraft(craft)}
+                  className="group grid w-full grid-cols-[60px_92px_1fr_auto] items-center gap-4 py-5 text-right transition hover:px-3 sm:grid-cols-[80px_150px_1fr_auto] sm:gap-6"
+                >
+                  <span className="text-xs font-black text-[#B24C2B] dark:text-[#D97857]">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+
+                  <div className="h-20 overflow-hidden rounded-2xl sm:h-24">
+                    <img
+                      src={getImage(craft)}
+                      alt={craft.title || craft.name}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-black sm:text-2xl">
+                      {craft.title || craft.name || 'حرفة تراثية'}
+                    </h3>
+
+                    <p className="mt-1 line-clamp-2 text-xs leading-6 text-[#73675B] dark:text-[#B8AAA0] sm:text-sm">
+                      {craft.description ||
+                        craft.shortDescription ||
+                        'صنعة متوارثة من أهل المكان.'}
+                    </p>
+                  </div>
+
+                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857] sm:block" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنوثق صنايع المحافظة." />
+          )}
+        </section>
+
+        {/* =======================================================
+            STORIES
+        ======================================================= */}
+
+        <section id="stories" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="04"
+            eyebrow="STORIES"
+            title="الحكاية قبل الصورة"
+            description="مرويات وأحداث وذاكرة شعبية بتخلي المكان له صوت."
+            icon={ScrollText}
+          />
+
+          {stories.length > 0 ? (
+            <div className="mt-12 grid gap-6 lg:grid-cols-3">
+              {stories.slice(0, 6).map((story: any, index: number) => (
+                <button
+                  key={story.id || index}
+                  onClick={() => navigateToStory(story)}
+                  className={`group relative overflow-hidden rounded-[30px] border border-[#E4DBD2] bg-white text-right dark:border-[#382D27] dark:bg-[#1B1613] ${index === 0 ? 'lg:row-span-2' : ''
+                    }`}
+                >
+                  <div
+                    className={
+                      index === 0
+                        ? 'h-[500px]'
+                        : 'h-[260px]'
+                    }
+                  >
+                    <img
+                      src={getImage(story)}
+                      alt={story.title}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                  </div>
+
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent p-6 pt-24">
+                    <div className="mb-3 text-[10px] font-black tracking-[0.18em] text-[#E8B19D]">
+                      STORY {String(index + 1).padStart(2, '0')}
+                    </div>
+
+                    <h3 className="text-xl font-black text-white sm:text-2xl">
+                      {story.title || story.name || 'حكاية من الصعيد'}
+                    </h3>
+
+                    <p className="mt-2 line-clamp-2 text-xs leading-6 text-white/65">
+                      {story.shortDescription ||
+                        story.description ||
+                        story.excerpt ||
+                        'حكاية من ذاكرة المكان.'}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنجمع حكايات المحافظة." />
+          )}
+        </section>
+
+        {/* =======================================================
+            PEOPLE
+        ======================================================= */}
+
+        <section id="people" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="05"
+            eyebrow="PEOPLE"
+            title="الناس هم التراث"
+            description="أصحاب الصنعة، الرواة، والشخصيات اللي بتحافظ على روح المكان."
+            icon={Users}
+          />
+
+          {people.length > 0 ? (
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {people.slice(0, 8).map((person: any, index: number) => (
+                <button
+                  key={person.id || index}
+                  onClick={() => navigateToPerson(person)}
+                  className="group overflow-hidden rounded-[28px] border border-[#E4DBD2] bg-white text-right transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/5 dark:border-[#382D27] dark:bg-[#1B1613] dark:hover:shadow-black/20"
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <img
+                      src={getPersonImage(person)}
+                      alt={person.name}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+
+                    <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/25 text-xs font-black text-white backdrop-blur-md">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  <div className="p-5">
+                    <h3 className="text-lg font-black">
+                      {person.name || 'شخصية من المحافظة'}
+                    </h3>
+
+                    <p className="mt-1 text-xs font-bold text-[#B24C2B] dark:text-[#D97857]">
+                      {getPersonTitle(person)}
+                    </p>
+
+                    <p className="mt-3 line-clamp-2 text-xs leading-6 text-[#73675B] dark:text-[#B8AAA0]">
+                      {person.bio ||
+                        person.biography ||
+                        'واحد من الناس اللي شايلين ذاكرة المكان.'}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنوثق الشخصيات المؤثرة." />
+          )}
+        </section>
+
+        {/* =======================================================
+            FOOD
+        ======================================================= */}
+
+        <section id="food" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="06"
+            eyebrow="FOOD"
+            title="طعم المكان"
+            description="الأكل جزء من الحكاية، وكل وصفة ليها مناسبة وذاكرة."
+            icon={Utensils}
+          />
+
+          {foods.length > 0 ? (
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {foods.slice(0, 8).map((food: any, index: number) => (
+                <button
+                  key={food.id || index}
+                  onClick={() => navigateToFood(food)}
+                  className="group relative min-h-[330px] overflow-hidden rounded-[28px] text-right"
+                >
+                  <img
+                    src={getImage(food)}
+                    alt={getFoodTitle(food)}
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+                  <div className="absolute left-5 top-5">
+                    <span className="rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-black text-white backdrop-blur-md">
+                      {food.category ||
+                        food.occasionOrTradition ||
+                        'أكلة شعبية'}
+                    </span>
+                  </div>
+
+                  <div className="absolute inset-x-5 bottom-5">
+                    <div className="mb-2 text-[10px] font-black tracking-widest text-white/45">
+                      FOOD {String(index + 1).padStart(2, '0')}
+                    </div>
+
+                    <h3 className="text-xl font-black text-white">
+                      {getFoodTitle(food)}
+                    </h3>
+
+                    <p className="mt-2 line-clamp-2 text-xs leading-6 text-white/65">
+                      {food.story ||
+                        food.originStory ||
+                        food.description ||
+                        'طعم من ذاكرة المكان.'}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنوثق أكلات المحافظة." />
+          )}
+        </section>
+
+        {/* =======================================================
+            EVENTS
+        ======================================================= */}
+
+        <section id="events" className="scroll-mt-20 py-16 sm:py-24">
+          <SectionHeading
+            number="07"
+            eyebrow="SEASONS"
+            title="المواسم اللي بتجمع الناس"
+            description="مناسبات وأحداث بتحرك الذاكرة وتجمع أهل المكان."
+            icon={CalendarDays}
+          />
+
+          {events.length > 0 ? (
+            <div className="mt-12 border-y border-[#E4DBD2] dark:border-[#382D27]">
+              {events.slice(0, 7).map((event: any, index: number) => (
+                <button
+                  key={event.id || index}
+                  onClick={() => navigateToEvent(event)}
+                  className="group grid w-full gap-5 border-b border-[#E4DBD2] py-7 text-right last:border-b-0 dark:border-[#382D27] md:grid-cols-[120px_1fr_auto] md:items-center"
+                >
+                  <div>
+                    <div className="text-2xl font-black text-[#B24C2B] dark:text-[#D97857]">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+
+                    <div className="mt-1 text-[10px] font-bold text-[#8B7D73] dark:text-[#8F8178]">
+                      {getEventDate(event)}
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Tab 8: Marketplace Products from this Governorate */}
-        {activeTab === 'products' && (
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-black font-serif">منتجات ورش {governorate.name}</h2>
-                <p className="text-xs sm:text-sm text-[#73675B]">قطع فنية أصلية مشحونة مباشرة من أيادي صناع {governorate.name}</p>
+                  <div>
+                    <h3 className="text-xl font-black transition group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857]">
+                      {event.title || event.name || 'فعالية من المحافظة'}
+                    </h3>
+
+                    <p className="mt-2 line-clamp-2 text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
+                      {event.description ||
+                        event.shortDescription ||
+                        'موعد من مواسم المكان.'}
+                    </p>
+                  </div>
+
+                  <ArrowLeft className="hidden h-5 w-5 text-[#A89B91] transition group-hover:-translate-x-1 group-hover:text-[#B24C2B] dark:group-hover:text-[#D97857] md:block" />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <EmptyState text="لسه بنضيف مواسم وأحداث المحافظة." />
+          )}
+        </section>
+
+        {/* =======================================================
+            MARKET
+        ======================================================= */}
+
+        <section id="market" className="scroll-mt-20 py-16 sm:py-24 lg:py-32">
+          <div className="relative overflow-hidden rounded-[36px] bg-[#241E1A] p-7 text-white sm:p-10 lg:p-14 dark:bg-[#1B1613]">
+            <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
+            <div className="pointer-events-none absolute -left-12 -top-12 h-48 w-48 rounded-full border border-white/10" />
+
+            <div className="relative z-10 flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
+              <div className="max-w-2xl">
+                <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#E8B19D]">
+                  <span>08</span>
+                  <span className="h-px w-10 bg-[#D97857]" />
+                  MARKET
+                </div>
+
+                <h2 className="text-4xl font-black tracking-[-0.035em] sm:text-6xl">
+                  خد حتة من الحكاية معاك.
+                </h2>
+
+                <p className="mt-5 max-w-xl text-sm leading-8 text-white/60 sm:text-base">
+                  منتجات من أهل الصعيد، معمولة بإيد أصحابها، وكل قطعة وراها
+                  قصة.
+                </p>
               </div>
+
               <button
-                onClick={() => setActivePage('products')}
-                className="text-xs sm:text-sm font-bold text-[#B24C2B] hover:underline"
+                onClick={() => setActivePage('market')}
+                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#241E1A] transition hover:-translate-y-1 hover:bg-[#D97857] hover:text-white"
               >
-                تصفح كل منتجات سوق وه ←
+                <Store className="h-4 w-4" />
+                ادخل السوق
+                <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
               </button>
             </div>
 
-            {(!governorate.products || governorate.products.length === 0) ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <Store className="w-10 h-10 text-[#73675B] mx-auto mb-2" />
-                <p className="text-sm font-bold text-[#241E1A] dark:text-[#FAF6F2]">لا توجد منتجات مسجلة حالياً لهذه المحافظة</p>
-                <p className="text-xs text-[#73675B] mt-1">تصفح أقسام السوق الأخرى لاكتشاف خيرات الصعيد</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-                {governorate.products.map((prod: any) => (
-                  <div
-                    key={prod.id}
-                    onClick={() => navigateToProduct(prod.id)}
-                    className="group bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            {products.length > 0 && (
+              <div className="relative z-10 mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {products.slice(0, 4).map((product: any, index: number) => (
+                  <button
+                    key={product.id || index}
+                    onClick={() => navigateToProduct(product)}
+                    className="group overflow-hidden rounded-[24px] border border-white/10 bg-white/5 text-right backdrop-blur-sm transition hover:bg-white/10"
                   >
-                    <div className="relative aspect-square overflow-hidden bg-[#E5DDD3] dark:bg-[#26201B]">
+                    <div className="aspect-square overflow-hidden">
                       <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400'}
-                        alt={prod.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        src={getImage(product)}
+                        alt={product.title || product.name}
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                       />
                     </div>
-                    <div className="p-3 sm:p-4">
-                      <span className="text-[10px] text-[#B24C2B] font-bold block mb-1">
-                        {prod.categoryName || 'حرفة يدوية'}
-                      </span>
-                      <h3 className="text-xs sm:text-sm font-bold text-[#241E1A] dark:text-[#FAF6F2] group-hover:text-[#B24C2B] transition-colors truncate">
-                        {prod.title}
-                      </h3>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#F0EAE1] dark:border-[#2D2622]">
-                        <span className="text-xs sm:text-sm font-black text-[#B24C2B]">
-                          {prod.price} ج.م
-                        </span>
-                        <span className="text-[10px] text-[#73675B]">تفاصيل القطعة ←</span>
+
+                    <div className="p-4">
+                      <div className="mb-1 text-[10px] font-bold text-white/40">
+                        {product.categoryName || 'منتج تراثي'}
                       </div>
+
+                      <h3 className="line-clamp-1 text-sm font-black text-white">
+                        {product.title || product.name || 'منتج من الصعيد'}
+                      </h3>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
           </div>
+        </section>
+      </main>
+
+      {/* =========================================================
+          MOBILE FLOATING INDEX
+      ========================================================= */}
+
+      <div className="fixed bottom-5 left-5 z-50 lg:hidden">
+        <button
+          onClick={() => setMobileMenuOpen((value) => !value)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#241E1A] text-white shadow-2xl transition hover:scale-105 dark:bg-[#FFF8F1] dark:text-[#17120F]"
+          aria-label="فتح الفهرس"
+        >
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
+        </button>
+
+        {mobileMenuOpen && (
+          <div className="absolute bottom-16 left-0 w-60 overflow-hidden rounded-[24px] border border-[#E4DBD2] bg-white p-2 shadow-2xl dark:border-[#382D27] dark:bg-[#1B1613]">
+            {sections.map((section) => {
+              const Icon = section.icon;
+
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-right transition hover:bg-[#F6F1EA] dark:hover:bg-[#2A211D]"
+                >
+                  <span className="text-[10px] font-black text-[#B24C2B] dark:text-[#D97857]">
+                    {section.number}
+                  </span>
+
+                  <Icon className="h-4 w-4 text-[#73675B] dark:text-[#B8AAA0]" />
+
+                  <span className="text-xs font-bold">
+                    {section.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         )}
       </div>
+    </div>
+  );
+};
+
+/* =============================================================
+   SECTION HEADING
+============================================================= */
+
+interface SectionHeadingProps {
+  number: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+}
+
+const SectionHeading: React.FC<SectionHeadingProps> = ({
+  number,
+  eyebrow,
+  title,
+  description,
+  icon: Icon,
+}) => {
+  return (
+    <div className="grid gap-7 lg:grid-cols-[170px_1fr] lg:items-end">
+      <div className="flex items-center gap-4 lg:block">
+        <div className="text-5xl font-black leading-none tracking-[-0.06em] text-[#241E1A]/10 dark:text-white/10 lg:text-7xl">
+          {number}
+        </div>
+
+        <div className="h-px flex-1 bg-[#D8CCC1] dark:bg-[#382D27] lg:mt-7 lg:w-20" />
+      </div>
+
+      <div className="max-w-3xl">
+        <div className="mb-4 flex items-center gap-3 text-[10px] font-black tracking-[0.2em] text-[#B24C2B] dark:text-[#D97857]">
+          <Icon className="h-4 w-4" />
+          {eyebrow}
+        </div>
+
+        <h2 className="text-4xl font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl">
+          {title}
+        </h2>
+
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0] sm:text-base">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/* =============================================================
+   EMPTY STATE
+============================================================= */
+
+const EmptyState: React.FC<{ text: string }> = ({ text }) => {
+  return (
+    <div className="mt-10 rounded-[28px] border border-dashed border-[#D8CCC1] bg-white/50 px-6 py-14 text-center dark:border-[#382D27] dark:bg-[#1B1613]/50">
+      <Package className="mx-auto mb-4 h-8 w-8 text-[#A89B91] dark:text-[#74665D]" />
+
+      <p className="text-sm font-bold text-[#73675B] dark:text-[#B8AAA0]">
+        {text}
+      </p>
     </div>
   );
 };

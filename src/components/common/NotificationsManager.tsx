@@ -809,7 +809,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
           <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] max-w-lg w-full p-6 shadow-2xl space-y-5">
             <div className="flex items-center justify-between border-b border-[#F3EFE9] dark:border-[#2D2723] pb-4">
-              <div className="flex items-center gap-2 text-[#B24C2B]">
+              <div className="flex items-center gap-2 text-[#B24C2B] dark:text-[#FF855D]">
                 <Send className="w-5 h-5" />
                 <h3 className="text-base font-bold text-[#2D2A26] dark:text-[#FAF6F2]">
                   إرسال إشعار / إعلان عام من الإدارة
@@ -818,7 +818,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               <button
                 type="button"
                 onClick={() => setShowBroadcastModal(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg"
+                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-[#FAF6F2] rounded-lg transition-colors cursor-pointer"
               >
                 ✕
               </button>
@@ -832,7 +832,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <select
                   value={broadcastRecipient}
                   onChange={(e) => setBroadcastRecipient(e.target.value as any)}
-                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none"
+                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none text-[#2D2A26] dark:text-[#FAF6F2]"
                 >
                   <option value="all">كافة مستخدمي المنصة (بائعين ومشترين)</option>
                   <option value="seller">أصحاب الورش والحرفيين فقط</option>
@@ -850,7 +850,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   onChange={(e) => setBroadcastTitle(e.target.value)}
                   placeholder="مثال: خصومات موسم حصاد القصب بالصعيد، تحديث سياسة الشحن..."
                   required
-                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none focus:border-[#B24C2B]"
+                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none focus:border-[#B24C2B] text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72]"
                 />
               </div>
 
@@ -864,7 +864,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   rows={4}
                   placeholder="اكتب تفاصيل التنبيه الموجه للبائعين أو الجمهور..."
                   required
-                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none focus:border-[#B24C2B]"
+                  className="w-full p-2.5 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] rounded-xl outline-none focus:border-[#B24C2B] text-[#2D2A26] dark:text-[#FAF6F2] placeholder:text-[#8C7E72]"
                 />
               </div>
 
@@ -872,7 +872,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowBroadcastModal(false)}
-                  className="px-4 py-2 text-gray-500 hover:text-gray-700 font-bold"
+                  className="px-4 py-2 text-[#73675B] dark:text-[#A89C90] hover:text-[#2D2A26] dark:hover:text-[#FAF6F2] font-bold cursor-pointer"
                 >
                   إلغاء
                 </button>

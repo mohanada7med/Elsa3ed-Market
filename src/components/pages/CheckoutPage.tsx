@@ -143,22 +143,22 @@ export const CheckoutPage: React.FC = () => {
 
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8 animate-fadeIn">
-        <div className="bg-white rounded-3xl border border-[#ebdccd] shadow-xl p-6 sm:p-10 text-center space-y-6">
-          <div className="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+        <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#ebdccd] dark:border-[#352B24] shadow-xl p-6 sm:p-10 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
             <CheckCircle2 className="w-12 h-12" />
           </div>
 
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
               <Check className="w-3.5 h-3.5" />
               <span>تم استلام طلبك بنجاح!</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 font-heritage mt-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-[#FAF6F2] font-heritage mt-2">
               شكراً لتسوقك ودعمك لحرفيي صعيد مصر
             </h1>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-[#A89C90] mt-1">
               رقم الطلب الخاص بك:{' '}
-              <span className="font-mono font-bold text-[#943310] text-sm">
+              <span className="font-mono font-bold text-[#943310] dark:text-[#FF855D] text-sm">
                 #{completedOrder.orderNumber || completedOrder.id}
               </span>
             </p>
@@ -166,12 +166,12 @@ export const CheckoutPage: React.FC = () => {
 
           {/* Payment Status Callout */}
           {isManualTransfer && (
-            <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-right space-y-2">
-              <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
-                <Clock className="w-4 h-4 text-amber-600" />
+            <div className="p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-right space-y-2">
+              <div className="flex items-center gap-2 text-amber-900 dark:text-amber-300 font-bold text-xs">
+                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 <span>حالة الدفع: قيد مراجعة وتأكيد التحويل من الإدارة</span>
               </div>
-              <p className="text-xs text-amber-800 leading-relaxed">
+              <p className="text-xs text-amber-800 dark:text-amber-200/90 leading-relaxed">
                 تم تسجيل طلبك وحفظ بيانات التحويل. يقوم فريق الإدارة بمطابقة الدفعة عبر{' '}
                 {completedOrder.paymentMethod === 'instapay' ? 'InstaPay' : 'فودافون كاش'}{' '}
                 ثم تحديث حالة الطلب لبدء تجهيز وشحن المنتجات فوراً من ورش الصعيد.
@@ -181,79 +181,79 @@ export const CheckoutPage: React.FC = () => {
 
           {/* Specific Payment Guidance Box */}
           {completedOrder.paymentMethod === 'instapay' && (
-            <div className="bg-blue-50/80 border border-blue-200 p-5 rounded-2xl text-right text-xs text-blue-950 space-y-3">
+            <div className="bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 p-5 rounded-2xl text-right text-xs text-blue-950 dark:text-blue-200 space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-blue-900 flex items-center gap-2 text-sm">
-                  <CreditCard className="w-4 h-4 text-blue-600" />
+                <h4 className="font-bold text-blue-900 dark:text-blue-300 flex items-center gap-2 text-sm">
+                  <CreditCard className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   <span>بيانات حساب إنستاباي للمنصة:</span>
                 </h4>
                 <button
                   type="button"
                   onClick={() => handleCopy(paymentConfig.instaPayAccount, 'instapay-success')}
-                  className="px-2.5 py-1 bg-white hover:bg-blue-100 text-blue-700 border border-blue-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-2.5 py-1 bg-white dark:bg-[#201B18] hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedKey === 'instapay-success' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'instapay-success' ? 'تم النسخ' : 'نسخ المعرف'}</span>
                 </button>
               </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-blue-100 flex items-center justify-between">
-                <span className="text-gray-600">معرف الدفع (IPA):</span>
-                <strong className="font-mono text-sm text-blue-900 select-all" dir="ltr">
+              <div className="bg-white/80 dark:bg-[#110E0C] p-3 rounded-xl border border-blue-100 dark:border-blue-900/40 flex items-center justify-between">
+                <span className="text-gray-600 dark:text-stone-400">معرف الدفع (IPA):</span>
+                <strong className="font-mono text-sm text-blue-900 dark:text-blue-300 select-all" dir="ltr">
                   {paymentConfig.instaPayAccount}
                 </strong>
               </div>
-              <p className="text-[11px] text-blue-800">
-                المبلغ المطلوب تحويله: <strong className="font-bold text-blue-950">{completedOrder.total} ج.م</strong>.
+              <p className="text-[11px] text-blue-800 dark:text-blue-300">
+                المبلغ المطلوب تحويله: <strong className="font-bold text-blue-950 dark:text-blue-200">{completedOrder.total} ج.م</strong>.
               </p>
             </div>
           )}
 
           {completedOrder.paymentMethod === 'vodafone_cash' && (
-            <div className="bg-red-50/80 border border-red-200 p-5 rounded-2xl text-right text-xs text-red-950 space-y-3">
+            <div className="bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 p-5 rounded-2xl text-right text-xs text-red-950 dark:text-red-200 space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-bold text-red-900 flex items-center gap-2 text-sm">
-                  <Wallet className="w-4 h-4 text-red-600" />
+                <h4 className="font-bold text-red-900 dark:text-red-300 flex items-center gap-2 text-sm">
+                  <Wallet className="w-4 h-4 text-red-600 dark:text-red-400" />
                   <span>بيانات محفظة فودافون كاش للمنصة:</span>
                 </h4>
                 <button
                   type="button"
                   onClick={() => handleCopy(paymentConfig.vodafoneCashNumber, 'vodafone-success')}
-                  className="px-2.5 py-1 bg-white hover:bg-red-100 text-red-700 border border-red-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-2.5 py-1 bg-white dark:bg-[#201B18] hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedKey === 'vodafone-success' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'vodafone-success' ? 'تم النسخ' : 'نسخ الرقم'}</span>
                 </button>
               </div>
-              <div className="bg-white/80 p-3 rounded-xl border border-red-100 flex items-center justify-between">
-                <span className="text-gray-600">رقم المحفظة المعتمد:</span>
-                <strong className="font-mono text-sm text-red-900 select-all" dir="ltr">
+              <div className="bg-white/80 dark:bg-[#110E0C] p-3 rounded-xl border border-red-100 dark:border-red-900/40 flex items-center justify-between">
+                <span className="text-gray-600 dark:text-stone-400">رقم المحفظة المعتمد:</span>
+                <strong className="font-mono text-sm text-red-900 dark:text-red-300 select-all" dir="ltr">
                   {paymentConfig.vodafoneCashNumber}
                 </strong>
               </div>
-              <p className="text-[11px] text-red-800">
-                المبلغ المطلوب تحويله: <strong className="font-bold text-red-950">{completedOrder.total} ج.م</strong>.
+              <p className="text-[11px] text-red-800 dark:text-red-300">
+                المبلغ المطلوب تحويله: <strong className="font-bold text-red-950 dark:text-red-200">{completedOrder.total} ج.م</strong>.
               </p>
             </div>
           )}
 
           {completedOrder.paymentMethod === 'cod' && (
-            <div className="bg-amber-50/80 border border-amber-200 p-5 rounded-2xl text-right text-xs text-amber-950 space-y-2">
-              <h4 className="font-bold text-amber-900 flex items-center gap-2 text-sm">
-                <Truck className="w-4 h-4 text-amber-700" />
+            <div className="bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-5 rounded-2xl text-right text-xs text-amber-950 dark:text-amber-200 space-y-2">
+              <h4 className="font-bold text-amber-900 dark:text-amber-300 flex items-center gap-2 text-sm">
+                <Truck className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                 <span>طريقة الدفع: نقداً عند الاستلام</span>
               </h4>
-              <p className="text-xs text-amber-900">
+              <p className="text-xs text-amber-900 dark:text-amber-200">
                 المبلغ المستحق عند التسليم: <strong>{completedOrder.total} ج.م</strong>. سيقوم مندوب الشحن بالتواصل معك قبل التوصيل مع إمكانية فحص سلامة التغليف قبل السداد.
               </p>
             </div>
           )}
 
           {/* Order Summary Details */}
-          <div className="bg-[#FAF7F2] p-5 rounded-2xl border border-[#ebdccd] text-right space-y-3">
-            <h4 className="font-bold text-xs text-gray-900 border-b border-[#ebdccd] pb-2">
+          <div className="bg-[#FAF7F2] dark:bg-[#161210] p-5 rounded-2xl border border-[#ebdccd] dark:border-[#352B24] text-right space-y-3">
+            <h4 className="font-bold text-xs text-gray-900 dark:text-[#FAF6F2] border-b border-[#ebdccd] dark:border-[#352B24] pb-2">
               ملخص الشحنة والمنتجات:
             </h4>
-            <div className="divide-y divide-[#f0e4d7]">
+            <div className="divide-y divide-[#f0e4d7] dark:divide-[#2C2420]">
               {(completedOrder.items || []).map((item, idx) => {
                 const prodId = item.product?.id || (item as any).productId || `completed-item-${idx}`;
                 const title = item.product?.title || (item as any).productTitle || 'منتج تراثي أصيل';
@@ -270,19 +270,19 @@ export const CheckoutPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <img src={img} alt={title} className="w-10 h-10 rounded-lg object-cover" />
                       <div>
-                        <span className="font-bold text-gray-800 block">{title}</span>
-                        <span className="text-[10px] text-gray-400">الكمية: {qty} • الورشة: {sellerName}</span>
+                        <span className="font-bold text-gray-800 dark:text-[#FAF6F2] block">{title}</span>
+                        <span className="text-[10px] text-gray-400 dark:text-stone-400">الكمية: {qty} • الورشة: {sellerName}</span>
                       </div>
                     </div>
-                    <span className="font-bold text-[#943310]">{price * qty} ج.م</span>
+                    <span className="font-bold text-[#943310] dark:text-[#FF855D]">{price * qty} ج.م</span>
                   </div>
                 );
               })}
             </div>
 
-            <div className="pt-2 border-t border-[#ebdccd] flex justify-between text-sm font-black text-gray-900">
+            <div className="pt-2 border-t border-[#ebdccd] dark:border-[#352B24] flex justify-between text-sm font-black text-gray-900 dark:text-[#FAF6F2]">
               <span>إجمالي الفاتورة المطلوب:</span>
-              <span className="text-[#943310] text-base">{completedOrder.total} ج.م</span>
+              <span className="text-[#943310] dark:text-[#FF855D] text-base">{completedOrder.total} ج.م</span>
             </div>
           </div>
 
