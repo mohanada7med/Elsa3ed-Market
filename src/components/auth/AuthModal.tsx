@@ -112,23 +112,21 @@ export const AuthModal: React.FC = () => {
   ========================================================= */
 
   useEffect(() => {
-    if (!isAuthModalOpen) return;
-
-    const previousBodyOverflow =
-      document.body.style.overflow;
-
-    const previousHtmlOverflow =
-      document.documentElement.style.overflow;
-
-    const previousBodyPaddingRight =
-      document.body.style.paddingRight;
+    if (!isAuthModalOpen) {
+      const cartDrawerRoot = document.getElementById('cart-drawer-root');
+      if (!cartDrawerRoot) {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
+      return;
+    }
 
     const scrollbarWidth =
       window.innerWidth -
       document.documentElement.clientWidth;
 
     document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
 
     if (scrollbarWidth > 0) {
       document.body.style.paddingRight =
@@ -136,14 +134,12 @@ export const AuthModal: React.FC = () => {
     }
 
     return () => {
-      document.body.style.overflow =
-        previousBodyOverflow;
-
-      document.documentElement.style.overflow =
-        previousHtmlOverflow;
-
-      document.body.style.paddingRight =
-        previousBodyPaddingRight;
+      const cartDrawerRoot = document.getElementById('cart-drawer-root');
+      if (!cartDrawerRoot) {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.body.style.paddingRight = '';
+      }
     };
   }, [isAuthModalOpen]);
 
