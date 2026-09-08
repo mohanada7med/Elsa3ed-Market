@@ -1246,7 +1246,9 @@ export const SellerDashboard: React.FC = () => {
                 <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{totalRevenue.toLocaleString()} ج.م</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">+18% نمو المبيعات التراثية</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                {orders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
+              </span>
             </div>
 
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
@@ -2376,7 +2378,9 @@ export const SellerDashboard: React.FC = () => {
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">
                 {reels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
               </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">+34% تفاعل خلال هذا الأسبوع</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                {reels.length > 0 ? `${reels.length} مقطع موثق للورشة` : 'مقاطع مرئية وتوثيق حي'}
+              </span>
             </div>
 
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">

@@ -16,9 +16,10 @@ import {
   UserProfile,
   UserRole,
   AuthState,
-  ThemeMode
+  ThemeMode,
+  WahEcosystemStats
 } from '../types.ts';
-import { api } from '../services/api.ts';
+import { api, wahApi } from '../services/api.ts';
 import { notificationService } from '../services/notificationService.ts';
 import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
 
@@ -69,6 +70,10 @@ interface AppContextType {
   navigateToPerson: (slug: string) => void;
   navigateToFood: (slug: string) => void;
   navigateToEvent: (slug: string) => void;
+
+  // WAH Platform Ecosystem Live Statistics (100% Real Database Source)
+  wahStats: WahEcosystemStats | null;
+  refreshWahStats: () => Promise<void>;
 
   // Intro Experience
   showIntroVideo: boolean;
@@ -338,43 +343,67 @@ export const normalizeOrder = (ord: any): Order => {
 const PAGE_ROUTES: Record<ActivePage, string> = {
   home: '/',
   explore: '/explore',
+
   governorates: '/governorates',
-  'governorate-details': '/governorates',
+  'governorate-details': '/governorates/:id',
+
   map: '/map',
+
   places: '/places',
-  'place-details': '/places',
+  'place-details': '/places/:id',
+
+  market: '/market',
+  profile: '/buyer-account',
+
   'cultural-crafts': '/cultural-crafts',
-  'cultural-craft-details': '/cultural-crafts',
-  'craft-details': '/cultural-crafts',
+  'cultural-craft-details': '/cultural-crafts/:id',
+  'craft-details': '/cultural-crafts/:id',
+
   stories: '/stories',
-  'story-details': '/stories',
+  'story-details': '/stories/:id',
+
   people: '/people',
-  'person-details': '/people',
+  'person-details': '/people/:id',
+
   food: '/food',
-  'food-details': '/food',
+  'food-details': '/food/:id',
+
   events: '/events',
-  'event-details': '/events',
+  'event-details': '/events/:id',
+
   'global-search': '/search',
+
   'cultural-cms': '/admin-cultural-cms',
+
+  // Market
   'wah-market': '/products',
   products: '/products',
-  'product-details': '/products',
+  'product-details': '/products/:id',
+
   categories: '/categories',
-  'category-details': '/categories',
+  'category-details': '/categories/:id',
+
   crafts: '/crafts',
+
   reels: '/reels',
+
   sellers: '/sellers',
-  'seller-details': '/sellers',
+  'seller-details': '/sellers/:id',
+
   about: '/about',
   wholesale: '/wholesale',
   search: '/search',
+
+  // Buyer
   cart: '/cart',
   checkout: '/checkout',
   orders: '/orders',
-  'order-details': '/orders',
+  'order-details': '/orders/:id',
   favorites: '/favorites',
   messages: '/messages',
   'buyer-account': '/buyer-account',
+
+  // Seller
   'seller-dashboard': '/seller-dashboard',
   'seller-products': '/seller-products',
   'seller-inventory': '/seller-inventory',
@@ -383,6 +412,8 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'seller-payouts': '/seller-payouts',
   'seller-analytics': '/seller-analytics',
   'seller-account': '/seller-account',
+
+  // Admin
   'admin-dashboard': '/admin-dashboard',
   'admin-cultural-cms': '/admin-cultural-cms',
   'admin-map-editor': '/admin-map-editor',
@@ -396,9 +427,8 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-reports': '/admin-reports',
   'admin-audit-logs': '/admin-audit-logs',
   'admin-settings': '/admin-settings',
-  'admin-media': '/admin-media'
+  'admin-media': '/admin-media',
 };
-
 function getInitialNavigationState(): {
   page: ActivePage;
   productId: string | null;
@@ -962,6 +992,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [sellerProducts, setSellerProducts] = useState<Product[]>([]);
   const [adminProducts, setAdminProducts] = useState<Product[]>([]);
   const [pendingProducts, setPendingProducts] = useState<Product[]>([]);
+
+  // WAH Platform Ecosystem Live Statistics
+  const [wahStats, setWahStats] = useState<WahEcosystemStats | null>(null);
+
+  const refreshWahStats = useCallback(async () => {
+    try {
+      const stats = await wahApi.getStats();
+      if (stats && typeof stats.governoratesCount === 'number') {
+        setWahStats(stats as unknown as WahEcosystemStats);
+      }
+    } catch (err) {
+      console.warn('[AppContext] Failed to refresh WAH stats:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshWahStats();
+  }, [refreshWahStats]);
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [sellers, setSellers] = useState<Seller[]>([]);
@@ -2567,6 +2615,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         navigateToPerson,
         navigateToFood,
         navigateToEvent,
+
+        wahStats,
+        refreshWahStats,
 
         showIntroVideo,
         setShowIntroVideo,

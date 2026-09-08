@@ -126,6 +126,16 @@ export const PlacesHeritagePage: React.FC = () => {
     );
   }, [places]);
 
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: places.length };
+    places.forEach((p) => {
+      if (p.category) {
+        counts[p.category] = (counts[p.category] || 0) + 1;
+      }
+    });
+    return counts;
+  }, [places]);
+
   const filteredPlaces = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
@@ -410,7 +420,7 @@ export const PlacesHeritagePage: React.FC = () => {
                       }
                     `}
                   >
-                    {category.number}
+                    {String(categoryCounts[category.key] || 0).padStart(2, '0')}
                   </span>
 
                   {category.label}

@@ -317,7 +317,9 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
+    const isEmail = normalizedUsername.includes('@');
     if (
+      !isEmail &&
       !USERNAME_REGEX.test(
         normalizedUsername
       )

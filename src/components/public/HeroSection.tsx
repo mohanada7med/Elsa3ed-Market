@@ -17,7 +17,7 @@ import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 
 export const HeroSection: React.FC = () => {
-  const { setActivePage } = useApp();
+  const { setActivePage, wahStats } = useApp();
 
   return (
     <div className="relative bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] border-b border-[var(--wah-border,#E5DDD3)] dark:border-[#2C231D] overflow-hidden transition-colors duration-300">
@@ -226,15 +226,21 @@ export const HeroSection: React.FC = () => {
               className="pt-6 border-t border-[#E5DDD3] dark:border-[#2C231D] grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-xl"
             >
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">8</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">
+                  {wahStats?.governoratesCount ?? 8}
+                </span>
                 <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89B8F] font-bold leading-tight block">محافظات موثقة</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">+180</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">
+                  {wahStats?.placesCount ?? 25}
+                </span>
                 <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89B8F] font-bold leading-tight block">معلم وموقع تراثي</span>
               </div>
               <div>
-                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">+35</span>
+                <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[var(--wah-primary,#B24C2B)] dark:text-[#E8734A] block font-mono">
+                  {wahStats?.craftsCount ?? 8}
+                </span>
                 <span className="text-[10px] sm:text-xs text-[#73675B] dark:text-[#A89B8F] font-bold leading-tight block">حرفة وصنعة أصيلة</span>
               </div>
               <div>

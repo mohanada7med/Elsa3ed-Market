@@ -1028,8 +1028,30 @@ export const Header: React.FC = () => {
               {isAuthenticated ? (
                 <div
                   ref={dropdownRef}
-                  className="relative shrink-0"
+                  className="relative shrink-0 flex items-center"
                 >
+                  <button
+                    id="user-avatar-btn"
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      navigate('buyer-account');
+                    }}
+                    title="الملف الشخصي"
+                    aria-label="الملف الشخصي"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 cursor-pointer sm:h-10 lg:h-11"
+                    style={{
+                      backgroundColor: hoverBg,
+                      color: mainText,
+                    }}
+                  >
+                    <img
+                      src={profileImage}
+                      alt={displayName}
+                      className="h-8 w-8 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                    />
+                  </button>
+
                   <button
                     id="user-menu-btn"
                     type="button"
@@ -1048,25 +1070,19 @@ export const Header: React.FC = () => {
                     }
                     aria-haspopup="menu"
                     aria-label="قائمة الحساب"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-auto sm:gap-2 lg:h-11"
+                    className="flex h-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:h-10 sm:gap-1.5 lg:h-11 cursor-pointer"
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
                     }}
                   >
-                    <img
-                      src={profileImage}
-                      alt={displayName}
-                      className="h-8 w-8 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-                    />
-
                     <span className="hidden max-w-[100px] truncate text-sm font-semibold xl:block">
                       {displayName}
                     </span>
 
                     <ChevronDown
                       size={15}
-                      className={`hidden transition-transform duration-200 xl:block ${userDropdownOpen
+                      className={`transition-transform duration-200 ${userDropdownOpen
                         ? 'rotate-180'
                         : ''
                         }`}
@@ -1113,7 +1129,8 @@ export const Header: React.FC = () => {
                         {/* USER INFO */}
 
                         <div
-                          className="border-b p-4"
+                          onClick={() => navigate('buyer-account')}
+                          className="border-b p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                           style={{
                             borderColor,
                           }}
@@ -1160,7 +1177,7 @@ export const Header: React.FC = () => {
                             type="button"
                             onClick={() =>
                               navigate(
-                                'profile'
+                                'buyer-account'
                               )
                             }
                             className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
@@ -1738,7 +1755,7 @@ export const Header: React.FC = () => {
                       id="mobile-account-link"
                       type="button"
                       onClick={() =>
-                        navigate('profile')
+                        navigate('buyer-account')
                       }
                       className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
                       style={{

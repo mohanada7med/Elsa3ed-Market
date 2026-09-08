@@ -26,7 +26,7 @@ import {
 import { WAHPattern } from '../../design-system/WAHPattern';
 
 export const Footer: React.FC = () => {
-  const { setActivePage, setShowIntroVideo } = useApp();
+  const { setActivePage, setShowIntroVideo, wahStats, sellers } = useApp();
 
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -50,10 +50,22 @@ export const Footer: React.FC = () => {
   };
 
   const liveMetrics = [
-    { num: '08', label: 'محافظات موثقة ميدانياً' },
-    { num: '+35', label: 'حرفة وصنعة متوارثة' },
-    { num: '+120', label: 'ورشة ونول تراثي مسجل' },
-    { num: '100%', label: 'عائد مباشر لصناع التراث' },
+    {
+      num: wahStats?.governoratesCount ? String(wahStats.governoratesCount).padStart(2, '0') : '08',
+      label: 'محافظات موثقة ميدانياً'
+    },
+    {
+      num: wahStats?.craftsCount ? String(wahStats.craftsCount).padStart(2, '0') : '08',
+      label: 'حرفة وصنعة متوارثة'
+    },
+    {
+      num: (sellers.length || wahStats?.sellersCount) ? String(sellers.length || wahStats?.sellersCount) : '—',
+      label: 'ورشة ونول تراثي مسجل'
+    },
+    {
+      num: '100%',
+      label: 'عائد مباشر لصناع التراث'
+    },
   ];
 
   const heritagePerks = [

@@ -18,7 +18,7 @@ import {
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export const GovernoratesPage: React.FC = () => {
-  const { navigateToGovernorate, setActivePage } = useApp();
+  const { navigateToGovernorate, setActivePage, wahStats } = useApp();
 
   const [governorates, setGovernorates] = useState<WahGovernorate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -202,18 +202,18 @@ export const GovernoratesPage: React.FC = () => {
           {/* Bottom information */}
           <div className="mt-16 grid border-y border-[#DDD2C8] dark:border-[#302721] sm:grid-cols-3">
             <Stat
-              number={governorates.length || 8}
+              number={governorates.length || wahStats?.governoratesCount || 8}
               label="محافظات موثقة"
             />
 
             <Stat
-              number="∞"
-              label="حكايات تستحق الاكتشاف"
+              number={wahStats?.storiesCount ?? '—'}
+              label="حكايات ومرويات موثقة"
             />
 
             <Stat
-              number="01"
-              label="معرض الصعيد"
+              number={wahStats?.placesCount ?? '—'}
+              label="معالم ومواقع تراثية"
             />
           </div>
         </div>

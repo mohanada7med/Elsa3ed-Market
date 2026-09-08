@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { api } from '../../services/api';
 import {
   User,
   MapPin,
@@ -22,6 +23,7 @@ import { Governorate } from '../../types';
 export const BuyerAccountPage: React.FC = () => {
   const {
     currentUser,
+    setCurrentUser,
     currentRole,
     orders,
     favorites,
@@ -33,12 +35,23 @@ export const BuyerAccountPage: React.FC = () => {
     setAuthModalTab
   } = useApp();
 
-  const [name, setName] = useState(currentUser.name);
-  const [email, setEmail] = useState(currentUser.email);
-  const [phone, setPhone] = useState(currentUser.phone || '01012345678');
+  const [name, setName] = useState(currentUser.name || '');
+  const [email, setEmail] = useState(currentUser.email || '');
+  const [phone, setPhone] = useState(currentUser.phone || '');
   const [governorate, setGovernorate] = useState<Governorate>(
     (currentUser.governorate as Governorate) || 'قنا'
   );
+
+  useEffect(() => {
+    if (currentUser?.id) {
+      setName(currentUser.name || '');
+      setEmail(currentUser.email || '');
+      setPhone(currentUser.phone || '');
+      if (currentUser.governorate) {
+        setGovernorate(currentUser.governorate as Governorate);
+      }
+    }
+  }, [currentUser]);
 
   // Profile image upload state
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -104,9 +117,26 @@ export const BuyerAccountPage: React.FC = () => {
     }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    addToast('تم حفظ البيانات', 'تم تحديث بيانات حسابك وعنوانك بنجاح', 'success');
+    try {
+      if (currentUser?.id) {
+        await api.updateProfile({ id: currentUser.id, role: currentUser.role }, {
+          name,
+          phone,
+          governorate
+        });
+        setCurrentUser(prev => ({
+          ...prev,
+          name,
+          phone,
+          governorate
+        }));
+      }
+      addToast('تم حفظ البيانات', 'تم تحديث بيانات حسابك وعنوانك بنجاح', 'success');
+    } catch (err: any) {
+      addToast('خطأ', err?.message || 'فشل حفظ بيانات الملف الشخصي', 'error');
+    }
   };
 
   const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';

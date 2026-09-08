@@ -29,6 +29,18 @@ import {
 
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
+const NILE_ORDER_MAP: Record<string, number> = {
+  'bani-suef': 1,
+  'beni-suef': 1,
+  'minya': 2,
+  'asyut': 3,
+  'sohag': 4,
+  'qena': 5,
+  'luxor': 6,
+  'aswan': 7,
+  'new-valley': 8,
+};
+
 export const GovernorateDetailPage: React.FC = () => {
   const {
     selectedGovernorateSlug,
@@ -49,6 +61,9 @@ export const GovernorateDetailPage: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const slug = selectedGovernorateSlug || 'qena';
+
+  const orderNumber = governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
+  const orderFormatted = String(orderNumber).padStart(2, '0');
 
   useEffect(() => {
     let mounted = true;
@@ -289,7 +304,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <div>
                   <div className="mb-3 flex items-center gap-3 text-xs font-bold tracking-[0.2em] text-white/55">
                     <span className="h-px w-10 bg-[#D97857]" />
-                    ARCHIVE 01
+                    ARCHIVE {orderFormatted}
                   </div>
 
                   <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-md">
@@ -310,7 +325,7 @@ export const GovernorateDetailPage: React.FC = () => {
               <div className="max-w-2xl">
                 <div className="mb-5 flex items-end gap-4">
                   <span className="text-[72px] font-black leading-none tracking-[-0.08em] text-white/10 sm:text-[110px]">
-                    01
+                    {orderFormatted}
                   </span>
 
                   <div className="mb-2 h-px flex-1 bg-white/15" />

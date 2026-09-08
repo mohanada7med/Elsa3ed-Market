@@ -337,6 +337,7 @@ export type ActivePage =
   | 'admin-reports'
   | 'admin-audit-logs'
   | 'market'
+  | 'profile'
   | 'admin-settings';
 
 export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';
@@ -782,21 +783,30 @@ export interface MapMarkerItem {
   detailsUrl?: string;
 }
 
+export interface WahEcosystemStats {
+  governoratesCount: number;
+  citiesCount?: number;
+  villagesCount?: number;
+  placesCount: number;
+  craftsCount: number;
+  traditionsCount?: number;
+  storiesCount: number;
+  peopleCount?: number;
+  artisansCount?: number;
+  foodsCount: number;
+  eventsCount: number;
+  seasonsCount?: number;
+  productsCount: number;
+  sellersCount?: number;
+  ordersCount?: number;
+  reelsCount: number;
+}
+
 export interface MapPayload {
   governorates: MapGovernorateData[];
   markers: MapMarkerItem[];
   featuredPlaces: MapMarkerItem[];
-  stats: {
-    governoratesCount: number;
-    placesCount: number;
-    craftsCount: number;
-    storiesCount: number;
-    foodsCount: number;
-    artisansCount: number;
-    eventsCount: number;
-    productsCount: number;
-    reelsCount: number;
-  };
+  stats: WahEcosystemStats;
 }
 
 export interface GlobalSearchResult {

@@ -18,7 +18,7 @@ import { motion } from 'motion/react';
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export const WahEcosystemPortalSection: React.FC = () => {
-  const { setActivePage } = useApp();
+  const { setActivePage, wahStats } = useApp();
 
   const portals = [
     {
@@ -34,12 +34,12 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'governorates',
-      title: 'محافظات الصعيد الـ 8',
+      title: wahStats?.governoratesCount ? `محافظات الصعيد الـ ${wahStats.governoratesCount}` : 'محافظات صعيد مصر',
       tagline: 'لكل محافظة طابع وتاريخ وصنعة',
       desc: 'دليل تفصيلي لكل محافظة: الفيوم، بني سويف، المنيا، أسيوط، سوهاج، قنا، الأقصر، أسوان، الوادي الجديد .',
       icon: Map,
       color: 'from-[#B24C2B] to-[#8C3E25]',
-      badge: '8 محافظات',
+      badge: `${wahStats?.governoratesCount || 8} محافظات`,
       page: 'governorates' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788791500/copy_of_.jpg'
     },
@@ -50,7 +50,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'توثيق معابد الكرنك، دندرة، إدفو، دير المحرق، قصور المنيا الخديوية، وجبانات أسوان الفاطمية وعمارة النوبة.',
       icon: Landmark,
       color: 'from-stone-700 to-stone-900',
-      badge: '+180 معلم',
+      badge: wahStats?.placesCount ? `${wahStats.placesCount} معلم موثق` : 'معالم موثقة',
       page: 'places' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg'
     },

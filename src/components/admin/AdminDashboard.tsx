@@ -1672,13 +1672,19 @@ export const AdminDashboard: React.FC = () => {
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
               <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">إجمالي حجم مبيعات المنصة (GMV)</span>
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">+24% مقارنة بالشهر السابق</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                {orders.length > 0 ? `إجمالي ${orders.length} طلب مسجل` : 'مؤشر المبيعات المباشرة'}
+              </span>
             </div>
 
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
               <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">إجمالي الحرفيين والورش</span>
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{sellers.length} ورشة</span>
-              <span className="text-[10px] text-[#B24C2B] dark:text-[#E0633C] font-bold block mt-1">تغطي 7 محافظات صعيدية</span>
+              <span className="text-[10px] text-[#B24C2B] dark:text-[#E0633C] font-bold block mt-1">
+                {new Set(sellers.map((s) => s.governorate).filter(Boolean)).size > 0
+                  ? `تغطي ${new Set(sellers.map((s) => s.governorate).filter(Boolean)).size} محافظات صعيدية`
+                  : 'شبكة الورش الحرفية'}
+              </span>
             </div>
 
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
@@ -1686,13 +1692,21 @@ export const AdminDashboard: React.FC = () => {
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">
                 {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
               </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">100% تم فحص أصالتها</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                {adminProducts.length > 0
+                  ? `${Math.round((adminProducts.filter((p) => p.approvalStatus === 'approved').length / adminProducts.length) * 100)}% نسبة الاعتماد`
+                  : 'توثيق الحرف اليدوية'}
+              </span>
             </div>
 
             <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xs">
               <span className="text-xs text-[#73675B] dark:text-[#A89B8F] block mb-1">طلبات الشحن المنفذة</span>
               <span className="text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-mono">{orders.length} شحنة</span>
-              <span className="text-[10px] text-[#73675B] dark:text-[#A89B8F] block mt-1">نسبة كسر التغليف &lt; 0.2%</span>
+              <span className="text-[10px] text-[#73675B] dark:text-[#A89B8F] block mt-1">
+                {orders.length > 0
+                  ? `${orders.filter((o) => o.status === 'delivered').length} شحنة مكتملة التسليم`
+                  : 'شحن مباشر من الورش'}
+              </span>
             </div>
           </div>
 

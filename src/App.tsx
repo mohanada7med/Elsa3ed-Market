@@ -263,7 +263,7 @@ const MainContent: React.FC = () => {
             id="main-route-container"
           >
             {activePage === 'home' && <HomePage />}
-            {(activePage === 'products' || activePage === 'search') && <ProductsPage />}
+            {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
             {activePage === 'product-details' && <ProductDetailsView />}
             {activePage === 'categories' && <CategoriesPage />}
             {activePage === 'category-details' && <ProductsPage />}
@@ -363,7 +363,7 @@ const MainContent: React.FC = () => {
             )}
 
             {/* Buyer Account: Requires Authentication */}
-            {activePage === 'buyer-account' && (
+            {(activePage === 'buyer-account' || activePage === 'profile') && (
               isAuthenticated ? (
                 <BuyerAccountPage />
               ) : (
@@ -507,11 +507,15 @@ const MainContent: React.FC = () => {
               'orders',
               'order-details',
               'favorites',
+              'messages',
               'buyer-account',
+              'profile',
               'seller-dashboard',
               'seller-products',
               'seller-inventory',
               'seller-orders',
+              'seller-messages',
+              'seller-payouts',
               'seller-analytics',
               'seller-account',
               'admin-dashboard',
@@ -526,6 +530,8 @@ const MainContent: React.FC = () => {
               'admin-settings',
               'about',
               'wholesale',
+              'market',
+              'wah-market',
               'map',
               'explore',
               'governorates',
