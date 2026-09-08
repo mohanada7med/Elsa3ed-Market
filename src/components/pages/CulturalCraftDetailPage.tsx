@@ -31,7 +31,12 @@ export const CulturalCraftDetailPage: React.FC = () => {
   const [craft, setCraft] = useState<CulturalCraft | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const slug = selectedCraftSlug || 'qena-pottery';
+  const slug =
+    selectedCraftSlug ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/cultural-crafts/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null) ||
+    'qena-pottery';
 
   useEffect(() => {
     const fetchCraft = async () => {
@@ -51,7 +56,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
   }, [slug]);
 
   const handleShare = () => {
-    const url = `${window.location.origin}/cultural-crafts?slug=${encodeURIComponent(slug)}`;
+    const url = `${window.location.origin}/cultural-crafts/${encodeURIComponent(slug)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       addToast('تم نسخ الرابط', 'تم نسخ رابط الحرفة التراثية بنجاح', 'success');

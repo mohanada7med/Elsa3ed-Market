@@ -40,43 +40,6 @@ const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=1600&q=85';
 
 /* =========================================================
-   REGION THEMES
-========================================================= */
-
-const REGION_THEMES: Record<
-  string,
-  {
-    color: string;
-    soft: string;
-    text: string;
-  }
-> = {
-  'شمال الصعيد': {
-    color: '#2F6F62',
-    soft: 'bg-[#2F6F62]/10',
-    text: 'text-[#2F6F62]',
-  },
-
-  'وسط الصعيد': {
-    color: '#A36A2D',
-    soft: 'bg-[#A36A2D]/10',
-    text: 'text-[#A36A2D]',
-  },
-
-  'جنوب الصعيد': {
-    color: '#B24C2B',
-    soft: 'bg-[#B24C2B]/10',
-    text: 'text-[#B24C2B]',
-  },
-
-  'الواحات والصحراء الغربية': {
-    color: '#9B7A2F',
-    soft: 'bg-[#9B7A2F]/10',
-    text: 'text-[#9B7A2F]',
-  },
-};
-
-/* =========================================================
    GOVERNORATE CONTENT
 ========================================================= */
 
@@ -397,37 +360,6 @@ export const UpperEgyptMapPage: React.FC = () => {
     selectedRegionFilter,
   ]);
 
-  /* =======================================================
-     THEME
-  ======================================================= */
-
-  const REGION_THEMES: Record<
-    string,
-    {
-      primary: string;
-      secondary: string;
-      accent: string;
-    }
-  > = {
-    'شمال الصعيد': {
-      primary: '#B24C2B',
-      secondary: '#264653',
-      accent: '#D89B5B',
-    },
-
-    'وسط الصعيد': {
-      primary: '#A9442B',
-      secondary: '#315C62',
-      accent: '#C98B4A',
-    },
-
-    'جنوب الصعيد': {
-      primary: '#9C4328',
-      secondary: '#214C55',
-      accent: '#D49A55',
-    },
-  };
-
   const currentEmblem =
     GOVERNORATE_EMBLEMS[selectedGov?.name] ?? {
       label: selectedGov?.region || 'الصعيد',
@@ -523,13 +455,15 @@ export const UpperEgyptMapPage: React.FC = () => {
           flex
           items-center
           justify-center
-          bg-[#F6F1EB]
-          dark:bg-[#110E0C]
+          bg-[#eee8dc]
+          text-[#211d18]
+          dark:bg-[#0b0b0a]
+          dark:text-[#f5f0e7]
           px-4
         "
       >
         <div className="relative w-full max-w-[360px]">
-          <div className="absolute inset-0 rounded-[36px] bg-[#B24C2B]/20 blur-3xl" />
+          <div className="absolute inset-0 rounded-[36px] bg-[#9a6a35]/20 blur-3xl" />
 
           <div
             className="
@@ -541,7 +475,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               rounded-[28px]
               sm:rounded-[34px]
               border
-              border-white/70
+              border-black/10
               dark:border-white/10
               bg-white/60
               dark:bg-white/[0.05]
@@ -564,7 +498,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 justify-center
                 rounded-[22px]
                 border
-                border-white/80
+                border-black/10
                 dark:border-white/10
                 bg-white/80
                 dark:bg-white/[0.08]
@@ -578,14 +512,14 @@ export const UpperEgyptMapPage: React.FC = () => {
               />
             </div>
 
-            <p className="mt-5 text-center text-sm font-black text-[#B24C2B]">
+            <p className="mt-5 text-center text-sm font-black text-[#9a6a35]">
               بنجهز رحلة الصعيد...
             </p>
 
             <div className="mt-4 flex gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#B24C2B] animate-pulse" />
-              <span className="h-1.5 w-1.5 rounded-full bg-[#B24C2B] animate-pulse [animation-delay:150ms]" />
-              <span className="h-1.5 w-1.5 rounded-full bg-[#B24C2B] animate-pulse [animation-delay:300ms]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35] animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35] animate-pulse [animation-delay:150ms]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35] animate-pulse [animation-delay:300ms]" />
             </div>
           </div>
         </div>
@@ -601,220 +535,143 @@ export const UpperEgyptMapPage: React.FC = () => {
     <div
       dir="rtl"
       className="
-        relative
         min-h-screen
-        w-full
-        max-w-full
         overflow-x-hidden
-        bg-[#F6F1EB]
-        dark:bg-[#110E0C]
-        text-[#211A16]
-        dark:text-[#F8F1EA]
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
       "
     >
-      {/* ===================================================
-          AMBIENT BACKGROUND
-      =================================================== */}
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
+      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
+        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
+          <button
+            onClick={() => setActivePage('home')}
+            className="
+              group flex items-center gap-3
+              text-sm font-bold
+              transition-all
+              hover:text-[#9a6a35]
+              cursor-pointer
+            "
+          >
+            <span
+              className="
+                flex h-10 w-10 items-center justify-center
+                rounded-full
+                border border-black/10
+                bg-white/60
+                transition-all
+                group-hover:bg-[#211d18]
+                group-hover:text-white
+                dark:border-white/10
+                dark:bg-white/5
+                dark:group-hover:bg-white
+                dark:group-hover:text-black
+              "
+            >
+              <ArrowLeft
+                size={17}
+                className="transition-transform group-hover:-translate-x-1"
+              />
+            </span>
+            <span className="hidden sm:block">الرئيسية</span>
+          </button>
 
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-40 top-20 h-[400px] w-[400px] sm:h-[550px] sm:w-[550px] rounded-full bg-[#B24C2B]/[0.055] blur-[100px] sm:blur-[130px]" />
+          <div className="absolute left-1/2 -translate-x-1/2 text-center">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+              WAH
+            </div>
+            <div className="mt-1 text-sm font-black">رحلة الصعيد</div>
+          </div>
 
-        <div className="absolute -left-40 top-[45%] h-[400px] w-[400px] sm:h-[550px] sm:w-[550px] rounded-full bg-[#264653]/[0.045] blur-[100px] sm:blur-[130px]" />
-
-        <div className="absolute right-[35%] bottom-0 h-[300px] w-[300px] sm:h-[400px] sm:w-[400px] rounded-full bg-[#D7A55B]/[0.035] blur-[100px]" />
-
-        <div
-          className="absolute inset-0 opacity-[0.02] dark:opacity-[0.03]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(36,29,24,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(36,29,24,.6) 1px, transparent 1px)',
-            backgroundSize: '70px 70px',
-          }}
-        />
-      </div>
-
-      {/* ===================================================
-          HEADER
-      =================================================== */}
-
-      <header
-        className="
-          sticky
-          top-0
-          z-50
-          w-full
-          border-b
-          border-black/[0.06]
-          dark:border-white/[0.07]
-          bg-[#F8F4EF]/75
-          dark:bg-[#14100E]/75
-          backdrop-blur-2xl
-        "
-      >
-        <div
-          className="
-            mx-auto
-            w-full
-            max-w-[1600px]
-            px-3
-            sm:px-5
-            md:px-7
-            lg:px-10
-            xl:px-12
-          "
-        >
           <div
             className="
               flex
-              min-h-[62px]
-              sm:min-h-[70px]
-              md:min-h-[76px]
+              shrink-0
               items-center
-              justify-between
-              gap-2
-              sm:gap-3
+              gap-1
+              rounded-xl
+              sm:rounded-2xl
+              border
+              border-black/10
+              bg-white/50
+              p-1
+              backdrop-blur-xl
+              dark:border-white/10
+              dark:bg-white/[0.05]
+              shadow-lg
             "
           >
-            {/* BRAND */}
-
-            <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={() => setActivePage('home')}
-                className="group shrink-0"
-              >
-                <div
-                  className="
-                    relative
-                    flex
-                    h-10
-                    w-10
-                    sm:h-11
-                    sm:w-11
-                    items-center
-                    justify-center
-                    overflow-hidden
-                    rounded-xl
-                    sm:rounded-2xl
-                    border
-                    border-white/80
-                    dark:border-white/10
-                    bg-white/60
-                    dark:bg-white/[0.06]
-                    shadow-lg
-                    backdrop-blur-xl
-                    transition-all
-                    duration-500
-                    group-hover:scale-105
-                  "
-                >
-                  <img
-                    src={LOGO_URL}
-                    alt="وه"
-                    className="h-7 w-7 sm:h-8 sm:w-8 object-contain"
-                  />
-                </div>
-              </button>
-
-              <div className="hidden sm:block h-8 w-px shrink-0 bg-[#DCD2C8] dark:bg-white/10" />
-
-              <div className="min-w-0">
-                <p className="text-[7px] sm:text-[8px] font-black tracking-[0.2em] text-[#B24C2B]">
-                  WAH / ATLAS
-                </p>
-
-                <h1 className="mt-0.5 text-xs sm:text-sm font-black leading-tight">
-                  رحلة الصعيد
-                </h1>
-              </div>
-            </div>
-
-            {/* VIEW SWITCHER */}
-
-            <div
-              className="
+            <button
+              id="btn-view-voyage"
+              type="button"
+              onClick={() => setDisplayMode('voyage')}
+              aria-label="عرض رحلة النيل"
+              className={`
                 flex
-                shrink-0
+                h-8
+                sm:h-10
                 items-center
-                gap-1
-                rounded-xl
-                sm:rounded-2xl
-                border
-                border-white/80
-                dark:border-white/10
-                bg-white/50
-                dark:bg-white/[0.05]
-                p-1
-                backdrop-blur-xl
-                shadow-lg
-              "
+                justify-center
+                gap-1.5
+                sm:gap-2
+                rounded-lg
+                sm:rounded-xl
+                px-2
+                sm:px-4
+                text-[8px]
+                sm:text-xs
+                font-black
+                whitespace-nowrap
+                transition-all
+                cursor-pointer
+                ${displayMode === 'voyage'
+                  ? 'bg-[#211d18] text-white shadow-lg dark:bg-white dark:text-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                }
+              `}
             >
-              <button
-                id="btn-view-voyage"
-                type="button"
-                onClick={() => setDisplayMode('voyage')}
-                aria-label="عرض رحلة النيل"
-                className={`
-                  flex
-                  h-8
-                  sm:h-10
-                  items-center
-                  justify-center
-                  gap-1.5
-                  sm:gap-2
-                  rounded-lg
-                  sm:rounded-xl
-                  px-2
-                  sm:px-4
-                  text-[8px]
-                  sm:text-xs
-                  font-black
-                  whitespace-nowrap
-                  transition-all
-                  ${displayMode === 'voyage'
-                    ? 'bg-[#211A16] text-white shadow-lg dark:bg-white dark:text-[#211A16]'
-                    : 'text-[#77685D] dark:text-[#AFA096] hover:bg-white/50 dark:hover:bg-white/[0.05]'
-                  }
-                `}
-              >
-                <Ship className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <Ship size={15} className="shrink-0" />
+              <span>رحلة النيل</span>
+            </button>
 
-                <span>رحلة النيل</span>
-              </button>
-
-              <button
-                id="btn-view-grid"
-                type="button"
-                onClick={() => setDisplayMode('grid')}
-                aria-label="عرض المحافظات"
-                className={`
-                  flex
-                  h-8
-                  sm:h-10
-                  items-center
-                  justify-center
-                  gap-1.5
-                  sm:gap-2
-                  rounded-lg
-                  sm:rounded-xl
-                  px-2
-                  sm:px-4
-                  text-[8px]
-                  sm:text-xs
-                  font-black
-                  whitespace-nowrap
-                  transition-all
-                  ${displayMode === 'grid'
-                    ? 'bg-[#211A16] text-white shadow-lg dark:bg-white dark:text-[#211A16]'
-                    : 'text-[#77685D] dark:text-[#AFA096] hover:bg-white/50 dark:hover:bg-white/[0.05]'
-                  }
-                `}
-              >
-                <LayoutGrid className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-
-                <span>المحافظات</span>
-              </button>
-            </div>
+            <button
+              id="btn-view-grid"
+              type="button"
+              onClick={() => setDisplayMode('grid')}
+              aria-label="عرض المحافظات"
+              className={`
+                flex
+                h-8
+                sm:h-10
+                items-center
+                justify-center
+                gap-1.5
+                sm:gap-2
+                rounded-lg
+                sm:rounded-xl
+                px-2
+                sm:px-4
+                text-[8px]
+                sm:text-xs
+                font-black
+                whitespace-nowrap
+                transition-all
+                cursor-pointer
+                ${displayMode === 'grid'
+                  ? 'bg-[#211d18] text-white shadow-lg dark:bg-white dark:text-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                }
+              `}
+            >
+              <LayoutGrid size={15} className="shrink-0" />
+              <span>المحافظات</span>
+            </button>
           </div>
         </div>
       </header>
@@ -822,39 +679,25 @@ export const UpperEgyptMapPage: React.FC = () => {
       {/* ===================================================
           GOVERNORATE RAIL
       =================================================== */}
-
       <div
         className="
           sticky
-          top-[62px]
-          sm:top-[70px]
-          md:top-[76px]
+          top-0
           z-40
           w-full
           border-b
-          border-black/[0.04]
-          dark:border-white/[0.05]
-          bg-[#F8F4EF]/60
-          dark:bg-[#14100E]/60
+          border-black/10
+          dark:border-white/10
+          bg-[#eee8dc]/90
+          dark:bg-[#0b0b0a]/90
           backdrop-blur-2xl
         "
       >
-        <div
-          className="
-            mx-auto
-            w-full
-            max-w-[1600px]
-            px-2
-            sm:px-5
-            md:px-7
-            lg:px-10
-            xl:px-12
-          "
-        >
-          <div className="relative overflow-x-auto no-scrollbar py-2.5 sm:py-3">
-            <div className="absolute right-7 left-7 sm:right-8 sm:left-8 top-[25px] sm:top-[30px] h-px bg-[#D9CFC5] dark:bg-white/10" />
+        <div className="mx-auto max-w-[1600px] px-3 sm:px-5 md:px-7 lg:px-10 xl:px-12">
+          <div className="relative overflow-x-auto no-scrollbar py-3">
+            <div className="absolute right-7 left-7 top-[31px] h-px bg-black/10 dark:bg-white/10" />
 
-            <div className="relative z-10 flex min-w-max items-start justify-between gap-1.5 sm:gap-2">
+            <div className="relative z-10 flex min-w-max items-start justify-between gap-2">
               {governorates.map((gov, index) => {
                 const active = index === selectedIndex;
 
@@ -863,42 +706,25 @@ export const UpperEgyptMapPage: React.FC = () => {
                     key={gov.id}
                     id={`ribbon-gov-${gov.id}`}
                     type="button"
-                    onClick={() =>
-                      selectGovernorate(index)
-                    }
-                    className="
-                      group
-                      flex
-                      min-w-[62px]
-                      sm:min-w-[75px]
-                      md:min-w-[90px]
-                      flex-col
-                      items-center
-                      gap-1.5
-                      px-0.5
-                    "
+                    onClick={() => selectGovernorate(index)}
+                    className="group flex min-w-[70px] sm:min-w-[90px] flex-col items-center gap-2 cursor-pointer"
                   >
                     <span
                       className={`
                         relative
-                        flex
-                        h-7
-                        w-7
-                        sm:h-8
-                        sm:w-8
+                        flex h-8 w-8 sm:h-9 sm:w-9
                         shrink-0
                         items-center
                         justify-center
                         rounded-full
                         border
-                        text-[8px]
-                        sm:text-[9px]
+                        text-[9px] sm:text-[10px]
                         font-black
                         transition-all
                         duration-500
                         ${active
-                          ? 'border-[#B24C2B] bg-[#B24C2B] text-white shadow-[0_0_0_5px_rgba(178,76,43,.10),0_8px_25px_rgba(178,76,43,.25)] scale-110'
-                          : 'border-white/80 dark:border-white/10 bg-[#F8F3EE]/80 dark:bg-white/[0.06] text-[#88786B] dark:text-[#A8998E] backdrop-blur-xl group-hover:border-[#B24C2B]'
+                          ? 'border-[#9a6a35] bg-[#9a6a35] text-white shadow-[0_0_0_5px_rgba(154,106,53,.15)] scale-110'
+                          : 'border-black/15 dark:border-white/15 bg-white/80 dark:bg-white/5 text-black/70 dark:text-white/70 group-hover:border-[#9a6a35]'
                         }
                       `}
                     >
@@ -907,20 +733,19 @@ export const UpperEgyptMapPage: React.FC = () => {
 
                     <span
                       className={`
-                        max-w-[78px]
-                        sm:max-w-[95px]
+                        max-w-[85px]
+                        sm:max-w-[110px]
                         text-center
                         break-words
                         whitespace-normal
                         leading-tight
-                        text-[8px]
-                        sm:text-[9px]
-                        md:text-[10px]
+                        text-[10px]
+                        sm:text-xs
                         font-black
                         transition-colors
                         ${active
-                          ? 'text-[#B24C2B]'
-                          : 'text-[#837469] dark:text-[#A39488]'
+                          ? 'text-[#9a6a35]'
+                          : 'text-black/60 dark:text-white/60 group-hover:text-black dark:group-hover:text-white'
                         }
                       `}
                     >
@@ -935,199 +760,59 @@ export const UpperEgyptMapPage: React.FC = () => {
       </div>
 
       {/* ===================================================
-          MAIN
+          MAIN CONTENT
       =================================================== */}
-
-      <main
-        className="
-          mx-auto
-          w-full
-          max-w-[1600px]
-          px-3
-          sm:px-5
-          md:px-7
-          lg:px-10
-          xl:px-12
-          py-4
-          sm:py-6
-          md:py-8
-          lg:py-10
-        "
-      >
+      <main className="mx-auto max-w-[1600px] px-5 py-8 sm:px-8 sm:py-12 lg:px-12">
         {/* =================================================
             GRID MODE
         ================================================= */}
-
         {displayMode === 'grid' && (
-          <section className="mb-8 sm:mb-12 lg:mb-16">
-            <div
-              className="
-                grid
-                grid-cols-1
-                lg:grid-cols-[1fr_330px]
-                gap-7
-                lg:gap-16
-                items-end
-                mb-7
-                sm:mb-8
-              "
-            >
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[8px] sm:text-[10px] font-black tracking-[0.2em] text-[#B24C2B]">
-                  <Compass className="h-3.5 w-3.5 shrink-0" />
+          <section className="mb-14">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 lg:gap-16 items-end mb-8">
+              <div>
+                <div className="mb-2 text-xs font-bold tracking-[0.3em] text-[#9a6a35]">
                   THE NILE COLLECTION
                 </div>
-
-                <h2
-                  className="
-                    mt-3
-                    font-serif
-                    font-black
-                    leading-[0.9]
-                    tracking-tight
-                    text-[48px]
-                    sm:text-[62px]
-                    md:text-[76px]
-                    lg:text-[90px]
-                  "
-                >
-                  الصعيد
-                  <br />
-
-                  <span className="text-[#B24C2B]">
-                    من جوّه.
-                  </span>
+                <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none">
+                  الصعيد <span className="text-[#9a6a35]">من جوّه.</span>
                 </h2>
-
-                <p className="mt-5 max-w-2xl text-xs sm:text-sm md:text-base leading-7 sm:leading-8 text-[#76675B] dark:text-[#B3A59A]">
-                  تسع محافظات، آلاف الحكايات، وصناعات اتنقلت
-                  من إيد لإيد لحد النهارده.
+                <p className="mt-4 text-sm sm:text-base text-black/60 dark:text-white/60 leading-relaxed">
+                  تسع محافظات، آلاف الحكايات، وصناعات اتنقلت من إيد لإيد لحد النهارده.
                 </p>
               </div>
 
-              {/* UPPER EGYPT INFO
-                  أصبح ظاهر على كل المقاسات */}
-              <div className="block">
-                <div
-                  className="
-                    rounded-[22px]
-                    sm:rounded-[28px]
-                    border
-                    border-white/80
-                    dark:border-white/10
-                    bg-white/45
-                    dark:bg-white/[0.04]
-                    p-4
-                    sm:p-6
-                    backdrop-blur-xl
-                    shadow-xl
-                  "
-                >
-                  <p className="text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-[#97887B]">
-                    UPPER EGYPT
-                  </p>
-
-                  <div className="mt-2 flex items-end gap-3">
-                    <span className="font-serif text-5xl sm:text-6xl md:text-7xl font-black leading-none">
-                      {String(
-                        governorates.length
-                      ).padStart(2, '0')}
-                    </span>
-
-                    <span className="pb-1 text-[10px] sm:text-xs font-bold leading-5 text-[#837469] dark:text-[#A39488]">
-                      محافظات
-                      <br />
-                      في رحلة واحدة
-                    </span>
-                  </div>
+              <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-6 backdrop-blur-xl shadow-lg">
+                <p className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
+                  UPPER EGYPT
+                </p>
+                <div className="mt-2 flex items-end gap-3">
+                  <span className="text-5xl sm:text-6xl font-black leading-none">
+                    {String(governorates.length).padStart(2, '0')}
+                  </span>
+                  <span className="text-xs font-bold text-black/60 dark:text-white/60">
+                    محافظة في رحلة واحدة
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* SEARCH */}
-
-            <div
-              className="
-                mb-6
-                sm:mb-7
-                rounded-[22px]
-                sm:rounded-[28px]
-                border
-                border-white/80
-                dark:border-white/10
-                bg-white/55
-                dark:bg-white/[0.045]
-                p-2.5
-                sm:p-3
-                shadow-xl
-                backdrop-blur-2xl
-              "
-            >
-              <div className="flex flex-col xl:flex-row gap-2.5">
-                <div className="relative min-w-0 flex-1">
-                  <Search className="absolute right-4 top-1/2 h-4 w-4 sm:h-5 sm:w-5 -translate-y-1/2 text-[#9A897B]" />
-
+            {/* SEARCH & REGION FILTERS */}
+            <div className="mb-8 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-[#151513]/90 p-3 sm:p-4 backdrop-blur-2xl shadow-xl">
+              <div className="flex flex-col xl:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40" />
                   <input
-                    id="input-search-govs"
                     value={searchQuery}
-                    onChange={(event) =>
-                      setSearchQuery(
-                        event.target.value
-                      )
-                    }
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="دور على محافظة، مكان، حرفة..."
-                    className="
-                      h-12
-                      sm:h-14
-                      w-full
-                      rounded-xl
-                      sm:rounded-2xl
-                      border
-                      border-white/70
-                      dark:border-white/[0.06]
-                      bg-white/55
-                      dark:bg-white/[0.05]
-                      pr-11
-                      sm:pr-12
-                      pl-10
-                      sm:pl-11
-                      text-xs
-                      sm:text-sm
-                      font-bold
-                      outline-none
-                      backdrop-blur-xl
-                      transition-all
-                      placeholder:text-[#9B8B7E]
-                      focus:border-[#B24C2B]/50
-                      focus:bg-white/80
-                      dark:focus:bg-white/[0.08]
-                    "
+                    className="h-12 w-full rounded-2xl border border-transparent bg-black/[0.035] pr-11 pl-10 text-sm font-medium outline-none transition-all placeholder:text-black/35 focus:border-[#9a6a35]/40 focus:bg-transparent dark:bg-white/[0.04] dark:placeholder:text-white/30 dark:focus:bg-white/[0.06]"
                   />
-
                   {searchQuery && (
                     <button
-                      type="button"
-                      onClick={() =>
-                        setSearchQuery('')
-                      }
-                      className="
-                        absolute
-                        left-2
-                        sm:left-3
-                        top-1/2
-                        flex
-                        h-8
-                        w-8
-                        -translate-y-1/2
-                        items-center
-                        justify-center
-                        rounded-lg
-                        text-[#88786C]
-                        hover:bg-black/5
-                        dark:hover:bg-white/5
-                      "
+                      onClick={() => setSearchQuery('')}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer"
                     >
-                      <X className="h-4 w-4" />
+                      <X size={14} />
                     </button>
                   )}
                 </div>
@@ -1140,37 +825,15 @@ export const UpperEgyptMapPage: React.FC = () => {
                     'جنوب الصعيد',
                     'الواحات والصحراء الغربية',
                   ].map((region) => {
-                    const active =
-                      selectedRegionFilter ===
-                      region;
-
+                    const active = selectedRegionFilter === region;
                     return (
                       <button
                         key={region}
-                        type="button"
-                        onClick={() =>
-                          setSelectedRegionFilter(
-                            region
-                          )
-                        }
-                        className={`
-                          shrink-0
-                          rounded-xl
-                          px-3.5
-                          sm:px-4
-                          py-2.5
-                          sm:py-3
-                          text-[9px]
-                          sm:text-[10px]
-                          md:text-xs
-                          font-black
-                          whitespace-nowrap
-                          transition-all
-                          ${active
-                            ? 'bg-[#B24C2B] text-white shadow-lg shadow-[#B24C2B]/20'
-                            : 'bg-white/45 dark:bg-white/[0.05] text-[#77685D] dark:text-[#AFA096] border border-white/60 dark:border-white/[0.05]'
-                          }
-                        `}
+                        onClick={() => setSelectedRegionFilter(region)}
+                        className={`shrink-0 rounded-xl px-4 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
+                          ? 'bg-[#9a6a35] text-white shadow-md'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
                       >
                         {region}
                       </button>
@@ -1180,1582 +843,412 @@ export const UpperEgyptMapPage: React.FC = () => {
               </div>
             </div>
 
-            {/* GOVERNORATE GRID */}
-
+            {/* GOVERNORATES GRID */}
             {filteredGovernorates.length > 0 ? (
-              <div
-                className="
-                  grid
-                  grid-cols-1
-                  sm:grid-cols-2
-                  xl:grid-cols-12
-                  gap-3
-                  sm:gap-4
-                  lg:gap-5
-                "
-              >
-                {filteredGovernorates.map(
-                  (gov, index) => {
-                    const originalIndex =
-                      governorates.findIndex(
-                        (item) =>
-                          item.id === gov.id
-                      );
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredGovernorates.map((gov, index) => {
+                  const originalIndex = governorates.findIndex((item) => item.id === gov.id);
+                  const active = originalIndex === selectedIndex;
 
-                    const active =
-                      originalIndex ===
-                      selectedIndex;
+                  return (
+                    <article
+                      key={gov.id}
+                      className="group relative overflow-hidden rounded-[2rem] border border-black/10 dark:border-white/10 bg-black shadow-xl cursor-pointer"
+                      onClick={() => {
+                        selectGovernorate(originalIndex);
+                        setDisplayMode('voyage');
+                      }}
+                    >
+                      <div className="relative h-[380px] w-full overflow-hidden">
+                        <img
+                          src={safeImage(gov.coverImage)}
+                          alt={gov.name}
+                          className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-700 group-hover:scale-110 group-hover:opacity-100"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 
-                    const featured = index === 0;
+                        <div className="absolute right-5 top-5 text-7xl font-black leading-none text-white/15">
+                          {String(originalIndex + 1).padStart(2, '0')}
+                        </div>
 
-                    return (
-                      <article
-                        key={gov.id}
-                        id={`card-gov-${gov.id}`}
-                        className={`
-                          group
-                          relative
-                          overflow-hidden
-                          rounded-[24px]
-                          sm:rounded-[30px]
-                          border
-                          border-white/20
-                          bg-[#1D1511]
-                          shadow-xl
-                          ${featured
-                            ? 'xl:col-span-7 xl:row-span-2'
-                            : 'xl:col-span-5'
-                          }
-                        `}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => {
-                            selectGovernorate(
-                              originalIndex
-                            );
-                            setDisplayMode(
-                              'voyage'
-                            );
-                          }}
-                          className={`
-                            relative
-                            block
-                            w-full
-                            text-right
-                            ${featured
-                              ? 'h-[500px] sm:h-[600px] xl:h-full xl:min-h-[650px]'
-                              : 'h-[350px] sm:h-[400px]'
-                            }
-                          `}
-                        >
-                          <img
-                            src={safeImage(
-                              gov.coverImage
-                            )}
-                            alt={gov.name}
-                            loading={
-                              featured
-                                ? 'eager'
-                                : 'lazy'
-                            }
-                            className="
-                              absolute
-                              inset-0
-                              h-full
-                              w-full
-                              object-cover
-                              transition-transform
-                              duration-[1200ms]
-                              group-hover:scale-105
-                            "
-                          />
+                        <div className="absolute left-5 top-5">
+                          <span className="inline-flex rounded-full border border-white/20 bg-black/20 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md">
+                            {gov.region}
+                          </span>
+                        </div>
 
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 p-6">
+                          <h3 className="text-3xl font-black text-white group-hover:text-[#d5a56d] transition-colors">
+                            {gov.name}
+                          </h3>
+                          <p className="mt-1 text-xs font-bold text-amber-200">
+                            {gov.nickname}
+                          </p>
+                          <p className="mt-2 line-clamp-2 text-xs text-white/65">
+                            {gov.shortIntro}
+                          </p>
 
-                          <div className="absolute inset-0 bg-gradient-to-l from-black/25 to-transparent" />
-
-                          {/* TOP */}
-
-                          <div className="absolute top-4 sm:top-5 right-4 sm:right-5 left-4 sm:left-5 flex items-start justify-between gap-3">
-                            <span className="max-w-[72%] break-words rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[8px] sm:text-[9px] font-black leading-4 text-white/85 backdrop-blur-xl">
-                              {gov.region}
+                          {active && (
+                            <span className="mt-4 inline-flex rounded-full border border-white/20 bg-white/20 px-3 py-1 text-[10px] font-bold text-white backdrop-blur-md">
+                              المحطة الحالية
                             </span>
-
-                            <span
-                              className="
-                                flex
-                                h-9
-                                w-9
-                                sm:h-10
-                                sm:w-10
-                                shrink-0
-                                items-center
-                                justify-center
-                                rounded-full
-                                border
-                                border-white/20
-                                bg-white/10
-                                text-white
-                                backdrop-blur-xl
-                                transition-all
-                                group-hover:-translate-y-1
-                                group-hover:-translate-x-1
-                              "
-                            >
-                              <ArrowUpLeft className="h-4 w-4" />
-                            </span>
-                          </div>
-
-                          {/* CONTENT */}
-
-                          <div className="absolute right-4 sm:right-5 left-4 sm:left-5 bottom-5 sm:bottom-7">
-                            <div className="flex flex-wrap items-center gap-2 text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-white/50">
-                              {String(
-                                originalIndex + 1
-                              ).padStart(2, '0')}
-
-                              <span className="h-px w-5 bg-[#E88E72]" />
-
-                              UPPER EGYPT
-                            </div>
-
-                            <h3
-                              className={`
-                                mt-2
-                                font-serif
-                                font-black
-                                leading-[0.95]
-                                text-white
-                                break-words
-                                ${featured
-                                  ? 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl'
-                                  : 'text-4xl sm:text-5xl'
-                                }
-                              `}
-                            >
-                              {gov.name}
-                            </h3>
-
-                            <p className="mt-2 break-words text-xs sm:text-sm font-bold text-amber-200">
-                              {gov.nickname}
-                            </p>
-
-                            {featured && (
-                              <p className="mt-3 sm:mt-4 max-w-xl break-words text-[11px] sm:text-xs md:text-sm leading-6 sm:leading-7 text-white/65">
-                                {gov.shortIntro}
-                              </p>
-                            )}
-
-                            {active && (
-                              <span className="mt-3 sm:mt-4 inline-flex max-w-full rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[8px] sm:text-[9px] font-black text-white backdrop-blur-xl">
-                                المحطة الحالية
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      </article>
-                    );
-                  }
-                )}
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             ) : (
-              <EmptyState
-                icon={<Search />}
-                title="مفيش نتائج"
-                description="جرّب كلمة بحث مختلفة."
-              />
+              <div className="py-20 text-center rounded-3xl border border-dashed border-black/20 dark:border-white/20">
+                <Search className="mx-auto mb-3 h-8 w-8 text-black/40 dark:text-white/40" />
+                <h3 className="text-lg font-bold">مفيش نتائج مطابقة</h3>
+                <p className="text-xs text-black/50 dark:text-white/50 mt-1">جرّب البحث بكلمة أخرى.</p>
+              </div>
             )}
           </section>
         )}
 
         {/* =================================================
-            VOYAGE CONTROLS
+            VOYAGE CONTROLS & HERO
         ================================================= */}
-
         {displayMode === 'voyage' && (
-          <section className="mb-4 sm:mb-7">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[8px] sm:text-[10px] font-black tracking-[0.2em] text-[#B24C2B]">
-                  <Ship className="h-3.5 w-3.5 shrink-0" />
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs font-bold tracking-[0.3em] text-[#9a6a35]">
                   NILE JOURNEY
                 </div>
-
-                <p className="mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-bold text-[#75665A] dark:text-[#B5A69A]">
-                  المحطة{' '}
-                  {String(selectedIndex + 1).padStart(
-                    2,
-                    '0'
-                  )}{' '}
-                  من{' '}
-                  {String(governorates.length).padStart(
-                    2,
-                    '0'
-                  )}
+                <p className="mt-1 text-sm font-bold text-black/60 dark:text-white/60">
+                  المحطة {String(selectedIndex + 1).padStart(2, '0')} من {String(governorates.length).padStart(2, '0')}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 sm:flex gap-2">
+              <div className="flex gap-2">
                 <button
-                  id="btn-prev-station"
-                  type="button"
                   onClick={previousGovernorate}
-                  className="
-                    group
-                    flex
-                    h-10
-                    sm:h-11
-                    items-center
-                    justify-center
-                    gap-1.5
-                    sm:gap-2
-                    rounded-xl
-                    border
-                    border-white/80
-                    dark:border-white/10
-                    bg-white/55
-                    dark:bg-white/[0.05]
-                    px-3
-                    sm:px-4
-                    text-[10px]
-                    sm:text-xs
-                    font-black
-                    whitespace-nowrap
-                    shadow-lg
-                    backdrop-blur-xl
-                    transition-all
-                    hover:border-[#B24C2B]/40
-                  "
+                  className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-2.5 text-xs font-bold shadow-md backdrop-blur-xl hover:border-[#9a6a35] cursor-pointer"
                 >
-                  <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
-                  السابقة
+                  <ChevronRight size={16} />
+                  <span>السابقة</span>
                 </button>
 
                 <button
-                  id="btn-next-station"
-                  type="button"
                   onClick={nextGovernorate}
-                  className="
-                    group
-                    flex
-                    h-10
-                    sm:h-11
-                    items-center
-                    justify-center
-                    gap-1.5
-                    sm:gap-2
-                    rounded-xl
-                    bg-[#B24C2B]
-                    px-3
-                    sm:px-4
-                    text-[10px]
-                    sm:text-xs
-                    font-black
-                    whitespace-nowrap
-                    text-white
-                    shadow-lg
-                    shadow-[#B24C2B]/20
-                    transition-all
-                    hover:bg-[#963E21]
-                  "
+                  className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-white text-white dark:text-black px-4 py-2.5 text-xs font-bold shadow-md hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer"
                 >
-                  التالية
-                  <ChevronLeft className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-1" />
+                  <span>التالية</span>
+                  <ChevronLeft size={16} />
                 </button>
               </div>
             </div>
-          </section>
-        )}
 
-        {/* =================================================
-            HERO
-        ================================================= */}
-
-        {displayMode === 'voyage' && (
-          <section className="relative w-full">
-            <div
-              className="
-                relative
-                min-h-[600px]
-                sm:min-h-[640px]
-                md:min-h-[660px]
-                lg:min-h-[720px]
-                xl:min-h-[780px]
-                overflow-hidden
-                rounded-[24px]
-                sm:rounded-[32px]
-                md:rounded-[38px]
-                lg:rounded-[44px]
-                border
-                border-white/20
-                bg-[#17110E]
-                shadow-[0_25px_80px_rgba(35,22,15,.18)]
-                lg:shadow-[0_40px_120px_rgba(35,22,15,.22)]
-              "
-            >
+            {/* SELECTED GOVERNORATE HERO CARD */}
+            <section className="relative overflow-hidden rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-black min-h-[600px] flex flex-col justify-end p-6 sm:p-12 shadow-2xl">
               <img
-                src={safeImage(
-                  selectedGov.coverImage
-                )}
+                src={safeImage(selectedGov.coverImage)}
                 alt={selectedGov.name}
-                loading="eager"
-                className="
-                  absolute
-                  inset-0
-                  h-full
-                  w-full
-                  object-cover
-                "
+                className="absolute inset-0 h-full w-full object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0806] via-[#0A0806]/45 to-[#0A0806]/5" />
-
-              <div className="absolute inset-0 bg-gradient-to-l from-[#0A0806]/50 via-transparent to-transparent" />
-
-              {/* AMBIENT LIGHT */}
-
-              <div className="absolute right-[15%] top-[10%] h-36 w-36 sm:h-48 sm:w-48 rounded-full bg-[#B24C2B]/15 blur-[70px] sm:blur-[90px]" />
-
-              <div className="absolute left-[10%] bottom-[15%] h-32 w-32 sm:h-40 sm:w-40 rounded-full bg-[#E8B76E]/10 blur-[60px] sm:blur-[80px]" />
-
-              {/* TOP */}
-
-              <div className="absolute top-4 sm:top-7 lg:top-8 right-4 sm:right-7 lg:right-8 left-4 sm:left-7 lg:left-8 flex items-start justify-between gap-4">
-                <div className="flex min-w-0 max-w-[78%] flex-wrap gap-1.5 sm:gap-2">
-                  <span className="max-w-full break-words rounded-full border border-white/15 bg-white/[0.08] px-2.5 sm:px-3 py-1.5 text-[8px] sm:text-[9px] font-black leading-4 text-white/85 backdrop-blur-xl">
+              <div className="relative z-10 max-w-4xl space-y-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
                     {selectedGov.region}
                   </span>
-
-                  {/* ظهر على كل المقاسات */}
-                  <span className="max-w-full break-words rounded-full border border-white/15 bg-white/[0.08] px-2.5 sm:px-3 py-1.5 text-[8px] sm:text-[9px] font-black leading-4 text-white/65 backdrop-blur-xl">
+                  <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1 text-xs font-bold text-white/70 backdrop-blur-md">
                     {selectedGov.nileSegment}
                   </span>
                 </div>
 
-                <div className="shrink-0 text-left">
-                  <div className="font-serif text-4xl sm:text-6xl md:text-7xl font-black leading-none text-white/90">
-                    {String(
-                      selectedIndex + 1
-                    ).padStart(2, '0')}
-                  </div>
-
-                  <div className="mt-1 text-[7px] sm:text-[8px] font-black tracking-[0.25em] text-white/40">
-                    OF{' '}
-                    {String(
-                      governorates.length
-                    ).padStart(2, '0')}
-                  </div>
-                </div>
-              </div>
-
-              {/* HERO CONTENT */}
-
-              <div className="absolute right-4 sm:right-7 lg:right-10 xl:right-12 bottom-5 sm:bottom-8 lg:bottom-10 xl:bottom-12 left-4 sm:left-7 lg:left-10 xl:left-12">
-                <div className="max-w-6xl">
-                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[7px] sm:text-[9px] lg:text-[10px] font-black tracking-[0.2em] text-white/50">
-                    THE UPPER EGYPT ATLAS
-
-                    <span className="h-px w-6 sm:w-10 bg-[#E88E72]" />
-
-                    WAH
-                  </div>
-
-                  <h2
-                    id="active-gov-dossier-title"
-                    className="
-                      mt-3
-                      sm:mt-4
-                      max-w-full
-                      font-serif
-                      font-black
-                      leading-[0.85]
-                      tracking-[-0.05em]
-                      text-white
-                      break-words
-                      text-[52px]
-                      sm:text-[72px]
-                      md:text-[94px]
-                      lg:text-[115px]
-                      xl:text-[145px]
-                    "
-                  >
-                    {selectedGov.name}
-                  </h2>
-
-                  <div className="mt-5 sm:mt-7 flex flex-col gap-3 sm:gap-5">
-                    <div className="min-w-0">
-                      <p className="text-sm sm:text-lg lg:text-2xl font-black text-amber-200 break-words">
-                        {selectedGov.nickname}
-                      </p>
-
-                      <p className="mt-1.5 sm:mt-2 max-w-2xl break-words text-[10px] sm:text-xs lg:text-base leading-6 sm:leading-7 text-white/65">
-                        {selectedGov.shortIntro}
-                      </p>
-                    </div>
-
-                    {/* ظهر على كل المقاسات */}
-                    <div className="flex w-fit max-w-full items-center gap-2 text-[10px] sm:text-xs lg:text-sm font-bold text-white/65">
-                      <MapPin className="h-4 w-4 shrink-0 text-[#E88E72]" />
-
-                      <span className="break-words">
-                        {selectedGov.capitalCity}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 sm:mt-6 flex max-w-full overflow-x-auto no-scrollbar gap-1.5 sm:gap-2 pb-1">
-                    {selectedGov.famousFor
-                      ?.slice(0, 5)
-                      .map((item) => (
-                        <span
-                          key={item}
-                          className="
-                            shrink-0
-                            rounded-full
-                            border
-                            border-white/10
-                            bg-white/[0.07]
-                            px-2.5
-                            sm:px-3
-                            py-1.5
-                            text-[8px]
-                            sm:text-[9px]
-                            md:text-[10px]
-                            font-bold
-                            text-white/70
-                            backdrop-blur-xl
-                          "
-                        >
-                          {item}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* =================================================
-                GLASS STATS
-            ================================================= */}
-
-            <div className="relative z-10 mx-2 sm:mx-5 md:mx-8 lg:mx-14 xl:mx-16 -mt-8 sm:-mt-11 md:-mt-14">
-              <div
-                className="
-                  grid
-                  grid-cols-2
-                  md:grid-cols-4
-                  overflow-hidden
-                  rounded-[20px]
-                  sm:rounded-[28px]
-                  md:rounded-[32px]
-                  border
-                  border-white/80
-                  dark:border-white/10
-                  bg-white/55
-                  dark:bg-[#1A1411]/75
-                  backdrop-blur-2xl
-                  shadow-[0_25px_70px_rgba(35,22,15,.13)]
-                "
-              >
-                {[
-                  {
-                    number:
-                      selectedGov.stats
-                        ?.placesCount ??
-                      places.length,
-                    label: 'معالم',
-                    icon: Landmark,
-                  },
-
-                  {
-                    number:
-                      selectedGov.stats
-                        ?.craftsCount ??
-                      crafts.length,
-                    label: 'حرف',
-                    icon: Hammer,
-                  },
-
-                  {
-                    number:
-                      selectedGov.stats
-                        ?.productsCount ??
-                      govMarketProducts.length,
-                    label: 'منتجات',
-                    icon: ShoppingBag,
-                  },
-
-                  {
-                    number:
-                      selectedGov.stats
-                        ?.storiesCount ?? 0,
-                    label: 'حكايات',
-                    icon: Scroll,
-                  },
-                ].map((stat, index) => {
-                  const Icon = stat.icon;
-
-                  return (
-                    <div
-                      key={stat.label}
-                      className={`
-                        flex
-                        min-w-0
-                        items-center
-                        gap-2
-                        sm:gap-3
-                        lg:gap-4
-                        p-3
-                        sm:p-5
-                        lg:p-7
-                        ${index % 2 !== 0
-                          ? 'border-r border-black/[0.06] dark:border-white/[0.07]'
-                          : ''
-                        }
-                        ${index >= 2
-                          ? 'border-t border-black/[0.06] dark:border-white/[0.07] md:border-t-0'
-                          : ''
-                        }
-                        ${index !== 0
-                          ? 'md:border-r'
-                          : ''
-                        }
-                      `}
-                    >
-                      <div
-                        className="
-                          flex
-                          h-9
-                          w-9
-                          sm:h-11
-                          sm:w-11
-                          lg:h-12
-                          lg:w-12
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-xl
-                          sm:rounded-2xl
-                          border
-                          border-white/70
-                          dark:border-white/10
-                          bg-white/55
-                          dark:bg-white/[0.05]
-                          text-[#B24C2B]
-                          shadow-sm
-                        "
-                      >
-                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="font-serif text-xl sm:text-2xl lg:text-3xl font-black leading-none">
-                          {stat.number}
-                        </p>
-
-                        <p className="mt-1 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-[#8A796C] dark:text-[#9E8E82]">
-                          {stat.label}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* =================================================
-            INTRO
-        ================================================= */}
-
-        <section className="py-10 sm:py-14 md:py-16 lg:py-20">
-          <div
-            className="
-              grid
-              grid-cols-1
-              lg:grid-cols-[1fr_1.4fr]
-              gap-7
-              lg:gap-20
-            "
-          >
-            <div>
-              <div className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] text-[#B24C2B]">
-                {currentEmblem.label}
-              </div>
-
-              <h3
-                className="
-                  mt-2 sm:mt-3
-                  font-serif
-                  font-black
-                  leading-tight
-                  text-3xl
-                  sm:text-4xl
-                  lg:text-5xl
-                "
-              >
-                كل محافظة
-                <br />
-
-                <span className="text-[#B24C2B]">
-                  لها روحها.
-                </span>
-              </h3>
-            </div>
-
-            <div>
-              <p className="break-words text-sm sm:text-base lg:text-xl leading-8 sm:leading-9 text-[#62544A] dark:text-[#B8A99D]">
-                {currentEmblem.folklore}
-              </p>
-
-              <div className="mt-5 sm:mt-7 flex items-center gap-3 sm:gap-4">
-                <span className="h-px w-10 sm:w-14 bg-[#B24C2B]" />
-
-                <span className="text-[10px] sm:text-xs font-black text-[#8A796B] dark:text-[#96867A]">
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black font-serif text-white tracking-tight">
                   {selectedGov.name}
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
+                </h1>
 
-        {/* =================================================
-            DOSSIER
-        ================================================= */}
+                <p className="text-lg sm:text-2xl font-bold text-amber-200">
+                  {selectedGov.nickname}
+                </p>
 
-        <section
-          className="
-            overflow-hidden
-            rounded-[24px]
-            sm:rounded-[32px]
-            lg:rounded-[42px]
-            border
-            border-white/80
-            dark:border-white/10
-            bg-white/45
-            dark:bg-white/[0.035]
-            shadow-[0_25px_100px_rgba(40,25,15,.08)]
-            backdrop-blur-xl
-          "
-        >
-          {/* DOSSIER HEADER */}
+                <p className="text-sm sm:text-base text-white/80 max-w-2xl leading-relaxed">
+                  {selectedGov.shortIntro}
+                </p>
 
-          <div className="border-b border-black/[0.05] dark:border-white/[0.07] p-4 sm:p-6 md:p-8 lg:p-10">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 lg:gap-6">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-[#B24C2B]">
-                  <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                  CULTURAL DOSSIER
+                <div className="flex items-center gap-2 pt-2 text-xs font-bold text-white/70">
+                  <MapPin size={15} className="text-[#9a6a35]" />
+                  <span>عاصمة المحافظة: {selectedGov.capitalCity}</span>
                 </div>
 
-                <h3 className="mt-2 break-words font-serif text-2xl sm:text-3xl lg:text-4xl font-black">
-                  من المكان للحكاية
-                </h3>
+                <div className="flex flex-wrap gap-2 pt-4">
+                  {selectedGov.famousFor?.map((item) => (
+                    <span
+                      key={item}
+                      className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-md"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
+            </section>
 
-              <button
-                id={`btn-open-encyclopedia-${selectedGov.id}`}
-                type="button"
-                onClick={() =>
-                  navigateToGovernorate(
-                    selectedGov.slug
-                  )
-                }
-                className="
-                  group
-                  flex
-                  w-full
-                  lg:w-auto
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  border
-                  border-white/70
-                  dark:border-white/10
-                  bg-[#211A16]
-                  dark:bg-white
-                  px-5
-                  py-3.5
-                  text-[10px]
-                  sm:text-xs
-                  font-black
-                  whitespace-nowrap
-                  text-white
-                  dark:text-[#211A16]
-                  shadow-lg
-                  transition-all
-                  hover:bg-[#B24C2B]
-                  dark:hover:bg-[#B24C2B]
-                  dark:hover:text-white
-                "
-              >
-                افتح الموسوعة
-
-                <ArrowLeft className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-1" />
-              </button>
+            {/* STATS BAR */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { number: places.length, label: 'معالم', icon: Landmark },
+                { number: crafts.length, label: 'حرف', icon: Hammer },
+                { number: govMarketProducts.length, label: 'منتجات', icon: ShoppingBag },
+                { number: selectedGov.stats?.storiesCount ?? 0, label: 'حكايات', icon: Scroll },
+              ].map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={stat.label}
+                    className="flex items-center gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] p-5 backdrop-blur-xl shadow-lg"
+                  >
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35]">
+                      <Icon size={22} />
+                    </div>
+                    <div>
+                      <div className="text-2xl sm:text-3xl font-black leading-none">
+                        {stat.number}
+                      </div>
+                      <div className="mt-1 text-xs font-bold text-black/50 dark:text-white/50">
+                        {stat.label}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* TABS */}
+            {/* FOLKLORE QUOTE */}
+            <div className="rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-[#211d18] text-white p-8 sm:p-12 text-center relative overflow-hidden shadow-xl">
+              <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full border-[30px] border-white/5" />
+              <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+                <span className="text-xs font-bold tracking-[0.3em] text-[#d5a56d]">
+                  FOLKLORE PROVERB
+                </span>
+                <blockquote className="text-2xl sm:text-4xl font-black font-serif leading-relaxed">
+                  «{currentEmblem.proverb}»
+                </blockquote>
+                <p className="text-sm sm:text-base text-white/70 leading-relaxed font-medium">
+                  {currentEmblem.folklore}
+                </p>
+              </div>
+            </div>
 
-            <div className="mt-6 sm:mt-7 overflow-x-auto no-scrollbar pb-1">
-              <div
-                className="
-                  flex
-                  min-w-max
-                  gap-1
-                  rounded-xl
-                  sm:rounded-2xl
-                  border
-                  border-white/70
-                  dark:border-white/10
-                  bg-white/35
-                  dark:bg-white/[0.04]
-                  p-1.5
-                  backdrop-blur-xl
-                "
-              >
+            {/* DOSSIER SECTION (TABS & CONTENT) */}
+            <section className="rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-white/60 dark:bg-[#151513]/80 p-6 sm:p-10 backdrop-blur-xl shadow-xl space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
+                <div>
+                  <div className="text-xs font-bold tracking-[0.3em] text-[#9a6a35]">
+                    CULTURAL DOSSIER
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black font-serif mt-1">
+                    أرشيف وموسوعة {selectedGov.name}
+                  </h3>
+                </div>
+
+                <button
+                  onClick={() => navigateToGovernorate(selectedGov.slug)}
+                  className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-white text-white dark:text-black px-5 py-3 text-xs font-bold shadow-lg hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                >
+                  <span>افتح موسوعة المحافظة</span>
+                  <ArrowLeft size={16} />
+                </button>
+              </div>
+
+              {/* TABS BAR */}
+              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                 {TABS.map((tab) => {
                   const Icon = tab.icon;
-                  const active =
-                    activeTab === tab.id;
-
+                  const active = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
-                      id={`tab-btn-${tab.id}`}
-                      type="button"
-                      onClick={() =>
-                        setActiveTab(tab.id)
-                      }
-                      className={`
-                        flex
-                        shrink-0
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-lg
-                        sm:rounded-xl
-                        px-3.5
-                        sm:px-5
-                        lg:px-6
-                        py-2.5
-                        sm:py-3
-                        text-[9px]
-                        sm:text-[10px]
-                        md:text-xs
-                        font-black
-                        whitespace-nowrap
-                        transition-all
-                        ${active
-                          ? 'border border-white/70 dark:border-white/10 bg-white/75 dark:bg-white/[0.09] text-[#211A16] dark:text-white shadow-md backdrop-blur-xl'
-                          : 'text-[#827267] dark:text-[#A99A8D] hover:bg-white/30 dark:hover:bg-white/[0.04]'
-                        }
-                      `}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
+                        ? 'bg-[#9a6a35] text-white shadow-md'
+                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                        }`}
                     >
-                      <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-
+                      <Icon size={16} />
                       <span>{tab.label}</span>
                     </button>
                   );
                 })}
               </div>
-            </div>
-          </div>
 
-          {/* =================================================
-              DOSSIER CONTENT
-          ================================================= */}
-
-          <div className="p-4 sm:p-6 md:p-8 lg:p-10">
-            {/* =================================================
-                PLACES
-            ================================================= */}
-
-            {activeTab === 'places' && (
-              <div>
-                <DossierHeading
-                  eyebrow="PLACES / MONUMENTS"
-                  title={`أماكن بتحكي تاريخ ${selectedGov.name}`}
-                />
-
-                {places.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                    {places.map((place, index) => (
-                      <article
-                        key={place.id}
-                        className="
-                          group
-                          relative
-                          overflow-hidden
-                          rounded-[22px]
-                          sm:rounded-[28px]
-                          border
-                          border-white/15
-                          bg-[#201713]
-                          shadow-xl
-                        "
-                      >
-                        <div className="aspect-[1.35] sm:aspect-[1.5] overflow-hidden">
-                          <img
-                            src={safeImage(
-                              place.coverImage
-                            )}
-                            alt={place.title}
-                            loading="lazy"
-                            className="
-                              h-full
-                              w-full
-                              object-cover
-                              transition-transform
-                              duration-[1000ms]
-                              group-hover:scale-105
-                            "
-                          />
-                        </div>
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-
-                        <div className="absolute right-4 sm:right-5 left-4 sm:left-5 bottom-4 sm:bottom-5">
-                          <div className="flex flex-wrap items-center gap-2 text-[8px] sm:text-[9px] font-black text-white/50">
-                            {String(index + 1).padStart(
-                              2,
-                              '0'
-                            )}
-
-                            <span className="h-px w-5 bg-white/30" />
-
-                            {place.typeLabel}
-                          </div>
-
-                          <h4 className="mt-2 break-words text-lg sm:text-xl md:text-2xl font-black text-white">
-                            {place.title}
-                          </h4>
-
-                          <p className="mt-1.5 sm:mt-2 break-words text-[10px] sm:text-xs leading-6 text-white/65">
-                            {place.shortDescription}
-                          </p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState
-                    icon={<Landmark />}
-                    title="المعالم بتتجمع هنا"
-                    description="اكتشف معالم وأماكن المحافظة في الموسوعة."
-                  />
-                )}
-              </div>
-            )}
-
-            {/* =================================================
-                CRAFTS
-            ================================================= */}
-
-            {activeTab === 'crafts' && (
-              <div>
-                <DossierHeading
-                  eyebrow="LIVING CRAFTS"
-                  title={`الصنعة اللي لسه عايشة في ${selectedGov.name}`}
-                />
-
-                {crafts.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-                    {crafts.map((craft, index) => (
-                      <article
-                        key={craft.id}
-                        className="
-                          group
-                          grid
-                          grid-cols-1
-                          sm:grid-cols-[150px_1fr]
-                          md:grid-cols-[165px_1fr]
-                          lg:grid-cols-[190px_1fr]
-                          overflow-hidden
-                          rounded-[22px]
-                          sm:rounded-[26px]
-                          border
-                          border-white/80
-                          dark:border-white/10
-                          bg-white/45
-                          dark:bg-white/[0.035]
-                          shadow-lg
-                          backdrop-blur-xl
-                        "
-                      >
-                        <div className="h-52 sm:h-full min-h-[180px] overflow-hidden">
-                          <img
-                            src={safeImage(
-                              craft.coverImage
-                            )}
-                            alt={craft.title}
-                            loading="lazy"
-                            className="
-                              h-full
-                              w-full
-                              object-cover
-                              transition-transform
-                              duration-700
-                              group-hover:scale-105
-                            "
-                          />
-                        </div>
-
-                        <div className="min-w-0 p-4 sm:p-5 md:p-6">
-                          <div className="text-[8px] sm:text-[9px] font-black tracking-widest text-[#B24C2B]">
-                            CRAFT{' '}
-                            {String(index + 1).padStart(
-                              2,
-                              '0'
-                            )}
-                          </div>
-
-                          <h4 className="mt-2 sm:mt-3 break-words text-base sm:text-lg md:text-xl font-black">
-                            {craft.title}
-                          </h4>
-
-                          <p className="mt-2 sm:mt-3 break-words text-[10px] sm:text-xs md:text-sm leading-6 sm:leading-7 text-[#75665A] dark:text-[#B2A398]">
-                            {craft.shortDescription}
-                          </p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <EmptyState
-                    icon={<Hammer />}
-                    title="الحرف بتتجمع هنا"
-                    description="الصناعات والحرف اليدوية المحلية جزء أساسي من هوية المحافظة."
-                  />
-                )}
-              </div>
-            )}
-
-            {/* =================================================
-                PRODUCTS
-            ================================================= */}
-
-            {activeTab === 'products' && (
-              <div>
-                <DossierHeading
-                  eyebrow="FROM WORKSHOP TO HOME"
-                  title={`اختيارات من سوق ${selectedGov.name}`}
-                />
-
-                {govMarketProducts.length > 0 ? (
-                  <div
-                    className="
-                      grid
-                      grid-cols-2
-                      sm:grid-cols-2
-                      md:grid-cols-3
-                      lg:grid-cols-4
-                      gap-2.5
-                      sm:gap-4
-                      lg:gap-5
-                    "
-                  >
-                    {govMarketProducts.map(
-                      (product) => {
-                        const added =
-                          addedProductId ===
-                          product.id;
-
-                        return (
-                          <article
-                            key={product.id}
-                            className="
-                              group
-                              min-w-0
-                              overflow-hidden
-                              rounded-[18px]
-                              sm:rounded-[22px]
-                              lg:rounded-[24px]
-                              border
-                              border-white/80
-                              dark:border-white/10
-                              bg-white/45
-                              dark:bg-white/[0.035]
-                              shadow-lg
-                              backdrop-blur-xl
-                            "
+              {/* TAB CONTENT */}
+              <div className="pt-4">
+                {activeTab === 'places' && (
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-black">أهم المعالم والأماكن الأثرية</h4>
+                    {places.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {places.map((place) => (
+                          <div
+                            key={place.id}
+                            className="group overflow-hidden rounded-3xl border border-black/10 dark:border-white/10 bg-black text-white relative shadow-lg"
                           >
-                            <div className="relative aspect-square overflow-hidden bg-[#E7DDD3] dark:bg-[#30261F]">
+                            <div className="aspect-[16/10] overflow-hidden">
                               <img
-                                src={safeImage(
-                                  product.images?.[0]
-                                )}
-                                alt={product.title}
-                                loading="lazy"
-                                className="
-                                  h-full
-                                  w-full
-                                  object-cover
-                                  transition-transform
-                                  duration-700
-                                  group-hover:scale-105
-                                "
+                                src={safeImage(place.coverImage)}
+                                alt={place.title}
+                                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                               />
-
-                              <div
-                                className="
-                                  absolute
-                                  top-2
-                                  sm:top-3
-                                  right-2
-                                  sm:right-3
-                                  flex
-                                  items-center
-                                  gap-1
-                                  rounded-full
-                                  border
-                                  border-white/20
-                                  bg-black/35
-                                  px-2
-                                  sm:px-2.5
-                                  py-1
-                                  sm:py-1.5
-                                  text-[7px]
-                                  sm:text-[9px]
-                                  font-black
-                                  text-white
-                                  backdrop-blur-xl
-                                "
-                              >
-                                <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-
-                                {product.rating ||
-                                  4.9}
-                              </div>
                             </div>
-
-                            <div className="min-w-0 p-2.5 sm:p-3.5 lg:p-4">
-                              <h4 className="break-words text-[10px] sm:text-xs md:text-sm font-black leading-5">
-                                {product.title}
-                              </h4>
-
-                              <p className="mt-1 break-words text-[7px] sm:text-[9px] md:text-[10px] leading-4 text-[#8A796B] dark:text-[#A7988C]">
-                                {product.sellerName ||
-                                  'حرفي من الصعيد'}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                            <div className="absolute inset-x-0 bottom-0 p-6 space-y-1">
+                              <span className="text-[10px] font-bold tracking-widest text-[#d5a56d]">
+                                {place.typeLabel}
+                              </span>
+                              <h5 className="text-xl font-black">{place.title}</h5>
+                              <p className="text-xs text-white/70 line-clamp-2">
+                                {place.shortDescription}
                               </p>
-
-                              <div className="mt-2.5 sm:mt-3 flex min-w-0 flex-col xs:flex-row sm:flex-row items-stretch sm:items-center justify-between gap-2">
-                                <span className="min-w-0 break-words text-[10px] sm:text-xs md:text-sm lg:text-base font-black text-[#B24C2B]">
-                                  {product.price} ج.م
-                                </span>
-
-                                <button
-                                  id={`btn-add-atlas-cart-${product.id}`}
-                                  type="button"
-                                  onClick={() =>
-                                    handleAddProduct(
-                                      product
-                                    )
-                                  }
-                                  className={`
-                                    flex
-                                    min-h-8
-                                    sm:min-h-9
-                                    shrink-0
-                                    items-center
-                                    justify-center
-                                    gap-1
-                                    rounded-lg
-                                    sm:rounded-xl
-                                    px-2
-                                    sm:px-3
-                                    text-[7px]
-                                    sm:text-[9px]
-                                    font-black
-                                    text-white
-                                    shadow-sm
-                                    transition-all
-                                    ${added
-                                      ? 'bg-emerald-600'
-                                      : 'bg-[#211A16] hover:bg-[#B24C2B]'
-                                    }
-                                  `}
-                                >
-                                  {added ? (
-                                    <>
-                                      <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-
-                                      <span>
-                                        تم
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <ShoppingBag className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-
-                                      <span>
-                                        أضف
-                                      </span>
-                                    </>
-                                  )}
-                                </button>
-                              </div>
                             </div>
-                          </article>
-                        );
-                      }
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/50 dark:text-white/50">لا توجد معالم مسجلة لهذه المحافظة حالياً.</p>
                     )}
                   </div>
-                ) : (
-                  <EmptyState
-                    icon={<ShoppingBag />}
-                    title="السوق بيتجهز"
-                    description={`منتجات ${selectedGov.name} هتظهر هنا أول ما يتم توثيقها.`}
-                  />
+                )}
+
+                {activeTab === 'crafts' && (
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-black">الحرف اليدوية التراثية</h4>
+                    {crafts.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {crafts.map((craft) => (
+                          <div
+                            key={craft.id}
+                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-5 shadow-md"
+                          >
+                            <img
+                              src={safeImage(craft.coverImage)}
+                              alt={craft.title}
+                              className="h-28 w-28 shrink-0 rounded-2xl object-cover"
+                            />
+                            <div className="space-y-1 min-w-0">
+                              <span className="text-[10px] font-bold text-[#9a6a35]">حرفة تقليدية</span>
+                              <h5 className="text-base font-black truncate">{craft.title}</h5>
+                              <p className="text-xs text-black/60 dark:text-white/60 line-clamp-3">
+                                {craft.shortDescription}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/50 dark:text-white/50">لا توجد حرف مسجلة لهذه المحافظة حالياً.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'products' && (
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-black">منتجات السوق المرتبطة بالمحافظة</h4>
+                    {govMarketProducts.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {govMarketProducts.map((product) => {
+                          const added = addedProductId === product.id;
+                          return (
+                            <div
+                              key={product.id}
+                              className="group rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] overflow-hidden p-4 flex flex-col justify-between shadow-md"
+                            >
+                              <div className="space-y-3">
+                                <div className="aspect-square overflow-hidden rounded-2xl bg-black/5">
+                                  <img
+                                    src={safeImage(product.images?.[0])}
+                                    alt={product.title}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  />
+                                </div>
+                                <h5 className="text-sm font-black line-clamp-1">{product.title}</h5>
+                                <div className="text-xs font-black text-[#9a6a35]">{product.price} ج.م</div>
+                              </div>
+                              <button
+                                onClick={() => handleAddProduct(product)}
+                                className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-white transition-colors cursor-pointer ${added ? 'bg-emerald-600' : 'bg-[#211d18] dark:bg-white dark:text-black hover:bg-[#9a6a35]'
+                                  }`}
+                              >
+                                {added ? <Check size={14} /> : <ShoppingBag size={14} />}
+                                <span>{added ? 'تم الأضف' : 'أضف للسلة'}</span>
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-black/50 dark:text-white/50">لا توجد منتجات معروضة حالياً لهذه المحافظة.</p>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'foods' && (
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-black">مطبخ وسفرة المحافظة</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {[
+                        { emoji: '🍞', title: 'العيش الشمسي', text: 'من أشهر تفاصيل البيت الصعيدي، بطعم ورائحة مرتبطة بالخبز البلدي التقليدي.' },
+                        { emoji: '🍯', title: 'العسل والفطير', text: 'تفاصيل بسيطة من السفرة المصرية الأصيلة، مرتبطة بالضيافة واللمة.' },
+                        { emoji: '🥣', title: 'الكشك الصعيدي', text: 'وصفة تقليدية تعتمد على القمح واللبن وتحضر بطرق مختلفة من بيت لبيت.' },
+                        { emoji: '🌿', title: 'الأكل البلدي', text: 'الملوخية والأكلات الريفية جزء من ذاكرة السفرة في محافظات الصعيد.' },
+                      ].map((food) => (
+                        <div
+                          key={food.title}
+                          className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-5 shadow-md"
+                        >
+                          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-black/5 text-2xl">
+                            {food.emoji}
+                          </div>
+                          <div>
+                            <h5 className="text-base font-black">{food.title}</h5>
+                            <p className="mt-1 text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                              {food.text}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'folklore' && (
+                  <div className="space-y-6 text-center py-8">
+                    <Scroll className="mx-auto h-12 w-12 text-[#9a6a35]" />
+                    <h4 className="text-xl font-black font-serif">مرويات وحكايات شعبية</h4>
+                    <p className="max-w-xl mx-auto text-sm text-black/70 dark:text-white/70 leading-relaxed">
+                      {currentEmblem.folklore}
+                    </p>
+                  </div>
                 )}
               </div>
-            )}
-
-            {/* =================================================
-                FOODS
-            ================================================= */}
-
-            {activeTab === 'foods' && (
-              <div>
-                <DossierHeading
-                  eyebrow="TASTE OF UPPER EGYPT"
-                  title={`سفرة ${selectedGov.name}`}
-                />
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {[
-                    {
-                      emoji: '🍞',
-                      title: 'العيش الشمسي',
-                      text: 'من أشهر تفاصيل البيت الصعيدي، بطعم ورائحة مرتبطة بالخبز البلدي التقليدي.',
-                    },
-
-                    {
-                      emoji: '🍯',
-                      title: 'العسل والفطير',
-                      text: 'تفاصيل بسيطة من السفرة المصرية الأصيلة، مرتبطة بالضيافة واللمة.',
-                    },
-
-                    {
-                      emoji: '🥣',
-                      title: 'الكشك الصعيدي',
-                      text: 'وصفة تقليدية تعتمد على القمح واللبن وتحضر بطرق مختلفة من بيت لبيت.',
-                    },
-
-                    {
-                      emoji: '🌿',
-                      title: 'الأكل البلدي',
-                      text: 'الملوخية والأكلات الريفية جزء من ذاكرة السفرة في محافظات الصعيد.',
-                    },
-                  ].map((food) => (
-                    <article
-                      key={food.title}
-                      className="
-                        rounded-[22px]
-                        sm:rounded-[26px]
-                        border
-                        border-white/80
-                        dark:border-white/10
-                        bg-white/45
-                        dark:bg-white/[0.035]
-                        p-4
-                        sm:p-5
-                        md:p-6
-                        shadow-lg
-                        backdrop-blur-xl
-                        transition-all
-                        hover:bg-white/65
-                        dark:hover:bg-white/[0.055]
-                      "
-                    >
-                      <div className="flex gap-3 sm:gap-4">
-                        <div
-                          className="
-                            flex
-                            h-11
-                            w-11
-                            sm:h-12
-                            sm:w-12
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            sm:rounded-2xl
-                            border
-                            border-white/70
-                            dark:border-white/10
-                            bg-white/60
-                            dark:bg-white/[0.05]
-                            text-xl
-                            sm:text-2xl
-                          "
-                        >
-                          {food.emoji}
-                        </div>
-
-                        <div className="min-w-0">
-                          <h4 className="break-words text-sm sm:text-base font-black">
-                            {food.title}
-                          </h4>
-
-                          <p className="mt-1.5 sm:mt-2 break-words text-[10px] sm:text-xs md:text-sm leading-6 sm:leading-7 text-[#75665A] dark:text-[#B2A398]">
-                            {food.text}
-                          </p>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* =================================================
-                FOLKLORE
-            ================================================= */}
-
-            {activeTab === 'folklore' && (
-              <div>
-                <DossierHeading
-                  eyebrow="ORAL HISTORY"
-                  title={`حكايات من ${selectedGov.name}`}
-                />
-
-                <div
-                  className="
-                    relative
-                    overflow-hidden
-                    rounded-[24px]
-                    sm:rounded-[32px]
-                    border
-                    border-white/10
-                    bg-[#241B16]
-                    px-5
-                    sm:px-8
-                    md:px-10
-                    py-12
-                    sm:py-14
-                    md:py-16
-                    text-center
-                    shadow-xl
-                  "
-                >
-                  <div className="absolute -right-20 -top-20 h-56 w-56 sm:h-64 sm:w-64 rounded-full border-[28px] sm:border-[35px] border-white/[0.035]" />
-
-                  <div className="absolute -left-20 -bottom-20 h-56 w-56 sm:h-64 sm:w-64 rounded-full border-[28px] sm:border-[35px] border-[#B24C2B]/10" />
-
-                  <div className="relative">
-                    <div className="text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-[#E88E72]">
-                      A VOICE FROM UPPER EGYPT
-                    </div>
-
-                    <blockquote
-                      className="
-                        mx-auto
-                        mt-4
-                        sm:mt-5
-                        max-w-4xl
-                        break-words
-                        font-serif
-                        font-black
-                        leading-relaxed
-                        text-xl
-                        sm:text-2xl
-                        md:text-4xl
-                        lg:text-5xl
-                        text-white
-                      "
-                    >
-                      «{currentEmblem.proverb}»
-                    </blockquote>
-                  </div>
-                </div>
-
-                <div
-                  className="
-                    mt-4
-                    sm:mt-5
-                    rounded-[22px]
-                    sm:rounded-[26px]
-                    border
-                    border-white/80
-                    dark:border-white/10
-                    bg-white/45
-                    dark:bg-white/[0.035]
-                    p-4
-                    sm:p-6
-                    md:p-8
-                    shadow-lg
-                    backdrop-blur-xl
-                  "
-                >
-                  <p className="break-words text-xs sm:text-sm md:text-lg leading-8 sm:leading-9 text-[#6E6055] dark:text-[#B6A79B]">
-                    {currentEmblem.folklore}
-                  </p>
-                </div>
-              </div>
-            )}
+            </section>
           </div>
-        </section>
-
-        {/* =================================================
-            NEXT JOURNEY
-        ================================================= */}
-
-        <section
-          className="
-            mt-6
-            sm:mt-8
-            md:mt-10
-            relative
-            overflow-hidden
-            rounded-[26px]
-            sm:rounded-[34px]
-            lg:rounded-[42px]
-            border
-            border-white/20
-            bg-[#B24C2B]
-            text-white
-            shadow-[0_30px_90px_rgba(178,76,43,.20)]
-          "
-        >
-          <div className="absolute -left-24 -bottom-24 h-72 w-72 sm:h-80 sm:w-80 rounded-full border-[30px] sm:border-[35px] border-white/[0.06]" />
-
-          <div className="absolute right-1/2 top-[-100px] h-56 w-56 sm:h-64 sm:w-64 rounded-full bg-white/[0.05] blur-3xl" />
-
-          <div
-            className="
-              relative
-              grid
-              grid-cols-1
-              lg:grid-cols-[1fr_auto]
-              gap-6
-              sm:gap-8
-              items-center
-              p-5
-              sm:p-7
-              md:p-10
-              lg:p-14
-            "
-          >
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 text-[8px] sm:text-[9px] font-black tracking-[0.2em] text-white/65">
-                <Sparkles className="h-3.5 w-3.5 shrink-0" />
-                KEEP EXPLORING
-              </div>
-
-              <h3 className="mt-2 break-words font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black">
-                الرحلة لسه طويلة.
-              </h3>
-
-              <p className="mt-2 sm:mt-3 max-w-2xl break-words text-[10px] sm:text-xs md:text-sm leading-7 text-white/70">
-                خلّي محطتك الجاية محافظة تانية واكتشف وش جديد
-                للصعيد.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex gap-2.5">
-              <button
-                type="button"
-                onClick={nextGovernorate}
-                className="
-                  group
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  bg-white
-                  px-5
-                  sm:px-6
-                  py-3.5
-                  text-[10px]
-                  sm:text-xs
-                  font-black
-                  whitespace-nowrap
-                  text-[#B24C2B]
-                  shadow-lg
-                  transition-all
-                  hover:-translate-y-0.5
-                "
-              >
-                المحافظة التالية
-
-                <ChevronLeft className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-1" />
-              </button>
-
-              <button
-                id="btn-open-market-gov"
-                type="button"
-                onClick={() =>
-                  setActivePage('products')
-                }
-                className="
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  border
-                  border-white/20
-                  bg-white/10
-                  px-5
-                  sm:px-6
-                  py-3.5
-                  text-[10px]
-                  sm:text-xs
-                  font-black
-                  whitespace-nowrap
-                  text-white
-                  backdrop-blur-xl
-                  transition-all
-                  hover:bg-white/15
-                "
-              >
-                <ShoppingBag className="h-4 w-4 shrink-0" />
-
-                سوق الصعيد
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* =================================================
-            FOOTER
-        ================================================= */}
-
-        <footer className="py-8 sm:py-10 md:py-12 text-center">
-          <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5">
-            <span className="h-px flex-1 bg-[#DDD4CA] dark:bg-white/10" />
-
-            <div
-              className="
-                flex
-                h-8
-                w-8
-                sm:h-9
-                sm:w-9
-                shrink-0
-                items-center
-                justify-center
-                rounded-xl
-                border
-                border-white/70
-                dark:border-white/10
-                bg-white/45
-                dark:bg-white/[0.04]
-                backdrop-blur-xl
-              "
-            >
-              <img
-                src={LOGO_URL}
-                alt="وه"
-                className="h-5 w-5 sm:h-6 sm:w-6 object-contain opacity-70"
-              />
-            </div>
-
-            <span className="h-px flex-1 bg-[#DDD4CA] dark:bg-white/10" />
-          </div>
-
-          <p className="mt-3 sm:mt-4 px-4 break-words text-[8px] sm:text-[9px] md:text-[10px] font-black tracking-[0.12em] text-[#958477] dark:text-[#766960]">
-            وَه · حكايات الصعيد من المكان للإنسان
-          </p>
-        </footer>
+        )}
       </main>
-    </div>
-  );
-};
 
-/* =========================================================
-   DOSSIER HEADING
-========================================================= */
-
-const DossierHeading: React.FC<{
-  eyebrow: string;
-  title: string;
-}> = ({ eyebrow, title }) => {
-  return (
-    <div className="mb-5 sm:mb-7">
-      <div className="text-[8px] sm:text-[9px] md:text-[10px] font-black tracking-[0.2em] text-[#B24C2B]">
-        {eyebrow}
-      </div>
-
-      <h3 className="mt-1.5 sm:mt-2 max-w-3xl break-words font-serif text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black leading-tight">
-        {title}
-      </h3>
-    </div>
-  );
-};
-
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
-const EmptyState: React.FC<{
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}> = ({ icon, title, description }) => {
-  return (
-    <div
-      className="
-        rounded-[22px]
-        sm:rounded-[28px]
-        border
-        border-white/80
-        dark:border-white/10
-        bg-white/45
-        dark:bg-white/[0.035]
-        py-14
-        sm:py-16
-        px-5
-        text-center
-        shadow-lg
-        backdrop-blur-xl
-      "
-    >
-      <div
-        className="
-          mx-auto
-          flex
-          h-12
-          w-12
-          sm:h-14
-          sm:w-14
-          items-center
-          justify-center
-          rounded-xl
-          sm:rounded-2xl
-          border
-          border-white/70
-          dark:border-white/10
-          bg-white/60
-          dark:bg-white/[0.05]
-          text-[#B24C2B]
-        "
-      >
-        {React.isValidElement(icon)
-          ? React.cloneElement(
-            icon as React.ReactElement<{
-              className?: string;
-            }>,
-            {
-              className:
-                'h-5 w-5 sm:h-6 sm:w-6',
-            }
-          )
-          : icon}
-      </div>
-
-      <h4 className="mt-4 break-words text-base sm:text-lg font-black">
-        {title}
-      </h4>
-
-      <p className="mx-auto mt-2 max-w-md break-words text-[10px] sm:text-xs md:text-sm leading-7 text-[#817267] dark:text-[#AA9B8E]">
-        {description}
-      </p>
+      {/* =====================================================
+          FOOTER
+      ===================================================== */}
+      <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
+        <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
+          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5">
+            <img src={LOGO_URL} alt="وه" className="h-6 w-6 object-contain opacity-80" />
+          </div>
+          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+        </div>
+        <p className="text-[10px] font-black tracking-[0.2em] text-black/50 dark:text-white/50">
+          وَه · حكايات الصعيد من المكان للإنسان
+        </p>
+      </footer>
     </div>
   );
 };

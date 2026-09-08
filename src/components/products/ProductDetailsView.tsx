@@ -45,7 +45,13 @@ export const ProductDetailsView: React.FC = () => {
     isLoading
   } = useApp();
 
-  const product = products.find((p) => p.id === selectedProductId) || products[0];
+  const effectiveProductId =
+    selectedProductId ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/products/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null);
+
+  const product = products.find((p) => p.id === effectiveProductId) || (!effectiveProductId ? products[0] : undefined);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'desc' | 'specs' | 'reviews' | 'shipping'>('desc');
@@ -127,7 +133,7 @@ export const ProductDetailsView: React.FC = () => {
 
   const handleShare = () => {
     if (!product) return;
-    const shareUrl = `${window.location.origin}/?product=${product.id}`;
+    const shareUrl = `${window.location.origin}/products/${encodeURIComponent(product.id)}`;
     if (navigator.share) {
       navigator
         .share({

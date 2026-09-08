@@ -15,7 +15,19 @@ export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
 
   return (
-    <div className="space-y-4">
+    <div
+      dir="rtl"
+      className="
+        min-h-screen
+        overflow-x-hidden
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
+        space-y-4
+      "
+    >
       {/* 1. Hero Section - WAH Digital Platform of Upper Egypt */}
       <HeroSection />
 
@@ -32,17 +44,17 @@ export const HomePage: React.FC = () => {
       <CraftReelsSection />
 
       {/* 5. Featured & Best-Selling Products Section */}
-      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6">
+      <section className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-[#943310] dark:text-[var(--wah-primary,#E0633C)] mb-1">
-              <Flame className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <div className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] mb-1">
+              <Flame className="w-4 h-4 text-[#9a6a35]" />
               <span>الأكثر طلباً وإقبالاً</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-[var(--wah-text,#F7F3EE)] font-heritage">
+            <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
               روائع الصعيد الأكثر شهرة
             </h2>
-            <p className="text-xs sm:text-sm text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)] mt-1">
+            <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-1">
               قطع أثبتت جودتها ونالت إعجاب مئات المتسوقين وعشاق التراث المصري
             </p>
           </div>
@@ -50,7 +62,7 @@ export const HomePage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="text-xs sm:text-sm font-bold text-[#943310] dark:text-[var(--wah-primary,#E0633C)] hover:text-[#7c280a] dark:hover:text-[#F07A54] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
+            className="text-xs sm:text-sm font-bold text-[#9a6a35] hover:text-[#744e26] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
           >
             <span>استعراض كل المنتجات</span>
             <ArrowLeft className="w-4 h-4" />

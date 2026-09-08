@@ -16,32 +16,46 @@ export const AboutSection: React.FC = () => {
   const { setShowIntroVideo, setActivePage } = useApp();
 
   return (
-    <section className="relative overflow-hidden py-20 sm:py-24 bg-[#FAF7F2] dark:bg-[#110E0C] border-t border-[#ebdccd] dark:border-[#352B24] transition-colors duration-300">
-
+    <section
+      dir="rtl"
+      className="
+        relative
+        overflow-hidden
+        py-20
+        sm:py-24
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
+        border-t border-black/10
+        dark:border-white/10
+      "
+    >
       {/* Decorative background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#B24C2B]/5 blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#9a6a35]/5 blur-3xl" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-amber-500/5 blur-3xl" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="relative max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12">
 
         {/* Intro Header */}
         <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-16">
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#B24C2B]/10 dark:bg-[#E0633C]/10 text-[#943310] dark:text-[#E0633C] text-xs font-black mb-5">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#9a6a35] text-xs font-bold backdrop-blur-md shadow-sm mb-5">
             <span>وه | WAH</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-[#241C17] dark:text-[#F7F3EE] font-heritage leading-tight">
+          <h2 className="text-3xl sm:text-5xl font-black font-serif leading-tight tracking-tight">
             الصعيد مش مجرد مكان...
             <br />
-            <span className="text-[#B24C2B] dark:text-[#E0633C]">
+            <span className="text-[#9a6a35]">
               الصعيد حكاية
             </span>
           </h2>
 
-          <p className="mt-5 text-sm sm:text-base leading-8 text-[#6E5F52] dark:text-[#A8988B]">
+          <p className="mt-5 text-sm sm:text-base leading-8 text-black/60 dark:text-white/60">
             وه هي المساحة الرقمية اللي بتجمع روح الصعيد في مكان واحد؛
             ناسه، بلادُه، حرفُه، أكله، حكاياته، تراثه وأسواقه.
             بنوثّق الحكاية، ونقرّبك من أصحابها، ونخليك تعيش الصعيد من جوّه.
@@ -54,7 +68,7 @@ export const AboutSection: React.FC = () => {
           {/* Visual Story */}
           <div className="lg:col-span-5 relative min-h-[420px]">
 
-            <div className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white dark:border-[#1B1613]">
+            <div className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white dark:border-[#151513]">
 
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
@@ -66,12 +80,12 @@ export const AboutSection: React.FC = () => {
 
               <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 text-white">
 
-                <span className="inline-flex items-center gap-2 text-amber-300 text-xs font-black mb-3">
+                <span className="inline-flex items-center gap-2 text-amber-300 text-xs font-bold mb-3">
                   <MapPin className="w-4 h-4" />
                   من الفيوم لأسوان
                 </span>
 
-                <h3 className="text-2xl sm:text-3xl font-black font-heritage leading-tight">
+                <h3 className="text-2xl sm:text-3xl font-black font-serif leading-tight">
                   كل مكان هنا
                   <br />
                   وراه حكاية.
@@ -84,8 +98,8 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Floating Brand Card */}
-            <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-[#B24C2B] text-white px-4 py-3 rounded-2xl shadow-xl border border-white/20 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center font-black font-heritage text-lg">
+            <div className="absolute -bottom-5 -left-3 sm:-left-5 bg-[#211d18] text-white dark:bg-white dark:text-black px-4 py-3 rounded-2xl shadow-xl border border-white/20 flex items-center gap-3 backdrop-blur-xl">
+              <div className="w-10 h-10 rounded-xl bg-white/10 dark:bg-black/10 flex items-center justify-center font-black font-serif text-lg">
                 وه
               </div>
 
@@ -93,7 +107,7 @@ export const AboutSection: React.FC = () => {
                 <div className="text-xs font-black">
                   WAH
                 </div>
-                <div className="text-[10px] text-white/75">
+                <div className="text-[10px] text-white/75 dark:text-black/75">
                   كل حكاية ليها أصل
                 </div>
               </div>
@@ -105,62 +119,62 @@ export const AboutSection: React.FC = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-7">
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <MapPin className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <MapPin className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   أماكن
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   بلاد ومعالم وحكايات
                 </p>
               </div>
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <Users className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <Users className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   ناس
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   وجوه وشيوخ وأساطوات
                 </p>
               </div>
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <Sparkles className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <Sparkles className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   حرف
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   صنعة متوارثة وحرفة حية
                 </p>
               </div>
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <BookOpen className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <BookOpen className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   حكايات
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   مرويات وذاكرة المكان
                 </p>
               </div>
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <Utensils className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <Utensils className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   أكل
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   طعم الصعيد وأكلاته
                 </p>
               </div>
 
-              <div className="group p-4 rounded-2xl bg-white dark:bg-[#1B1613] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#B24C2B]/50 transition-all">
-                <Store className="w-5 h-5 text-[#B24C2B] mb-3" />
-                <h4 className="text-xs font-black text-[#2C211B] dark:text-[#F7F3EE]">
+              <div className="group p-4 rounded-2xl bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50 transition-all backdrop-blur-xl">
+                <Store className="w-5 h-5 text-[#9a6a35] mb-3" />
+                <h4 className="text-xs font-black">
                   سوق
                 </h4>
-                <p className="text-[10px] text-[#8C7A6B] mt-1">
+                <p className="text-[10px] text-black/50 dark:text-white/50 mt-1">
                   من الصانع لبيتك
                 </p>
               </div>
@@ -168,9 +182,9 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Mission */}
-            <div className="p-6 sm:p-7 rounded-3xl bg-[#241C17] dark:bg-[#1B1613] text-white relative overflow-hidden">
+            <div className="p-6 sm:p-7 rounded-3xl bg-[#211d18] dark:bg-[#151513] text-white border border-white/10 relative overflow-hidden shadow-xl">
 
-              <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-[#B24C2B]/20 blur-2xl" />
+              <div className="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-[#9a6a35]/20 blur-2xl" />
 
               <div className="relative">
 
@@ -178,7 +192,7 @@ export const AboutSection: React.FC = () => {
                   رؤيتنا
                 </span>
 
-                <h3 className="mt-2 text-xl sm:text-2xl font-black font-heritage">
+                <h3 className="mt-2 text-xl sm:text-2xl font-black font-serif">
                   نخلي الصعيد أقرب...
                   <span className="text-amber-300">
                     وأصله أوضح.
@@ -201,7 +215,7 @@ export const AboutSection: React.FC = () => {
                 type="button"
                 id="about-watch-film-btn"
                 onClick={() => setShowIntroVideo(true)}
-                className="group px-5 py-3.5 rounded-xl bg-[#B24C2B] hover:bg-[#943310] text-white text-xs font-black shadow-lg flex items-center justify-center gap-2 transition-all min-h-[46px] cursor-pointer"
+                className="group px-5 py-3.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black shadow-lg flex items-center justify-center gap-2 transition-all min-h-[46px] cursor-pointer"
               >
                 <Film className="w-4 h-4" />
                 مشاهدة حكاية وه
@@ -212,7 +226,7 @@ export const AboutSection: React.FC = () => {
                 type="button"
                 id="about-explore-sellers-btn"
                 onClick={() => setActivePage('sellers')}
-                className="px-5 py-3.5 rounded-xl bg-white dark:bg-[#1B1613] hover:bg-[#F3EBDD] dark:hover:bg-[#26201B] text-[#2C211B] dark:text-white border border-[#dfcebe] dark:border-[#352B24] text-xs font-black transition-all min-h-[46px] flex items-center justify-center gap-2 cursor-pointer"
+                className="px-5 py-3.5 rounded-xl bg-white/80 dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-white border border-black/10 dark:border-white/10 text-xs font-black transition-all min-h-[46px] flex items-center justify-center gap-2 cursor-pointer backdrop-blur-xl"
               >
                 <Store className="w-4 h-4" />
                 اكتشف صُنّاع الصعيد
@@ -226,14 +240,14 @@ export const AboutSection: React.FC = () => {
         {/* Bottom Statement */}
         <div className="mt-16 text-center">
 
-          <div className="inline-flex items-center gap-3 text-[#8C7A6B] dark:text-[#A8988B]">
-            <span className="w-12 h-px bg-[#D8C9BA] dark:bg-[#493B31]" />
+          <div className="inline-flex items-center gap-3 text-black/40 dark:text-white/40">
+            <span className="w-12 h-px bg-black/10 dark:bg-white/10" />
 
             <span className="text-xs font-black">
               كل حكاية ليها أصل
             </span>
 
-            <span className="w-12 h-px bg-[#D8C9BA] dark:bg-[#493B31]" />
+            <span className="w-12 h-px bg-black/10 dark:bg-white/10" />
           </div>
 
         </div>

@@ -12,6 +12,7 @@ import {
   Utensils,
   Calendar,
   ShoppingBag,
+  Store,
   ArrowLeft,
   Sparkles,
   Layers
@@ -29,6 +30,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
     navigateToFood,
     navigateToEvent,
     navigateToProduct,
+    navigateToSeller,
     setActivePage
   } = useApp();
 
@@ -84,7 +86,10 @@ export const GlobalSearchResultsPage: React.FC = () => {
         navigateToEvent(item.slug);
         break;
       case 'product':
-        navigateToProduct(item.slug);
+        navigateToProduct(item.id || item.slug);
+        break;
+      case 'seller':
+        navigateToSeller(item.id || item.slug);
         break;
       default:
         setActivePage('home');
@@ -119,6 +124,8 @@ export const GlobalSearchResultsPage: React.FC = () => {
         return Calendar;
       case 'product':
         return ShoppingBag;
+      case 'seller':
+        return Store;
       default:
         return Sparkles;
     }

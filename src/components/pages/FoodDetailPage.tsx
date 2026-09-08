@@ -25,7 +25,12 @@ export const FoodDetailPage: React.FC = () => {
   const [food, setFood] = useState<UpperEgyptFood | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const slug = selectedFoodSlug || 'saidi-fayesh';
+  const slug =
+    selectedFoodSlug ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/food/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null) ||
+    'saidi-fayesh';
 
   useEffect(() => {
     const fetchFood = async () => {
@@ -45,7 +50,7 @@ export const FoodDetailPage: React.FC = () => {
   }, [slug]);
 
   const handleShare = () => {
-    const url = `${window.location.origin}/food?slug=${encodeURIComponent(slug)}`;
+    const url = `${window.location.origin}/food/${encodeURIComponent(slug)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       addToast('تم نسخ الرابط', 'تم نسخ رابط وصفة الأكلة التراثية بنجاح', 'success');

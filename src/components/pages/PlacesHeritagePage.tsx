@@ -11,6 +11,7 @@ import {
   Search,
   Sparkles,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 
@@ -52,19 +53,6 @@ type CategoryFilter =
   | 'إسلامي'
   | 'تراث شعبي'
   | 'طبيعي';
-
-const CATEGORIES: {
-  key: CategoryFilter;
-  label: string;
-  number: string;
-}[] = [
-    { key: 'all', label: 'كل الأماكن', number: '00' },
-    { key: 'فرعوني', label: 'فرعوني', number: '01' },
-    { key: 'قبطي', label: 'قبطي', number: '02' },
-    { key: 'إسلامي', label: 'إسلامي', number: '03' },
-    { key: 'تراث شعبي', label: 'تراث شعبي', number: '04' },
-    { key: 'طبيعي', label: 'طبيعي', number: '05' },
-  ];
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1600&q=85';
@@ -126,14 +114,14 @@ export const PlacesHeritagePage: React.FC = () => {
     );
   }, [places]);
 
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: places.length };
-    places.forEach((p) => {
-      if (p.category) {
-        counts[p.category] = (counts[p.category] || 0) + 1;
-      }
-    });
-    return counts;
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        places
+          .map((place) => place.category)
+          .filter(Boolean)
+      )
+    );
   }, [places]);
 
   const filteredPlaces = useMemo(() => {
@@ -180,296 +168,358 @@ export const PlacesHeritagePage: React.FC = () => {
   };
 
   const hasFilters =
-    searchQuery.trim() ||
+    searchQuery.trim() !== '' ||
     categoryFilter !== 'all' ||
     governorateFilter !== 'all';
 
   return (
-    <main
+    <div
       dir="rtl"
       className="
         min-h-screen
-        overflow-hidden
-        bg-[#F6F1EA]
-        text-[#211A16]
-        dark:bg-[#100C0A]
-        dark:text-[#F5EFE8]
+        overflow-x-hidden
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
       "
     >
-      {/* =========================================================
-          HEADER / INTRO
-      ========================================================== */}
-      <section className="relative border-b border-black/[0.08] dark:border-white/[0.08]">
-        {/* Decorative background */}
-        <div
-          className="
-            pointer-events-none
-            absolute
-            right-[-120px]
-            top-[-180px]
-            h-[500px]
-            w-[500px]
-            rounded-full
-            bg-[#B24C2B]/10
-            blur-[120px]
-          "
-        />
-
-        <div
-          className="
-            pointer-events-none
-            absolute
-            bottom-[-150px]
-            left-[-120px]
-            h-[400px]
-            w-[400px]
-            rounded-full
-            bg-[#264653]/10
-            blur-[120px]
-          "
-        />
-
-        <div className="relative mx-auto max-w-[1500px] px-5 pb-14 pt-7 sm:px-8 sm:pb-20 sm:pt-9 lg:px-12 lg:pb-24">
-          {/* Top row */}
-          <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setActivePage('home')}
+      {/* =====================================================
+          NAVBAR
+      ===================================================== */}
+      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
+        <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
+          <button
+            onClick={() => setActivePage('home')}
+            className="
+              group flex items-center gap-3
+              text-sm font-bold
+              transition-all
+              hover:text-[#9a6a35]
+              cursor-pointer
+            "
+          >
+            <span
               className="
-                group
-                flex
-                items-center
-                gap-3
-                text-xs
-                font-black
-                text-[#75675E]
-                transition
-                hover:text-[#B24C2B]
-                dark:text-[#A89B91]
+                flex h-10 w-10 items-center justify-center
+                rounded-full
+                border border-black/10
+                bg-white/60
+                transition-all
+                group-hover:bg-[#211d18]
+                group-hover:text-white
+                dark:border-white/10
+                dark:bg-white/5
+                dark:group-hover:bg-white
+                dark:group-hover:text-black
               "
             >
-              <span
-                className="
-                  flex
-                  h-10
-                  w-10
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-black/10
-                  bg-white
-                  transition
-                  group-hover:border-[#B24C2B]/30
-                  group-hover:bg-[#B24C2B]
-                  group-hover:text-white
-                  dark:border-white/10
-                  dark:bg-[#191411]
-                "
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </span>
+              <ArrowLeft
+                size={17}
+                className="transition-transform group-hover:-translate-x-1"
+              />
+            </span>
+            <span className="hidden sm:block">الرئيسية</span>
+          </button>
 
-              الرئيسية
-            </button>
-
-            <div className="flex items-center gap-2">
-              <span className="hidden text-[10px] font-black uppercase tracking-[0.25em] text-[#A09288] sm:block">
-                WAH / PLACES
-              </span>
-
-              <button
-                type="button"
-                onClick={() => setActivePage('map')}
-                className="
-                  flex
-                  h-10
-                  items-center
-                  gap-2
-                  rounded-full
-                  border
-                  border-black/10
-                  bg-white
-                  px-4
-                  text-xs
-                  font-black
-                  transition
-                  hover:border-[#B24C2B]/30
-                  hover:text-[#B24C2B]
-                  dark:border-white/10
-                  dark:bg-[#191411]
-                "
-              >
-                <Compass className="h-4 w-4" />
-                الخريطة
-              </button>
+          <div className="absolute left-1/2 -translate-x-1/2 text-center">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+              WAH
             </div>
+            <div className="mt-1 text-sm font-black">أماكن التراث</div>
           </div>
 
-          {/* Massive title */}
-          <div className="mt-20 grid gap-10 lg:grid-cols-[1fr_340px] lg:items-end">
-            <div>
-              <div className="mb-6 flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-[#B24C2B]" />
+          <button
+            onClick={() => setActivePage('map')}
+            className="
+              flex items-center gap-2
+              rounded-full
+              border border-black/10
+              px-4 py-2.5
+              text-xs font-bold
+              transition-all
+              hover:bg-[#211d18]
+              hover:text-white
+              dark:border-white/10
+              dark:hover:bg-white
+              dark:hover:text-black
+              cursor-pointer
+            "
+          >
+            <span className="hidden sm:block">الخريطة</span>
+            <Compass size={15} />
+          </button>
+        </div>
+      </header>
 
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#998B81]">
-                  DIGITAL HERITAGE ARCHIVE
+      {/* =====================================================
+          HERO SECTION
+      ===================================================== */}
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
+        <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
+
+        <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-32">
+          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
+            <div>
+              <div className="mb-8 flex items-center gap-3">
+                <Sparkles size={16} className="text-[#9a6a35]" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
+                  Digital Heritage Archive / Places
                 </span>
               </div>
 
               <h1
                 className="
                   max-w-5xl
-                  text-[62px]
+                  text-[14vw]
                   font-black
-                  leading-[0.82]
-                  tracking-[-0.07em]
-                  sm:text-[90px]
-                  md:text-[115px]
-                  lg:text-[150px]
+                  leading-[0.78]
+                  tracking-[-0.08em]
+                  sm:text-[11vw]
+                  lg:text-[9rem]
+                  xl:text-[11rem]
                 "
               >
                 أماكن
                 <br />
-
-                <span className="text-[#B24C2B]">
-                  بتحكي
-                </span>
+                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">بتحكي</span>
               </h1>
 
-              <div className="mt-8 flex items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-[#B24C2B]" />
-
-                <p className="max-w-xl text-sm font-medium leading-8 text-[#766960] dark:text-[#A99C92] sm:text-base">
-                  أرشيف بصري لأماكن الصعيد.
-                  <br />
-                  آثار، عمارة، قرى، طبيعة وحكايات لسه
-                  عايشة.
+              <div className="mt-10 flex max-w-2xl items-start gap-5">
+                <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
+                <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
+                  أرشيف بصري لأماكن الصعيد. آثار، عمارة، قرى، طبيعة وحكايات لسه عايشة.
                 </p>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 border-t border-black/10 dark:border-white/10">
-              <div className="border-l border-black/10 py-6 pl-5 dark:border-white/10">
-                <span className="text-4xl font-black">
-                  {places.length}
-                </span>
+            {/* Stats Card */}
+            <div className="relative">
+              <div
+                className="
+                  relative overflow-hidden
+                  rounded-[2rem]
+                  border border-black/10
+                  bg-white/50
+                  p-7
+                  backdrop-blur-xl
+                  dark:border-white/10
+                  dark:bg-white/[0.035]
+                "
+              >
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
 
-                <p className="mt-2 text-[10px] font-black text-[#8C7E74]">
-                  مكان موثق
-                </p>
-              </div>
+                <div className="relative">
+                  <div className="mb-10 flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
+                      ARCHIVE STATS
+                    </span>
+                    <Landmark size={18} className="text-[#9a6a35]" />
+                  </div>
 
-              <div className="py-6 pr-5">
-                <span className="text-4xl font-black">
-                  {governorates.length}
-                </span>
+                  <div className="grid grid-cols-2 gap-8">
+                    <div>
+                      <div className="text-5xl font-black tracking-[-0.05em]">
+                        {places.length}
+                      </div>
+                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                        مكان موثق
+                      </div>
+                    </div>
 
-                <p className="mt-2 text-[10px] font-black text-[#8C7E74]">
-                  محافظة
-                </p>
+                    <div>
+                      <div className="text-5xl font-black tracking-[-0.05em]">
+                        {governorates.length}
+                      </div>
+                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                        محافظة
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
+                    <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
+                    <span className="text-xs font-bold">
+                      أرشيف بصري لأماكن الصعيد
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* =========================================================
-          FILTER BAR
-      ========================================================== */}
-      <section className="sticky top-0 z-30 border-b border-black/10 bg-[#F6F1EA]/95 backdrop-blur-xl dark:border-white/10 dark:bg-[#100C0A]/95">
-        <div className="mx-auto max-w-[1500px] px-4 sm:px-8 lg:px-12">
-          <div className="flex min-h-[74px] items-center gap-3 overflow-x-auto">
-            {/* Categories */}
-            {CATEGORIES.map((category) => {
-              const active =
-                categoryFilter === category.key;
-
-              return (
-                <button
-                  key={category.key}
-                  type="button"
-                  onClick={() =>
-                    setCategoryFilter(category.key)
-                  }
-                  className={`
-                    group
-                    flex
-                    shrink-0
-                    items-center
-                    gap-2
-                    rounded-full
-                    px-4
-                    py-2.5
-                    text-xs
-                    font-black
-                    transition
-                    ${active
-                      ? 'bg-[#211A16] text-white dark:bg-white dark:text-[#211A16]'
-                      : 'text-[#786B62] hover:bg-white hover:text-[#211A16] dark:text-[#A99C92] dark:hover:bg-[#1A1512] dark:hover:text-white'
-                    }
-                  `}
-                >
-                  <span
-                    className={`
-                      text-[9px]
-                      ${active
-                        ? 'opacity-60'
-                        : 'text-[#B24C2B]'
-                      }
-                    `}
-                  >
-                    {String(categoryCounts[category.key] || 0).padStart(2, '0')}
-                  </span>
-
-                  {category.label}
-                </button>
-              );
-            })}
-
-            <div className="mx-1 h-7 w-px shrink-0 bg-black/10 dark:bg-white/10" />
-
-            {/* Search */}
-            <div className="relative ml-auto shrink-0">
-              <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#8F8178]" />
-
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) =>
-                  setSearchQuery(e.target.value)
-                }
-                placeholder="ابحث..."
+      {/* =====================================================
+          FLOATING FILTERS BAR
+      ===================================================== */}
+      <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+        <div
+          className="
+            rounded-[1.5rem]
+            border border-black/10
+            bg-white/75
+            p-3
+            shadow-[0_20px_70px_rgba(0,0,0,0.08)]
+            backdrop-blur-2xl
+            dark:border-white/10
+            dark:bg-[#151513]/90
+            dark:shadow-black/30
+          "
+        >
+          <div className="flex flex-col gap-3 lg:flex-row">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <Search
+                size={17}
                 className="
-                  h-10
-                  w-[160px]
-                  rounded-full
-                  border
-                  border-black/10
-                  bg-white
-                  pr-10
-                  pl-9
-                  text-xs
-                  font-bold
-                  outline-none
-                  transition
-                  focus:w-[220px]
-                  focus:border-[#B24C2B]/40
-                  dark:border-white/10
-                  dark:bg-[#191411]
-                  dark:text-white
-                  sm:w-[190px]
+                  absolute right-4 top-1/2
+                  -translate-y-1/2
+                  text-black/40
+                  dark:text-white/40
                 "
               />
-
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ابحث عن مكان أثري، قرية، أو معبد..."
+                className="
+                  h-12 w-full
+                  rounded-xl
+                  border border-transparent
+                  bg-black/[0.035]
+                  pr-11 pl-10
+                  text-sm
+                  outline-none
+                  transition-all
+                  placeholder:text-black/35
+                  focus:border-[#9a6a35]/40
+                  focus:bg-transparent
+                  dark:bg-white/[0.04]
+                  dark:placeholder:text-white/30
+                  dark:focus:bg-white/[0.06]
+                "
+              />
               {searchQuery && (
                 <button
-                  type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-3 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-black/5 dark:bg-white/10"
+                  className="
+                    absolute left-3 top-1/2
+                    -translate-y-1/2
+                    rounded-full p-1.5
+                    hover:bg-black/10
+                    dark:hover:bg-white/10
+                    cursor-pointer
+                  "
                 >
-                  <X className="h-3 w-3" />
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Category Select */}
+            <div className="relative lg:w-60">
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value as CategoryFilter)}
+                className="
+                  h-12 w-full
+                  appearance-none
+                  rounded-xl
+                  border border-transparent
+                  bg-black/[0.035]
+                  px-4
+                  text-sm font-bold
+                  outline-none
+                  transition-all
+                  focus:border-[#9a6a35]/40
+                  dark:bg-white/[0.04]
+                  dark:focus:bg-white/[0.06]
+                  cursor-pointer
+                "
+              >
+                <option value="all">كل الأماكن</option>
+                <option value="فرعوني">فرعوني</option>
+                <option value="قبطي">قبطي</option>
+                <option value="إسلامي">إسلامي</option>
+                <option value="تراث شعبي">تراث شعبي</option>
+                <option value="طبيعي">طبيعي</option>
+              </select>
+              <ChevronDown
+                size={15}
+                className="
+                  pointer-events-none
+                  absolute left-4 top-1/2
+                  -translate-y-1/2
+                "
+              />
+            </div>
+
+            {/* Governorate Select */}
+            <div className="relative lg:w-60">
+              <select
+                value={governorateFilter}
+                onChange={(e) => setGovernorateFilter(e.target.value)}
+                className="
+                  h-12 w-full
+                  appearance-none
+                  rounded-xl
+                  border border-transparent
+                  bg-black/[0.035]
+                  px-4
+                  text-sm font-bold
+                  outline-none
+                  transition-all
+                  focus:border-[#9a6a35]/40
+                  dark:bg-white/[0.04]
+                  dark:focus:bg-white/[0.06]
+                  cursor-pointer
+                "
+              >
+                <option value="all">كل المحافظات</option>
+                {governorates.map((gov) => (
+                  <option key={gov} value={gov}>
+                    {gov}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={15}
+                className="
+                  pointer-events-none
+                  absolute left-4 top-1/2
+                  -translate-y-1/2
+                "
+              />
+            </div>
+
+            {/* Result Counter & Clear */}
+            <div
+              className="
+                flex items-center justify-between
+                rounded-xl
+                bg-[#211d18]
+                px-5
+                text-white
+                dark:bg-white
+                dark:text-black
+              "
+            >
+              <div className="flex items-center gap-2">
+                <Landmark size={14} />
+                <span className="text-xs font-bold">
+                  {filteredPlaces.length} مكان
+                </span>
+              </div>
+
+              {hasFilters && (
+                <button
+                  onClick={resetFilters}
+                  className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
+                >
+                  إعادة
                 </button>
               )}
             </div>
@@ -477,78 +527,15 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </section>
 
-      {/* =========================================================
-          GOVERNORATES
-      ========================================================== */}
-      {governorates.length > 0 && (
-        <section className="border-b border-black/[0.06] dark:border-white/[0.06]">
-          <div className="mx-auto max-w-[1500px] px-5 py-5 sm:px-8 lg:px-12">
-            <div className="flex items-center gap-3 overflow-x-auto">
-              <span className="flex shrink-0 items-center gap-2 text-[10px] font-black text-[#998B81]">
-                <MapPin className="h-3.5 w-3.5" />
-                المحافظة
-              </span>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setGovernorateFilter('all')
-                }
-                className={`
-                  shrink-0
-                  rounded-full
-                  px-3.5
-                  py-1.5
-                  text-[10px]
-                  font-black
-                  transition
-                  ${governorateFilter === 'all'
-                    ? 'bg-[#B24C2B] text-white'
-                    : 'text-[#776960] hover:bg-white dark:text-[#A99C92] dark:hover:bg-[#191411]'
-                  }
-                `}
-              >
-                الكل
-              </button>
-
-              {governorates.map((governorate) => (
-                <button
-                  key={governorate}
-                  type="button"
-                  onClick={() =>
-                    setGovernorateFilter(governorate)
-                  }
-                  className={`
-                    shrink-0
-                    rounded-full
-                    px-3.5
-                    py-1.5
-                    text-[10px]
-                    font-black
-                    transition
-                    ${governorateFilter === governorate
-                      ? 'bg-[#B24C2B] text-white'
-                      : 'text-[#776960] hover:bg-white dark:text-[#A99C92] dark:hover:bg-[#191411]'
-                    }
-                  `}
-                >
-                  {governorate}
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* =========================================================
-          TIMELINE
-      ========================================================== */}
+      {/* =====================================================
+          TIMELINE SECTION (حافظنا على نفس الشكل المطلوب تماماً)
+      ===================================================== */}
       <section className="px-4 py-16 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
         <div className="mx-auto max-w-[1200px]">
           {/* Section heading */}
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#B24C2B]">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#9a6a35]">
                 THE ARCHIVE
               </p>
 
@@ -557,8 +544,8 @@ export const PlacesHeritagePage: React.FC = () => {
               </h2>
             </div>
 
-            <div className="text-left text-xs font-bold text-[#8C7E74]">
-              {filteredPlaces.length} نتيجة
+            <div className="text-left text-xs font-bold text-black/40 dark:text-white/40">
+              {filteredPlaces.length} نتيجة مطابقة
             </div>
           </div>
 
@@ -580,23 +567,21 @@ export const PlacesHeritagePage: React.FC = () => {
                     }
                   `}
                 >
-                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-[#E7DDD4] dark:bg-[#211A17]" />
+                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-white/5" />
 
                   <div className="space-y-4 py-6">
-                    <div className="h-3 w-20 animate-pulse rounded-full bg-[#E7DDD4] dark:bg-[#211A17]" />
-
-                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-[#E7DDD4] dark:bg-[#211A17]" />
-
-                    <div className="h-4 w-full animate-pulse rounded-full bg-[#E7DDD4] dark:bg-[#211A17]" />
+                    <div className="h-3 w-20 animate-pulse rounded-full bg-black/5 dark:bg-white/5" />
+                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-black/5 dark:bg-white/5" />
+                    <div className="h-4 w-full animate-pulse rounded-full bg-black/5 dark:bg-white/5" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredPlaces.length === 0 ? (
-            <div className="rounded-[32px] border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-[#191411]">
+            <div className="rounded-[32px] border border-black/10 bg-white/70 p-5 dark:border-white/10 dark:bg-[#151513]">
               <WAHEmptyState
                 icon={
-                  <Landmark className="h-9 w-9" />
+                  <Landmark className="h-9 w-9 text-[#9a6a35]" />
                 }
                 title="ملقيناش المكان ده"
                 description="جرب كلمة بحث تانية أو غير الفلاتر."
@@ -616,7 +601,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   w-px
                   bg-gradient-to-b
                   from-transparent
-                  via-[#B24C2B]/30
+                  via-[#9a6a35]/30
                   to-transparent
                   md:right-1/2
                 "
@@ -624,6 +609,8 @@ export const PlacesHeritagePage: React.FC = () => {
 
               {filteredPlaces.map((place, index) => {
                 const isEven = index % 2 === 0;
+                const image = getImage(place);
+                const categoryLabel = CATEGORY_LABELS[place.category] || place.category || 'معلم أثري';
 
                 return (
                   <article
@@ -651,9 +638,9 @@ export const PlacesHeritagePage: React.FC = () => {
                         justify-center
                         rounded-full
                         border-4
-                        border-[#F6F1EA]
-                        bg-[#B24C2B]
-                        dark:border-[#100C0A]
+                        border-[#eee8dc]
+                        bg-[#9a6a35]
+                        dark:border-[#0b0b0a]
                         md:right-1/2
                         md:-mr-3
                       "
@@ -684,11 +671,12 @@ export const PlacesHeritagePage: React.FC = () => {
                           overflow-hidden
                           rounded-[30px]
                           text-right
+                          cursor-pointer
                         "
                       >
-                        <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-[#D9CEC4] dark:bg-[#241D19]">
+                        <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-white/5">
                           <img
-                            src={getImage(place)}
+                            src={image}
                             alt={place.title}
                             loading={
                               index > 2
@@ -709,9 +697,7 @@ export const PlacesHeritagePage: React.FC = () => {
 
                           <div className="absolute right-5 top-5">
                             <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[9px] font-black text-white backdrop-blur-md">
-                              {CATEGORY_LABELS[
-                                place.category
-                              ] || place.category}
+                              {categoryLabel}
                             </span>
                           </div>
 
@@ -723,7 +709,7 @@ export const PlacesHeritagePage: React.FC = () => {
                               )}
                             </span>
 
-                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-[#201A17] transition group-hover:bg-[#B24C2B] group-hover:text-white">
+                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition group-hover:bg-[#9a6a35] group-hover:text-white">
                               <ArrowLeft className="h-4 w-4" />
                             </span>
                           </div>
@@ -748,18 +734,18 @@ export const PlacesHeritagePage: React.FC = () => {
                       `}
                     >
                       <div className="mb-4 flex items-center gap-3">
-                        <span className="text-[10px] font-black tracking-[0.25em] text-[#B24C2B]">
+                        <span className="text-[10px] font-black tracking-[0.25em] text-[#9a6a35]">
                           {String(index + 1).padStart(
                             2,
                             '0'
                           )}
                         </span>
 
-                        <span className="h-px w-8 bg-[#B24C2B]/40" />
+                        <span className="h-px w-8 bg-[#9a6a35]/40" />
 
                         {place.governorateName && (
-                          <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#8D8077]">
-                            <MapPin className="h-3 w-3" />
+                          <span className="flex items-center gap-1.5 text-[10px] font-bold text-black/60 dark:text-white/60">
+                            <MapPin className="h-3 w-3 text-[#9a6a35]" />
                             {place.governorateName}
                           </span>
                         )}
@@ -770,19 +756,19 @@ export const PlacesHeritagePage: React.FC = () => {
                         onClick={() =>
                           navigateToPlace(place.slug)
                         }
-                        className="group text-right"
+                        className="group text-right cursor-pointer"
                       >
-                        <h3 className="text-3xl font-black leading-tight tracking-tight transition group-hover:text-[#B24C2B] sm:text-4xl">
+                        <h3 className="text-3xl font-black leading-tight tracking-tight transition group-hover:text-[#9a6a35] sm:text-4xl">
                           {place.title}
                         </h3>
 
                         {place.historicalEra && (
-                          <p className="mt-3 text-xs font-bold text-[#B24C2B]">
+                          <p className="mt-3 text-xs font-bold text-[#9a6a35]">
                             {place.historicalEra}
                           </p>
                         )}
 
-                        <p className="mt-5 line-clamp-4 max-w-lg text-sm leading-8 text-[#766960] dark:text-[#A99C92]">
+                        <p className="mt-5 line-clamp-4 max-w-lg text-sm leading-8 text-black/65 dark:text-white/65">
                           {place.shortDescription ||
                             place.description ||
                             'اكتشف تفاصيل هذا المكان وحكايته.'}
@@ -802,10 +788,9 @@ export const PlacesHeritagePage: React.FC = () => {
                           gap-3
                           text-xs
                           font-black
-                          text-[#201A17]
                           transition
-                          hover:text-[#B24C2B]
-                          dark:text-white
+                          hover:text-[#9a6a35]
+                          cursor-pointer
                         "
                       >
                         اقرأ الحكاية
@@ -821,7 +806,7 @@ export const PlacesHeritagePage: React.FC = () => {
                             border
                             border-black/10
                             transition
-                            hover:border-[#B24C2B]
+                            hover:border-[#9a6a35]
                             dark:border-white/10
                           "
                         >
@@ -837,64 +822,56 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </section>
 
-      {/* =========================================================
-          DISCOVER MAP
-      ========================================================== */}
+      {/* =====================================================
+          DISCOVER MAP BANNER
+      ===================================================== */}
       {!isLoading && filteredPlaces.length > 0 && (
-        <section className="px-4 pb-16 sm:px-8 sm:pb-24 lg:px-12">
-          <div className="mx-auto max-w-[1500px]">
-            <div className="relative overflow-hidden rounded-[38px] bg-[#211A16] px-6 py-16 text-center text-white sm:px-10 sm:py-20">
-              {/* Decorative rings */}
-              <div className="pointer-events-none absolute right-[-100px] top-[-100px] h-[350px] w-[350px] rounded-full border border-white/5" />
+        <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
+          <div
+            className="
+              relative overflow-hidden
+              rounded-[2rem]
+              bg-[#211d18]
+              px-6 py-14
+              text-white
+              sm:px-12 sm:py-20
+              lg:px-20
+            "
+          >
+            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full border border-white/10" />
+            <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full border border-white/10" />
 
-              <div className="pointer-events-none absolute right-[-60px] top-[-60px] h-[270px] w-[270px] rounded-full border border-white/5" />
-
-              <div className="pointer-events-none absolute bottom-[-150px] left-[-100px] h-[350px] w-[350px] rounded-full border border-[#B24C2B]/20" />
-
-              <div className="relative mx-auto max-w-2xl">
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5">
-                  <Compass className="h-5 w-5 text-[#D87956]" />
-                </span>
-
-                <p className="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-white/35">
+            <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
+              <div>
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
                   CONTINUE EXPLORING
-                </p>
-
-                <h2 className="mt-5 text-4xl font-black leading-tight sm:text-6xl">
-                  شُفت الحكايات.
-                  <br />
-                  <span className="text-white/30">
-                    دلوقتي شوف مكانها.
-                  </span>
-                </h2>
-
-                <p className="mx-auto mt-6 max-w-lg text-sm leading-7 text-white/50">
-                  افتح أطلس الصعيد وشوف الأماكن على الخريطة
-                  واكتشف اللي حواليها.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() => setActivePage('map')}
+                </div>
+                <h2
                   className="
-                    mt-8
-                    inline-flex
-                    h-12
-                    items-center
-                    gap-3
-                    rounded-full
-                    bg-white
-                    px-7
-                    text-xs
+                    max-w-4xl
+                    text-4xl
                     font-black
-                    text-[#211A16]
-                    transition
-                    hover:bg-[#B24C2B]
-                    hover:text-white
+                    leading-tight
+                    tracking-[-0.04em]
+                    sm:text-6xl
                   "
                 >
-                  افتح الأطلس
-                  <ArrowUpLeft className="h-4 w-4" />
+                  شُفت الحكايات...
+                  <br />
+                  دلوقتي شوف مكانها.
+                </h2>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <p className="text-sm leading-8 text-white/55">
+                  افتح أطلس الصعيد وشوف الأماكن على الخريطة واكتشف اللي حواليها.
+                </p>
+                <button
+                  onClick={() => setActivePage('map')}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                >
+                  <span>افتح الأطلس</span>
+                  <ArrowUpLeft size={15} />
                 </button>
               </div>
             </div>
@@ -902,24 +879,21 @@ export const PlacesHeritagePage: React.FC = () => {
         </section>
       )}
 
-      {/* =========================================================
-          SMALL FOOTER LABEL
-      ========================================================== */}
-      <div className="border-t border-black/[0.07] dark:border-white/[0.07]">
-        <div className="mx-auto flex max-w-[1500px] items-center justify-between px-5 py-7 sm:px-8 lg:px-12">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#B24C2B]" />
-
-            <span className="text-[10px] font-black text-[#8C7E74]">
-              وه — ذاكرة الصعيد الرقمية
-            </span>
-          </div>
-
-          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-[#A09288]">
-            WAH / 2026
+      {/* =====================================================
+          FOOTER
+      ===================================================== */}
+      <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
+        <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
+          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <span className="text-[10px] font-bold tracking-[0.2em] text-black/50 dark:text-white/50">
+            وه — ذاكرة الصعيد الرقمية
           </span>
+          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
         </div>
-      </div>
-    </main>
+        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-black/40 dark:text-white/40">
+          WAH / 2026
+        </p>
+      </footer>
+    </div>
   );
 };

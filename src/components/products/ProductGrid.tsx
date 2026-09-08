@@ -89,25 +89,27 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
 
   if (filteredProducts.length === 0) {
     return (
-      <WAHEmptyState
-        icon={<PackageOpen className="w-8 h-8 sm:w-10 sm:h-10" />}
-        title="لم يتم العثور على قطع مطابقة"
-        description="جرب تغيير كلمات البحث، أو إلغاء بعض الفلاتر لاستكشاف المزيد من روائع الحرف التراثية الصعيدية الأصيلة."
-        actionLabel="إعادة ضبط البحث والتصفية"
-        onAction={() => {
-          setSelectedGovernorateFilter('all');
-          setSelectedCategoryFilter('all');
-          setSelectedHandmadeOnly(false);
-          setSearchQuery('');
-        }}
-      />
+      <div className="rounded-[2rem] border border-black/10 bg-white/75 p-6 dark:border-white/10 dark:bg-[#151513]/90 backdrop-blur-xl shadow-lg">
+        <WAHEmptyState
+          icon={<PackageOpen className="w-8 h-8 sm:w-10 sm:h-10 text-[#9a6a35]" />}
+          title="لم يتم العثور على قطع مطابقة"
+          description="جرب تغيير كلمات البحث، أو إلغاء بعض الفلاتر لاستكشاف المزيد من روائع الحرف التراثية الصعيدية الأصيلة."
+          actionLabel="إعادة ضبط البحث والتصفية"
+          onAction={() => {
+            setSelectedGovernorateFilter('all');
+            setSelectedCategoryFilter('all');
+            setSelectedHandmadeOnly(false);
+            setSearchQuery('');
+          }}
+        />
+      </div>
     );
   }
 
   return (
     <div
       id="products-grid-container"
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8"
     >
       {filteredProducts.map((product) => (
         <ProductCard key={product.id} product={product} />

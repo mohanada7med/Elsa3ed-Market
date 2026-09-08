@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
@@ -60,7 +59,12 @@ export const GovernorateDetailPage: React.FC = () => {
   const [activeSection, setActiveSection] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const slug = selectedGovernorateSlug || 'qena';
+  const slug =
+    selectedGovernorateSlug ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/governorates/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null) ||
+    'qena';
 
   const orderNumber = governorate?.nileOrder || (governorate?.order || (governorate?.slug ? NILE_ORDER_MAP[governorate.slug] : 1));
   const orderFormatted = String(orderNumber).padStart(2, '0');
@@ -240,26 +244,28 @@ export const GovernorateDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#F6F1EA] px-5 py-24 text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+        className="min-h-screen w-full overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
       >
-        <div className="mx-auto max-w-xl rounded-[32px] border border-[#E4DBD2] bg-white p-10 text-center shadow-sm dark:border-[#382D27] dark:bg-[#1B1613]">
-          <Landmark className="mx-auto mb-5 h-12 w-12 text-[#B24C2B] dark:text-[#D97857]" />
+        <div className="mx-auto max-w-[1600px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
+          <div className="mx-auto max-w-xl rounded-[32px] border border-[#E4DBD2] bg-white p-10 text-center shadow-sm dark:border-[#382D27] dark:bg-[#1B1613]">
+            <Landmark className="mx-auto mb-5 h-12 w-12 text-[#B24C2B] dark:text-[#D97857]" />
 
-          <h1 className="mb-3 text-2xl font-black">
-            المحافظة مش موجودة
-          </h1>
+            <h1 className="mb-3 text-2xl font-black">
+              المحافظة مش موجودة
+            </h1>
 
-          <p className="mb-7 text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
-            حاول ترجع للخريطة واختار محافظة تانية.
-          </p>
+            <p className="mb-7 text-sm leading-7 text-[#73675B] dark:text-[#B8AAA0]">
+              حاول ترجع للخريطة واختار محافظة تانية.
+            </p>
 
-          <button
-            onClick={() => setActivePage('governorates')}
-            className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#B24C2B] dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-[#D97857] dark:hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            رجوع للمحافظات
-          </button>
+            <button
+              onClick={() => setActivePage('governorates')}
+              className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#B24C2B] dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-[#D97857] dark:hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              رجوع للمحافظات
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -268,7 +274,7 @@ export const GovernorateDetailPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
+      className="min-h-screen w-full overflow-x-hidden bg-[#F6F1EA] text-[#241E1A] dark:bg-[#0F0C0A] dark:text-[#FFF8F1]"
     >
       {/* =========================================================
           HERO — MUSEUM EXHIBITION
@@ -406,8 +412,8 @@ export const GovernorateDetailPage: React.FC = () => {
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
                   className={`group flex min-w-max items-center gap-3 border-l border-[#E4DBD2] px-4 py-4 text-right transition first:border-l-0 dark:border-[#382D27] sm:px-6 ${active
-                    ? 'bg-[#241E1A] text-white dark:bg-[#FFF8F1] dark:text-[#17120F]'
-                    : 'text-[#73675B] hover:bg-white hover:text-[#241E1A] dark:text-[#B8AAA0] dark:hover:bg-[#1B1613] dark:hover:text-white'
+                      ? 'bg-[#241E1A] text-white dark:bg-[#FFF8F1] dark:text-[#17120F]'
+                      : 'text-[#73675B] hover:bg-white hover:text-[#241E1A] dark:text-[#B8AAA0] dark:hover:bg-[#1B1613] dark:hover:text-white'
                     }`}
                 >
                   <span className="text-[10px] font-black opacity-40">
@@ -423,8 +429,8 @@ export const GovernorateDetailPage: React.FC = () => {
                   {typeof section.count === 'number' && (
                     <span
                       className={`rounded-full px-2 py-0.5 text-[10px] font-black ${active
-                        ? 'bg-white/10'
-                        : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
+                          ? 'bg-white/10'
+                          : 'bg-[#EEE6DE] dark:bg-[#2A211D]'
                         }`}
                     >
                       {section.count}
@@ -570,8 +576,8 @@ export const GovernorateDetailPage: React.FC = () => {
                     key={place.id || index}
                     onClick={() => navigateToPlace(place)}
                     className={`group relative overflow-hidden rounded-[30px] text-right ${large
-                      ? 'min-h-[480px] lg:col-span-7'
-                      : 'min-h-[330px] lg:col-span-5'
+                        ? 'min-h-[480px] lg:col-span-7'
+                        : 'min-h-[330px] lg:col-span-5'
                       }`}
                   >
                     <img

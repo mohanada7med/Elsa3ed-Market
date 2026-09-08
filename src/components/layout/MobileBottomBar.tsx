@@ -28,6 +28,7 @@ export const MobileBottomBar: React.FC = () => {
     favorites,
     isAuthenticated,
     currentRole,
+    currentUser,
     setIsAuthModalOpen,
     setAuthModalTab,
     chatUnreadCount
@@ -37,12 +38,12 @@ export const MobileBottomBar: React.FC = () => {
     if (!isAuthenticated) {
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
-    } else if (currentRole === 'seller') {
-      setActivePage('seller-dashboard' as any);
-    } else if (currentRole === 'admin') {
-      setActivePage('admin-dashboard' as any);
+    } else if (currentRole === 'seller' || currentUser?.role === 'seller') {
+      setActivePage('seller-account');
+    } else if (currentRole === 'admin' || currentUser?.role === 'admin') {
+      setActivePage('admin-dashboard');
     } else {
-      setActivePage('buyer-account' as any);
+      setActivePage('buyer-account');
     }
   };
 

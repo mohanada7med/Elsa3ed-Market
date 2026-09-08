@@ -29,14 +29,20 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrdersTrackingPage: React.FC = () => {
-  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan } = useApp();
+  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage } = useApp();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
+
+  const effectiveOrderId =
+    selectedOrderId ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/orders/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null);
 
   // Sync selectedOrder when orders or selectedOrderId update
   const currentSelected = selectedOrder
     ? orders.find((o) => o.id === selectedOrder.id) || orders[0] || null
-    : (selectedOrderId ? orders.find((o) => o.id === selectedOrderId || o.orderNumber === selectedOrderId) : null) || orders[0] || null;
+    : (effectiveOrderId ? orders.find((o) => o.id === effectiveOrderId || o.orderNumber === effectiveOrderId) : null) || orders[0] || null;
 
   const getStepIndex = (status: OrderStatus) => {
     switch (status) {
@@ -83,7 +89,24 @@ export const OrdersTrackingPage: React.FC = () => {
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-        <span className="text-gray-900 dark:text-[#FAF6F2] font-bold">تتبع الشحنات والطلبات</span>
+        <button
+          type="button"
+          onClick={() => {
+            setSelectedOrder(null);
+            setActivePage('orders');
+          }}
+          className="hover:text-[#B24C2B] dark:hover:text-[#FF855D] transition-colors"
+        >
+          الطلبات
+        </button>
+        {activePage === 'order-details' && currentSelected && (
+          <>
+            <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+            <span className="text-gray-900 dark:text-[#FAF6F2] font-bold">
+              طلب #{currentSelected.orderNumber || currentSelected.id}
+            </span>
+          </>
+        )}
       </nav>
 
       {/* Page Header */}
@@ -153,7 +176,10 @@ export const OrdersTrackingPage: React.FC = () => {
                   <div
                     key={ord.id}
                     id={`order-card-${ord.id}`}
-                    onClick={() => setSelectedOrder(ord)}
+                    onClick={() => {
+                      setSelectedOrder(ord);
+                      navigateToOrder(ord.id);
+                    }}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 ${
                       isSelected
                         ? 'bg-white dark:bg-[#1E1917] border-[#B24C2B] shadow-md ring-1 ring-[#B24C2B]'

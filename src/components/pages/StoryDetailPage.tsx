@@ -28,7 +28,12 @@ export const StoryDetailPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
-  const slug = selectedStorySlug || 'sirah-hilaliyya';
+  const slug =
+    selectedStorySlug ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/stories/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null) ||
+    'sirah-hilaliyya';
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -48,7 +53,7 @@ export const StoryDetailPage: React.FC = () => {
   }, [slug]);
 
   const handleShare = () => {
-    const url = `${window.location.origin}/stories?slug=${encodeURIComponent(slug)}`;
+    const url = `${window.location.origin}/stories/${encodeURIComponent(slug)}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       addToast('تم نسخ الرابط', 'تم نسخ رابط الحكاية بنجاح', 'success');

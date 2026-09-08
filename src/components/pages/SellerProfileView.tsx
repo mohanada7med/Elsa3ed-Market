@@ -17,7 +17,13 @@ import {
 export const SellerProfileView: React.FC = () => {
   const { sellers, selectedSellerId, products, setActivePage, addToast } = useApp();
 
-  const seller = sellers.find((s) => s.id === selectedSellerId) || sellers[0];
+  const effectiveSellerId =
+    selectedSellerId ||
+    (typeof window !== 'undefined' && window.location.pathname.startsWith('/sellers/')
+      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+      : null);
+
+  const seller = sellers.find((s) => s.id === effectiveSellerId) || (!effectiveSellerId ? sellers[0] : undefined);
 
   if (!seller) {
     return (
@@ -39,7 +45,7 @@ export const SellerProfileView: React.FC = () => {
   );
 
   const handleShare = () => {
-    const shareUrl = `${window.location.origin}/?seller=${seller.id}`;
+    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(seller.id)}`;
     if (navigator.share) {
       navigator
         .share({

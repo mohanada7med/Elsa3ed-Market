@@ -98,7 +98,7 @@ const NotificationCenter: React.FC<{
           aria-label="الإشعارات"
           aria-expanded={open}
           onClick={() => setOpen((prev) => !prev)}
-          className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+          className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
           style={{
             backgroundColor: hoverBg,
             color: mainText,
@@ -110,7 +110,7 @@ const NotificationCenter: React.FC<{
             <span
               className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
               style={{
-                backgroundColor: '#B24C2B',
+                backgroundColor: '#9a6a35',
                 color: '#fff',
               }}
             >
@@ -161,6 +161,7 @@ const NotificationCenter: React.FC<{
                 rounded-2xl
                 border
                 shadow-2xl
+                backdrop-blur-2xl
                 sm:absolute
                 sm:left-auto
                 sm:right-0
@@ -169,8 +170,8 @@ const NotificationCenter: React.FC<{
               "
                 style={{
                   backgroundColor: isDark
-                    ? '#201914'
-                    : '#FFFDF9',
+                    ? 'rgba(21, 21, 19, 0.95)'
+                    : 'rgba(255, 255, 255, 0.95)',
                   borderColor,
                 }}
               >
@@ -200,9 +201,9 @@ const NotificationCenter: React.FC<{
                     <button
                       type="button"
                       onClick={markAllRead}
-                      className="flex items-center gap-1 text-[11px] font-semibold"
+                      className="flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
                       style={{
-                        color: '#B24C2B',
+                        color: '#9a6a35',
                       }}
                     >
                       <Check size={13} />
@@ -234,14 +235,14 @@ const NotificationCenter: React.FC<{
                                 )
                             );
                           }}
-                          className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors"
+                          className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
                           style={{
                             borderColor,
                             backgroundColor:
                               notification.unread
                                 ? isDark
-                                  ? 'rgba(178,76,43,0.08)'
-                                  : 'rgba(178,76,43,0.05)'
+                                  ? 'rgba(154,106,53,0.08)'
+                                  : 'rgba(154,106,53,0.05)'
                                 : 'transparent',
                           }}
                         >
@@ -251,9 +252,9 @@ const NotificationCenter: React.FC<{
                             style={{
                               backgroundColor:
                                 isDark
-                                  ? 'rgba(178,76,43,0.16)'
-                                  : 'rgba(178,76,43,0.10)',
-                              color: '#B24C2B',
+                                  ? 'rgba(154,106,53,0.16)'
+                                  : 'rgba(154,106,53,0.10)',
+                              color: '#9a6a35',
                             }}
                           >
                             <Bell size={16} />
@@ -271,7 +272,7 @@ const NotificationCenter: React.FC<{
                                   className="mt-1 h-2 w-2 shrink-0 rounded-full"
                                   style={{
                                     backgroundColor:
-                                      '#B24C2B',
+                                      '#9a6a35',
                                   }}
                                 />
                               )}
@@ -336,7 +337,7 @@ const NotificationCenter: React.FC<{
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="w-full rounded-xl py-2.5 text-xs font-semibold"
+                    className="w-full rounded-xl py-2.5 text-xs font-semibold cursor-pointer"
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
@@ -649,6 +650,16 @@ export const Header: React.FC = () => {
     setUserDropdownOpen(false);
   };
 
+  const getAccountPage = (): ActivePage => {
+    if (currentRole === 'seller' || currentUser?.role === 'seller') {
+      return 'seller-account';
+    }
+    if (currentRole === 'admin' || currentUser?.role === 'admin') {
+      return 'admin-dashboard';
+    }
+    return 'buyer-account';
+  };
+
   /* =========================================================
      USER
      ========================================================= */
@@ -661,7 +672,7 @@ export const Header: React.FC = () => {
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
     (currentUser as any)?.avatar ||
-    'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png';
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%80_%D9%88%D9%87_copy.png';
 
   /* =========================================================
      COLORS
@@ -670,24 +681,24 @@ export const Header: React.FC = () => {
   const isDark = theme === 'dark';
 
   const headerBg = isDark
-    ? '#15110E'
-    : '#FAF7F2';
+    ? '#0b0b0a'
+    : '#eee8dc';
 
   const mainText = isDark
-    ? '#FFF8F0'
-    : '#1C1613';
+    ? '#f5f0e7'
+    : '#211d18';
 
   const secondaryText = isDark
-    ? '#E1D4C7'
-    : '#5B4C42';
+    ? '#b3a59a'
+    : '#76675b';
 
   const borderColor = isDark
-    ? 'rgba(255,248,240,0.10)'
-    : 'rgba(28,22,19,0.10)';
+    ? 'rgba(255,255,255,0.10)'
+    : 'rgba(0,0,0,0.10)';
 
   const hoverBg = isDark
     ? 'rgba(255,255,255,0.07)'
-    : 'rgba(28,22,19,0.05)';
+    : 'rgba(0,0,0,0.05)';
 
   return (
     <>
@@ -697,31 +708,31 @@ export const Header: React.FC = () => {
 
       <header
         dir="rtl"
-        className="sticky top-0 z-[100] w-full overflow-visible"
+        className="sticky top-0 z-[100] w-full overflow-visible backdrop-blur-2xl transition-colors duration-500"
         style={{
-          backgroundColor: headerBg,
+          backgroundColor: isDark ? 'rgba(11, 11, 10, 0.85)' : 'rgba(238, 232, 220, 0.85)',
           color: mainText,
           borderBottom: `1px solid ${borderColor}`,
         }}
       >
         {/* ===================================================
             TOP BAR
-            =================================================== */}
+            ================================================   */}
 
         <div
-          className="hidden border-b lg:block "
+          className="hidden border-b lg:block"
           style={{
             borderColor,
           }}
         >
-          <div className="mx-auto flex h-9 max-w-[1500px] items-center justify-between px-6 ">
+          <div className="mx-auto flex h-9 max-w-[1600px] items-center justify-between px-6 lg:px-12">
             <div
-              className="flex items-center gap-2 text-xs"
+              className="flex items-center gap-2 text-xs font-bold"
               style={{
                 color: secondaryText,
               }}
             >
-              <Sparkles size={13} />
+              <Sparkles size={13} className="text-[#9a6a35]" />
 
               <span>
                 من قلب الصعيد... حكاية بتبدأ
@@ -729,7 +740,7 @@ export const Header: React.FC = () => {
             </div>
 
             <div
-              className="flex items-center gap-5 text-xs"
+              className="flex items-center gap-5 text-xs font-bold"
               style={{
                 color: secondaryText,
               }}
@@ -747,7 +758,7 @@ export const Header: React.FC = () => {
             MAIN ROW
             =================================================== */}
 
-        <div className="mx-auto max-w-[1500px] px-2 sm:px-5 lg:px-6">
+        <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
           <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
 
             {/* =================================================
@@ -765,7 +776,7 @@ export const Header: React.FC = () => {
                   setMobileMenuOpen(true)
                 }
                 aria-label="فتح القائمة"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 lg:hidden"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 lg:hidden cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -776,18 +787,18 @@ export const Header: React.FC = () => {
 
               {/* DESKTOP NAV */}
 
-              <div className="hidden items-center gap-5 lg:flex">
+              <div className="hidden items-center gap-6 lg:flex">
 
                 <button
                   type="button"
                   onClick={() =>
                     navigate('home')
                   }
-                  className="whitespace-nowrap text-sm font-medium"
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
                   style={{
                     color:
                       activePage === 'home'
-                        ? '#B24C2B'
+                        ? '#9a6a35'
                         : mainText,
                   }}
                 >
@@ -799,11 +810,11 @@ export const Header: React.FC = () => {
                   onClick={() =>
                     navigate('products')
                   }
-                  className="whitespace-nowrap text-sm font-medium"
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
                   style={{
                     color:
                       activePage === 'products'
-                        ? '#B24C2B'
+                        ? '#9a6a35'
                         : mainText,
                   }}
                 >
@@ -815,21 +826,21 @@ export const Header: React.FC = () => {
                   onClick={() =>
                     navigate('map')
                   }
-                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-medium"
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
                   style={{
                     color:
                       activePage === 'map'
-                        ? '#B24C2B'
+                        ? '#9a6a35'
                         : mainText,
                   }}
                 >
                   محافظات الصعيد
 
                   <span
-                    className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                    className="rounded-full px-2 py-0.5 text-[9px] font-black"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -850,7 +861,7 @@ export const Header: React.FC = () => {
                 navigate('home')
               }
               aria-label="وه - الرئيسية"
-              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95"
+              className="absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
@@ -864,7 +875,7 @@ export const Header: React.FC = () => {
                 RIGHT ACTIONS
                 ================================================= */}
 
-            <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
+            <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
 
               {/* SEARCH */}
 
@@ -875,7 +886,7 @@ export const Header: React.FC = () => {
                   setSearchOverlayOpen(true)
                 }
                 aria-label="بحث"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -895,14 +906,14 @@ export const Header: React.FC = () => {
                     ? 'تفعيل الوضع الفاتح'
                     : 'تفعيل الوضع الداكن'
                 }
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
                 }}
               >
                 {isDark ? (
-                  <Sun size={18} />
+                  <Sun size={18} className="text-amber-400" />
                 ) : (
                   <Moon size={18} />
                 )}
@@ -917,7 +928,7 @@ export const Header: React.FC = () => {
                   navigate('favorites')
                 }
                 aria-label="المفضلة"
-                className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11"
+                className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -930,7 +941,7 @@ export const Header: React.FC = () => {
                     className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -950,7 +961,7 @@ export const Header: React.FC = () => {
                   navigate('messages')
                 }
                 aria-label="الرسائل"
-                className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex"
+                className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -963,7 +974,7 @@ export const Header: React.FC = () => {
                     className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -976,8 +987,6 @@ export const Header: React.FC = () => {
 
               {/* =================================================
                   NOTIFICATIONS
-                  IMPORTANT:
-                  NOW VISIBLE ON MOBILE TOO
                   ================================================= */}
 
               <NotificationCenter
@@ -997,7 +1006,7 @@ export const Header: React.FC = () => {
                   setIsCartDrawerOpen(true)
                 }
                 aria-label="السلة"
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -1010,7 +1019,7 @@ export const Header: React.FC = () => {
                     className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -1035,7 +1044,7 @@ export const Header: React.FC = () => {
                     type="button"
                     onClick={(event) => {
                       event.stopPropagation();
-                      navigate('buyer-account');
+                      navigate(getAccountPage());
                     }}
                     title="الملف الشخصي"
                     aria-label="الملف الشخصي"
@@ -1076,15 +1085,15 @@ export const Header: React.FC = () => {
                       color: mainText,
                     }}
                   >
-                    <span className="hidden max-w-[100px] truncate text-sm font-semibold xl:block">
+                    <span className="hidden max-w-[100px] truncate text-sm font-bold xl:block">
                       {displayName}
                     </span>
 
                     <ChevronDown
                       size={15}
                       className={`transition-transform duration-200 ${userDropdownOpen
-                        ? 'rotate-180'
-                        : ''
+                          ? 'rotate-180'
+                          : ''
                         }`}
                     />
                   </button>
@@ -1117,19 +1126,19 @@ export const Header: React.FC = () => {
                         onPointerDown={(event) =>
                           event.stopPropagation()
                         }
-                        className="absolute left-0 top-[calc(100%+10px)] z-[500] w-[270px] overflow-hidden rounded-2xl border shadow-2xl"
+                        className="absolute left-0 top-[calc(100%+10px)] z-[500] w-[270px] overflow-hidden rounded-2xl border shadow-2xl backdrop-blur-2xl"
                         style={{
                           backgroundColor:
                             isDark
-                              ? '#201914'
-                              : '#FFFDF9',
+                              ? 'rgba(21, 21, 19, 0.95)'
+                              : 'rgba(255, 255, 255, 0.95)',
                           borderColor,
                         }}
                       >
                         {/* USER INFO */}
 
                         <div
-                          onClick={() => navigate('buyer-account')}
+                          onClick={() => navigate(getAccountPage())}
                           className="border-b p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                           style={{
                             borderColor,
@@ -1140,7 +1149,7 @@ export const Header: React.FC = () => {
                             <img
                               src={profileImage}
                               alt={displayName}
-                              className="h-11 w-11 rounded-full object-cover"
+                              className="h-11 w-11 shrink-0 rounded-full object-cover"
                             />
 
                             <div className="min-w-0">
@@ -1149,7 +1158,7 @@ export const Header: React.FC = () => {
                               </p>
 
                               <p
-                                className="mt-0.5 text-xs"
+                                className="mt-0.5 text-xs font-medium"
                                 style={{
                                   color:
                                     secondaryText,
@@ -1177,10 +1186,10 @@ export const Header: React.FC = () => {
                             type="button"
                             onClick={() =>
                               navigate(
-                                'buyer-account'
+                                getAccountPage()
                               )
                             }
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                             style={{
                               color: mainText,
                             }}
@@ -1197,7 +1206,7 @@ export const Header: React.FC = () => {
                                 'messages'
                               )
                             }
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                             style={{
                               color: mainText,
                             }}
@@ -1214,7 +1223,7 @@ export const Header: React.FC = () => {
                             onClick={() =>
                               navigate('orders')
                             }
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                             style={{
                               color: mainText,
                             }}
@@ -1231,7 +1240,7 @@ export const Header: React.FC = () => {
                                 'favorites'
                               )
                             }
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                             style={{
                               color: mainText,
                             }}
@@ -1242,51 +1251,51 @@ export const Header: React.FC = () => {
 
                           {currentRole ===
                             'seller' && (
-                              <button
-                                id="seller-dash-link"
-                                type="button"
-                                onClick={() =>
-                                  navigate(
-                                    'seller-dashboard'
-                                  )
-                                }
-                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
-                                style={{
-                                  color:
-                                    mainText,
-                                }}
-                              >
-                                <Store size={18} />
-                                <span>
-                                  لوحة البائع
-                                </span>
-                              </button>
-                            )}
+                            <button
+                              id="seller-dash-link"
+                              type="button"
+                              onClick={() =>
+                                navigate(
+                                  'seller-dashboard'
+                                )
+                              }
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                              style={{
+                                color:
+                                  mainText,
+                              }}
+                            >
+                              <Store size={18} />
+                              <span>
+                                لوحة البائع
+                              </span>
+                            </button>
+                          )}
 
                           {currentRole ===
                             'admin' && (
-                              <button
-                                id="admin-dash-link"
-                                type="button"
-                                onClick={() =>
-                                  navigate(
-                                    'admin-dashboard'
-                                  )
-                                }
-                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
-                                style={{
-                                  color:
-                                    mainText,
-                                }}
-                              >
-                                <ShieldCheck
-                                  size={18}
-                                />
-                                <span>
-                                  لوحة الإدارة
-                                </span>
-                              </button>
-                            )}
+                            <button
+                              id="admin-dash-link"
+                              type="button"
+                              onClick={() =>
+                                navigate(
+                                  'admin-dashboard'
+                                )
+                              }
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                              style={{
+                                color:
+                                  mainText,
+                              }}
+                            >
+                              <ShieldCheck
+                                size={18}
+                              />
+                              <span>
+                                لوحة الإدارة
+                              </span>
+                            </button>
+                          )}
 
                           <div
                             className="my-2 border-t"
@@ -1305,10 +1314,10 @@ export const Header: React.FC = () => {
 
                               logout();
                             }}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium"
+                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-rose-500/10"
                             style={{
                               color:
-                                '#B24C2B',
+                                '#9a6a35',
                             }}
                           >
                             <LogOut size={18} />
@@ -1331,7 +1340,7 @@ export const Header: React.FC = () => {
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
-                    className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-semibold sm:flex"
+                    className="hidden h-10 items-center justify-center rounded-full px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-80 transition-opacity"
                     style={{
                       color: mainText,
                       border: `1px solid ${borderColor}`,
@@ -1349,10 +1358,10 @@ export const Header: React.FC = () => {
                       );
                       setIsAuthModalOpen(true);
                     }}
-                    className="hidden h-10 items-center justify-center rounded-full px-5 text-sm font-semibold lg:flex"
+                    className="hidden h-10 items-center justify-center rounded-full px-5 text-sm font-bold lg:flex cursor-pointer hover:opacity-90 transition-opacity"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -1374,7 +1383,7 @@ export const Header: React.FC = () => {
             borderColor,
           }}
         >
-          <nav className="mx-auto flex h-12 max-w-[1500px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
+          <nav className="mx-auto flex h-12 max-w-[1600px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
             {roleNavLinks.map(
               (link: any) => {
                 const Icon = link.icon;
@@ -1386,12 +1395,12 @@ export const Header: React.FC = () => {
                     onClick={() =>
                       navigate(link.id)
                     }
-                    className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-medium"
+                    className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-bold transition-colors cursor-pointer"
                     style={{
                       color:
                         activePage ===
                           link.id
-                          ? '#B24C2B'
+                          ? '#9a6a35'
                           : mainText,
                     }}
                   >
@@ -1408,7 +1417,7 @@ export const Header: React.FC = () => {
                         className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
                         style={{
                           backgroundColor:
-                            '#B24C2B',
+                            '#9a6a35',
                           color: '#fff',
                         }}
                       >
@@ -1430,11 +1439,11 @@ export const Header: React.FC = () => {
       <AnimatePresence>
         {searchOverlayOpen && (
           <motion.div
-            className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28"
+            className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28 backdrop-blur-md"
             style={{
               backgroundColor: isDark
-                ? 'rgba(10,8,6,0.94)'
-                : 'rgba(250,247,242,0.96)',
+                ? 'rgba(11, 11, 10, 0.85)'
+                : 'rgba(238, 232, 220, 0.85)',
             }}
             initial={{
               opacity: 0,
@@ -1465,10 +1474,10 @@ export const Header: React.FC = () => {
 
                 <div>
                   <p
-                    className="text-xs font-medium"
+                    className="text-xs font-bold"
                     style={{
                       color:
-                        '#B24C2B',
+                        '#9a6a35',
                     }}
                   >
                     وه
@@ -1487,7 +1496,7 @@ export const Header: React.FC = () => {
                     )
                   }
                   aria-label="إغلاق البحث"
-                  className="flex h-10 w-10 items-center justify-center rounded-full"
+                  className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
                   style={{
                     backgroundColor:
                       hoverBg,
@@ -1504,12 +1513,12 @@ export const Header: React.FC = () => {
                 }
               >
                 <div
-                  className="flex items-center gap-3 rounded-2xl border px-4 shadow-xl"
+                  className="flex items-center gap-3 rounded-2xl border px-4 shadow-xl backdrop-blur-2xl"
                   style={{
                     backgroundColor:
                       isDark
-                        ? '#201914'
-                        : '#FFFDF9',
+                        ? 'rgba(21, 21, 19, 0.9)'
+                        : 'rgba(255, 255, 255, 0.9)',
                     borderColor,
                   }}
                 >
@@ -1532,7 +1541,7 @@ export const Header: React.FC = () => {
                       )
                     }
                     placeholder="ابحث عن منتج، حرفة، مكان..."
-                    className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base"
+                    className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base font-bold"
                     style={{
                       color: mainText,
                     }}
@@ -1540,10 +1549,10 @@ export const Header: React.FC = () => {
 
                   <button
                     type="submit"
-                    className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-semibold sm:flex"
+                    className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-90 transition-opacity"
                     style={{
                       backgroundColor:
-                        '#B24C2B',
+                        '#9a6a35',
                       color: '#fff',
                     }}
                   >
@@ -1556,7 +1565,7 @@ export const Header: React.FC = () => {
               <div className="mt-7">
 
                 <p
-                  className="mb-3 text-xs font-semibold"
+                  className="mb-3 text-xs font-bold"
                   style={{
                     color:
                       secondaryText,
@@ -1590,7 +1599,7 @@ export const Header: React.FC = () => {
                           false
                         );
                       }}
-                      className="rounded-full border px-3.5 py-2 text-xs font-medium sm:text-sm"
+                      className="rounded-full border px-3.5 py-2 text-xs font-bold sm:text-sm cursor-pointer hover:border-[#9a6a35] transition-colors"
                       style={{
                         color: mainText,
                         borderColor,
@@ -1617,7 +1626,7 @@ export const Header: React.FC = () => {
         {mobileMenuOpen && (
           <>
             <motion.div
-              className="fixed inset-0 z-[700] bg-black/50 lg:hidden"
+              className="fixed inset-0 z-[700] bg-black/50 backdrop-blur-xs lg:hidden"
               initial={{
                 opacity: 0,
               }}
@@ -1634,12 +1643,12 @@ export const Header: React.FC = () => {
 
             <motion.aside
               dir="rtl"
-              className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden"
+              className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden shadow-2xl"
               style={{
                 backgroundColor:
                   isDark
-                    ? '#15110E'
-                    : '#FAF7F2',
+                    ? '#0b0b0a'
+                    : '#eee8dc',
                 color: mainText,
                 paddingBottom:
                   'env(safe-area-inset-bottom)',
@@ -1663,12 +1672,12 @@ export const Header: React.FC = () => {
               {/* MOBILE HEADER */}
 
               <div
-                className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20"
+                className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20 backdrop-blur-2xl"
                 style={{
                   backgroundColor:
                     isDark
-                      ? '#15110E'
-                      : '#FAF7F2',
+                      ? 'rgba(11, 11, 10, 0.9)'
+                      : 'rgba(238, 232, 220, 0.9)',
                   borderColor,
                 }}
               >
@@ -1680,7 +1689,7 @@ export const Header: React.FC = () => {
                     )
                   }
                   aria-label="إغلاق القائمة"
-                  className="flex h-10 w-10 items-center justify-center rounded-full"
+                  className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
                   style={{
                     backgroundColor:
                       hoverBg,
@@ -1711,7 +1720,7 @@ export const Header: React.FC = () => {
 
                 {isAuthenticated ? (
                   <div
-                    className="mb-5 rounded-2xl border p-4"
+                    className="mb-5 rounded-2xl border p-4 shadow-sm"
                     style={{
                       borderColor,
                       backgroundColor:
@@ -1733,7 +1742,7 @@ export const Header: React.FC = () => {
                         </p>
 
                         <p
-                          className="mt-1 text-xs"
+                          className="mt-1 text-xs font-bold"
                           style={{
                             color:
                               secondaryText,
@@ -1755,12 +1764,12 @@ export const Header: React.FC = () => {
                       id="mobile-account-link"
                       type="button"
                       onClick={() =>
-                        navigate('buyer-account')
+                        navigate(getAccountPage())
                       }
-                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
+                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
                       style={{
                         backgroundColor:
-                          '#B24C2B',
+                          '#9a6a35',
                         color: '#fff',
                       }}
                     >
@@ -1785,7 +1794,7 @@ export const Header: React.FC = () => {
                           true
                         );
                       }}
-                      className="rounded-xl border py-3 text-sm font-semibold"
+                      className="rounded-xl border py-3 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity"
                       style={{
                         borderColor,
                         color: mainText,
@@ -1808,10 +1817,10 @@ export const Header: React.FC = () => {
                           true
                         );
                       }}
-                      className="rounded-xl py-3 text-sm font-semibold"
+                      className="rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
                       style={{
                         backgroundColor:
-                          '#B24C2B',
+                          '#9a6a35',
                         color: '#fff',
                       }}
                     >
@@ -1842,17 +1851,17 @@ export const Header: React.FC = () => {
                               link.id
                             )
                           }
-                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-right"
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-right font-bold cursor-pointer transition-colors"
                           style={{
                             backgroundColor:
                               isActive
                                 ? isDark
-                                  ? 'rgba(178,76,43,0.18)'
-                                  : 'rgba(178,76,43,0.09)'
+                                  ? 'rgba(154,106,53,0.18)'
+                                  : 'rgba(154,106,53,0.09)'
                                 : 'transparent',
                             color:
                               isActive
-                                ? '#B24C2B'
+                                ? '#9a6a35'
                                 : mainText,
                           }}
                         >
@@ -1863,7 +1872,7 @@ export const Header: React.FC = () => {
                             />
                           )}
 
-                          <span className="flex-1 text-sm font-semibold">
+                          <span className="flex-1 text-sm font-bold">
                             {link.label}
                           </span>
 
@@ -1872,7 +1881,7 @@ export const Header: React.FC = () => {
                               className="rounded-full px-2 py-0.5 text-[9px] font-bold"
                               style={{
                                 backgroundColor:
-                                  '#B24C2B',
+                                  '#9a6a35',
                                 color:
                                   '#fff',
                               }}
@@ -1921,7 +1930,7 @@ export const Header: React.FC = () => {
                           true
                         );
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                       style={{
                         color: mainText,
                       }}
@@ -1942,7 +1951,7 @@ export const Header: React.FC = () => {
                               'seller-dashboard'
                             )
                           }
-                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                           style={{
                             color: mainText,
                           }}
@@ -1964,7 +1973,7 @@ export const Header: React.FC = () => {
                               'admin-dashboard'
                             )
                           }
-                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                          className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                           style={{
                             color: mainText,
                           }}
@@ -1987,7 +1996,7 @@ export const Header: React.FC = () => {
                           'favorites'
                         )
                       }
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                       style={{
                         color: mainText,
                       }}
@@ -2004,7 +2013,7 @@ export const Header: React.FC = () => {
                             className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
                             style={{
                               backgroundColor:
-                                '#B24C2B',
+                                '#9a6a35',
                               color: '#fff',
                             }}
                           >
@@ -2022,7 +2031,7 @@ export const Header: React.FC = () => {
                           'messages'
                         )
                       }
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                       style={{
                         color: mainText,
                       }}
@@ -2041,7 +2050,7 @@ export const Header: React.FC = () => {
                             className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
                             style={{
                               backgroundColor:
-                                '#B24C2B',
+                                '#9a6a35',
                               color: '#fff',
                             }}
                           >
@@ -2067,7 +2076,7 @@ export const Header: React.FC = () => {
                             ?.click();
                         }, 100);
                       }}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                       style={{
                         color: mainText,
                       }}
@@ -2082,7 +2091,7 @@ export const Header: React.FC = () => {
                         className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
                         style={{
                           backgroundColor:
-                            '#B24C2B',
+                            '#9a6a35',
                           color: '#fff',
                         }}
                       >
@@ -2104,7 +2113,7 @@ export const Header: React.FC = () => {
                       true
                     );
                   }}
-                  className="mt-4 flex w-full items-center justify-between rounded-2xl border p-4 text-right"
+                  className="mt-4 flex w-full items-center justify-between rounded-2xl border p-4 text-right cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                   style={{
                     borderColor,
                     backgroundColor:
@@ -2117,9 +2126,9 @@ export const Header: React.FC = () => {
                       className="flex h-10 w-10 items-center justify-center rounded-full"
                       style={{
                         backgroundColor:
-                          'rgba(178,76,43,0.12)',
+                          'rgba(154,106,53,0.12)',
                         color:
-                          '#B24C2B',
+                          '#9a6a35',
                       }}
                     >
                       <Sparkles
@@ -2164,14 +2173,14 @@ export const Header: React.FC = () => {
                       );
                       logout();
                     }}
-                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:bg-rose-500/10 transition-colors"
                     style={{
                       color:
-                        '#B24C2B',
+                        '#9a6a35',
                       backgroundColor:
                         isDark
-                          ? 'rgba(178,76,43,0.10)'
-                          : 'rgba(178,76,43,0.06)',
+                          ? 'rgba(154,106,53,0.10)'
+                          : 'rgba(154,106,53,0.06)',
                     }}
                   >
                     <LogOut size={17} />
@@ -2188,7 +2197,7 @@ export const Header: React.FC = () => {
                   }}
                 >
                   <p
-                    className="text-[11px]"
+                    className="text-[11px] font-bold"
                     style={{
                       color:
                         secondaryText,

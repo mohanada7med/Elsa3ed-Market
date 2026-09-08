@@ -340,43 +340,43 @@ export const normalizeOrder = (ord: any): Order => {
   };
 };
 
-const PAGE_ROUTES: Record<ActivePage, string> = {
+export const PAGE_ROUTES: Record<ActivePage, string> = {
   home: '/',
   explore: '/explore',
 
   governorates: '/governorates',
-  'governorate-details': '/governorates/:id',
+  'governorate-details': '/governorates/:slug',
 
   map: '/map',
 
   places: '/places',
-  'place-details': '/places/:id',
+  'place-details': '/places/:slug',
 
   market: '/market',
-  profile: '/buyer-account',
+  profile: '/profile',
 
   'cultural-crafts': '/cultural-crafts',
-  'cultural-craft-details': '/cultural-crafts/:id',
-  'craft-details': '/cultural-crafts/:id',
+  'cultural-craft-details': '/cultural-crafts/:slug',
+  'craft-details': '/cultural-crafts/:slug',
 
   stories: '/stories',
-  'story-details': '/stories/:id',
+  'story-details': '/stories/:slug',
 
   people: '/people',
-  'person-details': '/people/:id',
+  'person-details': '/people/:slug',
 
   food: '/food',
-  'food-details': '/food/:id',
+  'food-details': '/food/:slug',
 
   events: '/events',
-  'event-details': '/events/:id',
+  'event-details': '/events/:slug',
 
-  'global-search': '/search',
+  'global-search': '/global-search',
 
   'cultural-cms': '/admin-cultural-cms',
 
   // Market
-  'wah-market': '/products',
+  'wah-market': '/market',
   products: '/products',
   'product-details': '/products/:id',
 
@@ -429,6 +429,7 @@ const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-settings': '/admin-settings',
   'admin-media': '/admin-media',
 };
+
 function getInitialNavigationState(): {
   page: ActivePage;
   productId: string | null;
@@ -448,7 +449,7 @@ function getInitialNavigationState(): {
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: '' };
   }
 
-  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const rawPath = window.location.pathname.replace(/\/+$/, '') || '/';
   const search = window.location.search;
   const hash = window.location.hash;
 
@@ -466,7 +467,7 @@ function getInitialNavigationState(): {
   const queryTerm = params.get('q') || params.get('search') || '';
   const pageParam = params.get('page') as ActivePage | null;
 
-  // 1. Direct Deep-Linking Priority via Explicit Query Parameters (Works regardless of pathname)
+  // 1. Direct Deep-Linking Priority via Explicit Query Parameters (Legacy & Share fallback)
   const reelId = params.get('reel') || params.get('reelId');
   if (reelId) {
     try { sessionStorage.setItem('wah_selected_reel_id', reelId); } catch { }
@@ -546,122 +547,117 @@ function getInitialNavigationState(): {
     };
   }
 
-  // 2. WAH Cultural Ecosystem Path-based Routes
-  if (path === '/governorates' || path.startsWith('/governorates/')) {
-    const slug = slugFromQuery || (path.startsWith('/governorates/') ? path.split('/')[2] : null);
+  // 2. Dynamic RESTful Path-based Routes with URL decoding
+  // Governorates: /governorates or /governorates/:slug
+  if (rawPath === '/governorates' || rawPath.startsWith('/governorates/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/governorates/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug: slug };
     }
     return { page: 'governorates', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/places' || path.startsWith('/places/')) {
-    const slug = slugFromQuery || (path.startsWith('/places/') ? path.split('/')[2] : null);
+  // Heritage Places: /places or /places/:slug
+  if (rawPath === '/places' || rawPath.startsWith('/places/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/places/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug: slug };
     }
     return { page: 'places', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/cultural-crafts' || path.startsWith('/cultural-crafts/')) {
-    const slug = slugFromQuery || (path.startsWith('/cultural-crafts/') ? path.split('/')[2] : null);
+  // Cultural Crafts: /cultural-crafts or /cultural-crafts/:slug
+  if (rawPath === '/cultural-crafts' || rawPath.startsWith('/cultural-crafts/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/cultural-crafts/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug: slug };
     }
     return { page: 'cultural-crafts', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/stories' || path.startsWith('/stories/')) {
-    const slug = slugFromQuery || (path.startsWith('/stories/') ? path.split('/')[2] : null);
+  // Stories: /stories or /stories/:slug
+  if (rawPath === '/stories' || rawPath.startsWith('/stories/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/stories/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug: slug };
     }
     return { page: 'stories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/people' || path.startsWith('/people/')) {
-    const slug = slugFromQuery || (path.startsWith('/people/') ? path.split('/')[2] : null);
+  // People: /people or /people/:slug
+  if (rawPath === '/people' || rawPath.startsWith('/people/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/people/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'person-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, personSlug: slug };
     }
     return { page: 'people', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/food' || path.startsWith('/food/')) {
-    const slug = slugFromQuery || (path.startsWith('/food/') ? path.split('/')[2] : null);
+  // Food: /food or /food/:slug
+  if (rawPath === '/food' || rawPath.startsWith('/food/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/food/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'food-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, foodSlug: slug };
     }
     return { page: 'food', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/events' || path.startsWith('/events/')) {
-    const slug = slugFromQuery || (path.startsWith('/events/') ? path.split('/')[2] : null);
+  // Events: /events or /events/:slug
+  if (rawPath === '/events' || rawPath.startsWith('/events/')) {
+    const slug = slugFromQuery || (rawPath.startsWith('/events/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (slug) {
       return { page: 'event-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, eventSlug: slug };
     }
     return { page: 'events', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/reels' || path.startsWith('/reels/')) {
-    const rId = path.startsWith('/reels/') ? path.split('/')[2] : null;
+  // Products: /products or /products/:id
+  if (rawPath === '/products' || rawPath.startsWith('/products/')) {
+    const pId = idFromQuery || (rawPath.startsWith('/products/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (pId) {
+      return { page: 'product-details', productId: pId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  // Categories: /categories or /categories/:id
+  if (rawPath === '/categories' || rawPath.startsWith('/categories/')) {
+    const cId = idFromQuery || (rawPath.startsWith('/categories/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (cId) {
+      return { page: 'category-details', productId: null, categoryId: cId, sellerId: null, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  // Sellers: /sellers or /sellers/:id
+  if (rawPath === '/sellers' || rawPath.startsWith('/sellers/')) {
+    const sId = idFromQuery || (rawPath.startsWith('/sellers/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (sId) {
+      return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null, searchQuery: queryTerm };
+    }
+    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  // Orders: /orders or /orders/:id
+  if (rawPath === '/orders' || rawPath.startsWith('/orders/')) {
+    const ordId = idFromQuery || (rawPath.startsWith('/orders/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
+    if (ordId) {
+      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId, searchQuery: queryTerm };
+    }
+    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  }
+
+  // Reels
+  if (rawPath === '/reels' || rawPath.startsWith('/reels/')) {
+    const rId = rawPath.startsWith('/reels/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null;
     if (rId) {
       try { sessionStorage.setItem('wah_selected_reel_id', rId); } catch { }
     }
     return { page: 'reels', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // 3. Path-based Product / Category / Seller / Order Routes
-  if (path === '/products') {
-    if (idFromQuery) {
-      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/products/')) {
-    const prodId = path.split('/')[2];
-    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/categories') {
-    if (idFromQuery) {
-      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/categories/')) {
-    const catId = path.split('/')[2];
-    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/sellers') {
-    if (idFromQuery) {
-      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/sellers/')) {
-    const sId = path.split('/')[2];
-    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/orders') {
-    if (idFromQuery) {
-      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery, searchQuery: queryTerm };
-    }
-    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/orders/')) {
-    const ordId = path.split('/')[2];
-    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId, searchQuery: queryTerm };
-  }
-
-  // 4. Root / Default Page & Session fallback
-  if (path === '/' || path === '') {
+  // Explicit mappings
+  if (rawPath === '/' || rawPath === '') {
     const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
     if (saved && PAGE_ROUTES[saved] && saved !== 'home') {
       return {
@@ -683,122 +679,30 @@ function getInitialNavigationState(): {
     return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/map') {
-    return { page: 'map', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  if (rawPath === '/market') {
+    return { page: 'market', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/explore') {
-    return { page: 'explore', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  if (rawPath === '/search') {
+    return { page: 'search', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/admin-cultural-cms') {
-    return { page: 'admin-cultural-cms', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  if (rawPath === '/global-search') {
+    return { page: 'global-search', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/market') {
-    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  if (rawPath === '/profile') {
+    return { page: 'profile', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  if (path === '/search') {
-    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/products') {
-    if (idFromQuery) {
-      return { page: 'product-details', productId: idFromQuery, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'products', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/products/')) {
-    const prodId = path.split('/')[2];
-    return { page: 'product-details', productId: prodId, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/categories') {
-    if (idFromQuery) {
-      return { page: 'category-details', productId: null, categoryId: idFromQuery, sellerId: null, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'categories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/categories/')) {
-    const catId = path.split('/')[2];
-    return { page: 'category-details', productId: null, categoryId: catId, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/sellers') {
-    if (idFromQuery) {
-      return { page: 'seller-details', productId: null, categoryId: null, sellerId: idFromQuery, orderId: null, searchQuery: queryTerm };
-    }
-    return { page: 'sellers', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/sellers/')) {
-    const sId = path.split('/')[2];
-    return { page: 'seller-details', productId: null, categoryId: null, sellerId: sId, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path === '/orders') {
-    if (idFromQuery) {
-      return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: idFromQuery, searchQuery: queryTerm };
-    }
-    return { page: 'orders', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
-  }
-
-  if (path.startsWith('/orders/')) {
-    const ordId = path.split('/')[2];
-    return { page: 'order-details', productId: null, categoryId: null, sellerId: null, orderId: ordId, searchQuery: queryTerm };
-  }
-
-  const simplePages: ActivePage[] = [
-    'crafts',
-    'explore',
-    'governorates',
-    'map',
-    'places',
-    'cultural-crafts',
-    'stories',
-    'people',
-    'food',
-    'events',
-    'wah-market',
-    'admin-cultural-cms',
-    'about',
-    'wholesale',
-    'search',
-    'cart',
-    'checkout',
-    'favorites',
-    'messages',
-    'buyer-account',
-    'seller-dashboard',
-    'seller-products',
-    'seller-inventory',
-    'seller-orders',
-    'seller-messages',
-    'seller-payouts',
-    'seller-analytics',
-    'seller-account',
-    'admin-dashboard',
-    'admin-sellers',
-    'admin-products',
-    'admin-buyers',
-    'admin-orders',
-    'admin-payouts',
-    'admin-categories',
-    'admin-discounts',
-    'admin-reports',
-    'admin-audit-logs',
-    'admin-settings'
-  ];
-
-  for (const p of simplePages) {
-    if (path === `/${p}`) {
-      return { page: p, productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+  // 3. Match any route directly against PAGE_ROUTES table
+  for (const [pageKey, routePattern] of Object.entries(PAGE_ROUTES) as [ActivePage, string][]) {
+    if (routePattern === rawPath) {
+      return { page: pageKey, productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
     }
   }
 
+  // 4. Session fallback for unrouted SPA navigation
   const saved = sessionStorage.getItem('elsa3ed_active_page') as ActivePage;
   if (saved && PAGE_ROUTES[saved]) {
     return {
@@ -852,7 +756,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const nav = getInitialNavigationState();
       setActivePageState(nav.page);
       if (nav.productId !== undefined) setSelectedProductId(nav.productId);
-      if (nav.categoryId !== undefined) setSelectedCategoryId(nav.categoryId);
+      if (nav.categoryId !== undefined) {
+        setSelectedCategoryId(nav.categoryId);
+        setSelectedCategoryFilter(nav.categoryId || 'all');
+      }
       if (nav.sellerId !== undefined) setSelectedSellerId(nav.sellerId);
       if (nav.orderId !== undefined) setSelectedOrderId(nav.orderId);
       if (nav.governorateSlug !== undefined) setSelectedGovernorateSlug(nav.governorateSlug);
@@ -1053,7 +960,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState(initialNav.searchQuery || '');
   const [selectedGovernorateFilter, setSelectedGovernorateFilter] = useState<Governorate | 'all'>('all');
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | 'all'>('all');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | 'all'>(initialNav.categoryId || 'all');
   const [selectedHandmadeOnly, setSelectedHandmadeOnly] = useState(false);
   const [selectedSort, setSelectedSort] = useState<'featured' | 'price-asc' | 'price-desc' | 'rating' | 'newest'>('featured');
 
@@ -1836,7 +1743,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', 'product-details');
       sessionStorage.setItem('elsa3ed_selected_product_id', productId);
-      const targetUrl = `/products?id=${encodeURIComponent(productId)}`;
+      const targetUrl = `/products/${encodeURIComponent(productId)}`;
       window.history.pushState({ page: 'product-details', productId }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1849,7 +1756,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', 'category-details');
       sessionStorage.setItem('elsa3ed_selected_category_id', categoryId);
-      const targetUrl = `/categories?id=${encodeURIComponent(categoryId)}`;
+      const targetUrl = `/categories/${encodeURIComponent(categoryId)}`;
       window.history.pushState({ page: 'category-details', categoryId }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1861,7 +1768,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', 'seller-details');
       sessionStorage.setItem('elsa3ed_selected_seller_id', sellerId);
-      const targetUrl = `/sellers?id=${encodeURIComponent(sellerId)}`;
+      const targetUrl = `/sellers/${encodeURIComponent(sellerId)}`;
       window.history.pushState({ page: 'seller-details', sellerId }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1873,7 +1780,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       sessionStorage.setItem('elsa3ed_active_page', 'order-details');
       sessionStorage.setItem('elsa3ed_selected_order_id', orderId);
-      const targetUrl = `/orders?id=${encodeURIComponent(orderId)}`;
+      const targetUrl = `/orders/${encodeURIComponent(orderId)}`;
       window.history.pushState({ page: 'order-details', orderId }, '', targetUrl);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1885,7 +1792,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('governorate-details');
     try {
       sessionStorage.setItem('wah_selected_governorate_slug', slug);
-      window.history.pushState({ page: 'governorate-details', slug }, '', `/governorates?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'governorate-details', slug }, '', `/governorates/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1895,7 +1802,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('place-details');
     try {
       sessionStorage.setItem('wah_selected_place_slug', slug);
-      window.history.pushState({ page: 'place-details', slug }, '', `/places?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'place-details', slug }, '', `/places/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1905,7 +1812,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('cultural-craft-details');
     try {
       sessionStorage.setItem('wah_selected_craft_slug', slug);
-      window.history.pushState({ page: 'cultural-craft-details', slug }, '', `/cultural-crafts?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'cultural-craft-details', slug }, '', `/cultural-crafts/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1915,7 +1822,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('story-details');
     try {
       sessionStorage.setItem('wah_selected_story_slug', slug);
-      window.history.pushState({ page: 'story-details', slug }, '', `/stories?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'story-details', slug }, '', `/stories/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1925,7 +1832,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('person-details');
     try {
       sessionStorage.setItem('wah_selected_person_slug', slug);
-      window.history.pushState({ page: 'person-details', slug }, '', `/people?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'person-details', slug }, '', `/people/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1935,7 +1842,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('food-details');
     try {
       sessionStorage.setItem('wah_selected_food_slug', slug);
-      window.history.pushState({ page: 'food-details', slug }, '', `/food?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'food-details', slug }, '', `/food/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -1945,7 +1852,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setActivePageState('event-details');
     try {
       sessionStorage.setItem('wah_selected_event_slug', slug);
-      window.history.pushState({ page: 'event-details', slug }, '', `/events?slug=${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'event-details', slug }, '', `/events/${encodeURIComponent(slug)}`);
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

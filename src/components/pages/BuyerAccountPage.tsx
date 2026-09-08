@@ -53,7 +53,6 @@ export const BuyerAccountPage: React.FC = () => {
     }
   }, [currentUser]);
 
-  // Profile image upload state
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isRemovingImage, setIsRemovingImage] = useState(false);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -67,7 +66,7 @@ export const BuyerAccountPage: React.FC = () => {
 
     const file = files[0];
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    const maxSizeBytes = 5 * 1024 * 1024; // 5MB
+    const maxSizeBytes = 5 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
       setImageError('نوع الملف غير مدعوم. يرجى اختيار صورة بصيغة JPG أو PNG أو WebP');
@@ -151,27 +150,45 @@ export const BuyerAccountPage: React.FC = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <div
+      dir="rtl"
+      className="
+        min-h-screen
+        overflow-x-hidden
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
+        max-w-[1600px]
+        mx-auto
+        px-5
+        sm:px-8
+        lg:px-12
+        py-8
+        space-y-8
+      "
+    >
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#8c6b53] dark:text-[var(--wah-text-muted,#A89B8F)]">
+      <nav className="flex items-center gap-2 text-xs text-black/50 dark:text-white/50">
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-[#943310] dark:hover:text-[#E0633C] transition-colors"
+          className="hover:text-[#9a6a35] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-        <span className="text-gray-900 dark:text-[var(--wah-text,#FAF6F2)] font-bold">الملف الشخصي وإعدادات الحساب</span>
+        <span className="font-bold">الملف الشخصي وإعدادات الحساب</span>
       </nav>
 
       {/* Account Overview Header */}
-      <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#ebdccd] dark:border-[#352B24] p-6 sm:p-8 shadow-xs">
+      <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
             {/* User Avatar with Cloudinary Integration */}
             <div className="relative group shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#943310] text-white flex items-center justify-center font-black text-3xl font-heritage shadow-md border-2 border-[#ebdccd] dark:border-[#352B24]">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
                 {isUploadingImage || isRemovingImage ? (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
                     <Loader2 className="w-6 h-6 animate-spin mb-1" />
@@ -196,7 +213,7 @@ export const BuyerAccountPage: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage || isRemovingImage}
                 title="تغيير الصورة"
-                className="absolute -bottom-1 -left-1 p-2 bg-[#943310] hover:bg-[#78280b] text-white rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
+                className="absolute -bottom-1 -left-1 p-2 bg-[#211d18] hover:bg-[#9a6a35] text-white dark:bg-white dark:text-black dark:hover:bg-[#d5a56d] rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -204,8 +221,8 @@ export const BuyerAccountPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-center sm:justify-start gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">{currentUser.name}</h1>
-                <span className="bg-amber-100 dark:bg-amber-950/40 text-[#943310] dark:text-amber-400 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                <h1 className="text-xl sm:text-2xl font-black">{currentUser.name}</h1>
+                <span className="bg-[#9a6a35]/10 border border-[#9a6a35]/30 text-[#9a6a35] text-[11px] font-bold px-2.5 py-0.5 rounded-full">
                   {currentUser.role === 'admin'
                     ? 'مدير المنصة'
                     : currentUser.role === 'seller'
@@ -213,7 +230,7 @@ export const BuyerAccountPage: React.FC = () => {
                       : 'متسوق موثق'}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 dark:text-[#A89B8F] mt-1">{currentUser.email}</p>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">{currentUser.email}</p>
 
               {/* Profile Image Management Controls */}
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-3">
@@ -231,9 +248,9 @@ export const BuyerAccountPage: React.FC = () => {
                   id="change-profile-image-btn"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage || isRemovingImage}
-                  className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#ebdccd] dark:hover:bg-[#352B24] border border-[#dfcebe] dark:border-[#3d3129] text-gray-800 dark:text-[#FAF6F2] text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
-                  <Upload className="w-3.5 h-3.5 text-[#943310] dark:text-[#E0633C]" />
+                  <Upload className="w-3.5 h-3.5 text-[#9a6a35]" />
                   <span>{isUploadingImage ? 'جاري الرفع...' : 'تغيير الصورة'}</span>
                 </button>
 
@@ -243,7 +260,7 @@ export const BuyerAccountPage: React.FC = () => {
                     id="remove-profile-image-btn"
                     onClick={handleRemoveProfileImage}
                     disabled={isUploadingImage || isRemovingImage}
-                    className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                    className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>{isRemovingImage ? 'جاري الحذف...' : 'حذف الصورة'}</span>
@@ -266,25 +283,25 @@ export const BuyerAccountPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('orders')}
-              className="p-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#943310] dark:hover:border-[#E0633C] transition-all text-center cursor-pointer"
+              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
             >
-              <div className="flex items-center justify-center gap-1 text-[#943310] dark:text-[#E0633C] font-bold text-base">
+              <div className="flex items-center justify-center gap-1 text-[#9a6a35] font-bold text-base">
                 <Package className="w-4 h-4" />
                 <span>{orders.length}</span>
               </div>
-              <span className="text-[10px] text-gray-500 dark:text-[#A89B8F]">طلبات سابقة</span>
+              <span className="text-[10px] text-black/50 dark:text-white/50">طلبات سابقة</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActivePage('favorites')}
-              className="p-3 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#ebdccd] dark:border-[#352B24] hover:border-[#943310] dark:hover:border-[#E0633C] transition-all text-center cursor-pointer"
+              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
             >
               <div className="flex items-center justify-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-base">
                 <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
                 <span>{favorites.length}</span>
               </div>
-              <span className="text-[10px] text-gray-500 dark:text-[#A89B8F]">قطع في المفضلة</span>
+              <span className="text-[10px] text-black/50 dark:text-white/50">قطع في المفضلة</span>
             </button>
           </div>
         </div>
@@ -294,47 +311,47 @@ export const BuyerAccountPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Profile Settings Form */}
         <div className="lg:col-span-8">
-          <form onSubmit={handleSaveProfile} className="bg-white dark:bg-[#1B1613] rounded-3xl border border-[#ebdccd] dark:border-[#352B24] p-6 sm:p-8 shadow-xs space-y-5">
-            <h3 className="font-bold text-base text-gray-900 dark:text-[#FAF6F2] border-b border-[#f0e4d7] dark:border-[#352B24] pb-3">
+          <form onSubmit={handleSaveProfile} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
+            <h3 className="font-bold text-base border-b border-black/10 dark:border-white/10 pb-3">
               البيانات الشخصية وعنوان التوصيل الافتراضي
             </h3>
 
             {/* Username display (read-only for security) */}
             <div>
-              <label className="block text-xs font-bold text-gray-700 dark:text-[#FAF6F2] mb-1">اسم المستخدم</label>
+              <label className="block text-xs font-bold mb-1">اسم المستخدم</label>
               <div className="relative">
                 <input
                   type="text"
                   readOnly
                   disabled
                   value={currentUser.username || 'غير محدد'}
-                  className="w-full pl-3 pr-10 py-3 bg-gray-100/80 dark:bg-[#26201B]/80 border border-[#dfcebe] dark:border-[#3d3129] rounded-xl text-sm outline-none text-gray-600 dark:text-[#A89B8F] min-h-[44px] cursor-not-allowed font-medium"
+                  className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none text-black/50 dark:text-white/50 min-h-[44px] cursor-not-allowed font-medium"
                 />
-                <User className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
+                <User className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
               </div>
-              <span className="text-[11px] text-gray-500 dark:text-[#A89B8F] mt-1 block">
+              <span className="text-[11px] text-black/50 dark:text-white/50 mt-1 block">
                 اسم المستخدم ثابت ومخصص لتسجيل الدخول بأمان لحسابك.
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-[#FAF6F2] mb-1">الاسم الكامل</label>
+                <label className="block text-xs font-bold mb-1">الاسم الكامل</label>
                 <div className="relative">
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-3 pr-10 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl text-sm outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
-                  <User className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
+                  <User className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-[#FAF6F2] mb-1">
-                  البريد الإلكتروني <span className="text-gray-400 font-normal">(اختياري)</span>
+                <label className="block text-xs font-bold mb-1">
+                  البريد الإلكتروني <span className="text-black/40 dark:text-white/40 font-normal">(اختياري)</span>
                 </label>
                 <div className="relative">
                   <input
@@ -342,47 +359,47 @@ export const BuyerAccountPage: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com (اختياري)"
-                    className="w-full pl-3 pr-10 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl text-sm outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
-                  <Mail className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
+                  <Mail className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-[#FAF6F2] mb-1">رقم الهاتف</label>
+                <label className="block text-xs font-bold mb-1">رقم الهاتف</label>
                 <div className="relative">
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-3 pr-10 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] text-gray-900 dark:text-[#FAF6F2] placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl text-sm outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
-                  <Phone className="w-4 h-4 text-gray-400 absolute right-3 top-3.5" />
+                  <Phone className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 dark:text-[#FAF6F2] mb-1">المحافظة</label>
+                <label className="block text-xs font-bold mb-1">المحافظة</label>
                 <div className="relative">
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-3 bg-[#FAF7F2] dark:bg-[#26201B] border border-[#dfcebe] dark:border-[#3d3129] text-gray-900 dark:text-[#FAF6F2] rounded-xl text-sm outline-none focus:border-[#943310] dark:focus:border-[#E0633C] min-h-[44px] cursor-pointer"
+                    className="w-full px-3.5 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px] cursor-pointer"
                   >
-                    <option value="القاهرة" className="dark:bg-[#1B1613]">القاهرة</option>
-                    <option value="الجيزة" className="dark:bg-[#1B1613]">الجيزة</option>
-                    <option value="الإسكندرية" className="dark:bg-[#1B1613]">الإسكندرية</option>
-                    <option value="قنا" className="dark:bg-[#1B1613]">قنا</option>
-                    <option value="سوهاج" className="dark:bg-[#1B1613]">سوهاج</option>
-                    <option value="أسوان" className="dark:bg-[#1B1613]">أسوان</option>
-                    <option value="الأقصر" className="dark:bg-[#1B1613]">الأقصر</option>
-                    <option value="أسيوط" className="dark:bg-[#1B1613]">أسيوط</option>
-                    <option value="المنيا" className="dark:bg-[#1B1613]">المنيا</option>
-                    <option value="بني سويف" className="dark:bg-[#1B1613]">بني سويف</option>
-                    <option value="الوادي الجديد" className="dark:bg-[#1B1613]">الوادي الجديد</option>
+                    <option value="القاهرة" className="dark:bg-[#151513]">القاهرة</option>
+                    <option value="الجيزة" className="dark:bg-[#151513]">الجيزة</option>
+                    <option value="الإسكندرية" className="dark:bg-[#151513]">الإسكندرية</option>
+                    <option value="قنا" className="dark:bg-[#151513]">قنا</option>
+                    <option value="سوهاج" className="dark:bg-[#151513]">سوهاج</option>
+                    <option value="أسوان" className="dark:bg-[#151513]">أسوان</option>
+                    <option value="الأقصر" className="dark:bg-[#151513]">الأقصر</option>
+                    <option value="أسيوط" className="dark:bg-[#151513]">أسيوط</option>
+                    <option value="المنيا" className="dark:bg-[#151513]">المنيا</option>
+                    <option value="بني سويف" className="dark:bg-[#151513]">بني سويف</option>
+                    <option value="الوادي الجديد" className="dark:bg-[#151513]">الوادي الجديد</option>
                   </select>
                 </div>
               </div>
@@ -390,7 +407,7 @@ export const BuyerAccountPage: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-3 bg-[#943310] hover:bg-[#7c280a] text-white text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>حفظ التعديلات</span>
@@ -400,9 +417,9 @@ export const BuyerAccountPage: React.FC = () => {
 
         {/* Sidebar Shortcut Options */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-[#FAF7F2] dark:bg-[#1B1613] p-6 rounded-3xl border border-[#ebdccd] dark:border-[#352B24] space-y-3 text-right">
-            <h4 className="font-bold text-xs text-gray-900 dark:text-[#FAF6F2]">هل تمتلك ورشة حرفية في الصعيد؟</h4>
-            <p className="text-xs text-[#8c6b53] dark:text-[#A89B8F] leading-relaxed">
+          <div className="bg-white/75 dark:bg-[#151513]/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-3 text-right shadow-lg backdrop-blur-xl">
+            <h4 className="font-bold text-xs">هل تمتلك ورشة حرفية في الصعيد؟</h4>
+            <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
               يمكنك التبديل إلى حساب بائع حرفي لعرض منتجاتك، متابعة طلبات العملاء، واستلام مستحقاتك المالية عبر فودافون كاش أو إنستاباي.
             </p>
             <button
@@ -415,15 +432,15 @@ export const BuyerAccountPage: React.FC = () => {
                   setIsAuthModalOpen(true);
                 }
               }}
-              className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
             >
               <Store className="w-4 h-4" />
               <span>{currentRole === 'seller' ? 'الدخول إلى لوحة البائع الحرفي' : 'تسجيل حساب ورشة حرفية'}</span>
             </button>
           </div>
 
-          <div className="bg-white dark:bg-[#1B1613] p-5 rounded-2xl border border-[#ebdccd] dark:border-[#352B24] text-xs text-gray-600 dark:text-[#A89B8F] space-y-2">
-            <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-400">
+          <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 text-xs text-black/60 dark:text-white/60 space-y-2 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="w-4 h-4" />
               <span>حماية البيانات والخصوصية</span>
             </div>

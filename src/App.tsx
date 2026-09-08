@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider, useApp, PAGE_ROUTES } from './context/AppContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -491,69 +491,7 @@ const MainContent: React.FC = () => {
             {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && <CulturalCmsAdminPage />}
             {activePage === 'admin-map-editor' && <AdminMapEditorPage />}
 
-            {![
-              'home',
-              'products',
-              'search',
-              'product-details',
-              'categories',
-              'category-details',
-              'crafts',
-              'reels',
-              'sellers',
-              'seller-details',
-              'cart',
-              'checkout',
-              'orders',
-              'order-details',
-              'favorites',
-              'messages',
-              'buyer-account',
-              'profile',
-              'seller-dashboard',
-              'seller-products',
-              'seller-inventory',
-              'seller-orders',
-              'seller-messages',
-              'seller-payouts',
-              'seller-analytics',
-              'seller-account',
-              'admin-dashboard',
-              'admin-sellers',
-              'admin-products',
-              'admin-buyers',
-              'admin-orders',
-              'admin-categories',
-              'admin-discounts',
-              'admin-reports',
-              'admin-audit-logs',
-              'admin-settings',
-              'about',
-              'wholesale',
-              'market',
-              'wah-market',
-              'map',
-              'explore',
-              'governorates',
-              'governorate-details',
-              'places',
-              'place-details',
-              'cultural-crafts',
-              'cultural-craft-details',
-              'craft-details',
-              'stories',
-              'story-details',
-              'people',
-              'person-details',
-              'food',
-              'food-details',
-              'events',
-              'event-details',
-              'global-search',
-              'cultural-cms',
-              'admin-cultural-cms',
-              'admin-map-editor'
-            ].includes(activePage) && <NotFoundPage />}
+            {!PAGE_ROUTES[activePage] && <NotFoundPage />}
           </motion.div>
         </AnimatePresence>
       </div>

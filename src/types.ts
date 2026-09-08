@@ -812,7 +812,7 @@ export interface MapPayload {
 export interface GlobalSearchResult {
   id: string;
   title: string;
-  type: 'governorate' | 'place' | 'craft' | 'story' | 'person' | 'food' | 'event' | 'product';
+  type: 'governorate' | 'place' | 'craft' | 'story' | 'person' | 'food' | 'event' | 'product' | 'seller';
   typeLabel: string;
   subtitle?: string;
   coverImage?: string;

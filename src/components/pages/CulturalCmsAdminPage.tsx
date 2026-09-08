@@ -62,6 +62,7 @@ import {
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
+import { i } from 'motion/react-client';
 
 type GovernorateSubTab =
   | 'overview'
@@ -81,25 +82,20 @@ type GovernorateSubTab =
 export const CulturalCmsAdminPage: React.FC = () => {
   const { setActivePage, addToast, currentUser, isAuthenticated, currentRole, setIsAuthModalOpen, setAuthModalTab } = useApp();
 
-  // Navigation state: null means Level 1 (Governorates Selection Hub), otherwise Level 2 (Dedicated Governorate CMS)
   const [selectedGovId, setSelectedGovId] = useState<string | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<GovernorateSubTab>('overview');
 
-  // Search and Filter states
   const [globalGovSearch, setGlobalGovSearch] = useState('');
   const [govStatusFilter, setGovStatusFilter] = useState<string>('all');
   const [internalSearch, setInternalSearch] = useState('');
   const [internalCategoryFilter, setInternalCategoryFilter] = useState('all');
 
-  // Loading states
   const [isLoading, setIsLoading] = useState(false);
   const [isStatsLoading, setIsStatsLoading] = useState(false);
 
-  // Governorates master list
   const [governorates, setGovernorates] = useState<WahGovernorate[]>([]);
   const [dashboardStats, setDashboardStats] = useState<GovernorateDashboardStats | null>(null);
 
-  // Scoped content entities for the selected governorate
   const [cities, setCities] = useState<CityDoc[]>([]);
   const [villages, setVillages] = useState<VillageDoc[]>([]);
   const [places, setPlaces] = useState<HeritagePlace[]>([]);
@@ -112,19 +108,15 @@ export const CulturalCmsAdminPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [platformSettings, setPlatformSettings] = useState<PlatformSettingsDoc | null>(null);
 
-  // Multi-selection for Bulk Actions
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [bulkActionInProgress, setBulkActionInProgress] = useState(false);
 
-  // Action Center Modal State
   const [isActionCenterOpen, setIsActionCenterOpen] = useState(false);
 
-  // Entity Edit / Create Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingEntityType, setEditingEntityType] = useState<string>('place');
   const [editingItem, setEditingItem] = useState<any | null>(null);
 
-  // Safe Deletion Confirmation State
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     item: any;
@@ -133,16 +125,13 @@ export const CulturalCmsAdminPage: React.FC = () => {
   } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Active user auth headers
   const authUser = useMemo(() => ({ id: currentUser?.id, role: currentUser?.role || 'admin' }), [currentUser]);
 
-  // Active selected governorate object
   const activeGov = useMemo(() => {
     if (!selectedGovId) return null;
     return governorates.find((g) => g.id === selectedGovId || g.slug === selectedGovId) || null;
   }, [selectedGovId, governorates]);
 
-  // 1. Initial Load: Fetch all governorates
   const loadGovernorates = async () => {
     setIsLoading(true);
     try {
@@ -159,7 +148,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
     loadGovernorates();
   }, []);
 
-  // 2. Load dedicated governorate data & live stats whenever selectedGovId changes
   const loadGovernorateData = async (govId: string) => {
     setIsStatsLoading(true);
     try {
@@ -187,7 +175,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
       setEvents(eventsData);
       setSeasons(seasonsData);
 
-      // Filter crafts by governorate name or id
       const currentGovObj = governorates.find((g) => g.id === govId || g.slug === govId);
       if (currentGovObj) {
         const matchingCrafts = craftsData.filter(
@@ -197,7 +184,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
         );
         setCrafts(matchingCrafts);
 
-        // Fetch products associated with this governorate
         try {
           const prods = await api.getPublicProducts({ governorate: currentGovObj.name });
           setProducts(prods || []);
@@ -222,28 +208,43 @@ export const CulturalCmsAdminPage: React.FC = () => {
     }
   }, [selectedGovId]);
 
-  // Auth Guard
   if (!currentUser || currentUser.role !== 'admin') {
     return (
-      <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] flex items-center justify-center p-6 text-center" dir="rtl">
-        <div className="bg-white dark:bg-[#1E1917] p-8 rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] max-w-md shadow-xl">
-          <Shield className="w-16 h-16 text-rose-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-[#241E1A] dark:text-[#FAF6F2] mb-2 font-serif">منطقة إدارية مقيدة</h2>
-          <p className="text-xs text-[#73675B] dark:text-[#9C8F82] mb-6 leading-relaxed">
-            نظام إدارة وتوثيق محافظات وه (Governorate CMS) مخصص لصلاحيات الإدارة العليا فقط.
+      <div
+        dir="rtl"
+        className="
+          min-h-[70vh]
+          flex items-center justify-center px-5
+          bg-[#eee8dc]
+          text-[#211d18]
+          transition-colors duration-500
+          dark:bg-[#0b0b0a]
+          dark:text-[#f5f0e7]
+        "
+      >
+        <div className="max-w-md w-full my-16 p-8 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl text-center space-y-4 backdrop-blur-xl">
+          <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto text-2xl">
+            🛡️
+          </div>
+          <h2 className="text-xl font-bold font-serif">منطقة إدارية مقيدة</h2>
+          <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+            نظام إدارة وتوثيق محافظات وه (Governorate CMS) مخصص لصلاحيات الإدارة العليا فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
           </p>
           <button
-            onClick={() => setActivePage('home')}
-            className="px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+            type="button"
+            onClick={() => {
+              setAuthModalTab('login');
+              setIsAuthModalOpen(true);
+            }}
+            className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
           >
-            العودة إلى الصفحة الرئيسية
+            تسجيل الدخول الإداري
           </button>
         </div>
       </div>
     );
   }
 
-  // Handle Bulk Action Execution
   const handleBulkAction = async (action: 'approve' | 'archive' | 'publish' | 'unpublish' | 'feature' | 'unfeature' | 'reject') => {
     if (selectedIds.length === 0) return;
 
@@ -286,7 +287,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
     }
   };
 
-  // Safe delete execution
   const executeSafeDelete = async () => {
     if (!deleteConfirmation) return;
     const { item, entityType } = deleteConfirmation;
@@ -335,40 +335,38 @@ export const CulturalCmsAdminPage: React.FC = () => {
     }
   };
 
-  // Helper status badge
   const renderStatusBadge = (status?: string, verificationStatus?: string) => {
     if (status === 'approved' || verificationStatus === 'verified') {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
-          <CheckCircle2 className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
           <span>معتمد ومنشور</span>
         </span>
       );
     }
     if (status === 'pending_review' || verificationStatus === 'pending_review' || status === 'unverified') {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-          <Clock className="w-3 h-3" />
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
+          <Clock className="w-3 h-3 text-amber-600" />
           <span>يحتاج مراجعة</span>
         </span>
       );
     }
     if (status === 'archived') {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200 dark:bg-stone-900 dark:text-stone-400">
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-white/5 dark:text-white/60 border border-black/10 dark:border-white/10">
           <Archive className="w-3 h-3" />
           <span>مؤرشف</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 border border-stone-200">
+      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-white/5 dark:text-white/60 border border-black/10 dark:border-white/10">
         <span>مسودة</span>
       </span>
     );
   };
 
-  // Filtered Governorates list in Level 1
   const filteredGovernorates = useMemo(() => {
     return governorates.filter((gov) => {
       const matchSearch =
@@ -381,1260 +379,1283 @@ export const CulturalCmsAdminPage: React.FC = () => {
     });
   }, [governorates, globalGovSearch, govStatusFilter]);
 
-  if (!isAuthenticated || currentRole !== 'admin') {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center px-4" dir="rtl">
-        <div className="max-w-md w-full my-16 p-8 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] shadow-xl text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-purple-100 text-purple-800 flex items-center justify-center mx-auto text-2xl">
-            🛡️
-          </div>
-          <h2 className="text-xl font-bold text-[#2D2A26] dark:text-[#FAF6F2]">منطقة الإدارة العليا</h2>
-          <p className="text-sm text-[#73675B] dark:text-[#9C8F82] leading-relaxed">
-            نظام إدارة المحافظات (WAH Governorate CMS) مخصص لمديري المنصة فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setAuthModalTab('login');
-              setIsAuthModalOpen(true);
-            }}
-            className="w-full py-3 bg-[#B24C2B] hover:bg-[#9E4F36] text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-          >
-            تسجيل الدخول الإداري
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#110E0C] text-[#241E1A] dark:text-[#FAF6F2] pt-6 pb-20 font-sans" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-        {/* ========================================================================= */}
-        {/* VIEW 1: GOVERNORATES SELECTION HUB (لوحة محافظات الصعيد الكبرى)          */}
-        {/* ========================================================================= */}
-        {!selectedGovId && (
-          <div className="space-y-6 animate-fadeIn">
-            {/* Header banner */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#B24C2B] uppercase tracking-wider">
-                  <Landmark className="w-4 h-4" />
-                  <span>نظام إدارة التراث والمحتوى الجغرافي | WAH Governorate CMS</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
-                  لوحة إدارة محافظات وه
-                </h1>
-                <p className="text-xs sm:text-sm text-[#73675B] dark:text-[#9C8F82] max-w-2xl leading-relaxed">
-                  نظام إدارة المحتوى الموجه بالمحافظة: اختر أي محافظة من محافظات الصعيد لإدارة جميع المعالم، الحرف، الأكلات، شيوخ الصنعة، القصص، الفعاليات، والمواسم المرتبطة بها في مركز تحكم موحد.
-                </p>
+    <div
+      dir="rtl"
+      className="
+        min-h-screen
+        overflow-x-hidden
+        bg-[#eee8dc]
+        text-[#211d18]
+        transition-colors duration-500
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
+        max-w-[1600px]
+        mx-auto
+        px-5
+        sm:px-8
+        lg:px-12
+        py-8
+        space-y-8
+      "
+    >
+      {/* ========================================================================= */}
+      {/* VIEW 1: GOVERNORATES SELECTION HUB (لوحة محافظات الصعيد الكبرى)          */}
+      {/* ========================================================================= */}
+      {!selectedGovId && (
+        <div className="space-y-8 animate-fadeIn">
+          {/* Header banner */}
+          <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-black/10 dark:border-white/10 backdrop-blur-xl">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] uppercase tracking-wider">
+                <Landmark className="w-4 h-4" />
+                <span>نظام إدارة التراث والمحتوى الجغرافي | WAH Governorate CMS</span>
               </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  onClick={() => {
-                    setEditingEntityType('governorate');
-                    setEditingItem(null);
-                    setIsEditModalOpen(true);
-                  }}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>توثيق محافظة جديدة</span>
-                </button>
-                <button
-                  onClick={() => setActivePage('admin-dashboard')}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#26201B] text-[#73675B] dark:text-[#A89C90] border border-[#E5DDD3] dark:border-[#352B24] hover:bg-[#FAF7F2] rounded-xl text-xs font-bold transition-all cursor-pointer"
-                >
-                  <span>لوحة المتجر</span>
-                </button>
-              </div>
+              <h1 className="text-2xl sm:text-3xl font-black font-serif">
+                لوحة إدارة محافظات وه
+              </h1>
+              <p className="text-xs sm:text-sm text-white/70 dark:text-black/70 max-w-2xl leading-relaxed">
+                نظام إدارة المحتوى الموجه بالمحافظة: اختر أي محافظة من محافظات الصعيد لإدارة جميع المعالم، الحرف، الأكلات، شيوخ الصنعة، القصص، الفعاليات، والمواسم المرتبطة بها في مركز تحكم موحد.
+              </p>
             </div>
 
-            {/* Filter and Search Toolbar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
-              <div className="relative w-full sm:w-80">
-                <Search className="w-4 h-4 text-[#73675B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="text"
-                  value={globalGovSearch}
-                  onChange={(e) => setGlobalGovSearch(e.target.value)}
-                  placeholder="ابحث عن محافظة، معلم، حرفة..."
-                  className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none focus:border-[#B24C2B]"
-                />
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <span className="text-xs text-[#73675B] font-bold whitespace-nowrap">الحالة:</span>
-                <select
-                  value={govStatusFilter}
-                  onChange={(e) => setGovStatusFilter(e.target.value)}
-                  className="bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold"
-                >
-                  <option value="all">كافة المحافظات ({governorates.length})</option>
-                  <option value="approved">معتمدة ومنشورة</option>
-                  <option value="pending_review">تحتاج مراجعة</option>
-                  <option value="archived">مؤرشفة</option>
-                </select>
-
-                <button
-                  onClick={loadGovernorates}
-                  className="p-2 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-xs text-[#73675B] cursor-pointer"
-                  title="تحديث البيانات"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingEntityType('governorate');
+                  setEditingItem(null);
+                  setIsEditModalOpen(true);
+                }}
+                className="flex items-center gap-2 px-5 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>توثيق محافظة جديدة</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePage('admin-dashboard')}
+                className="flex items-center gap-2 px-4 py-3 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 rounded-xl text-xs font-bold transition-all cursor-pointer border border-black/10 dark:border-white/10"
+              >
+                <span>لوحة المتجر</span>
+              </button>
             </div>
-
-            {/* Governorates Cards Grid */}
-            {isLoading && governorates.length === 0 ? (
-              <div className="text-center py-24 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <RefreshCw className="w-8 h-8 text-[#B24C2B] animate-spin mx-auto mb-3" />
-                <p className="text-sm font-bold text-[#73675B]">جاري جلب بيانات محافظات الصعيد من قاعدة البيانات...</p>
-              </div>
-            ) : filteredGovernorates.length === 0 ? (
-              <div className="text-center py-20 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <Landmark className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                <h3 className="text-base font-bold">لا توجد نتائج مطابقة لبحثك</h3>
-                <p className="text-xs text-[#73675B] mt-1">تأكد من كتابة اسم المحافظة بشكل صحيح أو أعد ضبط خيارات التصفية.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredGovernorates.map((gov) => (
-                  <div
-                    key={gov.id}
-                    className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
-                  >
-                    <div>
-                      {/* Card Image Banner */}
-                      <div className="relative h-48 w-full overflow-hidden bg-stone-100">
-                        <img
-                          src={gov.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
-                          alt={gov.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                        <div className="absolute top-3 right-3 flex items-center gap-2">
-                          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-xs text-white border border-white/20">
-                            {gov.region || 'صعيد مصر'}
-                          </span>
-                        </div>
-                        <div className="absolute top-3 left-3">{renderStatusBadge(gov.status)}</div>
-
-                        <div className="absolute bottom-3 right-3 left-3 text-white">
-                          <h3 className="text-xl font-black font-serif leading-tight">محافظة {gov.name}</h3>
-                          <p className="text-xs text-stone-200 line-clamp-1 mt-0.5">{gov.nickname || gov.shortIntro}</p>
-                        </div>
-                      </div>
-
-                      {/* Card Body */}
-                      <div className="p-5 space-y-4">
-                        <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 leading-relaxed">
-                          {gov.shortIntro || gov.history}
-                        </p>
-
-                        {/* Famous for tags */}
-                        {gov.famousFor && gov.famousFor.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5">
-                            {gov.famousFor.slice(0, 3).map((feat, idx) => (
-                              <span
-                                key={idx}
-                                className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#FAF7F2] dark:bg-[#26201B] text-[#73675B] dark:text-[#A89C90] border border-[#E5DDD3] dark:border-[#352B24]"
-                              >
-                                {feat}
-                              </span>
-                            ))}
-                            {gov.famousFor.length > 3 && (
-                              <span className="text-[10px] text-[#B24C2B] font-bold self-center">
-                                +{gov.famousFor.length - 3} أخرى
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Card Footer Actions */}
-                    <div className="p-5 pt-0 border-t border-[#F0EAE1] dark:border-[#2D2622] mt-2 flex items-center justify-between gap-3">
-                      <button
-                        onClick={() => setSelectedGovId(gov.id)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                      >
-                        <span>دخول لوحة إدارة {gov.name}</span>
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setEditingEntityType('governorate');
-                          setEditingItem(gov);
-                          setIsEditModalOpen(true);
-                        }}
-                        className="p-2.5 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-[#73675B] dark:text-[#A89C90] hover:bg-[#FAF7F2] text-xs font-bold transition-all cursor-pointer"
-                        title="تعديل بيانات المحافظة"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
-        )}
 
-        {/* ========================================================================= */}
-        {/* VIEW 2: DEDICATED GOVERNORATE CMS (لوحة إدارة المحافظة المحددة)            */}
-        {/* ========================================================================= */}
-        {selectedGovId && activeGov && (
-          <div className="space-y-6 animate-fadeIn">
-            {/* Dedicated Top Breadcrumb & Switcher Navigation Bar */}
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setSelectedGovId(null)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] hover:bg-[#FAF7F2] text-xs font-bold text-[#73675B] cursor-pointer"
-                >
-                  <ArrowRight className="w-3.5 h-3.5" />
-                  <span>كافة المحافظات</span>
-                </button>
-                <span className="text-[#B24C2B] font-bold">/</span>
-                <span className="text-sm font-black font-serif">لوحة إدارة محافظة {activeGov.name}</span>
-              </div>
-
-              {/* Quick Governorates Switcher & Action Center Trigger */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#73675B] font-bold hidden sm:inline">تبديل المحافظة:</span>
-                  <select
-                    value={selectedGovId}
-                    onChange={(e) => setSelectedGovId(e.target.value)}
-                    className="bg-[#FAF7F2] dark:bg-[#26201B] text-xs font-bold rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
-                  >
-                    {governorates.map((g) => (
-                      <option key={g.id} value={g.id}>
-                        محافظة {g.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  onClick={() => setIsActionCenterOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>إضافة محتوى سريع</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Dedicated Hero Banner for this Governorate */}
-            <div className="relative rounded-3xl overflow-hidden border border-[#E5DDD3] dark:border-[#352B24] bg-stone-900 text-white min-h-[160px] flex items-end p-6 sm:p-8">
-              <img
-                src={activeGov.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1200'}
-                alt={activeGov.name}
-                className="absolute inset-0 w-full h-full object-cover opacity-35"
+          {/* Filter and Search Toolbar */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/75 dark:bg-[#151513]/90 p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+            <div className="relative w-full sm:w-80">
+              <Search className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={globalGovSearch}
+                onChange={(e) => setGlobalGovSearch(e.target.value)}
+                placeholder="ابحث عن محافظة، معلم، حرفة..."
+                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-
-              <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div className="space-y-1.5 max-w-2xl">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#B24C2B] text-white font-bold">
-                      {activeGov.region || 'صعيد مصر'}
-                    </span>
-                    {renderStatusBadge(activeGov.status)}
-                  </div>
-                  <h2 className="text-2xl sm:text-4xl font-black font-serif">مركز إدارة {activeGov.name}</h2>
-                  <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
-                    {activeGov.shortIntro || activeGov.nickname || 'التوثيق الشامل لكنوز وتراث المحافظة'}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setEditingEntityType('governorate');
-                      setEditingItem(activeGov);
-                      setIsEditModalOpen(true);
-                    }}
-                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-xs text-white rounded-xl text-xs font-bold transition-all border border-white/30 flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                    <span>تعديل الملف التعريفي الكامل</span>
-                  </button>
-                </div>
-              </div>
             </div>
 
-            {/* LIVE MONGODB STATS BAR (Real Numbers Only) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-              {[
-                { label: 'المعالم التراثية', count: dashboardStats?.heritageSitesCount ?? places.length, icon: Landmark, color: 'text-amber-600' },
-                { label: 'الأماكن', count: dashboardStats?.placesCount ?? places.length, icon: MapPin, color: 'text-blue-600' },
-                { label: 'الحرف والتراث', count: dashboardStats?.craftsCount ?? crafts.length, icon: Hammer, color: 'text-orange-600' },
-                { label: 'أكلات المحافظة', count: dashboardStats?.foodsCount ?? foods.length, icon: Utensils, color: 'text-rose-600' },
-                { label: 'شيوخ الصنعة', count: dashboardStats?.peopleCount ?? people.length, icon: Users, color: 'text-indigo-600' },
-                { label: 'وه بيحكي', count: dashboardStats?.storiesCount ?? stories.length, icon: BookOpen, color: 'text-emerald-600' },
-                { label: 'مواسم وفعاليات', count: (dashboardStats?.eventsCount ?? events.length) + (dashboardStats?.seasonsCount ?? seasons.length), icon: Calendar, color: 'text-teal-600' }
-              ].map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] shadow-2xs flex flex-col justify-between"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <Icon className={`w-4 h-4 ${stat.color}`} />
-                      <span className="text-[10px] text-[#73675B] font-bold">MongoDB</span>
-                    </div>
-                    <div className="text-xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
-                      {isStatsLoading ? '...' : stat.count}
-                    </div>
-                    <div className="text-[11px] font-bold text-[#73675B] dark:text-[#9C8F82] mt-0.5">{stat.label}</div>
-                  </div>
-                );
-              })}
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <span className="text-xs font-bold text-black/60 dark:text-white/60 whitespace-nowrap">الحالة:</span>
+              <select
+                value={govStatusFilter}
+                onChange={(e) => setGovStatusFilter(e.target.value)}
+                className="bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none font-bold cursor-pointer"
+              >
+                <option value="all">كافة المحافظات ({governorates.length})</option>
+                <option value="approved">معتمدة ومنشورة</option>
+                <option value="pending_review">تحتاج مراجعة</option>
+                <option value="archived">مؤرشفة</option>
+              </select>
+
+              <button
+                type="button"
+                onClick={loadGovernorates}
+                className="p-2.5 bg-black/[0.035] dark:bg-white/[0.04] hover:bg-black/10 rounded-xl border border-black/10 dark:border-white/10 text-xs text-black/70 dark:text-white/70 cursor-pointer"
+                title="تحديث البيانات"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </button>
             </div>
+          </div>
 
-            {/* Scoped Governorate Category Navigation Tabs */}
-            <div className="bg-white dark:bg-[#1E1917] p-2 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              {[
-                { id: 'overview', label: 'الملف التعريفي', icon: Info },
-                { id: 'cities_villages', label: `المدن والقرى (${cities.length + villages.length})`, icon: MapPin },
-                { id: 'places_heritage', label: `الأماكن والمعالم (${places.length})`, icon: Landmark },
-                { id: 'crafts', label: `الحرف والتراث (${crafts.length})`, icon: Hammer },
-                { id: 'food', label: `أكلات المحافظة (${foods.length})`, icon: Utensils },
-                { id: 'people_artisans', label: `الناس والحرفيين (${people.length})`, icon: Users },
-                { id: 'stories', label: `وه بيحكي (${stories.length})`, icon: BookOpen },
-                { id: 'events_seasons', label: `الفعاليات والمواسم (${events.length + seasons.length})`, icon: Calendar },
-                { id: 'products', label: `منتجات سوق وه (${products.length})`, icon: ShoppingBag },
-                { id: 'map', label: 'خريطة المحافظة', icon: MapIcon },
-                { id: 'relationships', label: 'شبكة العلاقات', icon: LinkIcon },
-                {
-                  id: 'pending_review',
-                  label: `يحتاج مراجعة (${dashboardStats?.pendingReviewCount ?? 0})`,
-                  icon: AlertCircle,
-                  badgeColor: 'bg-amber-500 text-white'
-                }
-              ].map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeSubTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setActiveSubTab(tab.id as GovernorateSubTab);
-                      setSelectedIds([]);
-                      setInternalSearch('');
-                    }}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#B24C2B] text-white shadow-xs'
-                        : 'text-[#73675B] dark:text-[#A89C90] hover:bg-[#FAF7F2] dark:hover:bg-[#26201B]'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+          {/* Governorates Cards Grid */}
+          {isLoading && governorates.length === 0 ? (
+            <div className="text-center py-24 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+              <RefreshCw className="w-8 h-8 text-[#9a6a35] animate-spin mx-auto mb-3" />
+              <p className="text-sm font-bold text-black/60 dark:text-white/60">جاري جلب بيانات محافظات الصعيد من قاعدة البيانات...</p>
             </div>
-
-            {/* Bulk Actions Floating Bar (Active when items are selected) */}
-            {selectedIds.length > 0 && (
-              <div className="bg-[#241E1A] text-white p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
-                <div className="flex items-center gap-2 text-xs font-bold">
-                  <CheckSquare className="w-4 h-4 text-[#B24C2B]" />
-                  <span>تم تحديد {selectedIds.length} عنصر</span>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    disabled={bulkActionInProgress}
-                    onClick={() => handleBulkAction('approve')}
-                    className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    اعتماد ونشر
-                  </button>
-                  <button
-                    disabled={bulkActionInProgress}
-                    onClick={() => handleBulkAction('archive')}
-                    className="px-3 py-1.5 bg-stone-700 hover:bg-stone-600 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    أرشفة
-                  </button>
-                  <button
-                    disabled={bulkActionInProgress}
-                    onClick={() => handleBulkAction('feature')}
-                    className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    تمييز ⭐
-                  </button>
-                  <button
-                    disabled={bulkActionInProgress}
-                    onClick={() => handleBulkAction('reject')}
-                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                  >
-                    رفض
-                  </button>
-                  <button
-                    onClick={() => setSelectedIds([])}
-                    className="px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-bold cursor-pointer"
-                  >
-                    إلغاء التحديد
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Internal Search Bar for active subtab */}
-            {activeSubTab !== 'overview' && activeSubTab !== 'map' && activeSubTab !== 'relationships' && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#1E1917] p-3.5 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24]">
-                <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-[#73675B] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={internalSearch}
-                    onChange={(e) => setInternalSearch(e.target.value)}
-                    placeholder={`البحث داخل محتوى ${activeGov.name}...`}
-                    className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl pr-10 pl-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                  <button
-                    onClick={() => {
-                      if (activeSubTab === 'cities_villages') setEditingEntityType('city');
-                      else if (activeSubTab === 'places_heritage') setEditingEntityType('place');
-                      else if (activeSubTab === 'crafts') setEditingEntityType('craft');
-                      else if (activeSubTab === 'food') setEditingEntityType('food');
-                      else if (activeSubTab === 'people_artisans') setEditingEntityType('person');
-                      else if (activeSubTab === 'stories') setEditingEntityType('story');
-                      else if (activeSubTab === 'events_seasons') setEditingEntityType('event');
-                      setEditingItem(null);
-                      setIsEditModalOpen(true);
-                    }}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>إضافة عنصر في هذا القسم</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 1: OVERVIEW & PROFILE (الملف التعريفي الكامل)      */}
-            {/* ======================================================= */}
-            {activeSubTab === 'overview' && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
-                <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
+          ) : filteredGovernorates.length === 0 ? (
+            <div className="text-center py-20 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+              <Landmark className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+              <h3 className="text-base font-bold">لا توجد نتائج مطابقة لبحثك</h3>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1">تأكد من كتابة اسم المحافظة بشكل صحيح أو أعد ضبط خيارات التصفية.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {filteredGovernorates.map((gov, index) => (
+                <div
+                  key={gov.id}
+                  className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg backdrop-blur-xl hover:border-[#9a6a35] transition-all flex flex-col justify-between group"
+                >
                   <div>
-                    <h3 className="text-lg font-bold font-serif">الملف التعريفي الشامل لمحافظة {activeGov.name}</h3>
-                    <p className="text-xs text-[#73675B] mt-0.5">يمكن للإدارة تعديل كافة بيانات المحافظة مباشرة وحفظها في قاعدة البيانات.</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setEditingEntityType('governorate');
-                      setEditingItem(activeGov);
-                      setIsEditModalOpen(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                  >
-                    <Edit className="w-4 h-4" />
-                    <span>تحرير الحقول</span>
-                  </button>
-                </div>
+                    {/* Card Image Banner */}
+                    <div className="relative h-48 w-full overflow-hidden bg-stone-100 dark:bg-stone-900 rounded-t-[2rem]">
+                      <img
+                        src={gov.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800'}
+                        alt={gov.name}
+                        loading={index < 4 ? 'eager' : 'lazy'}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                      <div className="absolute top-3 right-3 flex items-center gap-2">
+                        <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-xs text-white border border-white/20">
+                          {gov.region || 'صعيد مصر'}
+                        </span>
+                      </div>
+                      <div className="absolute top-3 left-3">{renderStatusBadge(gov.status)}</div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-                  <div className="space-y-3">
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">الاسم بالعربية:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl font-bold">{activeGov.name}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">اللقب الشعبي والتاريخي:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">العاصمة الإقليمية:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">الإقليم الجغرافي:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">الموقع النيلي:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">المقدمة والنبذة الموجزة:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">العمق التاريخي والتراثي:</span>
-                      <div className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl leading-relaxed">{activeGov.history}</div>
-                    </div>
-                    <div>
-                      <span className="font-bold text-[#73675B] block mb-1">أبرز ما تشتهر به المحافظة:</span>
-                      <div className="flex flex-wrap gap-1.5 p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl">
-                        {activeGov.famousFor?.map((f, i) => (
-                          <span key={i} className="px-2 py-0.5 bg-white dark:bg-[#1E1917] rounded-md font-bold text-[#B24C2B]">
-                            {f}
-                          </span>
-                        ))}
+                      <div className="absolute bottom-3 right-3 left-3 text-white">
+                        <h3 className="text-xl font-black font-serif leading-tight">محافظة {gov.name}</h3>
+                        <p className="text-xs text-stone-200 line-clamp-1 mt-0.5">{gov.nickname || gov.shortIntro}</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
-            {/* ======================================================= */}
-            {/* SUBTAB 2: CITIES & VILLAGES (المدن والقرى)              */}
-            {/* ======================================================= */}
-            {activeSubTab === 'cities_villages' && (
-              <div className="space-y-6">
-                {/* Cities Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#B24C2B]" />
-                      <span>مدن ومراكز محافظة {activeGov.name} ({cities.length})</span>
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setEditingEntityType('city');
-                        setEditingItem(null);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>إضافة مدينة</span>
-                    </button>
-                  </div>
+                    {/* Card Body */}
+                    <div className="p-5 space-y-4">
+                      <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
+                        {gov.shortIntro || gov.history}
+                      </p>
 
-                  {cities.length === 0 ? (
-                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل مدن تابعة لهذه المحافظة بعد.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {cities.map((city) => (
-                        <div key={city.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm">{city.name}</h4>
-                            <button
-                              onClick={() => setDeleteConfirmation({ isOpen: true, item: city, entityType: 'cities' })}
-                              className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                      {gov.famousFor && gov.famousFor.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          {gov.famousFor.slice(0, 3).map((feat, idx) => (
+                            <span
+                              key={idx}
+                              className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10"
                             >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <p className="text-xs text-[#73675B] line-clamp-2">{city.shortDescription || 'مركز تراثي وتجاري عريق.'}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Villages Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Compass className="w-4 h-4 text-[#B24C2B]" />
-                      <span>القرى والنجوع التراثية ({villages.length})</span>
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setEditingEntityType('village');
-                        setEditingItem(null);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>إضافة قرية</span>
-                    </button>
-                  </div>
-
-                  {villages.length === 0 ? (
-                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل قرى تراثية لهذه المحافظة بعد.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {villages.map((v) => (
-                        <div key={v.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-sm">{v.name}</h4>
-                            <button
-                              onClick={() => setDeleteConfirmation({ isOpen: true, item: v, entityType: 'villages' })}
-                              className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <p className="text-xs text-[#73675B] line-clamp-2">{v.description || 'قرية تحتضن موروثاً حرفياً.'}</p>
-                          {v.traditionalCraftName && (
-                            <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-white dark:bg-[#1E1917] text-[#B24C2B]">
-                              الحرفة: {v.traditionalCraftName}
+                              {feat}
+                            </span>
+                          ))}
+                          {gov.famousFor.length > 3 && (
+                            <span className="text-[10px] text-[#9a6a35] font-bold self-center">
+                              +{gov.famousFor.length - 3} أخرى
                             </span>
                           )}
                         </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Footer Actions */}
+                  <div className="p-5 pt-0 border-t border-black/10 dark:border-white/10 mt-2 flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedGovId(gov.id)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    >
+                      <span>دخول لوحة إدارة {gov.name}</span>
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingEntityType('governorate');
+                        setEditingItem(gov);
+                        setIsEditModalOpen(true);
+                      }}
+                      className="p-3 rounded-xl border border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 text-xs font-bold transition-all cursor-pointer"
+                      title="تعديل بيانات المحافظة"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* VIEW 2: DEDICATED GOVERNORATE CMS (لوحة إدارة المحافظة المحددة)            */}
+      {/* ========================================================================= */}
+      {selectedGovId && activeGov && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* Dedicated Top Breadcrumb & Switcher Navigation Bar */}
+          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedGovId(null)}
+                className="flex items-center gap-1 px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 text-xs font-bold text-black/70 dark:text-white/70 cursor-pointer"
+              >
+                <ArrowRight className="w-3.5 h-3.5" />
+                <span>كافة المحافظات</span>
+              </button>
+              <span className="text-[#9a6a35] font-bold">/</span>
+              <span className="text-sm font-black font-serif">لوحة إدارة محافظة {activeGov.name}</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-black/60 dark:text-white/60 font-bold hidden sm:inline">تبديل المحافظة:</span>
+                <select
+                  value={selectedGovId}
+                  onChange={(e) => setSelectedGovId(e.target.value)}
+                  className="bg-black/[0.035] dark:bg-white/[0.04] text-xs font-bold rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
+                >
+                  {governorates.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      محافظة {g.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsActionCenterOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>إضافة محتوى سريع</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Dedicated Hero Banner for this Governorate */}
+          <div className="relative rounded-[2rem] overflow-hidden border border-black/10 dark:border-white/10 bg-black min-h-[160px] flex items-end p-6 sm:p-8 shadow-xl">
+            <img
+              src={activeGov.coverImage || 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1200'}
+              alt={activeGov.name}
+              className="absolute inset-0 w-full h-full object-cover opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+            <div className="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div className="space-y-1.5 max-w-2xl">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs px-3 py-1 rounded-full bg-[#9a6a35] text-white font-bold">
+                    {activeGov.region || 'صعيد مصر'}
+                  </span>
+                  {renderStatusBadge(activeGov.status)}
+                </div>
+                <h2 className="text-2xl sm:text-4xl font-black font-serif text-white">مركز إدارة {activeGov.name}</h2>
+                <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
+                  {activeGov.shortIntro || activeGov.nickname || 'التوثيق الشامل لكنوز وتراث المحافظة'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingEntityType('governorate');
+                    setEditingItem(activeGov);
+                    setIsEditModalOpen(true);
+                  }}
+                  className="px-4 py-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-xl text-xs font-bold transition-all border border-white/30 flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                  <span>تعديل الملف التعريفي الكامل</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* LIVE MONGODB STATS BAR (Real Numbers Only) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+            {[
+              { label: 'المعالم التراثية', count: dashboardStats?.heritageSitesCount ?? places.length, icon: Landmark, color: 'text-amber-500' },
+              { label: 'الأماكن', count: dashboardStats?.placesCount ?? places.length, icon: MapPin, color: 'text-blue-500' },
+              { label: 'الحرف والتراث', count: dashboardStats?.craftsCount ?? crafts.length, icon: Hammer, color: 'text-orange-500' },
+              { label: 'أكلات المحافظة', count: dashboardStats?.foodsCount ?? foods.length, icon: Utensils, color: 'text-rose-500' },
+              { label: 'شيوخ الصنعة', count: dashboardStats?.peopleCount ?? people.length, icon: Users, color: 'text-indigo-500' },
+              { label: 'وه بيحكي', count: dashboardStats?.storiesCount ?? stories.length, icon: BookOpen, color: 'text-emerald-500' },
+              { label: 'مواسم وفعاليات', count: (dashboardStats?.eventsCount ?? events.length) + (dashboardStats?.seasonsCount ?? seasons.length), icon: Calendar, color: 'text-teal-500' }
+            ].map((stat, idx) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-white/75 dark:bg-[#151513]/90 p-3.5 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <Icon className={`w-4 h-4 ${stat.color}`} />
+                    <span className="text-[10px] text-black/40 dark:text-white/40 font-bold">MongoDB</span>
+                  </div>
+                  <div className="text-xl font-black font-serif">
+                    {isStatsLoading ? '...' : stat.count}
+                  </div>
+                  <div className="text-[11px] font-bold text-black/60 dark:text-white/60 mt-0.5">{stat.label}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Scoped Governorate Category Navigation Tabs */}
+          <div className="bg-white/75 dark:bg-[#151513]/90 p-2 rounded-2xl border border-black/10 dark:border-white/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar backdrop-blur-xl">
+            {[
+              { id: 'overview', label: 'الملف التعريفي', icon: Info },
+              { id: 'cities_villages', label: `المدن والقرى (${cities.length + villages.length})`, icon: MapPin },
+              { id: 'places_heritage', label: `الأماكن والمعالم (${places.length})`, icon: Landmark },
+              { id: 'crafts', label: `الحرف والتراث (${crafts.length})`, icon: Hammer },
+              { id: 'food', label: `أكلات المحافظة (${foods.length})`, icon: Utensils },
+              { id: 'people_artisans', label: `الناس والحرفيين (${people.length})`, icon: Users },
+              { id: 'stories', label: `وه بيحكي (${stories.length})`, icon: BookOpen },
+              { id: 'events_seasons', label: `الفعاليات والمواسم (${events.length + seasons.length})`, icon: Calendar },
+              { id: 'products', label: `منتجات سوق وه (${products.length})`, icon: ShoppingBag },
+              { id: 'map', label: 'خريطة المحافظة', icon: MapIcon },
+              { id: 'relationships', label: 'شبكة العلاقات', icon: LinkIcon },
+              {
+                id: 'pending_review',
+                label: `يحتاج مراجعة (${dashboardStats?.pendingReviewCount ?? 0})`,
+                icon: AlertCircle,
+                badgeColor: 'bg-amber-500 text-white'
+              }
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeSubTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveSubTab(tab.id as GovernorateSubTab);
+                    setSelectedIds([]);
+                    setInternalSearch('');
+                  }}
+                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                    isActive
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                      : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Bulk Actions Floating Bar (Active when items are selected) */}
+          {selectedIds.length > 0 && (
+            <div className="bg-[#211d18] text-white dark:bg-white dark:text-black p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
+              <div className="flex items-center gap-2 text-xs font-bold">
+                <CheckSquare className="w-4 h-4 text-[#9a6a35]" />
+                <span>تم تحديد {selectedIds.length} عنصر</span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  disabled={bulkActionInProgress}
+                  onClick={() => handleBulkAction('approve')}
+                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                >
+                  اعتماد ونشر
+                </button>
+                <button
+                  type="button"
+                  disabled={bulkActionInProgress}
+                  onClick={() => handleBulkAction('archive')}
+                  className="px-3.5 py-2 bg-stone-700 hover:bg-stone-600 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                >
+                  أرشفة
+                </button>
+                <button
+                  type="button"
+                  disabled={bulkActionInProgress}
+                  onClick={() => handleBulkAction('feature')}
+                  className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                >
+                  تمييز ⭐
+                </button>
+                <button
+                  type="button"
+                  disabled={bulkActionInProgress}
+                  onClick={() => handleBulkAction('reject')}
+                  className="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                >
+                  رفض
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds([])}
+                  className="px-3.5 py-2 bg-black/20 dark:bg-black/10 hover:bg-black/30 rounded-xl text-xs font-bold cursor-pointer"
+                >
+                  إلغاء التحديد
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Internal Search Bar for active subtab */}
+          {activeSubTab !== 'overview' && activeSubTab !== 'map' && activeSubTab !== 'relationships' && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white/75 dark:bg-[#151513]/90 p-3.5 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={internalSearch}
+                  onChange={(e) => setInternalSearch(e.target.value)}
+                  placeholder={`البحث داخل محتوى ${activeGov.name}...`}
+                  className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl pr-10 pl-4 py-2 border border-black/10 dark:border-white/10 outline-none"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeSubTab === 'cities_villages') setEditingEntityType('city');
+                    else if (activeSubTab === 'places_heritage') setEditingEntityType('place');
+                    else if (activeSubTab === 'crafts') setEditingEntityType('craft');
+                    else if (activeSubTab === 'food') setEditingEntityType('food');
+                    else if (activeSubTab === 'people_artisans') setEditingEntityType('person');
+                    else if (activeSubTab === 'stories') setEditingEntityType('story');
+                    else if (activeSubTab === 'events_seasons') setEditingEntityType('event');
+                    setEditingItem(null);
+                    setIsEditModalOpen(true);
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>إضافة عنصر في هذا القسم</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 1: OVERVIEW & PROFILE (الملف التعريفي الكامل)      */}
+          {/* ======================================================= */}
+          {activeSubTab === 'overview' && (
+            <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
+              <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
+                <div>
+                  <h3 className="text-lg font-bold font-serif">الملف التعريفي الشامل لمحافظة {activeGov.name}</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">يمكن للإدارة تعديل كافة بيانات المحافظة مباشرة وحفظها في قاعدة البيانات.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingEntityType('governorate');
+                    setEditingItem(activeGov);
+                    setIsEditModalOpen(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  <Edit className="w-4 h-4" />
+                  <span>تحرير الحقول</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+                <div className="space-y-3">
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الاسم بالعربية:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl font-bold">{activeGov.name}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">اللقب الشعبي والتاريخي:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">العاصمة الإقليمية:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الإقليم الجغرافي:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الموقع النيلي:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">المقدمة والنبذة الموجزة:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">العمق التاريخي والتراثي:</span>
+                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl leading-relaxed">{activeGov.history}</div>
+                  </div>
+                  <div>
+                    <span className="font-bold text-black/50 dark:text-white/50 block mb-1">أبرز ما تشتهر به المحافظة:</span>
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">
+                      {activeGov.famousFor?.map((f, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-white dark:bg-[#151513] rounded-md font-bold text-[#9a6a35]">
+                          {f}
+                        </span>
                       ))}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* ======================================================= */}
-            {/* SUBTAB 3: PLACES & HERITAGE (الأماكن والمعالم التراثية)   */}
-            {/* ======================================================= */}
-            {activeSubTab === 'places_heritage' && (
-              <div className="space-y-4">
-                {places.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                    <Landmark className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                    <h3 className="text-base font-bold">لا توجد معالم أو أماكن موثقة بعد في {activeGov.name}</h3>
-                    <p className="text-xs text-[#73675B] mt-1">استخدم زر "إضافة محتوى سريع" لتوثيق معلم جديد.</p>
-                  </div>
+          {/* ======================================================= */}
+          {/* SUBTAB 2: CITIES & VILLAGES (المدن والقرى)               */}
+          {/* ======================================================= */}
+          {activeSubTab === 'cities_villages' && (
+            <div className="space-y-6">
+              {/* Cities Section */}
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-[#9a6a35]" />
+                    <span>مدن ومراكز محافظة {activeGov.name} ({cities.length})</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingEntityType('city');
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة مدينة</span>
+                  </button>
+                </div>
+
+                {cities.length === 0 ? (
+                  <p className="text-xs text-black/60 dark:text-white/60 text-center py-6">لم يتم تسجيل مدن تابعة لهذه المحافظة بعد.</p>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {places
-                      .filter((p) => !internalSearch || p.title.toLowerCase().includes(internalSearch.toLowerCase()))
-                      .map((place) => {
-                        const isChecked = selectedIds.includes(place.id);
-                        return (
-                          <div
-                            key={place.id}
-                            className={`bg-white dark:bg-[#1E1917] rounded-2xl border transition-all p-5 shadow-xs flex flex-col justify-between ${
-                              isChecked ? 'border-[#B24C2B] ring-2 ring-[#B24C2B]/20' : 'border-[#E5DDD3] dark:border-[#352B24]'
-                            }`}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {cities.map((city) => (
+                      <div key={city.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-sm">{city.name}</h4>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirmation({ isOpen: true, item: city, entityType: 'cities' })}
+                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
                           >
-                            <div>
-                              <div className="flex items-start justify-between gap-2 mb-3">
-                                <input
-                                  type="checkbox"
-                                  checked={isChecked}
-                                  onChange={(e) => {
-                                    if (e.target.checked) setSelectedIds((prev) => [...prev, place.id]);
-                                    else setSelectedIds((prev) => prev.filter((id) => id !== place.id));
-                                  }}
-                                  className="w-4 h-4 rounded border-stone-300 text-[#B24C2B] focus:ring-[#B24C2B] mt-1 cursor-pointer"
-                                />
-                                <div className="flex items-center gap-3 flex-1">
-                                  <img
-                                    src={place.coverImage || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=200'}
-                                    alt={place.title}
-                                    className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
-                                  />
-                                  <div>
-                                    <h4 className="font-bold text-sm line-clamp-1">{place.title}</h4>
-                                    <span className="text-[11px] text-[#B24C2B] font-bold">{place.category}</span>
-                                  </div>
-                                </div>
-                                {renderStatusBadge(place.status)}
-                              </div>
-                              <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-2 leading-relaxed">
-                                {place.description}
-                              </p>
-                              {place.locationName && (
-                                <p className="text-[11px] text-[#73675B] flex items-center gap-1">
-                                  <MapPin className="w-3 h-3 text-[#B24C2B]" />
-                                  <span>{place.locationName}</span>
-                                </p>
-                              )}
-                            </div>
-
-                            <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => {
-                                    setEditingEntityType('place');
-                                    setEditingItem(place);
-                                    setIsEditModalOpen(true);
-                                  }}
-                                  className="p-1.5 rounded-lg border border-[#E5DDD3] text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer"
-                                  title="تعديل"
-                                >
-                                  <Edit className="w-3.5 h-3.5" />
-                                </button>
-                                <button
-                                  onClick={() => setDeleteConfirmation({ isOpen: true, item: place, entityType: 'places' })}
-                                  className="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 cursor-pointer"
-                                  title="حذف"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                              <span className="text-[10px] text-[#73675B] font-bold">إحداثيات: {place.coordinates ? 'موثقة ✓' : 'غير محددة'}</span>
-                            </div>
-                          </div>
-                        );
-                      })}
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{city.shortDescription || 'مركز تراثي وتجاري عريق.'}</p>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
-            )}
 
-            {/* ======================================================= */}
-            {/* SUBTAB 4: CRAFTS (الحرف والتراث)                        */}
-            {/* ======================================================= */}
-            {activeSubTab === 'crafts' && (
-              <div className="space-y-4">
-                {crafts.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                    <Hammer className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                    <h3 className="text-base font-bold">لا توجد حرف موثقة لهذه المحافظة حالياً</h3>
-                    <p className="text-xs text-[#73675B] mt-1">وثّق الحرف التقليدية وأنوال النسيج والفخار والخوص الخاصة بـ {activeGov.name}.</p>
-                  </div>
+              {/* Villages Section */}
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <Compass className="w-4 h-4 text-[#9a6a35]" />
+                    <span>القرى والنجوع التراثية ({villages.length})</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingEntityType('village');
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة قرية</span>
+                  </button>
+                </div>
+
+                {villages.length === 0 ? (
+                  <p className="text-xs text-black/60 dark:text-white/60 text-center py-6">لم يتم تسجيل قرى تراثية لهذه المحافظة بعد.</p>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {crafts
-                      .filter((c) => !internalSearch || c.title.toLowerCase().includes(internalSearch.toLowerCase()))
-                      .map((craft) => (
-                        <div key={craft.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {villages.map((v) => (
+                      <div key={v.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-sm">{v.name}</h4>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirmation({ isOpen: true, item: v, entityType: 'villages' })}
+                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{v.description || 'قرية تحتضن موروثاً حرفياً.'}</p>
+                        {v.traditionalCraftName && (
+                          <span className="inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-[#151513] text-[#9a6a35] border border-black/10 dark:border-white/10">
+                            الحرفة: {v.traditionalCraftName}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 3: PLACES & HERITAGE (الأماكن والمعالم التراثية)   */}
+          {/* ======================================================= */}
+          {activeSubTab === 'places_heritage' && (
+            <div className="space-y-4">
+              {places.length === 0 ? (
+                <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <Landmark className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+                  <h3 className="text-base font-bold">لا توجد معالم أو أماكن موثقة بعد في {activeGov.name}</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">استخدم زر "إضافة محتوى سريع" لتوثيق معلم جديد.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {places
+                    .filter((p) => !internalSearch || p.title.toLowerCase().includes(internalSearch.toLowerCase()))
+                    .map((place) => {
+                      const isChecked = selectedIds.includes(place.id);
+                      return (
+                        <div
+                          key={place.id}
+                          className={`bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border transition-all p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between ${
+                            isChecked ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/20' : 'border-black/10 dark:border-white/10'
+                          }`}
+                        >
                           <div>
                             <div className="flex items-start justify-between gap-2 mb-3">
-                              <div className="flex items-center gap-3">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  if (e.target.checked) setSelectedIds((prev) => [...prev, place.id]);
+                                  else setSelectedIds((prev) => prev.filter((id) => id !== place.id));
+                                }}
+                                className="w-4 h-4 rounded border-black/20 text-[#9a6a35] focus:ring-[#9a6a35] mt-1 cursor-pointer"
+                              />
+                              <div className="flex items-center gap-3 flex-1">
                                 <img
-                                  src={craft.coverImage || 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=200'}
-                                  alt={craft.title}
-                                  className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
+                                  src={place.coverImage || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=200'}
+                                  alt={place.title}
+                                  className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10"
                                 />
                                 <div>
-                                  <h4 className="font-bold text-sm">{craft.title}</h4>
-                                  <span className="text-[10px] text-[#B24C2B] font-bold">حرفة أصيلة</span>
+                                  <h4 className="font-bold text-sm line-clamp-1">{place.title}</h4>
+                                  <span className="text-[11px] text-[#9a6a35] font-bold">{place.category}</span>
                                 </div>
                               </div>
-                              {renderStatusBadge(craft.status)}
+                              {renderStatusBadge(place.status)}
                             </div>
-                            <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-3">
-                              {craft.shortDescription || craft.history}
+                            <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-2 leading-relaxed">
+                              {place.description}
                             </p>
-                            {craft.materials && (
-                              <p className="text-[10px] text-[#73675B]">المواد: {craft.materials.slice(0, 2).join('، ')}</p>
+                            {place.locationName && (
+                              <p className="text-[11px] text-black/50 dark:text-white/50 flex items-center gap-1">
+                                <MapPin className="w-3 h-3 text-[#9a6a35]" />
+                                <span>{place.locationName}</span>
+                              </p>
                             )}
                           </div>
 
-                          <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
+                          <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
                             <div className="flex items-center gap-2">
                               <button
+                                type="button"
                                 onClick={() => {
-                                  setEditingEntityType('craft');
-                                  setEditingItem(craft);
+                                  setEditingEntityType('place');
+                                  setEditingItem(place);
                                   setIsEditModalOpen(true);
                                 }}
-                                className="p-1.5 rounded-lg border border-[#E5DDD3] text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer"
+                                className="p-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/5 hover:bg-black/5 text-xs font-bold cursor-pointer"
+                                title="تعديل"
                               >
                                 <Edit className="w-3.5 h-3.5" />
                               </button>
                               <button
-                                onClick={() => setDeleteConfirmation({ isOpen: true, item: craft, entityType: 'crafts' })}
-                                className="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 cursor-pointer"
+                                type="button"
+                                onClick={() => setDeleteConfirmation({ isOpen: true, item: place, entityType: 'places' })}
+                                className="p-2 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold cursor-pointer"
+                                title="حذف"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
-                            <span className="text-[10px] text-emerald-600 font-bold">مسجلة بالتوثيق</span>
+                            <span className="text-[10px] text-black/40 dark:text-white/40 font-bold">إحداثيات: {place.coordinates ? 'موثقة ✓' : 'غير محددة'}</span>
                           </div>
                         </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-            )}
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          )}
 
-            {/* ======================================================= */}
-            {/* SUBTAB 5: FOOD (أكلات وتراث المطبخ)                    */}
-            {/* ======================================================= */}
-            {activeSubTab === 'food' && (
-              <div className="space-y-4">
-                {foods.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                    <Utensils className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                    <h3 className="text-base font-bold">لا توجد أكلات موثقة لـ {activeGov.name} حالياً</h3>
-                    <p className="text-xs text-[#73675B] mt-1">وثّق المخبوزات والوصفات التاريخية المرتبطة بهذه المحافظة.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {foods.map((food) => (
-                      <div key={food.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h4 className="font-bold text-base">{food.title}</h4>
-                            {renderStatusBadge(food.status)}
-                          </div>
-                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-3">
-                            {food.description || food.originStory}
-                          </p>
-                          {food.ingredients && (
-                            <p className="text-[10px] text-[#73675B]">المكونات: {food.ingredients.slice(0, 3).join('، ')}</p>
-                          )}
-                        </div>
-
-                        <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
-                          <button
-                            onClick={() => setDeleteConfirmation({ isOpen: true, item: food, entityType: 'food' })}
-                            className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>حذف</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingEntityType('food');
-                              setEditingItem(food);
-                              setIsEditModalOpen(true);
-                            }}
-                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
-                          >
-                            تعديل الوصفة
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 6: PEOPLE & ARTISANS (الناس والحرفيين)          */}
-            {/* ======================================================= */}
-            {activeSubTab === 'people_artisans' && (
-              <div className="space-y-4">
-                {people.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                    <Users className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                    <h3 className="text-base font-bold">لا يوجد شيوخ صنعة أو حرفيين مسجلين حالياً</h3>
-                    <p className="text-xs text-[#73675B] mt-1">وثّق أسماء وخبرات شيوخ الصنعة وحراس التراث في {activeGov.name}.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {people.map((person) => (
-                      <div key={person.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
+          {/* ======================================================= */}
+          {/* SUBTAB 4: CRAFTS (الحرف والتراث)                         */}
+          {/* ======================================================= */}
+          {activeSubTab === 'crafts' && (
+            <div className="space-y-4">
+              {crafts.length === 0 ? (
+                <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <Hammer className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+                  <h3 className="text-base font-bold">لا توجد حرف موثقة لهذه المحافظة حالياً</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">وثّق الحرف التقليدية وأنوال النسيج والفخار والخوص الخاصة بـ {activeGov.name}.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {crafts
+                    .filter((c) => !internalSearch || c.title.toLowerCase().includes(internalSearch.toLowerCase()))
+                    .map((craft) => (
+                      <div key={craft.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between">
                         <div>
                           <div className="flex items-start justify-between gap-2 mb-3">
                             <div className="flex items-center gap-3">
                               <img
-                                src={person.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120'}
-                                alt={person.name}
-                                className="w-12 h-12 rounded-xl object-cover border border-[#E5DDD3]"
+                                src={craft.coverImage || 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?w=200'}
+                                alt={craft.title}
+                                className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10"
                               />
                               <div>
-                                <h4 className="font-bold text-sm">{person.name}</h4>
-                                <p className="text-xs text-[#B24C2B] font-bold">{person.titleOrRole}</p>
+                                <h4 className="font-bold text-sm">{craft.title}</h4>
+                                <span className="text-[10px] text-[#9a6a35] font-bold">حرفة أصيلة</span>
                               </div>
                             </div>
-                            {renderStatusBadge(person.status)}
+                            {renderStatusBadge(craft.status)}
                           </div>
-                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-2 mb-2">
-                            {person.biography}
+                          <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-3 leading-relaxed">
+                            {craft.shortDescription || craft.history}
                           </p>
-                          <p className="text-[11px] text-[#73675B]">المهنة / المهارة: {person.craftOrSkill}</p>
+                          {craft.materials && (
+                            <p className="text-[10px] text-black/50 dark:text-white/50">المواد: {craft.materials.slice(0, 2).join('، ')}</p>
+                          )}
                         </div>
 
-                        <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
-                          <button
-                            onClick={() => setDeleteConfirmation({ isOpen: true, item: person, entityType: 'people' })}
-                            className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>حذف</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingEntityType('person');
-                              setEditingItem(person);
-                              setIsEditModalOpen(true);
-                            }}
-                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
-                          >
-                            تعديل السيرة
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 7: WAH STORIES (وه بيحكي)                        */}
-            {/* ======================================================= */}
-            {activeSubTab === 'stories' && (
-              <div className="space-y-4">
-                {stories.length === 0 ? (
-                  <div className="text-center py-16 bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24]">
-                    <BookOpen className="w-12 h-12 text-[#73675B] mx-auto mb-3" />
-                    <h3 className="text-base font-bold">لا توجد حكايات موثقة لهذه المحافظة في وه بيحكي</h3>
-                    <p className="text-xs text-[#73675B] mt-1">وثّق المرويات الشفاهية والأساطير الشعبية لـ {activeGov.name}.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {stories.map((story) => (
-                      <div key={story.id} className="bg-white dark:bg-[#1E1917] rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] p-5 shadow-xs flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <span className="text-[11px] font-bold text-[#B24C2B]">وه بيحكي</span>
-                            {renderStatusBadge(story.status)}
-                          </div>
-                          <h4 className="font-bold text-base mb-1">{story.title}</h4>
-                          <p className="text-xs text-[#73675B] dark:text-[#A89C90] line-clamp-3 mb-3 leading-relaxed">
-                            {story.excerpt || story.content}
-                          </p>
-                          <p className="text-[10px] text-[#73675B]">الراوي / الكاتب: {story.authorName} • قراءة {story.readingTimeMinutes || 3} د</p>
-                        </div>
-
-                        <div className="pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622] flex items-center justify-between mt-3">
-                          <button
-                            onClick={() => setDeleteConfirmation({ isOpen: true, item: story, entityType: 'stories' })}
-                            className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>حذف</span>
-                          </button>
-                          <button
-                            onClick={() => {
-                              setEditingEntityType('story');
-                              setEditingItem(story);
-                              setIsEditModalOpen(true);
-                            }}
-                            className="text-xs text-[#B24C2B] hover:underline font-bold cursor-pointer"
-                          >
-                            تعديل الحكاية
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 8: EVENTS & SEASONS (الفعاليات والمواسم)         */}
-            {/* ======================================================= */}
-            {activeSubTab === 'events_seasons' && (
-              <div className="space-y-6">
-                {/* Seasons Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Wheat className="w-4 h-4 text-amber-600" />
-                      <span>مواسم الحصاد والتراث التلقائي ({seasons.length})</span>
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setEditingEntityType('season');
-                        setEditingItem(null);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>إضافة موسم</span>
-                    </button>
-                  </div>
-
-                  {seasons.length === 0 ? (
-                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل مواسم حصاد أو زراعة خاصة بهذه المحافظة.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {seasons.map((s) => (
-                        <div key={s.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
-                              {s.startPeriod} - {s.endPeriod}
-                            </span>
+                        <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-2">
                             <button
-                              onClick={() => setDeleteConfirmation({ isOpen: true, item: s, entityType: 'seasons' })}
-                              className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                              type="button"
+                              onClick={() => {
+                                setEditingEntityType('craft');
+                                setEditingItem(craft);
+                                setIsEditModalOpen(true);
+                              }}
+                              className="p-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/5 hover:bg-black/5 text-xs font-bold cursor-pointer"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeleteConfirmation({ isOpen: true, item: craft, entityType: 'crafts' })}
+                              className="p-2 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
-                          <h4 className="font-bold text-sm">{s.title}</h4>
-                          <p className="text-xs text-[#73675B] line-clamp-2">{s.description}</p>
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">مسجلة بالتوثيق</span>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </div>
+                    ))}
                 </div>
+              )}
+            </div>
+          )}
 
-                {/* Cultural Events Section */}
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-[#B24C2B]" />
-                      <span>المهرجانات والموالد والفعاليات ({events.length})</span>
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setEditingEntityType('event');
-                        setEditingItem(null);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="px-3 py-1.5 bg-[#FAF7F2] dark:bg-[#26201B] hover:bg-[#E5DDD3] rounded-xl text-xs font-bold text-[#B24C2B] flex items-center gap-1 cursor-pointer"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>إضافة فعالية</span>
-                    </button>
-                  </div>
-
-                  {events.length === 0 ? (
-                    <p className="text-xs text-[#73675B] text-center py-6">لم يتم تسجيل فعاليات دورية لهذه المحافظة بعد.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {events.map((ev) => (
-                        <div key={ev.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] text-[#B24C2B] font-bold">{ev.eventDate}</span>
-                            <button
-                              onClick={() => setDeleteConfirmation({ isOpen: true, item: ev, entityType: 'events' })}
-                              className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                          <h4 className="font-bold text-sm">{ev.title}</h4>
-                          <p className="text-xs text-[#73675B] line-clamp-2">{ev.description}</p>
+          {/* ======================================================= */}
+          {/* SUBTAB 5: FOOD (أكلات وتراث المطبخ)                     */}
+          {/* ======================================================= */}
+          {activeSubTab === 'food' && (
+            <div className="space-y-4">
+              {foods.length === 0 ? (
+                <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <Utensils className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+                  <h3 className="text-base font-bold">لا توجد أكلات موثقة لـ {activeGov.name} حالياً</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">وثّق المخبوزات والوصفات التاريخية المرتبطة بهذه المحافظة.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {foods.map((food) => (
+                    <div key={food.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h4 className="font-bold text-base">{food.title}</h4>
+                          {renderStatusBadge(food.status)}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-3 leading-relaxed">
+                          {food.description || food.originStory}
+                        </p>
+                        {food.ingredients && (
+                          <p className="text-[10px] text-black/50 dark:text-white/50">المكونات: {food.ingredients.slice(0, 3).join('، ')}</p>
+                        )}
+                      </div>
 
-            {/* ======================================================= */}
-            {/* SUBTAB 9: MARKETPLACE PRODUCTS (منتجات سوق وه)          */}
-            {/* ======================================================= */}
-            {activeSubTab === 'products' && (
-              <div className="space-y-4">
-                <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6">
-                  <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4 mb-4">
-                    <div>
-                      <h3 className="text-base font-bold font-serif">منتجات سوق وه المصنوعة في {activeGov.name} ({products.length})</h3>
-                      <p className="text-xs text-[#73675B] mt-0.5">المنتجات المرتبطة بحرفيي وتجار هذه المحافظة في المتجر المباشر.</p>
-                    </div>
-                  </div>
-
-                  {products.length === 0 ? (
-                    <div className="text-center py-12 text-[#73675B]">
-                      <ShoppingBag className="w-10 h-10 mx-auto mb-2 opacity-40" />
-                      <p className="text-xs font-bold">لا توجد منتجات مسجلة لصالح تجار هذه المحافظة في المتجر حالياً.</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {products.map((prod) => (
-                        <div key={prod.id} className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex items-center gap-3">
-                          <img
-                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200'}
-                            alt={prod.title}
-                            className="w-16 h-16 rounded-xl object-cover border border-[#E5DDD3]"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-xs truncate">{prod.title}</h4>
-                            <p className="text-[11px] text-[#B24C2B] font-bold mt-0.5">{prod.price} ج.م</p>
-                            <span className="text-[10px] text-[#73675B] block">البائع: {prod.sellerName || 'حرفي محلي'}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 10: GOVERNORATE MAP (خريطة المحافظة وإحداثياتها) */}
-            {/* ======================================================= */}
-            {activeSubTab === 'map' && (
-              <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-3">
-                  <div>
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <MapIcon className="w-4 h-4 text-[#B24C2B]" />
-                      <span>الخريطة التفاعلية لمحافظة {activeGov.name}</span>
-                    </h3>
-                    <p className="text-xs text-[#73675B] mt-0.5">تظهر كافة المعالم والأماكن الموثقة بإحداثيات GPS في قاعدة البيانات.</p>
-                  </div>
-                </div>
-
-                <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-900 border border-[#E5DDD3] dark:border-[#352B24] flex items-center justify-center p-6 text-center">
-                  <div className="space-y-2">
-                    <MapPin className="w-10 h-10 text-[#B24C2B] mx-auto animate-bounce" />
-                    <h4 className="font-bold text-sm">مستودع إحداثيات {activeGov.name}</h4>
-                    <p className="text-xs text-[#73675B] max-w-md">
-                      تم ربط {places.filter((p) => !!p.coordinates).length} معلماً بإحداثيات حية. تظهر هذه النقاط تلقائياً على خريطة وه العامة وخريطة استكشاف الصعيد التفاعلية.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Coordinates list */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
-                  {places.map((p) => (
-                    <div key={p.id} className="p-3 bg-[#FAF7F2] dark:bg-[#26201B] rounded-xl text-xs space-y-1">
-                      <div className="font-bold truncate">{p.title}</div>
-                      <div className="text-[10px] text-[#73675B]">
-                        إحداثيات: {p.coordinates ? `${p.coordinates.lat}, ${p.coordinates.lng}` : 'غير مدخلة'}
+                      <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmation({ isOpen: true, item: food, entityType: 'food' })}
+                          className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>حذف</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingEntityType('food');
+                            setEditingItem(food);
+                            setIsEditModalOpen(true);
+                          }}
+                          className="text-xs text-[#9a6a35] hover:underline font-bold cursor-pointer"
+                        >
+                          تعديل الوصفة
+                        </button>
                       </div>
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+          )}
 
-            {/* ======================================================= */}
-            {/* SUBTAB 11: RELATIONSHIP MANAGER (مدير شبكة العلاقات)     */}
-            {/* ======================================================= */}
-            {activeSubTab === 'relationships' && (
-              <RelationshipManagerSection
-                governorate={activeGov}
-                crafts={crafts}
-                people={people}
-                places={places}
-                stories={stories}
-                seasons={seasons}
-                foods={foods}
-                onSuccess={() => loadGovernorateData(activeGov.id)}
-              />
-            )}
-
-            {/* ======================================================= */}
-            {/* SUBTAB 12: PENDING REVIEW QUEUE (طابور مراجعة المحتوى)  */}
-            {/* ======================================================= */}
-            {activeSubTab === 'pending_review' && (
-              <PendingReviewSection
-                governorate={activeGov}
-                places={places}
-                crafts={crafts}
-                foods={foods}
-                people={people}
-                stories={stories}
-                events={events}
-                seasons={seasons}
-                onSuccess={() => loadGovernorateData(activeGov.id)}
-              />
-            )}
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* MODAL 1: ACTION CENTER MODAL (إضافة محتوى سريع للمحافظة)                 */}
-        {/* ========================================================================= */}
-        {isActionCenterOpen && activeGov && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl space-y-5">
-              <div className="flex items-center justify-between border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
-                <div>
-                  <h3 className="text-lg font-bold font-serif">إضافة محتوى لمحافظة {activeGov.name}</h3>
-                  <p className="text-xs text-[#73675B] mt-0.5">اختر نوع الكيان المطلوب إضافته وتوثيقه في قاعدة البيانات:</p>
+          {/* ======================================================= */}
+          {/* SUBTAB 6: PEOPLE & ARTISANS (الناس والحرفيين)             */}
+          {/* ======================================================= */}
+          {activeSubTab === 'people_artisans' && (
+            <div className="space-y-4">
+              {people.length === 0 ? (
+                <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <Users className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+                  <h3 className="text-base font-bold">لا يوجد شيوخ صنعة أو حرفيين مسجلين حالياً</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">وثّق أسماء وخبرات شيوخ الصنعة وحراس التراث في {activeGov.name}.</p>
                 </div>
-                <button onClick={() => setIsActionCenterOpen(false)} className="p-1.5 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer">
-                  <X className="w-5 h-5" />
-                </button>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {people.map((person) => (
+                    <div key={person.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-2 mb-3">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={person.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120'}
+                              alt={person.name}
+                              className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                            />
+                            <div>
+                              <h4 className="font-bold text-sm">{person.name}</h4>
+                              <p className="text-xs text-[#9a6a35] font-bold">{person.titleOrRole}</p>
+                            </div>
+                          </div>
+                          {renderStatusBadge(person.status)}
+                        </div>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-2 leading-relaxed">
+                          {person.biography}
+                        </p>
+                        <p className="text-[11px] text-black/50 dark:text-white/50">المهنة / المهارة: {person.craftOrSkill}</p>
+                      </div>
+
+                      <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmation({ isOpen: true, item: person, entityType: 'people' })}
+                          className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>حذف</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingEntityType('person');
+                            setEditingItem(person);
+                            setIsEditModalOpen(true);
+                          }}
+                          className="text-xs text-[#9a6a35] hover:underline font-bold cursor-pointer"
+                        >
+                          تعديل السيرة
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 7: WAH STORIES (وه بيحكي)                         */}
+          {/* ======================================================= */}
+          {activeSubTab === 'stories' && (
+            <div className="space-y-4">
+              {stories.length === 0 ? (
+                <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <BookOpen className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
+                  <h3 className="text-base font-bold">لا توجد حكايات موثقة لهذه المحافظة في وه بيحكي</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">وثّق المرويات الشفاهية والأساطير الشعبية لـ {activeGov.name}.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {stories.map((story) => (
+                    <div key={story.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <span className="text-[11px] font-bold text-[#9a6a35]">وه بيحكي</span>
+                          {renderStatusBadge(story.status)}
+                        </div>
+                        <h4 className="font-bold text-base mb-1">{story.title}</h4>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-3 mb-3 leading-relaxed">
+                          {story.excerpt || story.content}
+                        </p>
+                        <p className="text-[10px] text-black/50 dark:text-white/50">الراوي / الكاتب: {story.authorName} • قراءة {story.readingTimeMinutes || 3} د</p>
+                      </div>
+
+                      <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
+                        <button
+                          type="button"
+                          onClick={() => setDeleteConfirmation({ isOpen: true, item: story, entityType: 'stories' })}
+                          className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>حذف</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingEntityType('story');
+                            setEditingItem(story);
+                            setIsEditModalOpen(true);
+                          }}
+                          className="text-xs text-[#9a6a35] hover:underline font-bold cursor-pointer"
+                        >
+                          تعديل الحكاية
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 8: EVENTS & SEASONS (الفعاليات والمواسم)           */}
+          {/* ======================================================= */}
+          {activeSubTab === 'events_seasons' && (
+            <div className="space-y-6">
+              {/* Seasons Section */}
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <Wheat className="w-4 h-4 text-amber-500" />
+                    <span>مواسم الحصاد والتراث التلقائي ({seasons.length})</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingEntityType('season');
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة موسم</span>
+                  </button>
+                </div>
+
+                {seasons.length === 0 ? (
+                  <p className="text-xs text-black/60 dark:text-white/60 text-center py-6">لم يتم تسجيل مواسم حصاد أو زراعة خاصة بهذه المحافظة.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {seasons.map((s) => (
+                      <div key={s.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+                            {s.startPeriod} - {s.endPeriod}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirmation({ isOpen: true, item: s, entityType: 'seasons' })}
+                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <h4 className="font-bold text-sm">{s.title}</h4>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{s.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {[
-                  { type: 'place', label: 'إضافة مكان / معلم', icon: Landmark, color: 'text-amber-600' },
-                  { type: 'craft', label: 'إضافة حرفة أصيلة', icon: Hammer, color: 'text-orange-600' },
-                  { type: 'food', label: 'إضافة أكلة تراثية', icon: Utensils, color: 'text-rose-600' },
-                  { type: 'person', label: 'إضافة شيخ صنعة / حرفي', icon: Users, color: 'text-indigo-600' },
-                  { type: 'story', label: 'إضافة قصة في وه بيحكي', icon: BookOpen, color: 'text-emerald-600' },
-                  { type: 'event', label: 'إضافة فعالية ثقافية', icon: Calendar, color: 'text-teal-600' },
-                  { type: 'season', label: 'إضافة موسم حصاد', icon: Wheat, color: 'text-yellow-600' },
-                  { type: 'city', label: 'إضافة مدينة / مركز', icon: MapPin, color: 'text-blue-600' },
-                  { type: 'village', label: 'إضافة قرية تراثية', icon: Compass, color: 'text-purple-600' }
-                ].map((act, idx) => {
-                  const Icon = act.icon;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => {
-                        setIsActionCenterOpen(false);
-                        setEditingEntityType(act.type);
-                        setEditingItem(null);
-                        setIsEditModalOpen(true);
-                      }}
-                      className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] hover:border-[#B24C2B] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
-                    >
-                      <Icon className={`w-6 h-6 ${act.color} group-hover:scale-110 transition-transform`} />
-                      <span className="text-xs font-bold leading-tight">{act.label}</span>
-                    </button>
-                  );
-                })}
+              {/* Cultural Events Section */}
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#9a6a35]" />
+                    <span>المهروجانات والموالد والفعاليات ({events.length})</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingEntityType('event');
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة فعالية</span>
+                  </button>
+                </div>
+
+                {events.length === 0 ? (
+                  <p className="text-xs text-black/60 dark:text-white/60 text-center py-6">لم يتم تسجيل فعاليات دورية لهذه المحافظة بعد.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {events.map((ev) => (
+                      <div key={ev.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] text-[#9a6a35] font-bold">{ev.eventDate}</span>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteConfirmation({ isOpen: true, item: ev, entityType: 'events' })}
+                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <h4 className="font-bold text-sm">{ev.title}</h4>
+                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{ev.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ========================================================================= */}
-        {/* MODAL 2: SAFE DELETION / ARCHIVAL CONFIRMATION MODAL                      */}
-        {/* ========================================================================= */}
-        {deleteConfirmation && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#1E1917] rounded-3xl p-6 sm:p-8 max-w-md w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl space-y-4 text-center">
-              <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
-                <AlertCircle className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-bold">تأكيد عملية الحذف أو الأرشفة</h3>
-              <p className="text-xs text-[#73675B] leading-relaxed">
-                هل أنت متأكد من رغبتك في حذف السجل "{deleteConfirmation.item.name || deleteConfirmation.item.title}"؟ لا يمكن التراجع عن هذه العملية بعد التنفيذ.
-              </p>
+          {/* ======================================================= */}
+          {/* SUBTAB 9: MARKETPLACE PRODUCTS (منتجات سوق وه)           */}
+          {/* ======================================================= */}
+          {activeSubTab === 'products' && (
+            <div className="space-y-4">
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4 mb-4">
+                  <div>
+                    <h3 className="text-base font-bold font-serif">منتجات سوق وه المصنوعة في {activeGov.name} ({products.length})</h3>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">المنتجات المرتبطة بحرفيي وتجار هذه المحافظة في المتجر المباشر.</p>
+                  </div>
+                </div>
 
-              <div className="flex items-center justify-center gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setDeleteConfirmation(null)}
-                  className="px-4 py-2 rounded-xl border border-[#E5DDD3] text-xs font-bold text-[#73675B] cursor-pointer"
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="button"
-                  disabled={isDeleting}
-                  onClick={executeSafeDelete}
-                  className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all disabled:opacity-50 cursor-pointer"
-                >
-                  {isDeleting ? 'جاري التنفيذ...' : 'تأكيد الحذف النهائي'}
-                </button>
+                {products.length === 0 ? (
+                  <div className="text-center py-12 text-black/50 dark:text-white/50">
+                    <ShoppingBag className="w-10 h-10 mx-auto mb-2 opacity-40" />
+                    <p className="text-xs font-bold">لا توجد منتجات مسجلة لصالح تجار هذه المحافظة في المتجر حالياً.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {products.map((prod) => (
+                      <div key={prod.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 flex items-center gap-3">
+                        <img
+                          src={prod.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200'}
+                          alt={prod.title}
+                          className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-xs truncate">{prod.title}</h4>
+                          <p className="text-[11px] text-[#9a6a35] font-bold mt-0.5">{prod.price} ج.م</p>
+                          <span className="text-[10px] text-black/50 dark:text-white/50 block">البائع: {prod.sellerName || 'حرفي محلي'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* ========================================================================= */}
-        {/* MODAL 3: COMPREHENSIVE ENTITY EDIT & CREATION MODAL                       */}
-        {/* ========================================================================= */}
-        {isEditModalOpen && (
-          <EntityCreationModal
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
-            onSuccess={() => {
-              setIsEditModalOpen(false);
-              if (selectedGovId) loadGovernorateData(selectedGovId);
-              else loadGovernorates();
-            }}
-            entityType={editingEntityType}
-            editingItem={editingItem}
-            lockedGovernorate={activeGov}
-            governorates={governorates}
-            authUser={authUser}
-          />
-        )}
-      </div>
+          {/* ======================================================= */}
+          {/* SUBTAB 10: GOVERNORATE MAP (خريطة المحافظة وإحداثياتها) */}
+          {/* ======================================================= */}
+          {activeSubTab === 'map' && (
+            <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
+              <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                <div>
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <MapIcon className="w-4 h-4 text-[#9a6a35]" />
+                    <span>الخريطة التفاعلية لمحافظة {activeGov.name}</span>
+                  </h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">تظهر كافة المعالم والأماكن الموثقة بإحداثيات GPS في قاعدة البيانات.</p>
+                </div>
+              </div>
+
+              <div className="relative w-full h-80 rounded-2xl overflow-hidden bg-stone-100 dark:bg-stone-900 border border-black/10 dark:border-white/10 flex items-center justify-center p-6 text-center">
+                <div className="space-y-2">
+                  <MapPin className="w-10 h-10 text-[#9a6a35] mx-auto animate-bounce" />
+                  <h4 className="font-bold text-sm">مستودع إحداثيات {activeGov.name}</h4>
+                  <p className="text-xs text-black/60 dark:text-white/60 max-w-md">
+                    تم ربط {places.filter((p) => !!p.coordinates).length} معلماً بإحداثيات حية. تظهر هذه النقاط تلقائياً على خريطة وه العامة وخريطة استكشاف الصعيد التفاعلية.
+                  </p>
+                </div>
+              </div>
+
+              {/* Coordinates list */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+                {places.map((p) => (
+                  <div key={p.id} className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl text-xs space-y-1 border border-black/10 dark:border-white/10">
+                    <div className="font-bold truncate">{p.title}</div>
+                    <div className="text-[10px] text-black/50 dark:text-white/50">
+                      إحداثيات: {p.coordinates ? `${p.coordinates.lat}, ${p.coordinates.lng}` : 'غير مدخلة'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 11: RELATIONSHIP MANAGER (مدير شبكة العلاقات)      */}
+          {/* ======================================================= */}
+          {activeSubTab === 'relationships' && (
+            <RelationshipManagerSection
+              governorate={activeGov}
+              crafts={crafts}
+              people={people}
+              places={places}
+              stories={stories}
+              seasons={seasons}
+              foods={foods}
+              onSuccess={() => loadGovernorateData(activeGov.id)}
+            />
+          )}
+
+          {/* ======================================================= */}
+          {/* SUBTAB 12: PENDING REVIEW QUEUE (طابور مراجعة المحتوى)  */}
+          {/* ======================================================= */}
+          {activeSubTab === 'pending_review' && (
+            <PendingReviewSection
+              governorate={activeGov}
+              places={places}
+              crafts={crafts}
+              foods={foods}
+              people={people}
+              stories={stories}
+              events={events}
+              seasons={seasons}
+              onSuccess={() => loadGovernorateData(activeGov.id)}
+            />
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: ACTION CENTER MODAL (إضافة محتوى سريع للمحافظة)                   */}
+      {/* ========================================================================= */}
+      {isActionCenterOpen && activeGov && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] p-6 sm:p-8 max-w-xl w-full border border-black/10 dark:border-white/10 shadow-2xl space-y-5 backdrop-blur-2xl">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
+              <div>
+                <h3 className="text-lg font-bold font-serif">إضافة محتوى لمحافظة {activeGov.name}</h3>
+                <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">اختر نوع الكيان المطلوب إضافته وتوثيقه في قاعدة البيانات:</p>
+              </div>
+              <button type="button" onClick={() => setIsActionCenterOpen(false)} className="p-1.5 rounded-lg text-black/50 dark:text-white/50 hover:bg-black/5 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {[
+                { type: 'place', label: 'إضافة مكان / معلم', icon: Landmark, color: 'text-amber-500' },
+                { type: 'craft', label: 'إضافة حرفة أصيلة', icon: Hammer, color: 'text-orange-500' },
+                { type: 'food', label: 'إضافة أكلة تراثية', icon: Utensils, color: 'text-rose-500' },
+                { type: 'person', label: 'إضافة شيخ صنعة / حرفي', icon: Users, color: 'text-indigo-500' },
+                { type: 'story', label: 'إضافة قصة في وه بيحكي', icon: BookOpen, color: 'text-emerald-500' },
+                { type: 'event', label: 'إضافة فعالية ثقافية', icon: Calendar, color: 'text-teal-500' },
+                { type: 'season', label: 'إضافة موسم حصاد', icon: Wheat, color: 'text-yellow-500' },
+                { type: 'city', label: 'إضافة مدينة / مركز', icon: MapPin, color: 'text-blue-500' },
+                { type: 'village', label: 'إضافة قرية تراثية', icon: Compass, color: 'text-purple-500' }
+              ].map((act, idx) => {
+                const Icon = act.icon;
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setIsActionCenterOpen(false);
+                      setEditingEntityType(act.type);
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
+                  >
+                    <Icon className={`w-6 h-6 ${act.color} group-hover:scale-110 transition-transform`} />
+                    <span className="text-xs font-bold leading-tight">{act.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: SAFE DELETION / ARCHIVAL CONFIRMATION MODAL                      */}
+      {/* ========================================================================= */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] p-6 sm:p-8 max-w-md w-full border border-black/10 dark:border-white/10 shadow-2xl space-y-4 text-center backdrop-blur-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold">تأكيد عملية الحذف أو الأرشفة</h3>
+            <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+              هل أنت متأكد من رغبتك في حذف السجل "{deleteConfirmation.item.name || deleteConfirmation.item.title}"؟ لا يمكن التراجع عن هذه العملية بعد التنفيذ.
+            </p>
+
+            <div className="flex items-center justify-center gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmation(null)}
+                className="px-4 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-black/70 dark:text-white/70 cursor-pointer"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={executeSafeDelete}
+                className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all disabled:opacity-50 cursor-pointer shadow-md"
+              >
+                {isDeleting ? 'جاري التنفيذ...' : 'تأكيد الحذف النهائي'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: COMPREHENSIVE ENTITY EDIT & CREATION MODAL                       */}
+      {/* ========================================================================= */}
+      {isEditModalOpen && (
+        <EntityCreationModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={() => {
+            setIsEditModalOpen(false);
+            if (selectedGovId) loadGovernorateData(selectedGovId);
+            else loadGovernorates();
+          }}
+          entityType={editingEntityType}
+          editingItem={editingItem}
+          lockedGovernorate={activeGov}
+          governorates={governorates}
+          authUser={authUser}
+        />
+      )}
     </div>
   );
 };
@@ -1713,32 +1734,32 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
-      <div className="border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
+    <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
+      <div className="border-b border-black/10 dark:border-white/10 pb-4">
         <h3 className="text-base font-bold font-serif flex items-center gap-2">
-          <LinkIcon className="w-4 h-4 text-[#B24C2B]" />
+          <LinkIcon className="w-4 h-4 text-[#9a6a35]" />
           <span>مدير شبكة العلاقات التراثية الذكية ({governorate.name})</span>
         </h3>
-        <p className="text-xs text-[#73675B] mt-0.5">
+        <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
           اربط الحرف بالحرفيين، والقصص بالمعالم التراثية، والمواسم بالأكلات دون الحاجة لكتابة معرفات برمجية يدوياً.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Link Craft <-> Artisan */}
-        <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-4">
+        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
-            <Hammer className="w-4 h-4 text-orange-600" />
+            <Hammer className="w-4 h-4 text-orange-500" />
             <span>ربط حرفة أصيلة بشيخ صنعة / حرفي</span>
           </h4>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-[#73675B] mb-1 font-bold">الحرفة التراثية:</label>
+              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">الحرفة التراثية:</label>
               <select
                 value={selectedCraftId}
                 onChange={(e) => setSelectedCraftId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
               >
                 {crafts.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -1749,11 +1770,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs text-[#73675B] mb-1 font-bold">شيخ الصنعة / الحرفي:</label>
+              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">شيخ الصنعة / الحرفي:</label>
               <select
                 value={selectedArtisanId}
                 onChange={(e) => setSelectedArtisanId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
               >
                 {people.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -1764,9 +1785,10 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <button
+              type="button"
               disabled={isLinking || crafts.length === 0 || people.length === 0}
               onClick={handleLinkCraftArtisan}
-              className="w-full py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1774,19 +1796,19 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
         </div>
 
         {/* Link Story <-> Place */}
-        <div className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] space-y-4">
+        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-emerald-600" />
+            <BookOpen className="w-4 h-4 text-emerald-500" />
             <span>ربط قصة في "وه بيحكي" بمعلم تراثي</span>
           </h4>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs text-[#73675B] mb-1 font-bold">الحكاية الشعبية:</label>
+              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">الحكاية الشعبية:</label>
               <select
                 value={selectedStoryId}
                 onChange={(e) => setSelectedStoryId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
               >
                 {stories.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -1797,11 +1819,11 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs text-[#73675B] mb-1 font-bold">المعلم التراثي المرتبط:</label>
+              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">المعلم التراثي المرتبط:</label>
               <select
                 value={selectedPlaceId}
                 onChange={(e) => setSelectedPlaceId(e.target.value)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
               >
                 {places.map((pl) => (
                   <option key={pl.id} value={pl.id}>
@@ -1812,9 +1834,10 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
             </div>
 
             <button
+              type="button"
               disabled={isLinking || stories.length === 0 || places.length === 0}
               onClick={handleLinkStoryPlace}
-              className="w-full py-2 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1876,19 +1899,19 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#1E1917] rounded-3xl border border-[#E5DDD3] dark:border-[#352B24] p-6 sm:p-8 space-y-6">
-      <div className="border-b border-[#F0EAE1] dark:border-[#2D2622] pb-4">
+    <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
+      <div className="border-b border-black/10 dark:border-white/10 pb-4">
         <h3 className="text-base font-bold font-serif flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-amber-600" />
+          <AlertCircle className="w-4 h-4 text-amber-500" />
           <span>طابور مراجعة المحتوى وتدقيق المصادر ({pendingItems.length})</span>
         </h3>
-        <p className="text-xs text-[#73675B] mt-0.5">
+        <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
           وفقاً لميثاق جودة بيانات وه: أي محتوى جديد يبدأ بحالة "يحتاج مراجعة" ومرفق معه المصدر وتاريخ البحث حتى يقرره مدير النظام.
         </p>
       </div>
 
       {pendingItems.length === 0 ? (
-        <div className="text-center py-12 text-[#73675B]">
+        <div className="text-center py-12 text-black/50 dark:text-white/50">
           <CheckCircle2 className="w-10 h-10 mx-auto mb-2 text-emerald-500" />
           <h4 className="font-bold text-sm">كافة السجلات معتمدة ومحققة</h4>
           <p className="text-xs mt-1">لا توجد عناصر بانتظار المراجعة في محافظة {governorate.name}.</p>
@@ -1898,18 +1921,18 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
           {pendingItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-2xl bg-[#FAF7F2] dark:bg-[#26201B] border border-[#E5DDD3] dark:border-[#352B24] flex flex-col md:flex-row md:items-center justify-between gap-4"
+              className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300">
                     {item.typeLabel}
                   </span>
                   <h4 className="font-bold text-sm">{item.title || item.name}</h4>
                 </div>
-                <p className="text-xs text-[#73675B] line-clamp-2">{item.description || item.shortIntro || item.biography}</p>
+                <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{item.description || item.shortIntro || item.biography}</p>
                 {item.sourceName && (
-                  <div className="text-[11px] text-[#B24C2B] flex items-center gap-1 font-bold">
+                  <div className="text-[11px] text-[#9a6a35] flex items-center gap-1 font-bold">
                     <span>المصدر: {item.sourceName}</span>
                     {item.sourceUrl && (
                       <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="underline inline-flex items-center gap-0.5">
@@ -1923,8 +1946,9 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
 
               <div className="flex items-center gap-2 self-end md:self-center">
                 <button
+                  type="button"
                   onClick={() => handleApproveItem(item.entityType, item.id)}
-                  className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   اعتماد ونشر
                 </button>
@@ -2181,38 +2205,38 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-[#1E1917] rounded-2xl sm:rounded-3xl p-4 sm:p-7 max-w-2xl w-full border border-[#E5DDD3] dark:border-[#352B24] shadow-2xl my-4 sm:my-8 max-h-[92vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-4 border-b border-[#F0EAE1] dark:border-[#2D2622] mb-5">
+      <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] p-4 sm:p-7 max-w-2xl w-full border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-2xl my-4 sm:my-8 max-h-[92vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10 mb-5">
           <h3 className="text-lg font-bold font-serif flex items-center gap-2">
-            <Plus className="w-4 h-4 text-[#B24C2B]" />
+            <Plus className="w-4 h-4 text-[#9a6a35]" />
             <span>{editingItem ? 'تعديل السجل في MongoDB' : `توثيق ${entityType} جديد في قاعدة البيانات`}</span>
           </h3>
-          <button onClick={onClose} className="p-1 rounded-lg text-[#73675B] hover:bg-[#FAF7F2] cursor-pointer" aria-label="إغلاق">
+          <button type="button" onClick={onClose} className="p-1 rounded-lg text-black/50 dark:text-white/50 hover:bg-black/5 cursor-pointer" aria-label="إغلاق">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-[#73675B] mb-1">الاسم أو العنوان الرئيسي *</label>
+            <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">الاسم أو العنوان الرئيسي *</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: الدير المحرق، فن التلي، العيش الشمسي..."
-              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold"
+              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold focus:border-[#9a6a35]"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#73675B] mb-1">المحافظة التابعة</label>
+              <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">المحافظة التابعة</label>
               <select
                 value={selectedGovName}
                 onChange={(e) => setSelectedGovName(e.target.value)}
                 disabled={!!lockedGovernorate && !editingItem}
-                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none font-bold disabled:opacity-75"
+                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold disabled:opacity-75 cursor-pointer"
               >
                 {governorates.map((g) => (
                   <option key={g.id} value={g.name}>
@@ -2223,13 +2247,13 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#73675B] mb-1">التصنيف أو الكلمات المفتاحية</label>
+              <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">التصنيف أو الكلمات المفتاحية</label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="مثال: معبد فرعوني، دير، نسيج حرير..."
-                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
           </div>
@@ -2248,14 +2272,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
           {/* Video and Gallery uploaders for places, crafts, and stories */}
           {(entityType === 'place' || entityType === 'craft' || entityType === 'story') && (
-            <div className="space-y-4 pt-2 border-t border-[#F0EAE1] dark:border-[#2D2622]">
-              <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-3.5 sm:p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-2.5">
+            <div className="space-y-4 pt-2 border-t border-black/10 dark:border-white/10">
+              <div className="bg-black/[0.02] dark:bg-white/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-[#B24C2B] flex items-center gap-1.5">
+                  <span className="text-xs font-black text-[#9a6a35] flex items-center gap-1.5">
                     <Video className="w-4 h-4" />
                     <span>مقطع فيديو توثيقي (Cloudinary WAH/videos)</span>
                   </span>
-                  <span className="text-[11px] text-[#73675B]">MP4, WebM حتى 150MB</span>
+                  <span className="text-[11px] text-black/50 dark:text-white/50">MP4, WebM حتى 150MB</span>
                 </div>
                 <AdminMediaUploader
                   entityType={entityType}
@@ -2288,13 +2312,13 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 />
               </div>
 
-              <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-3.5 sm:p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-2.5">
+              <div className="bg-black/[0.02] dark:bg-white/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-black text-[#B24C2B] flex items-center gap-1.5">
+                  <span className="text-xs font-black text-[#9a6a35] flex items-center gap-1.5">
                     <ImageIcon className="w-4 h-4" />
                     <span>معرض صور إضافية للمكان (Gallery)</span>
                   </span>
-                  <span className="text-[11px] text-[#73675B]">{gallery.length} صورة</span>
+                  <span className="text-[11px] text-black/50 dark:text-white/50">{gallery.length} صورة</span>
                 </div>
                 <AdminMediaUploader
                   entityType={entityType}
@@ -2323,83 +2347,83 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[#73675B] mb-1">خط العرض (Latitude)</label>
+              <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">خط العرض (Latitude)</label>
               <input
                 type="number"
                 step="any"
                 value={lat}
                 onChange={(e) => setLat(e.target.value)}
                 placeholder="27.1809"
-                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#73675B] mb-1">خط الطول (Longitude)</label>
+              <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">خط الطول (Longitude)</label>
               <input
                 type="number"
                 step="any"
                 value={lng}
                 onChange={(e) => setLng(e.target.value)}
                 placeholder="31.1837"
-                className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs rounded-xl px-3 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#73675B] mb-1">نبذة موجزة للعرض في البطاقات</label>
+            <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">نبذة موجزة للعرض في البطاقات</label>
             <textarea
               rows={2}
               value={shortDesc}
               onChange={(e) => setShortDesc(e.target.value)}
               placeholder="تعريف مكثف لا يتجاوز سطرين..."
-              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-[#73675B] mb-1">المحتوى التاريخي والتفصيلي والقصة</label>
+            <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">المحتوى التاريخي والتفصيلي والقصة</label>
             <textarea
               rows={3}
               value={fullContent}
               onChange={(e) => setFullContent(e.target.value)}
               placeholder="التوثيق الكامل وتاريخ الصنعة والمروية التراثية..."
-              className="w-full bg-[#FAF7F2] dark:bg-[#26201B] text-xs sm:text-sm rounded-xl px-4 py-2 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
 
           {/* Verification and Sources Panel */}
-          <div className="bg-[#FAF7F2] dark:bg-[#26201B] p-4 rounded-2xl border border-[#E5DDD3] dark:border-[#352B24] space-y-3">
-            <span className="text-xs font-black text-[#B24C2B] block">توثيق المصدر وحالة النشر (وفق معايير وه)</span>
+          <div className="bg-black/[0.035] dark:bg-white/[0.04] p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+            <span className="text-xs font-black text-[#9a6a35] block">توثيق المصدر وحالة النشر (وفق معايير وه)</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-[#73675B] mb-1">اسم المصدر المعتمد:</label>
+                <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">اسم المصدر المعتمد:</label>
                 <input
                   type="text"
                   value={sourceName}
                   onChange={(e) => setSourceName(e.target.value)}
                   placeholder="مثال: وزارة السياحة والآثار المصرية"
-                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                  className="w-full bg-white dark:bg-[#151513] text-xs rounded-lg px-3 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-[#73675B] mb-1">رابط المصدر (URL):</label>
+                <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">رابط المصدر (URL):</label>
                 <input
                   type="url"
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                   placeholder="https://..."
-                  className="w-full bg-white dark:bg-[#1E1917] text-xs rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                  className="w-full bg-white dark:bg-[#151513] text-xs rounded-lg px-3 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-[#73675B] mb-1">حالة التحقق والنشر:</label>
+              <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">حالة التحقق والنشر:</label>
               <select
                 value={verificationStatus}
                 onChange={(e) => setVerificationStatus(e.target.value as VerificationStatus)}
-                className="w-full bg-white dark:bg-[#1E1917] text-xs font-bold rounded-lg px-3 py-1.5 border border-[#E5DDD3] dark:border-[#352B24] outline-none"
+                className="w-full bg-white dark:bg-[#151513] text-xs font-bold rounded-lg px-3 py-1.5 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
               >
                 <option value="verified">محقق ومعتمد للنشر العام (Verified)</option>
                 <option value="pending_review">يحتاج مراجعة وتدقيق (Pending Review)</option>
@@ -2408,18 +2432,18 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#F0EAE1] dark:border-[#2D2622]">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/10 dark:border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-[#E5DDD3] dark:border-[#352B24] text-xs font-bold text-[#73675B] cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-black/70 dark:text-white/70 cursor-pointer"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#B24C2B] hover:bg-[#9E4F36] text-white rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ في MongoDB'}</span>
