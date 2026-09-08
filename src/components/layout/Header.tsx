@@ -678,7 +678,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       },
       {
         id: 'reels',
-        label: 'الحكايات',
+        label: 'ريلز وه',
         isNew: true,
       },
       {
@@ -779,238 +779,90 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       <header
         dir="rtl"
         className={`sticky top-0 z-[100] w-full overflow-visible backdrop-blur-2xl transition-colors duration-500 shadow-sm ${className}`}
-      style={{
-        backgroundColor: isDark ? 'rgba(11, 11, 10, 0.9)' : 'rgba(238, 232, 220, 0.9)',
-        color: mainText,
-        borderBottom: `1px solid ${borderColor}`,
-      }}
-    >
-      {/* ===================================================
+        style={{
+          backgroundColor: isDark ? 'rgba(11, 11, 10, 0.9)' : 'rgba(238, 232, 220, 0.9)',
+          color: mainText,
+          borderBottom: `1px solid ${borderColor}`,
+        }}
+      >
+        {/* ===================================================
             TOP BAR
             =================================================== */}
 
-      <div
-        className="hidden border-b lg:block"
-        style={{
-          borderColor,
-        }}
-      >
-        <div className="mx-auto flex h-9 max-w-[1600px] items-center justify-between px-6 lg:px-12">
-          <div
-            className="flex items-center gap-2 text-xs font-bold"
-            style={{
-              color: secondaryText,
-            }}
-          >
-            <Sparkles size={13} className="text-[#9a6a35]" />
+        <div
+          className="hidden border-b lg:block"
+          style={{
+            borderColor,
+          }}
+        >
+          <div className="mx-auto flex h-9 max-w-[1600px] items-center justify-between px-6 lg:px-12">
+            <div
+              className="flex items-center gap-2 text-xs font-bold"
+              style={{
+                color: secondaryText,
+              }}
+            >
+              <Sparkles size={13} className="text-[#9a6a35]" />
 
-            <span>
-              من قلب الصعيد... حكاية بتبدأ
-            </span>
-          </div>
+              <span>
+                من قلب الصعيد... حكاية بتبدأ
+              </span>
+            </div>
 
-          <div
-            className="flex items-center gap-5 text-xs font-bold"
-            style={{
-              color: secondaryText,
-            }}
-          >
-            <span>أصالة</span>
-            <span>•</span>
-            <span>حرفة</span>
-            <span>•</span>
-            <span>حكاية</span>
+            <div
+              className="flex items-center gap-5 text-xs font-bold"
+              style={{
+                color: secondaryText,
+              }}
+            >
+              <span>أصالة</span>
+              <span>•</span>
+              <span>حرفة</span>
+              <span>•</span>
+              <span>حكاية</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* ===================================================
+        {/* ===================================================
             MAIN ROW
             =================================================== */}
 
-      <div className="relative mx-auto max-w-[1600px] px-3 sm:px-6 lg:px-12">
-        <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
+        <div className="relative mx-auto max-w-[1600px] px-3 sm:px-6 lg:px-12">
+          <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
 
-          {/* =================================================
+            {/* =================================================
                 LEFT / START AREA (Actions & Navigation)
                 ================================================= */}
 
-          <div
-            id="header-start-actions"
-            className="absolute start-0 ltr:left-0 rtl:right-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center px-1 sm:max-w-[calc(50%-55px)] sm:px-2.5 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
-          >
-
-            {/* MOBILE MENU */}
-
-            <button
-              id="mobile-menu-toggle"
-              type="button"
-              onClick={() =>
-                setMobileMenuOpen(true)
-              }
-              aria-label="فتح القائمة"
-              title="فتح القائمة"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 sm:h-10 sm:w-10 lg:hidden cursor-pointer"
-              style={{
-                backgroundColor: hoverBg,
-                color: mainText,
-              }}
+            <div
+              id="header-start-actions"
+              className="absolute start-0 ltr:left-0 rtl:right-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center px-1 sm:max-w-[calc(50%-55px)] sm:px-2.5 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
             >
-              <Menu size={20} className="sm:w-[21px] sm:h-[21px]" />
-            </button>
 
-            {/* MOBILE NIGHT MODE TOGGLE */}
-
-            <button
-              id="mobile-header-theme-toggle-btn"
-              type="button"
-              onClick={toggleTheme}
-              aria-label={
-                isDark
-                  ? 'تفعيل الوضع الفاتح'
-                  : 'تفعيل الوضع الداكن'
-              }
-              title={
-                isDark
-                  ? 'تفعيل الوضع الفاتح'
-                  : 'الوضع الداكن'
-              }
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer"
-              style={{
-                backgroundColor: hoverBg,
-                color: mainText,
-              }}
-            >
-              {isDark ? (
-                <Sun size={19} className="text-amber-400" />
-              ) : (
-                <Moon size={19} />
-              )}
-            </button>
-
-            {/* DESKTOP NAV */}
-
-            <div className="hidden items-center gap-6 lg:flex">
+              {/* MOBILE MENU */}
 
               <button
+                id="mobile-menu-toggle"
                 type="button"
                 onClick={() =>
-                  navigate('home')
+                  setMobileMenuOpen(true)
                 }
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color:
-                    activePage === 'home'
-                      ? '#9a6a35'
-                      : mainText,
-                }}
-              >
-                الرئيسية
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  navigate('products')
-                }
-                className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color:
-                    activePage === 'products'
-                      ? '#9a6a35'
-                      : mainText,
-                }}
-              >
-                المنتجات
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  navigate('map')
-                }
-                className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                style={{
-                  color:
-                    activePage === 'map'
-                      ? '#9a6a35'
-                      : mainText,
-                }}
-              >
-                محافظات الصعيد
-
-                <span
-                  className="rounded-full px-2 py-0.5 text-[9px] font-black"
-                  style={{
-                    backgroundColor:
-                      '#9a6a35',
-                    color: '#fff',
-                  }}
-                >
-                  جديد
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* =================================================
-                CENTER LOGO (Fixed True Horizontal Center)
-                ================================================= */}
-
-          <div
-            id="header-center-logo"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-auto select-none"
-          >
-            <button
-              id="brand-logo"
-              type="button"
-              onClick={() =>
-                navigate('home')
-              }
-              aria-label="وه - الرئيسية"
-              className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
-            >
-              <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
-                alt="وه"
-                draggable={false}
-                className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
-              />
-            </button>
-          </div>
-
-          {/* =================================================
-                RIGHT / END AREA (Action Buttons)
-                ================================================= */}
-
-          <div
-            id="header-end-actions"
-            className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
-          >
-            <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
-
-              {/* SEARCH */}
-
-              <button
-                id="search-trigger-btn"
-                type="button"
-                onClick={() =>
-                  setSearchOverlayOpen(true)
-                }
-                aria-label="بحث"
-                className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+                aria-label="فتح القائمة"
+                title="فتح القائمة"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all active:scale-95 sm:h-10 sm:w-10 lg:hidden cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
                 }}
               >
-                <Search size={18} />
+                <Menu size={20} className="sm:w-[21px] sm:h-[21px]" />
               </button>
 
-              {/* THEME (DESKTOP) */}
+              {/* MOBILE NIGHT MODE TOGGLE */}
 
               <button
-                id="header-theme-toggle-btn"
+                id="mobile-header-theme-toggle-btn"
                 type="button"
                 onClick={toggleTheme}
                 aria-label={
@@ -1018,70 +870,185 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     ? 'تفعيل الوضع الفاتح'
                     : 'تفعيل الوضع الداكن'
                 }
-                className="hidden lg:flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:h-11 lg:w-11 cursor-pointer"
+                title={
+                  isDark
+                    ? 'تفعيل الوضع الفاتح'
+                    : 'الوضع الداكن'
+                }
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer"
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
                 }}
               >
                 {isDark ? (
-                  <Sun size={18} className="text-amber-400" />
+                  <Sun size={19} className="text-amber-400" />
                 ) : (
-                  <Moon size={18} />
+                  <Moon size={19} />
                 )}
               </button>
 
-              {/* FAVORITES - TABLET/DESKTOP */}
+              {/* DESKTOP NAV */}
 
-              <button
-                id="nav-favorites-btn"
-                type="button"
-                onClick={() =>
-                  navigate('favorites')
-                }
-                aria-label="المفضلة"
-                className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <Heart size={18} />
+              <div className="hidden items-center gap-6 lg:flex">
 
-                {favorites.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('home')
+                  }
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'home'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  الرئيسية
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('products')
+                  }
+                  className="whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'products'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  المنتجات
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate('map')
+                  }
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color:
+                      activePage === 'map'
+                        ? '#9a6a35'
+                        : mainText,
+                  }}
+                >
+                  محافظات الصعيد
+
                   <span
-                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                    className="rounded-full px-2 py-0.5 text-[9px] font-black"
                     style={{
                       backgroundColor:
                         '#9a6a35',
                       color: '#fff',
                     }}
                   >
-                    {favorites.length > 99
-                      ? '99+'
-                      : favorites.length}
+                    جديد
                   </span>
-                )}
-              </button>
+                </button>
+              </div>
+            </div>
 
-              {/* CHAT - DESKTOP (للمسجلين فقط) */}
-              {isAuthenticated && (
+            {/* =================================================
+                CENTER LOGO (Fixed True Horizontal Center)
+                ================================================= */}
+
+            <div
+              id="header-center-logo"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center pointer-events-auto select-none"
+            >
+              <button
+                id="brand-logo"
+                type="button"
+                onClick={() =>
+                  navigate('home')
+                }
+                aria-label="وه - الرئيسية"
+                className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
+              >
+                <img
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                  alt="وه"
+                  draggable={false}
+                  className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
+                />
+              </button>
+            </div>
+
+            {/* =================================================
+                RIGHT / END AREA (Action Buttons)
+                ================================================= */}
+
+            <div
+              id="header-end-actions"
+              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+            >
+              <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
+
+                {/* SEARCH */}
+
                 <button
-                  id="nav-chat-btn"
+                  id="search-trigger-btn"
                   type="button"
                   onClick={() =>
-                    navigate('messages')
+                    setSearchOverlayOpen(true)
                   }
-                  aria-label="الرسائل"
-                  className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex cursor-pointer"
+                  aria-label="بحث"
+                  className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
                   style={{
                     backgroundColor: hoverBg,
                     color: mainText,
                   }}
                 >
-                  <MessageCircle size={18} />
+                  <Search size={18} />
+                </button>
 
-                  {chatUnreadCount > 0 && (
+                {/* THEME (DESKTOP) */}
+
+                <button
+                  id="header-theme-toggle-btn"
+                  type="button"
+                  onClick={toggleTheme}
+                  aria-label={
+                    isDark
+                      ? 'تفعيل الوضع الفاتح'
+                      : 'تفعيل الوضع الداكن'
+                  }
+                  className="hidden lg:flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:h-11 lg:w-11 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  {isDark ? (
+                    <Sun size={18} className="text-amber-400" />
+                  ) : (
+                    <Moon size={18} />
+                  )}
+                </button>
+
+                {/* FAVORITES - TABLET/DESKTOP */}
+
+                <button
+                  id="nav-favorites-btn"
+                  type="button"
+                  onClick={() =>
+                    navigate('favorites')
+                  }
+                  aria-label="المفضلة"
+                  className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <Heart size={18} />
+
+                  {favorites.length > 0 && (
                     <span
                       className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
                       style={{
@@ -1090,898 +1057,931 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         color: '#fff',
                       }}
                     >
-                      {chatUnreadCount > 99
+                      {favorites.length > 99
                         ? '99+'
-                        : chatUnreadCount}
+                        : favorites.length}
                     </span>
                   )}
                 </button>
-              )}
 
-              {/* NOTIFICATIONS (للمسجلين فقط) */}
-              {isAuthenticated && (
-                <NotificationCenter
-                  isDark={isDark}
-                  mainText={mainText}
-                  secondaryText={secondaryText}
-                  borderColor={borderColor}
-                  hoverBg={hoverBg}
-                />
-              )}
-
-              {/* CART */}
-
-              <button
-                id="nav-cart-btn"
-                type="button"
-                onClick={() =>
-                  setIsCartDrawerOpen(true)
-                }
-                aria-label="السلة"
-                className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <ShoppingBag size={18} />
-
-                {cartCount > 0 && (
-                  <span
-                    className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
-                    style={{
-                      backgroundColor:
-                        '#9a6a35',
-                      color: '#fff',
-                    }}
-                  >
-                    {cartCount > 99
-                      ? '99+'
-                      : cartCount}
-                  </span>
-                )}
-              </button>
-
-              {/* USER */}
-
-              {isAuthenticated ? (
-                <div
-                  ref={dropdownRef}
-                  className="relative shrink-0 flex items-center"
-                >
+                {/* CHAT - DESKTOP (للمسجلين فقط) */}
+                {isAuthenticated && (
                   <button
-                    id="user-avatar-btn"
+                    id="nav-chat-btn"
                     type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      navigate(getAccountPage());
-                    }}
-                    title="الملف الشخصي"
-                    aria-label="الملف الشخصي"
-                    className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full p-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer sm:h-10 sm:w-10 lg:h-11 lg:w-11"
-                    style={{
-                      backgroundColor: hoverBg,
-                      color: mainText,
-                    }}
-                  >
-                    <img
-                      src={profileImage}
-                      alt={displayName}
-                      className="h-7.5 w-7.5 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-                    />
-                  </button>
-
-                  <button
-                    id="user-menu-btn"
-                    type="button"
-                    onPointerDown={(event) =>
-                      event.stopPropagation()
+                    onClick={() =>
+                      navigate('messages')
                     }
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setUserDropdownOpen((prev) => !prev);
-                    }}
-                    aria-expanded={userDropdownOpen}
-                    aria-haspopup="menu"
-                    aria-label="قائمة الحساب"
-                    className="hidden sm:flex h-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:gap-1.5 lg:h-11 cursor-pointer"
+                    aria-label="الرسائل"
+                    className="relative hidden h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 lg:flex cursor-pointer"
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
                     }}
                   >
-                    <span className="hidden max-w-[100px] truncate text-sm font-bold xl:block">
-                      {displayName}
-                    </span>
+                    <MessageCircle size={18} />
 
-                    <ChevronDown
-                      size={15}
-                      className={`transition-transform duration-200 ${userDropdownOpen
-                        ? 'rotate-180'
-                        : ''
-                        }`}
-                    />
-                  </button>
-
-                  {/* USER DROPDOWN */}
-
-                  <AnimatePresence>
-                    {userDropdownOpen && (
-                      <motion.div
-                        id="user-dropdown-menu"
-                        role="menu"
-                        initial={{
-                          opacity: 0,
-                          y: -8,
-                          scale: 0.97,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          y: 0,
-                          scale: 1,
-                        }}
-                        exit={{
-                          opacity: 0,
-                          y: -8,
-                          scale: 0.97,
-                        }}
-                        transition={{
-                          duration: 0.16,
-                        }}
-                        onPointerDown={(event) =>
-                          event.stopPropagation()
-                        }
-                        className="absolute left-0 top-[calc(100%+10px)] z-[500] w-[270px] overflow-hidden rounded-[1.5rem] border shadow-2xl backdrop-blur-2xl"
+                    {chatUnreadCount > 0 && (
+                      <span
+                        className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
                         style={{
                           backgroundColor:
-                            isDark
-                              ? 'rgba(21, 21, 19, 0.95)'
-                              : 'rgba(255, 255, 255, 0.95)',
-                          borderColor,
+                            '#9a6a35',
+                          color: '#fff',
                         }}
                       >
-                        <div
-                          onClick={() => navigate(getAccountPage())}
-                          className="border-b p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        {chatUnreadCount > 99
+                          ? '99+'
+                          : chatUnreadCount}
+                      </span>
+                    )}
+                  </button>
+                )}
+
+                {/* NOTIFICATIONS (للمسجلين فقط) */}
+                {isAuthenticated && (
+                  <NotificationCenter
+                    isDark={isDark}
+                    mainText={mainText}
+                    secondaryText={secondaryText}
+                    borderColor={borderColor}
+                    hoverBg={hoverBg}
+                  />
+                )}
+
+                {/* CART */}
+
+                <button
+                  id="nav-cart-btn"
+                  type="button"
+                  onClick={() =>
+                    setIsCartDrawerOpen(true)
+                  }
+                  aria-label="السلة"
+                  className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <ShoppingBag size={18} />
+
+                  {cartCount > 0 && (
+                    <span
+                      className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                      style={{
+                        backgroundColor:
+                          '#9a6a35',
+                        color: '#fff',
+                      }}
+                    >
+                      {cartCount > 99
+                        ? '99+'
+                        : cartCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* USER */}
+
+                {isAuthenticated ? (
+                  <div
+                    ref={dropdownRef}
+                    className="relative shrink-0 flex items-center"
+                  >
+                    <button
+                      id="user-avatar-btn"
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        navigate(getAccountPage());
+                      }}
+                      title="الملف الشخصي"
+                      aria-label="الملف الشخصي"
+                      className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full p-0.5 transition-all hover:scale-105 active:scale-95 cursor-pointer sm:h-10 sm:w-10 lg:h-11 lg:w-11"
+                      style={{
+                        backgroundColor: hoverBg,
+                        color: mainText,
+                      }}
+                    >
+                      <img
+                        src={profileImage}
+                        alt={displayName}
+                        className="h-7.5 w-7.5 shrink-0 rounded-full object-cover sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                      />
+                    </button>
+
+                    <button
+                      id="user-menu-btn"
+                      type="button"
+                      onPointerDown={(event) =>
+                        event.stopPropagation()
+                      }
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setUserDropdownOpen((prev) => !prev);
+                      }}
+                      aria-expanded={userDropdownOpen}
+                      aria-haspopup="menu"
+                      aria-label="قائمة الحساب"
+                      className="hidden sm:flex h-10 shrink-0 items-center justify-center rounded-full p-1 transition-all hover:scale-105 active:scale-95 sm:gap-1.5 lg:h-11 cursor-pointer"
+                      style={{
+                        backgroundColor: hoverBg,
+                        color: mainText,
+                      }}
+                    >
+                      <span className="hidden max-w-[100px] truncate text-sm font-bold xl:block">
+                        {displayName}
+                      </span>
+
+                      <ChevronDown
+                        size={15}
+                        className={`transition-transform duration-200 ${userDropdownOpen
+                          ? 'rotate-180'
+                          : ''
+                          }`}
+                      />
+                    </button>
+
+                    {/* USER DROPDOWN */}
+
+                    <AnimatePresence>
+                      {userDropdownOpen && (
+                        <motion.div
+                          id="user-dropdown-menu"
+                          role="menu"
+                          initial={{
+                            opacity: 0,
+                            y: -8,
+                            scale: 0.97,
+                          }}
+                          animate={{
+                            opacity: 1,
+                            y: 0,
+                            scale: 1,
+                          }}
+                          exit={{
+                            opacity: 0,
+                            y: -8,
+                            scale: 0.97,
+                          }}
+                          transition={{
+                            duration: 0.16,
+                          }}
+                          onPointerDown={(event) =>
+                            event.stopPropagation()
+                          }
+                          className="absolute left-0 top-[calc(100%+10px)] z-[500] w-[270px] overflow-hidden rounded-[1.5rem] border shadow-2xl backdrop-blur-2xl"
                           style={{
+                            backgroundColor:
+                              isDark
+                                ? 'rgba(21, 21, 19, 0.95)'
+                                : 'rgba(255, 255, 255, 0.95)',
                             borderColor,
                           }}
                         >
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={profileImage}
-                              alt={displayName}
-                              className="h-11 w-11 shrink-0 rounded-full object-cover"
-                            />
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-bold">
-                                {displayName}
-                              </p>
-                              <p
-                                className="mt-0.5 text-xs font-medium"
-                                style={{
-                                  color: secondaryText,
-                                }}
-                              >
-                                {currentRole === 'admin'
-                                  ? 'مدير النظام'
-                                  : currentRole === 'seller'
-                                    ? 'بائع'
-                                    : 'مشتري'}
-                              </p>
+                          <div
+                            onClick={() => navigate(getAccountPage())}
+                            className="border-b p-4 cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                            style={{
+                              borderColor,
+                            }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={profileImage}
+                                alt={displayName}
+                                className="h-11 w-11 shrink-0 rounded-full object-cover"
+                              />
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-bold">
+                                  {displayName}
+                                </p>
+                                <p
+                                  className="mt-0.5 text-xs font-medium"
+                                  style={{
+                                    color: secondaryText,
+                                  }}
+                                >
+                                  {currentRole === 'admin'
+                                    ? 'مدير النظام'
+                                    : currentRole === 'seller'
+                                      ? 'بائع'
+                                      : 'مشتري'}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div className="p-2">
-                          <button
-                            id="user-profile-link"
-                            type="button"
-                            onClick={() => navigate(getAccountPage())}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                            style={{ color: mainText }}
-                          >
-                            <UserCircle size={18} />
-                            <span>حسابي</span>
-                          </button>
-
-                          <button
-                            id="user-messages-link"
-                            type="button"
-                            onClick={() => navigate('messages')}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                            style={{ color: mainText }}
-                          >
-                            <MessageCircle size={18} />
-                            <span>الرسائل</span>
-                          </button>
-
-                          <button
-                            id="user-orders-link"
-                            type="button"
-                            onClick={() => navigate('orders')}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                            style={{ color: mainText }}
-                          >
-                            <Package size={18} />
-                            <span>طلباتي</span>
-                          </button>
-
-                          <button
-                            id="user-favorites-link"
-                            type="button"
-                            onClick={() => navigate('favorites')}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
-                            style={{ color: mainText }}
-                          >
-                            <Heart size={18} />
-                            <span>المفضلة</span>
-                          </button>
-
-                          {currentRole === 'seller' && (
+                          <div className="p-2">
                             <button
-                              id="seller-dash-link"
+                              id="user-profile-link"
                               type="button"
-                              onClick={() => navigate('seller-dashboard')}
+                              onClick={() => navigate(getAccountPage())}
                               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                               style={{ color: mainText }}
                             >
-                              <Store size={18} />
-                              <span>لوحة البائع</span>
+                              <UserCircle size={18} />
+                              <span>حسابي</span>
                             </button>
-                          )}
 
-                          {currentRole === 'admin' && (
                             <button
-                              id="admin-dash-link"
+                              id="user-messages-link"
                               type="button"
-                              onClick={() => navigate('admin-dashboard')}
+                              onClick={() => navigate('messages')}
                               className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
                               style={{ color: mainText }}
                             >
-                              <ShieldCheck size={18} />
-                              <span>لوحة الإدارة</span>
+                              <MessageCircle size={18} />
+                              <span>الرسائل</span>
                             </button>
-                          )}
 
-                          <div
-                            className="my-2 border-t"
-                            style={{ borderColor }}
-                          />
+                            <button
+                              id="user-orders-link"
+                              type="button"
+                              onClick={() => navigate('orders')}
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                              style={{ color: mainText }}
+                            >
+                              <Package size={18} />
+                              <span>طلباتي</span>
+                            </button>
 
-                          <button
-                            id="auth-logout-btn"
-                            type="button"
-                            onClick={() => {
-                              setUserDropdownOpen(false);
-                              logout();
-                            }}
-                            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-rose-500/10"
-                            style={{ color: '#9a6a35' }}
-                          >
-                            <LogOut size={18} />
-                            <span>تسجيل الخروج</span>
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                <>
-                  <button
-                    id="header-register-mobile-btn"
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('register');
-                      setIsAuthModalOpen(true);
-                    }}
-                    title="تسجيل جديد / تسجيل الدخول"
-                    aria-label="تسجيل جديد / تسجيل الدخول"
-                    className="flex sm:hidden h-8.5 items-center gap-1.5 shrink-0 rounded-full px-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
-                    style={{ backgroundColor: '#9a6a35' }}
-                  >
-                    <UserPlus size={14} />
-                    <span>تسجيل</span>
-                  </button>
+                            <button
+                              id="user-favorites-link"
+                              type="button"
+                              onClick={() => navigate('favorites')}
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                              style={{ color: mainText }}
+                            >
+                              <Heart size={18} />
+                              <span>المفضلة</span>
+                            </button>
 
-                  <button
-                    id="header-login-btn"
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-4 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap shrink-0"
-                    style={{
-                      color: mainText,
-                      border: `1px solid ${borderColor}`,
-                    }}
-                  >
-                    دخول
-                  </button>
+                            {currentRole === 'seller' && (
+                              <button
+                                id="seller-dash-link"
+                                type="button"
+                                onClick={() => navigate('seller-dashboard')}
+                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                style={{ color: mainText }}
+                              >
+                                <Store size={18} />
+                                <span>لوحة البائع</span>
+                              </button>
+                            )}
 
-                  <button
-                    id="header-register-btn"
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('register');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-5 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
-                    style={{
-                      backgroundColor: '#9a6a35',
-                      color: '#fff',
-                    }}
-                  >
-                    إنشاء حساب
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+                            {currentRole === 'admin' && (
+                              <button
+                                id="admin-dash-link"
+                                type="button"
+                                onClick={() => navigate('admin-dashboard')}
+                                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+                                style={{ color: mainText }}
+                              >
+                                <ShieldCheck size={18} />
+                                <span>لوحة الإدارة</span>
+                              </button>
+                            )}
 
-      {/* ===================================================
-            DESKTOP NAV
-            =================================================== */}
+                            <div
+                              className="my-2 border-t"
+                              style={{ borderColor }}
+                            />
 
-      <div
-        className="hidden border-t lg:block"
-        style={{
-          borderColor,
-        }}
-      >
-        <nav className="mx-auto flex h-12 max-w-[1600px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
-          {roleNavLinks.map(
-            (link: any) => {
-              const Icon = link.icon;
+                            <button
+                              id="auth-logout-btn"
+                              type="button"
+                              onClick={() => {
+                                setUserDropdownOpen(false);
+                                logout();
+                              }}
+                              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-rose-500/10"
+                              style={{ color: '#9a6a35' }}
+                            >
+                              <LogOut size={18} />
+                              <span>تسجيل الخروج</span>
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      id="header-register-mobile-btn"
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('register');
+                        setIsAuthModalOpen(true);
+                      }}
+                      title="تسجيل جديد / تسجيل الدخول"
+                      aria-label="تسجيل جديد / تسجيل الدخول"
+                      className="flex sm:hidden h-8.5 items-center gap-1.5 shrink-0 rounded-full px-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                      style={{ backgroundColor: '#9a6a35' }}
+                    >
+                      <UserPlus size={14} />
+                      <span>تسجيل</span>
+                    </button>
 
-              return (
-                <button
-                  key={link.id}
-                  type="button"
-                  onClick={() =>
-                    navigate(link.id)
-                  }
-                  className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-bold transition-colors cursor-pointer"
-                  style={{
-                    color:
-                      activePage === link.id
-                        ? '#9a6a35'
-                        : mainText,
-                  }}
-                >
-                  {Icon && (
-                    <Icon size={15} />
-                  )}
+                    <button
+                      id="header-login-btn"
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('login');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-4 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity whitespace-nowrap shrink-0"
+                      style={{
+                        color: mainText,
+                        border: `1px solid ${borderColor}`,
+                      }}
+                    >
+                      دخول
+                    </button>
 
-                  <span>
-                    {link.label}
-                  </span>
-
-                  {link.isNew && (
-                    <span
-                      className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                    <button
+                      id="header-register-btn"
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('register');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="hidden sm:flex h-9 lg:h-10 items-center justify-center rounded-full px-3.5 sm:px-5 text-xs sm:text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
                       style={{
                         backgroundColor: '#9a6a35',
                         color: '#fff',
                       }}
                     >
-                      جديد
-                    </span>
-                  )}
-                </button>
-              );
-            }
-          )}
-        </nav>
-      </div>
-    </header>
+                      إنشاء حساب
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
 
-    {/* =====================================================
+        {/* ===================================================
+            DESKTOP NAV
+            =================================================== */}
+
+        <div
+          className="hidden border-t lg:block"
+          style={{
+            borderColor,
+          }}
+        >
+          <nav className="mx-auto flex h-12 max-w-[1600px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
+            {roleNavLinks.map(
+              (link: any) => {
+                const Icon = link.icon;
+
+                return (
+                  <button
+                    key={link.id}
+                    type="button"
+                    onClick={() =>
+                      navigate(link.id)
+                    }
+                    className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-bold transition-colors cursor-pointer"
+                    style={{
+                      color:
+                        activePage === link.id
+                          ? '#9a6a35'
+                          : mainText,
+                    }}
+                  >
+                    {Icon && (
+                      <Icon size={15} />
+                    )}
+
+                    <span>
+                      {link.label}
+                    </span>
+
+                    {link.isNew && (
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                        style={{
+                          backgroundColor: '#9a6a35',
+                          color: '#fff',
+                        }}
+                      >
+                        جديد
+                      </span>
+                    )}
+                  </button>
+                );
+              }
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {/* =====================================================
           SEARCH OVERLAY
           ===================================================== */}
 
-    <AnimatePresence>
-      {searchOverlayOpen && (
-        <motion.div
-          className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28 backdrop-blur-md"
-          style={{
-            backgroundColor: isDark
-              ? 'rgba(11, 11, 10, 0.85)'
-              : 'rgba(238, 232, 220, 0.85)',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+      <AnimatePresence>
+        {searchOverlayOpen && (
           <motion.div
-            className="w-full max-w-[680px]"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <p
-                  className="text-xs font-bold"
-                  style={{ color: '#9a6a35' }}
-                >
-                  وه
-                </p>
-                <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">
-                  بتدور على إيه؟
-                </h2>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSearchOverlayOpen(false)}
-                aria-label="إغلاق البحث"
-                className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSearchSubmit}>
-              <div
-                className="flex items-center gap-3 rounded-[1.5rem] border px-4 shadow-xl backdrop-blur-2xl"
-                style={{
-                  backgroundColor: isDark
-                    ? 'rgba(21, 21, 19, 0.9)'
-                    : 'rgba(255, 255, 255, 0.9)',
-                  borderColor,
-                }}
-              >
-                <Search
-                  size={21}
-                  className="shrink-0"
-                  style={{ color: secondaryText }}
-                />
-
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="ابحث عن منتج، حرفة، مكان..."
-                  className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base font-bold"
-                  style={{ color: mainText }}
-                />
-
-                <button
-                  type="submit"
-                  className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-90 transition-opacity"
-                  style={{
-                    backgroundColor: '#9a6a35',
-                    color: '#fff',
-                  }}
-                >
-                  بحث
-                  <ArrowLeft size={16} />
-                </button>
-              </div>
-            </form>
-
-            <div className="mt-7">
-              <p
-                className="mb-3 text-xs font-bold"
-                style={{ color: secondaryText }}
-              >
-                ممكن تدور على
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {[
-                  'فخار',
-                  'كليم',
-                  'هدايا',
-                  'حرف يدوية',
-                  'أسيوط',
-                  'سوهاج',
-                  'الأقصر',
-                  'أسوان',
-                ].map((tag) => (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery(tag);
-                      setActivePage('products');
-                      setSearchOverlayOpen(false);
-                    }}
-                    className="rounded-full border px-3.5 py-2 text-xs font-bold sm:text-sm cursor-pointer hover:border-[#9a6a35] transition-colors"
-                    style={{
-                      color: mainText,
-                      borderColor,
-                      backgroundColor: hoverBg,
-                    }}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-
-    {/* =====================================================
-          MOBILE DRAWER
-          ===================================================== */}
-
-    <AnimatePresence>
-      {mobileMenuOpen && (
-        <>
-          <motion.div
-            className="fixed inset-0 z-[700] bg-black/50 backdrop-blur-xs lg:hidden"
+            className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28 backdrop-blur-md"
+            style={{
+              backgroundColor: isDark
+                ? 'rgba(11, 11, 10, 0.85)'
+                : 'rgba(238, 232, 220, 0.85)',
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setMobileMenuOpen(false)}
-          />
-
-          <motion.aside
-            dir="rtl"
-            className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden shadow-2xl"
-            style={{
-              backgroundColor: isDark ? '#0b0b0a' : '#eee8dc',
-              color: mainText,
-              paddingBottom: 'env(safe-area-inset-bottom)',
-            }}
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{
-              type: 'spring',
-              stiffness: 300,
-              damping: 30,
-            }}
           >
-            {/* MOBILE HEADER */}
-            <div
-              className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20 backdrop-blur-2xl"
-              style={{
-                backgroundColor: isDark
-                  ? 'rgba(11, 11, 10, 0.9)'
-                  : 'rgba(238, 232, 220, 0.9)',
-                borderColor,
-              }}
+            <motion.div
+              className="w-full max-w-[680px]"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
             >
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="إغلاق القائمة"
-                className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <X size={20} />
-              </button>
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <p
+                    className="text-xs font-bold"
+                    style={{ color: '#9a6a35' }}
+                  >
+                    وه
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">
+                    بتدور على إيه؟
+                  </h2>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => navigate('home')}
-                className="flex items-center"
-              >
-                <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%80_%D9%88%D9%87_copy.png"
-                  alt="وه"
-                  className="h-11 w-auto object-contain sm:h-12"
-                />
-              </button>
-            </div>
-
-            <div className="p-4">
-              {/* ACCOUNT */}
-              {isAuthenticated ? (
-                <div
-                  className="mb-5 rounded-[1.5rem] border p-4 shadow-sm backdrop-blur-xl"
+                <button
+                  type="button"
+                  onClick={() => setSearchOverlayOpen(false)}
+                  aria-label="إغلاق البحث"
+                  className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
                   style={{
-                    borderColor,
                     backgroundColor: hoverBg,
+                    color: mainText,
                   }}
                 >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={profileImage}
-                      alt={displayName}
-                      className="h-12 w-12 shrink-0 rounded-full object-cover"
-                    />
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-bold">
-                        {displayName}
-                      </p>
-                      <p
-                        className="mt-1 text-xs font-bold"
-                        style={{ color: secondaryText }}
-                      >
-                        {currentRole === 'admin'
-                          ? 'مدير النظام'
-                          : currentRole === 'seller'
-                            ? 'حساب بائع'
-                            : 'حساب مشتري'}
-                      </p>
-                    </div>
-                  </div>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSearchSubmit}>
+                <div
+                  className="flex items-center gap-3 rounded-[1.5rem] border px-4 shadow-xl backdrop-blur-2xl"
+                  style={{
+                    backgroundColor: isDark
+                      ? 'rgba(21, 21, 19, 0.9)'
+                      : 'rgba(255, 255, 255, 0.9)',
+                    borderColor,
+                  }}
+                >
+                  <Search
+                    size={21}
+                    className="shrink-0"
+                    style={{ color: secondaryText }}
+                  />
+
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ابحث عن منتج، حرفة، مكان..."
+                    className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base font-bold"
+                    style={{ color: mainText }}
+                  />
 
                   <button
-                    id="mobile-account-link"
-                    type="button"
-                    onClick={() => navigate(getAccountPage())}
-                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
+                    type="submit"
+                    className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-90 transition-opacity"
                     style={{
                       backgroundColor: '#9a6a35',
                       color: '#fff',
                     }}
                   >
-                    <UserCircle size={17} />
-                    حسابي
+                    بحث
+                    <ArrowLeft size={16} />
                   </button>
                 </div>
-              ) : (
-                <div className="mb-5 grid grid-cols-2 gap-2">
-                  <button
-                    id="mobile-login-btn"
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="rounded-xl border py-3 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                    style={{ borderColor, color: mainText }}
-                  >
-                    دخول
-                  </button>
-                  <button
-                    id="mobile-register-btn"
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setAuthModalTab('register');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: '#9a6a35', color: '#fff' }}
-                  >
-                    إنشاء حساب
-                  </button>
-                </div>
-              )}
+              </form>
 
-              {/* NAVIGATION */}
-              <div className="space-y-1">
-                {roleNavLinks.map((link: any) => {
-                  const Icon = link.icon;
-                  const isActive = activePage === link.id;
+              <div className="mt-7">
+                <p
+                  className="mb-3 text-xs font-bold"
+                  style={{ color: secondaryText }}
+                >
+                  ممكن تدور على
+                </p>
 
-                  return (
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    'فخار',
+                    'كليم',
+                    'هدايا',
+                    'حرف يدوية',
+                    'أسيوط',
+                    'سوهاج',
+                    'الأقصر',
+                    'أسوان',
+                  ].map((tag) => (
                     <button
-                      key={link.id}
+                      key={tag}
                       type="button"
-                      onClick={() => navigate(link.id)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-right font-bold cursor-pointer transition-colors"
+                      onClick={() => {
+                        setSearchQuery(tag);
+                        setActivePage('products');
+                        setSearchOverlayOpen(false);
+                      }}
+                      className="rounded-full border px-3.5 py-2 text-xs font-bold sm:text-sm cursor-pointer hover:border-[#9a6a35] transition-colors"
                       style={{
-                        backgroundColor: isActive
-                          ? isDark
-                            ? 'rgba(154,106,53,0.18)'
-                            : 'rgba(154,106,53,0.09)'
-                          : 'transparent',
-                        color: isActive ? '#9a6a35' : mainText,
+                        color: mainText,
+                        borderColor,
+                        backgroundColor: hoverBg,
                       }}
                     >
-                      {Icon && <Icon size={19} className="shrink-0" />}
-                      <span className="flex-1 text-sm font-bold">{link.label}</span>
-                      {link.isNew && (
-                        <span
-                          className="rounded-full px-2 py-0.5 text-[9px] font-bold"
-                          style={{ backgroundColor: '#9a6a35', color: '#fff' }}
-                        >
-                          جديد
-                        </span>
-                      )}
-                      <ArrowLeft size={15} className="opacity-40" />
+                      {tag}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* =====================================================
+          MOBILE DRAWER
+          ===================================================== */}
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-[700] bg-black/50 backdrop-blur-xs lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+
+            <motion.aside
+              dir="rtl"
+              className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden shadow-2xl"
+              style={{
+                backgroundColor: isDark ? '#0b0b0a' : '#eee8dc',
+                color: mainText,
+                paddingBottom: 'env(safe-area-inset-bottom)',
+              }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+              }}
+            >
+              {/* MOBILE HEADER */}
+              <div
+                className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20 backdrop-blur-2xl"
+                style={{
+                  backgroundColor: isDark
+                    ? 'rgba(11, 11, 10, 0.9)'
+                    : 'rgba(238, 232, 220, 0.9)',
+                  borderColor,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-label="إغلاق القائمة"
+                  className="flex h-10 w-10 items-center justify-center rounded-full cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <X size={20} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('home')}
+                  className="flex items-center"
+                >
+                  <img
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%80_%D9%88%D9%87_copy.png"
+                    alt="وه"
+                    className="h-11 w-auto object-contain sm:h-12"
+                  />
+                </button>
               </div>
 
-              {/* MOBILE ACCOUNT SHORTCUTS */}
-              {isAuthenticated && (
-                <div
-                  className="my-5 border-t pt-4"
-                  style={{ borderColor }}
-                >
-                  <p
-                    className="mb-2 px-3 text-xs font-bold"
-                    style={{ color: secondaryText }}
-                  >
-                    اختصارات الحساب
-                  </p>
-
-                  <button
-                    id="mobile-intro-btn"
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setShowIntroVideo(true);
+              <div className="p-4">
+                {/* ACCOUNT */}
+                {isAuthenticated ? (
+                  <div
+                    className="mb-5 rounded-[1.5rem] border p-4 shadow-sm backdrop-blur-xl"
+                    style={{
+                      borderColor,
+                      backgroundColor: hoverBg,
                     }}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                    style={{ color: mainText }}
                   >
-                    <Play size={18} />
-                    <span>شوف حكاية وه</span>
-                  </button>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={profileImage}
+                        alt={displayName}
+                        className="h-12 w-12 shrink-0 rounded-full object-cover"
+                      />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold">
+                          {displayName}
+                        </p>
+                        <p
+                          className="mt-1 text-xs font-bold"
+                          style={{ color: secondaryText }}
+                        >
+                          {currentRole === 'admin'
+                            ? 'مدير النظام'
+                            : currentRole === 'seller'
+                              ? 'حساب بائع'
+                              : 'حساب مشتري'}
+                        </p>
+                      </div>
+                    </div>
 
-                  {currentRole === 'seller' && (
                     <button
-                      id="mobile-seller-link"
+                      id="mobile-account-link"
                       type="button"
-                      onClick={() => navigate('seller-dashboard')}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                      style={{ color: mainText }}
+                      onClick={() => navigate(getAccountPage())}
+                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
+                      style={{
+                        backgroundColor: '#9a6a35',
+                        color: '#fff',
+                      }}
                     >
-                      <Store size={18} />
-                      <span>لوحة البائع</span>
+                      <UserCircle size={17} />
+                      حسابي
                     </button>
-                  )}
-
-                  {currentRole === 'admin' && (
+                  </div>
+                ) : (
+                  <div className="mb-5 grid grid-cols-2 gap-2">
                     <button
-                      id="mobile-admin-link"
+                      id="mobile-login-btn"
                       type="button"
-                      onClick={() => navigate('admin-dashboard')}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                      style={{ color: mainText }}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setAuthModalTab('login');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="rounded-xl border py-3 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity"
+                      style={{ borderColor, color: mainText }}
                     >
-                      <ShieldCheck size={18} />
-                      <span>لوحة الإدارة</span>
+                      دخول
                     </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => navigate('favorites')}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                    style={{ color: mainText }}
-                  >
-                    <Heart size={18} />
-                    <span>المفضلة</span>
-                    {favorites.length > 0 && (
-                      <span
-                        className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                        style={{ backgroundColor: '#9a6a35', color: '#fff' }}
-                      >
-                        {favorites.length}
-                      </span>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => navigate('messages')}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                    style={{ color: mainText }}
-                  >
-                    <MessageCircle size={18} />
-                    <span>الرسائل</span>
-                    {chatUnreadCount > 0 && (
-                      <span
-                        className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                        style={{ backgroundColor: '#9a6a35', color: '#fff' }}
-                      >
-                        {chatUnreadCount}
-                      </span>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      setTimeout(() => {
-                        document.getElementById('header-notifications-btn')?.click();
-                      }, 100);
-                    }}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                    style={{ color: mainText }}
-                  >
-                    <Bell size={18} />
-                    <span>الإشعارات</span>
-                    <span
-                      className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                    <button
+                      id="mobile-register-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setAuthModalTab('register');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
                       style={{ backgroundColor: '#9a6a35', color: '#fff' }}
                     >
-                      جديد
-                    </span>
-                  </button>
-                </div>
-              )}
-
-              {/* DISCOVER */}
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowIntroVideo(true);
-                }}
-                className="mt-4 flex w-full items-center justify-between rounded-2xl border p-4 text-right cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                style={{ borderColor, backgroundColor: hoverBg }}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-full"
-                    style={{
-                      backgroundColor: 'rgba(154,106,53,0.12)',
-                      color: '#9a6a35',
-                    }}
-                  >
-                    <Sparkles size={18} />
+                      إنشاء حساب
+                    </button>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold">اكتشف وه</p>
+                )}
+
+                {/* NAVIGATION */}
+                <div className="space-y-1">
+                  {roleNavLinks.map((link: any) => {
+                    const Icon = link.icon;
+                    const isActive = activePage === link.id;
+
+                    return (
+                      <button
+                        key={link.id}
+                        type="button"
+                        onClick={() => navigate(link.id)}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-right font-bold cursor-pointer transition-colors"
+                        style={{
+                          backgroundColor: isActive
+                            ? isDark
+                              ? 'rgba(154,106,53,0.18)'
+                              : 'rgba(154,106,53,0.09)'
+                            : 'transparent',
+                          color: isActive ? '#9a6a35' : mainText,
+                        }}
+                      >
+                        {Icon && <Icon size={19} className="shrink-0" />}
+                        <span className="flex-1 text-sm font-bold">{link.label}</span>
+                        {link.isNew && (
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[9px] font-bold"
+                            style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                          >
+                            جديد
+                          </span>
+                        )}
+                        <ArrowLeft size={15} className="opacity-40" />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* MOBILE ACCOUNT SHORTCUTS */}
+                {isAuthenticated && (
+                  <div
+                    className="my-5 border-t pt-4"
+                    style={{ borderColor }}
+                  >
                     <p
-                      className="mt-1 text-[11px]"
+                      className="mb-2 px-3 text-xs font-bold"
                       style={{ color: secondaryText }}
                     >
-                      من الصعيد... لكل مصر
+                      اختصارات الحساب
                     </p>
-                  </div>
-                </div>
-                <ArrowLeft size={17} style={{ color: secondaryText }} />
-              </button>
 
-              {/* LOGOUT */}
-              {isAuthenticated && (
+                    <button
+                      id="mobile-intro-btn"
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setShowIntroVideo(true);
+                      }}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                      style={{ color: mainText }}
+                    >
+                      <Play size={18} />
+                      <span>شوف حكاية وه</span>
+                    </button>
+
+                    {currentRole === 'seller' && (
+                      <button
+                        id="mobile-seller-link"
+                        type="button"
+                        onClick={() => navigate('seller-dashboard')}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        style={{ color: mainText }}
+                      >
+                        <Store size={18} />
+                        <span>لوحة البائع</span>
+                      </button>
+                    )}
+
+                    {currentRole === 'admin' && (
+                      <button
+                        id="mobile-admin-link"
+                        type="button"
+                        onClick={() => navigate('admin-dashboard')}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        style={{ color: mainText }}
+                      >
+                        <ShieldCheck size={18} />
+                        <span>لوحة الإدارة</span>
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => navigate('favorites')}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                      style={{ color: mainText }}
+                    >
+                      <Heart size={18} />
+                      <span>المفضلة</span>
+                      {favorites.length > 0 && (
+                        <span
+                          className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                        >
+                          {favorites.length}
+                        </span>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigate('messages')}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                      style={{ color: mainText }}
+                    >
+                      <MessageCircle size={18} />
+                      <span>الرسائل</span>
+                      {chatUnreadCount > 0 && (
+                        <span
+                          className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                          style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                        >
+                          {chatUnreadCount}
+                        </span>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setTimeout(() => {
+                          document.getElementById('header-notifications-btn')?.click();
+                        }, 100);
+                      }}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                      style={{ color: mainText }}
+                    >
+                      <Bell size={18} />
+                      <span>الإشعارات</span>
+                      <span
+                        className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                        style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                      >
+                        جديد
+                      </span>
+                    </button>
+                  </div>
+                )}
+
+                {/* DISCOVER */}
                 <button
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    logout();
+                    setShowIntroVideo(true);
                   }}
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:bg-rose-500/10 transition-colors"
-                  style={{
-                    color: '#9a6a35',
-                    backgroundColor: isDark
-                      ? 'rgba(154,106,53,0.10)'
-                      : 'rgba(154,106,53,0.06)',
-                  }}
+                  className="mt-4 flex w-full items-center justify-between rounded-2xl border p-4 text-right cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                  style={{ borderColor, backgroundColor: hoverBg }}
                 >
-                  <LogOut size={17} />
-                  تسجيل الخروج
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 items-center justify-center rounded-full"
+                      style={{
+                        backgroundColor: 'rgba(154,106,53,0.12)',
+                        color: '#9a6a35',
+                      }}
+                    >
+                      <Sparkles size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold">اكتشف وه</p>
+                      <p
+                        className="mt-1 text-[11px]"
+                        style={{ color: secondaryText }}
+                      >
+                        من الصعيد... لكل مصر
+                      </p>
+                    </div>
+                  </div>
+                  <ArrowLeft size={17} style={{ color: secondaryText }} />
                 </button>
-              )}
 
-              {/* FOOTER */}
-              <div
-                className="mt-6 border-t pt-5 text-center"
-                style={{ borderColor }}
-              >
-                <p
-                  className="text-[11px] font-bold"
-                  style={{ color: secondaryText }}
+                {/* LOGOUT */}
+                {isAuthenticated && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:bg-rose-500/10 transition-colors"
+                    style={{
+                      color: '#9a6a35',
+                      backgroundColor: isDark
+                        ? 'rgba(154,106,53,0.10)'
+                        : 'rgba(154,106,53,0.06)',
+                    }}
+                  >
+                    <LogOut size={17} />
+                    تسجيل الخروج
+                  </button>
+                )}
+
+                {/* FOOTER */}
+                <div
+                  className="mt-6 border-t pt-5 text-center"
+                  style={{ borderColor }}
                 >
-                  وه — حكاية الصعيد في إيدك
-                </p>
+                  <p
+                    className="text-[11px] font-bold"
+                    style={{ color: secondaryText }}
+                  >
+                    وه — حكاية الصعيد في إيدك
+                  </p>
+                </div>
               </div>
-            </div>
-          </motion.aside>
-        </>
-      )}
-    </AnimatePresence>
-  </>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
-export default Header;
+export default Header;

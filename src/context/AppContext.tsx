@@ -397,7 +397,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'global-search': '/global-search',
 
   'dialect-dictionary': '/dialect-dictionary',
-  'panoramic-tours': '/panoramic-tours',
 
   'cultural-cms': '/admin-cultural-cms',
 
