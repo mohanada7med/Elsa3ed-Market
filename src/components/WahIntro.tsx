@@ -25,7 +25,6 @@ export default function WahLogoIntro({
         const hasSeenIntro = localStorage.getItem(INTRO_STORAGE_KEY);
 
         if (hasSeenIntro === 'true') {
-            onEnter();
         }
     }, [onEnter]);
 
@@ -559,22 +558,7 @@ export default function WahLogoIntro({
                         وخلي الحكاية تبدأ
                     </p>
 
-                    <div
-                        className="
-                            mx-auto mt-7
-                            flex h-9 w-9
-                            items-center justify-center
-                            rounded-full
-                            border
-                            border-[#b98545]/30
-                            bg-white/70
-                            text-[#9a6a35]
-                            shadow-[0_5px_20px_rgba(154,106,53,0.12)]
-                            animate-bounce
-                        "
-                    >
-                        ↓
-                    </div>
+
                 </div>
             </div>
 

@@ -108,7 +108,9 @@ export const CraftReelsSection: React.FC = () => {
               <span>الصعيد في فيديو • شاهد، اكتشف، وعيش التجربة</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black font-serif tracking-tight">
-              الصعيد كما لم تره من قبل
+                 الصعيد كما لم تره من قبل
+
+              <span className="inline-block mt-2 text-[#9a6a35] dark:text-amber-400 font-black"> «ريلز وه» </span>
             </h2>
           </div>
 

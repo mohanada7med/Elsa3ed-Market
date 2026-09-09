@@ -33,8 +33,6 @@ export const HomePage: React.FC = () => {
       {/* 2. WAH Ecosystem Portals (Map, Governorates, Places, Crafts, Stories, People, Food, Events, Market) */}
       <WahEcosystemPortalSection />
 
-      {/* 3. Featured Categories in Marketplace */}
-      <FeaturedCategories />
 
       {/* 4. Live Craft Reels & Stories Showcase (TikTok / Reels Video Feed) */}
       <CraftReelsSection />
@@ -68,7 +66,6 @@ export const HomePage: React.FC = () => {
         <ProductGrid limit={8} />
       </section>
 
-      <GovernorateExplorer />
 
       <FeaturedSellers />
 
