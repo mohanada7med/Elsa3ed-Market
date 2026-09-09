@@ -348,7 +348,8 @@ export const HeroSection: React.FC = () => {
             <span className="font-bold text-[#9a6a35]">
               {' '}أماكنه، ناسه، تراثه، أكله وحكاياته
             </span>
-            {' '}… من قلب المكان للدنيا كلها.
+            <br />
+            {' '}من قلب الصعيد للعالم كله.
           </motion.p>
 
           {/* =====================================================
@@ -658,51 +659,6 @@ export const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      
-
-      {/* =========================================================
-          TOP LOCATION LABEL
-          ========================================================= */}
-
-      <motion.div
-        initial={{
-          opacity: 0,
-          x: -10,
-        }}
-        animate={{
-          opacity: 1,
-          x: 0,
-        }}
-        transition={{
-          delay: 0.7,
-          duration: 0.45,
-        }}
-        className="
-          absolute
-          right-5
-          top-6
-          z-20
-          flex
-          items-center
-          gap-2
-          rounded-xl
-          border
-          border-black/10
-          bg-white/80
-          px-3
-          py-2
-          backdrop-blur-md
-          dark:border-white/10
-          dark:bg-black/35
-          sm:right-8
-        "
-      >
-        <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35]" />
-
-        <span className="text-[9px] font-bold text-black/80 dark:text-white/70">
-          من الفيوم إلى أسوان
-        </span>
-      </motion.div>
 
       {/* Bottom Heritage Line */}
       <div
