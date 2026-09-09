@@ -1,198 +1,697 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 
 interface WahLogoIntroProps {
     onEnter: () => void;
 }
 
-export default function WahLogoIntro({ onEnter }: WahLogoIntroProps) {
+export default function WahLogoIntro({
+    onEnter,
+}: WahLogoIntroProps) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [stage, setStage] = useState<'idle' | 'breach' | 'matrix' | 'roast' | 'welcome'>('idle');
-    const [ipAddress, setIpAddress] = useState('192.168.1.104');
-    const [matrixLogs, setMatrixLogs] = useState<string[]>([]);
 
-    useEffect(() => {
-        const randomIp = `${Math.floor(Math.random() * 200) + 10}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-        setIpAddress(randomIp);
-    }, []);
+    const [isEntering, setIsEntering] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
 
     const handleLogoClick = async () => {
-        if (stage !== 'idle') return;
+        if (isEntering) return;
 
-        // المرحلة الأولى: اختراق أمني وهمي
-        setStage('breach');
+        setIsEntering(true);
+        setShowWelcome(true);
 
+        // تشغيل الصوت فور الضغط
         try {
             if (!audioRef.current) {
                 const audio = new Audio('/audio/site-intro.mp3');
+
                 audio.loop = false;
-                audio.volume = 0.4;
+                audio.volume = 0.5;
                 audio.preload = 'auto';
+
                 audioRef.current = audio;
             }
 
-            audioRef.current.play().catch(() => { });
+            await audioRef.current.play();
         } catch (error) {
             console.error('Audio failed:', error);
         }
 
-        // بعد ثانيتين، سيل الأكواد
-        setTimeout(() => {
-            setStage('matrix');
+        /*
+         * نورت بيتك ومطرحك
+         * تظهر لمدة قصيرة فقط
+         */
+        window.setTimeout(() => {
+            setIsLeaving(true);
 
-            const logs = [
-                'ACCESS GRANTED: ROOT USER',
-                `TARGET IP: ${ipAddress} [EXPOSED]`,
-                'DOWNLOADING WHATSAPP CHATS... [OK]',
-                'EXTRACTING GALLERY & SAVED PASSWORDS...',
-                'UPLOADING TO DARKNET SERVER... 100%',
-                'FORMATTING SYSTEM IN 3... 2... 1...'
-            ];
+            /*
+             * خروج سريع وناعم
+             */
+            window.setTimeout(() => {
+                onEnter();
+            }, 450);
 
-            let i = 0;
-            const logInterval = setInterval(() => {
-                if (i < logs.length) {
-                    setMatrixLogs(prev => [...prev, logs[i]]);
-                    i++;
-                } else {
-                    clearInterval(logInterval);
-                }
-            }, 350);
-
-        }, 2200);
-
-        // بعد 5 ثوانٍ، شاشة المقلب والضحك
-        setTimeout(() => {
-            setStage('roast');
-
-            // بعد ثانيتين ونصف من الضحك، نظهر رسالة الترحيب الدافئة
-            setTimeout(() => {
-                setStage('welcome');
-
-                // بعد ثانيتين من رسالة الترحيب، ندخله الموقع بجد
-                setTimeout(() => {
-                    onEnter();
-                }, 2200);
-            }, 2500);
-        }, 5500);
+        }, 1500);
     };
 
-    // 1. شاشة الاختراق
-    if (stage === 'breach') {
-        return (
-            <main className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#f7f2e8] text-[#9a6a35] font-mono select-none overflow-hidden" dir="rtl">
-                <div className="absolute inset-0 bg-[#9a6a35]/5 animate-pulse pointer-events-none" />
-                <div className="relative z-10 text-center space-y-6 px-4">
-                    <div className="text-8xl animate-bounce">🚨</div>
-                    <h1 className="text-4xl sm:text-6xl font-black tracking-widest text-[#9a6a35] drop-shadow-[0_0_20px_rgba(154,106,53,0.25)]">
-                        SECURITY BREACH DETECTED
-                    </h1>
-                    <p className="text-2xl text-[#241b14] font-bold">
-                        تم رصد محاولة اختراق لجهازك من عنوان IP: <span className="text-[#9a6a35] font-mono">{ipAddress}</span>
-                    </p>
-                    <p className="text-lg text-[#9a6a35] animate-pulse">
-                        !! جاري سحب بياناتك الشخصية وحفظها على السيرفر الخارجي !!
-                    </p>
-                </div>
-            </main>
-        );
-    }
-
-    // 2. شاشة الماتريكس
-    if (stage === 'matrix') {
-        return (
-            <main className="fixed inset-0 z-[99999] flex flex-col justify-end p-8 bg-[#f7f2e8] text-[#557a4f] font-mono select-none overflow-hidden" dir="rtl">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(85,122,79,0.06)_0,transparent_100%)] pointer-events-none" />
-                <div className="relative z-10 max-w-2xl space-y-2 mb-10">
-                    <p className="text-[#9a6a35] text-xl font-bold mb-4 animate-pulse">
-                        [!] نظام الحماية عجز عن التصدي للتهديد:
-                    </p>
-                    {matrixLogs.map((log, index) => (
-                        <p key={index} className="text-sm sm:text-base tracking-wider text-[#557a4f] drop-shadow-[0_0_5px_rgba(85,122,79,0.25)]">
-                            {'>'} {log}
-                        </p>
-                    ))}
-                    <div className="w-full bg-[#9a6a35]/10 h-2 rounded mt-6 overflow-hidden border border-[#9a6a35]/20">
-                        <div className="bg-[#9a6a35] h-full animate-[pulse_0.2s_infinite]" style={{ width: '100%' }} />
-                    </div>
-                </div>
-            </main>
-        );
-    }
-
-    // 3. شاشة الضحك والكشف عن المقلب
-    if (stage === 'roast') {
-        return (
-            <main className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#f7f2e8] text-center select-none" dir="rtl">
-                <div className="space-y-4 px-4 animate-fade-in">
-                    <h2 className="text-4xl font-black text-[#9a6a35]">
-                        قلبك وقف ولا لسه يا صاحبي؟!
-                    </h2>
-                    <p className="text-lg text-[#241b14]/60">
-                        تليفونك سليم ومفيش أي بيانات اتسحبت.. منور الصعيد يا فنان!
-                    </p>
-                </div>
-            </main>
-        );
-    }
-
-    // 4. رسالة الترحيب الخاصة (نورت بيتك ومطرك)
-    if (stage === 'welcome') {
-        return (
-            <main className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#f7f2e8] text-center select-none" dir="rtl">
-                <div className="space-y-4 px-4 animate-fade-in">
-                    <h2 className="text-4xl sm:text-5xl font-black text-[#9a6a35] tracking-wide">
-                        نورت بيتك ومطرحك
-                    </h2>
-                    <p className="text-lg text-[#241b14]/70 font-medium">
-                        ثواني وهتفتح معاك الحكاية.. استعد!
-                    </p>
-                </div>
-            </main>
-        );
-    }
-
-    // 5. الفخ الأساسي
     return (
-        <main className="fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f7f2e8]" dir="rtl">
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9a6a35]/10 blur-[140px]" />
-                <div className="absolute inset-0 opacity-[0.035] bg-[linear-gradient(to_right,#9a6a35_1px,transparent_1px),linear-gradient(to_bottom,#9a6a35_1px,transparent_1px)] bg-[size:30px_30px]" />
+        <main
+            className={`
+                fixed inset-0 z-[99999]
+                flex min-h-screen
+                items-center justify-center
+                overflow-hidden
+                bg-[#f8f4ec]
+
+                transition-all
+                duration-[450ms]
+                ease-[cubic-bezier(0.22,1,0.36,1)]
+
+                ${isLeaving
+                    ? 'scale-[1.02] opacity-0 blur-[5px]'
+                    : 'scale-100 opacity-100 blur-0'
+                }
+            `}
+            dir="rtl"
+        >
+
+            {/* =====================================================
+                BACKGROUND
+            ====================================================== */}
+
+            <div className="pointer-events-none absolute inset-0">
+
+                {/* Main Glow */}
+                <div
+                    className="
+                        absolute
+                        left-1/2 top-1/2
+                        h-[650px] w-[650px]
+                        -translate-x-1/2 -translate-y-1/2
+                        rounded-full
+                        bg-[#d6a15a]/15
+                        blur-[130px]
+                        animate-[pulse_4s_ease-in-out_infinite]
+                    "
+                />
+
+                {/* Top Light */}
+                <div
+                    className="
+                        absolute
+                        left-1/2 top-0
+                        h-[450px] w-[700px]
+                        -translate-x-1/2
+                        rounded-full
+                        bg-[#fff0c9]/70
+                        blur-[120px]
+                    "
+                />
+
+                {/* Right Light */}
+                <div
+                    className="
+                        absolute
+                        -right-40 top-1/3
+                        h-[450px] w-[450px]
+                        rounded-full
+                        bg-[#e6c38e]/20
+                        blur-[120px]
+                    "
+                />
+
+                {/* Left Light */}
+                <div
+                    className="
+                        absolute
+                        -left-40 bottom-1/4
+                        h-[450px] w-[450px]
+                        rounded-full
+                        bg-[#d6a15a]/10
+                        blur-[120px]
+                    "
+                />
+
+                {/* Pattern */}
+                <div
+                    className="
+                        absolute inset-0
+                        opacity-[0.035]
+                        bg-[radial-gradient(circle_at_center,#9a6a35_1px,transparent_1px)]
+                        bg-[size:30px_30px]
+                    "
+                />
+
+                {/* Welcome Glow */}
+                <div
+                    className={`
+                        absolute
+                        left-1/2 top-1/2
+                        h-[500px] w-[500px]
+                        -translate-x-1/2 -translate-y-1/2
+                        rounded-full
+                        bg-[#d6a15a]/10
+                        blur-[100px]
+                        transition-all
+                        duration-700
+                        ${showWelcome
+                            ? 'scale-150 opacity-100'
+                            : 'scale-75 opacity-0'
+                        }
+                    `}
+                />
             </div>
 
-            <div className="relative z-10 flex flex-col items-center">
-                <div className="mb-8 px-4 py-1.5 rounded-full border border-[#9a6a35]/20 bg-white/70 backdrop-blur-md flex items-center gap-2 text-[11px] font-mono tracking-widest text-[#9a6a35] shadow-[0_0_15px_rgba(154,106,53,0.08)]">
-                    <span className="h-2 w-2 rounded-full bg-[#9a6a35] animate-ping" />
-                    SECURE GATEWAY // اتصال مشفر 256-bit
+            {/* =====================================================
+                MAIN INTRO
+            ====================================================== */}
+
+            <div
+                className={`
+                    relative z-10
+                    flex flex-col items-center
+
+                    transition-all
+                    duration-700
+                    ease-[cubic-bezier(0.22,1,0.36,1)]
+
+                    ${showWelcome
+                        ? 'scale-90 opacity-0'
+                        : 'scale-100 opacity-100'
+                    }
+                `}
+            >
+
+                {/* Small Title */}
+                <div
+                    className="
+                        mb-8
+                        flex items-center gap-3
+                        text-[10px]
+                        font-bold
+                        tracking-[0.35em]
+                        text-[#80633f]/60
+                    "
+                >
+                    <span className="h-px w-10 bg-[#9a6a35]/40" />
+
+                    الصعيد
+
+                    <span className="h-px w-10 bg-[#9a6a35]/40" />
                 </div>
+
+                {/* =================================================
+                    LOGO AREA
+                ================================================= */}
 
                 <button
                     type="button"
                     onClick={handleLogoClick}
-                    aria-label="دخول آمن"
-                    className="group relative flex items-center justify-center outline-none cursor-pointer p-6"
+                    disabled={isEntering}
+                    aria-label="دوس على اللوجو للدخول"
+                    className="
+                        group
+                        relative
+                        flex
+                        items-center
+                        justify-center
+                        outline-none
+                    "
                 >
-                    <div className="absolute h-56 w-56 rounded-full border border-dashed border-[#9a6a35]/30 animate-[spin_25s_linear_infinite] group-hover:border-[#9a6a35]" />
-                    <div className="absolute h-44 w-44 rounded-full border border-[#9a6a35]/10 animate-pulse" />
 
-                    <div className="relative flex h-40 w-40 items-center justify-center rounded-2xl rotate-45 border border-[#9a6a35]/40 bg-white shadow-[0_20px_60px_rgba(70,45,20,0.12)] transition-all duration-500 group-hover:rotate-0 group-hover:scale-105 group-hover:border-[#9a6a35] group-hover:shadow-[0_0_80px_rgba(154,106,53,0.25)]">
+                    {/* Big Glow */}
+                    <div
+                        className="
+                            pointer-events-none
+                            absolute
+                            h-[430px] w-[430px]
+                            rounded-full
+                            bg-[#d6a15a]/20
+                            blur-[90px]
+                            animate-[pulse_4s_ease-in-out_infinite]
+                        "
+                    />
+
+                    {/* =================================================
+                        ROTATING LIGHT RAYS
+                    ================================================= */}
+
+                    <div
+                        className="
+                            pointer-events-none
+                            absolute
+                            h-[440px] w-[440px]
+                            rounded-full
+                            animate-[spin_9s_linear_infinite]
+                        "
+                    >
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[2px] w-[220px]
+                                origin-left
+                                -translate-y-1/2
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#d6a15a]/70
+                                to-[#d6a15a]/0
+                                blur-[1px]
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[1px] w-[210px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-45
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#e7bd7c]/80
+                                to-[#d6a15a]/0
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[2px] w-[215px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-90
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#d6a15a]/60
+                                to-[#d6a15a]/0
+                                blur-[1px]
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[1px] w-[205px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-[135deg]
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#e7bd7c]/70
+                                to-[#d6a15a]/0
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[2px] w-[220px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-180
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#d6a15a]/65
+                                to-[#d6a15a]/0
+                                blur-[1px]
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[1px] w-[210px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-[225deg]
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#e7bd7c]/75
+                                to-[#d6a15a]/0
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[2px] w-[215px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-270
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#d6a15a]/60
+                                to-[#d6a15a]/0
+                                blur-[1px]
+                            "
+                        />
+
+                        <span
+                            className="
+                                absolute
+                                left-1/2 top-1/2
+                                h-[1px] w-[205px]
+                                origin-left
+                                -translate-y-1/2
+                                rotate-[315deg]
+                                bg-gradient-to-r
+                                from-[#d6a15a]/0
+                                via-[#e7bd7c]/70
+                                to-[#d6a15a]/0
+                            "
+                        />
+                    </div>
+
+                    {/* Conic Glow */}
+                    <div
+                        className="
+                            pointer-events-none
+                            absolute
+                            h-[370px] w-[370px]
+                            rounded-full
+                            bg-[conic-gradient(from_0deg,transparent,#d6a15a33,transparent,#e6bd7a44,transparent)]
+                            blur-[18px]
+                            animate-[spin_6s_linear_infinite_reverse]
+                        "
+                    />
+
+                    {/* Outer Ring */}
+                    <span
+                        className="
+                            absolute
+                            h-72 w-72
+                            rounded-full
+                            border
+                            border-[#b98545]/35
+                            shadow-[0_0_40px_rgba(154,106,53,0.12)]
+                            animate-[spin_18s_linear_infinite]
+                            transition-all
+                            duration-500
+                            group-hover:h-80
+                            group-hover:w-80
+                            group-hover:border-[#b98545]/60
+                            group-active:scale-90
+                        "
+                    />
+
+                    {/* Second Ring */}
+                    <span
+                        className="
+                            absolute
+                            h-60 w-60
+                            rounded-full
+                            border
+                            border-[#b98545]/25
+                            shadow-[0_0_30px_rgba(214,161,90,0.08)]
+                            animate-[spin_11s_linear_infinite_reverse]
+                        "
+                    />
+
+                    {/* Inner Ring */}
+                    <span
+                        className="
+                            absolute
+                            h-52 w-52
+                            rounded-full
+                            border
+                            border-[#d6a15a]/25
+                            shadow-[inset_0_0_30px_rgba(214,161,90,0.1)]
+                            animate-[spin_25s_linear_infinite]
+                        "
+                    />
+
+                    {/* Logo Circle */}
+                    <span
+                        className="
+                            relative
+                            flex
+                            h-48 w-48
+                            items-center
+                            justify-center
+                            rounded-full
+                            border
+                            border-[#c28b4d]/35
+                            bg-[#fffdf8]/95
+                            shadow-[0_10px_50px_rgba(154,106,53,0.16),0_0_100px_rgba(214,161,90,0.18)]
+                            backdrop-blur-md
+                            transition-all
+                            duration-500
+                            group-hover:scale-105
+                            group-hover:border-[#b98545]/70
+                            group-hover:shadow-[0_15px_70px_rgba(154,106,53,0.25),0_0_140px_rgba(214,161,90,0.3)]
+                        "
+                    >
+
+                        {/* Inner Light */}
+                        <span
+                            className="
+                                pointer-events-none
+                                absolute inset-3
+                                rounded-full
+                                bg-[radial-gradient(circle,rgba(214,161,90,0.18),transparent_68%)]
+                                animate-[pulse_3s_ease-in-out_infinite]
+                            "
+                        />
+
+                        {/* Shine */}
+                        <span
+                            className="
+                                pointer-events-none
+                                absolute
+                                left-[18%] top-[13%]
+                                h-8 w-16
+                                rotate-[-25deg]
+                                rounded-full
+                                bg-white/80
+                                blur-md
+                            "
+                        />
+
                         <img
                             src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
                             alt="وَه"
                             draggable={false}
-                            className="h-24 w-24 -rotate-45 select-none object-contain transition-transform duration-500 group-hover:rotate-0 group-hover:scale-110 filter drop-shadow-[0_0_10px_rgba(154,106,53,0.3)]"
+                            className="
+                                relative z-10
+                                h-36 w-36
+                                select-none
+                                object-contain
+                                drop-shadow-[0_5px_18px_rgba(120,80,35,0.2)]
+                                transition-all
+                                duration-500
+                                group-hover:scale-110
+                            "
                         />
-                    </div>
+                    </span>
                 </button>
 
-                <div className="mt-10 text-center space-y-2">
-                    <p className="text-2xl font-bold tracking-wide text-[#241b14]">
-                        اضغط هنا للتحقق من هويتك ودخول <span className="text-[#9a6a35]">وَه</span>
+                {/* Text */}
+                <div className="mt-12 text-center">
+
+                    <p
+                        className="
+                            text-2xl
+                            font-black
+                            tracking-tight
+                            text-[#3d3328]
+                            sm:text-3xl
+                        "
+                    >
+                        دوس على{' '}
+                        <span className="text-[#9a6a35]">
+                            اللوجو
+                        </span>
                     </p>
-                    <p className="text-xs text-[#241b14]/40 font-mono tracking-widest">
-                        [ اضغط للمتابعة عبر بروتوكول الأمان الآمن ]
+
+                    <p
+                        className="
+                            mt-3
+                            text-sm
+                            text-[#806f5b]/70
+                        "
+                    >
+                        وخلي الحكاية تبدأ
                     </p>
+
+                    <div
+                        className="
+                            mx-auto mt-7
+                            flex h-9 w-9
+                            items-center justify-center
+                            rounded-full
+                            border
+                            border-[#b98545]/30
+                            bg-white/70
+                            text-[#9a6a35]
+                            shadow-[0_5px_20px_rgba(154,106,53,0.12)]
+                            animate-bounce
+                        "
+                    >
+                        ↓
+                    </div>
                 </div>
             </div>
+
+            {/* =====================================================
+                WELCOME SCREEN
+            ====================================================== */}
+
+            <div
+                className={`
+                    pointer-events-none
+                    absolute inset-0
+                    z-30
+                    flex items-center justify-center
+
+                    transition-all
+                    duration-500
+                    ease-[cubic-bezier(0.22,1,0.36,1)]
+
+                    ${showWelcome
+                        ? 'scale-100 opacity-100'
+                        : 'scale-90 opacity-0'
+                    }
+                `}
+            >
+
+                {/* Glow */}
+                <div
+                    className="
+                        absolute
+                        h-[550px] w-[550px]
+                        rounded-full
+                        bg-[#d6a15a]/20
+                        blur-[110px]
+                        animate-[pulse_2s_ease-in-out_infinite]
+                    "
+                />
+
+                {/* Ring 1 */}
+                <div
+                    className="
+                        absolute
+                        h-[500px] w-[500px]
+                        rounded-full
+                        border
+                        border-[#d6a15a]/10
+                        animate-[spin_12s_linear_infinite]
+                    "
+                />
+
+                {/* Ring 2 */}
+                <div
+                    className="
+                        absolute
+                        h-[400px] w-[400px]
+                        rounded-full
+                        border
+                        border-[#b98545]/10
+                        animate-[spin_8s_linear_infinite_reverse]
+                    "
+                />
+
+                {/* Welcome */}
+                <div className="relative text-center">
+
+                    <div className="mb-7 flex items-center justify-center gap-4">
+
+                        <span className="h-px w-16 bg-[#9a6a35]/30" />
+
+                        <span
+                            className="
+                                h-2 w-2
+                                rounded-full
+                                bg-[#c28b4d]
+                                shadow-[0_0_15px_rgba(194,139,77,0.5)]
+                            "
+                        />
+
+                        <span className="h-px w-16 bg-[#9a6a35]/30" />
+
+                    </div>
+
+                    <h1
+                        className="
+                            text-4xl
+                            font-black
+                            tracking-tight
+                            text-[#3d3328]
+                            sm:text-5xl
+                            md:text-6xl
+                        "
+                    >
+                        نورت بيتك
+                    </h1>
+
+                    <h2
+                        className="
+                            mt-2
+                            text-3xl
+                            font-black
+                            text-[#9a6a35]
+                            sm:text-4xl
+                            md:text-5xl
+                        "
+                    >
+                        ومطرحك
+                    </h2>
+
+                    <p
+                        className="
+                            mt-6
+                            text-sm
+                            text-[#806f5b]/65
+                        "
+                    >
+                        أهلاً بيك في الصعيد...
+                    </p>
+
+                    <div className="mt-7 flex items-center justify-center gap-4">
+
+                        <span className="h-px w-16 bg-[#9a6a35]/30" />
+
+                        <span
+                            className="
+                                h-2 w-2
+                                rounded-full
+                                bg-[#c28b4d]
+                                shadow-[0_0_15px_rgba(194,139,77,0.5)]
+                            "
+                        />
+
+                        <span className="h-px w-16 bg-[#9a6a35]/30" />
+
+                    </div>
+                </div>
+            </div>
+
+            {/* =====================================================
+                FOOTER
+            ====================================================== */}
+
+            <div
+                className="
+                    absolute
+                    bottom-7
+                    left-0
+                    right-0
+                    text-center
+                    text-[9px]
+                    font-medium
+                    tracking-[0.3em]
+                    text-[#806f5b]/40
+                "
+            >
+                ELSA3ED MARKET
+            </div>
+
         </main>
     );
 }
