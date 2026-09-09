@@ -1,17 +1,52 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface WahLogoIntroProps {
     onEnter: () => void;
 }
 
+const INTRO_STORAGE_KEY = 'elsa3ed_wah_intro_seen';
+
 export default function WahLogoIntro({
     onEnter,
 }: WahLogoIntroProps) {
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const enterTimerRef = useRef<number | null>(null);
+    const leaveTimerRef = useRef<number | null>(null);
 
     const [isEntering, setIsEntering] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+
+    /*
+     * لو المستخدم شاف الـ Intro قبل كده
+     * ندخل الموقع مباشرة.
+     */
+    useEffect(() => {
+        const hasSeenIntro = localStorage.getItem(INTRO_STORAGE_KEY);
+
+        if (hasSeenIntro === 'true') {
+            onEnter();
+        }
+    }, [onEnter]);
+
+    /*
+     * تنظيف الـ timers فقط.
+     *
+     * مهم:
+     * لا نوقف الـ audio هنا عشان الصوت يقدر يكمل
+     * بعد خروج شاشة الـ Intro.
+     */
+    useEffect(() => {
+        return () => {
+            if (enterTimerRef.current !== null) {
+                window.clearTimeout(enterTimerRef.current);
+            }
+
+            if (leaveTimerRef.current !== null) {
+                window.clearTimeout(leaveTimerRef.current);
+            }
+        };
+    }, []);
 
     const handleLogoClick = async () => {
         if (isEntering) return;
@@ -19,13 +54,23 @@ export default function WahLogoIntro({
         setIsEntering(true);
         setShowWelcome(true);
 
-        // تشغيل الصوت فور الضغط
+        /*
+         * نسجل إن المستخدم شاف الـ Intro.
+         *
+         * بالتالي في الـ Refresh القادم
+         * الـ Intro مش هيظهر.
+         */
+        localStorage.setItem(INTRO_STORAGE_KEY, 'true');
+
+        /*
+         * تشغيل الصوت
+         */
         try {
             if (!audioRef.current) {
                 const audio = new Audio('/audio/site-intro.mp3');
 
                 audio.loop = false;
-                audio.volume = 0.5;
+                audio.volume = 0.4;
                 audio.preload = 'auto';
 
                 audioRef.current = audio;
@@ -37,19 +82,21 @@ export default function WahLogoIntro({
         }
 
         /*
+         * عرض:
          * نورت بيتك ومطرحك
-         * تظهر لمدة قصيرة فقط
          */
-        window.setTimeout(() => {
+        enterTimerRef.current = window.setTimeout(() => {
+            /*
+             * بداية خروج الـ Intro
+             */
             setIsLeaving(true);
 
             /*
-             * خروج سريع وناعم
+             * انتقال سريع وناعم للموقع
              */
-            window.setTimeout(() => {
+            leaveTimerRef.current = window.setTimeout(() => {
                 onEnter();
             }, 450);
-
         }, 1500);
     };
 
@@ -200,7 +247,7 @@ export default function WahLogoIntro({
                 </div>
 
                 {/* =================================================
-                    LOGO AREA
+                    LOGO
                 ================================================= */}
 
                 <button
@@ -232,7 +279,7 @@ export default function WahLogoIntro({
                     />
 
                     {/* =================================================
-                        ROTATING LIGHT RAYS
+                        LIGHT RAYS
                     ================================================= */}
 
                     <div
@@ -247,8 +294,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[2px] w-[220px]
                                 origin-left
                                 -translate-y-1/2
@@ -262,8 +308,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[1px] w-[210px]
                                 origin-left
                                 -translate-y-1/2
@@ -277,8 +322,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[2px] w-[215px]
                                 origin-left
                                 -translate-y-1/2
@@ -293,8 +337,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[1px] w-[205px]
                                 origin-left
                                 -translate-y-1/2
@@ -308,8 +351,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[2px] w-[220px]
                                 origin-left
                                 -translate-y-1/2
@@ -324,8 +366,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[1px] w-[210px]
                                 origin-left
                                 -translate-y-1/2
@@ -339,8 +380,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[2px] w-[215px]
                                 origin-left
                                 -translate-y-1/2
@@ -355,8 +395,7 @@ export default function WahLogoIntro({
 
                         <span
                             className="
-                                absolute
-                                left-1/2 top-1/2
+                                absolute left-1/2 top-1/2
                                 h-[1px] w-[205px]
                                 origin-left
                                 -translate-y-1/2
@@ -597,7 +636,7 @@ export default function WahLogoIntro({
                     "
                 />
 
-                {/* Welcome */}
+                {/* Welcome Text */}
                 <div className="relative text-center">
 
                     <div className="mb-7 flex items-center justify-center gap-4">
