@@ -86,6 +86,19 @@ export const BuyerAccountPage: React.FC = () => {
     }
   }, [currentUser]);
 
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && sessionStorage.getItem('open_seller_apply') === 'true') {
+        sessionStorage.removeItem('open_seller_apply');
+        if (currentUser?.sellerStatus !== 'approved' && currentRole !== 'seller') {
+          setIsApplyModalOpen(true);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [currentUser?.sellerStatus, currentRole]);
+
   const handleRefreshStatus = async () => {
     setIsCheckingStatus(true);
     try {

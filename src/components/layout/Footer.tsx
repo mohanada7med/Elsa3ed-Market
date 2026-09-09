@@ -30,7 +30,52 @@ import {
 import { WAHPattern } from '../../design-system/WAHPattern';
 
 export const Footer: React.FC = () => {
-  const { setActivePage, setShowIntroVideo } = useApp();
+  const {
+    setActivePage,
+    setShowIntroVideo,
+    isAuthenticated,
+    currentRole,
+    currentUser,
+    setIsAuthModalOpen,
+    setAuthModalTab,
+    addToast
+  } = useApp();
+
+  const isSeller =
+    isAuthenticated &&
+    (currentRole === 'seller' ||
+      currentUser?.role === 'seller' ||
+      currentUser?.sellerStatus === 'approved');
+
+  const handleWorkshopRegister = () => {
+    if (isSeller) {
+      return;
+    }
+
+    if (!isAuthenticated || currentRole === 'guest' || !currentUser?.id) {
+      setAuthModalTab('register');
+      setIsAuthModalOpen(true);
+      addToast(
+        'تسجيل ورشة حرفية',
+        'يرجى إنشاء حساب جديد أولاً للانضمام إلى منظومة الورش التراثية وتقديم طلب الاعتماد.',
+        'info'
+      );
+      return;
+    }
+
+    // Authenticated as buyer: proceed with the artisan/workshop application flow
+    try {
+      sessionStorage.setItem('open_seller_apply', 'true');
+    } catch {
+      // ignore
+    }
+    setActivePage('buyer-account');
+    addToast(
+      'انضمام ورشة حرفية',
+      'تم توجيهك إلى صفحة الحساب لبدء تقديم طلب اعتماد وتوثيق ورشتك التراثية.',
+      'info'
+    );
+  };
 
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -104,48 +149,44 @@ export const Footer: React.FC = () => {
 
       <div className="relative z-10 max-w-[1720px] mx-auto px-6 sm:px-10 lg:px-16 py-16">
 
-        {/* شريط علوي ملكي: دعوة انضمام الحرفيين والورش + الفيلم التوثيقي */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center pb-12 mb-14 border-b border-white/10">
+        {/* شريط علوي ملكي: دعوة انضمام الحرفيين والورش + الفيلم التوثيقي (يُخفى بالكامل إذا كان المستخدم بائعاً معتمداً) */}
+        {!isSeller && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center pb-12 mb-14 border-b border-white/10">
 
-          <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#C5A880] to-amber-800 flex items-center justify-center text-black shrink-0 shadow-xl shadow-[#C5A880]/20 font-black">
-              <Award className="w-8 h-8 text-black" />
+            <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <div>
+                <h3 className="text-2xl sm:text-3xl font-black font-heritage tracking-tight">
+                  هل تمتلك ورشة أو نولاً تراثياً بصعيد مصر؟
+                </h3>
+                <p className="text-xl sm:text-xl text-white/70 mt-1 max-w-xl">
+                  انضم الآن إلى المنصة الملكية الأولى لتوثيق وتسويق التراث الصعيدي مباشرة من ورشتك إلى مقتني التراث في كل مكان.
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-xs font-bold text-amber-300 block mb-1">شبكة شيوخ الصنعة والتعاونيات الحرفية المعتمدة</span>
-              <h3 className="text-2xl sm:text-3xl font-black font-heritage tracking-tight">
-                هل تمتلك ورشة أو نولاً تراثياً بصعيد مصر؟
-              </h3>
-              <p className="text-xs sm:text-sm text-white/70 mt-1 max-w-xl">
-                انضم الآن إلى المنصة الملكية الأولى لتوثيق وتسويق التراث الصعيدي مباشرة من ورشتك إلى مقتني التراث في كل مكان.
-              </p>
+
+            <div className="lg:col-span-4 flex flex-wrap items-center justify-start lg:justify-end gap-3.5">
+              <button
+                type="button"
+                id="footer-workshop-register-btn"
+                onClick={handleWorkshopRegister}
+                className="px-7 py-4 rounded-2xl bg-[#C5A880] text-black hover:bg-amber-300 text-xs sm:text-sm font-extrabold transition-all shadow-2xl flex items-center gap-2.5 cursor-pointer border border-amber-200/50"
+              >
+                <span>تسجيل ورشتك بالمنظومة</span>
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowIntroVideo(true)}
+                className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-white/15 hover:bg-white/[0.08] text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer backdrop-blur-xl"
+              >
+                <Film className="w-4 h-4 text-amber-300" />
+                <span>مشاهدة الفيلم التوثيقي</span>
+              </button>
             </div>
+
           </div>
-
-          <div className="lg:col-span-4 flex flex-wrap items-center justify-start lg:justify-end gap-3.5">
-            <a
-              href="https://wa.me/201158969931"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-4 rounded-2xl bg-[#C5A880] text-black hover:bg-amber-300 text-xs sm:text-sm font-extrabold transition-all shadow-2xl flex items-center gap-2.5 cursor-pointer border border-amber-200/50"
-            >
-              <span>تسجيل ورشتك بالمنظومة</span>
-              <ArrowLeft className="w-4 h-4" />
-            </a>
-
-            <button
-              type="button"
-              onClick={() => setShowIntroVideo(true)}
-              className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-white/15 hover:bg-white/[0.08] text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer backdrop-blur-xl"
-            >
-              <Film className="w-4 h-4 text-amber-300" />
-              <span>مشاهدة الفيلم التوثيقي الملكي</span>
-            </button>
-          </div>
-
-        </div>
-
-        {/* الهيكل الرئيسي للفوتر (يحتوي على كافة أقسام وصفحات المنصة) */}
+        )}        {/* الهيكل الرئيسي للفوتر (يحتوي على كافة أقسام وصفحات المنصة) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
           {/* 1. هوية المنصة والنبذة التأسيسية */}
@@ -206,6 +247,14 @@ export const Footer: React.FC = () => {
                     {service.label}
                   </button>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => setShowIntroVideo(true)}
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-amber-400/20 text-xs text-amber-300/90 hover:bg-[#C5A880] hover:text-black font-bold transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <Film className="w-3.5 h-3.5" />
+                  <span>الفيلم التوثيقي</span>
+                </button>
               </div>
             </div>
 
