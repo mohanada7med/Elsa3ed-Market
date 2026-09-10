@@ -435,16 +435,7 @@ export const ReelCommentsDrawer: React.FC<
                                 'مستخدم'}
                             </span>
 
-                            <span
-                              className="
-                              shrink-0
-                              text-[10px]
-                              text-gray-400
-                            "
-                            >
-                              {comment.createdAt ||
-                                'الآن'}
-                            </span>
+
                           </div>
 
                           <p
@@ -458,7 +449,7 @@ export const ReelCommentsDrawer: React.FC<
                           >
                             {comment.comment}
                           </p>
-                        </div>
+                        </div>ذ
                       </div>
                     ))}
                   </div>
@@ -494,7 +485,7 @@ export const ReelCommentsDrawer: React.FC<
                       text-gray-500
                     "
                     >
-                      كن أول من يشارك رأيه ❤️
+                      كن أول من يشارك رأيه
                     </p>
                   </div>
                 )}
