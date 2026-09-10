@@ -2074,6 +2074,58 @@ export const api = {
     }
   },
 
+  async sendAdminNotification(
+    user: { id?: string; role?: string },
+    payload: {
+      title: string;
+      message: string;
+      targetType: 'all' | 'user' | 'buyers' | 'sellers';
+      targetUserId?: string;
+      idempotencyKey?: string;
+      actionPage?: string;
+      link?: string;
+    }
+  ): Promise<{
+    success: boolean;
+    notificationId?: string;
+    targetType?: string;
+    recipientsCount?: number;
+    error?: string;
+  }> {
+    try {
+      const res = await fetch(`${API_BASE}/notifications/send`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders(user)
+        },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      return json;
+    } catch (err: any) {
+      return {
+        success: false,
+        error: err?.message || 'فشل الاتصال بالخادم لإرسال الإشعار'
+      };
+    }
+  },
+
+  async getAdminBroadcastHistory(user?: { id?: string; role?: string }, limit = 50): Promise<any[]> {
+    try {
+      const res = await fetch(`${API_BASE}/notifications/broadcasts?limit=${limit}`, {
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.data || [];
+    } catch {
+      return [];
+    }
+  },
+
   async validateCoupon(code: string, subtotal: number): Promise<any> {
     const res = await fetch(`${API_BASE}/discounts/validate`, {
       method: 'POST',

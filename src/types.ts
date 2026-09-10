@@ -323,6 +323,7 @@ export type ActivePage =
   | 'orders'
   | 'order-details'
   | 'favorites'
+  | 'notifications'
   | 'messages'
   | 'buyer-account'
   | 'seller-dashboard'

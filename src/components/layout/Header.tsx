@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import type { ActivePage } from '../../types';
+import { resolveNotificationNavigation } from '../../utils/notificationRouter';
 import {
   Menu,
   X,
@@ -70,6 +71,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     markNotificationAsRead,
     markAllNotificationsAsRead,
     setActivePage,
+    navigateToOrder,
+    navigateToProduct,
+    navigateToSeller,
     setIsAuthModalOpen,
     setAuthModalTab
   } = useApp();
@@ -100,33 +104,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     markNotificationAsRead(item.id);
     setOpen(false);
 
-    const targetLink = item.link || item.actionPage;
-    if (targetLink && typeof targetLink === 'string') {
-      const validPages: Record<string, any> = {
-        'orders': 'orders',
-        'buyer-orders': 'orders',
-        'seller-orders': 'seller-orders',
-        'admin-orders': 'admin-dashboard',
-        'seller-dashboard': 'seller-dashboard',
-        'seller-products': 'seller-products',
-        'seller-payouts': 'seller-payouts',
-        'admin-sellers': 'admin-dashboard',
-        'admin-products': 'admin-dashboard',
-        'admin-payouts': 'admin-dashboard',
-        'admin-dashboard': 'admin-dashboard',
-        'buyer-account': 'buyer-account',
-        'account': 'buyer-account',
-        'products': 'products',
-        'map': 'map'
-      };
-
-      const resolvedPage = validPages[targetLink] || targetLink;
-      try {
-        setActivePage(resolvedPage as any);
-      } catch {
-        // Graceful fallback
-      }
-    }
+    resolveNotificationNavigation(item, currentRole, {
+      setActivePage,
+      navigateToOrder,
+      navigateToProduct,
+      navigateToSeller
+    });
   };
 
   return (
@@ -399,15 +382,26 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
               {/* FOOTER */}
               <div
-                className="border-t p-2"
+                className="border-t p-2 flex items-center gap-2"
                 style={{
                   borderColor,
                 }}
               >
                 <button
                   type="button"
+                  id="header-view-all-notifications-btn"
+                  onClick={() => {
+                    setOpen(false);
+                    setActivePage('notifications');
+                  }}
+                  className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-[#9a6a35] text-white hover:bg-[#744e26]"
+                >
+                  عرض كافة الإشعارات
+                </button>
+                <button
+                  type="button"
                   onClick={() => setOpen(false)}
-                  className="w-full rounded-xl py-2.5 text-xs font-semibold cursor-pointer"
+                  className="px-3 rounded-xl py-2 text-xs font-semibold cursor-pointer"
                   style={{
                     backgroundColor: hoverBg,
                     color: mainText,

@@ -65,6 +65,10 @@ import {
   adminMarkProcessing,
   adminMarkPaid
 } from '../services/payoutService.ts';
+import {
+  sendAdminBroadcastNotification,
+  getAdminBroadcastHistory
+} from '../services/notificationService.ts';
 import { memoryDb, getDatabase } from '../db/mongodb.ts';
 
 const router = express.Router();
@@ -1553,6 +1557,58 @@ router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response)
       success: false,
       error: (error as Error).message || 'فشل تحديث إعدادات الدفع',
       code: 'UPDATE_PAYMENT_CONFIG_ERROR'
+    });
+  }
+});
+
+// ==================== PLATFORM NOTIFICATIONS (ADMIN BROADCAST) ====================
+
+// POST /api/admin/notifications/send or /broadcast
+router.post(['/notifications/send', '/notifications/broadcast'], async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { title, message, targetType, targetUserId, idempotencyKey, actionPage, link } = req.body;
+    const result = await sendAdminBroadcastNotification(req.user!, {
+      title,
+      message,
+      targetType,
+      targetUserId,
+      idempotencyKey,
+      actionPage,
+      link
+    });
+
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error: any) {
+    console.error('Error in POST /api/admin/notifications/send:', error);
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في إرسال الإشعار والتنبيه',
+      code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// GET /api/admin/notifications/broadcasts - History of sent broadcasts
+router.get('/notifications/broadcasts', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 50;
+    const history = await getAdminBroadcastHistory(limit);
+
+    res.json({
+      success: true,
+      count: history.length,
+      data: history
+    });
+  } catch (error: any) {
+    console.error('Error in GET /api/admin/notifications/broadcasts:', error);
+    res.status(500).json({
+      success: false,
+      error: error?.message || 'فشل في استعراض سجل الإعلانات المرسلة',
+      code: 'SERVER_ERROR'
     });
   }
 });

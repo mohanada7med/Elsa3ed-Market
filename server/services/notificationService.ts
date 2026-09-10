@@ -1,8 +1,11 @@
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
-import type { NotificationDocument } from '../models/types.ts';
+import type { NotificationDocument, AdminBroadcastDocument } from '../models/types.ts';
+import type { AuthenticatedUser } from '../middleware/auth.ts';
+import { chatRealtimeService } from './chatRealtimeService.ts';
 import { Logger } from '../utils/logger.ts';
 
 const memoryNotifications: NotificationDocument[] = [];
+const memoryBroadcasts: AdminBroadcastDocument[] = [];
 
 /**
  * Fetch paginated real notifications belonging strictly to the authenticated user.
@@ -115,9 +118,18 @@ export async function markNotificationAsRead(
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
+      const notif = await db.collection('notifications').findOne({ id: notificationId, userId });
       const res = await db
         .collection('notifications')
         .updateOne({ id: notificationId, userId }, { $set: { isRead: true } });
+
+      if (notif?.broadcastId) {
+        await db.collection('admin_broadcasts').updateOne(
+          { id: notif.broadcastId },
+          { $addToSet: { readBy: userId } }
+        );
+      }
+
       return res.modifiedCount > 0 || res.matchedCount > 0;
     } catch (e) {
       Logger.error('[NotificationService] Error updating notification in MongoDB:', e);
@@ -127,6 +139,12 @@ export async function markNotificationAsRead(
   const notif = memoryNotifications.find((n) => n.id === notificationId && n.userId === userId);
   if (notif) {
     notif.isRead = true;
+    if (notif.broadcastId) {
+      const bcast = memoryBroadcasts.find((b) => b.id === notif.broadcastId);
+      if (bcast && !bcast.readBy.includes(userId)) {
+        bcast.readBy.push(userId);
+      }
+    }
     return true;
   }
   return false;
@@ -141,9 +159,20 @@ export async function markAllNotificationsAsRead(userId: string): Promise<boolea
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
+      const unreadBroadcasts = await db
+        .collection('notifications')
+        .distinct('broadcastId', { userId, isRead: false, broadcastId: { $exists: true, $ne: null } });
+
       await db
         .collection('notifications')
         .updateMany({ userId, isRead: false }, { $set: { isRead: true } });
+
+      if (Array.isArray(unreadBroadcasts) && unreadBroadcasts.length > 0) {
+        await db.collection('admin_broadcasts').updateMany(
+          { id: { $in: unreadBroadcasts } },
+          { $addToSet: { readBy: userId } }
+        );
+      }
       return true;
     } catch (e) {
       Logger.error('[NotificationService] Error marking all notifications as read in MongoDB:', e);
@@ -153,6 +182,12 @@ export async function markAllNotificationsAsRead(userId: string): Promise<boolea
   memoryNotifications.forEach((n) => {
     if (n.userId === userId) {
       n.isRead = true;
+      if (n.broadcastId) {
+        const bcast = memoryBroadcasts.find((b) => b.id === n.broadcastId);
+        if (bcast && !bcast.readBy.includes(userId)) {
+          bcast.readBy.push(userId);
+        }
+      }
     }
   });
   return true;
@@ -284,5 +319,350 @@ export async function notifyAdmins(params: {
   } catch (err) {
     Logger.error('[NotificationService] Error in notifyAdmins:', err);
   }
+}
+
+export interface SendAdminNotificationInput {
+  title: string;
+  message: string;
+  targetType: 'all' | 'user' | 'buyers' | 'sellers';
+  targetUserId?: string;
+  idempotencyKey?: string;
+  actionPage?: string;
+  link?: string;
+}
+
+export interface SendAdminNotificationResult {
+  success: boolean;
+  notificationId?: string;
+  targetType?: string;
+  recipientsCount?: number;
+  error?: string;
+  code?: string;
+}
+
+/**
+ * Send an authentic, server-validated broadcast or targeted notification from an authorized Admin.
+ * Determines target users on server-side, saves to MongoDB with bulk operations, and delivers in real-time.
+ */
+export async function sendAdminBroadcastNotification(
+  adminUser: AuthenticatedUser,
+  input: SendAdminNotificationInput
+): Promise<SendAdminNotificationResult> {
+  if (!adminUser || adminUser.role !== 'admin') {
+    return {
+      success: false,
+      error: 'غير مصرح. يجب تسجيل الدخول كمدير للنظام لإرسال التنبيهات',
+      code: 'UNAUTHORIZED_ADMIN_ONLY'
+    };
+  }
+
+  const title = (input.title || '').trim();
+  const message = (input.message || '').trim();
+  const targetType = input.targetType;
+  const targetUserId = input.targetUserId ? String(input.targetUserId).trim() : undefined;
+  const idempotencyKey = input.idempotencyKey ? String(input.idempotencyKey).trim() : undefined;
+
+  // 1. Input Validation
+  if (!title || title.length < 2 || title.length > 150) {
+    return {
+      success: false,
+      error: 'عنوان الإشعار مطلوب ويجب أن يتراوح بين حرفين و 150 حرفاً',
+      code: 'INVALID_TITLE'
+    };
+  }
+
+  if (!message || message.length < 2 || message.length > 2000) {
+    return {
+      success: false,
+      error: 'نص الإشعار مطلوب ويجب أن يتراوح بين حرفين و 2000 حرف',
+      code: 'INVALID_MESSAGE'
+    };
+  }
+
+  if (!['all', 'user', 'buyers', 'sellers'].includes(targetType)) {
+    return {
+      success: false,
+      error: 'الفئة المستهدفة غير صالحة. الخيارات المتاحة: الكل، مستخدم محدد، المشترين فقط، أصحاب الورش فقط',
+      code: 'INVALID_TARGET_TYPE'
+    };
+  }
+
+  const { db, isMongo } = await getDatabase();
+
+  // 2. Duplicate Prevention / Idempotency check
+  if (idempotencyKey) {
+    if (isMongo && db) {
+      try {
+        const existing = await db.collection('admin_broadcasts').findOne({ idempotencyKey });
+        if (existing) {
+          return {
+            success: true,
+            notificationId: existing.id,
+            targetType: existing.targetType,
+            recipientsCount: existing.recipientsCount || (Array.isArray(existing.readBy) ? existing.readBy.length : 1)
+          };
+        }
+      } catch (e) {
+        Logger.error('[NotificationService] Idempotency check error in MongoDB:', e);
+      }
+    } else {
+      const existing = memoryBroadcasts.find((b) => b.idempotencyKey === idempotencyKey);
+      if (existing) {
+        return {
+          success: true,
+          notificationId: existing.id,
+          targetType: existing.targetType,
+          recipientsCount: existing.recipientsCount
+        };
+      }
+    }
+  }
+
+  // 3. Target User Determination (Server-side & strictly validated against MongoDB)
+  let recipientUserIds: string[] = [];
+  let targetUserName: string | undefined = undefined;
+
+  if (targetType === 'user') {
+    if (!targetUserId) {
+      return {
+        success: false,
+        error: 'معرف المستخدم المستهدف مطلوب عند اختيار مستخدم محدد',
+        code: 'MISSING_TARGET_USER_ID'
+      };
+    }
+
+    let foundUser: any = null;
+    if (isMongo && db) {
+      try {
+        foundUser = await db.collection('users').findOne({ id: targetUserId });
+      } catch (e) {
+        Logger.error('[NotificationService] Error looking up target user in MongoDB:', e);
+      }
+    }
+    if (!foundUser) {
+      foundUser = memoryDb.users.find((u) => u.id === targetUserId);
+    }
+
+    if (!foundUser) {
+      return {
+        success: false,
+        error: 'المستخدم المحدد غير موجود في قاعدة بيانات المنصة',
+        code: 'USER_NOT_FOUND'
+      };
+    }
+
+    if (foundUser.status === 'blocked') {
+      return {
+        success: false,
+        error: 'حساب المستخدم المحدد محظور أو غير مفعل حالياً',
+        code: 'USER_BLOCKED'
+      };
+    }
+
+    targetUserName = foundUser.name || foundUser.username || foundUser.email || 'مستخدم المنصة';
+    recipientUserIds = [foundUser.id];
+  } else if (targetType === 'all') {
+    if (isMongo && db) {
+      try {
+        const users = await db
+          .collection('users')
+          .find({ status: { $ne: 'blocked' } }, { projection: { id: 1 } })
+          .toArray();
+        recipientUserIds = users.map((u: any) => u.id).filter(Boolean);
+      } catch (e) {
+        Logger.error('[NotificationService] Error fetching all users in MongoDB:', e);
+      }
+    }
+    if (recipientUserIds.length === 0) {
+      recipientUserIds = memoryDb.users.filter((u) => u.status !== 'blocked').map((u) => u.id).filter(Boolean);
+    }
+  } else if (targetType === 'buyers') {
+    if (isMongo && db) {
+      try {
+        const users = await db
+          .collection('users')
+          .find({ role: 'buyer', status: { $ne: 'blocked' } }, { projection: { id: 1 } })
+          .toArray();
+        recipientUserIds = users.map((u: any) => u.id).filter(Boolean);
+      } catch (e) {
+        Logger.error('[NotificationService] Error fetching buyers in MongoDB:', e);
+      }
+    }
+    if (recipientUserIds.length === 0) {
+      recipientUserIds = memoryDb.users
+        .filter((u) => u.role === 'buyer' && u.status !== 'blocked')
+        .map((u) => u.id)
+        .filter(Boolean);
+    }
+  } else if (targetType === 'sellers') {
+    if (isMongo && db) {
+      try {
+        const users = await db
+          .collection('users')
+          .find({ role: 'seller', status: { $ne: 'blocked' } }, { projection: { id: 1 } })
+          .toArray();
+        recipientUserIds = users.map((u: any) => u.id).filter(Boolean);
+      } catch (e) {
+        Logger.error('[NotificationService] Error fetching sellers in MongoDB:', e);
+      }
+    }
+    if (recipientUserIds.length === 0) {
+      recipientUserIds = memoryDb.users
+        .filter((u) => u.role === 'seller' && u.status !== 'blocked')
+        .map((u) => u.id)
+        .filter(Boolean);
+    }
+  }
+
+  // Deduplicate IDs
+  recipientUserIds = Array.from(new Set(recipientUserIds));
+
+  if (recipientUserIds.length === 0) {
+    return {
+      success: false,
+      error: 'لم يتم العثور على أي مستخدمين مؤهلين في الفئة المستهدفة حالياً',
+      code: 'NO_TARGET_USERS_FOUND'
+    };
+  }
+
+  // 4. Create Master Broadcast Record
+  const broadcastId = `bcast-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const now = new Date().toISOString();
+
+  const broadcastDoc: AdminBroadcastDocument = {
+    id: broadcastId,
+    title,
+    message,
+    targetType,
+    targetUserId: targetType === 'user' ? targetUserId : undefined,
+    targetUserName,
+    senderId: adminUser.id,
+    senderRole: 'admin',
+    senderName: adminUser.name || adminUser.username || 'مدير المنصة',
+    recipientsCount: recipientUserIds.length,
+    readBy: [],
+    idempotencyKey,
+    createdAt: now
+  };
+
+  // 5. Prepare Bulk Notification Documents for Each Recipient
+  const recipientRole = targetType === 'sellers' ? 'seller' : targetType === 'buyers' ? 'buyer' : 'all';
+  const defaultActionPage = targetType === 'sellers' ? 'seller-dashboard' : 'notifications';
+  const customActionPage = (input.actionPage || input.link || '').trim().replace(/^\/+/, '');
+  const finalActionPage = customActionPage || defaultActionPage;
+
+  const notifDocs: NotificationDocument[] = recipientUserIds.map((uid) => ({
+    id: `notif-${broadcastId}-${uid}`,
+    userId: uid,
+    title,
+    message,
+    type: 'system_alert',
+    isRead: false,
+    link: finalActionPage,
+    actionPage: finalActionPage,
+    recipientRole,
+    targetType,
+    targetUserId: targetType === 'user' ? targetUserId : undefined,
+    senderId: adminUser.id,
+    senderRole: 'admin',
+    broadcastId,
+    readBy: [],
+    createdAt: now
+  }));
+
+  // 6. Save to MongoDB using High-Performance Bulk Operations
+  if (isMongo && db) {
+    try {
+      await db.collection('admin_broadcasts').insertOne(broadcastDoc as any);
+
+      // Insert notifications in batches to handle large audiences efficiently
+      const batchSize = 500;
+      for (let i = 0; i < notifDocs.length; i += batchSize) {
+        const batch = notifDocs.slice(i, i + batchSize);
+        await db.collection('notifications').insertMany(batch as any, { ordered: false });
+      }
+    } catch (e) {
+      Logger.error('[NotificationService] Error during bulk insert in MongoDB:', e);
+    }
+  }
+
+  // Always keep in-memory backup
+  memoryBroadcasts.unshift(broadcastDoc);
+  memoryNotifications.unshift(...notifDocs);
+
+  // 7. Deliver in Real-Time to Connected Users via SSE
+  for (const uid of recipientUserIds) {
+    chatRealtimeService.notifyUser(uid, 'notification:new', {
+      id: `notif-${broadcastId}-${uid}`,
+      title,
+      message,
+      type: 'system_alert',
+      broadcastId,
+      targetType,
+      actionPage: finalActionPage,
+      link: finalActionPage,
+      createdAt: now
+    });
+  }
+
+  Logger.info(
+    `[NotificationService] Admin ${adminUser.id} broadcasted notification "${title}" to ${recipientUserIds.length} users (target: ${targetType})`
+  );
+
+  return {
+    success: true,
+    notificationId: broadcastId,
+    targetType,
+    recipientsCount: recipientUserIds.length
+  };
+}
+
+/**
+ * Retrieve real Admin Broadcast History from MongoDB.
+ */
+export async function getAdminBroadcastHistory(limit: number = 50): Promise<any[]> {
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    try {
+      const records = await db
+        .collection('admin_broadcasts')
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(Math.min(Math.max(1, limit), 100))
+        .toArray();
+
+      return records.map((r: any) => ({
+        id: r.id,
+        title: r.title,
+        message: r.message,
+        targetType: r.targetType,
+        targetUserId: r.targetUserId,
+        targetUserName: r.targetUserName,
+        senderId: r.senderId,
+        senderRole: r.senderRole,
+        senderName: r.senderName,
+        recipientsCount: r.recipientsCount || (Array.isArray(r.readBy) ? r.readBy.length : 0),
+        readCount: Array.isArray(r.readBy) ? r.readBy.length : 0,
+        createdAt: r.createdAt
+      }));
+    } catch (e) {
+      Logger.error('[NotificationService] Error fetching admin broadcasts in MongoDB:', e);
+    }
+  }
+
+  return memoryBroadcasts.slice(0, limit).map((r) => ({
+    id: r.id,
+    title: r.title,
+    message: r.message,
+    targetType: r.targetType,
+    targetUserId: r.targetUserId,
+    targetUserName: r.targetUserName,
+    senderId: r.senderId,
+    senderRole: r.senderRole,
+    senderName: r.senderName,
+    recipientsCount: r.recipientsCount || (Array.isArray(r.readBy) ? r.readBy.length : 0),
+    readCount: Array.isArray(r.readBy) ? r.readBy.length : 0,
+    createdAt: r.createdAt
+  }));
 }
 

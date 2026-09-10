@@ -162,23 +162,29 @@ class NotificationService {
     if (role === 'guest') {
       return [];
     }
-    if (role === 'admin') {
-      return this.notifications.filter((n) => n.recipientRole === 'admin' || n.recipientRole === 'all' || !n.recipientRole);
-    }
-    if (role === 'seller') {
-      return this.notifications.filter(
-        (n) =>
+    return this.notifications.filter((n) => {
+      if (targetId && (n.recipientId === targetId || (n as any).userId === targetId)) {
+        return true;
+      }
+      if (role === 'admin') {
+        return n.recipientRole === 'admin' || n.recipientRole === 'all' || !n.recipientRole || (n as any).targetType === 'all';
+      }
+      if (role === 'seller') {
+        return (
           (n.recipientRole === 'seller' && (!n.recipientId || !targetId || n.recipientId === targetId)) ||
           n.recipientRole === 'all' ||
           !n.recipientRole
-      );
-    }
-    if (role === 'buyer') {
-      return this.notifications.filter(
-        (n) => (n.recipientRole === 'buyer' && (!n.recipientId || n.recipientId === targetId)) || n.recipientRole === 'all' || !n.recipientRole
-      );
-    }
-    return this.notifications;
+        );
+      }
+      if (role === 'buyer') {
+        return (
+          (n.recipientRole === 'buyer' && (!n.recipientId || !targetId || n.recipientId === targetId)) ||
+          n.recipientRole === 'all' ||
+          !n.recipientRole
+        );
+      }
+      return true;
+    });
   }
 
   getUnreadCount(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): number {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { RefreshDataButton } from './RefreshDataButton.tsx';
+import { api } from '../../services/api.ts';
 import {
   notificationService,
   AppNotification,
@@ -28,11 +29,21 @@ import {
   VolumeX,
   Radio,
   MessageSquare,
-  Play
+  Play,
+  User,
+  Users,
+  ShieldAlert,
+  History,
+  RotateCcw,
+  Loader2,
+  Search,
+  Info,
+  CheckCircle
 } from 'lucide-react';
+import { resolveNotificationNavigation } from '../../utils/notificationRouter.ts';
 
 interface NotificationsManagerProps {
-  viewMode: 'seller' | 'admin';
+  viewMode: 'seller' | 'admin' | 'buyer';
   onNavigateTab?: (tab: string) => void;
 }
 
@@ -42,7 +53,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 }) => {
   const {
     currentUser,
+    currentRole,
+    setActivePage,
+    navigateToOrder,
+    navigateToProduct,
+    navigateToSeller,
     addToast,
+    refreshNotifications,
     browserNotificationPermission,
     browserNotificationSettings,
     requestBrowserNotificationPermission,
@@ -55,17 +72,57 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [isRequestingPermission, setIsRequestingPermission] = useState(false);
 
+  // Admin Sub-Tab & History
+  const [adminSubTab, setAdminSubTab] = useState<'inbox' | 'broadcasts'>('inbox');
+  const [broadcastHistory, setBroadcastHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+
   // Admin Broadcast Announcement state
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [broadcastTitle, setBroadcastTitle] = useState('');
   const [broadcastMessage, setBroadcastMessage] = useState('');
-  const [broadcastRecipient, setBroadcastRecipient] = useState<'all' | 'seller' | 'buyer'>('all');
+  const [broadcastTargetType, setBroadcastTargetType] = useState<'all' | 'user' | 'buyers' | 'sellers'>('all');
+  const [broadcastActionPage, setBroadcastActionPage] = useState<string>('notifications');
+  const [selectedTargetUserId, setSelectedTargetUserId] = useState('');
+  const [selectedTargetUser, setSelectedTargetUser] = useState<any | null>(null);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
+  const [broadcastError, setBroadcastError] = useState<string | null>(null);
+  const [broadcastSuccessMessage, setBroadcastSuccessMessage] = useState<string | null>(null);
 
   const targetSellerId = currentUser?.sellerId || currentUser?.id;
 
   const refreshList = () => {
     const list = notificationService.getNotifications(viewMode, targetSellerId);
     setNotifications(list);
+  };
+
+  const fetchBroadcastHistory = async () => {
+    if (viewMode !== 'admin' || !currentUser?.id) return;
+    try {
+      setIsLoadingHistory(true);
+      const data = await api.getAdminBroadcastHistory({ id: currentUser.id, role: 'admin' });
+      setBroadcastHistory(data || []);
+    } catch (err) {
+      console.warn('Failed to load admin broadcast history:', err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    if (viewMode !== 'admin' || !currentUser?.id) return;
+    try {
+      setIsLoadingUsers(true);
+      const data = await api.getAdminUsers({ id: currentUser.id, role: 'admin' });
+      setAvailableUsers(data || []);
+    } catch (err) {
+      console.warn('Failed to load users for targeted notifications:', err);
+    } finally {
+      setIsLoadingUsers(false);
+    }
   };
 
   useEffect(() => {
@@ -75,6 +132,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       unsub();
     };
   }, [viewMode, targetSellerId]);
+
+  useEffect(() => {
+    if (viewMode === 'admin') {
+      fetchBroadcastHistory();
+      fetchUsers();
+    }
+  }, [viewMode, currentUser?.id]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -102,23 +166,98 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
     }
   };
 
-  const handleSendBroadcast = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!broadcastTitle.trim() || !broadcastMessage.trim()) return;
-
-    notificationService.addNotification({
-      recipientRole: broadcastRecipient,
-      title: broadcastTitle.trim(),
-      message: broadcastMessage.trim(),
-      type: 'system_alert',
-      actionPage: broadcastRecipient === 'seller' ? 'seller-dashboard' : 'home'
-    });
-
-    addToast('تم إرسال التنبيه', 'تم إرسال الإشعار والتنبيه بنجاح للجمهور المستهدف', 'success');
-    setShowBroadcastModal(false);
+  const handleResetBroadcastForm = () => {
     setBroadcastTitle('');
     setBroadcastMessage('');
-    refreshList();
+    setBroadcastTargetType('all');
+    setBroadcastActionPage('notifications');
+    setSelectedTargetUserId('');
+    setSelectedTargetUser(null);
+    setUserSearchQuery('');
+    setBroadcastError(null);
+    setBroadcastSuccessMessage(null);
+  };
+
+  const handleSelectUser = (user: any) => {
+    setSelectedTargetUserId(user.id);
+    setSelectedTargetUser(user);
+    setUserSearchQuery('');
+  };
+
+  const handleSendBroadcast = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBroadcastError(null);
+    setBroadcastSuccessMessage(null);
+
+    const title = broadcastTitle.trim();
+    const message = broadcastMessage.trim();
+
+    if (!title || title.length < 2) {
+      setBroadcastError('عنوان الإشعار مطلوب ويجب أن يتكون من حرفين على الأقل');
+      return;
+    }
+    if (title.length > 150) {
+      setBroadcastError('عنوان الإشعار يجب ألا يتجاوز 150 حرفاً');
+      return;
+    }
+    if (!message || message.length < 2) {
+      setBroadcastError('نص الإشعار مطلوب ويجب أن يتكون من حرفين على الأقل');
+      return;
+    }
+    if (message.length > 2000) {
+      setBroadcastError('نص الإشعار يجب ألا يتجاوز 2000 حرف');
+      return;
+    }
+    if (broadcastTargetType === 'user' && !selectedTargetUserId.trim()) {
+      setBroadcastError('يرجى تحديد المستخدم المستهدف أو إدخال معرف المستخدم (User ID)');
+      return;
+    }
+
+    setIsSendingBroadcast(true);
+    const idempotencyKey = `idemp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const destinationPage = broadcastActionPage || (broadcastTargetType === 'sellers' ? 'seller-dashboard' : 'notifications');
+
+    try {
+      const res = await api.sendAdminNotification(
+        { id: currentUser!.id, role: 'admin' },
+        {
+          title,
+          message,
+          targetType: broadcastTargetType,
+          targetUserId: broadcastTargetType === 'user' ? selectedTargetUserId.trim() : undefined,
+          idempotencyKey,
+          actionPage: destinationPage,
+          link: destinationPage
+        }
+      );
+
+      if (!res.success) {
+        setBroadcastError(res.error || 'فشل إرسال الإشعار من الخادم');
+        return;
+      }
+
+      const count = res.recipientsCount || 1;
+      setBroadcastSuccessMessage(`تم بنجاح حفظ الإشعار في MongoDB وتسليمه لـ ${count} مستخدم في الوقت الفعلي!`);
+      addToast(
+        'تم إرسال الإشعار بنجاح',
+        `تم تسليم الإشعار لـ ${count} مستخدم وتسجيله في قاعدة البيانات`,
+        'success'
+      );
+
+      await fetchBroadcastHistory();
+      refreshList();
+      refreshNotifications();
+
+      setTimeout(() => {
+        setShowBroadcastModal(false);
+        setBroadcastSuccessMessage(null);
+        handleResetBroadcastForm();
+      }, 1400);
+    } catch (err: any) {
+      setBroadcastError(err?.message || 'حدث خطأ في الاتصال بالخادم أثناء إرسال الإشعار');
+    } finally {
+      setIsSendingBroadcast(false);
+    }
   };
 
   const getNotificationIcon = (type: NotificationType) => {
@@ -492,7 +631,188 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
         </div>
       </div>
 
-      {/* KPI Stats Cards */}
+      {/* Admin View Mode Switcher: Inbox vs Sent Broadcasts (Admin Only) */}
+      {viewMode === 'admin' && (
+        <div className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 w-fit">
+          <button
+            type="button"
+            id="admin-notifs-inbox-tab"
+            onClick={() => setAdminSubTab('inbox')}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+              adminSubTab === 'inbox'
+                ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+            }`}
+          >
+            <Bell className="w-4 h-4" />
+            <span>الإشعارات الواردة</span>
+            {unreadCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#9a6a35] text-white font-bold">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            id="admin-notifs-broadcasts-tab"
+            onClick={() => {
+              setAdminSubTab('broadcasts');
+              fetchBroadcastHistory();
+            }}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+              adminSubTab === 'broadcasts'
+                ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+            }`}
+          >
+            <History className="w-4 h-4" />
+            <span>سجل التنبيهات والإعلانات المرسلة (MongoDB)</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold">
+              {broadcastHistory.length}
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Admin Broadcasts History View */}
+      {viewMode === 'admin' && adminSubTab === 'broadcasts' ? (
+        <div className="space-y-4">
+          <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                <History className="w-5 h-5 text-[#9a6a35]" />
+                <span>سجل الإعلانات والتنبيهات الموجهة (من قاعدة البيانات MongoDB)</span>
+              </h3>
+              <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                متابعة كافة التنبيهات المرسلة من الإدارة مع تتبع عدد المستلمين الفعلي وعدد القراءات الحقيقية لحظة بلحظة.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={fetchBroadcastHistory}
+                disabled={isLoadingHistory}
+                className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
+              >
+                <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-[#9a6a35]' : ''}`} />
+                <span>تحديث السجل</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowBroadcastModal(true)}
+                className="px-5 py-2 bg-[#9a6a35] hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 cursor-pointer transition-all"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>إرسال تنبيه جديد</span>
+              </button>
+            </div>
+          </div>
+
+          {isLoadingHistory ? (
+            <div className="p-12 text-center bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10">
+              <Loader2 className="w-8 h-8 animate-spin text-[#9a6a35] mx-auto mb-2" />
+              <p className="text-xs font-bold text-black/60 dark:text-white/60">جارٍ تحميل سجل الإعلانات من قاعدة البيانات...</p>
+            </div>
+          ) : broadcastHistory.length > 0 ? (
+            <div className="space-y-3">
+              {broadcastHistory.map((bc: any) => {
+                const targetLabel =
+                  bc.targetType === 'all'
+                    ? 'كافة المستخدمين'
+                    : bc.targetType === 'buyers'
+                    ? 'المشترين فقط'
+                    : bc.targetType === 'sellers'
+                    ? 'أصحاب الورش والحرفيين'
+                    : `مستخدم محدد (${bc.targetUserId || 'معرف'})`;
+
+                const targetBadgeColor =
+                  bc.targetType === 'all'
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300'
+                    : bc.targetType === 'buyers'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                    : bc.targetType === 'sellers'
+                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
+                    : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
+
+                const readCount = bc.readCount ?? (Array.isArray(bc.readBy) ? bc.readBy.length : 0);
+                const recipientsCount = bc.recipientsCount || 1;
+                const readPercentage = Math.min(100, Math.round((readCount / recipientsCount) * 100));
+
+                return (
+                  <div
+                    key={bc.id || bc._id}
+                    className="p-5 bg-white/80 dark:bg-[#151513]/90 rounded-2xl border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-sm space-y-3 transition-all hover:border-[#9a6a35]/30"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/5 dark:border-white/5 pb-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${targetBadgeColor}`}>
+                          {targetLabel}
+                        </span>
+                        <h4 className="text-sm font-black text-[#211d18] dark:text-[#f5f0e7]">
+                          {bc.title}
+                        </h4>
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] text-black/50 dark:text-white/50 font-medium">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{new Date(bc.createdAt).toLocaleString('ar-EG')}</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-black/75 dark:text-white/75 leading-relaxed font-medium">
+                      {bc.message}
+                    </p>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-black/60 dark:text-white/60 font-medium">
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <span className="flex items-center gap-1.5">
+                          <Users className="w-3.5 h-3.5 text-[#9a6a35]" />
+                          <span>عدد المستلمين الفعلي: <strong>{recipientsCount}</strong></span>
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>تمت القراءة: <strong>{readCount}</strong> ({readPercentage}%)</span>
+                        </span>
+                        {bc.senderName && (
+                          <span className="flex items-center gap-1.5">
+                            <User className="w-3.5 h-3.5 text-black/40 dark:text-white/40" />
+                            <span>بواسطة: {bc.senderName}</span>
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                        ● محفوظ في MongoDB & تم البث عبر SSE
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-12 text-center bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto">
+                <History className="w-8 h-8" />
+              </div>
+              <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
+                لم يتم إرسال أي إعلانات أو تنبيهات عامة بعد
+              </h4>
+              <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto font-medium">
+                يمكنك إرسال تنبيهات موجهة لكافة مستخدمي المنصة، أو للمشترين فقط، أو للحرفيين، أو لمستخدم بعينه وستظهر هنا في السجل.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowBroadcastModal(true)}
+                className="px-6 py-2.5 bg-[#9a6a35] hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-lg inline-flex items-center gap-2 cursor-pointer transition-all"
+              >
+                <Send className="w-4 h-4" />
+                <span>إرسال أول تنبيه الآن</span>
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* KPI Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
           <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
@@ -762,16 +1082,26 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     </button>
                   )}
 
-                  {notif.actionTab && onNavigateTab && (
+                  {(notif.link || notif.actionPage || notif.metadata?.orderId || notif.metadata?.productId || (notif.actionTab && onNavigateTab)) && (
                     <button
                       type="button"
                       onClick={() => {
                         if (!notif.read) handleMarkAsRead(notif.id);
-                        onNavigateTab(notif.actionTab!);
+                        if (notif.actionTab && onNavigateTab) {
+                          onNavigateTab(notif.actionTab);
+                        } else {
+                          resolveNotificationNavigation(notif as any, currentRole, {
+                            setActivePage,
+                            navigateToOrder,
+                            navigateToProduct,
+                            navigateToSeller,
+                            onNavigateTab
+                          });
+                        }
                       }}
                       className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                     >
-                      <span>الانتقال للقسم</span>
+                      <span>الانتقال والتفاصيل</span>
                       <ExternalLink className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -802,86 +1132,379 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           </div>
         )}
       </div>
+      </>
+      )}
 
-      {/* Broadcast Announcement Modal (Admin Only) */}
+      {/* Broadcast Announcement & Targeted Notifications Modal (Admin Only) */}
       {showBroadcastModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl animate-in fade-in">
-          <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 backdrop-blur-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl animate-in fade-in overflow-y-auto">
+          <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 backdrop-blur-2xl my-8">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
-              <div className="flex items-center gap-2 text-[#9a6a35]">
-                <Send className="w-5 h-5" />
-                <h3 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7]">
-                  إرسال إشعار / إعلان عام من الإدارة
-                </h3>
+              <div className="flex items-center gap-2.5 text-[#9a6a35]">
+                <div className="w-10 h-10 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
+                  <Send className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7]">
+                    إرسال إشعار وتنبيه رسمي من الإدارة
+                  </h3>
+                  <span className="text-[11px] text-black/50 dark:text-white/50 block font-medium">
+                    يتم الحفظ في MongoDB والبث لحظياً عبر قنوات SSE الفورية
+                  </span>
+                </div>
               </div>
               <button
                 type="button"
-                onClick={() => setShowBroadcastModal(false)}
-                className="p-1.5 text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white rounded-lg transition-colors cursor-pointer"
+                onClick={() => {
+                  setShowBroadcastModal(false);
+                  setBroadcastError(null);
+                  setBroadcastSuccessMessage(null);
+                }}
+                className="p-2 text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white rounded-xl transition-colors cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleSendBroadcast} className="space-y-4 text-xs">
-              <div className="space-y-1.5">
-                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
-                  الفئة المستهدفة
-                </label>
-                <select
-                  value={broadcastRecipient}
-                  onChange={(e) => setBroadcastRecipient(e.target.value as any)}
-                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none text-[#211d18] dark:text-[#f5f0e7] cursor-pointer"
+            {/* Error Banner */}
+            {broadcastError && (
+              <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-xl text-xs text-rose-800 dark:text-rose-300 flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div className="flex-1 font-bold">{broadcastError}</div>
+                <button
+                  type="button"
+                  onClick={() => setBroadcastError(null)}
+                  className="text-rose-600 hover:text-rose-800 font-bold"
                 >
-                  <option value="all">كافة مستخدمي المنصة (بائعين ومشترين)</option>
-                  <option value="seller">أصحاب الورش والحرفيين فقط</option>
-                  <option value="buyer">المشترين فقط</option>
-                </select>
+                  ✕
+                </button>
+              </div>
+            )}
+
+            {/* Success Banner */}
+            {broadcastSuccessMessage && (
+              <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2.5">
+                <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <div className="flex-1 font-bold">{broadcastSuccessMessage}</div>
+              </div>
+            )}
+
+            <form onSubmit={handleSendBroadcast} className="space-y-4 text-xs">
+              {/* Target Type Selector */}
+              <div className="space-y-2">
+                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                  الفئة المستهدفة بالتنبيه *
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastTargetType('all');
+                      setSelectedTargetUserId('');
+                      setSelectedTargetUser(null);
+                    }}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      broadcastTargetType === 'all'
+                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                  >
+                    <Users className="w-4 h-4" />
+                    <span className="font-black text-[11px]">كافة المستخدمين</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastTargetType('user');
+                      if (availableUsers.length === 0) fetchUsers();
+                    }}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      broadcastTargetType === 'user'
+                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="font-black text-[11px]">مستخدم محدد</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastTargetType('buyers');
+                      setSelectedTargetUserId('');
+                      setSelectedTargetUser(null);
+                    }}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      broadcastTargetType === 'buyers'
+                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                  >
+                    <Package className="w-4 h-4" />
+                    <span className="font-black text-[11px]">المشترين فقط</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBroadcastTargetType('sellers');
+                      setSelectedTargetUserId('');
+                      setSelectedTargetUser(null);
+                    }}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
+                      broadcastTargetType === 'sellers'
+                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span className="font-black text-[11px]">أصحاب الورش</span>
+                  </button>
+                </div>
               </div>
 
+              {/* Specific User Search & Selector (When Target = user) */}
+              {broadcastTargetType === 'user' && (
+                <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-[#9a6a35]" />
+                      <span>اختيار المستخدم المستهدف (من قاعدة البيانات) *</span>
+                    </label>
+                    {selectedTargetUserId && (
+                      <span className="text-[10px] text-emerald-600 font-bold">
+                        ✓ تم اختيار المستخدم
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Selected User Preview Card */}
+                  {selectedTargetUserId ? (
+                    <div className="p-3 bg-white dark:bg-[#1c1b18] rounded-xl border border-emerald-500/30 flex items-center justify-between gap-3 shadow-xs">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] flex items-center justify-center font-black text-xs shrink-0">
+                          {(selectedTargetUser?.name || selectedTargetUser?.fullName || 'U').charAt(0)}
+                        </div>
+                        <div className="min-w-0">
+                          <span className="font-black text-xs text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                            {selectedTargetUser?.name || selectedTargetUser?.fullName || 'مستخدم المنصة'}
+                          </span>
+                          <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
+                            {selectedTargetUserId} {selectedTargetUser?.email ? `• ${selectedTargetUser.email}` : ''}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#9a6a35]/10 text-[#9a6a35]">
+                          {selectedTargetUser?.role === 'seller' ? 'حرفي' : selectedTargetUser?.role === 'admin' ? 'مدير' : 'مشتري'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedTargetUserId('');
+                            setSelectedTargetUser(null);
+                          }}
+                          className="p-1 text-black/40 hover:text-red-500 rounded-lg cursor-pointer"
+                          title="تغيير المستخدم"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {/* Search / Manual Input */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={userSearchQuery}
+                          onChange={(e) => setUserSearchQuery(e.target.value)}
+                          placeholder="ابحث بالاسم، البريد الإلكتروني، أو أدخل المعرف (User ID)..."
+                          className="w-full pr-9 pl-3 py-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35"
+                        />
+                        <Search className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-2.5 pointer-events-none" />
+                      </div>
+
+                      {/* Filtered User Selection List */}
+                      <div className="max-h-36 overflow-y-auto space-y-1 divide-y divide-black/5 dark:divide-white/5 bg-white dark:bg-[#1a1916] rounded-xl border border-black/10 dark:border-white/10 p-1">
+                        {isLoadingUsers ? (
+                          <div className="p-4 text-center text-xs text-black/50">جارٍ جلب المستخدمين...</div>
+                        ) : availableUsers.filter((u) => {
+                            if (!userSearchQuery.trim()) return true;
+                            const q = userSearchQuery.toLowerCase();
+                            return (
+                              (u.name && u.name.toLowerCase().includes(q)) ||
+                              (u.fullName && u.fullName.toLowerCase().includes(q)) ||
+                              (u.email && u.email.toLowerCase().includes(q)) ||
+                              (u.id && u.id.toLowerCase().includes(q)) ||
+                              (u._id && String(u._id).toLowerCase().includes(q))
+                            );
+                          }).slice(0, 6).length > 0 ? (
+                          availableUsers
+                            .filter((u) => {
+                              if (!userSearchQuery.trim()) return true;
+                              const q = userSearchQuery.toLowerCase();
+                              return (
+                                (u.name && u.name.toLowerCase().includes(q)) ||
+                                (u.fullName && u.fullName.toLowerCase().includes(q)) ||
+                                (u.email && u.email.toLowerCase().includes(q)) ||
+                                (u.id && u.id.toLowerCase().includes(q)) ||
+                                (u._id && String(u._id).toLowerCase().includes(q))
+                              );
+                            })
+                            .slice(0, 6)
+                            .map((u) => (
+                              <button
+                                key={u.id || u._id}
+                                type="button"
+                                onClick={() => handleSelectUser(u)}
+                                className="w-full text-right p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg flex items-center justify-between gap-2 cursor-pointer transition-colors"
+                              >
+                                <div className="min-w-0">
+                                  <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                                    {u.name || u.fullName || 'مستخدم'}
+                                  </span>
+                                  <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
+                                    {u.id || u._id} • {u.email || u.phone || 'بدون بريد'}
+                                  </span>
+                                </div>
+                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70">
+                                  {u.role === 'seller' ? 'حرفي' : u.role === 'admin' ? 'مدير' : 'مشتري'}
+                                </span>
+                              </button>
+                            ))
+                        ) : (
+                          <div className="p-3 text-center text-xs text-black/50">
+                            لم يتم العثور على مستخدم مطابق. يمكنك إدخال معرف المستخدم مباشرة.
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Manual direct User ID entry */}
+                      <div className="flex items-center gap-2 pt-1">
+                        <input
+                          type="text"
+                          value={selectedTargetUserId}
+                          onChange={(e) => {
+                            setSelectedTargetUserId(e.target.value.trim());
+                            setSelectedTargetUser(null);
+                          }}
+                          placeholder="أو اكتب معرف المستخدم مباشرة (User ID)"
+                          className="flex-1 p-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none font-mono text-[11px] text-[#211d18] dark:text-[#f5f0e7]"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Title */}
               <div className="space-y-1.5">
-                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
-                  عنوان الإشعار *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                    عنوان الإشعار والتنبيه *
+                  </label>
+                  <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
+                    {broadcastTitle.length}/150
+                  </span>
+                </div>
                 <input
                   type="text"
                   value={broadcastTitle}
+                  maxLength={150}
                   onChange={(e) => setBroadcastTitle(e.target.value)}
-                  placeholder="مثال: خصومات موسم حصاد القصب بالصعيد، تحديث سياسة الشحن..."
+                  placeholder="مثال: تحديث أوقات تسليم طلبات الأعياد، إشعار سحب مستحقات..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35"
+                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 font-medium"
                 />
               </div>
 
+              {/* Message */}
               <div className="space-y-1.5">
-                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
-                  نص الرسالة / التنبيه *
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                    نص الرسالة والتنبيه المفصل *
+                  </label>
+                  <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
+                    {broadcastMessage.length}/2000
+                  </span>
+                </div>
                 <textarea
                   value={broadcastMessage}
+                  maxLength={2000}
                   onChange={(e) => setBroadcastMessage(e.target.value)}
                   rows={4}
-                  placeholder="اكتب تفاصيل التنبيه الموجه للبائعين أو الجمهور..."
+                  placeholder="اكتب التوجيهات أو الإعلان الرسمي بشكل واضح..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35"
+                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 leading-relaxed font-medium"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/10 dark:border-white/10">
+              {/* Destination Page on Click */}
+              <div className="space-y-1.5">
+                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                  وجهة الانتقال عند النقر على الإشعار
+                </label>
+                <select
+                  value={broadcastActionPage}
+                  onChange={(e) => setBroadcastActionPage(e.target.value)}
+                  className="w-full p-3 bg-white/60 dark:bg-[#151513] border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs cursor-pointer"
+                >
+                  <option value="notifications">مركز الإشعارات (الافتراضي)</option>
+                  <option value="products">سوق وَه للحرف والمنتجات</option>
+                  <option value="orders">صفحة متابعة الطلبيات</option>
+                  <option value="seller-dashboard">لوحة تحكم الورش الحرفية</option>
+                  <option value="buyer-account">الملف الشخصي والحساب</option>
+                  <option value="home">الصفحة الرئيسية</option>
+                </select>
+                <p className="text-[10px] text-black/50 dark:text-white/50">
+                  سيتم توجيه المستخدم تلقائياً وبأمان لهذه الصفحة عند النقر على الإشعار دون حدوث خطأ 404.
+                </p>
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-between gap-3 pt-4 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
-                  onClick={() => setShowBroadcastModal(false)}
-                  className="px-4 py-2.5 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white font-black cursor-pointer"
+                  onClick={handleResetBroadcastForm}
+                  className="px-3 py-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white font-bold flex items-center gap-1.5 cursor-pointer text-xs"
                 >
-                  إلغاء
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>إعادة ضبط</span>
                 </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <Send className="w-4 h-4" />
-                  <span>إرسال التنبيه الآن</span>
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowBroadcastModal(false);
+                      setBroadcastError(null);
+                      setBroadcastSuccessMessage(null);
+                    }}
+                    className="px-4 py-2.5 text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white font-black cursor-pointer"
+                  >
+                    إلغاء
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSendingBroadcast || !broadcastTitle.trim() || !broadcastMessage.trim()}
+                    className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    {isSendingBroadcast ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-[#9a6a35]" />
+                        <span>جارٍ الحفظ والبث...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>إرسال التنبيه الآن</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -892,3 +1515,4 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 };
 
 export default NotificationsManager;
+

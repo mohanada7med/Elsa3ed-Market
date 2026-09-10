@@ -342,11 +342,35 @@ export interface NotificationDocument {
     | 'order'
     | 'product'
     | 'promotion'
-    | 'chat_message';
+    | 'chat_message'
+    | 'system_alert';
   isRead: boolean;
   link?: string;
+  actionPage?: string;
   metadata?: any;
   recipientRole?: 'admin' | 'seller' | 'buyer' | 'all';
+  targetType?: 'all' | 'user' | 'buyers' | 'sellers';
+  targetUserId?: string;
+  senderId?: string;
+  senderRole?: 'admin';
+  broadcastId?: string;
+  readBy?: string[];
+  createdAt: string;
+}
+
+export interface AdminBroadcastDocument {
+  id: string; // broadcastId
+  title: string;
+  message: string;
+  targetType: 'all' | 'user' | 'buyers' | 'sellers';
+  targetUserId?: string;
+  targetUserName?: string;
+  senderId: string;
+  senderRole: 'admin';
+  senderName?: string;
+  recipientsCount: number;
+  readBy: string[]; // user IDs who have marked this notification as read
+  idempotencyKey?: string;
   createdAt: string;
 }
 

@@ -47,6 +47,7 @@ import { FoodDetailPage } from './components/pages/FoodDetailPage';
 import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
 import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
+import { NotificationsPage } from './components/pages/NotificationsPage';
 
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
@@ -368,6 +369,9 @@ const MainContent: React.FC = () => {
                 <FavoritesPage />
               )
             )}
+
+            {/* Notifications Center Page */}
+            {activePage === 'notifications' && <NotificationsPage />}
 
             {/* Live Chat: Buyer & General Messages */}
             {activePage === 'messages' && (

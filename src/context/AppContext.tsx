@@ -22,6 +22,7 @@ import {
 import { api, wahApi } from '../services/api.ts';
 import { notificationService, AppNotification, normalizeNotification } from '../services/notificationService.ts';
 import { browserNotificationService, BrowserNotificationSettings } from '../services/browserNotificationService.ts';
+import { resolveNotificationNavigation } from '../utils/notificationRouter.ts';
 
 export interface ToastNotification {
   id: string;
@@ -428,6 +429,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   orders: '/orders',
   'order-details': '/orders/:id',
   favorites: '/favorites',
+  notifications: '/notifications',
   messages: '/messages',
   'buyer-account': '/buyer-account',
 
@@ -788,7 +790,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Sync activePage with browser URL and history
   const setActivePage = useCallback((pageOrUpdater: ActivePage | ((prev: ActivePage) => ActivePage)) => {
     setActivePageState((prev) => {
-      return typeof pageOrUpdater === 'function' ? pageOrUpdater(prev) : pageOrUpdater;
+      const nextPage = typeof pageOrUpdater === 'function' ? pageOrUpdater(prev) : pageOrUpdater;
+      if (typeof nextPage === 'string') {
+        const cleaned = (nextPage as string).replace(/^\/+/, '').replace(/\/+$/, '');
+        if (cleaned === 'notifications' || cleaned === 'notification') return 'notifications';
+        if (cleaned === 'orders' || cleaned === 'order') return 'orders';
+        if (cleaned === 'products' || cleaned === 'market') return 'products';
+        if (PAGE_ROUTES[cleaned as ActivePage]) {
+          return cleaned as ActivePage;
+        }
+      }
+      return nextPage;
     });
   }, []);
 
@@ -1052,17 +1064,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     browserNotificationService.sendTestNotification();
     addToast('تم إرسال إشعار تجريبي', 'تم اختبار منظومة التنبيهات الفورية والتنبيه الصوتي بنجاح', 'success');
   }, [addToast]);
-
-  // Setup Notification Click Navigation
-  useEffect(() => {
-    browserNotificationService.setNavigationHandler((page, tab, meta) => {
-      if (page) setActivePage(page as any);
-      if (meta?.orderId) setSelectedOrderId(meta.orderId);
-      if (meta?.productId) setSelectedProductId(meta.productId);
-      if (meta?.sellerId) setSelectedSellerId(meta.sellerId);
-      if (meta?.conversationId) setActiveConversationId(meta.conversationId);
-    });
-  }, [setActivePage]);
 
   // Real Persistent Database Notifications State
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -1566,6 +1567,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       eventSource.addEventListener('chat:message_read', () => {
         refreshChatUnreadCount();
+      });
+
+      eventSource.addEventListener('notification:new', (e: MessageEvent) => {
+        try {
+          const data = JSON.parse(e.data);
+          // Refresh notifications and unread count from MongoDB
+          refreshNotifications();
+
+          if (data?.title) {
+            // Trigger native browser notification and chime
+            browserNotificationService.sendNotification({
+              title: data.title,
+              body: data.message || '',
+              type: 'system',
+              actionPage: data.actionPage || 'notifications'
+            });
+
+            // In-app feedback toast
+            addToast(data.title, data.message || '', 'info');
+          }
+        } catch { }
       });
 
       eventSource.onerror = () => {
@@ -2173,6 +2195,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Setup Notification Click Navigation using robust resolver
+  useEffect(() => {
+    browserNotificationService.setNavigationHandler((page, tab, meta) => {
+      resolveNotificationNavigation(
+        { link: page, actionPage: page, actionTab: tab, metadata: meta },
+        currentRole,
+        {
+          setActivePage,
+          navigateToOrder,
+          navigateToProduct,
+          navigateToSeller
+        }
+      );
+      if (meta?.conversationId) setActiveConversationId(meta.conversationId);
+    });
+  }, [currentRole, setActivePage, navigateToOrder, navigateToProduct, navigateToSeller]);
 
   // Role Navigation
   const switchRole = (newRole: UserRole) => {

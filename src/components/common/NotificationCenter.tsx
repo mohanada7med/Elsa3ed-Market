@@ -27,6 +27,7 @@ import {
   Radio,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { resolveNotificationNavigation } from '../../utils/notificationRouter.ts';
 
 interface NotificationCenterProps {
   className?: string;
@@ -39,6 +40,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     currentRole,
     currentUser,
     setActivePage,
+    navigateToOrder,
+    navigateToProduct,
+    navigateToSeller,
     browserNotificationPermission,
     browserNotificationSettings,
     requestBrowserNotificationPermission,
@@ -209,11 +213,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       );
     }
 
-    if (notification.actionPage) {
-      setActivePage(
-        notification.actionPage as any
-      );
-    }
+    resolveNotificationNavigation(notification as any, currentRole, {
+      setActivePage,
+      navigateToOrder,
+      navigateToProduct,
+      navigateToSeller
+    });
 
     setIsOpen(false);
 
@@ -1186,9 +1191,35 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 border-t
                 border-black/10
                 dark:border-white/10
-                text-center
+                flex
+                flex-col
+                gap-2
               "
             >
+              <button
+                type="button"
+                id="notification-center-view-all-btn"
+                onClick={() => {
+                  setIsOpen(false);
+                  setActivePage('notifications');
+                }}
+                className="
+                  w-full
+                  py-2
+                  px-3
+                  rounded-xl
+                  bg-[#9a6a35]
+                  hover:bg-[#744e26]
+                  text-white
+                  text-xs
+                  font-bold
+                  transition-colors
+                  cursor-pointer
+                  text-center
+                "
+              >
+                عرض كافة الإشعارات
+              </button>
               <span
                 className="
                   text-[9px]
