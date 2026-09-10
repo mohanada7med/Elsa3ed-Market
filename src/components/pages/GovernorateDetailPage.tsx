@@ -605,6 +605,30 @@ export const GovernorateDetailPage: React.FC = () => {
                       </span>
                     </div>
 
+                    <div className="absolute right-6 top-6 flex flex-wrap items-center gap-2">
+                      {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
+                        <span
+                          className={`rounded-full px-3 py-1 text-[10px] font-black shadow-lg ${
+                            place.visitInfo.visitStatus === 'closed_to_public'
+                              ? 'bg-red-600/90 text-white border border-red-400/40'
+                              : place.visitInfo.visitStatus === 'closed_for_restoration'
+                              ? 'bg-amber-600/90 text-white border border-amber-400/40'
+                              : place.visitInfo.visitStatus === 'public_landmark'
+                              ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
+                              : place.visitInfo.visitStatus === 'active_institution'
+                              ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
+                              : 'bg-orange-600/90 text-white border border-orange-400/40'
+                          }`}
+                        >
+                          {place.visitInfo.visitStatus === 'closed_to_public' && '⚠️ مغلق أمام الجمهور'}
+                          {place.visitInfo.visitStatus === 'closed_for_restoration' && '🏛️ مغلق للترميم'}
+                          {place.visitInfo.visitStatus === 'public_landmark' && '📍 معلم عام مفتوح'}
+                          {place.visitInfo.visitStatus === 'active_institution' && '🎓 صرح تعليمي وديني'}
+                          {place.visitInfo.visitStatus === 'requires_safari_permit' && '🚙 محمية وسفاري'}
+                        </span>
+                      )}
+                    </div>
+
                     <div className="absolute inset-x-6 bottom-6">
                       <div className="mb-3 flex items-center gap-2 text-xs font-bold text-white/60">
                         <MapPin className="h-3.5 w-3.5" />

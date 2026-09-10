@@ -31,7 +31,9 @@ import {
   Building2,
   Users,
   Layers,
-  Sparkle
+  Sparkle,
+  AlertOctagon,
+  GraduationCap
 } from 'lucide-react';
 
 export const PlaceDetailPage: React.FC = () => {
@@ -447,6 +449,38 @@ export const PlaceDetailPage: React.FC = () => {
                       {place.historicalEra}
                     </span>
                   )}
+
+                  {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
+                    <span
+                      className={`
+                        px-3.5 sm:px-4
+                        py-1.5 sm:py-2
+                        rounded-full
+                        backdrop-blur-xl
+                        text-[10px] sm:text-xs
+                        font-black
+                        shadow-lg
+                        flex items-center gap-1.5
+                        ${
+                          place.visitInfo.visitStatus === 'closed_to_public'
+                            ? 'bg-red-600/90 text-white border border-red-400/40'
+                            : place.visitInfo.visitStatus === 'closed_for_restoration'
+                            ? 'bg-amber-600/90 text-white border border-amber-400/40'
+                            : place.visitInfo.visitStatus === 'public_landmark'
+                            ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
+                            : place.visitInfo.visitStatus === 'active_institution'
+                            ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
+                            : 'bg-orange-600/90 text-white border border-orange-400/40'
+                        }
+                      `}
+                    >
+                      {place.visitInfo.visitStatus === 'closed_to_public' && '⚠️ مغلق أمام الجمهور العام'}
+                      {place.visitInfo.visitStatus === 'closed_for_restoration' && '🏛️ مغلق للترميم والتحويل لمتحف'}
+                      {place.visitInfo.visitStatus === 'public_landmark' && '📍 ميدان ومعلم عام مفتوح'}
+                      {place.visitInfo.visitStatus === 'active_institution' && '🎓 صرح تعليمي وديني نشط'}
+                      {place.visitInfo.visitStatus === 'requires_safari_permit' && '🚙 محمية صحراوية وتصريح سفاري'}
+                    </span>
+                  )}
                 </div>
 
                 {/* Title */}
@@ -831,6 +865,79 @@ export const PlaceDetailPage: React.FC = () => {
             </div>
 
             <div className="lg:col-span-7 min-w-0">
+              {/* Specialized Accessibility / Visit Status Banner */}
+              {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
+                <div
+                  className={`mb-6 p-6 rounded-2xl border flex items-start gap-4 ${
+                    place.visitInfo.visitStatus === 'closed_to_public'
+                      ? 'bg-red-500/10 border-red-500/30 text-red-950 dark:text-red-100'
+                      : place.visitInfo.visitStatus === 'closed_for_restoration'
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-100'
+                      : place.visitInfo.visitStatus === 'public_landmark'
+                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-100'
+                      : place.visitInfo.visitStatus === 'active_institution'
+                      ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-950 dark:text-indigo-100'
+                      : 'bg-[#9a6a35]/10 border-[#9a6a35]/30 text-amber-950 dark:text-amber-100'
+                  }`}
+                >
+                  <div
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                      place.visitInfo.visitStatus === 'closed_to_public'
+                        ? 'bg-red-500/20 text-red-600 dark:text-red-400'
+                        : place.visitInfo.visitStatus === 'closed_for_restoration'
+                        ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                        : place.visitInfo.visitStatus === 'public_landmark'
+                        ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                        : place.visitInfo.visitStatus === 'active_institution'
+                        ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                        : 'bg-[#9a6a35]/20 text-[#9a6a35]'
+                    }`}
+                  >
+                    {place.visitInfo.visitStatus === 'closed_to_public' && (
+                      <AlertOctagon className="w-6 h-6" />
+                    )}
+                    {place.visitInfo.visitStatus === 'closed_for_restoration' && (
+                      <Hammer className="w-6 h-6" />
+                    )}
+                    {place.visitInfo.visitStatus === 'public_landmark' && (
+                      <Landmark className="w-6 h-6" />
+                    )}
+                    {place.visitInfo.visitStatus === 'active_institution' && (
+                      <GraduationCap className="w-6 h-6" />
+                    )}
+                    {place.visitInfo.visitStatus === 'requires_safari_permit' && (
+                      <Compass className="w-6 h-6" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <span className="text-[11px] font-black tracking-widest uppercase opacity-75">
+                        حالة الزيارة وطبيعة الموقع
+                      </span>
+                      {place.visitInfo.visitStatusLabel && (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-black/10 dark:bg-white/10">
+                          {place.visitInfo.visitStatusLabel}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm sm:text-base font-bold leading-relaxed mb-2 break-words">
+                      {place.visitInfo.visitStatusNote || (
+                        place.visitInfo.visitStatus === 'closed_to_public'
+                          ? 'الموقع مغلق حالياً أمام زيارات الجمهور العام بقرار رسمي.'
+                          : place.visitInfo.visitStatus === 'closed_for_restoration'
+                          ? 'الموقع مغلق حالياً من الداخل للترميم والتأهيل كمتحف.'
+                          : place.visitInfo.visitStatus === 'public_landmark'
+                          ? 'المعلم عبارة عن ميدان عام في الفضاء المفتوح بدون تذاكر أو بوابات مغلقة.'
+                          : 'الموقع صرح نشط يتطلب إذناً وتنسيقاً مسبقاً.'
+                      )}
+                    </p>
+                    <p className="text-xs opacity-75 leading-normal">
+                      تلتزم منصة «وه» بالأمانة التوثيقية الدقيقة؛ نوثق الحقائق الواقعية استناداً إلى القرارات الرسمية دون اختلاق مواعيد أو تذاكر وهمية للأماكن غير المتاحة للزيارة السياحية.
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Opening Hours */}
                 {place.visitInfo?.openingHours && (

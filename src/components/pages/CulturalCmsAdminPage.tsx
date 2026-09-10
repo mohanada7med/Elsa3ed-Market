@@ -2074,6 +2074,8 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
   // Extended Place Fields (Single source of truth in MongoDB)
   const [visitDuration, setVisitDuration] = useState(editingItem?.visitDuration || '');
+  const [visitStatus, setVisitStatus] = useState<string>(editingItem?.visitInfo?.visitStatus || 'open');
+  const [visitStatusNote, setVisitStatusNote] = useState(editingItem?.visitInfo?.visitStatusNote || '');
   const [openingHours, setOpeningHours] = useState(editingItem?.visitInfo?.openingHours || '');
   const [bestTimeToVisit, setBestTimeToVisit] = useState(editingItem?.visitInfo?.bestTimeToVisit || '');
   const [entryFee, setEntryFee] = useState(editingItem?.visitInfo?.entryFee || '');
@@ -2167,6 +2169,20 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           sourceUrl: sourceUrl.trim(),
           visitDuration: visitDuration.trim(),
           visitInfo: {
+            visitStatus: visitStatus as any,
+            visitStatusLabel:
+              visitStatus === 'closed_to_public'
+                ? 'مغلق حالياً أمام الجمهور العام'
+                : visitStatus === 'closed_for_restoration'
+                ? 'مغلق للزيارة من الداخل (قيد الترميم والتحويل إلى متحف)'
+                : visitStatus === 'public_landmark'
+                ? 'ميدان ومعلم عام في الفضاء المفتوح'
+                : visitStatus === 'active_institution'
+                ? 'صرح تعليمي أزهري عامل ومسجد جامع'
+                : visitStatus === 'requires_safari_permit'
+                ? 'محمية صحراوية (سفاري بدليل وتصريح بيئي)'
+                : 'مفتوح ومتاح للزيارة الرسمية',
+            visitStatusNote: visitStatusNote.trim(),
             openingHours: openingHours.trim(),
             bestTimeToVisit: bestTimeToVisit.trim(),
             entryFee: entryFee.trim(),
@@ -2538,11 +2554,32 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               <div className="space-y-3">
                 <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-[#9a6a35]" />
-                  <span>دليل ومواعيد الزيارة (visitInfo & visitDuration)</span>
+                  <span>دليل ومواعيد الزيارة وحالة الإتاحة (visitInfo & visitDuration)</span>
                 </h5>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">مدة الزيارة المقترحة:</label>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                      حالة إتاحة الموقع للزيارة:
+                    </label>
+                    <select
+                      value={visitStatus}
+                      onChange={(e) => setVisitStatus(e.target.value)}
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35] font-bold"
+                    >
+                      <option value="open">مفتوح ومتاح للزيارة الرسمية للجمهور</option>
+                      <option value="closed_to_public">مغلق حالياً أمام الجمهور العام (للأبحاث فقط)</option>
+                      <option value="closed_for_restoration">مغلق للزيارة من الداخل (قيد الترميم والتحويل لمتحف)</option>
+                      <option value="public_landmark">ميدان ومعلم عام في الفضاء المفتوح (بدون تذاكر)</option>
+                      <option value="active_institution">صرح تعليمي/ديني عامل (الزيارات بتنسيق خاص)</option>
+                      <option value="requires_safari_permit">محمية صحراوية (تتطلب دليلاً وسفاري 4x4)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                      مدة الزيارة المقترحة:
+                    </label>
                     <input
                       type="text"
                       value={visitDuration}
@@ -2551,6 +2588,22 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                    توضيح وملاحظة رسمية عن حالة الزيارة وطبيعة الموقع:
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={visitStatusNote}
+                    onChange={(e) => setVisitStatusNote(e.target.value)}
+                    placeholder="اكتب التوضيح الرسمي الدقيق إذا كان الموقع مغلقاً أو معلماً عاماً أو تحت الترميم منعاً لأي اختلاق معلومات..."
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl p-3 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35] resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">مواعيد وساعات العمل:</label>
                     <input

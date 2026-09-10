@@ -695,10 +695,31 @@ export const PlacesHeritagePage: React.FC = () => {
 
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
 
-                          <div className="absolute right-5 top-5">
+                          <div className="absolute right-5 top-5 flex flex-wrap items-center gap-2">
                             <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[9px] font-black text-white backdrop-blur-md">
                               {categoryLabel}
                             </span>
+                            {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
+                              <span
+                                className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${
+                                  place.visitInfo.visitStatus === 'closed_to_public'
+                                    ? 'bg-red-600 text-white'
+                                    : place.visitInfo.visitStatus === 'closed_for_restoration'
+                                    ? 'bg-amber-600 text-white'
+                                    : place.visitInfo.visitStatus === 'public_landmark'
+                                    ? 'bg-emerald-600 text-white'
+                                    : place.visitInfo.visitStatus === 'active_institution'
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-orange-600 text-white'
+                                }`}
+                              >
+                                {place.visitInfo.visitStatus === 'closed_to_public' && 'مغلق أمام الجمهور'}
+                                {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مغلق للترميم'}
+                                {place.visitInfo.visitStatus === 'public_landmark' && 'ميدان ومعلم عام'}
+                                {place.visitInfo.visitStatus === 'active_institution' && 'صرح تعليمي وديني'}
+                                {place.visitInfo.visitStatus === 'requires_safari_permit' && 'محمية وسفاري'}
+                              </span>
+                            )}
                           </div>
 
                           <div className="absolute bottom-5 right-5 left-5 flex items-end justify-between gap-4">

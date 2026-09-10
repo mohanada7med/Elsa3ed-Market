@@ -612,7 +612,18 @@ export interface HeritagePlaceVisitorService {
   description?: string;
 }
 
+export type HeritagePlaceAccessibility =
+  | 'open'
+  | 'closed_to_public'
+  | 'closed_for_restoration'
+  | 'public_landmark'
+  | 'active_institution'
+  | 'requires_safari_permit';
+
 export interface HeritagePlaceVisitInfo {
+  visitStatus?: HeritagePlaceAccessibility;
+  visitStatusLabel?: string;
+  visitStatusNote?: string;
   openingHours?: string;
   bestTimeToVisit?: string;
   entryFee?: string | number;
