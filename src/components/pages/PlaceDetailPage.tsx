@@ -18,6 +18,20 @@ import {
   Video,
   Sparkles,
   Navigation,
+  Clock,
+  Ticket,
+  Hourglass,
+  Car,
+  Bus,
+  CheckCircle2,
+  PartyPopper,
+  CalendarDays,
+  ExternalLink,
+  ShieldCheck,
+  Building2,
+  Users,
+  Layers,
+  Sparkle
 } from 'lucide-react';
 
 export const PlaceDetailPage: React.FC = () => {
@@ -532,7 +546,7 @@ export const PlaceDetailPage: React.FC = () => {
       ========================================================= */}
       <section className="border-b border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.02]">
         <div className="max-w-[1500px] mx-auto px-5 sm:px-7 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4">
+          <div className={`grid grid-cols-2 ${place.visitDuration ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
             <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
               <div className="flex items-start gap-3">
                 <Landmark className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
@@ -574,6 +588,22 @@ export const PlaceDetailPage: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {place.visitDuration && (
+              <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
+                <div className="flex items-start gap-3">
+                  <Hourglass className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
+                  <div>
+                    <span className="block text-[9px] tracking-widest font-black text-black/40 dark:text-white/40 mb-1 uppercase">
+                      DURATION
+                    </span>
+                    <span className="text-xs sm:text-sm font-black break-words">
+                      {place.visitDuration}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <button
               type="button"
@@ -640,6 +670,18 @@ export const PlaceDetailPage: React.FC = () => {
                   <div className="text-lg sm:text-xl lg:text-3xl font-serif font-bold leading-[2] whitespace-pre-line break-words">
                     {history}
                   </div>
+
+                  {place.significance && place.significance.trim() !== '' && place.significance !== place.description && (
+                    <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-[#9a6a35]/10 border border-[#9a6a35]/20">
+                      <div className="flex items-center gap-2 mb-3 text-[#9a6a35] font-black text-xs sm:text-sm">
+                        <Sparkles className="w-4 h-4" />
+                        <span>القيمة والأهمية التاريخية</span>
+                      </div>
+                      <p className="text-base sm:text-xl font-serif font-bold text-black/85 dark:text-white/85 leading-relaxed break-words">
+                        {place.significance}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -768,7 +810,7 @@ export const PlaceDetailPage: React.FC = () => {
             </div>
           </div>        </section>
 
-        {/* VISITOR GUIDE */}
+        {/* VISITOR GUIDE & SCHEDULE */}
         <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
             <div className="lg:col-span-5">
@@ -780,49 +822,393 @@ export const PlaceDetailPage: React.FC = () => {
                   <span className="w-10 h-px bg-[#9a6a35]/40" />
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                  قبل ما <span className="text-[#9a6a35]">تروح</span>
+                  دليل ومواعيد <span className="text-[#9a6a35]">الزيارة</span>
                 </h2>
                 <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
-                  معلومات بسيطة تساعدك تستكشف المكان بشكل أفضل وتعيش التجربة بعيدًا عن الزيارة التقليدية.
+                  كل ما تحتاجه لتخطيط زيارتك من مواعيد وساعات الفتح ورسوم الدخول وأفضل الأوقات.
                 </p>
               </div>
             </div>
 
             <div className="lg:col-span-7 min-w-0">
-              <div className="border-t border-black/10 dark:border-white/10">
-                <div className="py-6 border-b border-black/10 dark:border-white/10 flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#9a6a35]/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-4 h-4 text-[#9a6a35]" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Opening Hours */}
+                {place.visitInfo?.openingHours && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Clock className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">مواعيد وساعات الفتح</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.visitInfo.openingHours}
+                    </p>
+                  </div>
+                )}
+
+                {/* Visit Duration */}
+                {place.visitDuration && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Hourglass className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">المدة المقترحة للتجربة</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.visitDuration}
+                    </p>
+                  </div>
+                )}
+
+                {/* Best Time to Visit */}
+                {place.visitInfo?.bestTimeToVisit && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Compass className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">أفضل وقت وموسم للزيارة</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.visitInfo.bestTimeToVisit}
+                    </p>
+                  </div>
+                )}
+
+                {/* Entry Fee */}
+                {place.visitInfo?.entryFee && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Ticket className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">رسوم وتذاكر الدخول</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.visitInfo.entryFee}
+                    </p>
+                  </div>
+                )}
+
+                {/* Reservation Status */}
+                {place.visitInfo && place.visitInfo.reservationRequired !== undefined && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">حالة الحجز المسبق</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.visitInfo.reservationRequired
+                        ? 'يلزم الحجز المسبق أو التنسيق المسبق قبل الزيارة'
+                        : 'متاح للزيارة المباشرة وقطع التذاكر من الموقع'}
+                    </p>
+                  </div>
+                )}
+
+                {/* General Location description */}
+                {place.locationDescription && (
+                  <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 sm:col-span-2">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <MapPin className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">الموقع والوصف الجغرافي</span>
+                    </div>
+                    <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
+                      {place.locationDescription}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Visitor Tip */}
+              {place.visitorTips && (
+                <div className="mt-4 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                    <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <span className="block text-[10px] font-black tracking-widest text-black/40 dark:text-white/40 mb-2">
-                      LOCATION
+                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-amber-400 mb-1">
+                      نصيحة ذهبية للزائر
                     </span>
-                    <p className="text-sm sm:text-base font-bold leading-7 break-words">
-                      {place.locationDescription || `محافظة ${place.governorateName}`}
+                    <p className="text-sm leading-relaxed text-black/80 dark:text-white/80 break-words">
+                      {place.visitorTips}
                     </p>
                   </div>
                 </div>
+              )}
+            </div>
+          </div>
+        </section>
 
-                {place.visitorTips && (
-                  <div className="py-6 border-b border-black/10 dark:border-white/10 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
-                      <Info className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        {/* ACCESS & TRANSPORTATION */}
+        {(place.access?.description || place.access?.transportation || place.address?.city || place.coordinates) && (
+          <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
+              <div className="lg:col-span-5">
+                <div className="lg:sticky lg:top-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                      05 / ACCESS & DIRECTIONS
+                    </span>
+                    <span className="w-10 h-px bg-[#9a6a35]/40" />
+                  </div>
+                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                    العنوان <span className="text-[#9a6a35]">وكيفية الوصول</span>
+                  </h2>
+                  <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
+                    تفاصيل مسارات الطرق والمواصلات العامة والخاصة للوصول إلى المعلم بسهولة.
+                  </p>
+                </div>
+              </div>
+
+              <div className="lg:col-span-7 min-w-0 space-y-4">
+                {/* Structured Address */}
+                {(place.address?.village || place.address?.city || place.address?.governorate) && (
+                  <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-3 text-[#9a6a35]">
+                      <Building2 className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">العنوان التفصيلي</span>
                     </div>
+                    <div className="flex flex-wrap gap-2 items-center text-sm font-bold">
+                      {place.address.village && (
+                        <span className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+                          قرية / منطقة: {place.address.village}
+                        </span>
+                      )}
+                      {place.address.city && (
+                        <span className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+                          مركز / مدينة: {place.address.city}
+                        </span>
+                      )}
+                      {place.address.governorate && (
+                        <span className="px-3 py-1.5 rounded-lg bg-[#9a6a35]/15 text-[#9a6a35] border border-[#9a6a35]/20">
+                          محافظة: {place.address.governorate}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Route description */}
+                {place.access?.description && (
+                  <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Navigation className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">وصف المسار والطريق</span>
+                    </div>
+                    <p className="text-sm sm:text-base leading-relaxed text-black/85 dark:text-white/85 break-words">
+                      {place.access.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Transportation options */}
+                {place.access?.transportation && (
+                  <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                      <Bus className="w-4 h-4 shrink-0" />
+                      <span className="text-[11px] font-black tracking-wider uppercase">وسائل المواصلات المتاحة</span>
+                    </div>
+                    <p className="text-sm sm:text-base leading-relaxed text-black/85 dark:text-white/85 break-words">
+                      {place.access.transportation}
+                    </p>
+                  </div>
+                )}
+
+                {/* Google Maps link if coordinates */}
+                {place.coordinates?.lat && place.coordinates?.lng && (
+                  <div className="p-6 rounded-2xl bg-[#9a6a35]/10 border border-[#9a6a35]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-amber-400 mb-2">
-                        VISITOR TIP
+                      <div className="flex items-center gap-2 text-[#9a6a35] font-black text-xs mb-1">
+                        <MapPin className="w-4 h-4" />
+                        <span>الإحداثيات الجغرافية الموثقة</span>
+                      </div>
+                      <span className="text-xs font-mono text-black/60 dark:text-white/60">
+                        {place.coordinates.lat.toFixed(5)}, {place.coordinates.lng.toFixed(5)}
                       </span>
-                      <p className="text-sm sm:text-base leading-7 text-black/70 dark:text-white/70 break-words">
-                        {place.visitorTips}
-                      </p>
                     </div>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#9a6a35] text-white hover:bg-[#85592a] text-xs font-black transition-colors shrink-0"
+                    >
+                      <span>الملاحة على خرائط جوجل</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
                   </div>
                 )}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* VISITOR SERVICES & FACILITIES */}
+        {place.visitorServices && place.visitorServices.length > 0 && (
+          <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                    06 / VISITOR SERVICES
+                  </span>
+                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                  خدمات ومرافق <span className="text-[#9a6a35]">الزوار</span>
+                </h2>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {place.visitorServices.map((service, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#9a6a35]/15 flex items-center justify-center text-[#9a6a35]">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      <h3 className="font-bold text-base text-black/90 dark:text-white/90">
+                        {service.name}
+                      </h3>
+                    </div>
+                    <p className="text-sm leading-relaxed text-black/70 dark:text-white/70">
+                      {service.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* HERITAGE EVENTS & OCCASIONS */}
+        {place.events && place.events.length > 0 && (
+          <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                    07 / HERITAGE EVENTS
+                  </span>
+                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                  فعاليات ومناسبات <span className="text-[#9a6a35]">المعلم</span>
+                </h2>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {place.events.map((event, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 sm:p-8 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                      <div className="flex items-center gap-2">
+                        <PartyPopper className="w-5 h-5 text-[#9a6a35]" />
+                        <h3 className="font-bold text-lg text-black/90 dark:text-white/90">
+                          {event.name}
+                        </h3>
+                      </div>
+                      {event.frequency && (
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-[#9a6a35]/15 text-[#9a6a35]">
+                          {event.frequency}
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-sm sm:text-base leading-relaxed text-black/75 dark:text-white/75 mb-4">
+                      {event.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t border-black/10 dark:border-white/10 flex flex-wrap gap-4 text-xs font-bold text-black/60 dark:text-white/60">
+                    {event.date && (
+                      <div className="flex items-center gap-1.5">
+                        <CalendarDays className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <span>{event.date}</span>
+                      </div>
+                    )}
+                    {event.duration && (
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <span>{event.duration}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* RELATED CRAFTS */}
+        {place.relatedCrafts && place.relatedCrafts.length > 0 && (
+          <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                08 / LIVING HERITAGE
+              </span>
+              <span className="w-10 h-px bg-[#9a6a35]/40" />
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
+              حرف تراثية <span className="text-[#9a6a35]">مرتبطة بالمكان</span>
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {place.relatedCrafts.map((craft, idx) => (
+                <div
+                  key={idx}
+                  className="px-4 py-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex items-center gap-2.5 text-sm font-bold"
+                >
+                  <Hammer className="w-4 h-4 text-[#9a6a35]" />
+                  <span>{craft}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* DOCUMENTATION & SOURCE VERIFICATION */}
+        {(place.sourceName || place.verificationStatus) && (
+          <section className="py-10 border-t border-black/10 dark:border-white/10">
+            <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-black text-emerald-700 dark:text-emerald-400">
+                      {place.verificationStatus === 'verified'
+                        ? 'توثيق أثري وأكاديمي معتمد'
+                        : 'بيانات موثقة في أرشيف واه التراثي'}
+                    </span>
+                    {place.sourceType && (
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60">
+                        {place.sourceType}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    المصدر المعتمد: {place.sourceName || 'سجلات وزارة السياحة والآثار المصرية والتوثيق الميداني'}
+                    {place.researchDate ? ` · تاريخ التوثيق: ${place.researchDate}` : ''}
+                  </p>
+                </div>
+              </div>
+
+              {place.sourceUrl && (
+                <a
+                  href={place.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#9a6a35] hover:underline shrink-0"
+                >
+                  <span>زيارة المصدر المرجعي</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+            </div>
+          </section>
+        )}
       </main>
 
       {/* =====================================================

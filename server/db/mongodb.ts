@@ -27,6 +27,7 @@ import type {
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
+import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts';
 
 dotenv.config();
 
@@ -331,6 +332,9 @@ async function seedMongoDatabase(database: Db) {
 
     // Execute non-blocking batch indexing in background
     await Promise.allSettled(indexOperations);
+
+    // Safely migrate and enrich heritage places schema without altering existing data
+    await runHeritagePlacesMigration(database);
   } catch (err) {
     Logger.error('[MongoDB] Database index/taxonomy initialization error:', err);
   }

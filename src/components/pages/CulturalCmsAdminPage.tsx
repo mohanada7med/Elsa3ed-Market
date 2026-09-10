@@ -58,7 +58,13 @@ import {
   Layers,
   SlidersHorizontal,
   ChevronLeft,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Ticket,
+  Hourglass,
+  Bus,
+  PartyPopper,
+  CalendarDays,
+  Building2
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
@@ -124,8 +130,24 @@ export const CulturalCmsAdminPage: React.FC = () => {
     dependencies?: Record<string, number>;
   } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isMigratingPlaces, setIsMigratingPlaces] = useState(false);
 
   const authUser = useMemo(() => ({ id: currentUser?.id, role: currentUser?.role || 'admin' }), [currentUser]);
+
+  const handleMigratePlaces = async () => {
+    try {
+      setIsMigratingPlaces(true);
+      const res = await wahApi.migrateHeritagePlacesSchema(authUser);
+      addToast('نجاح الترقية في MongoDB', res.message || 'تمت ترقية هيكل الأماكن بنجاح', 'success');
+      if (selectedGovId) {
+        await loadGovernorateData(selectedGovId);
+      }
+    } catch (err: any) {
+      addToast('خطأ في الترقية', err.message || 'فشلت عملية فحص وترقية الهيكل', 'error');
+    } finally {
+      setIsMigratingPlaces(false);
+    }
+  };
 
   const activeGov = useMemo(() => {
     if (!selectedGovId) return null;
@@ -1006,6 +1028,30 @@ export const CulturalCmsAdminPage: React.FC = () => {
           {/* ======================================================= */}
           {activeSubTab === 'places_heritage' && (
             <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/75 dark:bg-[#151513]/90 p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl text-xs">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-xl bg-[#9a6a35]/10 text-[#9a6a35]">
+                    <Landmark className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="font-bold block text-sm">مستودع الأماكن التراثية الحي في MongoDB</span>
+                    <span className="text-[11px] text-black/60 dark:text-white/60">
+                      قاعدة البيانات هي المصدر الوحيد للحقيقة (Single Source of Truth) دون أي بيانات ثابتة أو هاردكود
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleMigratePlaces}
+                  disabled={isMigratingPlaces}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#9a6a35]/30 text-[#9a6a35] hover:bg-[#9a6a35]/10 font-bold text-xs transition-colors shrink-0 disabled:opacity-50 cursor-pointer"
+                  title="التحقق من صحة وترقية بنية الحقول في MongoDB مع الحفاظ الكامل على كافة البيانات الحالية"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isMigratingPlaces ? 'animate-spin' : ''}`} />
+                  <span>{isMigratingPlaces ? 'جاري الفحص والمزامنة...' : 'ترقية ومزامنة هيكل MongoDB'}</span>
+                </button>
+              </div>
+
               {places.length === 0 ? (
                 <div className="text-center py-16 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                   <Landmark className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
@@ -1052,12 +1098,32 @@ export const CulturalCmsAdminPage: React.FC = () => {
                             <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-2 leading-relaxed">
                               {place.description}
                             </p>
-                            {place.locationName && (
-                              <p className="text-[11px] text-black/50 dark:text-white/50 flex items-center gap-1">
-                                <MapPin className="w-3 h-3 text-[#9a6a35]" />
-                                <span>{place.locationName}</span>
-                              </p>
-                            )}
+                            <div className="flex flex-wrap gap-1.5 mb-2">
+                              {place.locationName && (
+                                <span className="text-[10px] text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                  <MapPin className="w-2.5 h-2.5 text-[#9a6a35]" />
+                                  <span>{place.locationName}</span>
+                                </span>
+                              )}
+                              {place.visitDuration && (
+                                <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                  <Clock className="w-2.5 h-2.5 text-[#9a6a35]" />
+                                  <span>{place.visitDuration}</span>
+                                </span>
+                              )}
+                              {place.visitorServices && place.visitorServices.length > 0 && (
+                                <span className="text-[10px] text-blue-700 dark:text-blue-300 bg-blue-500/10 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                  <Building2 className="w-2.5 h-2.5" />
+                                  <span>{place.visitorServices.length} خدمات</span>
+                                </span>
+                              )}
+                              {place.events && place.events.length > 0 && (
+                                <span className="text-[10px] text-purple-700 dark:text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                  <PartyPopper className="w-2.5 h-2.5" />
+                                  <span>{place.events.length} فعاليات</span>
+                                </span>
+                              )}
+                            </div>
                           </div>
 
                           <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
@@ -2005,6 +2071,34 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
   const [sourceName, setSourceName] = useState(editingItem?.sourceName || 'وزارة السياحة والآثار المصرية');
   const [sourceUrl, setSourceUrl] = useState(editingItem?.sourceUrl || 'https://mota.gov.eg');
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(editingItem?.verificationStatus || 'verified');
+
+  // Extended Place Fields (Single source of truth in MongoDB)
+  const [visitDuration, setVisitDuration] = useState(editingItem?.visitDuration || '');
+  const [openingHours, setOpeningHours] = useState(editingItem?.visitInfo?.openingHours || '');
+  const [bestTimeToVisit, setBestTimeToVisit] = useState(editingItem?.visitInfo?.bestTimeToVisit || '');
+  const [entryFee, setEntryFee] = useState(editingItem?.visitInfo?.entryFee || '');
+  const [reservationRequired, setReservationRequired] = useState<boolean>(
+    Boolean(editingItem?.visitInfo?.reservationRequired)
+  );
+  const [village, setVillage] = useState(editingItem?.address?.village || '');
+  const [city, setCity] = useState(editingItem?.address?.city || editingItem?.locationName || '');
+  const [accessDescription, setAccessDescription] = useState(editingItem?.access?.description || '');
+  const [transportation, setTransportation] = useState(editingItem?.access?.transportation || '');
+  const [visitorTips, setVisitorTips] = useState(editingItem?.visitorTips || '');
+  const [historicalEra, setHistoricalEra] = useState(editingItem?.historicalEra || '');
+  const [architecturalHighlights, setArchitecturalHighlights] = useState(
+    Array.isArray(editingItem?.architecturalHighlights) ? editingItem.architecturalHighlights.join('\n') : ''
+  );
+  const [relatedCrafts, setRelatedCrafts] = useState(
+    Array.isArray(editingItem?.relatedCrafts) ? editingItem.relatedCrafts.join(', ') : ''
+  );
+  const [visitorServices, setVisitorServices] = useState<Array<{ name: string; description: string }>>(
+    editingItem?.visitorServices || []
+  );
+  const [events, setEvents] = useState<Array<{ name: string; description: string; date?: string; duration?: string; frequency?: string }>>(
+    editingItem?.events || []
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -2036,29 +2130,66 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           authUser
         );
       } else if (entityType === 'place') {
-        await wahApi.savePlace(
-          {
-            id: editingItem?.id,
-            title: title.trim(),
-            slug,
-            governorateId: govId,
-            governorateName: selectedGovName,
-            category: (category as any) || 'temple',
-            description: shortDesc.trim(),
-            history: fullContent.trim(),
-            significance: shortDesc.trim(),
-            locationName: selectedGovName,
-            coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800',
-            videoUrl: videoUrl.trim() || undefined,
-            videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
-            gallery: gallery,
-            galleryImages: gallery,
-            coordinates,
-            status: verificationStatus === 'verified' ? 'approved' : 'pending_review',
-            sourceName: sourceName.trim()
+        const parsedArchitectural = architecturalHighlights
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const parsedCrafts = relatedCrafts
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
+        const placePayload: Partial<HeritagePlace> = {
+          id: editingItem?.id,
+          title: title.trim(),
+          slug,
+          governorateId: govId,
+          governorateName: selectedGovName,
+          category: (category as any) || 'temple',
+          description: shortDesc.trim(),
+          history: fullContent.trim(),
+          significance: editingItem?.significance || shortDesc.trim(),
+          locationName: city.trim() || selectedGovName,
+          locationDescription: editingItem?.locationDescription || `محافظة ${selectedGovName}`,
+          visitorTips: visitorTips.trim() || editingItem?.visitorTips || '',
+          historicalEra: historicalEra.trim() || editingItem?.historicalEra || 'تراث مصري',
+          architecturalHighlights: parsedArchitectural.length > 0 ? parsedArchitectural : (editingItem?.architecturalHighlights || []),
+          relatedCrafts: parsedCrafts.length > 0 ? parsedCrafts : (editingItem?.relatedCrafts || []),
+          coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800',
+          videoUrl: videoUrl.trim() || undefined,
+          videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
+          gallery: gallery,
+          galleryImages: gallery,
+          coordinates,
+          status: (verificationStatus === 'verified' ? 'approved' : 'pending_review') as VerificationStatus,
+          verificationStatus: verificationStatus as VerificationStatus,
+          sourceName: sourceName.trim(),
+          sourceUrl: sourceUrl.trim(),
+          visitDuration: visitDuration.trim(),
+          visitInfo: {
+            openingHours: openingHours.trim(),
+            bestTimeToVisit: bestTimeToVisit.trim(),
+            entryFee: entryFee.trim(),
+            reservationRequired: Boolean(reservationRequired)
           },
-          authUser
-        );
+          access: {
+            description: accessDescription.trim(),
+            transportation: transportation.trim()
+          },
+          address: {
+            village: village.trim(),
+            city: (city.trim() || selectedGovName),
+            governorate: selectedGovName
+          },
+          visitorServices: visitorServices.filter((s) => s.name.trim()),
+          events: events.filter((e) => e.name.trim())
+        };
+
+        if (editingItem?.id) {
+          await wahApi.updatePlace(editingItem.id, placePayload, authUser);
+        } else {
+          await wahApi.savePlace(placePayload, authUser);
+        }
       } else if (entityType === 'craft') {
         await wahApi.saveCraft(
           {
@@ -2391,6 +2522,335 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
+
+          {/* Extended Heritage Place Fields (Live Database Fields in MongoDB) */}
+          {entityType === 'place' && (
+            <div className="bg-[#9a6a35]/5 dark:bg-[#9a6a35]/10 border border-[#9a6a35]/30 rounded-2xl p-4 sm:p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#9a6a35]/20">
+                <span className="text-xs font-black text-[#9a6a35] flex items-center gap-2">
+                  <Landmark className="w-4 h-4" />
+                  <span>بيانات الزيارة والخدمات والفعاليات في MongoDB (Place Schema)</span>
+                </span>
+                <span className="text-[11px] text-stone-500 dark:text-stone-400 font-bold">مصدر حقيقي بدون هاردكود</span>
+              </div>
+
+              {/* 1. Visit Info & Duration */}
+              <div className="space-y-3">
+                <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <span>دليل ومواعيد الزيارة (visitInfo & visitDuration)</span>
+                </h5>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">مدة الزيارة المقترحة:</label>
+                    <input
+                      type="text"
+                      value={visitDuration}
+                      onChange={(e) => setVisitDuration(e.target.value)}
+                      placeholder="مثال: من ساعتين إلى 3 ساعات"
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">مواعيد وساعات العمل:</label>
+                    <input
+                      type="text"
+                      value={openingHours}
+                      onChange={(e) => setOpeningHours(e.target.value)}
+                      placeholder="مثال: يومياً من 8:00 ص إلى 5:00 م"
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">أفضل وقت وموسم للزيارة:</label>
+                    <input
+                      type="text"
+                      value={bestTimeToVisit}
+                      onChange={(e) => setBestTimeToVisit(e.target.value)}
+                      placeholder="مثال: من أكتوبر إلى أبريل صباحاً"
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">رسوم وتذاكر الدخول:</label>
+                    <input
+                      type="text"
+                      value={entryFee}
+                      onChange={(e) => setEntryFee(e.target.value)}
+                      placeholder="مثال: 60 ج.م للمصريين / 240 ج.م للأجانب"
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <input
+                    type="checkbox"
+                    id="reservationReqCheck"
+                    checked={reservationRequired}
+                    onChange={(e) => setReservationRequired(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#9a6a35] focus:ring-[#9a6a35] cursor-pointer"
+                  />
+                  <label htmlFor="reservationReqCheck" className="text-xs font-bold text-black/70 dark:text-white/70 cursor-pointer">
+                    يتطلب حجز مسبق قبل الحضور (Reservation Required)
+                  </label>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">إرشادات ونصائح للزائر (Visitor Tips):</label>
+                  <input
+                    type="text"
+                    value={visitorTips}
+                    onChange={(e) => setVisitorTips(e.target.value)}
+                    placeholder="مثال: يفضل ارتداء حذاء مريح وحمل مياه شرب وقبعة شمسية"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+              </div>
+
+              {/* 2. Address & Access */}
+              <div className="space-y-3 pt-3 border-t border-[#9a6a35]/20">
+                <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <span>العنوان والوصول والمواصلات (address & access)</span>
+                </h5>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">المركز أو المدينة (City):</label>
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="مثال: القوصية، أسوان، إدفو..."
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">القرية أو الحي (Village):</label>
+                    <input
+                      type="text"
+                      value={village}
+                      onChange={(e) => setVillage(e.target.value)}
+                      placeholder="مثال: مير، غرب سهيل، الكوم الأحمر..."
+                      className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">وصف طريق الوصول (Access Description):</label>
+                  <input
+                    type="text"
+                    value={accessDescription}
+                    onChange={(e) => setAccessDescription(e.target.value)}
+                    placeholder="مثال: يبعد 12 كم غرب مدينة القوصية عبر طريق أسفلتي ممهد"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">المواصلات ووسائل التنقل (Transportation):</label>
+                  <input
+                    type="text"
+                    value={transportation}
+                    onChange={(e) => setTransportation(e.target.value)}
+                    placeholder="مثال: سيارات الأجرة من موقف القوصية، حافلات سياحية، أو سيارة خاصة"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+              </div>
+
+              {/* 3. Visitor Services (Dynamic List) */}
+              <div className="space-y-3 pt-3 border-t border-[#9a6a35]/20">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <span>خدمات ومرافق الزوار بالموقع (visitorServices) ({visitorServices.length})</span>
+                  </h5>
+                  <button
+                    type="button"
+                    onClick={() => setVisitorServices((prev) => [...prev, { name: '', description: '' }])}
+                    className="text-[11px] font-bold text-[#9a6a35] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>إضافة خدمة</span>
+                  </button>
+                </div>
+
+                {visitorServices.map((srv, idx) => (
+                  <div key={idx} className="flex items-start gap-2 bg-white dark:bg-[#151513] p-2.5 rounded-xl border border-black/10 dark:border-white/10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                      <input
+                        type="text"
+                        value={srv.name}
+                        onChange={(e) => {
+                          const updated = [...visitorServices];
+                          updated[idx].name = e.target.value;
+                          setVisitorServices(updated);
+                        }}
+                        placeholder="اسم الخدمة (مثل: مرشد معتمد، كافتيريا)"
+                        className="text-xs rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                      />
+                      <input
+                        type="text"
+                        value={srv.description}
+                        onChange={(e) => {
+                          const updated = [...visitorServices];
+                          updated[idx].description = e.target.value;
+                          setVisitorServices(updated);
+                        }}
+                        placeholder="وصف وتفاصيل توفر الخدمة"
+                        className="text-xs rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setVisitorServices((prev) => prev.filter((_, i) => i !== idx))}
+                      className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg cursor-pointer mt-1"
+                      title="حذف الخدمة"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* 4. Heritage Events (Dynamic List) */}
+              <div className="space-y-3 pt-3 border-t border-[#9a6a35]/20">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
+                    <PartyPopper className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <span>الفعاليات والمناسبات التراثية بالمكان (events) ({events.length})</span>
+                  </h5>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setEvents((prev) => [
+                        ...prev,
+                        { name: '', description: '', date: '', duration: '', frequency: '' }
+                      ])
+                    }
+                    className="text-[11px] font-bold text-[#9a6a35] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>إضافة فعالية</span>
+                  </button>
+                </div>
+
+                {events.map((ev, idx) => (
+                  <div key={idx} className="bg-white dark:bg-[#151513] p-3 rounded-xl border border-black/10 dark:border-white/10 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <input
+                        type="text"
+                        value={ev.name}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[idx].name = e.target.value;
+                          setEvents(updated);
+                        }}
+                        placeholder="اسم الفعالية (مثل: تعامد الشمس، المولد السنوي)"
+                        className="text-xs font-bold rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35] flex-1"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setEvents((prev) => prev.filter((_, i) => i !== idx))}
+                        className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg cursor-pointer"
+                        title="حذف الفعالية"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <input
+                        type="text"
+                        value={ev.date || ''}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[idx].date = e.target.value;
+                          setEvents(updated);
+                        }}
+                        placeholder="الموعد (مثل: 22 فبراير)"
+                        className="text-[11px] rounded-lg px-2 py-1 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                      />
+                      <input
+                        type="text"
+                        value={ev.duration || ''}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[idx].duration = e.target.value;
+                          setEvents(updated);
+                        }}
+                        placeholder="المدة (مثل: يوم كامل)"
+                        className="text-[11px] rounded-lg px-2 py-1 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                      />
+                      <input
+                        type="text"
+                        value={ev.frequency || ''}
+                        onChange={(e) => {
+                          const updated = [...events];
+                          updated[idx].frequency = e.target.value;
+                          setEvents(updated);
+                        }}
+                        placeholder="التكرار (مثل: سنوي)"
+                        className="text-[11px] rounded-lg px-2 py-1 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                      />
+                    </div>
+
+                    <input
+                      type="text"
+                      value={ev.description}
+                      onChange={(e) => {
+                        const updated = [...events];
+                        updated[idx].description = e.target.value;
+                        setEvents(updated);
+                      }}
+                      placeholder="وصف موجز للفعالية ومظاهر الاحتفال"
+                      className="w-full text-xs rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* 5. Era, Architecture & Crafts */}
+              <div className="space-y-3 pt-3 border-t border-[#9a6a35]/20">
+                <h5 className="text-[11px] font-black text-black/70 dark:text-white/70 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <span>الحقبة التاريخية، الملامح المعمارية والحرف المرتبطة</span>
+                </h5>
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">الحقبة أو العصر التاريخي:</label>
+                  <input
+                    type="text"
+                    value={historicalEra}
+                    onChange={(e) => setHistoricalEra(e.target.value)}
+                    placeholder="مثال: الدولة الحديثة (الأسرة التاسعة عشرة)"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">أبرز الملامح المعمارية (سطر لكل عنصر):</label>
+                  <textarea
+                    rows={2}
+                    value={architecturalHighlights}
+                    onChange={(e) => setArchitecturalHighlights(e.target.value)}
+                    placeholder="أربعة تماثيل عملاقة للملك رمسيس الثاني&#10;بهو الأعمدة الأوزيرية المنحوتة في الصخر"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">حرف أو منتجات تراثية مرتبطة (مفصولة بفواصل):</label>
+                  <input
+                    type="text"
+                    value={relatedCrafts}
+                    onChange={(e) => setRelatedCrafts(e.target.value)}
+                    placeholder="مثال: نحت الحجر، المشغولات النوبية، سعف النخيل"
+                    className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Verification and Sources Panel */}
           <div className="bg-black/[0.035] dark:bg-white/[0.04] p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">

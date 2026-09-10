@@ -23,6 +23,7 @@ import type {
   BulkActionPayload,
   RelationshipPayload
 } from '../models/types.ts';
+import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts';
 
 const router = express.Router();
 
@@ -801,6 +802,32 @@ router.post('/places', requireAdmin, async (req: AuthenticatedRequest, res: Resp
     if (!item.slug) item.slug = `place-${encodeURIComponent(item.title.trim().toLowerCase().replace(/\s+/g, '-'))}`;
     if (!item.status) item.status = 'approved';
 
+    // Normalize extended fields if missing
+    if (!item.events) item.events = [];
+    if (!item.visitorServices) item.visitorServices = [];
+    if (!item.visitInfo) {
+      item.visitInfo = {
+        openingHours: '',
+        bestTimeToVisit: '',
+        entryFee: '',
+        reservationRequired: false
+      };
+    }
+    if (!item.access) {
+      item.access = {
+        description: '',
+        transportation: ''
+      };
+    }
+    if (!item.address) {
+      item.address = {
+        village: '',
+        city: item.locationName || '',
+        governorate: item.governorateName || ''
+      };
+    }
+    if (!item.visitDuration) item.visitDuration = '';
+
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       await db.collection('wah_heritage_places').updateOne({ id: item.id }, { $set: item }, { upsert: true });
@@ -809,6 +836,9 @@ router.post('/places', requireAdmin, async (req: AuthenticatedRequest, res: Resp
     const idx = memoryDb.heritagePlaces.findIndex((p) => p.id === item.id);
     if (idx >= 0) memoryDb.heritagePlaces[idx] = item;
     else memoryDb.heritagePlaces.push(item);
+
+    invalidateWahCache('places_');
+    invalidateWahCache('place_detail_');
 
     await createAuditLog({
       actorId: req.user?.id,
@@ -835,6 +865,8 @@ router.put('/places/:id', requireAdmin, async (req: AuthenticatedRequest, res: R
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       const updated = await db.collection('wah_heritage_places').findOneAndUpdate({ id }, { $set: updateData }, { returnDocument: 'after' });
+      invalidateWahCache('places_');
+      invalidateWahCache('place_detail_');
       await createAuditLog({
         actorId: req.user?.id,
         userName: req.user?.name || 'مدير النظام',
@@ -850,9 +882,71 @@ router.put('/places/:id', requireAdmin, async (req: AuthenticatedRequest, res: R
     const idx = memoryDb.heritagePlaces.findIndex((p) => p.id === id);
     if (idx === -1) return res.status(404).json({ success: false, error: 'المعلم غير موجود' });
     memoryDb.heritagePlaces[idx] = { ...memoryDb.heritagePlaces[idx], ...updateData };
+    invalidateWahCache('places_');
+    invalidateWahCache('place_detail_');
     return res.json({ success: true, message: 'تم تحديث المعلم بنجاح', data: memoryDb.heritagePlaces[idx] });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل تحديث المعلم التراثي' });
+  }
+});
+
+router.patch('/places/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const patchData = { ...req.body, updatedAt: new Date().toISOString() };
+    delete patchData._id;
+
+    const { db, isMongo } = await getMongoOrMemory();
+    if (isMongo && db) {
+      const updated = await db.collection('wah_heritage_places').findOneAndUpdate(
+        { id },
+        { $set: patchData },
+        { returnDocument: 'after' }
+      );
+      if (!updated) {
+        return res.status(404).json({ success: false, error: 'المعلم غير موجود' });
+      }
+      invalidateWahCache('places_');
+      invalidateWahCache('place_detail_');
+      await createAuditLog({
+        actorId: req.user?.id,
+        userName: req.user?.name || 'مدير النظام',
+        userRole: req.user?.role || 'admin',
+        action: 'ADMIN_PATCHED_PLACE',
+        resource: 'wah_heritage_places',
+        resourceId: id,
+        details: `تم التعديل الجزئي للمعلم التراثي (${patchData.title || id})`
+      });
+      return res.json({ success: true, message: 'تم تحديث المعلم التراثي بنجاح', data: updated });
+    }
+
+    const idx = memoryDb.heritagePlaces.findIndex((p) => p.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, error: 'المعلم غير موجود' });
+    memoryDb.heritagePlaces[idx] = { ...memoryDb.heritagePlaces[idx], ...patchData };
+    invalidateWahCache('places_');
+    invalidateWahCache('place_detail_');
+    return res.json({ success: true, message: 'تم تحديث المعلم بنجاح', data: memoryDb.heritagePlaces[idx] });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'فشل التعديل الجزئي للمعلم التراثي' });
+  }
+});
+
+router.post('/places/migrate-schema', requireAdmin, async (_req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { db, isMongo } = await getMongoOrMemory();
+    if (!isMongo || !db) {
+      return res.status(400).json({ success: false, error: 'قاعدة بيانات MongoDB غير متصلة' });
+    }
+    const result = await runHeritagePlacesMigration(db);
+    invalidateWahCache('places_');
+    invalidateWahCache('place_detail_');
+    return res.json({
+      success: true,
+      message: 'تم ترحيل وتأمين مخطط المعالم التراثية بنجاح دون المساس بالبيانات الحالية',
+      stats: result
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: 'فشل ترحيل مخطط المعالم التراثية' });
   }
 });
 

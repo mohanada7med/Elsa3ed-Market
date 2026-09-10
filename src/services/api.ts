@@ -3442,6 +3442,41 @@ export const wahApi = {
     return json.data;
   },
 
+  async updatePlace(id: string, place: Partial<HeritagePlace>, user?: { id?: string; role?: string }): Promise<HeritagePlace> {
+    const res = await fetch(`${API_BASE}/wah/places/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(place)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل تحديث المعلم التراثي');
+    clientWahCache.clear();
+    return json.data;
+  },
+
+  async patchPlace(id: string, partial: Partial<HeritagePlace>, user?: { id?: string; role?: string }): Promise<HeritagePlace> {
+    const res = await fetch(`${API_BASE}/wah/places/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(partial)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل التعديل الجزئي للمعلم');
+    clientWahCache.clear();
+    return json.data;
+  },
+
+  async migrateHeritagePlacesSchema(user?: { id?: string; role?: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/wah/places/migrate-schema`, {
+      method: 'POST',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message || 'فشل ترحيل مخطط المعالم');
+    clientWahCache.clear();
+    return json.stats;
+  },
+
   // 3. Cultural Crafts
   async getCrafts(params?: { governorate?: string; governorateId?: string; status?: string }): Promise<CulturalCraft[]> {
     try {

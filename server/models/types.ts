@@ -623,6 +623,37 @@ export interface GovernorateDoc {
   updatedAt: string;
 }
 
+export interface HeritagePlaceEvent {
+  name: string;
+  description?: string;
+  date?: string;
+  duration?: string;
+  frequency?: string;
+}
+
+export interface HeritagePlaceVisitorService {
+  name: string;
+  description?: string;
+}
+
+export interface HeritagePlaceVisitInfo {
+  openingHours?: string;
+  bestTimeToVisit?: string;
+  entryFee?: string | number;
+  reservationRequired?: boolean;
+}
+
+export interface HeritagePlaceAccess {
+  description?: string;
+  transportation?: string;
+}
+
+export interface HeritagePlaceAddress {
+  village?: string;
+  city?: string;
+  governorate?: string;
+}
+
 export interface HeritagePlaceDoc {
   _id?: string;
   id: string;
@@ -630,13 +661,20 @@ export interface HeritagePlaceDoc {
   slug: string;
   governorateId: string;
   governorateName: string;
-  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center' | 'historical';
+  category: 'temple' | 'monastery' | 'mosque' | 'museum' | 'tomb' | 'heritage_village' | 'nature' | 'cultural_center' | 'historical' | string;
   description: string;
+  shortDescription?: string;
   history: string;
+  fullHistory?: string;
   significance: string;
   locationName: string;
+  locationDescription?: string;
+  visitorTips?: string;
+  historicalEra?: string;
+  architecturalHighlights?: string[];
   coverImage: string;
   gallery: string[];
+  galleryImages?: string[];
   videoUrl?: string;
   videos?: string[];
   relatedCrafts?: string[];
@@ -649,6 +687,15 @@ export interface HeritagePlaceDoc {
   sourceType?: 'official_gov' | 'unesco' | 'academic' | string;
   researchDate?: string;
   verificationStatus?: VerificationStatus;
+
+  // Extended fields (Single source of truth in MongoDB)
+  events?: HeritagePlaceEvent[];
+  visitorServices?: HeritagePlaceVisitorService[];
+  visitInfo?: HeritagePlaceVisitInfo;
+  access?: HeritagePlaceAccess;
+  address?: HeritagePlaceAddress;
+  visitDuration?: string;
+
   createdAt: string;
   updatedAt: string;
 }
