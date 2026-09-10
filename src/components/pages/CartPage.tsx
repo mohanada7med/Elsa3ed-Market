@@ -58,10 +58,10 @@ export const CartPage: React.FC = () => {
       if (res.success) {
         setCouponInput('');
       } else {
-        setCouponError(res.message || 'كود الخصم غير صالح أو منتهي الصلاحية');
+        setCouponError(res.message || 'كود الخصم مش شغال أو خلصت مدته');
       }
     } catch (err: any) {
-      setCouponError(err.message || 'حدث خطأ أثناء تطبيق كود الخصم');
+      setCouponError(err.message || 'حصلت مشكلة وإحنا بنطبّق كود الخصم، جرّب تاني');
     } finally {
       setIsApplyingCoupon(false);
     }
@@ -117,7 +117,7 @@ export const CartPage: React.FC = () => {
             معرض المنتجات
           </button>
           <span>/</span>
-          <span className="font-bold">سلة المشتريات</span>
+          <span className="font-bold">سلة الشراء</span>
         </nav>
 
         {/* Page Title */}
@@ -128,10 +128,10 @@ export const CartPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl sm:text-3xl font-black font-serif">
-                سلة المشتريات التراثية
+                سلة الشراء بتاعتك
               </h1>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-0.5">
-                قطع أصيلة تم اختيارها بعناية من كبار شيوخ الصنعة بالصعيد
+                قطع أصلية معمولة بإيد كبار شيوخ الصنعة في الصعيد
               </p>
             </div>
           </div>
@@ -147,7 +147,7 @@ export const CartPage: React.FC = () => {
                 onClick={clearCart}
                 className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline px-2.5 py-1 transition-colors cursor-pointer"
               >
-                إفراغ السلة
+                فضّي السلة
               </button>
             </div>
           )}
@@ -167,10 +167,10 @@ export const CartPage: React.FC = () => {
 
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl font-black font-serif">
-                سلة المشتريات فارغة
+                السلة فاضية لسه
               </h2>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 max-w-sm mx-auto leading-relaxed">
-                ابدأ التسوق الآن واكتشف روائع الفخار والكليم والعسل والخيرات الأصيلة من قلب محافظات الصعيد.
+                لف في السوق دلوقتي واكتشف روائع الفخار والكليم والعسل وخيرات الصعيد الأصيلة.
               </p>
             </div>
 
@@ -185,7 +185,7 @@ export const CartPage: React.FC = () => {
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>تصفح منتجات سوق وه</span>
+                <span>اتفرج على منتجات سوق وه</span>
               </button>
             </div>
           </motion.div>
@@ -396,11 +396,11 @@ export const CartPage: React.FC = () => {
                   <div className="flex justify-between text-black/60 dark:text-white/60">
                     <span className="flex items-center gap-1">
                       <Truck className="w-3.5 h-3.5 text-[#9a6a35]" />
-                      <span>رسوم الشحن السريع لباب المنزل</span>
+                      <span>مصاريف الشحن لحد باب بيتك</span>
                     </span>
                     <span className="font-bold">
                       {shippingFee === 0 ? (
-                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">شحن مجاني 🎁</span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">شحن ببلاش 🎁</span>
                       ) : (
                         <span>{shippingFee} ج.م</span>
                       )}
@@ -409,14 +409,14 @@ export const CartPage: React.FC = () => {
 
                   {cartDiscountAmount > 0 && (
                     <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-bold">
-                      <span>قيمة الخصم المطبق</span>
+                      <span>قيمة الخصم</span>
                       <span>-{cartDiscountAmount} ج.م</span>
                     </div>
                   )}
 
                   {cartSubtotal < 1000 && (
                     <p className="text-[11px] text-[#9a6a35] bg-[#9a6a35]/10 p-2.5 rounded-xl leading-relaxed">
-                      💡 أضف منتجات بقيمة <strong>{1000 - cartSubtotal} ج.م</strong> إضافية للحصول على <strong>شحن مجاني كامل</strong> لجميع المحافظات!
+                      💡 زود حاجات بـ <strong>{1000 - cartSubtotal} ج.م</strong> عشان تاخد <strong>شحن ببلاش</strong> لكل المحافظات!
                     </p>
                   )}
 
@@ -437,7 +437,7 @@ export const CartPage: React.FC = () => {
                   onClick={handleCheckout}
                   className="w-full py-3.5 sm:py-4 px-6 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
                 >
-                  <span>متابعة إتمام الطلب والدفع</span>
+                  <span>كمّل واطلب وادفع دلوقتي</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
 

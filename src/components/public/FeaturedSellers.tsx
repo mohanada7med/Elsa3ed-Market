@@ -15,9 +15,9 @@ export const FeaturedSellers: React.FC = () => {
   return (
     <WAHSection
       id="featured-sellers-section"
-      eyebrow="حرفيو الصعيد وشيوخ الصنعة"
-      title="الورش والتعاونيات الحرفية المعتمدة"
-      subtitle="تعرف على صانعي الجمال واطلع على ورشهم وقصص كفاحهم المتوارثة في مدن وقرى الصعيد"
+      eyebrow="شيوخ الصنعة وحرفيين الصعيد"
+      title="ورش ومعامل الصنعة الأصيلة"
+      subtitle="اتعرف على أصحاب الصنعة وشوف ورشهم وحكايات كفاحهم المتوارثة في بلاد ونجوع الصعيد"
       pattern="geometry"
       action={
         <button
@@ -26,7 +26,7 @@ export const FeaturedSellers: React.FC = () => {
           onClick={() => setActivePage('sellers')}
           className="text-xs sm:text-sm font-bold text-[#9a6a35] hover:underline flex items-center gap-1 cursor-pointer"
         >
-          <span>عرض كافة الورش والحرفيين</span>
+          <span>شوف كل الورش والحرفيين</span>
           <ArrowLeft className="w-4 h-4" />
         </button>
       }
@@ -83,7 +83,7 @@ export const FeaturedSellers: React.FC = () => {
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{seller.rating}</span>
                     <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
-                      ({seller.salesCount} مبيعة)
+                      ({seller.salesCount} طلب متسلم)
                     </span>
                   </div>
                 </div>
@@ -107,7 +107,7 @@ export const FeaturedSellers: React.FC = () => {
                   {seller.specialty}
                 </span>
                 <span className="text-black/50 dark:text-white/50 font-medium text-[11px]">
-                  {seller.productsCount} منتجات معروضة
+                  {seller.productsCount} قطعة معروضة
                 </span>
               </div>
             </div>

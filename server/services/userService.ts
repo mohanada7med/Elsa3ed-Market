@@ -724,11 +724,11 @@ export async function updateUserByAdmin(
           rating: 5.0,
           salesCount: 0,
           productsCount: 0,
-          badge: 'حرفي معتمد',
+          badge: 'صنايعي معتمد',
           avatar: existingUser.avatar || DEFAULT_USER_AVATAR,
           coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80',
-          bio: `ورشة متخصصة في صناعة المشغولات الصعيدية الأصيلة.`,
-          story: `بدأنا بحرفة الأجداد وتوارثناها لنقدم أجود تراث الصعيد.`,
+          bio: `ورشة متخصصة في عمل المشغولات الصعيدية على أصولها.`,
+          story: `بدأنا بصنعة أجدادنا وورثناها جيل بعد جيل عشان نقدم أحسن تراث في الصعيد.`,
           verified: true,
           joinedDate: new Date().toISOString().split('T')[0],
           phone: updates.phone?.trim() || existingUser.phone,
@@ -736,7 +736,7 @@ export async function updateUserByAdmin(
           payoutMethod: 'vodafone_cash',
           payoutAccount: updates.phone?.trim() || existingUser.phone,
           status: 'approved' as SellerStatus,
-          specialty: updates.specialty?.trim() || 'مشغولات وحرف تراثية'
+          specialty: updates.specialty?.trim() || 'مشغولات وحرف صعيدية على أصولها'
         };
 
         if (isMongo && db) {
@@ -922,11 +922,11 @@ export async function adminCreateNewUser(
       rating: 5.0,
       salesCount: 0,
       productsCount: 0,
-      badge: 'حرفي معتمد',
+      badge: 'صنايعي معتمد',
       avatar: finalAvatar,
       coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80',
-      bio: `ورشة حرفية معتمدة على منصة سوق الصعيد.`,
-      story: `حرف يدوية وتراثية أصيلة من قلب الصعيد.`,
+      bio: `ورشة شاطرة ومعتمدة على منصة وه.`,
+      story: `صنعة إيد وحرف تراثية أصيلة من قلب الصعيد.`,
       verified: true,
       joinedDate: new Date().toISOString().split('T')[0],
       phone: data.phone.trim(),
@@ -934,7 +934,7 @@ export async function adminCreateNewUser(
       payoutMethod: 'vodafone_cash',
       payoutAccount: data.phone.trim(),
       status: 'approved' as SellerStatus,
-      specialty: data.specialty?.trim() || 'مشغولات وحرف تراثية'
+      specialty: data.specialty?.trim() || 'مشغولات وحرف صعيدية على أصولها'
     };
 
     if (isMongo && db) {

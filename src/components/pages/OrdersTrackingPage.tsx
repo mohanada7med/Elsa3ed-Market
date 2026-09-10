@@ -55,15 +55,15 @@ export const OrdersTrackingPage: React.FC = () => {
   };
 
   const handleCancelOrder = async (orderId: string) => {
-    if (!window.confirm('هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟ سيتم استرجاع القطع للمخزون فوراً.')) {
+    if (!window.confirm('متأكد إنك عايز تلغي الطلب ده؟ القطع هترجع للمخزون فوراً.')) {
       return;
     }
 
     setIsCancelling(true);
     try {
-      await cancelOrder(orderId, 'طلب العميل الإلغاء');
+      await cancelOrder(orderId, 'المشتري طلب الإلغاء');
     } catch (err: any) {
-      addToast('خطأ في الإلغاء', err?.message || 'تعذر إلغاء الطلب حالياً', 'error');
+      addToast('مشكلة في الإلغاء', err?.message || 'ماعرفناش نلغي الطلب دلوقتي، جرّب تاني', 'error');
     } finally {
       setIsCancelling(false);
     }
@@ -109,13 +109,13 @@ export const OrdersTrackingPage: React.FC = () => {
         <div className="space-y-2 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/20 text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold">
             <Truck className="w-3.5 h-3.5 text-[#d5a56d]" />
-            <span>خدمة التتبع اللحظي لشحنات الصعيد</span>
+            <span>تتبع شحنتك خطوة بخطوة من الصعيد</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black font-serif">
-            تتبع طلباتك ورحلة وصولها من الورشة
+            تابع طلباتك ورحلتها من الورشة لحد عندك
           </h1>
           <p className="text-xs text-[#f5f0e7]/80">
-            تابع حالة التجهيز والتحميل في محافظات الصعيد حتى وصولها لباب منزلك بأمان
+            تابع تجهيز القطعة في ورش الصعيد لحد ما تخبط على باب بيتك بأمان
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export const OrdersTrackingPage: React.FC = () => {
             type="button"
             onClick={() => refreshOrders()}
             className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors cursor-pointer min-h-[42px] min-w-[42px] flex items-center justify-center"
-            title="تحديث البيانات"
+            title="حدّث البيانات"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
@@ -133,7 +133,7 @@ export const OrdersTrackingPage: React.FC = () => {
             onClick={() => setActivePage('products')}
             className="px-6 py-3 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-black rounded-[1.25rem] shadow-lg transition-all hover:scale-[1.02] cursor-pointer min-h-[42px]"
           >
-            تسوق المزيد من القطع
+            شوف قطع تانية
           </button>
         </div>
       </div>
@@ -143,9 +143,9 @@ export const OrdersTrackingPage: React.FC = () => {
           <div className="w-20 h-20 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto">
             <ShoppingBag className="w-10 h-10" />
           </div>
-          <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">لا توجد لديك طلبات سابقة حتى الآن</h3>
+          <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">لسه مفيش أي طلبات طلبتها لحد دلوقتي</h3>
           <p className="text-xs sm:text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 max-w-sm mx-auto leading-relaxed">
-            عندما تقوم بطلب أي قطعة فخار أو كليم أو عسل ستظهر مسارات الشحن والتتبع هنا بالتفصيل.
+            أول ما تطلب أي قطعة من الفخار أو الكليم أو العسل، مسار شحنتها وتفاصيلها هتظهرلك هنا أول بأول.
           </p>
           <button
             type="button"
@@ -160,7 +160,7 @@ export const OrdersTrackingPage: React.FC = () => {
           {/* Orders List Column */}
           <div className="lg:col-span-5 space-y-4">
             <h3 className="font-black font-serif text-sm text-[#211d18] dark:text-[#f5f0e7] px-1">
-              قائمة طلباتك ({orders.length})
+              كل طلباتك ({orders.length})
             </h3>
 
             <div className="space-y-3">

@@ -89,7 +89,7 @@ export const CraftsPage: React.FC = () => {
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">أطلس حرف الصعيد التراثية</span>
+        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">أطلس صنايع وحرف الصعيد</span>
       </nav>
 
       {/* Hero Banner with Documentary CTA */}
@@ -98,15 +98,15 @@ export const CraftsPage: React.FC = () => {
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/20 text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold">
             <Sparkles className="w-3.5 h-3.5 text-[#d5a56d]" />
-            <span>الموسوعة التراثية الرقمية</span>
+            <span>صنايع بلادنا التراثية</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black font-serif leading-tight">
-            أطلس الحرف التراثية في صعيد مصر
+            أطلس الحرف اليدوية في صعيد مصر
           </h1>
 
           <p className="text-xs sm:text-sm text-[#f5f0e7]/80 leading-relaxed">
-            توثيق تاريخي وبصري مستمد حصرياً من سجلات قاعدة البيانات المعتمدة لحرف الصعيد الأصيلة، لتوثيق أسرار الصنعة وهوية الحرفيين دون تحريف أو اختلاق.
+            توثيق حي لحرف وصنايع الصعيد الأصيلة، بنتعرف فيه على سر الصنعة، خامات البيئة، وهوية شيوخ المهنة اللي حافظوا عليها جيل ورا جيل.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -117,7 +117,7 @@ export const CraftsPage: React.FC = () => {
               className="px-6 py-3.5 rounded-[1.25rem] bg-[#9a6a35] hover:bg-[#7d5427] text-white font-black text-xs shadow-lg flex items-center gap-2 transition-all cursor-pointer hover:scale-[1.02]"
             >
               <Film className="w-4 h-4" />
-              <span>مشاهدة الفيلم الوثائقي التفاعلي</span>
+              <span>اتفرج على الفيلم الوثائقي</span>
             </button>
           </div>
         </div>
@@ -133,7 +133,7 @@ export const CraftsPage: React.FC = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ابحث في أطلس الحرف بالاسم، المادة، القرية أو المحافظة..."
+              placeholder="دوّر في أطلس الحرف بالاسم، المادة، القرية أو المحافظة..."
               className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-[1rem] text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] placeholder-[#211d18]/40 dark:placeholder-[#f5f0e7]/40 focus:outline-none focus:border-[#9a6a35] transition-colors"
             />
             {searchQuery && (
@@ -153,14 +153,14 @@ export const CraftsPage: React.FC = () => {
             <span>
               {isLoading
                 ? 'جاري التحميل...'
-                : `${filteredCrafts.length} ${filteredCrafts.length === 1 ? 'حرفة موثقة' : 'حرف موثقة'}`}
+                : `${filteredCrafts.length} ${filteredCrafts.length === 1 ? 'حرفة متوثقة' : 'حرف متوثقة'}`}
             </span>
           </div>
         </div>
 
         {/* Governorate Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs">
-          <span className="text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-bold shrink-0 ml-1">تصفية بالمحافظة:</span>
+          <span className="text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-bold shrink-0 ml-1">المحافظة:</span>
           {UPPER_EGYPT_GOVS.map((gov) => (
             <button
               key={gov}
@@ -208,12 +208,12 @@ export const CraftsPage: React.FC = () => {
             <BookOpen className="w-8 h-8" />
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif">
-            لا توجد حرف موثقة حاليًا
+            ملقيناش حرف مطابقة
           </h2>
           <p className="text-xs sm:text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed max-w-md mx-auto">
             {selectedGov !== 'الكل' || searchQuery
-              ? 'لم يتم العثور على حرف تطابق معايير البحث المحددة. يمكنك إعادة تعيين الفلاتر لعرض كافة السجلات المعتمدة.'
-              : 'يتم توثيق الحرف التراثية وأسرار الصنعة الأصيلة عبر لوحة تحكم إدارة المنصة استناداً إلى المراجع الميدانية المعتمدة.'}
+              ? 'جرّب غيّر كلمة البحث أو فضّي الفلاتر عشان تشوف كل الحرف والصنايع المتوثقة.'
+              : 'بيتم توثيق الحرف التراثية وأسرار الصنعة الأصيلة أول بأول من قلب صعيد مصر.'}
           </p>
           {(selectedGov !== 'الكل' || searchQuery) && (
             <button
@@ -225,7 +225,7 @@ export const CraftsPage: React.FC = () => {
               className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold rounded-xl border border-black/10 dark:border-white/10 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5 text-[#9a6a35]" />
-              <span>إعادة ضبط الفلاتر</span>
+              <span>فضّي الفلاتر</span>
             </button>
           )}
         </div>
@@ -409,7 +409,7 @@ export const CraftsPage: React.FC = () => {
                         }}
                         className="w-full sm:w-auto px-6 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
                       >
-                        <span>تصفح قطع ومنتجات {story.title.split('(')[0]}</span>
+                        <span>شوف منتجات وقطع {story.title.split('(')[0]}</span>
                         <ArrowLeft className="w-3.5 h-3.5" />
                       </button>
                     </div>

@@ -45,7 +45,7 @@ export const CategoriesPage: React.FC = () => {
           </button>
           <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
           <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">
-            أطلس الحرف والمشغولات التراثية
+            أطلس حرف وفنون الصعيد
           </span>
         </nav>
 
@@ -85,13 +85,13 @@ export const CategoriesPage: React.FC = () => {
         <div className="relative z-10 max-w-3xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/20 border border-[#9a6a35]/30 text-[#d5a56d] text-xs font-bold">
             <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
-            <span>الأرشيف الموثق لحرف صعيد مصر</span>
+            <span>حرف وفنون صعيد مصر</span>
           </div>
           <h1 className="text-2xl sm:text-5xl font-black font-serif leading-tight">
-            أصالة الصعيد مصنفة بالخامة والنشأة
+            أصالة الصعيد بالخامة والبلد
           </h1>
           <p className="text-xs sm:text-sm text-[#f5f0e7]/80 leading-relaxed max-w-2xl font-light">
-            استكشف الحرف اليدوية ككيانات حية، تنبض بطمي النيل وخيوط الفضة وسعف الواحات. اختر الحرفة لتطلع على توثيقها ومحافظتها ومجموعاتها الحصرية.
+            استكشف حرف الصعيد اليدوية بطمي النيل وخيوط الفضة وخوص النخيل. اختار الحرفة عشان تشوف أصلها ومحافظتها وأحلى شغل طالع منها.
           </p>
         </div>
       </div>
@@ -190,7 +190,7 @@ export const CategoriesPage: React.FC = () => {
 
                     <span className="inline-flex items-center gap-1 text-xs text-white/90 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 font-bold">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>حرفة تراثية موثقة</span>
+                      <span>شغل يدوي أصيل</span>
                     </span>
                   </div>
 
@@ -216,7 +216,7 @@ export const CategoriesPage: React.FC = () => {
                         onClick={() => navigateToCategory(selectedCategory.id)}
                         className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                       >
-                        <span>استكشف منتجات وحرفيي {selectedCategory.name}</span>
+                        <span>شوف شغل وحرفيين {selectedCategory.name}</span>
                         <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
                       </button>
                     </div>
@@ -330,7 +330,7 @@ export const CategoriesPage: React.FC = () => {
                             <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-white">
                               <span className="text-xs font-semibold text-amber-200/90 flex items-center gap-1">
                                 <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
-                                <span>اضغط على الصورة لاستكشاف القطع</span>
+                                <span>دوس على الصورة عشان تشوف المنتجات</span>
                               </span>
                               <div className="w-8 h-8 rounded-full bg-[#9a6a35] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                 <ArrowUpLeft className="w-4 h-4" />
@@ -356,7 +356,7 @@ export const CategoriesPage: React.FC = () => {
                             onClick={() => navigateToCategory(cat.id)}
                             className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
                           >
-                            <span>تصفح كافة معروضات {cat.name}</span>
+                            <span>شوف كل منتجات {cat.name}</span>
                             <ArrowUpLeft className="w-4 h-4" />
                           </button>
                         </div>
@@ -410,7 +410,7 @@ export const CategoriesPage: React.FC = () => {
                 </p>
 
                 <div className="pt-3 border-t border-white/15 flex items-center justify-between text-xs text-[#d5a56d] font-bold">
-                  <span>تصفح الكتالوج</span>
+                  <span>شوف المنتجات</span>
                   <ArrowUpLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1" />
                 </div>
               </div>

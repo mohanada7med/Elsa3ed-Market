@@ -361,12 +361,12 @@ export const DialectDictionaryPage: React.FC = () => {
               className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#8C5D30] hover:text-[#6D4420] dark:text-[#D1A877] dark:hover:text-[#E9CBA4] transition-colors cursor-pointer"
             >
               <ArrowLeft size={16} className="rotate-180" />
-              العودة للرئيسية
+              ارجع للرئيسية
             </button>
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#8C5D30]/10 dark:bg-[#8C5D30]/20 text-[#8C5D30] dark:text-[#E2B98A] text-xs font-black">
               <Sparkles size={14} />
-              موسوعة التراث اللغوي والشفاهي
+              كلام الصعيد وحكاياته
             </div>
           </div>
 
@@ -378,7 +378,7 @@ export const DialectDictionaryPage: React.FC = () => {
               </span>
             </h1>
             <p className="text-base sm:text-lg text-[#6E5B4B] dark:text-[#BDB0A3] leading-relaxed">
-              توثيق تفاعلي حي لمفردات وحِكَم وأمثال صعيد مصر، وجذورها الممتدة في اللغة المصرية القديمة والقبطية والفصحى، مع النطق الصوتي وقصص نشأتها عبر مدن وقرى النيل الخالد.
+              توثيق حي لكلمات وأمثال وحكم الصعيد، وأصلها اللي راجع للمصري القديم والقبطي والعربي الفصيح، بنطقها وحكاياتها في بلاد النيل.
             </p>
           </div>
 
@@ -407,7 +407,7 @@ export const DialectDictionaryPage: React.FC = () => {
               }`}
             >
               <HelpCircle size={17} />
-              اختبر معلوماتك: لهجتك صعيدي فصيح؟
+              اختبر نفسك: بتفهم صعيدي ولا لأ؟
               <span className="px-1.5 py-0.5 text-[10px] rounded-full bg-amber-500 text-white font-black">
                 تحدي
               </span>
@@ -431,7 +431,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <Flame size={16} />
                   </span>
                   <span className="text-xs font-black uppercase tracking-wider text-[#8C5D30] dark:text-[#DFA973]">
-                    مفردة ومثل اليوم المختارة
+                    كلمة ومثل النهاردة
                   </span>
                 </div>
 
@@ -441,10 +441,10 @@ export const DialectDictionaryPage: React.FC = () => {
                     onClick={() => speakTerm(wordOfTheDay.term)}
                     aria-label="سماع النطق"
                     title="سماع النطق باللهجة الصعيدية"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#2A211B] text-[#8C5D30] dark:text-[#DFB588] text-xs font-bold border border-[#E7DECة] dark:border-[#382D25] hover:bg-[#F8F2E8] dark:hover:bg-[#322720] transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#2A211B] text-[#8C5D30] dark:text-[#DFB588] text-xs font-bold border border-[#E7DECE] dark:border-[#382D25] hover:bg-[#F8F2E8] dark:hover:bg-[#322720] transition-colors cursor-pointer"
                   >
                     <Volume2 size={15} />
-                    استمع للنطق
+                    اسمع النطق
                   </button>
 
                   <button
@@ -528,7 +528,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ابحث عن مثل أو كلمة أو معنى صعيدي (مثل: دلعادي، البرش، كانون...)"
+                    placeholder="دوّر على مثل أو كلمة أو معنى صعيدي (زي: دلعادي، البرش، كانون...)"
                     className="w-full pr-11 pl-4 py-3 rounded-2xl bg-white dark:bg-[#1A1410] border border-[#E5DACB] dark:border-[#30261F] text-sm text-[#261E17] dark:text-[#FAF5EE] placeholder:text-[#9F8F7F] focus:outline-none focus:ring-2 focus:ring-[#8C5D30]/30"
                   />
                   {searchQuery && (
@@ -597,10 +597,10 @@ export const DialectDictionaryPage: React.FC = () => {
               <div className="py-16 text-center bg-white dark:bg-[#181310] rounded-3xl border border-[#E5DACB] dark:border-[#2E241E] p-8">
                 <Layers size={40} className="mx-auto text-[#A89888] mb-3 opacity-60" />
                 <h3 className="text-lg font-bold text-[#261E17] dark:text-[#FAF5EE] mb-1">
-                  لم نجد مفردات تطابق بحثك
+                  ملقيناش كلام يطابق اللي بتدوّر عليه
                 </h3>
                 <p className="text-sm text-[#7D6D5E] dark:text-[#A7998B] mb-4">
-                  جرب البحث بكلمة أخرى أو قم بإلغاء التصفية لاستعراض كافة مفردات المعجم.
+                  جرّب دوّر بكلمة تانية أو فضّي الفلاتر عشان تشوف كل كلمات وأمثال المعجم.
                 </p>
                 <button
                   type="button"
@@ -611,7 +611,7 @@ export const DialectDictionaryPage: React.FC = () => {
                   }}
                   className="px-5 py-2.5 rounded-xl bg-[#8C5D30] text-white text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer"
                 >
-                  إعادة ضبط البحث
+                  فضّي الفلاتر
                 </button>
               </div>
             ) : (
@@ -637,8 +637,8 @@ export const DialectDictionaryPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => speakTerm(entry.term)}
-                            title="استمع للنطق"
-                            aria-label={`استمع لنطق ${entry.term}`}
+                            title="اسمع النطق"
+                            aria-label={`اسمع نطق ${entry.term}`}
                             className="p-2 rounded-xl text-[#8C5D30] dark:text-[#DFA973] hover:bg-amber-50 dark:hover:bg-[#2B211A] transition-colors cursor-pointer"
                           >
                             <Volume2 size={16} />
@@ -686,7 +686,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <div className="mt-4 pt-3 border-t border-[#EFE8DC] dark:border-[#261E18] flex items-center justify-between gap-2 text-xs">
                       <div className="flex items-center gap-1.5 text-[#8C7662] dark:text-[#9A8A7A]">
                         <MapPin size={13} className="text-[#8C5D30]" />
-                        <span>شائع في:</span>
+                        <span>مشهور في:</span>
                         <span className="font-bold text-[#261E17] dark:text-[#FAF5EE]">
                           {entry.governorates.slice(0, 3).join('، ')}
                           {entry.governorates.length > 3 && ` +${entry.governorates.length - 3}`}
@@ -770,7 +770,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 {/* Explanation */}
                 {showExplanation && (
                   <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 mb-6 text-xs sm:text-sm text-amber-900 dark:text-amber-200 leading-relaxed">
-                    <strong>الإيضاح التراثي: </strong>
+                    <strong>حكاية الكلمة وأصلها: </strong>
                     {QUIZ_QUESTIONS[currentQuestionIndex].explanation}
                   </div>
                 )}
@@ -783,7 +783,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="w-full py-3.5 rounded-2xl bg-[#8C5D30] hover:bg-[#724822] text-white font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                   >
                     <span>
-                      {currentQuestionIndex + 1 === QUIZ_QUESTIONS.length ? 'مشاهدة النتيجة الختامية' : 'السؤال التالي'}
+                      {currentQuestionIndex + 1 === QUIZ_QUESTIONS.length ? 'شوف نتيجتك' : 'السؤال اللي بعده'}
                     </span>
                     <ChevronRight size={18} className="rotate-180" />
                   </button>
@@ -802,16 +802,16 @@ export const DialectDictionaryPage: React.FC = () => {
                       ? 'صعيدي أباً عن جد! 👑'
                       : score >= 3
                       ? 'عفارم عليك! ابن النيل الصادق 🌾'
-                      : 'بداية جميلة لتعلم لغة الكرم والأصالة 🏺'}
+                      : 'بداية حلوة عشان تعرف لغة الكرم والأصالة 🏺'}
                   </h3>
                   <p className="text-base text-[#6E5B4B] dark:text-[#BDB0A3]">
-                    حصلت على <strong className="text-[#8C5D30] dark:text-[#DFB588] text-xl">{score}</strong> من إجمالي{' '}
+                    جبت <strong className="text-[#8C5D30] dark:text-[#DFB588] text-xl">{score}</strong> من أصل{' '}
                     <strong className="text-xl">{QUIZ_QUESTIONS.length}</strong> أسئلة
                   </p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-[#FAF4EB] dark:bg-[#16110D] border border-[#E7DDCF] dark:border-[#2C231D] text-xs sm:text-sm text-[#5B493B] dark:text-[#B5A799] leading-relaxed">
-                  اللهجة الصعيدية ليست مجرد كلمات متوارثة، بل هي وعاء لتاريخ عريق يمتد لآلاف السنين يجمع فصاحة العربية مع هيبة اللسان المصري القديم.
+                  كلام الصعيد مش مجرد لهجة، ده تاريخ وعزوة وهيبة متوارثة من آلاف السنين، جمعت فصاحة العربي مع أصل اللسان المصري القديم.
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -821,7 +821,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="flex-1 py-3 rounded-2xl border border-[#8C5D30] text-[#8C5D30] dark:text-[#DFB588] font-black text-sm flex items-center justify-center gap-2 hover:bg-[#8C5D30]/5 transition-colors cursor-pointer"
                   >
                     <RefreshCw size={16} />
-                    إعادة الاختبار
+                    عيد الاختبار تاني
                   </button>
 
                   <button
@@ -830,7 +830,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="flex-1 py-3 rounded-2xl bg-[#8C5D30] text-white font-black text-sm flex items-center justify-center gap-2 shadow-md hover:bg-[#724822] transition-colors cursor-pointer"
                   >
                     <BookOpen size={16} />
-                    تصفح كافة مفردات المعجم
+                    قلّب في كل كلمات المعجم
                   </button>
                 </div>
               </div>

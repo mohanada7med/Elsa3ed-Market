@@ -29,17 +29,17 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'places',
-      title: 'المعالم والتراث المعماري',
-      tagline: 'حكايات الصروح والمعابد العتيقة',
+      title: 'معالم وآثار الصعيد',
+      tagline: 'حكاوي المعابد والصروح العتيقة',
       desc: 'من معابد الكرنك ودندرة وإدفو لحد الأديرة القديمة وقصور المنيا وعمارة النوبة على النيل.',
-      badge: wahStats?.placesCount ? `${wahStats.placesCount} معلم موثق` : 'معالم موثقة',
+      badge: wahStats?.placesCount ? `${wahStats.placesCount} معلم متوثق` : 'معالم متوثقة',
       page: 'places' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
       nameEn: 'Architectural Heritage'
     },
     {
       id: 'crafts',
-      title: 'موسوعة الحرف والورش',
+      title: 'حرف وصنايع الصعيد',
       tagline: 'سر الصنعة في إيد الأسطوات',
       desc: 'أسرار فخار قنا، تلي أسيوط الفضي، فركة نقادة، ألباستر القرنة، وسجاد أخميم اليدوي الأصيل.',
       badge: 'حرف صعيدية',
@@ -49,19 +49,19 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'stories',
-      title: 'وه بيحكي — حكايات الصعيد',
-      tagline: 'ذاكرة المرويات وسير الناس',
-      desc: 'حكايات بتتوارث من جيل لجيل: مربعات ابن عروس، سيرة الهلالية، أساطير النيل، وحكايات القرى والنجوع.',
-      badge: 'أرشيف شفاهي',
+      title: 'وه بيحكي — حكاوي وسير',
+      tagline: 'سير الناس ومرويات زمان',
+      desc: 'حكايات بتتوارث من جيل لجيل: مربعات ابن عروس، السيرة الهلالية، أساطير النيل، وحكاوي النجوع والبلاد.',
+      badge: 'حكاوي ومرويات',
       page: 'stories' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png',
       nameEn: 'Oral History'
     },
     {
       id: 'people',
-      title: 'ناس الصعيد وحُرّاس الحكاية',
-      tagline: 'أهل الصنعة وحراس الحكاية',
-      desc: 'اتعرف على ناس الصعيد الحقيقيين؛ أسطوات الحرف، رواة السير، الشعراء، وفنانين التراث الأصلاء.',
+      title: 'ناس الصعيد وحراس الحكاية',
+      tagline: 'شيوخ الصنعة وحراس الحكاية',
+      desc: 'اتعرف على ناس الصعيد الطيبين؛ شيوخ الصنعة، رواة السيرة، الشعراء، وفنانين التراث.',
       badge: 'وجوه من الصعيد',
       page: 'people' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
@@ -69,30 +69,30 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'food',
-      title: 'طعم الصعيد — المطبخ الأصيل',
+      title: 'طعم وأكل الصعيد',
       tagline: 'سر الفرن البلدي وطعم البيوت',
-      desc: 'العيش الشمسي الفلاحي، الفايش الصعيدي بالسمسم، الويكا بالمفراك، الكشك، وخيرات عسل القصب.',
-      badge: 'وصفات وأسرار',
+      desc: 'العيش الشمسي، الفايش الصعيدي بالسمسم، الويكا بالمفراك، الكشك، وخيرات عسل القصب.',
+      badge: 'أكلات ووصفات',
       page: 'food' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
       nameEn: 'Authentic Kitchen'
     },
     {
       id: 'events',
-      title: 'فعاليات ومواسم الصعيد',
-      tagline: 'أجواء الموالد وحلقات التحطيب',
+      title: 'مواسم وليالي الصعيد',
+      tagline: 'ليالي الموالد وحلقات التحطيب',
       desc: 'موسم كسر القصب، مولد سيدي عبد الرحيم القنائي، ليالي التحطيب بالأقصر، وتعامد الشمس في أبو سمبل.',
-      badge: 'أجندة حية',
+      badge: 'مواسم حية',
       page: 'events' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
       nameEn: 'Seasons & Events'
     },
     {
       id: 'marketplace',
-      title: 'سوق وه الحرفي (المتجر)',
-      tagline: 'من الورشة لبيتك مباشرة',
-      desc: 'اشتري منتجات أصلية ومضمونة من ورش قنا وأسوان وسوهاج، بدفع آمن وشحن لحد باب دارك.',
-      badge: 'سوق وه المباشر',
+      title: 'سوق وه للحرف اليدوية',
+      tagline: 'من الورشة لحد دارك',
+      desc: 'اشتري قطع أصلية ومضمونة من ورش قنا وأسوان وسوهاج، بدفع مريح وشحن لحد باب بيتك.',
+      badge: 'سوق وه',
       page: 'products' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
       nameEn: 'WAH Marketplace'
@@ -123,14 +123,15 @@ export const WahEcosystemPortalSection: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#9a6a35] tracking-wider mb-2">
             <Compass className="w-4 h-4 animate-spin-slow" />
-            <span>منظومة «وه» الشاملة</span>
+            <span>أبواب ودليل «وه»</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
-            الصعيد كله فى مكان واحد          </h2>
+            الصعيد كله في مكان واحد
+          </h2>
         </div>
 
         <p className="text-sm text-black/60 dark:text-white/60 max-w-md">
-          تصفح الأقسام المتكاملة لتوثيق جغرافية وتاريخ وأهل صعيد مصر عبر أكورديون تفاعلي سينمائي.
+          لف في أبواب وه وتعرف على بلاد وناس وتراث الصعيد كله بتفاصيله وحكاياته.
         </p>
       </div>
 

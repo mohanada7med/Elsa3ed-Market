@@ -30,10 +30,10 @@ export const FeaturedCategories: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-2 text-xs font-bold text-[#9a6a35] tracking-wider mb-2">
             <Compass className="w-4 h-4 animate-spin-slow" />
-            <span>معرض الحرف التراثية الكبرى</span>
+            <span>صنايع وحرف بلادنا</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
-            رحلة في حرف الصعيد
+            لفّة في حرف وصنعة الصعيد
           </h2>
         </div>
 
@@ -42,7 +42,7 @@ export const FeaturedCategories: React.FC = () => {
           onClick={() => setActivePage('categories')}
           className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#9a6a35] hover:text-[#744e26] transition-colors py-2 px-4 rounded-xl hover:bg-[#9a6a35]/5 self-start sm:self-auto cursor-pointer"
         >
-          <span>عرض كل المجموعات</span>
+          <span>شوف كل الحرف</span>
           <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
         </button>
       </div>

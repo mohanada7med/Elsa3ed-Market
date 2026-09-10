@@ -127,7 +127,7 @@ export const CartDrawer: React.FC = () => {
                     <ShoppingBag className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-base font-serif">سلة المشتريات التراثية</h3>
+                    <h3 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-base font-serif">سلة الشراء بتاعتك</h3>
                     <p className="text-xs text-black/50 dark:text-white/50">{cart.length} منتجات مختارة</p>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export const CartDrawer: React.FC = () => {
                   id="cart-drawer-close"
                   onClick={() => setIsCartDrawerOpen(false)}
                   className="p-2 rounded-xl text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
-                  aria-label="إغلاق سلة المشتريات والعودة للتسوق"
+                  aria-label="إغلاق سلة الشراء والرجوع للتسوق"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -150,9 +150,9 @@ export const CartDrawer: React.FC = () => {
                     <div className="w-20 h-20 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto mb-4 border border-[#9a6a35]/30 shadow-inner">
                       <ShoppingBag className="w-10 h-10 opacity-75" />
                     </div>
-                    <h4 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-lg font-serif">سلة المشتريات فارغة</h4>
+                    <h4 className="font-bold text-[#211d18] dark:text-[#f5f0e7] text-lg font-serif">السلة فاضية لسه</h4>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-2 max-w-xs mx-auto leading-relaxed">
-                      لم تقم بإضافة أي من روائع الفخار أو الكليم أو عسل الصعيد بعد. استكشف الحرفيين وأضف قطعك المفضلة!
+                      لسه ما حطتش أي حاجة في السلة من الفخار أو الكليم أو عسل الصعيد. لف في السوق واختار اللي يعجبك!
                     </p>
                     <button
                       type="button"
@@ -161,10 +161,10 @@ export const CartDrawer: React.FC = () => {
                         setIsCartDrawerOpen(false);
                         setActivePage('products');
                       }}
-                      aria-label="استكشف جميع منتجات سوق الصعيد الآن"
+                      aria-label="اتفرج على كل منتجات سوق الصعيد دلوقتي"
                       className="mt-6 px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
                     >
-                      استكشف سوق الصعيد الآن
+                      اتفرج على سوق الصعيد دلوقتي
                     </button>
                   </div>
                 ) : (
@@ -358,10 +358,10 @@ export const CartDrawer: React.FC = () => {
                       type="button"
                       id="cart-checkout-btn"
                       onClick={proceedToCheckout}
-                      aria-label={`متابعة إتمام الطلب، المبلغ الإجمالي ${cartTotal} جنيه مصري`}
+                      aria-label={`كمّل واطلب دلوقتي، الحساب كله ${cartTotal} جنيه`}
                       className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
                     >
-                      <span>متابعة إتمام الطلب</span>
+                      <span>كمّل واطلب دلوقتي</span>
                       <ArrowLeft className="w-4 h-4" />
                     </button>
 
@@ -375,7 +375,7 @@ export const CartDrawer: React.FC = () => {
                       className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-[1.25rem] transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>عرض سلة المشتريات بالكامل</span>
+                      <span>شوف السلة بالتفصيل</span>
                     </button>
                   </div>
 

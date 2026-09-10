@@ -316,7 +316,7 @@ export const StoriesPage: React.FC = () => {
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث في حكايات الصعيد وأساطيره..."
+                placeholder="دوّر في حكايات الصعيد وسيره وأساطيره..."
                 className="
                   h-12 w-full
                   rounded-xl
@@ -372,7 +372,7 @@ export const StoriesPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                <option value="all">كافة الحكايات</option>
+                <option value="all">كل الحكايات</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -451,7 +451,7 @@ export const StoriesPage: React.FC = () => {
                   onClick={resetFilters}
                   className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
                 >
-                  إعادة
+                  فضّي الفلاتر
                 </button>
               )}
             </div>
@@ -468,12 +468,12 @@ export const StoriesPage: React.FC = () => {
             <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
               ORAL MEMORY ARCHIVE
             </div>
-            <h2 className="text-3xl font-black sm:text-4xl">مرويات وحكايات الصعيد</h2>
+            <h2 className="text-3xl font-black sm:text-4xl">حكاوي وسير الصعيد</h2>
           </div>
 
           <div className="hidden items-center gap-2 text-xs text-black/40 dark:text-white/40 sm:flex">
             <Feather size={14} />
-            <span>Upper Egypt Oral Traditions</span>
+            <span>سير وحكايات الصعيد</span>
           </div>
         </div>
 
@@ -514,9 +514,9 @@ export const StoriesPage: React.FC = () => {
               <BookOpen size={24} />
             </div>
 
-            <h3 className="text-xl font-black">لم يتم العثور على حكايات مطابقة</h3>
+            <h3 className="text-xl font-black">ملقيناش حكاية مطابقة</h3>
             <p className="mt-3 text-sm text-black/45 dark:text-white/45">
-              جرب البحث بكلمات أخرى أو تغيير تصنيف الحكاية لاستكشاف مرويات الصعيد.
+              جرّب دوّر بكلمة تانية أو فضّي الفلاتر علشان تسمع باقي حكايات وسير الصعيد.
             </p>
 
             {hasFilters && (
@@ -533,7 +533,7 @@ export const StoriesPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                إعادة ضبط الفلاتر
+                فضّي الفلاتر وشوف الكل
               </button>
             )}
           </div>

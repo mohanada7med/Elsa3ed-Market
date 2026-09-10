@@ -871,7 +871,7 @@ const ProductCard: React.FC<{
             <button
               type="button"
               disabled={outOfStock}
-              aria-label="إضافة للسلة"
+              aria-label="حط في السلة"
               onClick={(event) => {
                 event.stopPropagation();
                 addToCart(product as any, 1);
@@ -929,7 +929,7 @@ const ProductCard: React.FC<{
                 }
               >
                 {outOfStock
-                  ? 'نفد المخزون'
+                  ? 'خلصان دلوقتي'
                   : `${formatPrice(stock)} قطعة متاحة`}
               </span>
             ) : (
@@ -1397,7 +1397,7 @@ const QuickView: React.FC<{
 
                       {stock > 0
                         ? `${formatPrice(stock)} قطعة`
-                        : 'نفد المخزون'}
+                        : 'خلصان دلوقتي'}
                     </span>
                   </div>
                 )}
@@ -1437,7 +1437,7 @@ const QuickView: React.FC<{
               >
                 <Eye size={16} />
 
-                مشاهدة صفحة المنتج
+                شوف تفاصيل القطعة
               </button>
 
               {/* Add Cart */}
@@ -1478,7 +1478,7 @@ const QuickView: React.FC<{
               >
                 <ShoppingBag size={16} />
 
-                إضافة للسلة
+                حط في السلة
               </button>
             </div>
           </div>

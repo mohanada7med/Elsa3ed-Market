@@ -56,8 +56,8 @@ export const Footer: React.FC = () => {
       setAuthModalTab('register');
       setIsAuthModalOpen(true);
       addToast(
-        'تسجيل ورشة حرفية',
-        'يرجى إنشاء حساب جديد أولاً للانضمام إلى منظومة الورش التراثية وتقديم طلب الاعتماد.',
+        'تسجيل ورشة',
+        'اعمل حساب جديد الأول عشان تنضم لورش وه وتقدم طلب اعتماد ورشتك.',
         'info'
       );
       return;
@@ -71,8 +71,8 @@ export const Footer: React.FC = () => {
     }
     setActivePage('buyer-account');
     addToast(
-      'انضمام ورشة حرفية',
-      'تم توجيهك إلى صفحة الحساب لبدء تقديم طلب اعتماد وتوثيق ورشتك التراثية.',
+      'انضمام ورشة',
+      'فتحنا لك صفحة الحساب عشان تبدأ تقدم طلب توثيق ورشتك التراثية.',
       'info'
     );
   };
@@ -115,11 +115,11 @@ export const Footer: React.FC = () => {
   ];
 
   const clientServices = [
-    { label: 'تتبع الشحنة والطلبات', page: 'orders' },
-    { label: 'سلة المقتنيات', page: 'cart' },
-    { label: 'قائمة المفضلة', page: 'favorites' },
-    { label: 'إدارة الحساب والعناوين', page: 'buyer-account' },
-    { label: 'ميثاق ورسالة المنصة', page: 'about' },
+    { label: 'تابع شحنتك وطلباتك', page: 'orders' },
+    { label: 'سلة الشراء', page: 'cart' },
+    { label: 'الحاجات المحفوظة', page: 'favorites' },
+    { label: 'حسابك وعناوينك', page: 'buyer-account' },
+    { label: 'عن وه وحكايتنا', page: 'about' },
   ];
 
   return (
@@ -171,7 +171,7 @@ export const Footer: React.FC = () => {
                 onClick={handleWorkshopRegister}
                 className="px-7 py-4 rounded-2xl bg-[#C5A880] text-black hover:bg-amber-300 text-xs sm:text-sm font-extrabold transition-all shadow-2xl flex items-center gap-2.5 cursor-pointer border border-amber-200/50"
               >
-                <span>تسجيل ورشتك بالمنظومة</span>
+                <span>سجّل ورشتك معانا</span>
                 <ArrowLeft className="w-4 h-4" />
               </button>
 
@@ -181,7 +181,7 @@ export const Footer: React.FC = () => {
                 className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-white/15 hover:bg-white/[0.08] text-xs sm:text-sm font-bold transition-all flex items-center gap-2.5 cursor-pointer backdrop-blur-xl"
               >
                 <Film className="w-4 h-4 text-amber-300" />
-                <span>مشاهدة الفيلم التوثيقي</span>
+                <span>اتفرج على فيلم وه</span>
               </button>
             </div>
 
@@ -211,7 +211,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-5 space-y-4">
             <h4 className="text-xs font-extrabold tracking-wider text-[#C5A880] uppercase font-heritage pb-2 border-b border-white/10 flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              <span>دليل بوابات وصفحات المنصة الشاملة</span>
+              <span>أبواب ودليل منصة وه</span>
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
               {appPortals.map((portal) => (
@@ -234,7 +234,7 @@ export const Footer: React.FC = () => {
             {/* خدمات المقتني */}
             <div className="space-y-3">
               <h4 className="text-xs font-extrabold tracking-wider text-[#C5A880] uppercase font-heritage pb-2 border-b border-white/10">
-                خدمات المقتني وحسابك
+                خدماتك وحسابك
               </h4>
               <div className="flex flex-wrap gap-2">
                 {clientServices.map((service) => (
@@ -253,7 +253,7 @@ export const Footer: React.FC = () => {
                   className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-amber-400/20 text-xs text-amber-300/90 hover:bg-[#C5A880] hover:text-black font-bold transition-all cursor-pointer flex items-center gap-1.5"
                 >
                   <Film className="w-3.5 h-3.5" />
-                  <span>الفيلم التوثيقي</span>
+                  <span>فيلم وه التوثيقي</span>
                 </button>
               </div>
             </div>
@@ -261,7 +261,7 @@ export const Footer: React.FC = () => {
             {/* نشرة بريد الجنوب */}
             <div className="space-y-3 pt-2">
               <h4 className="text-xs font-extrabold tracking-wider text-[#C5A880] uppercase font-heritage">
-                رسائل ومرويات الجنوب
+                جوابات وحكاوي الجنوب
               </h4>
               <p className="text-xs text-white/70">
                 اشترك في نشرتنا عشان توصلك حكايات الصنعة وأسرار الأنوال والأفران أول بأول.
@@ -273,7 +273,7 @@ export const Footer: React.FC = () => {
                   required
                   value={newsletterEmail}
                   onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="أدخل بريدك الإلكتروني..."
+                  placeholder="اكتب إيميلك هنا..."
                   className="
                     w-full h-12 pr-4 pl-12 rounded-xl
                     bg-white/[0.05] border border-white/15
@@ -297,7 +297,7 @@ export const Footer: React.FC = () => {
               {subscribed && (
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>تم اشتراكك في بريد الجنوب التراثي بنجاح!</span>
+                  <span>اشتركت معانا خلاص ونورتنا!</span>
                 </div>
               )}
             </div>
@@ -309,11 +309,11 @@ export const Footer: React.FC = () => {
         {/* الشريط السفلي الحقوق والدفع */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-right">
           <p className="text-xs text-white/60 font-medium tracking-wide">
-            جميع الحقوق محفوظة © {new Date().getFullYear()} — <span className="text-[#C5A880] font-bold">مهند أحمد</span> &nbsp;|&nbsp; منصة <span className="font-heritage font-bold">«وه — WAH»</span>
+            كل الحقوق محفوظة © {new Date().getFullYear()} — <span className="text-[#C5A880] font-bold">مهند أحمد</span> &nbsp;|&nbsp; منصة <span className="font-heritage font-bold">«وه — WAH»</span>
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-white/50 ml-1 font-medium hidden sm:inline">وسائل الدفع المعتمدة:</span>
+            <span className="text-xs text-white/50 ml-1 font-medium hidden sm:inline">طرق الدفع المتاحة:</span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
               <Wallet className="w-3.5 h-3.5 text-[#C5A880]" />
               إنستاباي والمحافظ الإلكترونية
@@ -334,7 +334,7 @@ export const Footer: React.FC = () => {
             aria-label="العودة لأعلى الصفحة"
             className="group flex items-center gap-2 text-xs text-white/70 hover:text-white transition-colors cursor-pointer font-bold"
           >
-            <span>للأعلى</span>
+            <span>اطلع فوق</span>
             <div className="w-9 h-9 rounded-xl border border-white/15 bg-white/[0.04] flex items-center justify-center group-hover:bg-[#C5A880] group-hover:text-black group-hover:border-[#C5A880] transition-all">
               <ArrowUp className="w-4 h-4" />
             </div>

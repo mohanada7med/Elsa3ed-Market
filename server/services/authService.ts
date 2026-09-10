@@ -180,11 +180,11 @@ export async function register(params: {
       rating: 5.0,
       salesCount: 0,
       productsCount: 0,
-      badge: 'حرفي جديد',
+      badge: 'صنايعي جديد',
       avatar: finalAvatar,
       coverImage: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80',
-      bio: `ورشة متخصصة في صناعة المشغولات الصعيدية والتراثية الأصيلة في محافظة ${params.governorate || 'قنا'}.`,
-      story: `بدأنا بحرفة الأجداد وتوارثناها جيلاً بعد جيل لنقدم لكم أروع ما أبدعت أيادي الصعيد.`,
+      bio: `ورشة متخصصة في عمل المشغولات الصعيدية والتراثية على أصولها في محافظة ${params.governorate || 'قنا'}.`,
+      story: `بدأنا بصنعة أجدادنا وورثناها جيل ورا جيل عشان نوصلكم أحسن ما طلعت إيدين الصعايدة.`,
       verified: false,
       joinedDate: new Date().toISOString().split('T')[0],
       phone: params.phone,
@@ -192,7 +192,7 @@ export async function register(params: {
       payoutMethod: 'vodafone_cash',
       payoutAccount: params.phone,
       status: 'pending' as SellerStatus,
-      specialty: params.specialty || 'مشغولات وحرف تراثية'
+      specialty: params.specialty || 'مشغولات وحرف صعيدية على أصولها'
     };
 
     if (isMongo && db) {

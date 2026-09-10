@@ -53,8 +53,8 @@ export const CheckoutPage: React.FC = () => {
   }>({
     instaPayAccount: 'elsa3ed@instapay',
     vodafoneCashNumber: '01158969931',
-    instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تأكيد الطلب".',
-    vodafoneCashInstructions: 'قم بتحويل المبلغ إلى رقم فودافون كاش الموضح أعلاه واضغط على "تأكيد الطلب".'
+    instaPayInstructions: 'حوّل عن طريق تطبيق إنستاباي لعنوان الدفع المكتوب فوق، وبعدها دوس "أكد الطلب".',
+    vodafoneCashInstructions: 'حوّل المبلغ على رقم فودافون كاش المكتوب فوق، وبعدها دوس "أكد الطلب".'
   });
 
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -78,7 +78,7 @@ export const CheckoutPage: React.FC = () => {
     if (!text) return;
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
-    addToast('تم النسخ بنجاح', `تم نسخ ${text} إلى الحافظة`, 'success');
+    addToast('اتنسخ تمام', `تم نسخ ${text} بنجاح`, 'success');
     setTimeout(() => {
       setCopiedKey(null);
     }, 2500);
@@ -96,10 +96,10 @@ export const CheckoutPage: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl sm:text-3xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
-              سلة المشتريات فارغة
+              السلة فاضية لسه
             </h2>
             <p className="text-xs sm:text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
-              يرجى إضافة قطع ومنتجات تراثية أصيلة إلى السلة أولاً لتتمكن من إتمام عملية الشراء.
+              حط منتجات في السلة الأول عشان تقدر تكمّل الطلب بتاعك.
             </p>
           </div>
           <button
@@ -107,7 +107,7 @@ export const CheckoutPage: React.FC = () => {
             onClick={() => setActivePage('products')}
             className="w-full py-4 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all duration-300 hover:scale-[1.01]"
           >
-            تصفح سوق وه الآن
+            اتفرج على سوق وه دلوقتي
           </button>
         </div>
       </div>
@@ -117,7 +117,7 @@ export const CheckoutPage: React.FC = () => {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim() || !phone.trim() || !city.trim() || !address.trim()) {
-      addToast('بيانات غير مكتملة', 'يرجى ملء جميع حقول عنوان التوصيل', 'error');
+      addToast('بيانات ناقصة', 'لو سمحت كمل كل بيانات عنوان التوصيل', 'error');
       return;
     }
 
@@ -137,7 +137,7 @@ export const CheckoutPage: React.FC = () => {
       setCompletedOrder(newOrder);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
-      addToast('تعذر تأكيد الطلب', err?.message || 'يرجى مراجعة بيانات السلة والمحاولة مرة أخرى', 'error');
+      addToast('ماعرفناش نأكد الطلب', err?.message || 'راجع بيانات السلة وجرب تاني كده', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -315,7 +315,7 @@ export const CheckoutPage: React.FC = () => {
               onClick={() => setActivePage('products')}
               className="px-6 py-3.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-[1.25rem] transition-colors cursor-pointer"
             >
-              العودة للتسوق
+              ارجع للسوق
             </button>
           </div>
         </div>
@@ -343,10 +343,10 @@ export const CheckoutPage: React.FC = () => {
           onClick={() => setActivePage('cart')}
           className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
         >
-          سلة المشتريات
+          سلة الشراء
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">إتمام الشراء والدفع</span>
+        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">إتمام الطلب والدفع</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -660,7 +660,7 @@ export const CheckoutPage: React.FC = () => {
               {/* Payment Assurance Note */}
               <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span>جميع المدفوعات والتحويلات يتم مراجعتها وتوثيقها بدقة لضمان حقوقك وحقوق الحرفيين في صعيد مصر.</span>
+                <span>كل المدفوعات والتحويلات بنراجعها بدقة عشان نضمن حقك وحق أهالينا الحرفيين في الصعيد.</span>
               </div>
             </div>
 
@@ -673,10 +673,10 @@ export const CheckoutPage: React.FC = () => {
               }`}
             >
               {isSubmitting ? (
-                <span>جاري معالجة وتأكيد الطلب...</span>
+                <span>بنأكد طلبك دلوقتي...</span>
               ) : (
                 <>
-                  <span>تأكيد الطلب الآن ({cartTotal} ج.م)</span>
+                  <span>أكد الطلب دلوقتي ({cartTotal} ج.م)</span>
                   <ArrowLeft className="w-5 h-5" />
                 </>
               )}
@@ -730,7 +730,7 @@ export const CheckoutPage: React.FC = () => {
               <div className="flex justify-between">
                 <span>تكلفة الشحن والتغليف:</span>
                 <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                  {shippingFee === 0 ? 'مجاني (عرض خاص)' : `${shippingFee} ج.م`}
+                  {shippingFee === 0 ? 'شحن ببلاش (عرض خاص)' : `${shippingFee} ج.م`}
                 </span>
               </div>
               {cartDiscountAmount > 0 && (
@@ -747,7 +747,7 @@ export const CheckoutPage: React.FC = () => {
 
             <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>ضمان أصالة الحرفة واستبدال مجاني في حال حدوث أي كسر أثناء الشحن.</span>
+              <span>ضمان أصالة الصنعة وتبديل ببلاش لو حصل أي كسر وقت الشحن.</span>
             </div>
           </div>
         </div>

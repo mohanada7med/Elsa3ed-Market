@@ -83,19 +83,19 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const userNotifications = isGuest ? [] : notifications;
 
   const formatRelativeTime = (isoString?: string): string => {
-    if (!isoString) return 'الآن';
+    if (!isoString) return 'دلوقتي';
     try {
       const diff = Date.now() - new Date(isoString).getTime();
       const mins = Math.floor(diff / 60000);
-      if (mins < 1) return 'الآن';
-      if (mins < 60) return `منذ ${mins} دقيقة`;
+      if (mins < 1) return 'دلوقتي';
+      if (mins < 60) return `من ${mins} دقيقة`;
       const hours = Math.floor(mins / 60);
-      if (hours < 24) return `منذ ${hours} ساعة`;
+      if (hours < 24) return `من ${hours} ساعة`;
       const days = Math.floor(hours / 24);
-      if (days === 1) return 'أمس';
-      return `منذ ${days} أيام`;
+      if (days === 1) return 'إمبارح';
+      return `من ${days} أيام`;
     } catch {
-      return 'منذ فترة';
+      return 'من مدة';
     }
   };
 
@@ -216,7 +216,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       color: secondaryText,
                     }}
                   >
-                    {isGuest ? 'تنبيهات المنصة' : 'آخر التحديثات والتنبيهات المباشرة'}
+                    {isGuest ? 'تنبيهات وه' : 'أحدث التنبيهات والأخبار أول بأول'}
                   </p>
                 </div>
 
@@ -230,7 +230,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     }}
                   >
                     <Check size={13} />
-                    قراءة الكل
+                    علّم على الكل كمقروء
                   </button>
                 )}
               </div>
@@ -250,7 +250,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         color: mainText,
                       }}
                     >
-                      سجل الدخول لعرض الإشعارات
+                      سجّل دخولك عشان تشوف إشعاراتك
                     </p>
 
                     <p
@@ -259,7 +259,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         color: secondaryText,
                       }}
                     >
-                      ستظهر هنا تحديثات الطلبات والورشة والرسائل الخاصة بك
+                      هتلاقي هنا كل جديد يخص طلباتك والورش والرسايل أول بأول
                     </p>
 
                     <button
@@ -275,7 +275,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         color: '#fff',
                       }}
                     >
-                      تسجيل الدخول
+                      ادخل لحسابك
                     </button>
                   </div>
                 ) : userNotifications.length > 0 ? (
@@ -396,7 +396,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   }}
                   className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-[#9a6a35] text-white hover:bg-[#744e26]"
                 >
-                  عرض كافة الإشعارات
+                  شوف كل الإشعارات
                 </button>
                 <button
                   type="button"
@@ -407,7 +407,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     color: mainText,
                   }}
                 >
-                  إغلاق
+                  قفل
                 </button>
               </div>
             </motion.div>
@@ -1258,10 +1258,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   }}
                                 >
                                   {currentRole === 'admin'
-                                    ? 'مدير النظام'
+                                    ? 'إدارة وه'
                                     : currentRole === 'seller'
-                                      ? 'بائع'
-                                      : 'مشتري'}
+                                      ? 'شيخ صنعة / بائع'
+                                      : 'ابن البلد / زبون'}
                                 </p>
                               </div>
                             </div>
@@ -1287,7 +1287,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               style={{ color: mainText }}
                             >
                               <MessageCircle size={18} />
-                              <span>الرسائل</span>
+                              <span>الرسايل</span>
                             </button>
 
                             <button
@@ -1298,7 +1298,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               style={{ color: mainText }}
                             >
                               <Package size={18} />
-                              <span>طلباتي</span>
+                              <span>طلباتي ومشترياتي</span>
                             </button>
 
                             <button
@@ -1321,7 +1321,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 style={{ color: mainText }}
                               >
                                 <Store size={18} />
-                                <span>لوحة البائع</span>
+                                <span>لوحة الورشة</span>
                               </button>
                             )}
 
@@ -1354,7 +1354,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               style={{ color: '#9a6a35' }}
                             >
                               <LogOut size={18} />
-                              <span>تسجيل الخروج</span>
+                              <span>اخرج من الحساب</span>
                             </button>
                           </div>
                         </motion.div>
@@ -1370,13 +1370,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
-                      title="تسجيل جديد / تسجيل الدخول"
-                      aria-label="تسجيل جديد / تسجيل الدخول"
+                      title="اعمل حساب / ادخل لحسابك"
+                      aria-label="اعمل حساب / ادخل لحسابك"
                       className="flex sm:hidden h-8.5 items-center gap-1.5 shrink-0 rounded-full px-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
                       style={{ backgroundColor: '#9a6a35' }}
                     >
                       <UserPlus size={14} />
-                      <span>تسجيل</span>
+                      <span>دخول</span>
                     </button>
 
                     <button
@@ -1392,7 +1392,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         border: `1px solid ${borderColor}`,
                       }}
                     >
-                      دخول
+                      ادخل لحسابك
                     </button>
 
                     <button
@@ -1408,7 +1408,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         color: '#fff',
                       }}
                     >
-                      إنشاء حساب
+                      اعمل حساب جديد
                     </button>
                   </>
                 )}
@@ -1545,7 +1545,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="ابحث عن منتج، حرفة، مكان..."
+                    placeholder="بتدور على إيه؟ منتج، صنعة، مكان..."
                     className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base font-bold"
                     style={{ color: mainText }}
                   />
@@ -1558,7 +1558,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       color: '#fff',
                     }}
                   >
-                    بحث
+                    دوّر
                     <ArrowLeft size={16} />
                   </button>
                 </div>
@@ -1569,7 +1569,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   className="mb-3 text-xs font-bold"
                   style={{ color: secondaryText }}
                 >
-                  ممكن تدور على
+                  ممكن يعجبك تدور على
                 </p>
 
                 <div className="flex flex-wrap gap-2">
@@ -1701,10 +1701,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           style={{ color: secondaryText }}
                         >
                           {currentRole === 'admin'
-                            ? 'مدير النظام'
+                            ? 'إدارة وه'
                             : currentRole === 'seller'
-                              ? 'حساب بائع'
-                              : 'حساب مشتري'}
+                              ? 'حساب الورشة / بائع'
+                              : 'حساب زبون'}
                         </p>
                       </div>
                     </div>
@@ -1736,7 +1736,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       className="rounded-xl border py-3 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity"
                       style={{ borderColor, color: mainText }}
                     >
-                      دخول
+                      تسجيل دخول
                     </button>
                     <button
                       id="mobile-register-btn"
@@ -1749,7 +1749,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       className="rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
                       style={{ backgroundColor: '#9a6a35', color: '#fff' }}
                     >
-                      إنشاء حساب
+                      اعمل حساب جديد
                     </button>
                   </div>
                 )}
@@ -1801,7 +1801,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       className="mb-2 px-3 text-xs font-bold"
                       style={{ color: secondaryText }}
                     >
-                      اختصارات الحساب
+                      حاجات تهمك في حسابك
                     </p>
 
                     <button
@@ -1827,12 +1827,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         style={{ color: mainText }}
                       >
                         <Store size={18} />
-                        <span>لوحة البائع</span>
+                        <span>لوحة الورشة</span>
                       </button>
                     )}
 
                     {currentRole === 'admin' && (
-                      <button
+                       <button
                         id="mobile-admin-link"
                         type="button"
                         onClick={() => navigate('admin-dashboard')}
@@ -1869,7 +1869,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       style={{ color: mainText }}
                     >
                       <MessageCircle size={18} />
-                      <span>الرسائل</span>
+                      <span>الرسايل</span>
                       {chatUnreadCount > 0 && (
                         <span
                           className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
@@ -1924,7 +1924,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       <Sparkles size={18} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold">اكتشف وه</p>
+                      <p className="text-sm font-bold">اتعرف على وه</p>
                       <p
                         className="mt-1 text-[11px]"
                         style={{ color: secondaryText }}
@@ -1953,7 +1953,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     }}
                   >
                     <LogOut size={17} />
-                    تسجيل الخروج
+                    اخرج من الحساب
                   </button>
                 )}
 

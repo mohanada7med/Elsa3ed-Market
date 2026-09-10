@@ -210,7 +210,7 @@ export const FoodHeritagePage: React.FC = () => {
                         {foods.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        أكلة تراثية موثقة
+                        أكلة تراثية متوثقة
                       </div>
                     </div>
 
@@ -227,7 +227,7 @@ export const FoodHeritagePage: React.FC = () => {
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
                     <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
                     <span className="text-xs font-bold">
-                      من الفرن البلدي وعبق التاريخ
+                      من قعر الطاجن ودفا الفرن البلدي
                     </span>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export const FoodHeritagePage: React.FC = () => {
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن أكلة، مكون، أو محافظة..."
+                placeholder="دوّر على أكلة، مكوّن، أو محافظة..."
                 className="
                   h-12 w-full
                   rounded-xl
@@ -325,7 +325,7 @@ export const FoodHeritagePage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                <option value="all">كافة الأصناف</option>
+                <option value="all">كل الأصناف</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -408,7 +408,7 @@ export const FoodHeritagePage: React.FC = () => {
                   }}
                   className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
                 >
-                  إعادة
+                  فضّي الفلاتر
                 </button>
               )}
             </div>
@@ -425,7 +425,7 @@ export const FoodHeritagePage: React.FC = () => {
             <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
               CULINARY HERITAGE
             </div>
-            <h2 className="text-3xl font-black sm:text-4xl">روائع المطبخ الصعيدي</h2>
+            <h2 className="text-3xl font-black sm:text-4xl">حلاوة أكل الصعيد</h2>
           </div>
 
           <div className="hidden items-center gap-2 text-xs text-black/40 dark:text-white/40 sm:flex">
@@ -471,9 +471,9 @@ export const FoodHeritagePage: React.FC = () => {
               <Utensils size={24} />
             </div>
 
-            <h3 className="text-xl font-black">لم يتم العثور على أكلات مطابقة</h3>
+            <h3 className="text-xl font-black">ملقيناش أكلات مطابقة للي بتدوّر عليه</h3>
             <p className="mt-3 text-sm text-black/45 dark:text-white/45">
-              جرب البحث بكلمات أخرى أو تغيير الفلاتر لاستعراض روائع طعم الصعيد.
+              جرّب دوّر بكلمة تانية أو غيّر الفلاتر عشان تشوف أكلات الصعيد.
             </p>
 
             {(searchQuery.trim() !== '' || categoryFilter !== 'all' || governorateFilter !== 'all') && (
@@ -494,7 +494,7 @@ export const FoodHeritagePage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                عرض كل الأكلات
+                شوف كل الأكلات
               </button>
             )}
           </div>
@@ -713,12 +713,12 @@ export const FoodHeritagePage: React.FC = () => {
                 >
                   طعم بيحكي تاريخ...
                   <br />
-                  وريحة تفوح أصالة.
+                  وريحة طالعة من قعر الطاجن.
                 </h2>
               </div>
 
               <p className="text-sm leading-8 text-white/55">
-                الأكلات الصعيدية مش أكل وبس، دي طقوس ومحبة وتراث بيتوارثه الأجداد للأحفاد في كل طبق ومشروب.
+                أكل الصعيد مش مجرد لقمة، دي لمّة عيلة وطيبة ومحبة متوارثة جيل ورا جيل في كل طاجن وعيش شمسي طالع من الفرن.
               </p>
             </div>
           </div>

@@ -48,7 +48,7 @@ export const FavoritesPage: React.FC = () => {
             الرئيسية
           </button>
           <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-          <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">قائمة الرغبات والمفضلة</span>
+          <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">القطع اللي عجبتك</span>
         </nav>
 
         {/* Header */}
@@ -56,13 +56,13 @@ export const FavoritesPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-rose-600 dark:text-rose-400 mb-1">
               <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
-              <span>مجموعتك التراثية المفضلة</span>
+              <span>حاجاتك اللي اخترتها</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black font-serif tracking-tight">
-              القطع التي نالت إعجابك ({favoriteProducts.length})
+              القطع اللي حطيتها في المفضلة ({favoriteProducts.length})
             </h1>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-1">
-              احفظ القطع الحرفية للرجوع إليها في أي وقت أو إضافتها لسلة التسوق بنقرة واحدة
+              احفظ أي قطعة تحب ترجعلها في أي وقت، أو حطها في السلة بضغطة واحدة
             </p>
           </div>
 
@@ -73,7 +73,7 @@ export const FavoritesPage: React.FC = () => {
               onClick={() => setActivePage('products')}
               className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
             >
-              تصفح المزيد من المعروضات
+              شوف باقي المنتجات
             </button>
           )}
         </div>
@@ -83,9 +83,9 @@ export const FavoritesPage: React.FC = () => {
             <div className="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400 flex items-center justify-center mx-auto shadow-inner">
               <Heart className="w-10 h-10" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold font-serif">قائمة المفضلة فارغة حالياً</h3>
+            <h3 className="text-lg sm:text-xl font-bold font-serif">لسه مفيش حاجة في المفضلة</h3>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 max-w-sm mx-auto leading-relaxed">
-              انقر على أيقونة القلب على أي قطعة من روائع الفخار أو الكليم أو عسل الصعيد لحفظها في قائمتك الخاصة والعودة إليها بسهولة.
+              دوس على علامة القلب على أي قطعة تعجبك من الفخار أو الكليم أو العسل عشان تحفظها وترجعلها براحتك.
             </p>
             <button
               type="button"
@@ -93,7 +93,7 @@ export const FavoritesPage: React.FC = () => {
               onClick={() => setActivePage('products')}
               className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold rounded-xl shadow-md transition-colors cursor-pointer"
             >
-              استكشف سوق الصعيد الآن
+              استكشف سوق وه دلوقتي
             </button>
           </div>
         ) : (

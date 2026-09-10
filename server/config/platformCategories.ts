@@ -11,7 +11,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'Sparkles',
     productsCount: 0,
     active: true,
-    heritageNote: 'حرفة مصرية أصيلة متوارثة من آلاف السنين في قنا وأسيوط',
+    heritageNote: 'صنعة مصرية أصيلة متوارثة من آلاف السنين في قنا وأسيوط',
     featuredGovernorate: 'قنا'
   },
   {
@@ -24,7 +24,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'Flame',
     productsCount: 0,
     active: true,
-    heritageNote: 'أخميم عاصمة النسيج اليدوي في صعيد مصر من العصر القبطي',
+    heritageNote: 'أخميم عاصمة النسيج اليدوي في صعيد مصر من أيام أجدادنا الأقباط',
     featuredGovernorate: 'سوهاج'
   },
   {
@@ -37,7 +37,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'ShoppingBag',
     productsCount: 0,
     active: true,
-    heritageNote: 'صناعة نوبية وصعيدية تجمع بين المنفعة اليومية وجمال البيئة الطبيعية',
+    heritageNote: 'شغل نوبي وصعيدي أصيل بيجمع بين نفع البيت وبركة البيئة الطبيعية',
     featuredGovernorate: 'أسوان'
   },
   {
@@ -50,7 +50,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'Feather',
     productsCount: 0,
     active: true,
-    heritageNote: 'فن التلي الأسيوطي مسجل كتراث إنساني فريد تميزت بيه ستات أسيوط',
+    heritageNote: 'فن التلي الأسيوطي التراثي اللي تميزت بيه وبأسراره ستات أسيوط وسوهاج',
     featuredGovernorate: 'أسيوط'
   },
   {
@@ -63,7 +63,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'Heart',
     productsCount: 0,
     active: true,
-    heritageNote: 'مناحل ومزارع برية في سفوح جبال المنيا وسوهاج وأسوان',
+    heritageNote: 'مناحل ومزارع برية في حضن جبال المنيا وسوهاج وأسوان بتطلع خير طبيعي صافي',
     featuredGovernorate: 'المنيا'
   },
   {
@@ -76,7 +76,7 @@ export const PLATFORM_CATEGORIES: Category[] = [
     iconName: 'Sun',
     productsCount: 0,
     active: true,
-    heritageNote: 'خيرات نخل الصعيد المعتق تحت شمس الجنوب الدافية',
+    heritageNote: 'خيرات وبركة نخل الصعيد المعتق تحت شمس الجنوب الدافية',
     featuredGovernorate: 'أسوان'
   },
 ];

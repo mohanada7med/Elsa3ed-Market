@@ -286,11 +286,11 @@ export const ProductDetailsView: React.FC = () => {
           </div>
 
           <h3 className="text-xl font-black">
-            المنتج غير متوفر حالياً
+            القطعة دي مش متوفرة دلوقتي
           </h3>
 
           <p className="mt-3 text-sm leading-7 text-black/50 dark:text-white/50">
-            قد يكون المنتج تم حذفه أو لم يتم تحميل البيانات بعد.
+            ممكن تكون القطعة خلصت أو اتحذفت، أو لسه البيانات بتتحمّل.
           </p>
 
           <button
@@ -318,7 +318,7 @@ export const ProductDetailsView: React.FC = () => {
             "
           >
             <ArrowUpLeft size={16} />
-            العودة للسوق
+            ارجع للسوق
           </button>
         </div>
       </div>
@@ -1123,7 +1123,7 @@ export const ProductDetailsView: React.FC = () => {
                 <div className="mt-2 text-xs font-black">
                   {product.inStock
                     ? `${stockCount} قطعة`
-                    : 'نفد المخزون'}
+                    : 'خلصان دلوقتي'}
                 </div>
               </div>
             </div>
@@ -1338,7 +1338,7 @@ export const ProductDetailsView: React.FC = () => {
                       <ShoppingBag size={18} />
 
                       <span>
-                        إضافة للسلة
+                        حط في السلة
                       </span>
 
                       <span className="hidden sm:inline">
@@ -1357,7 +1357,7 @@ export const ProductDetailsView: React.FC = () => {
                           product.sellerId ||
                           product.id,
                         productId: product.id,
-                        initialMessage: `السلام عليكم، أود الاستفسار بخصوص عمل "${product.title}" المعروض على سوق وه.`,
+                        initialMessage: `سلام عليكم يا معلم، كنت عايز أسأل عن "${product.title}" المعروضة على سوق وه.`,
                       })
                     }
                     className="
@@ -1979,7 +1979,7 @@ export const ProductDetailsView: React.FC = () => {
                         'المخزون',
                         product.inStock
                           ? `${stockCount} قطعة`
-                          : 'نفد المخزون',
+                          : 'خلصان دلوقتي',
                       ],
                     ].map(
                       ([icon, label, value], index) => (
@@ -2603,7 +2603,7 @@ export const ProductDetailsView: React.FC = () => {
                 "
               >
                 <ShoppingBag size={16} />
-                إضافة للسلة
+                حط في السلة
               </button>
             </div>
           </div>

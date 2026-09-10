@@ -328,7 +328,7 @@ export const AuthModal: React.FC = () => {
 
     if (!password) {
       setError(
-        'من فضلك اكتب كلمة المرور.'
+        'اكتب كلمة السر لو سمحت.'
       );
       return;
     }
@@ -349,7 +349,7 @@ export const AuthModal: React.FC = () => {
     } catch (err: any) {
       setError(
         err?.message ||
-        'اسم المستخدم أو كلمة المرور غير صحيحة.'
+        'اسم المستخدم أو كلمة السر مش مظبوطين، راجعهم كده.'
       );
     } finally {
       setSubmitting(false);
@@ -426,7 +426,7 @@ export const AuthModal: React.FC = () => {
 
     if (password.length < 6) {
       setError(
-        'كلمة المرور لازم تكون 6 أحرف على الأقل.'
+        'كلمة السر لازم تكون 6 حروف على الأقل.'
       );
       return;
     }
@@ -537,7 +537,7 @@ export const AuthModal: React.FC = () => {
         !forgotIdentifier.trim()
       ) {
         setError(
-          'اكتب اسم المستخدم أو البريد الإلكتروني.'
+          'اكتب اسم المستخدم أو الإيميل بتاعك.'
         );
         return;
       }
@@ -550,7 +550,7 @@ export const AuthModal: React.FC = () => {
         );
 
         addToast(
-          'تم إرسال طلب استعادة كلمة المرور للإدارة.',
+          'طلب استرجاع كلمة السر راح للإدارة خلاص وهيتواصلوا معاك.',
           'success'
         );
 
@@ -559,7 +559,7 @@ export const AuthModal: React.FC = () => {
       } catch (err: any) {
         setError(
           err?.message ||
-          'حصلت مشكلة أثناء إرسال طلب استعادة كلمة المرور.'
+          'حصلت مشكلة وإحنا بنبعت طلب استرجاع كلمة السر، جرّب تاني.'
         );
       } finally {
         setSubmitting(false);
@@ -917,7 +917,7 @@ export const AuthModal: React.FC = () => {
                 "
               >
                 {forgotPassword
-                  ? 'استعادة كلمة المرور'
+                  ? 'استرجاع كلمة السر'
                   : authModalTab === 'login'
                     ? 'أهلاً بيك في وه'
                     : 'انضم لعيلة وه'}
@@ -936,7 +936,7 @@ export const AuthModal: React.FC = () => {
                 "
               >
                 {forgotPassword
-                  ? 'اكتب بيانات حسابك وهنساعدك في استعادته.'
+                  ? 'اكتب بيانات حسابك وهنساعدك في استرجاعه.'
                   : authModalTab === 'login'
                     ? 'كمل رحلتك واكتشف حكايات الصعيد.'
                     : 'اعمل حسابك بسهولة وابدأ رحلتك مع وه.'}
@@ -1173,7 +1173,7 @@ export const AuthModal: React.FC = () => {
                     `}
                   >
                     <User size={17} />
-                    <span>تسجيل الدخول</span>
+                    <span>ادخل لحسابك</span>
                   </button>
 
                   <button
@@ -1215,7 +1215,7 @@ export const AuthModal: React.FC = () => {
                     `}
                   >
                     <Sparkles size={16} />
-                    <span>إنشاء حساب</span>
+                    <span>اعمل حساب جديد</span>
                   </button>
                 </div>
 
@@ -1305,7 +1305,7 @@ export const AuthModal: React.FC = () => {
                         htmlFor="login-password-input"
                         className={labelClass}
                       >
-                        كلمة المرور
+                        كلمة السر
                         <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
@@ -1330,7 +1330,7 @@ export const AuthModal: React.FC = () => {
                               e.target.value
                             )
                           }
-                          placeholder="اكتب كلمة المرور"
+                          placeholder="اكتب كلمة السر"
                           className={`${inputClass} pl-11 sm:pl-12`}
                           autoComplete="current-password"
                         />
@@ -1367,8 +1367,8 @@ export const AuthModal: React.FC = () => {
                           "
                           aria-label={
                             showPassword
-                              ? 'إخفاء كلمة المرور'
-                              : 'إظهار كلمة المرور'
+                              ? 'إخفاء كلمة السر'
+                              : 'إظهار كلمة السر'
                           }
                         >
                           {showPassword ? (
@@ -1398,7 +1398,7 @@ export const AuthModal: React.FC = () => {
                           cursor-pointer
                         "
                       >
-                        نسيت كلمة المرور؟
+                        نسيت كلمة السر؟
                       </button>
 
                       <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-black/50 dark:text-white/50 font-medium">
@@ -2015,7 +2015,7 @@ export const AuthModal: React.FC = () => {
                         htmlFor="register-password-input"
                         className={labelClass}
                       >
-                        كلمة المرور
+                        كلمة السر
                         <span className="mr-1 text-[#9a6a35]">
                           *
                         </span>
@@ -2040,7 +2040,7 @@ export const AuthModal: React.FC = () => {
                               e.target.value
                             )
                           }
-                          placeholder="6 أحرف على الأقل"
+                          placeholder="6 حروف على الأقل"
                           className={`${inputClass} pl-11 sm:pl-12`}
                           autoComplete="new-password"
                         />
@@ -2077,8 +2077,8 @@ export const AuthModal: React.FC = () => {
                           "
                           aria-label={
                             showRegisterPassword
-                              ? 'إخفاء كلمة المرور'
-                              : 'إظهار كلمة المرور'
+                              ? 'إخفاء كلمة السر'
+                              : 'إظهار كلمة السر'
                           }
                         >
                           {showRegisterPassword ? (
@@ -2090,7 +2090,7 @@ export const AuthModal: React.FC = () => {
                       </div>
 
                       <p className="mt-2 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-[12px] font-medium">
-                        اختار كلمة مرور تقدر تفتكرها، ولازم تكون 6 أحرف على الأقل.
+                        اختار كلمة سر تعرف تفتكرها كويس، ولازم تكون 6 حروف على الأقل.
                       </p>
                     </div>
 
@@ -2108,11 +2108,11 @@ export const AuthModal: React.FC = () => {
                             className="animate-spin"
                           />
 
-                          جاري إنشاء الحساب...
+                          بنعمل حسابك دلوقتي...
                         </>
                       ) : (
                         <>
-                          إنشاء الحساب
+                          سجّل حسابك دلوقتي
                           <ArrowLeft size={19} />
                         </>
                       )}
@@ -2140,7 +2140,7 @@ export const AuthModal: React.FC = () => {
                       />
 
                       <span>
-                        بياناتك محمية ويمكنك تعديلها لاحقًا.
+                        بياناتك في أمان وتقدر تعدلها في أي وقت.
                       </span>
                     </div>
                   </form>

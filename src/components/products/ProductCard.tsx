@@ -182,7 +182,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               )}
             </div>
             <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block">
-              {product.inStock ? `متوفر (${product.stockCount} قطعة)` : 'غير متوفر حالياً'}
+              {product.inStock ? `موجود (${product.stockCount} قطعة)` : 'خلصان دلوقتي'}
             </span>
           </div>
 
@@ -200,8 +200,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               }}
               disabled={!product.inStock}
               className="p-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
-              title={`إضافة ${product.title} إلى سلة المشتريات`}
-              aria-label={`إضافة ${product.title} إلى سلة المشتريات`}
+              title={`حط ${product.title} في السلة`}
+              aria-label={`حط ${product.title} في السلة`}
             >
               <ShoppingBag className="w-4 h-4" />
             </motion.button>

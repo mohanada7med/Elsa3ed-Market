@@ -19,22 +19,22 @@ export const AboutSection: React.FC = () => {
     {
       icon: MapPin,
       title: 'أماكن',
-      text: 'بلاد ومعالم',
+      text: 'بلاد وآثار ومعالم',
     },
     {
       icon: BookOpen,
       title: 'حكايات',
-      text: 'ذاكرة ومرويات',
+      text: 'حكاوي ومرويات زمان',
     },
     {
       icon: Sparkles,
       title: 'حرف',
-      text: 'صنعة متوارثة',
+      text: 'صنعة يد متوارثة',
     },
     {
       icon: ShoppingBag,
       title: 'سوق',
-      text: 'من الصانع لبيتك',
+      text: 'من يد الصانع لحد عندك',
     },
   ];
 
@@ -185,9 +185,9 @@ export const AboutSection: React.FC = () => {
                 dark:text-white/55
               "
             >
-              وه مساحة رقمية بتجمع روح الصعيد في مكان واحد؛
-              ناسه، بلادُه، حرفُه، أكله، حكاياته وتراثه.
-              بنوثّق الحكاية ونقرّبك من أصحابها.
+              «وه» بتجمع روح الصعيد كله في مكان واحد؛
+              ناسه، بلاده، حرفه، أكله وحكاياته.
+              بنوثق الصنعة وبنقربك من شيوخها وناسها الطيبين.
             </p>
 
             {/* Features */}
@@ -320,7 +320,7 @@ export const AboutSection: React.FC = () => {
               >
                 <Film className="w-4 h-4" />
 
-                <span>شاهد حكاية وه</span>
+                <span>اتفرج على حكاية وه</span>
 
                 <ArrowLeft
                   className="
@@ -407,7 +407,7 @@ export const AboutSection: React.FC = () => {
                   "
                 />
 
-                <span>المعالم</span>
+                <span>معالم الصعيد</span>
               </motion.button>
             </div>
           </motion.div>
@@ -513,7 +513,7 @@ export const AboutSection: React.FC = () => {
                     font-serif
                   "
                 >
-                   كل مكان هنا وراه حكاية...
+                  كل شبر هنا وراه حكاية...
                 </h3>
               </div>
             </div>
@@ -535,7 +535,7 @@ export const AboutSection: React.FC = () => {
           <span className="w-10 h-px bg-current" />
 
           <span className="text-[9px] font-black tracking-widest">
-            كل حكاية ليها أصل
+            كل حكاية وليها أصل
           </span>
 
           <span className="w-10 h-px bg-current" />

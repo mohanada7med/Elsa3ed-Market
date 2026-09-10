@@ -324,7 +324,7 @@ export const PlacesHeritagePage: React.FC = () => {
                         {places.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        مكان موثق
+                        مكان متوثق
                       </div>
                     </div>
 
@@ -341,7 +341,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
                     <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
                     <span className="text-xs font-bold">
-                      أرشيف بصري لأماكن الصعيد
+                      توثيق بصري لمعالم الصعيد
                     </span>
                   </div>
                 </div>
@@ -384,7 +384,7 @@ export const PlacesHeritagePage: React.FC = () => {
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن مكان أثري، قرية، أو معبد..."
+                placeholder="دوّر على مكان أثري، قرية، أو معبد..."
                 className="
                   h-12 w-full
                   rounded-xl
@@ -519,7 +519,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   onClick={resetFilters}
                   className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
                 >
-                  إعادة
+                  فضّي الفلاتر
                 </button>
               )}
             </div>
@@ -540,12 +540,12 @@ export const PlacesHeritagePage: React.FC = () => {
               </p>
 
               <h2 className="text-3xl font-black sm:text-5xl">
-                رحلتك تبدأ من هنا
+                رحلتك بتبدأ من هنا
               </h2>
             </div>
 
             <div className="text-left text-xs font-bold text-black/40 dark:text-white/40">
-              {filteredPlaces.length} نتيجة مطابقة
+              {filteredPlaces.length} مكان طالع معاك
             </div>
           </div>
 
@@ -585,7 +585,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 }
                 title="ملقيناش المكان ده"
                 description="جرب كلمة بحث تانية أو غير الفلاتر."
-                actionLabel="إعادة ضبط"
+                actionLabel="فضّي الفلاتر"
                 onAction={resetFilters}
               />
             </div>
@@ -713,8 +713,8 @@ export const PlacesHeritagePage: React.FC = () => {
                                     : 'bg-orange-600 text-white'
                                 }`}
                               >
-                                {place.visitInfo.visitStatus === 'closed_to_public' && 'مغلق أمام الجمهور'}
-                                {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مغلق للترميم'}
+                                {place.visitInfo.visitStatus === 'closed_to_public' && 'مقفول للجمهور'}
+                                {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مقفول للترميم'}
                                 {place.visitInfo.visitStatus === 'public_landmark' && 'ميدان ومعلم عام'}
                                 {place.visitInfo.visitStatus === 'active_institution' && 'صرح تعليمي وديني'}
                                 {place.visitInfo.visitStatus === 'requires_safari_permit' && 'محمية وسفاري'}
@@ -792,7 +792,7 @@ export const PlacesHeritagePage: React.FC = () => {
                         <p className="mt-5 line-clamp-4 max-w-lg text-sm leading-8 text-black/65 dark:text-white/65">
                           {place.shortDescription ||
                             place.description ||
-                            'اكتشف تفاصيل هذا المكان وحكايته.'}
+                            'شوف تفاصيل المكان ده وحكايته.'}
                         </p>
                       </button>
 
@@ -814,7 +814,7 @@ export const PlacesHeritagePage: React.FC = () => {
                           cursor-pointer
                         "
                       >
-                        اقرأ الحكاية
+                        اعرف الحكاية
 
                         <span
                           className="
@@ -907,7 +907,7 @@ export const PlacesHeritagePage: React.FC = () => {
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
           <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
           <span className="text-[10px] font-bold tracking-[0.2em] text-black/50 dark:text-white/50">
-            وه — ذاكرة الصعيد الرقمية
+            وه — حكاية الصعيد في إيدك
           </span>
           <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
         </div>

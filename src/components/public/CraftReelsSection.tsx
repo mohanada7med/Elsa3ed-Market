@@ -32,15 +32,15 @@ export const CraftReelsSection: React.FC = () => {
 
   const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
-    const confirmed = window.confirm(`هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً؟`);
+    const confirmed = window.confirm(`متأكد إنك عايز تحذف فيديو "${reel.title}" خالص؟`);
     if (!confirmed) return;
 
     try {
       await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
       setReels((prev) => prev.filter((r) => r.id !== reel.id));
-      addToast('تم حذف الفيديو', 'تم حذف الفيديو بنجاح من المنصة', 'info');
+      addToast('اتحذف خلاص', 'مسحنا الفيديو من المنصة بنجاح', 'info');
     } catch (err: any) {
-      addToast('خطأ في الحذف', err?.message || 'فشل في الحذف', 'error');
+      addToast('في مشكلة في الحذف', err?.message || 'فشل الحذف', 'error');
     }
   };
 
@@ -77,7 +77,7 @@ export const CraftReelsSection: React.FC = () => {
       },
       1
     );
-    addToast('أُضيف إلى السلة', `تمت إضافة "${reel.productTitle}" لسلة مشترياتك`, 'success');
+    addToast('اتحط في السلة', `ضفنا "${reel.productTitle}" لسلتك`, 'success');
   };
 
   if (!reels.length) return null;
@@ -105,10 +105,10 @@ export const CraftReelsSection: React.FC = () => {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#9a6a35]/10 border border-[#9a6a35]/20 text-[#9a6a35] dark:text-amber-400 text-xs font-bold backdrop-blur-md mb-3">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>الصعيد في فيديو • شاهد، اكتشف، وعيش التجربة</span>
+              <span>الصعيد فيديو وحكاية • اتفرج وعيش الجو</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black font-serif tracking-tight">
-                 الصعيد كما لم تره من قبل
+                 الصعيد زي ما عمرك ما شفته قبل كده
 
               <span className="inline-block mt-2 text-[#9a6a35] dark:text-amber-400 font-black"> «ريلز وه» </span>
             </h2>
@@ -119,7 +119,7 @@ export const CraftReelsSection: React.FC = () => {
             onClick={() => setActivePage('reels')}
             className="group inline-flex items-center gap-2.5 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-6 py-3 rounded-2xl border border-black/10 dark:border-white/10 transition-all duration-300 shadow-md self-start md:self-auto cursor-pointer"
           >
-            <span>استعراض كل الحكايات</span>
+            <span>اتفرج على كل الفيديوهات</span>
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           </button>
         </div>
@@ -163,7 +163,7 @@ export const CraftReelsSection: React.FC = () => {
                         type="button"
                         onClick={(e) => handleAdminDeleteReel(e, reel)}
                         className="p-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-transform active:scale-95"
-                        title="حذف الفيديو"
+                        title="امسح الفيديو"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -206,7 +206,7 @@ export const CraftReelsSection: React.FC = () => {
                 {reel.productId && reel.productId !== 'none' && reel.productPrice && (
                   <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-3">
                     <div>
-                      <span className="text-[10px] text-black/50 dark:text-white/50 block">المنتج المرتبط</span>
+                      <span className="text-[10px] text-black/50 dark:text-white/50 block">القطعة المعروضة</span>
                       <span className="text-sm font-black text-[#9a6a35] dark:text-amber-400">
                         {reel.productPrice} ج.م
                       </span>
@@ -218,7 +218,7 @@ export const CraftReelsSection: React.FC = () => {
                       className="inline-flex items-center gap-2 bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
-                      <span>شراء المنتج</span>
+                      <span>اشتري القطعة</span>
                     </button>
                   </div>
                 )}

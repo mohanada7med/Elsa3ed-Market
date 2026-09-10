@@ -154,7 +154,7 @@ export const GovernoratesPage: React.FC = () => {
           <div className="mx-auto mt-16 max-w-5xl text-center lg:mt-24">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#9a6a35]/20 bg-[#9a6a35]/10 px-4 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] backdrop-blur">
               <Landmark className="h-3.5 w-3.5" />
-              <span>أرشيف محافظات صعيد مصر التراثي</span>
+              <span>دليل محافظات صعيد مصر</span>
             </div>
 
             <h1 className="mt-7 text-6xl font-black font-serif leading-[0.95] tracking-[-0.05em] sm:text-8xl lg:text-[110px]">
@@ -168,8 +168,8 @@ export const GovernoratesPage: React.FC = () => {
             </h1>
 
             <p className="mx-auto mt-8 max-w-2xl text-sm leading-8 text-[#211d18]/70 dark:text-[#f5f0e7]/70 sm:text-base font-light">
-              دليل لمحافظات الصعيد؛ تكتشف فيه أماكنها، ناسها،
-              صنعتها، أكلها، وحكاياتها اللي بتتنقل من جيل لجيل.
+              دليل لمحافظات الصعيد؛ هتكتشف فيه أماكنها، ناسها،
+              صنايعها، أكلها، وحكاياتها اللي بتتنقل من جيل لجيل.
             </p>
           </div>
 
@@ -177,15 +177,15 @@ export const GovernoratesPage: React.FC = () => {
           <div className="mt-16 grid border-y border-black/10 dark:border-white/10 sm:grid-cols-3">
             <Stat
               number={governorates.length || wahStats?.governoratesCount || 8}
-              label="محافظات موثقة"
+              label="محافظات متوثقة"
             />
             <Stat
               number={wahStats?.storiesCount ?? '—'}
-              label="حكايات ومرويات موثقة"
+              label="حكايات وسير متوثقة"
             />
             <Stat
               number={wahStats?.placesCount ?? '—'}
-              label="معالم ومواقع تراثية"
+              label="معالم وأماكن أثرية"
             />
           </div>
         </div>
@@ -204,7 +204,7 @@ export const GovernoratesPage: React.FC = () => {
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن محافظة أو معلم..."
+                placeholder="دوّر على محافظة أو مكان..."
                 className="h-11 w-full rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 pr-11 pl-10 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] outline-none transition placeholder:text-[#211d18]/40 dark:placeholder:text-[#f5f0e7]/40 focus:border-[#9a6a35]"
               />
 
@@ -250,7 +250,7 @@ export const GovernoratesPage: React.FC = () => {
               <span className="text-[#9a6a35] dark:text-[#d5a56d]">
                 {filteredGovernorates.length}
               </span>
-              <span>محافظات معروضة</span>
+              <span>محافظات طالعة معاك</span>
             </div>
           </div>
         </div>
@@ -272,12 +272,12 @@ export const GovernoratesPage: React.FC = () => {
                   EXHIBITION / 01
                 </p>
                 <h2 className="mt-2 text-3xl font-black font-serif sm:text-5xl">
-                  جدار المحافظات
+                  محافظات الصعيد
                 </h2>
               </div>
 
               <div className="hidden items-center gap-2 text-xs font-bold text-[#211d18]/50 dark:text-[#f5f0e7]/50 sm:flex">
-                <span>مرر للاستكشاف</span>
+                <span>انزل وتفرج</span>
                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
             </div>
@@ -362,7 +362,7 @@ export const GovernoratesPage: React.FC = () => {
                         className={`mt-4 flex items-center gap-2 text-xs font-black text-[#d5a56d] transition-all duration-500 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
                           }`}
                       >
-                        <span>افتح المعرض التوثيقي</span>
+                        <span>افتح وتفرج على المحافظة</span>
                         <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1.5" />
                       </div>
                     </div>
@@ -408,14 +408,14 @@ export const GovernoratesPage: React.FC = () => {
                     <div>
                       <Sparkles className="h-8 w-8 text-[#9a6a35] dark:text-[#d5a56d]" />
                       <h3 className="mt-5 text-2xl font-black font-serif leading-tight sm:text-3xl text-[#211d18] dark:text-[#f5f0e7]">
-                        كل محافظة باب.
+                        كل محافظة باب..
                         <br />
                         وإنت لسه بتفتحه.
                       </h3>
 
                       <p className="mt-4 text-xs sm:text-sm leading-relaxed text-[#211d18]/70 dark:text-[#f5f0e7]/70">
-                        ادخل جوه المحافظة واكتشف معالمها، صنايعها،
-                        حكاياتها، أهلها، أكلها وسوقها التراثي.
+                        ادخل جوه المحافظة وشوف معالمها، صنايعها،
+                        حكاياتها، ناسها، أكلها وسوقها.
                       </p>
                     </div>
 
@@ -424,7 +424,7 @@ export const GovernoratesPage: React.FC = () => {
                       onClick={() => navigateToGovernorate(filteredGovernorates[0].slug)}
                       className="group mt-8 flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
                     >
-                      <span>اكتشف المحافظة</span>
+                      <span>ادخل المحافظة</span>
                       <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
                     </button>
                   </div>
@@ -465,7 +465,7 @@ export const GovernoratesPage: React.FC = () => {
                 </h2>
 
                 <p className="mt-4 max-w-xl text-xs sm:text-sm leading-relaxed text-[#f5f0e7]/70">
-                  افتح أي محافظة وشوف إيه اللي مخبي جوه تفاصيلها وحرفها الأصيلة.
+                  افتح أي محافظة وشوف إيه اللي مستخبي جوه تفاصيلها وصنايعها الأصيلة.
                 </p>
               </div>
 
@@ -474,7 +474,7 @@ export const GovernoratesPage: React.FC = () => {
                 onClick={() => setActivePage('map')}
                 className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
                 <Compass className="h-4 w-4" />
-                <span>استكشف الخريطة</span>
+                <span>افتح الخريطة</span>
                 <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
               </button>
             </div>
@@ -555,7 +555,7 @@ const EmptyState: React.FC<{
       </h3>
 
       <p className="mt-2 max-w-sm text-xs sm:text-sm leading-relaxed text-[#211d18]/70 dark:text-[#f5f0e7]/70">
-        جرب تغير كلمة البحث أو ارجع واعرض كل محافظات الصعيد.
+        جرّب تغيّر كلمة البحث أو ارجع وشوف كل محافظات الصعيد.
       </p>
 
       <button
@@ -563,7 +563,7 @@ const EmptyState: React.FC<{
         onClick={onReset}
         className="mt-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg"
       >
-        عرض الكل
+        شوف كل المحافظات
       </button>
     </div>
   );

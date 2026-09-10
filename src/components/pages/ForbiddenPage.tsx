@@ -13,16 +13,16 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
   const isShoppingRoute = activePage === 'cart' || activePage === 'checkout' || activePage === 'favorites';
 
   const defaultTitle = isShoppingRoute && currentRole === 'seller'
-    ? 'سلة المشتريات غير متاحة لحسابات البائعين'
+    ? 'سلة المشتريات مش متاحة لحسابات البائعين'
     : isShoppingRoute && currentRole === 'admin'
-    ? 'سلة المشتريات غير متاحة لحسابات الإدارة العليا'
-    : title || 'وصول محظور — غير مصرح';
+    ? 'سلة المشتريات مش متاحة لحسابات الإدارة'
+    : title || 'الصفحة دي مقفولة عليك';
 
   const defaultMessage = isShoppingRoute && currentRole === 'seller'
-    ? 'سلة المشتريات وخدمات التسوق وإتمام الطلبات مخصصة للمشترين فقط. يمكنك إدارة منتجاتك ومخزونك ومبيعاتك من خلال لوحة تحكم ورشتك.'
+    ? 'سلة المشتريات والشوبينج معمولة للمشترين بس. تقدر تدير منتجاتك ومخزونك ومبيعاتك من لوحة تحكم ورشتك.'
     : isShoppingRoute && currentRole === 'admin'
-    ? 'سلة المشتريات وخدمات التسوق مخصصة لعملاء ومشتري المنصة فقط. يمكنك متابعة ورقابة العمليات من لوحة الإدارة العليا.'
-    : message || 'هذا القسم مخصص لفئة محددة من المستخدمين وفقاً للصلاحيات الممنوحة لهم.';
+    ? 'سلة الشراء مخصصة للزبائن والمشترين بس. تقدر تتابع الشغل والعمليات من لوحة الإدارة.'
+    : message || 'القسم ده محتاج صلاحيات تانية عشان تدخله.';
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-5 sm:px-8 py-16" dir="rtl">
@@ -32,7 +32,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
         </div>
 
         <span className="inline-block px-3.5 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold tracking-wider uppercase mb-3 border border-rose-500/20">
-          رمز الاستجابة: 403 Forbidden
+          كود الخطأ: 403 Forbidden
         </span>
 
         <h1 className="text-2xl sm:text-3xl font-black text-[#211d18] dark:text-[#f5f0e7] mb-3 font-serif">
@@ -52,7 +52,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Store className="w-4 h-4" aria-hidden="true" />
-              <span>الانتقال إلى لوحة الورشة</span>
+              <span>روح على لوحة الورشة</span>
             </button>
           ) : currentRole === 'admin' ? (
             <button
@@ -62,7 +62,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Shield className="w-4 h-4" aria-hidden="true" />
-              <span>الانتقال إلى لوحة الإدارة</span>
+              <span>روح على لوحة الإدارة</span>
             </button>
           ) : (
             <button
@@ -72,7 +72,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <LogIn className="w-4 h-4" aria-hidden="true" />
-              <span>تسجيل الدخول بحساب مشتري</span>
+              <span>ادخل بحساب مشتري</span>
             </button>
           )}
 
@@ -83,7 +83,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
             className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors text-sm cursor-pointer border border-black/10 dark:border-white/10"
           >
             <Home className="w-4 h-4" aria-hidden="true" />
-            <span>العودة للرئيسية</span>
+            <span>ارجع للرئيسية</span>
           </button>
         </div>
       </div>

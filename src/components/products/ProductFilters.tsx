@@ -63,7 +63,7 @@ export const ProductFilters: React.FC = () => {
           className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px] transition-colors cursor-pointer"
         >
           <Filter className="w-4 h-4" />
-          <span>{isMobileExpanded ? 'إخفاء خيارات التصفية' : 'تصفية وفرز المعروضات'}</span>
+          <span>{isMobileExpanded ? 'إخفاء الفلاتر' : 'فلترة وترتيب المعروضات'}</span>
           {activeCount > 0 && (
             <span className="w-5 h-5 rounded-full bg-[#9a6a35] text-white text-[10px] flex items-center justify-center font-black">
               {activeCount}
@@ -79,7 +79,7 @@ export const ProductFilters: React.FC = () => {
             className="text-xs text-[#9a6a35] dark:text-[#d5a56d] hover:underline flex items-center gap-1 font-bold p-2 cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
-            <span>إعادة ضبط</span>
+            <span>رجّع الفلاتر</span>
           </button>
         )}
       </div>
@@ -89,7 +89,7 @@ export const ProductFilters: React.FC = () => {
         <div className="hidden sm:flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
           <div className="flex items-center gap-2 text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
             <Filter className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
-            <span>تصفية واختيار المنتجات التراثية</span>
+            <span>فلتر ونقي من روائع الصعيد</span>
             {activeCount > 0 && (
               <span className="w-5 h-5 rounded-full bg-[#9a6a35] text-white text-[10px] flex items-center justify-center font-bold">
                 {activeCount}
@@ -104,7 +104,7 @@ export const ProductFilters: React.FC = () => {
               className="text-xs text-[#9a6a35] dark:text-[#d5a56d] hover:underline flex items-center gap-1 font-bold transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
-              <span>إعادة ضبط جميع الفلاتر</span>
+              <span>رجّع الفلاتر لأولها</span>
             </button>
           )}
         </div>
@@ -113,7 +113,7 @@ export const ProductFilters: React.FC = () => {
         <div>
           <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-2 flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
-            <span>المحافظة ومصدر الصنعة بالصعيد</span>
+            <span>المحافظة ومصدر الصنعة في الصعيد</span>
           </label>
           <div className="flex flex-wrap gap-1.5">
             {GOVERNORATES.map((gov) => {
@@ -130,7 +130,7 @@ export const ProductFilters: React.FC = () => {
                       : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
                   }`}
                 >
-                  {gov === 'all' ? 'جميع محافظات الصعيد' : gov}
+                  {gov === 'all' ? 'كل محافظات الصعيد' : gov}
                 </button>
               );
             })}
@@ -141,7 +141,7 @@ export const ProductFilters: React.FC = () => {
         <div>
           <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-2 flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
-            <span>التصنيف ونوع الحرفة</span>
+            <span>التصنيف ونوع الصنعة</span>
           </label>
           <div className="flex flex-wrap gap-1.5">
             <button
@@ -154,7 +154,7 @@ export const ProductFilters: React.FC = () => {
                   : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
               }`}
             >
-              جميع التصنيفات
+              كل التصنيفات
             </button>
             {categories.map((cat) => {
               const isSelected = selectedCategoryFilter === cat.id;
@@ -189,7 +189,7 @@ export const ProductFilters: React.FC = () => {
             />
             <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              <span>مشغولات يدوية 100% فقط بأيدي شيوخ الصنعة</span>
+              <span>شغل يدوي 100% بس بإيد شيوخ الصنعة</span>
             </span>
           </label>
 
@@ -202,11 +202,11 @@ export const ProductFilters: React.FC = () => {
               onChange={(e) => setSelectedSort(e.target.value as any)}
               className="w-full bg-transparent text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] py-2 outline-none cursor-pointer"
             >
-              <option value="featured" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: الأكثر تميزاً وشهرة بالصعيد</option>
-              <option value="rating" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: الأعلى تقييماً من المشترين</option>
-              <option value="price-asc" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: السعر من الأقل للأعلى</option>
-              <option value="price-desc" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: السعر من الأعلى للأقل</option>
-              <option value="newest" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: أحدث القطع المضافة</option>
+              <option value="featured" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: الأكثر شهرة وتميز في الصعيد</option>
+              <option value="rating" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: أعلى تقييم من الناس</option>
+              <option value="price-asc" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: السعر من الأرخص للأغلى</option>
+              <option value="price-desc" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: السعر من الأغلى للأرخص</option>
+              <option value="newest" className="dark:bg-[#151513] dark:text-[#f5f0e7]">الترتيب: أجدد القطع اللي نزلت</option>
             </select>
           </div>
         </div>

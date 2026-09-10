@@ -106,11 +106,11 @@ export const BuyerAccountPage: React.FC = () => {
       if (me && me.id) {
         setCurrentUser(me);
         if (me.role === 'seller' && me.sellerStatus === 'approved') {
-          addToast('تم اعتماد حسابك كبائع!', 'تهانينا، تم توثيق ورشتك بنجاح من قبل الإدارة المركزية.', 'success');
+          addToast('مبروك ورشتك اتقبلت!', 'ورشتك اتوثقت وبقت جاهزة على المنصة.', 'success');
         } else if (me.sellerStatus === 'pending') {
-          addToast('حالة الطلب', 'طلب انضمام ورشتك ما زال قيد المراجعة والتدقيق الإداري.', 'info');
+          addToast('حالة الطلب', 'طلب ورشتك لسه بيتراجع من الإدارة.', 'info');
         } else if (me.sellerStatus === 'rejected') {
-          addToast('حالة الطلب', 'تم رفض طلب الانضمام. يمكنك مراجعة سبب الرفض وتعديل البيانات.', 'warning');
+          addToast('حالة الطلب', 'للأسف طلب الانضمام اترفض، تقدر تشوف السبب وتعدل بياناتك وتبعته تاني.', 'warning');
         } else {
           addToast('حالة الحساب', 'حسابك مسجل كمشتري في منصة وه.', 'info');
         }
@@ -170,12 +170,12 @@ export const BuyerAccountPage: React.FC = () => {
     const maxSizeBytes = 5 * 1024 * 1024;
 
     if (!allowedTypes.includes(file.type)) {
-      setImageError('نوع الملف غير مدعوم. يرجى اختيار صورة بصيغة JPG أو PNG أو WebP');
+      setImageError('نوع الصورة مش مدعوم، اختار صورة JPG أو PNG أو WebP');
       return;
     }
 
     if (file.size > maxSizeBytes) {
-      setImageError('حجم الصورة يتجاوز الحد الأقصى المسموح به (5 ميجابايت)');
+      setImageError('حجم الصورة كبير أوي، الحد الأقصى 5 ميجابايت');
       return;
     }
 
@@ -529,7 +529,7 @@ export const BuyerAccountPage: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                  متجرك <strong>"{currentUser.seller?.brandName || 'ورشة الحرفي'}"</strong> موثق ومتاح بالسوق العام. يمكنك إدارة منتجاتك ومبيعاتك ومستحقاتك من لوحة التحكم.
+                  متجرك <strong>"{currentUser.seller?.brandName || 'ورشة الحرفي'}"</strong> متوثق وشغال في السوق. تقدر تدير منتجاتك ومبيعاتك وأرباحك من لوحة التحكم.
                 </p>
                 <button
                   type="button"
@@ -538,7 +538,7 @@ export const BuyerAccountPage: React.FC = () => {
                   className="w-full py-2.5 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Store className="w-4 h-4" />
-                  <span>الدخول إلى لوحة البائع الحرفي</span>
+                  <span>ادخل للوحة البائع الحرفي</span>
                 </button>
               </>
             ) : currentUser.sellerStatus === 'pending' ? (
@@ -557,7 +557,7 @@ export const BuyerAccountPage: React.FC = () => {
                   </p>
                 </div>
                 <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed">
-                  تم حفظ طلبك بنجاح في قاعدة البيانات. تجري حالياً مراجعة المعايير التراثية والتاريخية للورشة من قبل إدارة منصة وه.
+                  طلبك محفوظ عندنا تمام، وإدارة منصة وه بتراجع بيانات الورشة دلوقتي وهنرد عليك قريب.
                 </p>
                 <button
                   type="button"
@@ -567,7 +567,7 @@ export const BuyerAccountPage: React.FC = () => {
                   className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
-                  <span>{isCheckingStatus ? 'جاري التحقق...' : 'تحديث حالة الطلب'}</span>
+                  <span>{isCheckingStatus ? 'بنراجع...' : 'حدّث حالة الطلب'}</span>
                 </button>
               </>
             ) : currentUser.sellerStatus === 'rejected' ? (
@@ -590,19 +590,19 @@ export const BuyerAccountPage: React.FC = () => {
                   className="w-full py-2.5 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Store className="w-4 h-4" />
-                  <span>تعديل وإعادة تقديم الطلب</span>
+                  <span>عدّل وقدّم الطلب تاني</span>
                 </button>
               </>
             ) : (
               <>
                 <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs">التحول إلى بائع (Become a Seller)</h4>
+                  <h4 className="font-bold text-xs">افتح ورشتك في وه</h4>
                   <span className="text-[10px] text-[#9a6a35] font-bold px-2 py-0.5 bg-[#9a6a35]/10 rounded-full">
                     متاح للمشترين
                   </span>
                 </div>
                 <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                  هل تمتلك ورشة أو مشغل حرفي في صعيد مصر؟ يمكنك تقديم طلب انضمام كبائع حرفي لعرض منتجاتك، متابعة طلبات العملاء، واستلام مستحقاتك المالية عبر فودافون كاش أو إنستاباي فور مراجعة واعتماد الإدارة.
+                  عندك ورشة أو بتعمل حرف يدوية في الصعيد؟ تقدر تقدم عشان تنضم كبائع حرفي وتعرض منتجاتك للناس، وتتابع طلباتك وتستلم فلوسك على فودافون كاش أو إنستاباي بعد ما الإدارة تراجع طلبك.
                 </p>
                 <button
                   type="button"
@@ -611,7 +611,7 @@ export const BuyerAccountPage: React.FC = () => {
                   className="w-full py-2.5 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <Store className="w-4 h-4" />
-                  <span>التحول إلى بائع — تقديم طلب اعتماد ورشة</span>
+                  <span>قدّم طلب عشان تفتح ورشتك كبائع</span>
                 </button>
               </>
             )}

@@ -484,7 +484,7 @@ export const CulturalCraftsPage: React.FC = () => {
                   onClick={clearFilters}
                   className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
                 >
-                  إعادة
+                  فضّي الفلاتر
                 </button>
               )}
             </div>
@@ -581,7 +581,7 @@ export const CulturalCraftsPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                عرض كل الحرف
+                شوف كل الحرف
               </button>
             )}
           </div>
