@@ -19,7 +19,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
     if (!image && (!images || !Array.isArray(images) || images.length === 0)) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى تقديم بيانات الصورة لرفعها',
+        error: 'اختار الصورة اللي عايز ترفعها الأول',
         code: 'VALIDATION_ERROR'
       });
     }
@@ -29,7 +29,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
       if (req.user!.role !== 'seller' && req.user!.role !== 'admin') {
         return res.status(403).json({
           success: false,
-          error: 'عفواً، رفع صور المنتجات مخصص لحسابات البائعين المعتمدين فقط',
+          error: 'رفع صور المنتجات مخصص لأصحاب الورش والبائعين المعتمدين بس',
           code: 'FORBIDDEN_SELLER_ONLY'
         });
       }
@@ -51,7 +51,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
         if (sellerStatus !== 'approved') {
           return res.status(403).json({
             success: false,
-            error: 'حساب البائع قيد المراجعة والاعتماد. لا يمكن رفع صور منتجات قبل اعتماد الحساب.',
+            error: 'حساب ورشتك لسه بيتراجع، مش هتقدر ترفع صور منتجات لحد ما الحساب يعتمد',
             code: 'SELLER_NOT_APPROVED'
           });
         }
@@ -79,7 +79,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
         if (existingProd && existingProd.sellerId !== ownerId) {
           return res.status(403).json({
             success: false,
-            error: 'غير مصرح لك برفع صور لمنتج يخص ورشة أخرى',
+            error: 'معندكش صلاحية ترفع صور لمنتج يخص ورشة تانية',
             code: 'OWNERSHIP_VIOLATION'
           });
         }
@@ -99,7 +99,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
 
       return res.status(201).json({
         success: true,
-        message: 'تم رفع الصورة بنجاح وتخزينها بأمان',
+        message: 'الصورة اترفعت واتحفظت بأمان',
         data: {
           ...result,
           productId: targetProductId
@@ -112,7 +112,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
     if (imageList.length > MAX_PRODUCT_IMAGES) {
       return res.status(400).json({
         success: false,
-        error: `الحد الأقصى المسموح به لصور المنتج هو ${MAX_PRODUCT_IMAGES} صور`,
+        error: `أكتر حاجة مسموحة لصور المنتج هي ${MAX_PRODUCT_IMAGES} صور بس`,
         code: 'MAX_IMAGES_EXCEEDED'
       });
     }
@@ -132,7 +132,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
 
     res.status(201).json({
       success: true,
-      message: `تم رفع ${uploadedResults.length} صور بنجاح`,
+      message: `اترفعت ${uploadedResults.length} صور بنجاح`,
       count: uploadedResults.length,
       productId: targetProductId,
       data: uploadedResults
@@ -152,7 +152,7 @@ router.post('/', uploadLimiter, requireAuth, async (req: AuthenticatedRequest, r
 
     res.status(400).json({
       success: false,
-      error: error.message || 'فشل في رفع ومعالجة ملفات الصور',
+      error: error.message || 'حصلت مشكلة في رفع الصور، جرب تاني',
       code: 'UPLOAD_FAILED'
     });
   }
@@ -167,20 +167,20 @@ router.delete('/:folder/:key(*)', requireAuth, async (req: AuthenticatedRequest,
     if (!deleted) {
       return res.status(404).json({
         success: false,
-        error: 'الملف غير موجود أو تم حذفه مسبقاً',
+        error: 'الملف ده مش موجود أو اتحذف قبل كده',
         code: 'NOT_FOUND'
       });
     }
 
     res.json({
       success: true,
-      message: 'تم حذف الصورة بنجاح'
+      message: 'الصورة اتحذفت بنجاح'
     });
   } catch (error: any) {
     console.error('Error deleting image:', error);
     res.status(403).json({
       success: false,
-      error: error.message || 'تعذر حذف الصورة',
+      error: error.message || 'معرفناش نحذف الصورة، جرب تاني',
       code: 'DELETE_FAILED'
     });
   }

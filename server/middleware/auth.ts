@@ -179,7 +179,7 @@ export function requireAuth(req: AuthenticatedRequest, res: Response, next: Next
   if (!req.user || !req.user.id) {
     return res.status(401).json({
       success: false,
-      error: 'غير مصرح. يرجى تسجيل الدخول أولاً',
+      error: 'سجّل دخولك الأول عشان تقدر تكمل',
       code: 'UNAUTHORIZED'
     });
   }
@@ -190,7 +190,7 @@ export function requireBuyer(req: AuthenticatedRequest, res: Response, next: Nex
   if (!req.user || !req.user.id) {
     return res.status(401).json({
       success: false,
-      error: 'غير مصرح. يرجى تسجيل الدخول أولاً',
+      error: 'سجّل دخولك الأول عشان تقدر تكمل',
       code: 'UNAUTHORIZED'
     });
   }
@@ -198,7 +198,7 @@ export function requireBuyer(req: AuthenticatedRequest, res: Response, next: Nex
   if (req.user.role !== 'buyer') {
     return res.status(403).json({
       success: false,
-      error: 'عفواً، سلة المشتريات وإتمام الطلبات مخصصة لحسابات المشترين فقط',
+      error: 'معلش، السلة وإتمام الطلبات مخصصة لحسابات المشترين بس',
       code: 'FORBIDDEN_BUYER_ONLY'
     });
   }
@@ -210,7 +210,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (!req.user || !req.user.id) {
     return res.status(401).json({
       success: false,
-      error: 'غير مصرح. يرجى تسجيل الدخول كبائع',
+      error: 'سجّل دخولك بحساب بائع أو صانع عشان تقدر تكمل',
       code: 'UNAUTHORIZED'
     });
   }
@@ -256,7 +256,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (sellerStatus === 'pending') {
     return res.status(403).json({
       success: false,
-      error: 'حساب ورشتك قيد المراجعة والاعتماد من قبل إدارة المنصة',
+      error: 'طلب ورشتك لسه بيتراجع من فريق وه، وهنرد عليك في أقرب وقت',
       code: 'SELLER_PENDING_APPROVAL',
       sellerStatus: 'pending'
     });
@@ -265,7 +265,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (sellerStatus === 'rejected') {
     return res.status(403).json({
       success: false,
-      error: 'تم رفض طلب انضمام الورشة من قبل إدارة المنصة',
+      error: 'طلب انضمام ورشتك متوافقش عليه من إدارة المنصة',
       code: 'SELLER_REJECTED',
       sellerStatus: 'rejected',
       reason: req.user.seller?.rejectionReason
@@ -275,7 +275,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (sellerStatus === 'suspended') {
     return res.status(403).json({
       success: false,
-      error: 'حساب الورشة معلق حالياً، يرجى التواصل مع إدارة المنصة',
+      error: 'حساب ورشتك موقوف مؤقتاً، تواصل مع فريق وه عشان يحلولك الموضوع',
       code: 'SELLER_SUSPENDED',
       sellerStatus: 'suspended'
     });
@@ -284,7 +284,7 @@ export async function requireSeller(req: AuthenticatedRequest, res: Response, ne
   if (req.user.role !== 'seller' || sellerStatus !== 'approved') {
     return res.status(403).json({
       success: false,
-      error: 'عفواً، هذه الميزة مخصصة لأصحاب الورش الحرفية المعتمدة فقط',
+      error: 'الميزة دي مخصصة لأصحاب الورش الحرفية المعتمدة بس',
       code: 'FORBIDDEN_SELLER_ONLY',
       sellerStatus
     });
@@ -297,7 +297,7 @@ export function requireAdmin(req: AuthenticatedRequest, res: Response, next: Nex
   if (!req.user || !req.user.id) {
     return res.status(401).json({
       success: false,
-      error: 'غير مصرح. يرجى تسجيل الدخول كمدير للنظام',
+      error: 'سجّل دخولك بحساب إدارة عشان تقدر تدخل هنا',
       code: 'UNAUTHORIZED'
     });
   }
@@ -305,7 +305,7 @@ export function requireAdmin(req: AuthenticatedRequest, res: Response, next: Nex
   if (req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
-      error: 'عفواً، هذه العملية مخصصة لمدراء منصة وه | WAH فقط',
+      error: 'المكان ده مخصص لإدارة منصة وه بس',
       code: 'FORBIDDEN_ADMIN_ONLY'
     });
   }

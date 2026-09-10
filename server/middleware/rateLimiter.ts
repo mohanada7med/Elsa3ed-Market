@@ -63,7 +63,7 @@ export function createRateLimiter(options: RateLimitOptions) {
       res.setHeader('Retry-After', retryAfterSeconds);
       return res.status(429).json({
         success: false,
-        error: message || 'تجاوزت الحد المسموح من الطلبات، يرجى الانتظار قليلاً وإعادة المحاولة',
+        error: message || 'طلبات كتير ورا بعض، استنى ثواني وجرب تاني',
         code: 'TOO_MANY_REQUESTS',
         retryAfter: retryAfterSeconds
       });
@@ -78,33 +78,33 @@ export const standardApiLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 120,
   keyPrefix: 'std',
-  message: 'تم تجاوز الحد الأقصى لتصفح المنصة في الدقيقة، يرجى الانتظار قليلاً'
+  message: 'طلبات تصفح كتيرة في وقت قصير، استنى شوية وجرب تاني'
 });
 
 export const mutationLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 30,
   keyPrefix: 'mut',
-  message: 'تم استقبال عدد كبير من عمليات الإرسال، يرجى الانتظار دقيقة واحدة'
+  message: 'إرسال طلبات كتير ورا بعض، استنى دقيقة وجرب تاني'
 });
 
 export const uploadLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 20,
   keyPrefix: 'upl',
-  message: 'تم تجاوز الحد المسموح لرفع الصور والملفات، يرجى المحاولة بعد قليل'
+  message: 'رفعت ملفات كتير في وقت قصير، استنى شوية وجرب تاني'
 });
 
 export const authLimiter = createRateLimiter({
   windowMs: 60 * 1000,
   max: 25,
   keyPrefix: 'auth',
-  message: 'تم تجاوز محاولات تسجيل الدخول، يرجى الانتظار دقيقة لحماية الحساب'
+  message: 'محاولات دخول كتيرة ورا بعض، استنى دقيقة لحماية حسابك'
 });
 
 export const forgotPasswordLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // max 5 requests per 15 minutes
   keyPrefix: 'forgot_pwd',
-  message: 'تم تجاوز الحد المسموح لطلبات استعادة كلمة المرور، يرجى الانتظار 15 دقيقة قبل المحاولة مرة أخرى'
+  message: 'طلبت استعادة كلمة السر كذا مرة، استنى ربع ساعة وجرب تاني عشان أمان حسابك'
 });

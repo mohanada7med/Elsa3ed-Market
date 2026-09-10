@@ -27,7 +27,7 @@ router.get('/', async (req: Request, res: Response) => {
     console.error('Error fetching craft stories:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب سجلات الحرف التراثية من قاعدة البيانات',
+      error: 'حصلت مشكلة وإحنا بنجيب حكايات الصنعة، جرب تاني',
       code: 'SERVER_ERROR'
     });
   }
@@ -40,7 +40,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     if (!story) {
       return res.status(404).json({
         success: false,
-        error: 'قصة الصنعة التراثية غير موجودة',
+        error: 'حكاية الصنعة دي مش موجودة',
         code: 'NOT_FOUND'
       });
     }
@@ -53,7 +53,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     console.error('Error fetching craft story:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب تفاصيل قصة الصنعة',
+      error: 'حصلت مشكلة وإحنا بنجيب تفاصيل الحكاية، جرب تاني',
       code: 'SERVER_ERROR'
     });
   }

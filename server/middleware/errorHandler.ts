@@ -23,21 +23,21 @@ export function errorHandler(
     requestId
   );
 
-  // Return clean, dignified Arabic message to user without leaking internals
+  // Return clean, warm Egyptian Arabic message to user without leaking internals
   const userMessage =
     statusCode === 400
-      ? err.message || 'بيانات الطلب غير مكتملة أو غير صحيحة'
+      ? err.message || 'بيانات الطلب ناقصة أو فيها حاجة مش مظبوطة'
       : statusCode === 401
-      ? 'غير مصرح لك بالوصول. يرجى تسجيل الدخول'
+      ? 'سجّل دخولك الأول عشان تقدر تكمل'
       : statusCode === 403
-      ? 'ليس لديك الصلاحيات الكافية للقيام بهذا الإجراء'
+      ? 'معندكش صلاحية تعمل الخطوة دي'
       : statusCode === 404
-      ? 'العنصر أو المسار المطلوب غير موجود'
+      ? 'الحاجة أو الصفحة اللي بتدور عليها مش موجودة'
       : statusCode === 413 || err.type === 'entity.too.large'
-      ? 'حجم الملف أو الفيديو يتجاوز الحد الأقصى المسموح به. يرجى اختيار ملف بحجم أصغر'
+      ? 'حجم الملف أو الفيديو كبير شوية، اختار ملف حجمه أصغر'
       : statusCode === 429
-      ? 'تم تجاوز الحد المسموح من الطلبات، يرجى الانتظار قليلاً'
-      : 'حدث خطأ غير متوقع في الخادم، جاري معالجة الأمر';
+      ? 'ضغط طلبات كتير ورا بعض، استنى ثواني وجرب تاني'
+      : 'حصلت مشكلة غير متوقعة وإحنا بنعالج الموضوع دلوقتي';
 
   res.status(statusCode).json({
     success: false,

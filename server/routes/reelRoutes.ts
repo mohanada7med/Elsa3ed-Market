@@ -44,7 +44,7 @@ const videoMulter = multer({
     if (allowedMimes.includes(file.mimetype) || file.mimetype.startsWith('video/')) {
       cb(null, true);
     } else {
-      cb(new Error('نوع الملف غير مدعوم. يرجى اختيار ملف فيديو صالح (MP4, WebM, MOV, OGG)'));
+      cb(new Error('نوع الملف ده مش مدعوم، اختار ملف فيديو شغال زي (MP4, WebM, MOV, OGG)'));
     }
   }
 });
@@ -323,7 +323,7 @@ router.post(
         if (typeof rawVideo === 'string' && rawVideo.trim().startsWith('blob:')) {
           return res.status(400).json({
             success: false,
-            error: 'لا يمكن رفع رابط blob مؤقت. يرجى إرسال ملف الفيديو الفعلي'
+            error: 'مينفعش نرفع رابط مؤقت، ابعت ملف الفيديو الحقيقي نفسه'
           });
         }
         uploadData = rawVideo;
@@ -332,7 +332,7 @@ router.post(
       } else {
         return res.status(400).json({
           success: false,
-          error: 'يرجى اختيار وتمرير ملف الفيديو لرفعه'
+          error: 'اختار ملف الفيديو اللي عايز ترفعه الأول'
         });
       }
 
@@ -525,7 +525,7 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
     if (videoUrl.trim().startsWith('blob:')) {
       return res.status(400).json({
         success: false,
-        error: 'لا يمكن حفظ رابط blob مؤقت في قاعدة البيانات. يرجى التأكد من رفع الفيديو بنجاح إلى Cloudinary أولاً للحصول على رابط دائم.',
+        error: 'مينفعش نحفظ رابط فيديو مؤقت، اتأكد إن الفيديو ارفع مظبوط على السحابة الأول',
         code: 'INVALID_BLOB_URL'
       });
     }
@@ -880,7 +880,7 @@ router.post('/bulk-delete', requireAuth, async (req: AuthenticatedRequest, res: 
     if (user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        error: 'عفواً، الحذف المتعدد للفيديوهات مقتصر على مدير المنصة فقط',
+        error: 'حذف أكتر من فيديو مرة واحدة مسموح بيه لإدارة المنصة بس',
         code: 'FORBIDDEN'
       });
     }
@@ -888,7 +888,7 @@ router.post('/bulk-delete', requireAuth, async (req: AuthenticatedRequest, res: 
     if (!Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى تحديد معرفات مقاطع الفيديو المراد حذفها',
+        error: 'حدد الفيديوهات اللي عايز تحذفها الأول',
         code: 'BAD_REQUEST'
       });
     }

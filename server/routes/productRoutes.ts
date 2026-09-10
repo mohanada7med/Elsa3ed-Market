@@ -30,7 +30,7 @@ router.get('/', async (req: Request, res: Response) => {
     console.error('Error fetching public products:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب المنتجات من الخادم',
+      error: 'حصلت مشكلة وإحنا بنجيب المنتجات، جرب تاني',
       code: 'SERVER_ERROR'
     });
   }
@@ -49,7 +49,7 @@ router.get('/:id/reviews', async (req: Request, res: Response) => {
     console.error('Error fetching reviews:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب التقييمات',
+      error: 'حصلت مشكلة وإحنا بنجيب التقييمات، جرب تاني',
       code: 'SERVER_ERROR'
     });
   }
@@ -67,7 +67,7 @@ router.post('/:id/reviews', requireBuyer, async (req: AuthenticatedRequest, res:
 
     res.status(201).json({
       success: true,
-      message: 'تم إضافة تقييمك الموثق بنجاح',
+      message: 'تقييمك اتسجل بنجاح، تسلم!',
       data: result.review,
       productRating: result.updatedProductRating
     });
@@ -75,7 +75,7 @@ router.post('/:id/reviews', requireBuyer, async (req: AuthenticatedRequest, res:
     console.error('Error creating review:', error);
     res.status(400).json({
       success: false,
-      error: error.message || 'فشل في حفظ التقييم',
+      error: error.message || 'معرفناش نحفظ تقييمك، جرب تاني',
       code: 'REVIEW_ERROR'
     });
   }
@@ -90,7 +90,7 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        error: 'المنتج غير موجود أو غير متاح للعرض العام',
+        error: 'المنتج ده مش موجود أو مش متاح حالياً',
         code: 'NOT_FOUND'
       });
     }
@@ -103,7 +103,7 @@ router.get('/:id', async (req: AuthenticatedRequest, res: Response) => {
     console.error('Error fetching product by ID:', error);
     res.status(500).json({
       success: false,
-      error: 'حدث خطأ أثناء جلب تفاصيل المنتج',
+      error: 'حصلت مشكلة وإحنا بنجيب تفاصيل المنتج، جرب تاني',
       code: 'SERVER_ERROR'
     });
   }

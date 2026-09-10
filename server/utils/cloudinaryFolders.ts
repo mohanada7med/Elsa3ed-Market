@@ -231,7 +231,7 @@ export function getCloudinaryFolder(
   if (!folderName) {
     const validFolders = WAH_TOP_LEVEL_FOLDERS.join(', ');
     const err = new Error(
-      `نوع الكيان "${type}" غير صالح أو غير معتمد في بنية مجلدات WAH السحابية. يرجى اختيار أحد الأنواع المعتمدة: ${validFolders}`
+      `نوع القسم "${type}" مش مظبوط في مجلدات وه، اختار من الأقسام المعتمدة دي: ${validFolders}`
     );
     (err as any).code = 'UNKNOWN_ENTITY_TYPE';
     throw err;
