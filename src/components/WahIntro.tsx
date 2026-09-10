@@ -25,7 +25,6 @@ export default function WahLogoIntro({
         const hasSeenIntro = localStorage.getItem(INTRO_STORAGE_KEY);
 
         if (hasSeenIntro === 'true') {
-            onEnter()
         }
     }, [onEnter]);
 

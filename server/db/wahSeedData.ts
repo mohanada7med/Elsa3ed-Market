@@ -33,8 +33,8 @@ export const INITIAL_SEASONS: SeasonDoc[] = [];
 
 export const INITIAL_PLATFORM_SETTINGS: PlatformSettingsDoc = {
   id: 'platform_settings_global',
-  siteName: 'سوق الصعيد — منصة التراث والتجارة الأصيلة',
-  siteTagline: 'أول منصة وطنية لرقمنة تراث صعيد مصر وتسويق منتجات الحرفيين',
+  siteName: 'وه | WAH — العالم الرقمي لصعيد مصر',
+  siteTagline: 'منصة الصعيد الأولى — بنوثق التراث وبنقربك من حكاياته وناسه وحرفه الأصيلة',
   contactEmail: 'contact@elsa3ed.com',
   contactPhone: '01000000000',
   shippingFlatRate: 45,
@@ -43,8 +43,8 @@ export const INITIAL_PLATFORM_SETTINGS: PlatformSettingsDoc = {
   featuredCrafts: ['craft-pottery', 'craft-tally', 'craft-akhmeem'],
   featuredStories: [],
   featuredProducts: [],
-  heroHeadline: 'أصالة الصعيد بين يديك',
-  heroSubheadline: 'من قلب صعيد مصر، نوثق التراث وندعم أصحاب الحرف الأصيلة',
+  heroHeadline: 'أصالة الصعيد بين إيديك',
+  heroSubheadline: 'من قلب صعيد مصر للعالم كله؛ بنحكي قصص البلاد والناس وبندعم أصحاب الصنعة الحقيقيين',
   updatedAt: new Date().toISOString(),
   updatedBy: 'النظام'
 };

@@ -181,7 +181,7 @@ export const CulturalCraftsPage: React.FC = () => {
               WAH
             </div>
 
-            <div className="mt-1 text-sm font-black">موسوعة الحرف</div>
+            <div className="mt-1 text-sm font-black">حرف وصنايع الصعيد</div>
           </div>
 
           <button

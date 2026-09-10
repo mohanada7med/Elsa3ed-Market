@@ -103,7 +103,7 @@ export const Footer: React.FC = () => {
     { label: 'أطلس الصعيد التفاعلي', page: 'map' },
     { label: 'محافظات الصعيد', page: 'governorates' },
     { label: 'المعالم والتراث المعماري', page: 'places' },
-    { label: 'موسوعة الحرف والورش', page: 'cultural-crafts' },
+    { label: 'حرف وصنايع الصعيد', page: 'cultural-crafts' },
     { label: 'وه بيحكي (المرويات)', page: 'stories' },
     { label: 'ناس الصعيد وحُرّاس الحكاية', page: 'people' },
     { label: 'طعم الصعيد (المطبخ الأصيل)', page: 'food' },
@@ -156,10 +156,10 @@ export const Footer: React.FC = () => {
             <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <div>
                 <h3 className="text-2xl sm:text-3xl font-black font-heritage tracking-tight">
-                  هل تمتلك ورشة أو نولاً تراثياً بصعيد مصر؟
+                  عندك ورشة أو نول في الصعيد؟
                 </h3>
                 <p className="text-xl sm:text-xl text-white/70 mt-1 max-w-xl">
-                  انضم الآن إلى المنصة الملكية الأولى لتوثيق وتسويق التراث الصعيدي مباشرة من ورشتك إلى مقتني التراث في كل مكان.
+                  انضم لمنصة «وه» واعرض شغلك وصنعتك التراثية مباشرة للناس اللي بتقدر الفن الأصيل في كل مكان.
                 </p>
               </div>
             </div>
@@ -198,7 +198,7 @@ export const Footer: React.FC = () => {
               className="brightness-125"
             />
             <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
-              المنصة الرقمية الملكية الجامعة لاكتشاف روح صعيد مصر وموروثه الحي؛ نصل بين شيوخ الصنعة في أقصى الجنوب والذائقة الرفيعة عبر تجربة اقتناء موثقة وحكايات حية.
+              منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-white/60">
               <span className="flex items-center gap-1.5"><Compass className="w-4 h-4 text-[#C5A880]" /> من الفيوم لأسوان</span>
@@ -264,7 +264,7 @@ export const Footer: React.FC = () => {
                 رسائل ومرويات الجنوب
               </h4>
               <p className="text-xs text-white/70">
-                انضم لنشرتنا الملكية لتصلك خفايا الصنعة وكواليس الأنوال والأفران قبل طرح القطع للعامة.
+                اشترك في نشرتنا عشان توصلك حكايات الصنعة وأسرار الأنوال والأفران أول بأول.
               </p>
 
               <form onSubmit={handleSubscribe} className="relative">

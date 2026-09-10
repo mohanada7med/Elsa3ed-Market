@@ -168,8 +168,8 @@ export const GovernoratesPage: React.FC = () => {
             </h1>
 
             <p className="mx-auto mt-8 max-w-2xl text-sm leading-8 text-[#211d18]/70 dark:text-[#f5f0e7]/70 sm:text-base font-light">
-              معرض بصري لمحافظات صعيد مصر؛ أماكنها، ناسها،
-              صنايعها، أكلها، وحكاياتها الأصيلة المتوارثة عبر الأجيال.
+              دليل لمحافظات الصعيد؛ تكتشف فيه أماكنها، ناسها،
+              صنعتها، أكلها، وحكاياتها اللي بتتنقل من جيل لجيل.
             </p>
           </div>
 

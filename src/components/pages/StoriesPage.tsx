@@ -214,15 +214,15 @@ export const StoriesPage: React.FC = () => {
                   xl:text-[11rem]
                 "
               >
-                الذاكرة
+                وه
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الشفاهية</span>
+                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">بيحكي</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  مستودع المرويات الشفاهية، أساطير النيل والجبل، السيرة الهلالية، وقصص البطولة والحكمة التي تناقلتها أجيال الصعيد حول موائد السمر في العصاري وليالي الشتاء.
+                  حكايات الصعيد اللي ملهاش نهاية؛ من أساطير النيل والجبل، لمربعات السيرة الهلالية وسير الناس وحكايات البيوت في ليالي الشتا وسهرات السمر.
                 </p>
               </div>
             </div>

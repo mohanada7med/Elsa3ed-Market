@@ -20,7 +20,7 @@ export function updatePageSEO(config: SEOConfig) {
   // Description
   const description =
     config.description ||
-    'وه — منصة رقمية شاملة لاكتشاف وتوثيق وربط تراث وثقافة ومحافظات وحرف وأكلات وناس وحكايات صعيد مصر، وسوق وه للحرف التراثية.';
+    'وه — منصتك لاكتشاف روح صعيد مصر وحكاياته؛ من بلد لبلد، بنتعرف على ناس الصعيد ومعالمه وحرفه وأكلاته وسوقه التراثي الأصيل.';
 
   let metaDesc = document.querySelector('meta[name="description"]');
   if (!metaDesc) {

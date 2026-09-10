@@ -75,14 +75,14 @@ export const FoodDetailPage: React.FC = () => {
         className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-center text-[#211d18] dark:text-[#f5f0e7]"
       >
         <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
-          <h2 className="text-2xl font-black font-serif">الأكلة غير موجودة</h2>
-          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">لم نتمكن من العثور على بيانات هذه الأكلة التراثية</p>
+          <h2 className="text-2xl font-black font-serif">الأكلة مش موجودة</h2>
+          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">ملقناش بيانات للأكلة دي حالياً</p>
           <button
             type="button"
             onClick={() => setActivePage('food')}
             className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
           >
-            العودة لكافة أكلات الصعيد
+            الرجوع لكل أكلات الصعيد
           </button>
         </div>
       </div>
@@ -111,7 +111,7 @@ export const FoodDetailPage: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-xs font-bold transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 rotate-180" />
-            <span>موسوعة طعم الصعيد</span>
+            <span>طعم الصعيد والمطبخ الأصيل</span>
           </button>
 
           <div className="flex items-center gap-2">
@@ -207,7 +207,7 @@ export const FoodDetailPage: React.FC = () => {
                 أصل الأكلة
               </h3>
               <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 mb-4">
-                تشتهر محافظة {food.governorateName} بتحضير هذه الأكلة في مواسم محددة.
+                محافظة {food.governorateName} معروفة بالأكلة دي وليها سرها في تحضيرها ولمستها الخاصة.
               </p>
               <button
                 type="button"

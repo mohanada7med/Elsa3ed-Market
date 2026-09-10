@@ -387,7 +387,7 @@ export const GovernorateDetailPage: React.FC = () => {
                   ['المعالم', places.length],
                   ['الصنايع', crafts.length],
                   ['الحكايات', stories.length],
-                  ['الشخصيات', people.length],
+                  ['الناس', people.length],
                 ].map(([label, count]) => (
                   <div
                     key={String(label)}

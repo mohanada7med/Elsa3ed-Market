@@ -165,15 +165,15 @@ export const PeoplePage: React.FC = () => {
                   xl:text-[11rem]
                 "
               >
-                حراس
+                ناس
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الذاكرة</span>
+                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الصعيد</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  توثيق مسيرات شيوخ الصنائع، الرواة، والفنانين التلقائيين الذين ورثوا أسرار الصنعة كابراً عن كابر وحافظوا على أصالة الصعيد لقرون.
+                  ناس الصعيد هما روحه وحراسه؛ من الأسطوات اللي ورثوا الصنعة إيد بإيد، للشعراء والمبدعين اللي حكوا حكايات البلد بصوتها الصادق.
                 </p>
               </div>
             </div>
@@ -208,7 +208,7 @@ export const PeoplePage: React.FC = () => {
                         {people.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        شيخ صنعة وحرفي موثق
+                        شخصية وأسطى موثق
                       </div>
                     </div>
 

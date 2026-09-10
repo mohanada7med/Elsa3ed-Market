@@ -289,7 +289,7 @@ export const PlacesHeritagePage: React.FC = () => {
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  أرشيف بصري لأماكن الصعيد. آثار، عمارة، قرى، طبيعة وحكايات لسه عايشة.
+                  أماكن الصعيد ليها هيبة وحكاية؛ من المعابد والآثار العتيقة، للأديرة والمساجد، والقرى اللي عايشة على شط النيل.
                 </p>
               </div>
             </div>

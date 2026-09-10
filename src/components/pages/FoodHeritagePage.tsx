@@ -167,15 +167,15 @@ export const FoodHeritagePage: React.FC = () => {
                   xl:text-[11rem]
                 "
               >
-                مذاق
+                طعم
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الأصالة</span>
+                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">الصعيد</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  توثيق المطبخ الصعيدي المتوارث: من الفايش السمسمي بخميرة الحمص، الشلولو، الملوخية الناشفة، حتى العسل الأسود ومشروبات قصب السكر والكركديه الأسواني.
+                  أكلات الصعيد ليها طعم وحكاية متتنسيش؛ من خبيز العيش الشمسي والفايش، للويكا والبصارة والكشك، لحد عصارات عسل القصب في قلب النيل.
                 </p>
               </div>
             </div>

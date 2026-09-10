@@ -175,7 +175,7 @@ export const EventsPage: React.FC = () => {
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="text-sm leading-8 text-black/65 dark:text-white/65 sm:text-base">
-                  مواعيد وأسرار الموالد الصوفية التاريخية، مواسم حصاد القصب وتصنيع العسل، مهرجانات التمور، وحلقات التحطيب بالأقصر وقنا.
+                  أجواء الفرحة في الصعيد؛ من ليالي الموالد ولمة الحبايب، لمواسم كسر القصب وعصر العسل، وحلقات التحطيب وتعامد شمس أبو سمبل.
                 </p>
               </div>
             </div>
@@ -229,7 +229,7 @@ export const EventsPage: React.FC = () => {
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
                     <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
                     <span className="text-xs font-bold">
-                      أجندة الاحتفالات والمواسم الشعبية
+                      دليل مواسم وأفراح الصعيد
                     </span>
                   </div>
                 </div>

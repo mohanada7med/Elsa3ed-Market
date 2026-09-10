@@ -2517,13 +2517,24 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             </div>
           </div>
 
+          {/* إرشادات أسلوب التحرير والكتابة بالعامية المصرية */}
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 space-y-1 text-right">
+            <div className="flex items-center gap-1.5 text-xs font-black text-amber-700 dark:text-amber-300">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>دليل التحرير لمنصة «وه»: العامية المصرية الطبيعية بروح الصعيد</span>
+            </div>
+            <p className="text-[11px] text-black/70 dark:text-white/70 leading-relaxed">
+              اكتب بطريقة بسيطة وسلسة كأن مصري بيعرف مصري تاني على الصعيد وأهله بدون لغة معقدة أو جافة. حافظ على دقة الأسماء الرسمية والتاريخية، وابتعد عن المبالغات أو السخرية، وتجنب النمط الموسوعي الجاف.
+            </p>
+          </div>
+
           <div>
             <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">نبذة موجزة للعرض في البطاقات</label>
             <textarea
               rows={2}
               value={shortDesc}
               onChange={(e) => setShortDesc(e.target.value)}
-              placeholder="تعريف مكثف لا يتجاوز سطرين..."
+              placeholder="اكتب نبذة سريعة بالعامية المصرية البسيطة تجذب القارئ وتعرفه بالمكان أو الحكاية..."
               className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
@@ -2534,7 +2545,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               rows={3}
               value={fullContent}
               onChange={(e) => setFullContent(e.target.value)}
-              placeholder="التوثيق الكامل وتاريخ الصنعة والمروية التراثية..."
+              placeholder="اكتب الحكاية والتفاصيل بالعامية المصرية الطبيعية بدون مبالغة، زي ما أهل البلد بيحكوها..."
               className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
