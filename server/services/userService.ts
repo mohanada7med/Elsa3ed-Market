@@ -153,6 +153,29 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
   return null;
 }
 
+export async function findUserByResetTokenHash(tokenHash: string): Promise<UserDocument | null> {
+  if (!tokenHash || typeof tokenHash !== 'string') return null;
+  const { db, isMongo } = await getDatabase();
+
+  if (isMongo && db) {
+    try {
+      const user = await db.collection('users').findOne({ passwordResetTokenHash: tokenHash });
+      if (user) {
+        return user as unknown as UserDocument;
+      }
+    } catch (e) {
+      Logger.error('[UserService] Error querying user by reset token hash in MongoDB:', e);
+    }
+  }
+
+  const memUser = memoryDb.users.find((u) => (u as any).passwordResetTokenHash === tokenHash);
+  if (memUser) {
+    return memUser as unknown as UserDocument;
+  }
+
+  return null;
+}
+
 export const DEFAULT_USER_AVATAR = 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
 
 export async function createUser(userData: {

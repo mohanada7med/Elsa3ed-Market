@@ -48,6 +48,7 @@ import { EventsPage } from './components/pages/EventsPage';
 import { EventDetailPage } from './components/pages/EventDetailPage';
 import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
 import { NotificationsPage } from './components/pages/NotificationsPage';
+import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import { WhatsAppButton } from './components/common/WhatsAppButton';
@@ -563,6 +564,8 @@ const MainContent: React.FC = () => {
                 </div>
               )
             )}
+
+            {activePage === 'reset-password' && <ResetPasswordPage />}
 
             {activePage === 'about' && (
               <div className="py-8">

@@ -2,7 +2,12 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import { register, login, verifyToken } from '../services/authService.ts';
 import { findUserById, updateUser, DEFAULT_USER_AVATAR, changeUserPersonalPassword } from '../services/userService.ts';
-import { createPasswordResetRequest } from '../services/passwordResetService.ts';
+import {
+  createPasswordResetRequest,
+  requestAutomatedPasswordReset,
+  resetPasswordWithToken,
+  validateResetToken
+} from '../services/passwordResetService.ts';
 import { getUserFavorites, toggleFavorite } from '../services/favoriteService.ts';
 import {
   getUserNotifications,
@@ -17,7 +22,7 @@ import type { AuthenticatedRequest } from '../middleware/auth.ts';
 
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import { storageService } from '../services/storage/storageProvider.ts';
-import { uploadLimiter, forgotPasswordLimiter } from '../middleware/rateLimiter.ts';
+import { uploadLimiter, forgotPasswordLimiter, resetPasswordLimiter } from '../middleware/rateLimiter.ts';
 import { setAuthCookie, clearAuthCookie, getAuthTokenFromRequest } from '../config/authCookie.ts';
 
 const router = express.Router();
@@ -326,28 +331,105 @@ router.get('/me', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 
-// POST /api/auth/forgot-password - Submit forgot password request by username
+// POST /api/auth/forgot-password - Automated password reset flow via Email / Username
 router.post('/forgot-password', forgotPasswordLimiter, async (req: Request, res: Response) => {
   try {
-    const { username } = req.body;
-    if (!username || typeof username !== 'string' || !username.trim()) {
+    const rawIdentifier = req.body.identifier || req.body.username || req.body.email;
+    if (!rawIdentifier || typeof rawIdentifier !== 'string' || !rawIdentifier.trim()) {
       return res.status(400).json({
         success: false,
-        error: 'من فضلك اكتب اسم المستخدم'
+        error: 'من فضلك اكتب اسم المستخدم أو البريد الإلكتروني'
       });
     }
 
-    const result = await createPasswordResetRequest(username.trim());
+    const originHeader = req.get('origin') || (req.headers.host ? `${req.protocol}://${req.headers.host}` : undefined);
+    const result = await requestAutomatedPasswordReset(rawIdentifier.trim(), originHeader);
+
     res.json({
       success: true,
-      message: result.message,
-      data: { requestId: result.requestId }
+      message: result.message
     });
   } catch (error: any) {
     console.error('[authRoutes] Error in forgot-password:', error?.message || error);
     res.status(400).json({
       success: false,
-      error: error?.message || 'فشل في تقديم طلب استعادة كلمة المرور'
+      error: error?.message || 'فشل في إرسال رابط استعادة كلمة المرور'
+    });
+  }
+});
+
+// GET /api/auth/reset-password/validate - Check if token is valid and unexpired
+router.get('/reset-password/validate', async (req: Request, res: Response) => {
+  try {
+    const token = typeof req.query.token === 'string' ? req.query.token : '';
+    const result = await validateResetToken(token);
+    if (!result.valid) {
+      return res.status(400).json({
+        success: false,
+        code: result.code,
+        error: result.message
+      });
+    }
+    res.json({
+      success: true,
+      valid: true
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'رمز التحقق غير صالح'
+    });
+  }
+});
+
+// POST /api/auth/reset-password - Reset password using verified cryptographic token
+router.post('/reset-password', resetPasswordLimiter, async (req: Request, res: Response) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    if (!token || typeof token !== 'string' || !token.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'رمز إعادة تعيين كلمة السر مفقود'
+      });
+    }
+
+    if (!password || typeof password !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى كتابة كلمة السر الجديدة'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: 'كلمة السر يجب ألا تقل عن 6 خانات'
+      });
+    }
+
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        error: 'كلمتا السر غير متطابقتين'
+      });
+    }
+
+    const result = await resetPasswordWithToken({
+      token: token.trim(),
+      password,
+      confirmPassword
+    });
+
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error: any) {
+    console.error('[authRoutes] Error in reset-password:', error?.message || error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل في إعادة تعيين كلمة السر'
     });
   }
 });

@@ -1,7 +1,17 @@
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { PasswordResetRequestDocument, UserDocument } from '../models/types.ts';
-import { findUserByUsername, normalizeUsername } from './userService.ts';
+import {
+  findUserByUsername,
+  findUserByEmail,
+  findUserByResetTokenHash,
+  updateUser,
+  normalizeUsername
+} from './userService.ts';
+import { hashPassword } from './authService.ts';
+import { invalidateAuthSession } from '../middleware/auth.ts';
+import { sendPasswordResetEmail } from './emailService.ts';
 import { createNotification } from './notificationService.ts';
 import { createAuditLog } from './auditService.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
@@ -337,3 +347,247 @@ export async function rejectPasswordResetRequest(
     message: 'تم رفض طلب استعادة كلمة المرور'
   };
 }
+
+/**
+ * Request an automated password reset link sent to the user's registered email address.
+ * Supports email or username as identifier.
+ * Prevents account enumeration by always returning the same generic success message.
+ */
+export async function requestAutomatedPasswordReset(
+  identifier: string,
+  baseUrlOrOrigin?: string
+): Promise<{ success: boolean; message: string }> {
+  const genericSuccessMessage = 'لو البيانات دي مرتبطة بحساب، هنبعتلك رسالة لإعادة تعيين كلمة السر.';
+
+  if (!identifier || typeof identifier !== 'string' || !identifier.trim()) {
+    throw new Error('من فضلك اكتب اسم المستخدم أو البريد الإلكتروني');
+  }
+
+  const trimmed = identifier.trim();
+  const isEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+
+  let user: UserDocument | null = null;
+
+  try {
+    if (isEmailFormat) {
+      user = await findUserByEmail(trimmed);
+      if (!user) {
+        user = await findUserByUsername(trimmed);
+      }
+    } else {
+      user = await findUserByUsername(trimmed);
+      if (!user && trimmed.includes('@')) {
+        user = await findUserByEmail(trimmed);
+      }
+    }
+  } catch (lookupErr) {
+    Logger.error('[PasswordResetService] User lookup error in automated reset:', lookupErr);
+  }
+
+  // Account Enumeration Prevention:
+  // If user doesn't exist or has no registered email, return generic response without revealing anything
+  if (!user || !user.email || !user.email.trim()) {
+    Logger.info(`[PasswordResetService] Reset requested for non-existing or email-less identifier: "${trimmed}"`);
+    return {
+      success: true,
+      message: genericSuccessMessage
+    };
+  }
+
+  try {
+    // Generate cryptographically secure random token (256-bit entropy)
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+    // Token expires in 30 minutes
+    const expiresInMinutes = 30;
+    const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000).toISOString();
+
+    // Store secure token hash and expiration on the user document
+    await updateUser(user.id, {
+      passwordResetTokenHash: tokenHash,
+      passwordResetExpiresAt: expiresAt
+    });
+
+    // Form absolute reset URL
+    let appBaseUrl = (
+      process.env.APP_URL ||
+      baseUrlOrOrigin ||
+      'http://localhost:3000'
+    ).trim().replace(/\/$/, '');
+
+    // Ensure URL has protocol
+    if (!appBaseUrl.startsWith('http://') && !appBaseUrl.startsWith('https://')) {
+      appBaseUrl = `https://${appBaseUrl}`;
+    }
+
+    const resetUrl = `${appBaseUrl}/reset-password?token=${rawToken}`;
+
+    // Send email to the registered email address
+    await sendPasswordResetEmail({
+      to: user.email.trim(),
+      userName: user.name || user.username,
+      resetUrl,
+      expiresInMinutes
+    });
+
+    // Audit log without leaking the raw token or email secrets
+    await createAuditLog({
+      userName: user.name,
+      userRole: user.role,
+      action: 'PASSWORD_RESET_REQUESTED',
+      resource: 'users',
+      resourceId: user.id,
+      status: 'نجاح',
+      details: `تم إرسال رابط إعادة تعيين كلمة السر إلى البريد الإلكتروني المسجل للمستخدم (@${user.username})`
+    });
+
+    Logger.info(`[PasswordResetService] Password reset token created and emailed for user ${user.id} (@${user.username})`);
+  } catch (err: any) {
+    Logger.error(`[PasswordResetService] Error processing password reset for user ${user?.id}:`, err?.message || err);
+    // Even if an unexpected server error occurs, do not leak internal errors to potential attackers
+  }
+
+  return {
+    success: true,
+    message: genericSuccessMessage
+  };
+}
+
+/**
+ * Validates whether a given reset token is valid and unexpired
+ */
+export async function validateResetToken(token: string): Promise<{
+  valid: boolean;
+  message?: string;
+  code?: 'INVALID' | 'EXPIRED' | 'MISSING';
+}> {
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    return {
+      valid: false,
+      code: 'MISSING',
+      message: 'رمز التحقق مفقود، يرجى استخدام الرابط المرسل إليك في البريد الإلكتروني.'
+    };
+  }
+
+  const tokenHash = crypto.createHash('sha256').update(token.trim()).digest('hex');
+  const user = await findUserByResetTokenHash(tokenHash);
+
+  if (!user) {
+    return {
+      valid: false,
+      code: 'INVALID',
+      message: 'رابط إعادة تعيين كلمة السر غير صالح أو تم استخدامه من قبل.'
+    };
+  }
+
+  if (!user.passwordResetExpiresAt || new Date(user.passwordResetExpiresAt).getTime() < Date.now()) {
+    // Invalidate stale token
+    await updateUser(user.id, {
+      passwordResetTokenHash: null,
+      passwordResetExpiresAt: null
+    }).catch(() => {});
+
+    return {
+      valid: false,
+      code: 'EXPIRED',
+      message: 'انتهت صلاحية رابط إعادة تعيين كلمة السر، يرجى طلب رابط جديد.'
+    };
+  }
+
+  return {
+    valid: true
+  };
+}
+
+/**
+ * Resets user password using the cryptographically verified token
+ */
+export async function resetPasswordWithToken(params: {
+  token: string;
+  password: string;
+  confirmPassword?: string;
+}): Promise<{ success: boolean; message: string }> {
+  const { token, password, confirmPassword } = params;
+
+  if (!token || typeof token !== 'string' || !token.trim()) {
+    throw new Error('رمز التحقق غير موجود');
+  }
+
+  if (!password || typeof password !== 'string') {
+    throw new Error('يرجى كتابة كلمة السر الجديدة');
+  }
+
+  if (password.length < 6) {
+    throw new Error('كلمة السر يجب ألا تقل عن 6 خانات');
+  }
+
+  if (confirmPassword !== undefined && password !== confirmPassword) {
+    throw new Error('كلمتا السر غير متطابقتين');
+  }
+
+  const tokenHash = crypto.createHash('sha256').update(token.trim()).digest('hex');
+  const user = await findUserByResetTokenHash(tokenHash);
+
+  if (!user) {
+    throw new Error('رابط إعادة تعيين كلمة السر غير صالح أو تم استخدامه من قبل');
+  }
+
+  if (!user.passwordResetExpiresAt || new Date(user.passwordResetExpiresAt).getTime() < Date.now()) {
+    // Clean up expired token
+    await updateUser(user.id, {
+      passwordResetTokenHash: null,
+      passwordResetExpiresAt: null
+    }).catch(() => {});
+
+    throw new Error('انتهت صلاحية رابط إعادة تعيين كلمة السر، يرجى طلب رابط جديد');
+  }
+
+  // Hash the new password with bcrypt
+  const newPasswordHash = await hashPassword(password);
+
+  // Atomically update password, clear reset token & expiration, and clear mustChangePassword
+  const updated = await updateUser(user.id, {
+    passwordHash: newPasswordHash,
+    passwordResetTokenHash: null,
+    passwordResetExpiresAt: null,
+    mustChangePassword: false
+  });
+
+  if (!updated) {
+    throw new Error('تعذر تحديث كلمة السر، يرجى المحاولة مرة أخرى');
+  }
+
+  // Invalidate any active cached sessions for this user
+  invalidateAuthSession(user.id);
+
+  // Create audit log
+  await createAuditLog({
+    userName: user.name,
+    userRole: user.role,
+    action: 'PASSWORD_RESET_SUCCESS',
+    resource: 'users',
+    resourceId: user.id,
+    status: 'نجاح',
+    details: `تمت إعادة تعيين كلمة السر بنجاح باستخدام رابط التحقق للمستخدم (@${user.username})`
+  });
+
+  // Create in-app notification for the user
+  try {
+    await createNotification({
+      userId: user.id,
+      title: 'تم تغيير كلمة السر بنجاح',
+      message: 'تمت إعادة تعيين كلمة السر لحسابك بنجاح. إذا لم تكن أنت من قام بهذا التغيير، يرجى التواصل فوراً مع إدارة المنصة.',
+      type: 'account',
+      link: 'buyer-account'
+    });
+  } catch (notifErr) {
+    Logger.warn('[PasswordResetService] Notification delivery warning:', notifErr);
+  }
+
+  return {
+    success: true,
+    message: 'تم تغيير كلمة السر بنجاح. يمكنك الآن تسجيل الدخول بكلمة السر الجديدة.'
+  };
+}
+

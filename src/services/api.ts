@@ -1811,16 +1811,44 @@ export const api = {
 
   // ==================== FORGOT & RESET PASSWORD WORKFLOW API ====================
 
-  async requestPasswordReset(username: string): Promise<{ success: boolean; message: string; data?: { requestId: string } }> {
+  async requestPasswordReset(identifier: string): Promise<{ success: boolean; message: string }> {
     const res = await fetch(`${API_BASE}/auth/forgot-password`, {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username })
+      body: JSON.stringify({ identifier })
     });
     const json = await res.json();
     if (!json.success) {
       throw new Error(json.error || 'فشل في إرسال طلب استعادة كلمة المرور');
+    }
+    return json;
+  },
+
+  async validateResetToken(token: string): Promise<{ success: boolean; valid: boolean; error?: string }> {
+    const res = await fetch(`${API_BASE}/auth/reset-password/validate?token=${encodeURIComponent(token)}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const json = await res.json();
+    return json;
+  },
+
+  async resetPasswordWithToken(params: {
+    token: string;
+    password: string;
+    confirmPassword?: string;
+  }): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في إعادة تعيين كلمة السر');
     }
     return json;
   },

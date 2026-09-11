@@ -108,3 +108,11 @@ export const forgotPasswordLimiter = createRateLimiter({
   keyPrefix: 'forgot_pwd',
   message: 'طلبت استعادة كلمة السر كذا مرة، استنى ربع ساعة وجرب تاني عشان أمان حسابك'
 });
+
+export const resetPasswordLimiter = createRateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  keyPrefix: 'reset_pwd',
+  message: 'محاولات كثيرة لإعادة تعيين كلمة السر، استنى شوية وجرب تاني'
+});
+

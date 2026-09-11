@@ -295,6 +295,8 @@ export interface UserDocument {
   sellerStatus?: SellerStatus;
   savedAddresses?: UserAddress[];
   mustChangePassword?: boolean;
+  passwordResetTokenHash?: string | null;
+  passwordResetExpiresAt?: string | null;
   createdAt: string;
   updatedAt?: string;
 }

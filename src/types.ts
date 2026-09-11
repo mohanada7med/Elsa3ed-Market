@@ -351,7 +351,8 @@ export type ActivePage =
   | 'market'
   | 'profile'
   | 'admin-settings'
-  | 'quize';
+  | 'quize'
+  | 'reset-password';
 
 export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';
 

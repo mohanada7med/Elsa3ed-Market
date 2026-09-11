@@ -545,12 +545,12 @@ export const AuthModal: React.FC = () => {
       try {
         setSubmitting(true);
 
-        await api.requestPasswordReset(
+        const res = await api.requestPasswordReset(
           forgotIdentifier.trim()
         );
 
         addToast(
-          'طلب استرجاع كلمة السر راح للإدارة خلاص وهيتواصلوا معاك.',
+          res?.message || 'لو البيانات دي مرتبطة بحساب، هنبعتلك رسالة لإعادة تعيين كلمة السر.',
           'success'
         );
 
@@ -1024,11 +1024,11 @@ export const AuthModal: React.FC = () => {
 
                     <div className="min-w-0">
                       <p className="text-[14px] sm:text-[15px] font-black text-[#211d18] dark:text-[#f5f0e7]">
-                        هنرجعك لحسابك
+                        نسيت كلمة السر؟
                       </p>
 
                       <p className="mt-1 text-[11px] leading-5 text-black/60 dark:text-white/60 sm:text-[12px] sm:leading-6 font-medium">
-                        ابعت طلب للإدارة لاستعادة كلمة المرور.
+                        اكتب الإيميل أو اسم المستخدم وهنبعتلك رابط لإعادة تعيين كلمة السر.
                       </p>
                     </div>
                   </div>
@@ -1037,7 +1037,7 @@ export const AuthModal: React.FC = () => {
                     htmlFor="forgot-identifier-input"
                     className={labelClass}
                   >
-                    اسم المستخدم أو البريد الإلكتروني
+                    الإيميل أو اسم المستخدم
                   </label>
 
                   <div className="relative">
@@ -1055,7 +1055,7 @@ export const AuthModal: React.FC = () => {
                           e.target.value
                         )
                       }
-                      placeholder="مثال: محمد123"
+                      placeholder="الإيميل أو اسم المستخدم"
                       className={inputClass}
                       autoComplete="username"
                     />
@@ -1073,11 +1073,11 @@ export const AuthModal: React.FC = () => {
                         size={20}
                         className="animate-spin"
                       />
-                      جاري الإرسال...
+                      جاري إرسال الرابط...
                     </>
                   ) : (
                     <>
-                      إرسال الطلب
+                      إرسال رابط إعادة التعيين
                       <ArrowLeft size={18} />
                     </>
                   )}
