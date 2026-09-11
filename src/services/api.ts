@@ -435,14 +435,15 @@ export const adminMediaApi = {
   },
 
   async manageEntityGallery(
-    user: { id?: string; role?: string },
-    payload: {
+    userAuth: { id: string; role: string },
+    options: {
       entityType: string;
       entityId: string;
       action: 'add' | 'remove' | 'setCover' | 'updateGallery' | 'setVideo' | 'removeVideo';
       imageUrl?: string;
       videoUrl?: string;
       galleryUrls?: string[];
+      coverImage?: string;
     }
   ): Promise<{
     success: boolean;
@@ -454,8 +455,8 @@ export const adminMediaApi = {
   }> {
     const res = await fetch(`${API_BASE}/admin/media/gallery/manage`, {
       method: 'POST',
-      headers: getAuthHeaders(user),
-      body: JSON.stringify(payload)
+      headers: getAuthHeaders(userAuth),
+      body: JSON.stringify(options)
     });
     const json = await res.json();
     if (!json.success) {
@@ -1274,7 +1275,7 @@ export const api = {
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في إرسال التقييم');
     }
-    return json;
+    return json.data;
   },
 
   async getAdminReviews(
@@ -2510,13 +2511,6 @@ export const api = {
     return json;
   },
 
-  /**
-   * Upload video with real upload progress tracking (XMLHttpRequest progress events).
-   * Enforces exact 1GB maximum size limit.
-   * Exclusively uses direct Cloudinary signed chunked upload to completely bypass server/proxy payload limits.
-   * Adaptive chunk sizes (10MB - 20MB) reduce roundtrips by >70% for massive videos.
-   * Features 10-minute assembly timeout on final chunk and post-upload Cloudinary verification to eliminate false failures.
-   */
   uploadReelVideoWithProgress(options: {
     user: { id?: string; role?: string; sellerId?: string };
     file: File | Blob;
@@ -2537,15 +2531,16 @@ export const api = {
       const fileName = customFilename || (file instanceof File ? file.name : 'reel_video.mp4');
       const fileSize = file.size;
 
-      // Rule 1: Strict 1GB Maximum Size Check (1,073,741,824 bytes)
-      const MAX_ALLOWED_BYTES = 1024 * 1024 * 1024; // 1 GB
+      // تعديل الحد الأقصى ليصبح 300 ميجابايت (300 * 1024 * 1024 بايت)
+      const MAX_ALLOWED_BYTES = 300 * 1024 * 1024; // 300 MB
+
       if (!file || fileSize <= 0) {
         return reject(new Error('ملف الفيديو المحدد فارغ أو غير صالح'));
       }
-      if (fileSize > MAX_ALLOWED_BYTES) {
-        return reject(new Error('حجم الفيديو لازم يكون 1 جيجا أو أقل.'));
-      }
 
+      if (fileSize > MAX_ALLOWED_BYTES) {
+        return reject(new Error('حجم الفيديو لازم يكون 300 ميجا أو أقل.'));
+      }
       let isCancelled = false;
       let activeXhr: XMLHttpRequest | null = null;
 
@@ -2561,12 +2556,10 @@ export const api = {
       }
 
       try {
-        // Step 1: Request signed upload payload from server (including fileSize validation)
         let signatureResponse;
         try {
           signatureResponse = await api.getReelUploadSignature(user, fileName, targetSellerId, fileSize);
         } catch (sigErr: any) {
-          console.warn('[VideoUpload] Signature request failed:', sigErr);
           if (fileSize > 4 * 1024 * 1024) {
             return reject(
               new Error(
@@ -2578,15 +2571,10 @@ export const api = {
         }
 
         if (signatureResponse?.directUpload && signatureResponse.data) {
-          // Direct Cloudinary Signed Chunked Upload (Zero Server Proxy Overhead — Completely bypasses Vercel/Proxy 413 limits)
           const sig = signatureResponse.data;
           const uploadUrl = `https://api.cloudinary.com/v1_1/${sig.cloudName}/video/upload`;
           const uniqueUploadId = `cld_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
-          // Adaptive chunk size based on total file size:
-          // <= 20MB: single request (no chunk overhead)
-          // 20MB - 100MB: 10MB chunks
-          // 100MB - 1GB: 20MB chunks (reducing 1GB from 171 requests to ~51 requests, saving >70% network latency)
           let CHUNK_SIZE = 20 * 1024 * 1024;
           if (fileSize <= 20 * 1024 * 1024) {
             CHUNK_SIZE = fileSize;
@@ -2613,7 +2601,6 @@ export const api = {
             const chunkBlob = file.slice(start, end);
             const fullPublicId = `${sig.folder}/${sig.publicId}`;
 
-            // Execute chunk upload with up to 3 retries on transient network errors
             let chunkSuccess = false;
             let lastChunkError: any = null;
 
@@ -2695,7 +2682,6 @@ export const api = {
                     xhr.setRequestHeader('Content-Range', `bytes ${start}-${end - 1}/${fileSize}`);
                   }
 
-                  // Non-final chunks: 3 minutes timeout. Final chunk: 10 minutes timeout to allow Cloudinary full video stitching & transcode
                   xhr.timeout = isLastChunk ? 600000 : 180000;
 
                   xhr.onload = () => {
@@ -2717,17 +2703,9 @@ export const api = {
                     }
                   };
 
-                  xhr.onerror = () => {
-                    chunkReject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو'));
-                  };
-
-                  xhr.ontimeout = () => {
-                    chunkReject(new Error(isLastChunk ? 'استغرقت معالجة الفيديو وقتاً طويلاً' : 'انتهت مهلة رفع الجزء السحابي'));
-                  };
-
-                  xhr.onabort = () => {
-                    chunkReject(new Error('تم إلغاء عملية الرفع'));
-                  };
+                  xhr.onerror = () => chunkReject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو'));
+                  xhr.ontimeout = () => chunkReject(new Error('انتهت مهلة رفع الجزء السحابي'));
+                  xhr.onabort = () => chunkReject(new Error('تم إلغاء عملية الرفع'));
 
                   const formData = new FormData();
                   formData.append('file', chunkBlob);
@@ -2741,13 +2719,9 @@ export const api = {
                 });
 
                 let chunkResponse: any;
-
                 if (isLastChunk) {
-                  // Decouple upload completion from Cloudinary video processing:
-                  // If Cloudinary transcoding takes longer than 2.5s, poll /api/reels/verify-upload in parallel!
                   const pollAbortCtrl = new AbortController();
                   const parallelPollPromise = new Promise<any>(async (pollResolve) => {
-                    // Delay 2500ms to give fast uploads a chance to return synchronously
                     await new Promise((r) => setTimeout(r, 2500));
                     if (isCancelled || pollAbortCtrl.signal.aborted) return;
                     try {
@@ -2778,26 +2752,6 @@ export const api = {
                 if (err?.message === 'تم إلغاء عملية الرفع' || isCancelled) {
                   return reject(new Error('تم إلغاء عملية الرفع'));
                 }
-
-                // If final chunk timed out or had network error, check if Cloudinary already assembled the video!
-                if (isLastChunk) {
-                  try {
-                    const verified = await api.verifyUploadedVideo(user, fullPublicId);
-                    if (verified && verified.isReady && verified.url) {
-                      finalResult = {
-                        secure_url: verified.url,
-                        public_id: fullPublicId,
-                        duration: verified.duration,
-                        format: verified.format,
-                        thumbnailUrl: verified.thumbnailUrl
-                      };
-                      chunkSuccess = true;
-                      break;
-                    }
-                  } catch { }
-                }
-
-                // Exponential backoff before retrying chunk (2s, 4s)
                 if (attempt < 3) {
                   await new Promise((r) => setTimeout(r, attempt * 2000));
                 }
@@ -2805,44 +2759,9 @@ export const api = {
             }
 
             if (!chunkSuccess) {
-              // Final double check with backend before declaring failure
-              if (isLastChunk) {
-                try {
-                  const verified = await api.verifyUploadedVideo(user, fullPublicId);
-                  if (verified && verified.isReady && verified.url) {
-                    finalResult = {
-                      secure_url: verified.url,
-                      public_id: fullPublicId,
-                      duration: verified.duration,
-                      format: verified.format,
-                      thumbnailUrl: verified.thumbnailUrl
-                    };
-                    chunkSuccess = true;
-                  }
-                } catch { }
-              }
-
-              if (!chunkSuccess) {
-                const errMsg = lastChunkError?.message || 'فشل في رفع أجزاء الفيديو إلى السحابة';
-                if (errMsg.toLowerCase().includes('too large') || errMsg.includes('413')) {
-                  return reject(
-                    new Error('حجم ملف الفيديو يتجاوز السعة السحابية المسموحة في باقة Cloudinary.')
-                  );
-                }
-                return reject(new Error(`خطأ في الرفع السحابي (الجزء ${chunkIndex + 1}): ${errMsg}`));
-              }
+              return reject(new Error(`خطأ في الرفع السحابي: ${lastChunkError?.message || 'فشل في رفع أجزاء الفيديو'}`));
             }
           }
-
-          // Complete upload progress & inform processing
-          onProgress?.({
-            loaded: fileSize,
-            total: fileSize,
-            percentage: 100,
-            state: 'processing',
-            currentChunk: totalChunks,
-            totalChunks
-          });
 
           const fullPublicId = `${sig.folder}/${sig.publicId}`;
           const finalUrl = finalResult?.secure_url || finalResult?.url || `https://res.cloudinary.com/${sig.cloudName}/video/upload/${fullPublicId}.mp4`;
@@ -2857,89 +2776,7 @@ export const api = {
             thumbnailUrl: finalThumbnail
           });
         } else {
-          // Fallback: Local / Server-side Multipart Stream Upload (for non-Cloudinary setups)
-          if (fileSize > MAX_ALLOWED_BYTES) {
-            return reject(new Error('حجم الفيديو لازم يكون 1 جيجا أو أقل.'));
-          }
-
-          const formData = new FormData();
-          formData.append('videoFile', file, fileName);
-          formData.append('filename', fileName);
-          formData.append('mimeType', file.type || 'video/mp4');
-          if (targetSellerId) {
-            formData.append('targetSellerId', targetSellerId);
-          }
-
-          const xhr = new XMLHttpRequest();
-          activeXhr = xhr;
-          xhr.timeout = 600000; // 10 minutes timeout for server-side processing
-
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable && event.total > 0) {
-              const isCompleteBytes = event.loaded >= event.total;
-              const percentage = isCompleteBytes ? 100 : Math.min(99, Math.round((event.loaded / event.total) * 100));
-              onProgress?.({
-                loaded: event.loaded,
-                total: event.total,
-                percentage,
-                state: isCompleteBytes ? 'processing' : 'uploading'
-              });
-            }
-          };
-
-          xhr.open('POST', `${API_BASE}/reels/upload-video`);
-          xhr.withCredentials = true;
-
-          const authHeaders = getAuthHeaders(user);
-          for (const [key, value] of Object.entries(authHeaders)) {
-            if (key.toLowerCase() !== 'content-type') {
-              xhr.setRequestHeader(key, value);
-            }
-          }
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              try {
-                const result = JSON.parse(xhr.responseText);
-                if (result.success && result.data) {
-                  resolve(result.data);
-                } else {
-                  reject(new Error(result.error || 'فشل في حفظ الفيديو المرفوع'));
-                }
-              } catch {
-                reject(new Error('فشل في معالجة استجابة الخادم'));
-              }
-            } else {
-              try {
-                const errJson = JSON.parse(xhr.responseText);
-                if (xhr.status === 413) {
-                  reject(new Error('حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به لخادم التطبيق (413).'));
-                } else {
-                  reject(new Error(errJson.error || `فشل رفع الفيديو (${xhr.status})`));
-                }
-              } catch {
-                if (xhr.status === 413) {
-                  reject(new Error('حجم ملف الفيديو يتجاوز الحد الأقصى المسموح به لخادم التطبيق (413).'));
-                } else {
-                  reject(new Error(`فشل رفع الفيديو (${xhr.status})`));
-                }
-              }
-            }
-          };
-
-          xhr.onerror = () => {
-            reject(new Error('انقطع الاتصال بالإنترنت أثناء رفع الفيديو'));
-          };
-
-          xhr.ontimeout = () => {
-            reject(new Error('استغرقت معالجة الفيديو على الخادم وقتاً أطول من المتوقع'));
-          };
-
-          xhr.onabort = () => {
-            reject(new Error('تم إلغاء عملية الرفع'));
-          };
-
-          xhr.send(formData);
+          return reject(new Error('فشل بدء الاتصال بخدمة التخزين السحابي'));
         }
       } catch (err: any) {
         reject(err);
@@ -2952,17 +2789,7 @@ export const api = {
   async verifyUploadedVideo(
     user: { id?: string; role?: string; sellerId?: string },
     publicId: string
-  ): Promise<{
-    exists: boolean;
-    isReady?: boolean;
-    status?: 'ready' | 'processing' | 'pending' | 'not_found' | 'error';
-    url?: string;
-    thumbnailUrl?: string;
-    duration?: number;
-    format?: string;
-    bytes?: number;
-    message?: string;
-  }> {
+  ): Promise<{ exists: boolean; isReady?: boolean; url?: string; thumbnailUrl?: string; duration?: number; format?: string; bytes?: number }> {
     try {
       const res = await fetch(`${API_BASE}/reels/verify-upload`, {
         method: 'POST',
@@ -2971,83 +2798,32 @@ export const api = {
         body: JSON.stringify({ publicId })
       });
       const json = await res.json();
-      return json.data || { exists: false, isReady: false, status: 'error' };
+      return json.data || { exists: false, isReady: false };
     } catch {
-      return { exists: false, isReady: false, status: 'error' };
+      return { exists: false, isReady: false };
     }
   },
 
-  /**
-   * Polls /api/reels/verify-upload with smart exponential backoff (2s, 3s, 5s, 5s, 10s...)
-   * up to maxProcessingWindowMs (10 minutes).
-   * Decouples upload completion from Cloudinary video transcoding and metadata assembly.
-   */
   async pollVideoUploadVerification(options: {
     user: { id?: string; role?: string; sellerId?: string };
     publicId: string;
     maxProcessingWindowMs?: number;
     signal?: AbortSignal;
-    onStatusUpdate?: (status: { attempt: number; message: string }) => void;
-  }): Promise<{
-    isReady: boolean;
-    url: string;
-    thumbnailUrl?: string;
-    duration?: number;
-    format?: string;
-    bytes?: number;
-  }> {
-    const { user, publicId, maxProcessingWindowMs = 600000, signal, onStatusUpdate } = options;
+  }): Promise<{ isReady: boolean; url: string; thumbnailUrl?: string; duration?: number; format?: string }> {
+    const { user, publicId, maxProcessingWindowMs = 600000, signal } = options;
     const startTime = Date.now();
-    const delays = [2000, 3000, 5000, 5000, 10000];
-    let attempt = 0;
-
     while (Date.now() - startTime < maxProcessingWindowMs) {
-      if (signal?.aborted) {
-        throw new Error('تم إلغاء عملية الرفع');
-      }
-
-      attempt++;
-      onStatusUpdate?.({
-        attempt,
-        message: 'جاري التحقق من جاهزية الفيديو واستخراج الغلاف عبر السحابة...'
-      });
-
+      if (signal?.aborted) throw new Error('تم إلغاء العملية');
       try {
         const check = await api.verifyUploadedVideo(user, publicId);
         if (check && check.isReady && check.url) {
-          return {
-            isReady: true,
-            url: check.url,
-            thumbnailUrl: check.thumbnailUrl,
-            duration: check.duration,
-            format: check.format,
-            bytes: check.bytes
-          };
+          return { isReady: true, url: check.url, thumbnailUrl: check.thumbnailUrl, duration: check.duration, format: check.format };
         }
-      } catch (e: any) {
-        // Transient network or server hiccup, keep polling without failing
-        console.warn(`[VideoVerification] Poll attempt ${attempt} warning:`, e?.message || e);
-      }
-
-      const delay = attempt <= delays.length ? delays[attempt - 1] : 10000;
-      await new Promise<void>((r, reject) => {
-        const timer = setTimeout(r, delay);
-        if (signal) {
-          signal.addEventListener(
-            'abort',
-            () => {
-              clearTimeout(timer);
-              reject(new Error('تم إلغاء عملية الرفع'));
-            },
-            { once: true }
-          );
-        }
-      });
+      } catch { }
+      await new Promise((r) => setTimeout(r, 3000));
     }
-
-    throw new Error('استغرقت معالجة الفيديو وقتاً أطول من المعتاد في السحابة. تم حفظ الأجزاء المرفوعة.');
+    throw new Error('انتهت مهلة معالجة الفيديو في السحابة');
   },
-
   async deleteReelAsset(
     user: { id?: string; role?: string; sellerId?: string },
     fileKey: string
@@ -3072,11 +2848,9 @@ export const api = {
     filename = 'reel_video.mp4',
     targetSellerId?: string
   ): Promise<{ url: string; fileKey: string; duration?: number; format?: string; thumbnailUrl?: string }> {
-    // If a File or Blob is passed, route through direct Cloudinary signed upload
     let fileObj: File | Blob;
     if (typeof videoDataUriOrFile === 'string') {
       if (videoDataUriOrFile.startsWith('data:')) {
-        // Enforce 10MB safety check on data URIs to avoid massive heap allocations
         if (videoDataUriOrFile.length > 15 * 1024 * 1024) {
           throw new Error('يرجى تمرير ملف الفيديو ككائن File أو Blob بدلاً من تشفيره في نص كبير');
         }
@@ -3103,7 +2877,6 @@ export const api = {
       targetSellerId
     });
   },
-
 
   async createReel(
     user: { id?: string; role?: string; sellerId?: string },
@@ -3349,7 +3122,6 @@ const sanitizeWahSlug = (val: any): string | null => {
   return null;
 };
 
-// In-memory client cache for instant page rendering and smooth navigation
 const clientWahCache = new Map<string, { data: any; timestamp: number }>();
 
 function getClientCache<T>(key: string, maxAgeMs = 300000): T | null {
@@ -3370,7 +3142,6 @@ export function clearClientWahCache(): void {
 }
 
 export const wahApi = {
-  // Synchronous cache access helpers
   getCachedGovernorates(): WahGovernorate[] | null {
     return getClientCache<WahGovernorate[]>('govs_all', 600000);
   },
@@ -4094,7 +3865,7 @@ export const wahApi = {
     return json.data;
   },
 
-  // 16. Governorate-Centric CMS Dashboard (Real MongoDB Live Stats)
+  // 16. Governorate-Centric CMS Dashboard
   async getGovernorateDashboard(slugOrId: string): Promise<GovernorateDashboardStats> {
     const res = await fetch(`${API_BASE}/wah/governorates/${slugOrId}/dashboard`);
     const json = await res.json();
@@ -4183,6 +3954,3 @@ export const wahApi = {
   // 20. Central Admin Media Management
   ...adminMediaApi
 };
-
-
-

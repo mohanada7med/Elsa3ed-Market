@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
 import type { SellerDocument, ProductDocument, OrderDocument, SellerStatus } from '../models/types.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
@@ -32,7 +33,6 @@ export async function getSellerDashboardStats(sellerId: string) {
     }
   }
 
-  // Calculate sales and units sold specifically for this seller
   let totalSales = 0;
   let totalUnitsSold = 0;
   const productSalesMap: Record<string, { title: string; image: string; units: number; revenue: number }> = {};
@@ -119,16 +119,12 @@ export async function getSellerAnalytics(sellerId: string, period: '7d' | '30d' 
   if (period === 'all') daysToFilter = 3650;
 
   const cutoffTime = new Date(now.getTime() - daysToFilter * 24 * 60 * 60 * 1000).getTime();
-
-  // Filter orders by cutoff
   const filteredOrders = orders.filter((o) => new Date(o.createdAt).getTime() >= cutoffTime);
 
-  // Group sales by day
   const dailyMap: Record<string, { date: string; sales: number; orders: number; units: number }> = {};
   let totalRevenue = 0;
   let totalUnits = 0;
 
-  // Prepopulate days
   for (let i = Math.min(daysToFilter, 30) - 1; i >= 0; i--) {
     const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
     const dateStr = d.toISOString().split('T')[0];
@@ -198,7 +194,6 @@ export async function updateSellerProfile(
     payoutAccount: updates.payoutAccount?.trim()
   };
 
-  // Remove undefined keys
   Object.keys(safeUpdates).forEach((k) => {
     if ((safeUpdates as any)[k] === undefined) delete (safeUpdates as any)[k];
   });
@@ -289,7 +284,6 @@ export async function adminUpdateSellerProfile(
   if (isMongo && db) {
     try {
       await db.collection('sellers').updateOne({ id: sellerId }, { $set: safeUpdates });
-      // Also sync linked user profile
       const userUpdate: any = {};
       if (safeUpdates.name) userUpdate.name = safeUpdates.name;
       if (safeUpdates.governorate) userUpdate.governorate = safeUpdates.governorate;
@@ -388,7 +382,6 @@ export async function adminUpdateSellerStatus(
     updatePayload.suspensionReason = reason?.trim() || 'تم تعليق الحساب لمخالفة سياسات التوريد أو الجودة';
   }
 
-  // Determine user updates
   const userUpdates: any = {
     sellerStatus: status,
     updatedAt: now
@@ -403,10 +396,7 @@ export async function adminUpdateSellerStatus(
 
   if (isMongo && db) {
     try {
-      // 1. Update seller in sellers collection
       await db.collection('sellers').updateOne({ id: sellerId }, { $set: updatePayload });
-
-      // 2. Sync sellerStatus and role to users collection
       await db.collection('users').updateMany(
         { $or: [{ sellerId: sellerId }, { id: seller.userId }, { email: seller.email }] },
         { $set: userUpdates }
@@ -416,7 +406,6 @@ export async function adminUpdateSellerStatus(
     }
   }
 
-  // Update in-memory fallback
   const memSeller = memoryDb.sellers.find((s) => s.id === sellerId);
   if (memSeller) {
     Object.assign(memSeller, updatePayload);
@@ -435,13 +424,11 @@ export async function adminUpdateSellerStatus(
     }
   }
 
-  // Invalidate cached auth sessions for this user so changes take effect immediately
   if (seller.userId) {
     invalidateAuthSession(seller.userId);
   }
   invalidateAuthSession(sellerId);
 
-  // Send persistent notification to the applicant/seller user
   const targetUserId = seller.userId || sellerId;
   try {
     if (status === 'approved') {
@@ -490,12 +477,109 @@ export async function adminUpdateSellerStatus(
     resource: 'حساب ورشة',
     resourceId: sellerId,
     status: status === 'suspended' || status === 'rejected' ? 'تنبيه' : 'نجاح',
-    details: `قام المدير ${adminUser.name} بتعديل حالة ورشة "${seller.brandName || seller.name}" من [${previousStatus}] إلى [${status}]${
-      reason ? ` - السبب: ${reason}` : ''
-    }`
+    details: `قام المدير ${adminUser.name} بتعديل حالة ورشة "${seller.brandName || seller.name}" من [${previousStatus}] إلى [${status}]${reason ? ` - السبب: ${reason}` : ''
+      }`
   });
 
   return updatedSeller;
+}
+
+/**
+ * Admin: Delete a seller completely from database and memory,
+ * cleaning up all associated products, reels, and user profiles.
+ */
+export async function deleteSellerCompletely(
+  adminUser: AuthenticatedUser,
+  sellerIdOrUserId: string
+): Promise<{ success: boolean; message: string; deletedProductsCount: number; deletedReelsCount: number }> {
+  if (adminUser.role !== 'admin') {
+    throw new Error('فقط مدير المنصة يملك صلاحية حذف الورش نهائياً');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let targetSellerId = sellerIdOrUserId;
+  let targetUserId = sellerIdOrUserId;
+
+  let sellerDoc: any = null;
+  if (isMongo && db) {
+    const queryFilter: any[] = [{ id: sellerIdOrUserId }, { userId: sellerIdOrUserId }];
+    if (ObjectId.isValid(sellerIdOrUserId) && sellerIdOrUserId.length === 24) {
+      try {
+        queryFilter.push({ _id: new ObjectId(sellerIdOrUserId) });
+      } catch { }
+    }
+    sellerDoc = await db.collection('sellers').findOne({ $or: queryFilter });
+    if (sellerDoc) {
+      targetSellerId = sellerDoc.id || sellerDoc._id.toString();
+      targetUserId = sellerDoc.userId || targetSellerId;
+    }
+  }
+
+  if (!sellerDoc) {
+    sellerDoc = memoryDb.sellers.find((s) => s.id === sellerIdOrUserId || (s as any).userId === sellerIdOrUserId);
+    if (sellerDoc) {
+      targetSellerId = sellerDoc.id;
+      targetUserId = (sellerDoc as any).userId || targetSellerId;
+    }
+  }
+
+  let deletedProductsCount = 0;
+  let deletedReelsCount = 0;
+
+  // 1. حذف المنتجات المرتبطة بالورشة
+  if (isMongo && db) {
+    const sellerProducts = await db.collection('products').find({ sellerId: { $in: [targetSellerId, targetUserId] } }).toArray();
+    deletedProductsCount = sellerProducts.length;
+    await db.collection('products').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+  }
+  memoryDb.products = memoryDb.products.filter((p) => p.sellerId !== targetSellerId && p.sellerId !== targetUserId);
+
+  // 2. حذف فيديوهات الحرفيين (Reels) المرتبطة
+  if (isMongo && db) {
+    const sellerReels = await db.collection('craft_reels').find({ sellerId: { $in: [targetSellerId, targetUserId] } }).toArray();
+    deletedReelsCount = sellerReels.length;
+    await db.collection('craft_reels').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+  }
+  memoryDb.craftReels = memoryDb.craftReels.filter((r) => r.sellerId !== targetSellerId && r.sellerId !== targetUserId);
+
+  // 3. حذف سجل الورشة وحساب المستخدم المرتبط
+  if (isMongo && db) {
+    const sellerFilter: any[] = [{ id: targetSellerId }, { userId: targetUserId }];
+    if (ObjectId.isValid(targetSellerId) && targetSellerId.length === 24) {
+      try { sellerFilter.push({ _id: new ObjectId(targetSellerId) }); } catch { }
+    }
+    await db.collection('sellers').deleteMany({ $or: sellerFilter });
+
+    const userFilter: any[] = [{ id: targetUserId }, { id: targetSellerId }];
+    if (ObjectId.isValid(targetUserId) && targetUserId.length === 24) {
+      try { userFilter.push({ _id: new ObjectId(targetUserId) }); } catch { }
+    }
+    await db.collection('users').deleteMany({ $or: userFilter });
+  }
+
+  memoryDb.sellers = memoryDb.sellers.filter((s) => s.id !== targetSellerId && (s as any).userId !== targetUserId);
+  memoryDb.users = memoryDb.users.filter((u) => u.id !== targetUserId && u.id !== targetSellerId);
+
+  cacheService.invalidateSellers(targetSellerId);
+  invalidateAuthSession(targetUserId);
+
+  await createAuditLog({
+    actorId: adminUser.id,
+    userName: adminUser.name,
+    userRole: 'admin',
+    action: 'SELLER_DELETED_COMPLETELY',
+    resource: 'حساب ورشة',
+    resourceId: targetSellerId,
+    status: 'نجاح',
+    details: `قام المدير ${adminUser.name} بحذف الورشة [${targetSellerId}] نهائياً مع ${deletedProductsCount} منتج و ${deletedReelsCount} فيديو`
+  });
+
+  return {
+    success: true,
+    message: 'تم حذف الورشة وكل متعلقاتها نهائياً من قاعدة البيانات بنجاح',
+    deletedProductsCount,
+    deletedReelsCount
+  };
 }
 
 /**

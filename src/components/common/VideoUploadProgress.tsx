@@ -131,9 +131,9 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
 
     // Rule 1: Immediate 1GB validation check
     if (file.size > maxSizeBytes) {
-      setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+      setErrorMessage('حجم الفيديو لازم يكون 300 ميجاأو أقل.');
       setUploadState('failed');
-      onUploadError?.('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+      onUploadError?.('حجم الفيديو لازم يكون 300 ميجاأو أقل.');
       return;
     }
 

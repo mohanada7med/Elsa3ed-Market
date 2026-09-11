@@ -60,10 +60,9 @@ export function createApp(): Express {
   app.use(cookieParser());
 
   // 4. Body parsers (Support images and high-definition craft reels video uploads up to 60MB)
-  const bodyLimit = `${Math.max(env.MAX_UPLOAD_SIZE_MB + 2, 60)}mb`;
+  const bodyLimit = '350mb';
   app.use(express.json({ limit: bodyLimit }));
   app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
-
 
   // 4. Static Uploads folder serving
   const uploadsPath = path.join(process.cwd(), 'public', 'uploads');

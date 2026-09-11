@@ -78,7 +78,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.',
+            error: 'حجم الفيديو لازم يكون 300 ميجاأو أقل.',
             code: 'FILE_TOO_LARGE'
           });
         }

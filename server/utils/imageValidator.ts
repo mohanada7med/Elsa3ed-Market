@@ -333,7 +333,7 @@ export function validateVideo(
   if (sizeBytes > MAX_VIDEO_FILE_SIZE_BYTES) {
     return {
       valid: false,
-      error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
+      error: 'حجم الفيديو لازم يكون 300 ميجاأو أقل.'
     };
   }
 

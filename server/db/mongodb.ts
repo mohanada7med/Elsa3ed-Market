@@ -88,6 +88,7 @@ class MemoryStore {
     updatedAt: new Date().toISOString(),
     updatedBy: 'النظام'
   };
+  craftReels: any;
 }
 export const memoryDb = new MemoryStore();
 

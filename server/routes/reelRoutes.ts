@@ -178,7 +178,7 @@ const handleUploadSignature = async (req: AuthenticatedRequest, res: Response) =
     if (fileSize && (isNaN(fileSize) || fileSize > MAX_VIDEO_SIZE_BYTES)) {
       return res.status(400).json({
         success: false,
-        error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
+        error: 'حجم الفيديو لازم يكون 300 ميجاأو أقل.'
       });
     }
 
@@ -284,7 +284,7 @@ router.post(
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            error: 'حجم الفيديو لازم يكون 1 جيجا أو أقل.'
+            error: 'حجم الفيديو لازم يكون 300 ميجاأو أقل.'
           });
         }
         return res.status(400).json({
@@ -312,7 +312,7 @@ router.post(
       if (req.file) {
         if ((req.file as any).path) {
           uploadData = fs.readFileSync((req.file as any).path);
-          fs.unlink((req.file as any).path, () => {});
+          fs.unlink((req.file as any).path, () => { });
         } else {
           uploadData = req.file.buffer;
         }
@@ -582,8 +582,8 @@ router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) =
       hashtags: Array.isArray(hashtags)
         ? hashtags
         : typeof hashtags === 'string'
-        ? hashtags.split(/[,،\s]+/).filter(Boolean)
-        : ['#تراث_الصعيد', '#حكايات_الصعيد'],
+          ? hashtags.split(/[,،\s]+/).filter(Boolean)
+          : ['#تراث_الصعيد', '#حكايات_الصعيد'],
       musicTrack: musicTrack || undefined,
       isVerifiedArtisan: isVerifiedArtisan ?? true,
       isFeatured: user.role === 'admin' ? Boolean(isFeatured) : false,
@@ -906,7 +906,7 @@ router.post('/bulk-delete', requireAuth, async (req: AuthenticatedRequest, res: 
     for (const r of reelsToDelete) {
       const videoPublicId = r.cloudinaryPublicId || extractCloudinaryPublicId(r.videoUrl);
       if (videoPublicId) {
-        cloudinaryStorage.delete(videoPublicId, { id: user.id, role: user.role }).catch(() => {});
+        cloudinaryStorage.delete(videoPublicId, { id: user.id, role: user.role }).catch(() => { });
       }
     }
 

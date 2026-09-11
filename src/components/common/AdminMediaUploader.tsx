@@ -91,7 +91,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     id: currentUser?.id || 'admin',
     role: isAdmin ? 'admin' : (currentUser?.role || currentRole || 'admin')
   };
-
+  const [externalUrlInput, setExternalUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
@@ -219,7 +219,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       if (isVideo) {
         if (file.size > 1024 * 1024 * 1024) {
-          setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+          setErrorMessage('حجم الفيديو لازم يكون 300 ميجاأو أقل.');
           return;
         }
       } else {
@@ -443,7 +443,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     const isVideo = file.type.startsWith('video/') || allowedVideoMimes.includes(file.type.toLowerCase());
 
     if (isVideo && file.size > 1024 * 1024 * 1024) {
-      setErrorMessage('حجم الفيديو لازم يكون 1 جيجا أو أقل.');
+      setErrorMessage('حجم الفيديو لازم يكون 300 ميجاأو أقل.');
       return;
     }
     if (!isVideo && (!allowedImageMimes.includes(file.type.toLowerCase()) || file.size > 10 * 1024 * 1024)) {
@@ -581,9 +581,9 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   const isVideoUrl = (url?: string) =>
     Boolean(
       url &&
-        (url.match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i) ||
-          url.includes('/video/upload/') ||
-          url.includes('resource_type=video'))
+      (url.match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i) ||
+        url.includes('/video/upload/') ||
+        url.includes('resource_type=video'))
     );
 
   // Staging upload progress metrics
@@ -646,8 +646,8 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           mediaCategory === 'video'
             ? 'video/mp4,video/webm,video/quicktime,video/*'
             : mediaCategory === 'image'
-            ? 'image/png,image/jpeg,image/webp,image/jpg'
-            : 'image/png,image/jpeg,image/webp,image/jpg,video/mp4,video/webm,video/quicktime,video/*'
+              ? 'image/png,image/jpeg,image/webp,image/jpg'
+              : 'image/png,image/jpeg,image/webp,image/jpg,video/mp4,video/webm,video/quicktime,video/*'
         }
         multiple={multiple}
         onChange={(e) => {
@@ -685,11 +685,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         <button
           type="button"
           onClick={() => setActiveMode('device')}
-          className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-            activeMode === 'device'
-              ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
-              : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
-          }`}
+          className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${activeMode === 'device'
+            ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
+            : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
+            }`}
         >
           <Upload className="w-4 h-4 shrink-0" />
           <span>رفع من الجهاز (Cloudinary)</span>
@@ -698,11 +697,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         <button
           type="button"
           onClick={() => setActiveMode('url')}
-          className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
-            activeMode === 'url'
-              ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
-              : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
-          }`}
+          className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${activeMode === 'url'
+            ? 'bg-white dark:bg-[#2C241F] text-[#9a6a35] dark:text-[#d5a56d] shadow-xs'
+            : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-[#211d18]'
+            }`}
         >
           <LinkIcon className="w-4 h-4 shrink-0" />
           <span>رابط وسيط خارجي (URL)</span>
@@ -725,11 +723,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 handleFilesSelected(e.dataTransfer.files);
               }
             }}
-            className={`w-full border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center transition-all select-none flex flex-col items-center justify-center gap-3 ${
-              isDragging
-                ? 'border-[#9a6a35] bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 scale-[0.99]'
-                : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
-            }`}
+            className={`w-full border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center transition-all select-none flex flex-col items-center justify-center gap-3 ${isDragging
+              ? 'border-[#9a6a35] bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 scale-[0.99]'
+              : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
+              }`}
           >
             <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#EADCCB] dark:bg-[#362A22] flex items-center justify-center text-[#9a6a35] dark:text-[#d5a56d] shadow-2xs">
               {mediaCategory === 'video' ? (
@@ -744,10 +741,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 {mediaCategory === 'video'
                   ? 'اختر أو اسحب مقطع فيديو توثيقي'
                   : mediaCategory === 'image'
-                  ? multiple
-                    ? 'اختر مجموعة صور للمعرض'
-                    : 'اختر صورة الغلاف الرئيسية'
-                  : 'اختر الصور أو مقاطع الفيديو'}
+                    ? multiple
+                      ? 'اختر مجموعة صور للمعرض'
+                      : 'اختر صورة الغلاف الرئيسية'
+                    : 'اختر الصور أو مقاطع الفيديو'}
               </h4>
               <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 mt-1 leading-relaxed">
                 {mediaCategory === 'video'
@@ -1051,33 +1048,27 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* Tab 2: External Image URL (Backward compatibility) */}
       {activeMode === 'url' && (
-        <form onSubmit={handleUrlSubmit} className="space-y-2 mb-3">
+        <div className="space-y-2 mb-3"> {/* تم تغيير form إلى div لمنع تداخل النماذج */}
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <input
                 type="url"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="https://images.unsplash.com/... أو رابط وسيط خارجي"
-                disabled={disabled || isUploading || !isAdmin}
-                className="w-full bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5 text-xs sm:text-sm rounded-xl px-4 py-3 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:text-white/40 focus:outline-none focus:border-[#9a6a35] min-h-[44px]"
+                value={externalUrlInput}
+                onChange={(e) => setExternalUrlInput(e.target.value)}
+                placeholder="أدخل رابط الصورة أو الفيديو مباشرة (https://...)"
                 dir="ltr"
+                className="w-full px-3 py-2 text-xs border border-black/15 dark:border-white/15 rounded-xl bg-white dark:bg-black/40 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
               />
             </div>
             <button
-              type="submit"
-              disabled={disabled || isUploading || !urlInput.trim() || !isAdmin}
-              className="min-h-[44px] px-6 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+              type="button" // تم جعل الزر من نوع button عادي وليس submit لمنع إرسال النموذج الرئيسي بالخطأ
+              onClick={handleUrlSubmit}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              {isUploading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CheckCircle2 className="w-4 h-4" />
-              )}
-              <span>اعتماد الرابط</span>
+              <span>حفظ الرابط</span>
             </button>
           </div>
-        </form>
+        </div>
       )}
 
       {/* Alt Text Input (for SEO & Accessibility) */}
@@ -1227,11 +1218,10 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               return (
                 <div
                   key={img.item?.id || `${img.url}-${idx}`}
-                  className={`relative rounded-2xl overflow-hidden border transition-all ${
-                    isPrimary
-                      ? 'border-[#9a6a35] shadow-xs dark:border-[#d5a56d]/60 bg-[#FFFBF7] dark:bg-black/5 dark:bg-white/5'
-                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
-                  } p-3 flex flex-col justify-between gap-2.5`}
+                  className={`relative rounded-2xl overflow-hidden border transition-all ${isPrimary
+                    ? 'border-[#9a6a35] shadow-xs dark:border-[#d5a56d]/60 bg-[#FFFBF7] dark:bg-black/5 dark:bg-white/5'
+                    : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 dark:bg-black/5 dark:bg-white/5'
+                    } p-3 flex flex-col justify-between gap-2.5`}
                 >
                   {/* Thumbnail / Video */}
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10 flex items-center justify-center">
