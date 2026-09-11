@@ -38,12 +38,17 @@ export function buildMediaIdFilter(mediaIdOrPublicId: string) {
   return { $or: filter };
 }
 
-export function buildEntityFilter(entityId: string) {
+export function buildEntityFilter(entityId: string, entitySlug?: string) {
   const filter: any[] = [
     { id: entityId },
     { slug: entityId },
     { _id: entityId }
   ];
+
+  if (entitySlug && entitySlug !== entityId) {
+    filter.push({ slug: entitySlug });
+    filter.push({ id: entitySlug });
+  }
 
   if (ObjectId.isValid(entityId) && entityId.length === 24) {
     try {
@@ -51,7 +56,30 @@ export function buildEntityFilter(entityId: string) {
     } catch { }
   }
 
+  if (entitySlug && ObjectId.isValid(entitySlug) && entitySlug.length === 24) {
+    try {
+      filter.push({ _id: new ObjectId(entitySlug) });
+    } catch { }
+  }
+
   return { $or: filter };
+}
+
+function findMemoryEntity(collectionName: string, entityId: string, entitySlug?: string): any {
+  const match = (item: any) =>
+    item &&
+    (item.id === entityId ||
+      item.slug === entityId ||
+      (entitySlug && (item.slug === entitySlug || item.id === entitySlug)));
+
+  if (collectionName === 'wah_heritage_places') return memoryDb.heritagePlaces.find(match) || null;
+  if (collectionName === 'wah_cultural_crafts') return memoryDb.culturalCrafts.find(match) || null;
+  if (collectionName === 'wah_stories') return memoryDb.wahStories.find(match) || null;
+  if (collectionName === 'wah_people') return memoryDb.localPeople.find(match) || null;
+  if (collectionName === 'wah_foods') return memoryDb.upperEgyptFood.find(match) || null;
+  if (collectionName === 'wah_events') return memoryDb.culturalEvents.find(match) || null;
+  if (collectionName === 'wah_governorates') return memoryDb.governorates.find(match) || null;
+  return null;
 }
 
 export interface UploadAdminMediaOptions {
@@ -700,10 +728,11 @@ export async function setPrimaryAdminMedia(
 export async function reorderGalleryMedia(options: {
   entityType: string;
   entityId: string;
+  entitySlug?: string;
   galleryUrls: string[];
   user: { id: string; role: UserRole };
 }): Promise<{ success: boolean; gallery: string[] }> {
-  const { entityType, entityId, galleryUrls, user } = options;
+  const { entityType, entityId, entitySlug, galleryUrls, user } = options;
 
   if (!user || user.role !== 'admin') {
     throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
@@ -715,7 +744,7 @@ export async function reorderGalleryMedia(options: {
   }
 
   const { db, isMongo } = await getDatabase();
-  const filter = buildEntityFilter(entityId);
+  const filter = buildEntityFilter(entityId, entitySlug);
 
   if (isMongo && db) {
     await db.collection(collectionName).updateOne(
@@ -724,12 +753,19 @@ export async function reorderGalleryMedia(options: {
     );
   }
 
+  const memEntity = findMemoryEntity(collectionName, entityId, entitySlug);
+  if (memEntity) {
+    memEntity.gallery = galleryUrls;
+    memEntity.galleryImages = galleryUrls;
+  }
+
   return { success: true, gallery: galleryUrls };
 }
 
 export async function manageEntityGallery(options: {
   entityType: string;
   entityId: string;
+  entitySlug?: string;
   action: 'add' | 'remove' | 'setCover' | 'updateGallery' | 'setVideo' | 'removeVideo';
   imageUrl?: string;
   videoUrl?: string;
@@ -744,7 +780,7 @@ export async function manageEntityGallery(options: {
   videoUrl?: string | null;
   videos?: string[];
 }> {
-  const { entityType, entityId, action, imageUrl, videoUrl, galleryUrls, coverImage, user } = options;
+  const { entityType, entityId, entitySlug, action, imageUrl, videoUrl, galleryUrls, coverImage, user } = options;
 
   if (!user || user.role !== 'admin') {
     throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
@@ -756,77 +792,233 @@ export async function manageEntityGallery(options: {
   }
 
   const { db, isMongo } = await getDatabase();
-  const filter = buildEntityFilter(entityId);
+  const filter = buildEntityFilter(entityId, entitySlug);
+  const memEntity = findMemoryEntity(collectionName, entityId, entitySlug);
 
-  let updatedGallery: string[] = [];
-  let updatedCover: string | undefined;
-
-  if (action === 'setCover' && imageUrl) {
-    updatedCover = imageUrl;
-    if (isMongo && db) {
-      await db.collection(collectionName).updateOne(filter, {
-        $set: { coverImage: imageUrl, imageUrl: imageUrl, updatedAt: new Date().toISOString() }
-      });
-    }
-    return { success: true, message: 'تم تعيين الصورة كصورة رئيسية بنجاح', coverImage: imageUrl };
+  // Fetch current entity state
+  let currentDoc: any = null;
+  if (isMongo && db) {
+    currentDoc = await db.collection(collectionName).findOne(filter);
+  }
+  if (!currentDoc && memEntity) {
+    currentDoc = memEntity;
   }
 
+  let currentGallery: string[] = Array.isArray(currentDoc?.gallery)
+    ? currentDoc.gallery
+    : (Array.isArray(memEntity?.gallery) ? memEntity.gallery : []);
+  let currentCover: string | undefined = currentDoc?.coverImage || currentDoc?.imageUrl || memEntity?.coverImage || memEntity?.imageUrl;
+
+  // 1. SET COVER
+  if (action === 'setCover' && imageUrl) {
+    const cleanUrl = imageUrl.trim();
+    if (isMongo && db) {
+      await db.collection(collectionName).updateOne(filter, {
+        $set: { coverImage: cleanUrl, imageUrl: cleanUrl, updatedAt: new Date().toISOString() }
+      });
+
+      // Update primary state in wah_media
+      try {
+        await db.collection<MediaAssetDoc>('wah_media').updateMany(
+          {
+            $or: [
+              { entityType, entityId },
+              ...(entitySlug ? [{ entityType, entitySlug }] : [])
+            ]
+          },
+          { $set: { isPrimary: false, updatedAt: new Date().toISOString() } }
+        );
+        await db.collection<MediaAssetDoc>('wah_media').updateOne(
+          buildMediaIdFilter(cleanUrl),
+          { $set: { isPrimary: true, updatedAt: new Date().toISOString() } }
+        );
+      } catch { }
+    }
+
+    if (memEntity) {
+      memEntity.coverImage = cleanUrl;
+      memEntity.imageUrl = cleanUrl;
+    }
+
+    memoryDb.media.forEach((m) => {
+      if (m.entityType === entityType && (m.entityId === entityId || (entitySlug && m.entitySlug === entitySlug))) {
+        m.isPrimary = m.url === cleanUrl || m.secureUrl === cleanUrl;
+      }
+    });
+
+    return {
+      success: true,
+      message: 'تم تعيين الصورة كغلاف رئيسي بنجاح',
+      coverImage: cleanUrl,
+      gallery: currentGallery
+    };
+  }
+
+  // 2. SET VIDEO
   if (action === 'setVideo' && (videoUrl || imageUrl)) {
-    const targetVideo = videoUrl || imageUrl;
+    const targetVideo = (videoUrl || imageUrl)!.trim();
     if (isMongo && db) {
       await db.collection(collectionName).updateOne(filter, {
         $set: { videoUrl: targetVideo, updatedAt: new Date().toISOString() },
         $addToSet: { videos: targetVideo } as any
       });
     }
+    if (memEntity) {
+      memEntity.videoUrl = targetVideo;
+      if (!memEntity.videos) memEntity.videos = [];
+      if (!memEntity.videos.includes(targetVideo)) memEntity.videos.push(targetVideo);
+    }
     return { success: true, message: 'تم حفظ مقطع الفيديو التوثيقي بنجاح', videoUrl: targetVideo };
   }
 
+  // 3. REMOVE VIDEO
   if (action === 'removeVideo') {
-    const targetVideo = videoUrl || imageUrl;
+    const targetVideo = (videoUrl || imageUrl)?.trim();
     if (isMongo && db) {
       const updateDoc: any = { $set: { updatedAt: new Date().toISOString() } };
       if (!targetVideo) updateDoc.$set.videoUrl = null;
       if (targetVideo) updateDoc.$pull = { videos: targetVideo };
       await db.collection(collectionName).updateOne(filter, updateDoc);
     }
+    if (memEntity) {
+      if (!targetVideo) memEntity.videoUrl = null;
+      if (targetVideo && memEntity.videos) {
+        memEntity.videos = memEntity.videos.filter((v: string) => v !== targetVideo);
+      }
+    }
     return { success: true, message: 'تم إزالة مقطع الفيديو بنجاح', videoUrl: null };
   }
 
+  // 4. ADD IMAGE TO GALLERY
   if (action === 'add' && imageUrl) {
+    const cleanUrl = imageUrl.trim();
+    const isFirstImage = !currentCover && currentGallery.length === 0;
+    const targetCover = isFirstImage ? cleanUrl : currentCover;
+
     if (isMongo && db) {
-      await db.collection(collectionName).updateOne(filter, {
-        $addToSet: { gallery: imageUrl, galleryImages: imageUrl } as any,
+      const updateDoc: any = {
+        $addToSet: { gallery: cleanUrl, galleryImages: cleanUrl } as any,
         $set: { updatedAt: new Date().toISOString() }
-      });
+      };
+      if (isFirstImage) {
+        updateDoc.$set.coverImage = cleanUrl;
+        updateDoc.$set.imageUrl = cleanUrl;
+      }
+      await db.collection(collectionName).updateOne(filter, updateDoc);
     }
-    return { success: true, message: 'تمت إضافة الصورة إلى المعرض بنجاح', gallery: updatedGallery };
+
+    if (memEntity) {
+      if (!memEntity.gallery) memEntity.gallery = [];
+      if (!memEntity.gallery.includes(cleanUrl)) memEntity.gallery.push(cleanUrl);
+      if (!memEntity.galleryImages) memEntity.galleryImages = [];
+      if (!memEntity.galleryImages.includes(cleanUrl)) memEntity.galleryImages.push(cleanUrl);
+      if (isFirstImage) {
+        memEntity.coverImage = cleanUrl;
+        memEntity.imageUrl = cleanUrl;
+      }
+    }
+
+    const updatedGallery = Array.from(new Set([...currentGallery, cleanUrl]));
+    return {
+      success: true,
+      message: 'تمت إضافة الصورة إلى المعرض بنجاح',
+      gallery: updatedGallery,
+      coverImage: targetCover
+    };
   }
 
+  // 5. REMOVE IMAGE FROM GALLERY & CLOUDINARY
   if (action === 'remove' && imageUrl) {
+    const cleanUrl = imageUrl.trim();
+    const cleanBasePath = cleanUrl.split('?')[0];
+
+    // Filter out removed image from gallery
+    const remainingGallery = currentGallery.filter(
+      (u) => u && u.trim() !== cleanUrl && u.trim().split('?')[0] !== cleanBasePath
+    );
+
+    const isCurrentCover =
+      currentCover &&
+      (currentCover.trim() === cleanUrl || currentCover.trim().split('?')[0] === cleanBasePath);
+    const nextCover = isCurrentCover ? (remainingGallery[0] || undefined) : currentCover;
+
     if (isMongo && db) {
-      await db.collection(collectionName).updateOne(filter, {
-        $pull: { gallery: imageUrl, galleryImages: imageUrl } as any,
+      const updateDoc: any = {
+        $pull: {
+          gallery: { $in: [cleanUrl, cleanBasePath] },
+          galleryImages: { $in: [cleanUrl, cleanBasePath] }
+        } as any,
         $set: { updatedAt: new Date().toISOString() }
-      });
+      };
+      if (isCurrentCover) {
+        updateDoc.$set.coverImage = nextCover || null;
+        updateDoc.$set.imageUrl = nextCover || null;
+      }
+      await db.collection(collectionName).updateOne(filter, updateDoc);
     }
-    return { success: true, message: 'تم حذف الصورة من معرض المكان بنجاح', gallery: updatedGallery };
+
+    if (memEntity) {
+      if (memEntity.gallery) {
+        memEntity.gallery = remainingGallery;
+      }
+      if (memEntity.galleryImages) {
+        memEntity.galleryImages = remainingGallery;
+      }
+      if (isCurrentCover) {
+        memEntity.coverImage = nextCover;
+        memEntity.imageUrl = nextCover;
+      }
+    }
+
+    // Purge from Cloudinary and wah_media collection completely
+    try {
+      await deleteAdminMedia(cleanUrl, user);
+    } catch (cloudErr) {
+      Logger.warn('[manageEntityGallery] Cloudinary purge warning:', cloudErr);
+    }
+
+    return {
+      success: true,
+      message: 'تم حذف الصورة من المعرض والتخزين السحابي وقاعدة البيانات بنجاح',
+      gallery: remainingGallery,
+      coverImage: nextCover
+    };
   }
 
+  // 6. UPDATE FULL GALLERY
   if (action === 'updateGallery' && Array.isArray(galleryUrls)) {
+    const validUrls = Array.from(new Set(galleryUrls.map((u) => u.trim()).filter(Boolean)));
+    const targetCover = coverImage?.trim() || (validUrls.length > 0 ? (validUrls.includes(currentCover || '') ? currentCover : validUrls[0]) : undefined);
+
     const updateFields: any = {
-      gallery: galleryUrls,
-      galleryImages: galleryUrls,
+      gallery: validUrls,
+      galleryImages: validUrls,
       updatedAt: new Date().toISOString()
     };
-    if (coverImage) {
-      updateFields.coverImage = coverImage;
-      updateFields.imageUrl = coverImage;
+    if (targetCover) {
+      updateFields.coverImage = targetCover;
+      updateFields.imageUrl = targetCover;
     }
+
     if (isMongo && db) {
       await db.collection(collectionName).updateOne(filter, { $set: updateFields });
     }
-    return { success: true, message: 'تم تحديث صور المعرض بنجاح', gallery: galleryUrls, coverImage: coverImage || updatedCover };
+
+    if (memEntity) {
+      memEntity.gallery = validUrls;
+      memEntity.galleryImages = validUrls;
+      if (targetCover) {
+        memEntity.coverImage = targetCover;
+        memEntity.imageUrl = targetCover;
+      }
+    }
+
+    return {
+      success: true,
+      message: 'تم تحديث صور المعرض بنجاح',
+      gallery: validUrls,
+      coverImage: targetCover
+    };
   }
 
   return { success: false, message: 'إجراء غير معروف أو بيانات غير مكتملة' };

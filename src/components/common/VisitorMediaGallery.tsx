@@ -256,14 +256,20 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
         action: 'setCover',
         imageUrl,
       });
 
       if (res?.success !== false) {
-        setLocalCover(imageUrl);
-        onCoverChange?.(imageUrl);
-        addToast('تم التعيين', 'تم تعيين الصورة كغلاف رئيسي بنجاح', 'success');
+        const newCover = res?.coverImage || imageUrl;
+        setLocalCover(newCover);
+        onCoverChange?.(newCover);
+        if (res?.gallery && Array.isArray(res.gallery)) {
+          setLocalGallery(res.gallery);
+          onGalleryChange?.(res.gallery);
+        }
+        addToast('تم التعيين', 'تم تعيين الصورة كغلاف رئيسي في قاعدة البيانات بنجاح', 'success');
       }
     } catch (err: any) {
       addToast('خطأ', err?.message || 'فشل تعيين الصورة كغلاف', 'error');
@@ -308,6 +314,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       let res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: realEntityId,
+        entitySlug: entitySlug || realEntityId,
         action: 'updateGallery',
         galleryUrls: updatedGallery,
         coverImage: nextCover,
@@ -318,6 +325,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
           res = await adminMediaApi.manageEntityGallery(userAuth, {
             entityType,
             entityId: realEntityId,
+            entitySlug: entitySlug || realEntityId,
             action: 'add',
             imageUrl: url,
           });
@@ -328,8 +336,12 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         setLocalGallery(res.gallery);
         onGalleryChange?.(res.gallery);
       }
+      if (res?.coverImage) {
+        setLocalCover(res.coverImage);
+        onCoverChange?.(res.coverImage);
+      }
 
-      addToast('تم الحفظ', 'تم حفظ الصور في قاعدة البيانات بنجاح', 'success');
+      addToast('تم الحفظ', 'تم حفظ الصور في قاعدة البيانات والتخزين السحابي بنجاح', 'success');
     } catch (err: any) {
       addToast('فشل الحفظ في الخادم', err?.message || 'الصور رُفعت لكن لم يتم ربطها بقاعدة البيانات', 'error');
     } finally {
@@ -357,6 +369,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: targetEntityKey,
+        entitySlug: entitySlug || targetEntityKey,
         action: 'remove',
         imageUrl: targetClean,
         galleryUrls: updated,
@@ -366,24 +379,14 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       setLocalGallery(finalGallery);
       onGalleryChange?.(finalGallery);
 
-      if (
-        localCover &&
-        (localCover.trim() === targetClean ||
-          localCover.trim().split('?')[0] === targetPath)
-      ) {
-        const nextCover = finalGallery[0] || '';
-        setLocalCover(nextCover);
-        onCoverChange?.(nextCover);
+      const resolvedCover: string = res?.coverImage !== undefined ? (res.coverImage || '') : (
+        localCover && (localCover.trim() === targetClean || localCover.trim().split('?')[0] === targetPath)
+          ? (finalGallery[0] || '')
+          : (localCover || '')
+      );
 
-        if (nextCover) {
-          await adminMediaApi.manageEntityGallery(userAuth, {
-            entityType,
-            entityId: targetEntityKey,
-            action: 'setCover',
-            imageUrl: nextCover,
-          });
-        }
-      }
+      setLocalCover(resolvedCover || undefined);
+      onCoverChange?.(resolvedCover);
 
       if (activeImageIndex >= finalGallery.length) {
         setActiveImageIndex(Math.max(0, finalGallery.length - 1));
@@ -393,7 +396,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         closeLightbox();
       }
 
-      addToast('تم الحذف', 'تم حذف الصورة من المعرض والمخزن السحابي بنجاح', 'success');
+      addToast('تم الحذف', 'تم حذف الصورة من المكان والتخزين السحابي Cloudinary بنجاح', 'success');
     } catch (err: any) {
       addToast('خطأ في الحذف', err?.message || 'فشل حذف الصورة من الخادم أو السحابة', 'error');
     } finally {
@@ -687,12 +690,56 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         </div>
                       </div>
 
-                      {activeImage === localCover && (
-                        <div className="absolute right-4 top-4 z-30 flex items-center gap-1.5 rounded-full bg-[#9a6a35] px-3 py-2 text-[9px] font-black text-white shadow-xl sm:right-7 sm:top-7">
-                          <Star className="h-3 w-3 fill-current" />
-                          الصورة الرئيسية
-                        </div>
-                      )}
+                      {/* أزرار وشارات التحكم: ظاهرة ومتاحة للموبايل وسطح المكتب لمدراء النظام */}
+                      <div className="absolute right-3 top-3 z-30 flex max-w-[85%] flex-wrap items-center justify-end gap-1.5 sm:right-7 sm:top-7 sm:gap-2">
+                        {activeImage === localCover ? (
+                          <div className="flex items-center gap-1.5 rounded-full bg-[#9a6a35] px-3 py-1.5 text-[11px] font-black text-white shadow-xl backdrop-blur-md sm:text-xs">
+                            <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
+                            <span>الصورة الرئيسية</span>
+                          </div>
+                        ) : (
+                          isAdmin && activeImage && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetCover(activeImage)}
+                              disabled={isProcessing}
+                              className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
+                              title="تعيين هذه الصورة كغلاف رئيسي للمكان"
+                            >
+                              <Star className="h-3.5 w-3.5 text-amber-400" />
+                              <span>تعيين كغلاف</span>
+                            </button>
+                          )
+                        )}
+
+                        {isAdmin && activeImage && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => setImagePendingDelete(activeImage)}
+                              disabled={isProcessing}
+                              className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-600/85 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-red-600 active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
+                              title="حذف الصورة من المكان وقاعدة البيانات والتخزين السحابي"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              <span>حذف</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminActiveTab('gallery');
+                                setAdminModalOpen(true);
+                              }}
+                              className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/20 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-white hover:text-black active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
+                              title="إضافة صور جديدة للمعرض"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                              <span>إضافة صور</span>
+                            </button>
+                          </>
+                        )}
+                      </div>
 
                       <button
                         type="button"
@@ -737,6 +784,20 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
                   <div className="border-b border-black/10 bg-white px-4 py-4 dark:border-white/10 dark:bg-[#171512] sm:px-6 lg:px-8">
                     <div className="flex gap-3 overflow-x-auto pb-1">
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAdminActiveTab('gallery');
+                            setAdminModalOpen(true);
+                          }}
+                          className="group flex h-20 w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-[#9a6a35]/40 bg-[#9a6a35]/5 text-[#9a6a35] transition hover:border-[#9a6a35] hover:bg-[#9a6a35]/15 sm:h-24 sm:w-28 cursor-pointer active:scale-95"
+                          title="إضافة صور جديدة لهذا المكان"
+                        >
+                          <Plus className="h-5 w-5" />
+                          <span className="text-[10px] font-black">إضافة صور</span>
+                        </button>
+                      )}
                       {localGallery.map((imgUrl, idx) => {
                         const isActive = idx === activeImageIndex;
                         const isCover = imgUrl === localCover;
@@ -844,13 +905,48 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         >
           <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/30 px-3 py-3 sm:px-6 sm:py-4">
             <span className="font-serif text-sm font-black">{entityTitle || 'المعرض التوثيقي'}</span>
-            <button
-              type="button"
-              onClick={closeLightbox}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition hover:bg-red-600 cursor-pointer"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              {isAdmin && localGallery[lightboxIndex] && (
+                <>
+                  {localGallery[lightboxIndex] === localCover ? (
+                    <span className="flex items-center gap-1.5 rounded-xl bg-[#9a6a35] px-3 py-1.5 text-xs font-bold text-white shadow">
+                      <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
+                      <span className="hidden sm:inline">الغلاف الرئيسي</span>
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSetCover(localGallery[lightboxIndex])}
+                      disabled={isProcessing}
+                      className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/60 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#9a6a35] hover:border-[#9a6a35] active:scale-95 cursor-pointer min-h-[36px]"
+                      title="تعيين كغلاف رئيسي للمكان"
+                    >
+                      <Star className="h-3.5 w-3.5 text-amber-400" />
+                      <span>تعيين كغلاف</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setImagePendingDelete(localGallery[lightboxIndex])}
+                    disabled={isProcessing}
+                    className="flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-600/80 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-red-600 active:scale-95 cursor-pointer min-h-[36px]"
+                    title="حذف الصورة نهائياً"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>حذف</span>
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={closeLightbox}
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition hover:bg-red-600 cursor-pointer"
+                title="إغلاق"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3 sm:p-6">
@@ -939,46 +1035,60 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     {localGallery.length === 0 ? (
                       <p className="py-6 text-center text-xs opacity-40">لا توجد صور مسجلة حالياً لهذا الكيان.</p>
                     ) : (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[280px] overflow-y-auto p-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[340px] overflow-y-auto p-1">
                         {localGallery.map((imgUrl, idx) => {
                           const isCover = imgUrl === localCover;
                           return (
                             <div
                               key={`${imgUrl}-${idx}`}
-                              className="group relative aspect-video overflow-hidden rounded-xl border border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5"
+                              className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-[#1f1b17] shadow-xs"
                             >
-                              <img
-                                src={imgUrl}
-                                alt={`صورة أرشيفية ${idx + 1}`}
-                                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                              />
+                              <div className="relative aspect-video w-full overflow-hidden bg-black/10">
+                                <img
+                                  src={imgUrl}
+                                  alt={`صورة أرشيفية ${idx + 1}`}
+                                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                  loading="lazy"
+                                />
 
-                              {/* شارة الغلاف */}
-                              {isCover && (
-                                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded bg-[#9a6a35] text-white shadow">
-                                  <Star className="h-3 w-3 fill-current" />
-                                </span>
-                              )}
+                                {/* شارة الغلاف في زاوية الصورة */}
+                                {isCover && (
+                                  <span className="absolute top-2 right-2 flex items-center gap-1 rounded-lg bg-[#9a6a35] px-2 py-1 text-[10px] font-black text-white shadow-md">
+                                    <Star className="h-3 w-3 fill-current text-amber-200" />
+                                    <span>غلاف المكان</span>
+                                  </span>
+                                )}
+                              </div>
 
-                              {/* أزرار التحكم السريع (تعيين غلاف / حذف نهائي) */}
-                              <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/60 opacity-0 backdrop-blur-xs transition group-hover:opacity-100">
-                                {!isCover && (
+                              {/* أزرار التحكم السريع: ظاهرة دائماً على الموبايل وبمقاس لمس مريح */}
+                              <div className="flex items-center justify-between gap-1.5 p-2 bg-neutral-50 dark:bg-[#25201c] border-t border-black/5 dark:border-white/5">
+                                {!isCover ? (
                                   <button
                                     type="button"
                                     onClick={() => handleSetCover(imgUrl)}
+                                    disabled={isProcessing}
                                     title="تعيين كغلاف رئيسي"
-                                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-[#9a6a35] cursor-pointer"
+                                    className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-[#9a6a35]/10 hover:bg-[#9a6a35] text-[#9a6a35] hover:text-white text-xs font-bold transition cursor-pointer min-h-[38px] active:scale-95"
                                   >
-                                    <Star className="h-4 w-4" />
+                                    <Star className="h-3.5 w-3.5" />
+                                    <span>تعيين غلاف</span>
                                   </button>
+                                ) : (
+                                  <span className="flex-1 text-center py-1.5 text-xs font-black text-[#9a6a35] flex items-center justify-center gap-1">
+                                    <Check className="h-3.5 w-3.5" />
+                                    <span>الغلاف الحالي</span>
+                                  </span>
                                 )}
+
                                 <button
                                   type="button"
                                   onClick={() => setImagePendingDelete(imgUrl)}
-                                  title="حذف من السحابة وقاعدة البيانات"
-                                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/80 text-white hover:bg-red-600 cursor-pointer"
+                                  disabled={isProcessing}
+                                  title="حذف من المكان والسحابة"
+                                  className="flex items-center justify-center gap-1 py-1.5 px-3 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-bold transition cursor-pointer min-h-[38px] active:scale-95"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <span>حذف</span>
                                 </button>
                               </div>
                             </div>

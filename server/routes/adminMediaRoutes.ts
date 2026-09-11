@@ -517,9 +517,10 @@ router.post('/gallery/reorder', async (req: AuthenticatedRequest, res: Response)
 // =========================================================================
 router.post('/gallery/manage', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { entityType, entityId, action, imageUrl, videoUrl, galleryUrls } = req.body || {};
+    const { entityType, entityId, entitySlug, action, imageUrl, videoUrl, galleryUrls, coverImage } = req.body || {};
 
-    if (!entityType || !entityId || !action) {
+    const targetId = entityId || entitySlug;
+    if (!entityType || !targetId || !action) {
       return res.status(400).json({
         success: false,
         error: 'يرجى تزويد نوع الكيان، ومعرفه، والإجراء المطلوب (add, remove, setCover, updateGallery, setVideo, removeVideo)',
@@ -529,11 +530,13 @@ router.post('/gallery/manage', async (req: AuthenticatedRequest, res: Response) 
 
     const result = await manageEntityGallery({
       entityType,
-      entityId,
+      entityId: targetId,
+      entitySlug: entitySlug || entityId,
       action,
       imageUrl,
       videoUrl,
       galleryUrls,
+      coverImage,
       user: {
         id: req.user!.id,
         role: req.user!.role

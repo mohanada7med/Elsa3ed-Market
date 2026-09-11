@@ -440,6 +440,7 @@ export const adminMediaApi = {
     options: {
       entityType: string;
       entityId: string;
+      entitySlug?: string;
       action: 'add' | 'remove' | 'setCover' | 'updateGallery' | 'setVideo' | 'removeVideo';
       imageUrl?: string;
       videoUrl?: string;
