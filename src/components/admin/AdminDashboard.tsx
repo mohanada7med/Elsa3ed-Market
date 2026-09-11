@@ -64,59 +64,34 @@ import {
 const HERITAGE_COVER_PRESETS = [
   {
     id: 'pottery-qena',
-    title: 'فخار وقناطر قنا ونقادة التراثية',
-    region: 'قنا',
+    title: 'فخار',
     craft: 'فخار طمي النيل خزفي وحرف يدوية',
-    url: 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80'
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788789133/WAH/crafts/qena-pottery/img_1788789133627_u027.jpg'
   },
   {
     id: 'rugs-sohag',
-    title: 'سجاد وكليم صوف أخميم التراثي',
-    region: 'سوهاج',
+    title: 'سجاد وكليم',
     craft: 'نول يدوي ومنسوجات صوف وحرير',
-    url: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=1200&q=80'
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788712729/%D9%83%D9%84%D9%8A%D9%85.jpg'
   },
   {
     id: 'tally-asyut',
-    title: 'تلي وتطريز خيوط الفضة التراثي',
-    region: 'أسيوط',
+    title: 'تلي وتطريز',
     craft: 'تطريز تلي صعيدي أصيل',
-    url: 'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=80'
-  },
-  {
-    id: 'brass-luxor',
-    title: 'صواني ونقوش النحاس الأقصري',
-    region: 'الأقصر',
-    craft: 'نقش وتشكيل نحاس وزخارف عربية',
-    url: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1200&q=80'
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788712725/%D8%A7%D9%84%D8%AA%D9%84%D9%89.jpg'
   },
   {
     id: 'palm-aswan',
-    title: 'خوص ونخيل وتمور أسوان النوبية',
-    region: 'أسوان',
+    title: 'خوص ونخيل وتمور',
     craft: 'جدل خوص وسلال نخيل نوبية',
-    url: 'https://images.unsplash.com/photo-1579613832125-5d34a13ffe2a?auto=format&fit=crop&w=1200&q=80'
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788712728/%D8%AA%D9%85%D9%88%D8%B1.jpg'
   },
-  {
-    id: 'wood-craft',
-    title: 'أخشاب السرسوع والمشغولات الخشبية',
-    region: 'قنا / سوهاج',
-    craft: 'نجارة تقليدية وتطعيم صدف',
-    url: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=1200&q=80'
-  },
-  {
-    id: 'alabaster-luxor',
-    title: 'نحت الألباستر ومحاجر القرنة',
-    region: 'الأقصر',
-    craft: 'نحت يدوي على الألباستر والأحجار',
-    url: 'https://images.unsplash.com/photo-1599818817351-40995772654c?auto=format&fit=crop&w=1200&q=80'
-  },
+
   {
     id: 'honey-herbs-minya',
-    title: 'عسل جبلي وأعشاب برية بالمنيا',
-    region: 'المنيا',
+    title: 'عسل جبلي وأعشاب برية',
     craft: 'مناحل طبيعية ومقطرات عشبية',
-    url: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=1200&q=80'
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788712728/%D8%B9%D8%B3%D9%84.jpg'
   }
 ];
 
@@ -5426,9 +5401,7 @@ export const AdminDashboard: React.FC = () => {
                           <img src={preset.url} alt={preset.title} className="w-full h-16 object-cover" />
                           <div className="p-1.5 bg-white space-y-0.5">
                             <p className="text-[10px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{preset.title}</p>
-                            <span className="text-[9px] text-[#9a6a35] dark:text-[#d5a56d] bg-amber-50 px-1 py-0.2 rounded inline-block font-semibold">
-                              {preset.region}
-                            </span>
+
                           </div>
                           {isSelected && (
                             <div className="absolute top-1 left-1 bg-[#9a6a35] text-white p-0.5 rounded-full shadow-xs">
@@ -5486,7 +5459,7 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) => setSellerEditGovernorate(e.target.value as Governorate)}
                     className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
-                    {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
+                    {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر', 'الفيوم'].map((gov) => (
                       <option key={gov} value={gov}>
                         محافظة {gov}
                       </option>
