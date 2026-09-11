@@ -26,20 +26,20 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeReelId, setActiveReelId] = useState<string | null>(null);
-
-  // المتصفحات تبدأ التشغيل التلقائي فوراً وبدون أي تأخير عندما يكون الصوت مكتوماً في البداية
   const [isMuted, setIsMuted] = useState(false);
   const [reelsList, setReelsList] = useState<CraftReel[]>(reels);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const hasInitiallyScrolled = useRef<boolean>(false);
-  const isScrollingRef = useRef<boolean>(false);
+  const lastWheelTime = useRef<number>(0);
 
+  // Sync reels list with incoming prop
   useEffect(() => {
     setReelsList(reels);
   }, [reels]);
 
+  // Set initial active reel id and index
   useEffect(() => {
     if (reelsList.length === 0) return;
     if (initialReelId) {
@@ -54,39 +54,21 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     setActiveReelId(reelsList[0].id);
   }, [initialReelId, reelsList]);
 
-  // التحميل المسبق للفيديو النشط والمقبل في المتصفح
-  useEffect(() => {
-    const preloadTarget = reelsList[activeIndex + 1]?.videoUrl;
-    if (preloadTarget) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'video';
-      link.href = preloadTarget;
-      document.head.appendChild(link);
-      return () => {
-        document.head.removeChild(link);
-      };
-    }
-  }, [activeIndex, reelsList]);
-
+  // Scroll to target reel index
   const scrollToIndex = useCallback((targetIndex: number, smooth = true) => {
     if (targetIndex < 0 || targetIndex >= reelsList.length) return;
     const targetEl = itemRefs.current[targetIndex];
     if (targetEl) {
-      isScrollingRef.current = true;
       targetEl.scrollIntoView({
         behavior: smooth ? 'smooth' : 'auto',
         block: 'start'
       });
       setActiveIndex(targetIndex);
       setActiveReelId(reelsList[targetIndex]?.id || null);
-
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 400);
     }
   }, [reelsList]);
 
+  // Initial scroll to target reel on mount / load
   useEffect(() => {
     if (hasInitiallyScrolled.current || reelsList.length === 0) return;
 
@@ -96,29 +78,29 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       if (foundIdx !== -1) targetIdx = foundIdx;
     }
 
+    // Scroll without animation on first load
     const timeoutId = setTimeout(() => {
       scrollToIndex(targetIdx, false);
       hasInitiallyScrolled.current = true;
-    }, 30);
+    }, 50);
 
     return () => clearTimeout(timeoutId);
   }, [initialReelId, reelsList, scrollToIndex]);
 
-  // مراقبة الفيديو النشط بأداء أعلى
+  // IntersectionObserver: Detects which reel is currently in view (threshold: 60%)
   useEffect(() => {
     const container = containerRef.current;
     if (!container || reelsList.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (isScrollingRef.current) return;
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          if (entry.isIntersecting) {
             const idxStr = entry.target.getAttribute('data-index');
             const reelId = entry.target.getAttribute('data-reel-id');
             if (idxStr !== null && reelId) {
               const idx = parseInt(idxStr, 10);
-              if (!isNaN(idx) && idx !== activeIndex) {
+              if (!isNaN(idx)) {
                 setActiveIndex(idx);
                 setActiveReelId(reelId);
               }
@@ -128,7 +110,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       },
       {
         root: container,
-        threshold: [0.6]
+        threshold: 0.6
       }
     );
 
@@ -139,10 +121,12 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     return () => {
       observer.disconnect();
     };
-  }, [reelsList, activeIndex]);
+  }, [reelsList]);
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // If user is typing in an input or textarea, skip
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
 
       if (e.key === 'ArrowDown' || e.key === 'j' || e.key === 'PageDown') {
@@ -167,6 +151,21 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeIndex, reelsList.length, scrollToIndex, onClose]);
+
+  // Mouse wheel navigation with debounce for desktop
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    // Only intercept if delta is significant to prevent erratic jumping
+    const now = Date.now();
+    if (now - lastWheelTime.current < 450) return;
+
+    if (e.deltaY > 35 && activeIndex < reelsList.length - 1) {
+      lastWheelTime.current = now;
+      scrollToIndex(activeIndex + 1);
+    } else if (e.deltaY < -35 && activeIndex > 0) {
+      lastWheelTime.current = now;
+      scrollToIndex(activeIndex - 1);
+    }
+  };
 
   const handleDeleteReel = (deletedId: string) => {
     const updated = reelsList.filter((r) => r.id !== deletedId);
@@ -197,26 +196,28 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       style={{
         height: '100dvh',
         maxHeight: '100dvh',
-        overscrollBehavior: 'contain'
+        overscrollBehavior: 'contain',
+        overscrollBehaviorY: 'contain'
       }}
+      onWheel={handleWheel}
     >
-      <div className="relative w-full h-full sm:max-w-[440px] sm:h-[min(94dvh,880px)] sm:rounded-3xl overflow-hidden shadow-2xl bg-black border sm:border-white/10 flex flex-col">
+      {/* Centered Phone Canvas Wrapper (Full screen on mobile, phone-sized card on desktop) */}
+      <div className="relative w-full h-full sm:max-w-[420px] sm:h-[min(94dvh,860px)] sm:rounded-3xl overflow-hidden shadow-2xl bg-black border sm:border-white/10 flex flex-col">
+        {/* Dedicated Vertical Scroll Snap Container */}
         <div
           ref={containerRef}
-          className="reels-scroll-container w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-none"
+          className="reels-scroll-container w-full h-full overflow-y-scroll overscroll-contain snap-y snap-mandatory scroll-smooth scrollbar-none"
           style={{
             height: '100%',
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
+            overscrollBehaviorY: 'contain',
             scrollSnapType: 'y mandatory',
             touchAction: 'pan-y'
           }}
         >
           {reelsList.map((reel, idx) => {
             const isActive = activeIndex === idx;
-            // يتم تحميل الفيديو النشط والسابق واللاحق فقط لتفادي تجميد الذاكرة وتسريع التشغيل اللحظي
-            const shouldRenderMedia = Math.abs(activeIndex - idx) <= 1;
-
             return (
               <div
                 key={reel.id}
@@ -228,48 +229,42 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
                 className="reel-snap-item w-full h-full min-h-[100dvh] sm:min-h-full snap-start snap-always shrink-0 relative flex items-center justify-center bg-black overflow-hidden"
                 style={{
                   height: '100%',
+                  minHeight: '100%',
+                  maxHeight: '100%',
                   scrollSnapAlign: 'start',
-                  scrollSnapStop: 'always'
+                  scrollSnapStop: 'always',
+                  overscrollBehavior: 'contain',
+                  overscrollBehaviorY: 'contain'
                 }}
               >
-                {shouldRenderMedia ? (
-                  <ReelItem
-                    reel={reel}
-                    isActive={isActive}
-                    isMuted={isMuted}
-                    onToggleMute={() => setIsMuted((prev) => !prev)}
-                    onSelectProduct={onSelectProduct}
-                    onSelectSeller={onSelectSeller}
-                    onDeleteReel={handleDeleteReel}
-                    onClose={onClose}
-                    showCloseButton={showCloseButton}
-                    reelIndex={idx}
-                    totalReels={reelsList.length}
-                    hasBottomNav={hasBottomNav}
-                  />
-                ) : (
-                  // صورة الغلاف كبديل خفيف أثناء وجود الكرت بعيداً عن الشاشة
-                  <img
-                    src={reel.posterUrl}
-                    alt={reel.title}
-                    className="w-full h-full object-cover opacity-60 filter blur-xs"
-                    loading="lazy"
-                  />
-                )}
+                <ReelItem
+                  reel={reel}
+                  isActive={isActive}
+                  isMuted={isMuted}
+                  onToggleMute={() => setIsMuted((prev) => !prev)}
+                  onSelectProduct={onSelectProduct}
+                  onSelectSeller={onSelectSeller}
+                  onDeleteReel={handleDeleteReel}
+                  onClose={onClose}
+                  showCloseButton={showCloseButton}
+                  reelIndex={idx}
+                  totalReels={reelsList.length}
+                  hasBottomNav={hasBottomNav}
+                />
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* أزرار التنقل للشاشات الكبيرة */}
+      {/* Desktop Next/Prev Floating Navigation Pill on Side */}
       <div className="hidden md:flex flex-col items-center gap-3 absolute left-6 sm:left-10 top-1/2 -translate-y-1/2 z-40">
         <button
           type="button"
           disabled={activeIndex === 0}
           onClick={() => scrollToIndex(activeIndex - 1)}
           className="p-3 rounded-full bg-black/60 hover:bg-black/90 text-white disabled:opacity-20 disabled:cursor-not-allowed border border-white/15 transition-all shadow-xl hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
-          title="الفيديو السابق"
+          title="الفيديو السابق (سهم لأعلى)"
           aria-label="الفيديو السابق"
         >
           <ChevronUp className="w-5 h-5" />
@@ -284,7 +279,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
           disabled={activeIndex === reelsList.length - 1}
           onClick={() => scrollToIndex(activeIndex + 1)}
           className="p-3 rounded-full bg-black/60 hover:bg-black/90 text-white disabled:opacity-20 disabled:cursor-not-allowed border border-white/15 transition-all shadow-xl hover:scale-110 active:scale-95 cursor-pointer backdrop-blur-md"
-          title="الفيديو التالي"
+          title="الفيديو التالي (سهم لأسفل)"
           aria-label="الفيديو التالي"
         >
           <ChevronDown className="w-5 h-5" />
@@ -293,3 +288,4 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     </div>
   );
 };
+

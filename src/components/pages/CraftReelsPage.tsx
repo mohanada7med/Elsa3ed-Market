@@ -684,7 +684,7 @@ export const CraftReelsPage: React.FC = () => {
                   setReels((prev) => prev.filter((r) => r.id !== deletedId));
                 }}
                 showCloseButton={false}
-                hasBottomNav={false}
+                hasBottomNav={true}
               />
             </div>
           </div>
