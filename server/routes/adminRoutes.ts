@@ -11,12 +11,13 @@ import {
   updateProduct,
   createProduct
 } from '../services/productService.ts';
-import { getAuditLogs } from '../services/auditService.ts';
+import { getAuditLogs, deleteAuditLog, clearAllAuditLogs } from '../services/auditService.ts';
 import {
   getAdminOrders,
   updateAdminOrderStatus,
   adminVerifyOrderPayment,
-  adminRejectOrderPayment
+  adminRejectOrderPayment,
+  deleteAdminOrder
 } from '../services/orderService.ts';
 import { getPaymentConfig, updatePaymentConfig } from '../services/paymentConfigService.ts';
 import {
@@ -33,9 +34,10 @@ import {
 } from '../services/craftStoryService.ts';
 import {
   getAdminReviews,
-  moderateReview
+  moderateReview,
+  deleteProductReview
 } from '../services/reviewService.ts';
-import { adminUpdateSellerStatus, adminUpdateSellerProfile } from '../services/sellerService.ts';
+import { adminUpdateSellerStatus, adminUpdateSellerProfile, deleteSellerCompletely } from '../services/sellerService.ts';
 import {
   getUsersWithFilters,
   getUserDetailsForAdmin,
@@ -284,6 +286,23 @@ router.put('/reviews/:id/moderate', async (req: AuthenticatedRequest, res: Respo
   }
 });
 
+// DELETE /api/admin/reviews/:id - Delete a review permanently
+router.delete('/reviews/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await deleteProductReview(req.user!, req.params.id);
+    res.json({
+      success: true,
+      message: 'تم حذف التقييم نهائياً من قاعدة البيانات'
+    });
+  } catch (error: any) {
+    console.error('Error deleting review:', error);
+    res.status(400).json({
+      success: false,
+      error: error?.message || 'فشل حذف التقييم'
+    });
+  }
+});
+
 // ==================== SELLERS MANAGEMENT ====================
 
 // GET /api/admin/sellers/pending - Quick list of sellers awaiting approval
@@ -440,6 +459,35 @@ router.put('/sellers/:id', async (req: AuthenticatedRequest, res: Response) => {
       success: false,
       error: error.message || 'فشل في تحديث بيانات الورشة',
       code: 'UPDATE_SELLER_ERROR'
+    });
+  }
+});
+
+// DELETE /api/admin/sellers/:id - Admin completely delete a seller and cascade cleanup
+router.delete('/sellers/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const sellerId = req.params.id;
+    if (!sellerId || !sellerId.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'معرف الورشة/البائع مطلوب للحذف',
+        code: 'VALIDATION_ERROR'
+      });
+    }
+
+    const result = await deleteSellerCompletely(req.user!, sellerId.trim());
+
+    res.json({
+      success: true,
+      message: result.message,
+      data: result
+    });
+  } catch (error: any) {
+    console.error('Error deleting seller completely by admin:', error);
+    res.status(400).json({
+      success: false,
+      error: error.message || 'فشل في حذف الورشة نهائياً من قاعدة البيانات',
+      code: 'DELETE_SELLER_ERROR'
     });
   }
 });
@@ -719,6 +767,25 @@ router.post('/orders/:id/reject-payment', async (req: AuthenticatedRequest, res:
   }
 });
 
+// DELETE /api/admin/orders/:id - Delete order permanently by admin
+router.delete('/orders/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const orderId = req.params.id;
+    await deleteAdminOrder(req.user!, orderId);
+    res.json({
+      success: true,
+      message: 'تم حذف الطلب نهائياً من قاعدة البيانات'
+    });
+  } catch (error) {
+    console.error('[AdminRoutes] Error deleting order:', error);
+    res.status(400).json({
+      success: false,
+      error: (error as Error).message || 'تعذر حذف الطلب',
+      code: 'DELETE_ORDER_ERROR'
+    });
+  }
+});
+
 // GET /api/admin/products/pending - List products awaiting approval
 
 router.get('/products/pending', async (req: AuthenticatedRequest, res: Response) => {
@@ -940,6 +1007,40 @@ router.get('/audit-logs', async (req: AuthenticatedRequest, res: Response) => {
       success: false,
       error: 'فشل في جلب سجل العمليات',
       code: 'SERVER_ERROR'
+    });
+  }
+});
+
+// DELETE /api/admin/audit-logs - Clear all audit logs
+router.delete('/audit-logs', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await clearAllAuditLogs();
+    res.json({
+      success: true,
+      message: 'تم مسح سجل العمليات بالكامل'
+    });
+  } catch (error) {
+    console.error('Error clearing audit logs:', error);
+    res.status(500).json({
+      success: false,
+      error: 'فشل مسح سجل العمليات'
+    });
+  }
+});
+
+// DELETE /api/admin/audit-logs/:id - Delete single audit log
+router.delete('/audit-logs/:id', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await deleteAuditLog(req.params.id);
+    res.json({
+      success: true,
+      message: 'تم حذف بند السجل بنجاح'
+    });
+  } catch (error) {
+    console.error('Error deleting audit log:', error);
+    res.status(500).json({
+      success: false,
+      error: 'فشل حذف بند السجل'
     });
   }
 });

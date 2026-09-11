@@ -247,6 +247,7 @@ export const adminMediaApi = {
       caption?: string;
       isPrimary?: boolean;
       addToGallery?: boolean;
+      resourceType?: 'image' | 'video';
     }
   ): Promise<MediaItem> {
     const res = await fetch(`${API_BASE}/admin/media/url`, {
@@ -256,7 +257,7 @@ export const adminMediaApi = {
     });
     const json = await res.json();
     if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل في حفظ رابط الصورة');
+      throw new Error(json.error || 'فشل في حفظ رابط الوسيط');
     }
     return json.data;
   },
@@ -842,6 +843,37 @@ export const api = {
     return json.data || [];
   },
 
+  async deleteAdminAuditLog(
+    user: { id: string; role: string },
+    logId: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/audit-logs/${logId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف بند السجل');
+    }
+    return true;
+  },
+
+  async clearAdminAuditLogs(
+    user: { id: string; role: string }
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/audit-logs`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في مسح سجل العمليات');
+    }
+    return true;
+  },
+
   // Common
   async getCategories(): Promise<Category[]> {
     try {
@@ -1103,6 +1135,22 @@ export const api = {
     return json.data;
   },
 
+  async deleteAdminOrder(
+    user: { id: string; role: string },
+    orderId: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/orders/${orderId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف الطلب');
+    }
+    return true;
+  },
+
   async getPublicPaymentConfig(): Promise<{
     instaPayAccount: string;
     vodafoneCashNumber: string;
@@ -1311,6 +1359,22 @@ export const api = {
       throw new Error(json.error || 'فشل في تعديل حالة التقييم');
     }
     return json.data;
+  },
+
+  async deleteAdminReview(
+    user: { id: string; role: string },
+    reviewId: string
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/admin/reviews/${reviewId}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف التقييم');
+    }
+    return true;
   },
 
   // ==================== PHASE 4: CATEGORIES MANAGEMENT ====================
@@ -1523,6 +1587,21 @@ export const api = {
       throw new Error(json.error || 'فشل في تحديث بيانات وغلاف الورشة بواسطة الإدارة');
     }
     return json.data;
+  },
+
+  async deleteSellerCompletely(
+    user: { id: string; role: string },
+    sellerId: string
+  ): Promise<{ success: boolean; message: string; deletedProductsCount: number; deletedReelsCount: number }> {
+    const res = await fetch(`${API_BASE}/admin/sellers/${sellerId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      throw new Error(json.error || 'فشل في حذف الورشة نهائياً من المنصة');
+    }
+    return json.data || json;
   },
 
   async createAdminProduct(

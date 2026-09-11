@@ -15,9 +15,9 @@ import { uploadLimiter } from '../middleware/rateLimiter.ts';
 
 const router = express.Router();
 
-export const MAX_VIDEO_SIZE_BYTES = 1024 * 1024 * 1024; // Exactly 1 GB (1,073,741,824 bytes)
+export const MAX_VIDEO_SIZE_BYTES = 300 * 1024 * 1024; // Exactly 300 MB (314,572,800 bytes)
 
-// Configure Multer for streaming/binary multipart video uploads (up to 1GB disk buffer to protect Node RAM)
+// Configure Multer for streaming/binary multipart video uploads (up to 300MB disk buffer to protect Node RAM)
 const videoMulter = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => {
@@ -29,7 +29,7 @@ const videoMulter = multer({
     }
   }),
   limits: {
-    fileSize: MAX_VIDEO_SIZE_BYTES // Exactly 1 GB
+    fileSize: MAX_VIDEO_SIZE_BYTES // Exactly 300 MB
   },
   fileFilter: (_req, file, cb) => {
     const allowedMimes = [

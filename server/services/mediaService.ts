@@ -96,6 +96,7 @@ export interface ExternalUrlMediaOptions {
   caption?: string;
   isPrimary?: boolean;
   addToGallery?: boolean;
+  resourceType?: 'image' | 'video';
   user: {
     id: string;
     role: UserRole;
@@ -302,6 +303,12 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     filename.toLowerCase().endsWith('.mov') ||
     filename.toLowerCase().endsWith('.ogg') ||
     filename.toLowerCase().endsWith('.mkv') ||
+    Boolean(
+      externalUrl &&
+      (externalUrl.toLowerCase().match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i) ||
+        externalUrl.toLowerCase().includes('/video/upload/') ||
+        externalUrl.toLowerCase().includes('resource_type=video'))
+    ) ||
     entityType === 'video' ||
     entityType === 'videos';
 
@@ -326,7 +333,13 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
       uploadResult = await cloudinary.uploader.upload(trimmedUrl, {
         folder: targetFolder,
         public_id: publicId,
-        resource_type: isVideo ? 'video' : 'image'
+        resource_type: isVideo ? 'video' : 'image',
+        ...(isVideo
+          ? {
+            chunk_size: 20000000,
+            timeout: 600000
+          }
+          : {})
       });
     } catch (urlErr: any) {
       Logger.error('[MediaService] External URL upload error:', urlErr?.message || urlErr);
@@ -460,6 +473,7 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
 export async function saveExternalUrlMedia(options: ExternalUrlMediaOptions): Promise<MediaAssetDoc> {
   return uploadAdminMedia({
     url: options.url,
+    resourceType: options.resourceType,
     entityType: options.entityType,
     entitySlug: options.entitySlug,
     entityId: options.entityId,

@@ -346,3 +346,77 @@ export async function moderateReview(
 
   return updatedReview;
 }
+
+/**
+ * Permanently delete a review by admin and recalculate ratings
+ */
+export async function deleteProductReview(
+  adminUser: AuthenticatedUser,
+  reviewId: string
+): Promise<boolean> {
+  if (adminUser.role !== 'admin') {
+    throw new Error('فقط مدير المنصة يملك صلاحية حذف التقييمات');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let review: ReviewDocument | null = null;
+  if (isMongo && db) {
+    try {
+      review = (await db.collection('reviews').findOne({ id: reviewId })) as unknown as ReviewDocument | null;
+    } catch (e) {
+      console.error('[ReviewService] Mongo find review error:', e);
+    }
+  }
+  if (!review) {
+    review = memoryDb.reviews.find((r) => r.id === reviewId) || null;
+  }
+  if (!review) {
+    throw new Error('التقييم غير موجود');
+  }
+
+  const productId = review.productId;
+
+  if (isMongo && db) {
+    try {
+      await db.collection('reviews').deleteOne({ id: reviewId });
+    } catch (e) {
+      console.error('[ReviewService] Mongo delete review error:', e);
+    }
+  }
+
+  memoryDb.reviews = memoryDb.reviews.filter((r) => r.id !== reviewId);
+
+  // Recalculate product rating after deleting review
+  const activeReviews = await getProductReviews(productId, false);
+  const total = activeReviews.reduce((sum, r) => sum + r.rating, 0);
+  const avg = activeReviews.length > 0 ? Number((total / activeReviews.length).toFixed(1)) : 5.0;
+
+  if (isMongo && db) {
+    try {
+      await db.collection('products').updateOne(
+        { id: productId },
+        { $set: { rating: avg, reviewCount: activeReviews.length } }
+      );
+    } catch (e) {
+      console.error('[ReviewService] Error updating product rating after review deletion:', e);
+    }
+  }
+  const memProd = memoryDb.products.find((p) => p.id === productId);
+  if (memProd) {
+    memProd.rating = avg;
+    memProd.reviewCount = activeReviews.length;
+  }
+
+  await createAuditLog({
+    actorId: adminUser.id,
+    userName: adminUser.name,
+    userRole: 'admin',
+    action: 'REVIEW_DELETED',
+    resource: 'تقييم منتج',
+    resourceId: reviewId,
+    status: 'تنبيه',
+    details: `قام المدير ${adminUser.name} بحذف تقييم المشتري "${review.userName}" على المنتج "${productId}" نهائياً`
+  });
+
+  return true;
+}

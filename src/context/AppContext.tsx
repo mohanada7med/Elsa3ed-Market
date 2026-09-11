@@ -204,6 +204,7 @@ interface AppContextType {
   updateSeller: (sellerId: string, updates: Partial<Seller>) => void;
   updateSellerStatus: (sellerId: string, status: string, reason?: string) => Promise<void>;
   updateSellerProfile: (updates: Partial<Seller>) => Promise<void>;
+  deleteSellerCompletely: (sellerId: string) => Promise<any>;
 
   // Order Actions
   createOrder: (orderData: {
@@ -223,10 +224,17 @@ interface AppContextType {
   // Reviews
   addReview: (productId: string, rating: number, comment: string) => Promise<void> | void;
   moderateReview: (reviewId: string, status: 'published' | 'hidden', reason?: string) => Promise<void>;
+  deleteReview: (reviewId: string) => Promise<void>;
 
   // Discounts
   addDiscountCoupon: (coupon: Omit<DiscountCoupon, 'id' | 'usageCount'>) => void;
   toggleDiscountStatus: (id: string) => void;
+  deleteDiscount: (id: string) => Promise<void>;
+
+  // Audit Logs & Orders
+  deleteOrder: (id: string) => Promise<void>;
+  deleteAuditLog: (id: string) => Promise<void>;
+  clearAuditLogs: () => Promise<void>;
 
   // Categories
   addCategory: (categoryData: Omit<Category, 'id' | 'productsCount'>) => Promise<void> | void;
@@ -2354,15 +2362,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id
         );
       }
-    } catch (e) {
-      console.warn('API delete error:', e);
+      setSellerProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setAdminProducts((prev) => prev.filter((p) => p.id !== id));
+      setPendingProducts((prev) => prev.filter((p) => p.id !== id));
+      addToast('تم الحذف', 'تم حذف المنتج بنجاح من قاعدة البيانات', 'info');
+      refreshAuditLogs();
+    } catch (e: any) {
+      console.error('API delete error:', e);
+      addToast('خطأ في الحذف', e?.message || 'تعذر حذف المنتج من قاعدة البيانات', 'error');
     }
-
-    setSellerProducts((prev) => prev.filter((p) => p.id !== id));
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    setAdminProducts((prev) => prev.filter((p) => p.id !== id));
-    setPendingProducts((prev) => prev.filter((p) => p.id !== id));
-    addToast('تم الحذف', 'تم حذف المنتج من النظام', 'info');
   };
 
   const approveProduct = async (id: string) => {
@@ -2561,6 +2570,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err: any) {
       console.error('Error updating seller:', err);
       addToast('خطأ', err?.message || 'تعذر تحديث بيانات الورشة', 'error');
+    }
+  };
+
+  const deleteSellerCompletely = async (sellerId: string) => {
+    try {
+      const res = await api.deleteSellerCompletely(
+        { id: currentUser.id, role: 'admin' },
+        sellerId
+      );
+      setSellers((prev) => prev.filter((s) => s.id !== sellerId && (s as any).userId !== sellerId));
+      addToast('تم الحذف النهائي', res?.message || 'تم حذف الورشة وكافة متعلقاتها نهائياً بنجاح', 'success');
+      refreshSellers();
+      refreshAdminProducts();
+      refreshAuditLogs();
+      return res;
+    } catch (err: any) {
+      console.error('Error deleting seller completely:', err);
+      addToast('خطأ في الحذف', err?.message || 'تعذر حذف الورشة نهائياً', 'error');
+      throw err;
     }
   };
 
@@ -2775,6 +2803,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const deleteReview = async (reviewId: string) => {
+    try {
+      await api.deleteAdminReview({ id: currentUser.id, role: 'admin' }, reviewId);
+      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+      addToast('تم حذف التقييم', 'تم حذف التقييم نهائياً من قاعدة البيانات', 'info');
+      refreshReviews();
+      refreshAuditLogs();
+    } catch (err: any) {
+      console.error('Error deleting review:', err);
+      addToast('خطأ في الحذف', err?.message || 'فشل في حذف التقييم', 'error');
+    }
+  };
+
   // Discounts
   const addDiscountCoupon = (couponData: Omit<DiscountCoupon, 'id' | 'usageCount'>) => {
     const newCoupon: DiscountCoupon = {
@@ -2790,6 +2831,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setDiscounts((prev) =>
       prev.map((d) => (d.id === id ? { ...d, active: !d.active } : d))
     );
+  };
+
+  const deleteDiscount = async (id: string) => {
+    try {
+      await api.deleteAdminDiscount({ id: currentUser.id, role: 'admin' }, id);
+      setDiscounts((prev) => prev.filter((d) => d.id !== id && d.code !== id));
+      addToast('تم حذف الكوبون', 'تم حذف كود الخصم نهائياً من قاعدة البيانات', 'info');
+      refreshAuditLogs();
+    } catch (err: any) {
+      console.error('Error deleting discount:', err);
+      addToast('خطأ في الحذف', err?.message || 'فشل حذف كود الخصم', 'error');
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    try {
+      await api.deleteAdminOrder({ id: currentUser.id, role: 'admin' }, orderId);
+      setOrders((prev) => prev.filter((o) => o.id !== orderId));
+      addToast('تم حذف الطلب', 'تم حذف الطلب نهائياً من قاعدة البيانات', 'info');
+      refreshAuditLogs();
+    } catch (err: any) {
+      console.error('Error deleting order:', err);
+      addToast('خطأ في الحذف', err?.message || 'تعذر حذف الطلب', 'error');
+    }
+  };
+
+  const deleteAuditLog = async (logId: string) => {
+    try {
+      await api.deleteAdminAuditLog({ id: currentUser.id, role: 'admin' }, logId);
+      setAuditLogs((prev) => prev.filter((l) => l.id !== logId));
+      addToast('تم حذف بند السجل', 'تم حذف السجل المحدد بنجاح', 'info');
+    } catch (err: any) {
+      console.error('Error deleting audit log:', err);
+      addToast('خطأ في الحذف', err?.message || 'تعذر حذف بند السجل', 'error');
+    }
+  };
+
+  const clearAuditLogs = async () => {
+    try {
+      await api.clearAdminAuditLogs({ id: currentUser.id, role: 'admin' });
+      setAuditLogs([]);
+      addToast('تم تفريغ السجل', 'تم مسح كامل سجل العمليات الإدارية', 'info');
+    } catch (err: any) {
+      console.error('Error clearing audit logs:', err);
+      addToast('خطأ في التفريغ', err?.message || 'تعذر مسح سجل العمليات', 'error');
+    }
   };
 
   // Categories
@@ -2963,6 +3050,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateSeller,
         updateSellerStatus,
         updateSellerProfile,
+        deleteSellerCompletely,
 
         sellerInventory,
         refreshSellerInventory,
@@ -2978,9 +3066,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         addReview,
         moderateReview,
+        deleteReview,
 
         addDiscountCoupon,
         toggleDiscountStatus,
+        deleteDiscount,
+
+        deleteOrder,
+        deleteAuditLog,
+        clearAuditLogs,
 
         addCategory,
         updateCategory,

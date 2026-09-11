@@ -91,7 +91,6 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     id: currentUser?.id || 'admin',
     role: isAdmin ? 'admin' : (currentUser?.role || currentRole || 'admin')
   };
-  const [externalUrlInput, setExternalUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
 
@@ -218,7 +217,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       }
 
       if (isVideo) {
-        if (file.size > 1024 * 1024 * 1024) {
+        if (file.size > 300 * 1024 * 1024) {
           setErrorMessage('حجم الفيديو لازم يكون 300 ميجاأو أقل.');
           return;
         }
@@ -373,11 +372,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
     await startUploadBatch(pendingOrErrorItems);
   };
 
-  // 2. Handle External URL submission (Backward compatibility)
+  // 2. Handle External URL submission (Backward compatibility & direct URLs)
   const handleUrlSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!isAdmin) {
-      setErrorMessage('عفواً، اعتماد وحفظ الصور مخصص لمدراء المنصة فقط');
+      setErrorMessage('عفواً، اعتماد وحفظ الوسائط مخصص لمدراء المنصة فقط');
       return;
     }
     if (!urlInput.trim() || disabled || isUploading) return;
@@ -389,31 +388,47 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       return;
     }
 
+    const isVideo =
+      mediaCategory === 'video' ||
+      Boolean(cleanUrl.match(/\.(mp4|webm|mov|ogg|mkv|3gp|m4v)(\?.*)?$/i)) ||
+      cleanUrl.includes('/video/upload/') ||
+      cleanUrl.includes('resource_type=video');
+
+    if (mediaCategory === 'image' && isVideo) {
+      setErrorMessage('الرابط يشير لمقطع فيديو، وهذا الحقل مخصص للصور فقط.');
+      return;
+    }
+    if (mediaCategory === 'video' && !isVideo) {
+      setErrorMessage('الرابط لا يشير لمقطع فيديو صالح. الصيغ المقبولة: MP4, WebM, MOV.');
+      return;
+    }
+
     try {
       setIsUploading(true);
 
       const media = await api.saveAdminMediaUrl(authUser, {
         url: cleanUrl,
-        entityType,
+        entityType: isVideo && entityType === 'image' ? 'video' : entityType,
         entitySlug,
         entityId,
         alt: getSuggestedAlt(),
         caption: captionInput.trim(),
         isPrimary: !multiple || currentItems.length === 0,
-        addToGallery: multiple
+        addToGallery: multiple,
+        resourceType: isVideo ? 'video' : 'image'
       });
 
       if (multiple) {
         onChange([...currentItems.map((i) => i.item || i.url), media]);
-        setSuccessMessage('تم اعتماد وحفظ رابط الصورة في المعرض');
+        setSuccessMessage('تم اعتماد وحفظ الرابط في المعرض');
       } else {
         onChange(cleanUrl);
-        setSuccessMessage('تم اعتماد رابط الصورة بنجاح');
+        setSuccessMessage('تم اعتماد الرابط بنجاح');
       }
 
       setUrlInput('');
     } catch (err: any) {
-      setErrorMessage(err?.message || 'فشل في تسجيل رابط الصورة');
+      setErrorMessage(err?.message || 'فشل في تسجيل الرابط');
     } finally {
       setIsUploading(false);
     }
@@ -748,7 +763,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               </h4>
               <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 mt-1 leading-relaxed">
                 {mediaCategory === 'video'
-                  ? 'صيغ الفيديو: MP4, WebM, MOV حتى 1 جيجابايت • مجلد WAH/videos'
+                  ? 'صيغ الفيديو: MP4, WebM, MOV حتى 300 ميجابايت • مجلد WAH/videos'
                   : 'الصور المدعومة: JPG, PNG, WEBP (حتى 10 ميجابايت) • معاينة سريعة قبل الرفع'}
               </p>
             </div>
@@ -1046,26 +1061,41 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         </div>
       )}
 
-      {/* Tab 2: External Image URL (Backward compatibility) */}
+      {/* Tab 2: External Media URL (Backward compatibility & direct URLs) */}
       {activeMode === 'url' && (
-        <div className="space-y-2 mb-3"> {/* تم تغيير form إلى div لمنع تداخل النماذج */}
+        <div className="space-y-2 mb-3">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <input
                 type="url"
-                value={externalUrlInput}
-                onChange={(e) => setExternalUrlInput(e.target.value)}
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleUrlSubmit();
+                  }
+                }}
                 placeholder="أدخل رابط الصورة أو الفيديو مباشرة (https://...)"
                 dir="ltr"
+                disabled={disabled || !isAdmin || isUploading}
                 className="w-full px-3 py-2 text-xs border border-black/15 dark:border-white/15 rounded-xl bg-white dark:bg-black/40 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
               />
             </div>
             <button
-              type="button" // تم جعل الزر من نوع button عادي وليس submit لمنع إرسال النموذج الرئيسي بالخطأ
-              onClick={handleUrlSubmit}
-              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
+              type="button"
+              onClick={() => handleUrlSubmit()}
+              disabled={disabled || !isAdmin || isUploading || !urlInput.trim()}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer disabled:opacity-50 min-h-[38px]"
             >
-              <span>حفظ الرابط</span>
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>جاري الحفظ...</span>
+                </>
+              ) : (
+                <span>حفظ الرابط</span>
+              )}
             </button>
           </div>
         </div>

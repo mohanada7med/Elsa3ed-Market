@@ -1094,8 +1094,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                 )
                               }
                               className="
-                                opacity-0
-                                group-hover:opacity-100
+                                opacity-70
+                                sm:opacity-0
+                                sm:group-hover:opacity-100
+                                hover:opacity-100
                                 w-7
                                 h-7
                                 rounded-lg

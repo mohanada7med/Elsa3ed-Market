@@ -193,7 +193,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
 // =========================================================================
 router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { url, entitySlug = '', entityId = '', alt = '', caption = '', isPrimary, addToGallery } = req.body;
+    const { url, entitySlug = '', entityId = '', alt = '', caption = '', isPrimary, addToGallery, resourceType } = req.body;
 
     const rawEntityType = req.body.entityType ? String(req.body.entityType).trim() : 'general';
     if (!isValidWahEntityType(rawEntityType)) {
@@ -208,7 +208,7 @@ router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
     if (!url || typeof url !== 'string') {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال رابط صورة صالح',
+        error: 'يرجى إدخال رابط وسيط صالح',
         code: 'INVALID_URL'
       });
     }
@@ -222,6 +222,7 @@ router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
       caption,
       isPrimary: Boolean(isPrimary),
       addToGallery: Boolean(addToGallery),
+      resourceType: resourceType === 'video' || resourceType === 'image' ? resourceType : undefined,
       user: {
         id: req.user!.id,
         role: req.user!.role
@@ -230,7 +231,7 @@ router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
 
     return res.status(201).json({
       success: true,
-      message: 'تم تسجيل رابط الصورة بنجاح',
+      message: 'تم تسجيل رابط الوسيط بنجاح',
       data: media
     });
   } catch (error: any) {

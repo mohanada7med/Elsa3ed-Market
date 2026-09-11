@@ -54,3 +54,29 @@ export async function getAuditLogs(): Promise<AuditLogDocument[]> {
   }
   return memoryDb.auditLogs as AuditLogDocument[];
 }
+
+export async function deleteAuditLog(logId: string): Promise<boolean> {
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    try {
+      await db.collection('audit_logs').deleteOne({ id: logId });
+    } catch (e) {
+      console.error('[AuditService] Failed to delete log from MongoDB:', e);
+    }
+  }
+  memoryDb.auditLogs = memoryDb.auditLogs.filter((l) => l.id !== logId);
+  return true;
+}
+
+export async function clearAllAuditLogs(): Promise<boolean> {
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    try {
+      await db.collection('audit_logs').deleteMany({});
+    } catch (e) {
+      console.error('[AuditService] Failed to clear logs from MongoDB:', e);
+    }
+  }
+  memoryDb.auditLogs = [];
+  return true;
+}

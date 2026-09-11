@@ -953,3 +953,54 @@ export async function adminRejectOrderPayment(
   return order;
 }
 
+/**
+ * Admin: Completely delete an order from database and memory
+ */
+export async function deleteAdminOrder(
+  admin: AuthenticatedUser,
+  orderId: string
+): Promise<boolean> {
+  if (admin.role !== 'admin') {
+    throw new Error('فقط مدير المنصة يملك صلاحية حذف الطلبات نهائياً');
+  }
+
+  const { db, isMongo } = await getDatabase();
+  let order: OrderDocument | null = null;
+  if (isMongo && db) {
+    try {
+      order = (await db.collection('orders').findOne({ id: orderId })) as unknown as OrderDocument | null;
+    } catch (e) {
+      console.error('[OrderService] Mongo find order error:', e);
+    }
+  }
+  if (!order) {
+    order = memoryDb.orders.find((o) => o.id === orderId) || null;
+  }
+  if (!order) {
+    throw new Error('الطلب غير موجود');
+  }
+
+  if (isMongo && db) {
+    try {
+      await db.collection('orders').deleteOne({ id: orderId });
+    } catch (e) {
+      console.error('[OrderService] Mongo delete order error:', e);
+    }
+  }
+
+  memoryDb.orders = memoryDb.orders.filter((o) => o.id !== orderId);
+
+  await addAuditLog({
+    actorId: admin.id,
+    userName: admin.name,
+    userRole: 'admin',
+    action: 'حذف طلب من الإدارة',
+    resource: 'الطلبات',
+    resourceId: orderId,
+    status: 'تنبيه',
+    details: `قام المدير ${admin.name} بحذف الطلب #${order.orderNumber} نهائياً من قاعدة البيانات`
+  });
+
+  return true;
+}
+

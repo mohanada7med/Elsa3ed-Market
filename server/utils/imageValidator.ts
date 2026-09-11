@@ -294,7 +294,7 @@ export const ALLOWED_VIDEO_EXTENSIONS = [
   '.avi'
 ];
 
-export const MAX_VIDEO_FILE_SIZE_BYTES = 1024 * 1024 * 1024; // 1 GB (1,073,741,824 bytes)
+export const MAX_VIDEO_FILE_SIZE_BYTES = 300 * 1024 * 1024; // 300 MB (314,572,800 bytes)
 
 export function validateVideo(
   data: string | Buffer,

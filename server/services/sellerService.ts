@@ -512,6 +512,24 @@ export async function deleteSellerCompletely(
     if (sellerDoc) {
       targetSellerId = sellerDoc.id || sellerDoc._id.toString();
       targetUserId = sellerDoc.userId || targetSellerId;
+    } else {
+      const userFilter: any[] = [{ id: sellerIdOrUserId }];
+      if (ObjectId.isValid(sellerIdOrUserId) && sellerIdOrUserId.length === 24) {
+        try { userFilter.push({ _id: new ObjectId(sellerIdOrUserId) }); } catch { }
+      }
+      const userDoc = await db.collection('users').findOne({ $or: userFilter });
+      if (userDoc) {
+        targetUserId = userDoc.id || userDoc._id?.toString() || sellerIdOrUserId;
+        if (userDoc.sellerId) {
+          targetSellerId = userDoc.sellerId;
+          sellerDoc = await db.collection('sellers').findOne({
+            $or: [
+              { id: targetSellerId },
+              ...(ObjectId.isValid(targetSellerId) && targetSellerId.length === 24 ? [{ _id: new ObjectId(targetSellerId) }] : [])
+            ]
+          });
+        }
+      }
     }
   }
 
@@ -520,19 +538,29 @@ export async function deleteSellerCompletely(
     if (sellerDoc) {
       targetSellerId = sellerDoc.id;
       targetUserId = (sellerDoc as any).userId || targetSellerId;
+    } else {
+      const memUser = memoryDb.users.find((u) => u.id === sellerIdOrUserId);
+      if (memUser?.sellerId) {
+        targetSellerId = memUser.sellerId;
+        targetUserId = memUser.id;
+        sellerDoc = memoryDb.sellers.find((s) => s.id === targetSellerId);
+      }
     }
   }
 
+  const workshopName = sellerDoc?.brandName || sellerDoc?.name || targetSellerId;
   let deletedProductsCount = 0;
   let deletedReelsCount = 0;
 
-  // 1. حذف المنتجات المرتبطة بالورشة
+  // 1. حذف المنتجات وسجلات المخزون المرتبطة بالورشة
   if (isMongo && db) {
     const sellerProducts = await db.collection('products').find({ sellerId: { $in: [targetSellerId, targetUserId] } }).toArray();
     deletedProductsCount = sellerProducts.length;
     await db.collection('products').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+    await db.collection('stock_movements').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
   }
   memoryDb.products = memoryDb.products.filter((p) => p.sellerId !== targetSellerId && p.sellerId !== targetUserId);
+  memoryDb.stockMovements = memoryDb.stockMovements.filter((m) => m.sellerId !== targetSellerId && m.sellerId !== targetUserId);
 
   // 2. حذف فيديوهات الحرفيين (Reels) المرتبطة
   if (isMongo && db) {
@@ -561,7 +589,11 @@ export async function deleteSellerCompletely(
   memoryDb.users = memoryDb.users.filter((u) => u.id !== targetUserId && u.id !== targetSellerId);
 
   cacheService.invalidateSellers(targetSellerId);
+  cacheService.invalidateProducts();
   invalidateAuthSession(targetUserId);
+  if (targetSellerId !== targetUserId) {
+    invalidateAuthSession(targetSellerId);
+  }
 
   await createAuditLog({
     actorId: adminUser.id,
@@ -571,12 +603,12 @@ export async function deleteSellerCompletely(
     resource: 'حساب ورشة',
     resourceId: targetSellerId,
     status: 'نجاح',
-    details: `قام المدير ${adminUser.name} بحذف الورشة [${targetSellerId}] نهائياً مع ${deletedProductsCount} منتج و ${deletedReelsCount} فيديو`
+    details: `قام المدير ${adminUser.name} بحذف ورشة "${workshopName}" [${targetSellerId}] نهائياً مع تنظيف ${deletedProductsCount} منتج تراثي و ${deletedReelsCount} فيديو ريلز`
   });
 
   return {
     success: true,
-    message: 'تم حذف الورشة وكل متعلقاتها نهائياً من قاعدة البيانات بنجاح',
+    message: `تم حذف ورشة "${workshopName}" وكل متعلقاتها نهائياً من قاعدة البيانات بنجاح`,
     deletedProductsCount,
     deletedReelsCount
   };

@@ -110,6 +110,7 @@ export const AdminDashboard: React.FC = () => {
     rejectSeller,
     suspendSeller,
     updateSeller,
+    deleteSellerCompletely,
     refreshSellers,
     orders,
     refreshOrders,
@@ -122,6 +123,12 @@ export const AdminDashboard: React.FC = () => {
     reviews,
     refreshReviews,
     moderateReview,
+    deleteReview,
+    addDiscountCoupon,
+    deleteDiscount,
+    deleteOrder,
+    deleteAuditLog,
+    clearAuditLogs,
     auditLogs,
     refreshAuditLogs,
     addToast,
@@ -262,6 +269,7 @@ export const AdminDashboard: React.FC = () => {
   const [selectedSellerForAction, setSelectedSellerForAction] = useState<{ id: string; name: string; action: 'reject' | 'suspend' } | null>(null);
   const [sellerActionReason, setSellerActionReason] = useState('');
   const [isProcessingSellerAction, setIsProcessingSellerAction] = useState(false);
+  const [deletingSellerId, setDeletingSellerId] = useState<string | null>(null);
 
   // Admin Edit Seller Modal State
   const [selectedSellerForEditProfile, setSelectedSellerForEditProfile] = useState<Seller | null>(null);
@@ -323,10 +331,10 @@ export const AdminDashboard: React.FC = () => {
   const [isSubmittingCat, setIsSubmittingCat] = useState(false);
 
   // Coupon Generator State
-  const [coupons, setCoupons] = useState([
-    { code: 'SAEED100', discount: 15, minOrder: 300, active: true },
-    { code: 'ASWAN20', discount: 20, minOrder: 500, active: true },
-    { code: 'RAMADAN', discount: 10, minOrder: 200, active: true }
+  const [coupons, setCoupons] = useState<Array<{ id?: string; code: string; discount: number; minOrder: number; active: boolean }>>([
+    { id: 'c1', code: 'SAEED100', discount: 15, minOrder: 300, active: true },
+    { id: 'c2', code: 'ASWAN20', discount: 20, minOrder: 500, active: true },
+    { id: 'c3', code: 'RAMADAN', discount: 10, minOrder: 200, active: true }
   ]);
   const [newCode, setNewCode] = useState('');
   const [newDiscount, setNewDiscount] = useState(15);
@@ -727,6 +735,37 @@ export const AdminDashboard: React.FC = () => {
       console.error('Error in handleSaveAdminSellerProfile:', err);
     } finally {
       setIsUpdatingSellerProfile(false);
+    }
+  };
+
+  // Permanent Delete Seller Completely Handler (Admin Exclusive Control)
+  const handleDeleteSellerCompletely = async (seller: Seller) => {
+    const workshopName = seller.brandName || seller.name || 'الورشة';
+    const confirmed = window.confirm(
+      `هل أنت متأكد من حذف ورشة "${workshopName}" نهائياً من النظام؟\n\nتنبيه إداري فوري: سيؤدي هذا الإجراء إلى حذف حساب الورشة وكافة منتجاتها التراثية وفيديوهات الحرفيين (Reels) التابعة لها نهائياً لمنع أي بيانات يتيمة، ولا يمكن التراجع عن هذه العملية.`
+    );
+    if (!confirmed) return;
+
+    setDeletingSellerId(seller.id);
+    try {
+      if (typeof deleteSellerCompletely === 'function') {
+        await deleteSellerCompletely(seller.id);
+      } else {
+        const res = await api.deleteSellerCompletely(
+          { id: currentUser.id, role: currentUser.role },
+          seller.id
+        );
+        addToast('تم الحذف النهائي', res?.message || `تم حذف ورشة "${workshopName}" وكل متعلقاتها بنجاح`, 'success');
+        await refreshSellers();
+      }
+      if (typeof refreshAdminProducts === 'function') {
+        refreshAdminProducts();
+      }
+    } catch (err: any) {
+      console.error('Error deleting seller completely:', err);
+      addToast('خطأ في الحذف', err?.message || 'تعذر حذف الورشة نهائياً من النظام', 'error');
+    } finally {
+      setDeletingSellerId(null);
     }
   };
 
@@ -1279,15 +1318,47 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleCreateCoupon = (e: React.FormEvent) => {
+  const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCode.trim()) return;
-    setCoupons([
-      ...coupons,
-      { code: newCode.toUpperCase().trim(), discount: Number(newDiscount), minOrder: Number(newMinOrder), active: true }
-    ]);
-    setNewCode('');
-    addToast('تم إنشاء الكوبون', `كوبون ${newCode.toUpperCase()} مفعل الآن للمتسوقين`, 'success');
+    const codeUpper = newCode.toUpperCase().trim();
+    try {
+      await addDiscountCoupon({
+        code: codeUpper,
+        discountPercent: Number(newDiscount),
+        minOrderValue: Number(newMinOrder),
+        active: true,
+        description: `كوبون خصم ${newDiscount}%`
+      });
+      setCoupons((prev) => [
+        ...prev,
+        { id: `disc-${Date.now()}`, code: codeUpper, discount: Number(newDiscount), minOrder: Number(newMinOrder), active: true }
+      ]);
+      setNewCode('');
+      addToast('تم إنشاء الكوبون', `كوبون ${codeUpper} مفعل الآن للمتسوقين`, 'success');
+    } catch {
+      setCoupons((prev) => [
+        ...prev,
+        { code: codeUpper, discount: Number(newDiscount), minOrder: Number(newMinOrder), active: true }
+      ]);
+      setNewCode('');
+      addToast('تم إنشاء الكوبون', `كوبون ${codeUpper} مفعل الآن للمتسوقين`, 'success');
+    }
+  };
+
+  const handleDeleteCoupon = async (c: any) => {
+    try {
+      if (c.id) {
+        await deleteDiscount(c.id);
+      } else {
+        await deleteDiscount(c.code);
+      }
+      setCoupons((prev) => prev.filter((item) => (item.id ? item.id !== c.id : item.code !== c.code)));
+      addToast('تم الحذف', `تم حذف كوبون ${c.code} بنجاح`, 'info');
+    } catch {
+      setCoupons((prev) => prev.filter((item) => item.code !== c.code));
+      addToast('تم الحذف', `تم حذف كوبون ${c.code}`, 'info');
+    }
   };
 
   const filteredProducts = adminProducts.filter((p) => {
@@ -2582,10 +2653,23 @@ export const AdminDashboard: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => moderateReview(rev.id, 'hidden')}
-                      className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
                     >
                       <X className="w-3.5 h-3.5" />
                       <span>إخفاء</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.confirm(`هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟`)) {
+                          deleteReview(rev.id);
+                        }
+                      }}
+                      className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                      title="حذف التقييم نهائياً"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>حذف</span>
                     </button>
                   </div>
                 </div>
@@ -2870,6 +2954,28 @@ export const AdminDashboard: React.FC = () => {
                         <span>إعادة التفعيل والموافقة</span>
                       </button>
                     )}
+
+                    {/* Permanent Delete Seller Completely Button */}
+                    <button
+                      type="button"
+                      id={`admin-delete-seller-${s.id}`}
+                      disabled={deletingSellerId === s.id}
+                      onClick={() => handleDeleteSellerCompletely(s)}
+                      className="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="حذف نهائي للورشة وكافة المنتجات والفيديوهات المرتبطة بها"
+                    >
+                      {deletingSellerId === s.id ? (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                          <span>جاري الحذف...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                          <span>حذف نهائي</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               ))
@@ -3064,6 +3170,20 @@ export const AdminDashboard: React.FC = () => {
                                 </button>
                               </>
                             )}
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (window.confirm(`هل أنت متأكد من حذف الطلب #${ord.orderNumber} نهائياً؟`)) {
+                                  deleteOrder(ord.id);
+                                }
+                              }}
+                              className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                              title="حذف الطلب نهائياً"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>حذف</span>
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -3315,9 +3435,24 @@ export const AdminDashboard: React.FC = () => {
                         </span>
                       </div>
 
-                      <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">
-                        شغال ومفعل
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">
+                          شغال ومفعل
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`هل أنت متأكد من حذف كود الخصم "${c.code}"؟`)) {
+                              handleDeleteCoupon(c);
+                            }
+                          }}
+                          className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                          title="حذف الكوبون نهائياً"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          <span className="hidden sm:inline">حذف</span>
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -3337,10 +3472,25 @@ export const AdminDashboard: React.FC = () => {
                 سجل بيوضح كل عمليات الاعتماد والرفض وتعديل المنتجات مع الوقت واسم المسؤول
               </p>
             </div>
-            <RefreshDataButton
-              onRefresh={refreshAuditLogs}
-              label="تحديث السجل"
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                    clearAuditLogs();
+                  }
+                }}
+                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                title="مسح سجل العمليات بالكامل"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>مسح كامل السجل</span>
+              </button>
+              <RefreshDataButton
+                onRefresh={refreshAuditLogs}
+                label="تحديث السجل"
+              />
+            </div>
           </div>
 
           <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
@@ -3353,6 +3503,7 @@ export const AdminDashboard: React.FC = () => {
                   <th className="py-3 px-4 font-bold">القسم / العنصر</th>
                   <th className="py-3 px-4 font-bold">تفاصيل العملية</th>
                   <th className="py-3 px-4 font-bold">الحالة</th>
+                  <th className="py-3 px-4 font-bold text-center">إجراءات</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/10 dark:divide-white/10">
@@ -3377,6 +3528,20 @@ export const AdminDashboard: React.FC = () => {
                       >
                         {log.status}
                       </span>
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm('هل تريد حذف بند السجل هذا؟')) {
+                            deleteAuditLog(log.id);
+                          }
+                        }}
+                        className="p-1 rounded-lg hover:bg-rose-50 text-black/40 hover:text-rose-600 transition-colors cursor-pointer"
+                        title="حذف بند السجل"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </td>
                   </tr>
                 ))}
