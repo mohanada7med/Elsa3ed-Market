@@ -16,8 +16,11 @@ export const FeaturedSellers: React.FC = () => {
     <WAHSection
       id="featured-sellers-section"
       eyebrow="شيوخ الصنعة وحرفيين الصعيد"
-      title="ورش ومعامل الصنعة الأصيلة"
-      subtitle="اتعرف على أصحاب الصنعة وشوف ورشهم وحكايات كفاحهم المتوارثة في بلاد ونجوع الصعيد"
+
+      title="ورش وحكايات أهل الصنعة"
+
+      subtitle="اتعرف على أهل الصنعة، وشوف ورشهم واسمع حكاياتهم وحكايات تعبهم اللي اتوارثوها جيل ورا جيل في بلاد ونجوع الصعيد"
+
       pattern="geometry"
       action={
         <button

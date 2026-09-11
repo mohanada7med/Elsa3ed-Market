@@ -33,14 +33,15 @@ export const SellerProfileView: React.FC = () => {
       >
         <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 text-center space-y-4 shadow-lg max-w-md w-full">
           <Store className="w-12 h-12 text-[#9a6a35] mx-auto" />
-          <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">بيانات الحرفي غير متوفرة</h3>
+          <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">صفحة الورشة مش موجودة دلوقتي</h3>
           <button
             type="button"
             onClick={() => setActivePage('sellers')}
             className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-[1.25rem] text-xs font-black transition-colors cursor-pointer"
           >
-            دليل الحرفيين والورش
+            شوف باقي شيوخ الصنعة
           </button>
+
         </div>
       </div>
     );
@@ -89,8 +90,7 @@ export const SellerProfileView: React.FC = () => {
           onClick={() => setActivePage('sellers')}
           className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
         >
-          دليل الحرفيين
-        </button>
+          دليل شيوخ الصنعة        </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
         <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">{seller.brandName}</span>
       </nav>
@@ -205,21 +205,21 @@ export const SellerProfileView: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif">
-              معروضات ومصنوعات {seller.brandName}
+              شغل وحلاوة {seller.brandName}
             </h2>
             <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 mt-0.5">
-              جميع القطع متوفرة للشحن المباشر من الورشة في {seller.governorate}
+              كل القطع بتتشحن على طول من الورشة في {seller.governorate} لحد عندك
             </p>
           </div>
           <span className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-[#9a6a35]/10 px-3.5 py-1 rounded-full border border-[#9a6a35]/20">
-            {sellerProducts.length} منتجات متاحة
+            {sellerProducts.length} قطع جاهزة
           </span>
         </div>
 
         {sellerProducts.length === 0 ? (
           <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-12 text-center shadow-lg">
             <Store className="w-12 h-12 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
-            <h4 className="font-bold text-[#211d18]/70 dark:text-[#f5f0e7]/70 text-sm font-serif">لا توجد منتجات منشورة حالياً لهذه الورشة</h4>
+            <h4 className="font-bold text-[#211d18]/70 dark:text-[#f5f0e7]/70 text-sm font-serif">لسه مفيش قطع معروضة للورشة دي حالياً</h4>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

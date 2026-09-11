@@ -350,7 +350,8 @@ export type ActivePage =
   | 'admin-audit-logs'
   | 'market'
   | 'profile'
-  | 'admin-settings';
+  | 'admin-settings'
+  | 'quize';
 
 export type CraftVerificationStatus = 'draft' | 'pending_review' | 'verified' | 'published' | 'rejected';
 

@@ -60,7 +60,7 @@ export const SellersDirectoryPage: React.FC = () => {
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-        <span className="font-bold">دليل ورش وشيوخ صنعة الصعيد</span>
+        <span className="font-bold">ناس الصنعة في الصعيد</span>
       </nav>
 
       {/* Header */}
@@ -68,15 +68,15 @@ export const SellersDirectoryPage: React.FC = () => {
         <div className="relative z-10 max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 dark:bg-black/10 text-amber-200 dark:text-[#9a6a35] text-xs font-bold backdrop-blur-xs">
             <Store className="w-3.5 h-3.5" />
-            <span>حرفيو وشيوخ صنعة الصعيد المعتمدون</span>
+            <span>من الورشة لبيتك على طول</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black font-serif leading-tight">
-            دليل الورش والتعاونيات الحرفية
+            شيوخ الكار.. سر الصنعة وريحة بلادنا
           </h1>
 
           <p className="text-xs sm:text-sm text-white/75 dark:text-black/75 leading-relaxed font-sans">
-            تواصل مباشرة مع الحرفيين وشيوخ الصنعة في أسوان والأقصر وقنا وسوهاج وأسيوط والمنيا والوادي الجديد. تسوق أعمالهم اليدوية الموثقة وادعم استمرار التراث الحي.
+            شوف شغل شيوخ الصنعة وحلاوة إيديهم في الصعيد؛ من النيل للوادي. نَقّي قطع أصيلة معمولة بحب، وخلي خير بلادنا عايش في بيتك.
           </p>
 
           <div className="pt-2">
@@ -102,8 +102,8 @@ export const SellersDirectoryPage: React.FC = () => {
             type="button"
             onClick={() => setSelectedGov(gov)}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[40px] cursor-pointer ${selectedGov === gov
-                ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                : 'bg-white/75 dark:bg-[#151513]/90 text-black/75 dark:text-white/75 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
+              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              : 'bg-white/75 dark:bg-[#151513]/90 text-black/75 dark:text-white/75 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
               }`}
           >
             {gov === 'all' ? 'جميع المحافظات' : `محافظة ${gov}`}

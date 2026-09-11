@@ -131,7 +131,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
         </div>
 
         <p className="text-sm text-black/60 dark:text-white/60 max-w-md">
-          لف في أبواب وه وتعرف على بلاد وناس وتراث الصعيد كله بتفاصيله وحكاياته.
+          لف في أبواب «وه» واكتشف بلاد الصعيد وناسه وتراثه، واسمع حكاياته وتفاصيله اللي مميزة كل حتة فيه.
         </p>
       </div>
 

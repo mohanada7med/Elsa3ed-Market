@@ -399,8 +399,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
 
   'global-search': '/global-search',
 
-  'dialect-dictionary': '/dialect-dictionary',
-
+  quize: '/quiz',
   'cultural-cms': '/admin-cultural-cms',
 
   // Market
@@ -458,6 +457,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-audit-logs': '/admin-audit-logs',
   'admin-settings': '/admin-settings',
   'admin-media': '/admin-media',
+  'dialect-dictionary': ''
 };
 
 function getInitialNavigationState(): {

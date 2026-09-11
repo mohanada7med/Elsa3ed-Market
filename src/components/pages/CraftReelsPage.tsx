@@ -184,7 +184,7 @@ export const CraftReelsPage: React.FC = () => {
     return reels.filter((reel) => {
       const matchGov =
         selectedGovernorate === 'all' || reel.governorate === selectedGovernorate;
-      
+
       const matchContent =
         selectedContentType === 'all' ||
         reel.contentType === selectedContentType ||
@@ -398,7 +398,7 @@ export const CraftReelsPage: React.FC = () => {
     xl:text-[11rem]
   "
               >
-                شاهد
+                شوف
                 <br />
                 <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">
                   الصعيد
@@ -408,8 +408,7 @@ export const CraftReelsPage: React.FC = () => {
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60 sm:text-xl">
-                  من الحرف والأسواق إلى الأماكن والمعالم والفعاليات...
-                  اكتشف حكايات الصعيد كما لم ترها من قبل.
+                  من لَفّة الأسواق وأسرار الحرف لمعالم تفتح النفس.. عيش حكاية الصعيد الحقيقية زي ما عمرك ما شفتها قبل كده.
                 </p>
               </div>
             </div>
@@ -486,11 +485,10 @@ export const CraftReelsPage: React.FC = () => {
                 className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
               >
                 <div
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${
-                    isSelected
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
                       ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
                       : 'bg-black/10 dark:bg-white/10 group-hover:bg-[#9a6a35]/40'
-                  }`}
+                    }`}
                 >
                   <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
                     <img
@@ -502,9 +500,8 @@ export const CraftReelsPage: React.FC = () => {
                   </div>
                 </div>
                 <span
-                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${
-                    isSelected ? 'text-[#9a6a35]' : 'text-black dark:text-white'
-                  }`}
+                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${isSelected ? 'text-[#9a6a35]' : 'text-black dark:text-white'
+                    }`}
                 >
                   {gov.label}
                 </span>

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import WahIntro from './components/WahIntro';
 import { AppProvider, useApp, PAGE_ROUTES } from './context/AppContext';
@@ -75,7 +74,7 @@ const CraftReelsPage = React.lazy(() =>
   import('./components/pages/CraftReelsPage').then((m) => ({ default: m.CraftReelsPage }))
 );
 const DialectDictionaryPage = React.lazy(() =>
-  import('./components/pages/DialectDictionaryPage').then((m) => ({ default: m.DialectDictionaryPage }))
+  import('./components/pages/quize').then((m) => ({ default: m.DialectDictionaryPage }))
 );
 const OrdersTrackingPage = React.lazy(() =>
   import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
@@ -103,9 +102,11 @@ const MainContent: React.FC = () => {
     setIsAuthModalOpen,
     setAuthModalTab
   } = useApp();
+
   const selectedProduct = products.find((p) => p.id === selectedProductId);
   const [showIntro, setShowIntro] = useState(true);
-  // Dynamic SEO meta updates on page transition (called unconditionally at top of component)
+
+  // Dynamic SEO meta updates on page transition
   useEffect(() => {
     switch (activePage) {
       case 'home':
@@ -253,16 +254,18 @@ const MainContent: React.FC = () => {
           description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
         });
         break;
+      case 'quize':
       case 'dialect-dictionary':
         updatePageSEO({
-          title: 'معجم اللهجة والأمثال الصعيدية (الصعيدي الفصيح) | وه',
-          description: 'توثيق تفاعلي حي لمفردات وحِكَم وأمثال صعيد مصر، وجذورها القبطية والفرعونية والعربية مع النطق الصوتي واختبار اللهجة.'
+          title: 'تحدي اللهجة الصعيدية | وه',
+          description: 'اختبر معرفتك بلهجة ومفردات أهل الصعيد في 10 أسئلة سريعة وممتعة.'
         });
         break;
       default:
         break;
     }
   }, [activePage, selectedProduct, selectedSellerId]);
+
   if (showIntro) {
     return (
       <WahIntro
@@ -270,16 +273,15 @@ const MainContent: React.FC = () => {
       />
     );
   }
-  // Initial Auth Verification State (rendered after all hooks)
+
+  // Initial Auth Verification State
   if (isAuthChecking) {
     return <WahLoadingScreen />;
-
   }
 
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] transition-colors duration-500">
       <div>
-
         <Header />
 
         <AnimatePresence mode="wait">
@@ -305,7 +307,7 @@ const MainContent: React.FC = () => {
             {activePage === 'sellers' && <SellersDirectoryPage />}
             {activePage === 'seller-details' && <SellerProfileView />}
 
-            {/* Cart: Buyer/Guest only. Forbidden for Seller and Admin */}
+            {/* Cart */}
             {activePage === 'cart' && (
               isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
                 <ForbiddenPage />
@@ -314,7 +316,7 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {/* Checkout: Buyer only. Forbidden for Seller and Admin. Prompt login for guest */}
+            {/* Checkout */}
             {activePage === 'checkout' && (
               isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
                 <ForbiddenPage />
@@ -370,10 +372,10 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {/* Notifications Center Page */}
+            {/* Notifications */}
             {activePage === 'notifications' && <NotificationsPage />}
 
-            {/* Live Chat: Buyer & General Messages */}
+            {/* Live Chat */}
             {activePage === 'messages' && (
               isAuthenticated ? (
                 <ChatView isSellerMode={currentRole === 'seller'} />
@@ -400,7 +402,7 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {/* Buyer Account: Requires Authentication */}
+            {/* Buyer Account */}
             {(activePage === 'buyer-account' || activePage === 'profile') && (
               isAuthenticated ? (
                 <BuyerAccountPage />
@@ -427,114 +429,112 @@ const MainContent: React.FC = () => {
               )
             )}
 
-            {/* Seller Dashboard: Requires Approved Seller or Admin Role */}
-            {activePage.startsWith('seller-') && (
-              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') && currentUser?.sellerStatus !== 'pending' && currentUser?.sellerStatus !== 'rejected' ? (
-                <React.Suspense fallback={<LazySectionFallback />}>
-                  <SellerDashboard />
-                </React.Suspense>
-              ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
-                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
-                    ⏳
-                  </div>
-                  <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
-                    طلبك قيد المراجعة والاعتماد
-                  </span>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                    طلب انضمام ورشتك قيد الفحص الإداري
-                  </h2>
-                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    تم استلام طلب اعتماد ورشة "{currentUser.seller?.brandName || 'ورشة الحرفي'}" بنجاح، ويجري حالياً تدقيق البيانات والمعايير التراثية من قبل إدارة منصة وه. ستتمكن من إضافة المنتجات وإدارة المتجر فور صدور الاعتماد.
-                  </p>
-                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
-                    <button
-                      type="button"
-                      onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
-                    >
-                      متابعة حالة الطلب في حسابي
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
-                    >
-                      العودة للرئيسية
-                    </button>
-                  </div>
+            {/* Seller Dashboard */}
+            {activePage.startsWith('seller-') && activePage !== 'seller-details' && (isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') && currentUser?.sellerStatus !== 'pending' && currentUser?.sellerStatus !== 'rejected' ? (
+              <React.Suspense fallback={<LazySectionFallback />}>
+                <SellerDashboard />
+              </React.Suspense>
+            ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
+              <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
+                  ⏳
                 </div>
-              ) : isAuthenticated && currentUser?.sellerStatus === 'rejected' ? (
-                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/20">
-                    ⚠️
-                  </div>
-                  <span className="inline-block px-3 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold">
-                    تم رفض طلب الاعتماد
-                  </span>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                    لم يتم قبول طلب الانضمام كبائع
-                  </h2>
-                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    {currentUser.seller?.rejectionReason || 'عفواً، لم يستوفِ الطلب المعايير التراثية المعتمدة للمنصة في الوقت الحالي.'}
-                  </p>
-                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
-                    <button
-                      type="button"
-                      onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
-                    >
-                      تعديل وإعادة تقديم الطلب
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
-                    >
-                      تصفح السوق
-                    </button>
-                  </div>
+                <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
+                  طلبك قيد المراجعة والاعتماد
+                </span>
+                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                  طلب انضمام ورشتك قيد الفحص الإداري
+                </h2>
+                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                  تم استلام طلب اعتماد ورشة "{currentUser.seller?.brandName || 'ورشة الحرفي'}" بنجاح، ويجري حالياً تدقيق البيانات والمعايير التراثية من قبل إدارة منصة وه. ستتمكن من إضافة المنتجات وإدارة المتجر فور صدور الاعتماد.
+                </p>
+                <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('buyer-account')}
+                    className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                  >
+                    متابعة حالة الطلب في حسابي
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('home')}
+                    className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                  >
+                    العودة للرئيسية
+                  </button>
                 </div>
-              ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
-                    🏺
-                  </div>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">لوحة تحكم ورش الصعيد</h2>
-                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
-                  </p>
-                  <div className="pt-2 flex flex-col gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAuthModalTab('login');
+              </div>
+            ) : isAuthenticated && currentUser?.sellerStatus === 'rejected' ? (
+              <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                <div className="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/20">
+                  ⚠️
+                </div>
+                <span className="inline-block px-3 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold">
+                  تم رفض طلب الاعتماد
+                </span>
+                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                  لم يتم قبول طلب الانضمام كبائع
+                </h2>
+                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                  {currentUser.seller?.rejectionReason || 'عفواً، لم يستوفِ الطلب المعايير التراثية المعتمدة للمنصة في الوقت الحالي.'}
+                </p>
+                <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('buyer-account')}
+                    className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                  >
+                    تعديل وإعادة تقديم الطلب
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('home')}
+                    className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                  >
+                    تصفح السوق
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
+                <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                  🏺
+                </div>
+                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">لوحة تحكم ورش الصعيد</h2>
+                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                  هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
+                </p>
+                <div className="pt-2 flex flex-col gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAuthModalTab('login');
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                  >
+                    تسجيل دخول البائع
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isAuthenticated) {
+                        setActivePage('buyer-account');
+                      } else {
+                        setAuthModalTab('register');
                         setIsAuthModalOpen(true);
-                      }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-                    >
-                      تسجيل دخول البائع
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isAuthenticated) {
-                          setActivePage('buyer-account');
-                        } else {
-                          setAuthModalTab('register');
-                          setIsAuthModalOpen(true);
-                        }
-                      }}
-                      className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
-                    >
-                      تقديم طلب انضمام ورشة جديدة
-                    </button>
-                  </div>
+                      }
+                    }}
+                    className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                  >
+                    تقديم طلب انضمام ورشة جديدة
+                  </button>
                 </div>
-              )
-            )}
+              </div>
+            ))}
 
-            {/* Admin Dashboard: Requires Admin Role */}
+            {/* Admin Dashboard */}
             {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
               isAuthenticated && currentRole === 'admin' ? (
                 <React.Suspense fallback={<LazySectionFallback />}>
@@ -606,7 +606,9 @@ const MainContent: React.FC = () => {
                 <AdminMapEditorPage />
               </React.Suspense>
             )}
-            {activePage === 'dialect-dictionary' && (
+
+            {/* Dialect Dictionary & Quiz */}
+            {(activePage === 'quize') && (
               <React.Suspense fallback={<LazySectionFallback />}>
                 <DialectDictionaryPage />
               </React.Suspense>
@@ -622,7 +624,7 @@ const MainContent: React.FC = () => {
       {/* Floating Direct WhatsApp Support & Inquiries */}
       <WhatsAppButton />
 
-      {/* Persistent Mobile Bottom Navigation Bar (Phones & Small Tablets) */}
+      {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />
 
       {/* Global Modals & Drawers */}

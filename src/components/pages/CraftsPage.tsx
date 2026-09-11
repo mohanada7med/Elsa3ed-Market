@@ -89,7 +89,7 @@ export const CraftsPage: React.FC = () => {
           الرئيسية
         </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">أطلس صنايع وحرف الصعيد</span>
+        <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">حكايات صنعة الصعيد</span>
       </nav>
 
       {/* Hero Banner with Documentary CTA */}
@@ -98,15 +98,15 @@ export const CraftsPage: React.FC = () => {
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/20 text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold">
             <Sparkles className="w-3.5 h-3.5 text-[#d5a56d]" />
-            <span>صنايع بلادنا التراثية</span>
+            <span>صَنعة أهالينا وخير أرضنا</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black font-serif leading-tight">
-            أطلس الحرف اليدوية في صعيد مصر
+            دليل حِرف وصنايع الصعيد.. من إيدين أصحابها
           </h1>
 
           <p className="text-xs sm:text-sm text-[#f5f0e7]/80 leading-relaxed">
-            توثيق حي لحرف وصنايع الصعيد الأصيلة، بنتعرف فيه على سر الصنعة، خامات البيئة، وهوية شيوخ المهنة اللي حافظوا عليها جيل ورا جيل.
+            توثيق حي لحِرف الصعيد اللي لسه عايشة؛ بنكشف سر الصنعة، وخير الخامات اللي طالعة من أرضنا، وبنحكي عن شيوخ المهنة اللي شالوا السر وسلّموه جيل ورا جيل.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -166,11 +166,10 @@ export const CraftsPage: React.FC = () => {
               key={gov}
               type="button"
               onClick={() => setSelectedGov(gov)}
-              className={`px-3.5 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                selectedGov === gov
+              className={`px-3.5 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${selectedGov === gov
                   ? 'bg-[#9a6a35] text-white shadow-sm'
                   : 'bg-black/5 dark:bg-white/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
-              }`}
+                }`}
             >
               {gov}
             </button>
@@ -273,7 +272,7 @@ export const CraftsPage: React.FC = () => {
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-                      
+
                       <div className="absolute bottom-3 right-3 text-white">
                         <span className="text-[11px] text-[#d5a56d] font-bold block">الموطن التراثي:</span>
                         <span className="font-bold text-sm">{fullLocation || story.governorate}</span>

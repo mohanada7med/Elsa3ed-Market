@@ -393,24 +393,29 @@ export const ProductsPage: React.FC = () => {
 
                 <p
                   className="
-                    max-w-2xl
-                    text-sm
-                    font-medium
-                    leading-8
-                    text-black/55
+    max-w-2xl
+    text-sm
+    font-medium
+    leading-8
+    text-black/55
 
-                    dark:text-white/55
+dark:text-white/55
 
-                    sm:text-base
-                    sm:leading-9
-                  "
+sm:text-base
+sm:leading-9
+
+"
+
                 >
-                  قطع أصلية بتحمل روح المكان،
+
+                  حاجات أصلية بتحكي عن المكان،
                   وصنعة اتنقلت من جيل لجيل.
-                  اكتشف الفخار والكليم والتلي
-                  والخوص وكل ما هو مصنوع بإيد
-                  حقيقية من قلب الصعيد.
+                  شوف الفخار والكليم والتلي
+                  والخوص وكل حاجة معمولة بإيد
+                  ناس من قلب الصعيد.
+
                 </p>
+
               </div>
             </div>
 
@@ -813,7 +818,7 @@ export const ProductsPage: React.FC = () => {
             />
 
             <span className="text-xs font-black">
-              تصفح المجموعة
+              شوف المجموعة
             </span>
           </div>
 

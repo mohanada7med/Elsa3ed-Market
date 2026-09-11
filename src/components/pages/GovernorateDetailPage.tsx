@@ -608,23 +608,22 @@ export const GovernorateDetailPage: React.FC = () => {
                     <div className="absolute right-6 top-6 flex flex-wrap items-center gap-2">
                       {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
                         <span
-                          className={`rounded-full px-3 py-1 text-[10px] font-black shadow-lg ${
-                            place.visitInfo.visitStatus === 'closed_to_public'
+                          className={`rounded-full px-3 py-1 text-[10px] font-black shadow-lg ${place.visitInfo.visitStatus === 'closed_to_public'
                               ? 'bg-red-600/90 text-white border border-red-400/40'
                               : place.visitInfo.visitStatus === 'closed_for_restoration'
-                              ? 'bg-amber-600/90 text-white border border-amber-400/40'
-                              : place.visitInfo.visitStatus === 'public_landmark'
-                              ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
-                              : place.visitInfo.visitStatus === 'active_institution'
-                              ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
-                              : 'bg-orange-600/90 text-white border border-orange-400/40'
-                          }`}
+                                ? 'bg-amber-600/90 text-white border border-amber-400/40'
+                                : place.visitInfo.visitStatus === 'public_landmark'
+                                  ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
+                                  : place.visitInfo.visitStatus === 'active_institution'
+                                    ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
+                                    : 'bg-orange-600/90 text-white border border-orange-400/40'
+                            }`}
                         >
-                          {place.visitInfo.visitStatus === 'closed_to_public' && '⚠️ مغلق أمام الجمهور'}
-                          {place.visitInfo.visitStatus === 'closed_for_restoration' && '🏛️ مغلق للترميم'}
-                          {place.visitInfo.visitStatus === 'public_landmark' && '📍 معلم عام مفتوح'}
-                          {place.visitInfo.visitStatus === 'active_institution' && '🎓 صرح تعليمي وديني'}
-                          {place.visitInfo.visitStatus === 'requires_safari_permit' && '🚙 محمية وسفاري'}
+                          {place.visitInfo.visitStatus === 'closed_to_public' && ' مغلق أمام الجمهور'}
+                          {place.visitInfo.visitStatus === 'closed_for_restoration' && ' مغلق للترميم'}
+                          {place.visitInfo.visitStatus === 'public_landmark' && ' معلم عام مفتوح'}
+                          {place.visitInfo.visitStatus === 'active_institution' && ' صرح تعليمي وديني'}
+                          {place.visitInfo.visitStatus === 'requires_safari_permit' && ' محمية وسفاري'}
                         </span>
                       )}
                     </div>

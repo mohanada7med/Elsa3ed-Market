@@ -9,6 +9,7 @@ import { GovernorateExplorer } from '../public/GovernorateExplorer';
 import { FeaturedSellers } from '../public/FeaturedSellers';
 import { AboutSection } from '../public/AboutSection';
 import { ArrowLeft, Flame } from 'lucide-react';
+import { DialectDictionaryPage } from './quize';
 
 export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
@@ -43,14 +44,16 @@ export const HomePage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] mb-1">
               <Flame className="w-4 h-4 text-[#9a6a35]" />
-              <span>الأكثر طلباً وإقبالاً</span>
+              <span>الأكتر طلبًا وإقبالًا</span>
+
             </div>
             <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
-              روائع الصعيد الأكثر شهرة
+              أحلى حاجات الصعيد والأكتر شهرة
             </h2>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-1">
-              قطع أثبتت جودتها ونالت إعجاب مئات المتسوقين وعشاق التراث المصري
+              حاجات ناس كتير جربوها وحبوها، وبتحكي عن تراث الصعيد وأصالته
             </p>
+
           </div>
 
           <button
@@ -58,7 +61,7 @@ export const HomePage: React.FC = () => {
             onClick={() => setActivePage('products')}
             className="text-xs sm:text-sm font-bold text-[#9a6a35] hover:text-[#744e26] flex items-center gap-1.5 self-start sm:self-auto hover:underline min-h-[40px] cursor-pointer"
           >
-            <span>استعراض كل المنتجات</span>
+            <span>شوف كل المنتجات</span>
             <ArrowLeft className="w-4 h-4" />
           </button>
         </div>
@@ -66,6 +69,7 @@ export const HomePage: React.FC = () => {
         <ProductGrid limit={8} />
       </section>
 
+      <DialectDictionaryPage />
 
       <FeaturedSellers />
 

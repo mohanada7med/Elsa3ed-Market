@@ -54,11 +54,10 @@ export const CategoriesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setViewMode('interactive')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              viewMode === 'interactive'
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'interactive'
                 ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
                 : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-            }`}
+              }`}
           >
             <Rows3 className="w-4 h-4" />
             <span>عرض الأطلس التفاعلي</span>
@@ -67,11 +66,10 @@ export const CategoriesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setViewMode('grid')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              viewMode === 'grid'
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'grid'
                 ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
                 : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-            }`}
+              }`}
           >
             <LayoutGrid className="w-4 h-4" />
             <span>عرض الشبكة</span>
@@ -88,10 +86,10 @@ export const CategoriesPage: React.FC = () => {
             <span>حرف وفنون صعيد مصر</span>
           </div>
           <h1 className="text-2xl sm:text-5xl font-black font-serif leading-tight">
-            أصالة الصعيد بالخامة والبلد
+            أصل الصعيد.. بخامته وبلده
           </h1>
           <p className="text-xs sm:text-sm text-[#f5f0e7]/80 leading-relaxed max-w-2xl font-light">
-            استكشف حرف الصعيد اليدوية بطمي النيل وخيوط الفضة وخوص النخيل. اختار الحرفة عشان تشوف أصلها ومحافظتها وأحلى شغل طالع منها.
+            اتفرّج على صَنعة الصعيد على أصولها، من طمي النيل لخيوط الفضة وخوص النخل. نقّي الصنعة عشان تشوف بلدها وإزاي بتتعمل، وتشوف أحلى شغل طالع بإيدين ناسها.
           </p>
         </div>
       </div>
@@ -113,26 +111,23 @@ export const CategoriesPage: React.FC = () => {
                     tabIndex={0}
                     onMouseEnter={() => setSelectedCatId(cat.id)}
                     onClick={() => navigateToCategory(cat.id)}
-                    className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 cursor-pointer flex items-center justify-between ${
-                      isSelected
+                    className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 cursor-pointer flex items-center justify-between ${isSelected
                         ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] dark:border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/30'
                         : 'bg-white/50 dark:bg-[#151513]/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${
-                        isSelected ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]' : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
-                      }`}>
+                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]' : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                        }`}>
                         0{idx + 1}
                       </span>
 
                       <div>
                         <h3
-                          className={`text-lg font-black font-serif transition-colors ${
-                            isSelected
+                          className={`text-lg font-black font-serif transition-colors ${isSelected
                               ? 'text-[#9a6a35] dark:text-[#d5a56d]'
                               : 'text-[#211d18] dark:text-[#f5f0e7]'
-                          }`}
+                            }`}
                         >
                           {cat.name}
                         </h3>
@@ -149,11 +144,10 @@ export const CategoriesPage: React.FC = () => {
                         </span>
                       )}
                       <ArrowUpLeft
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          isSelected
+                        className={`w-4 h-4 transition-transform duration-300 ${isSelected
                             ? 'text-[#9a6a35] dark:text-[#d5a56d] -translate-x-1 -translate-y-1'
                             : 'text-[#211d18]/30 dark:text-[#f5f0e7]/30 group-hover:opacity-100'
-                        }`}
+                          }`}
                       />
                     </div>
                   </div>
@@ -234,11 +228,10 @@ export const CategoriesPage: React.FC = () => {
               return (
                 <div
                   key={cat.id}
-                  className={`relative rounded-[1.5rem] border overflow-hidden transition-all duration-300 ${
-                    isOpen
+                  className={`relative rounded-[1.5rem] border overflow-hidden transition-all duration-300 ${isOpen
                       ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/20'
                       : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10'
-                  }`}
+                    }`}
                 >
                   {/* شريط الإضاءة النحاسي الجانبي للتمييز الاحترافي */}
                   {isOpen && (
@@ -254,11 +247,10 @@ export const CategoriesPage: React.FC = () => {
                   >
                     <div className="flex items-center gap-3">
                       <span
-                        className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${
-                          isOpen
+                        className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
                             ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
                             : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
-                        }`}
+                          }`}
                       >
                         0{idx + 1}
                       </span>
@@ -279,16 +271,14 @@ export const CategoriesPage: React.FC = () => {
                         </span>
                       )}
                       <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
-                          isOpen
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isOpen
                             ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
                             : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
-                        }`}
+                          }`}
                       >
                         <ChevronDown
-                          className={`w-4 h-4 transition-transform duration-300 ${
-                            isOpen ? 'rotate-180' : ''
-                          }`}
+                          className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''
+                            }`}
                         />
                       </div>
                     </div>
