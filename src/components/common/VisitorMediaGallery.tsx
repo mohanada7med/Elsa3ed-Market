@@ -747,8 +747,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                             key={`${imgUrl}-${idx}`}
                             onClick={() => setActiveImageIndex(idx)}
                             className={`group relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl transition sm:h-24 sm:w-36 cursor-pointer ${isActive
-                                ? 'ring-2 ring-[#9a6a35] ring-offset-2 ring-offset-white dark:ring-offset-[#171512]'
-                                : 'opacity-55 hover:opacity-100'
+                              ? 'ring-2 ring-[#9a6a35] ring-offset-2 ring-offset-white dark:ring-offset-[#171512]'
+                              : 'opacity-55 hover:opacity-100'
                               }`}
                           >
                             <img
@@ -811,8 +811,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                             key={`${vidUrl}-${idx}`}
                             onClick={() => setSelectedVideoUrl(vidUrl)}
                             className={`group flex w-full items-center gap-3 rounded-2xl p-2 text-right transition cursor-pointer ${isSelected
-                                ? 'bg-[#9a6a35]/10 ring-1 ring-[#9a6a35]/30'
-                                : 'hover:bg-black/[0.035] dark:hover:bg-white/[0.035]'
+                              ? 'bg-[#9a6a35]/10 ring-1 ring-[#9a6a35]/30'
+                              : 'hover:bg-black/[0.035] dark:hover:bg-white/[0.035]'
                               }`}
                           >
                             <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-black">
@@ -902,28 +902,92 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-7">
               {adminActiveTab === 'gallery' && (
-                <AdminMediaUploader
-                  entityType={entityType}
-                  entitySlug={entitySlug || entityId}
-                  entityTitle={entityTitle}
-                  mediaCategory="image"
-                  multiple={true}
-                  value={[]}
-                  onChange={(uploaded: any) => {
-                    const urls: string[] = [];
-                    if (Array.isArray(uploaded)) {
-                      uploaded.forEach((item: any) => {
-                        const url = typeof item === 'string' ? item : item?.secureUrl || item?.url;
+                <div className="space-y-6">
+                  {/* أداة الرفع الجديدة */}
+                  <AdminMediaUploader
+                    entityType={entityType}
+                    entitySlug={entitySlug || entityId}
+                    entityTitle={entityTitle}
+                    mediaCategory="image"
+                    multiple={true}
+                    value={[]}
+                    onChange={(uploaded: any) => {
+                      const urls: string[] = [];
+                      if (Array.isArray(uploaded)) {
+                        uploaded.forEach((item: any) => {
+                          const url = typeof item === 'string' ? item : item?.secureUrl || item?.url;
+                          if (url) urls.push(url.trim());
+                        });
+                      } else if (uploaded) {
+                        const url = typeof uploaded === 'string' ? uploaded : uploaded?.secureUrl || uploaded?.url;
                         if (url) urls.push(url.trim());
-                      });
-                    } else if (uploaded) {
-                      const url = typeof uploaded === 'string' ? uploaded : uploaded?.secureUrl || uploaded?.url;
-                      if (url) urls.push(url.trim());
-                    }
-                    if (urls.length > 0) handleNewImagesUploaded(urls);
-                  }}
-                  helperText="رفع صور المعرض التوثيقي."
-                />
+                      }
+                      if (urls.length > 0) handleNewImagesUploaded(urls);
+                    }}
+                    helperText="اختر صور جديدة للإضافة الفورية للأرشيف السحابي."
+                  />
+
+                  {/* إدارة واستعراض الصور القديمة المخزنة سحابياً وقاعدياً */}
+                  <div className="rounded-2xl border border-black/10 bg-white/50 p-4 dark:border-white/10 dark:bg-white/[0.02]">
+                    <div className="mb-3 flex items-center justify-between">
+                      <h4 className="text-xs font-black tracking-wider opacity-80">
+                        الصور الحالية في الأرشيف ({localGallery.length})
+                      </h4>
+                      <span className="text-[10px] opacity-50">إدارة مباشرة من السحابة وقاعدة البيانات</span>
+                    </div>
+
+                    {localGallery.length === 0 ? (
+                      <p className="py-6 text-center text-xs opacity-40">لا توجد صور مسجلة حالياً لهذا الكيان.</p>
+                    ) : (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 max-h-[280px] overflow-y-auto p-1">
+                        {localGallery.map((imgUrl, idx) => {
+                          const isCover = imgUrl === localCover;
+                          return (
+                            <div
+                              key={`${imgUrl}-${idx}`}
+                              className="group relative aspect-video overflow-hidden rounded-xl border border-black/10 bg-black/5 dark:border-white/10 dark:bg-white/5"
+                            >
+                              <img
+                                src={imgUrl}
+                                alt={`صورة أرشيفية ${idx + 1}`}
+                                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                              />
+
+                              {/* شارة الغلاف */}
+                              {isCover && (
+                                <span className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded bg-[#9a6a35] text-white shadow">
+                                  <Star className="h-3 w-3 fill-current" />
+                                </span>
+                              )}
+
+                              {/* أزرار التحكم السريع (تعيين غلاف / حذف نهائي) */}
+                              <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/60 opacity-0 backdrop-blur-xs transition group-hover:opacity-100">
+                                {!isCover && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSetCover(imgUrl)}
+                                    title="تعيين كغلاف رئيسي"
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-white hover:bg-[#9a6a35] cursor-pointer"
+                                  >
+                                    <Star className="h-4 w-4" />
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => setImagePendingDelete(imgUrl)}
+                                  title="حذف من السحابة وقاعدة البيانات"
+                                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-600/80 text-white hover:bg-red-600 cursor-pointer"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
 
               {adminActiveTab === 'video' && (
@@ -959,8 +1023,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
           <div className="w-full max-w-md rounded-[2rem] bg-white p-6 dark:bg-[#211d19]">
             <h3 className="text-base font-black mb-2">حذف الصورة نهائيًا؟</h3>
             <div className="flex gap-2 mt-4">
-              <button onClick={() => setImagePendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold">إلغاء</button>
-              <button onClick={() => handleRemoveFromGallery(imagePendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white">حذف</button>
+              <button onClick={() => setImagePendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold cursor-pointer">إلغاء</button>
+              <button onClick={() => handleRemoveFromGallery(imagePendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white cursor-pointer">حذف</button>
             </div>
           </div>
         </div>
@@ -971,8 +1035,8 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
           <div className="w-full max-w-md rounded-[2rem] bg-white p-6 dark:bg-[#211d19]">
             <h3 className="text-base font-black mb-2">إزالة مقطع الفيديو؟</h3>
             <div className="flex gap-2 mt-4">
-              <button onClick={() => setVideoPendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold">إلغاء</button>
-              <button onClick={() => handleRemoveVideo(videoPendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white">إزالة</button>
+              <button onClick={() => setVideoPendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold cursor-pointer">إلغاء</button>
+              <button onClick={() => handleRemoveVideo(videoPendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white cursor-pointer">إزالة</button>
             </div>
           </div>
         </div>

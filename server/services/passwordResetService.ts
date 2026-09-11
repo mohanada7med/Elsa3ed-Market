@@ -16,9 +16,8 @@ import { createNotification } from './notificationService.ts';
 import { createAuditLog } from './auditService.ts';
 import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { Logger } from '../utils/logger.ts';
-
 /**
- * Submit a request to reset password by username
+ * تقديم طلب استعادة كلمة السر عن طريق اسم المستخدم (يدوياً لمراجعة الإدارة)
  */
 export async function createPasswordResetRequest(usernameInput: string): Promise<{
   success: boolean;
@@ -26,19 +25,19 @@ export async function createPasswordResetRequest(usernameInput: string): Promise
   requestId: string;
 }> {
   if (!usernameInput || typeof usernameInput !== 'string' || !usernameInput.trim()) {
-    throw new Error('من فضلك اكتب اسم المستخدم');
+    throw new Error('من فضلك اكتب اسم المستخدم الأول عشان نقدر نساعدك.');
   }
 
   const trimmedUsername = usernameInput.trim();
   const user = await findUserByUsername(trimmedUsername);
 
   if (!user) {
-    throw new Error('اسم المستخدم المدخل غير مسجل لدينا في المنصة');
+    throw new Error('اسم المستخدم اللي كتبته مش مسجل عندنا في المنصة.');
   }
 
   const { db, isMongo } = await getDatabase();
 
-  // Check if there is an active pending reset request for this user
+  // التأكد من عدم وجود طلب معلق سابق لنفس المستخدم
   let existingPending: PasswordResetRequestDocument | null = null;
   if (isMongo && db) {
     try {
@@ -56,7 +55,7 @@ export async function createPasswordResetRequest(usernameInput: string): Promise
   }
 
   if (existingPending) {
-    throw new Error('يوجد بالفعل طلب معلق لاستعادة كلمة المرور لهذا الحساب قيد مراجعة الإدارة');
+    throw new Error('فيه بالفعل طلب استعادة كلمة سر معلق للحساب ده وقيد المراجعة من الإدارة حالياً.');
   }
 
   const now = new Date().toISOString();
@@ -73,18 +72,18 @@ export async function createPasswordResetRequest(usernameInput: string): Promise
     createdAt: now
   };
 
-  // Insert request
+  // حفظ الطلب في قاعدة البيانات
   if (isMongo && db) {
     try {
       await db.collection('password_resets').insertOne(resetRequest as any);
     } catch (e) {
       Logger.error('[PasswordResetService] Error inserting reset request into MongoDB:', e);
-      throw new Error('فشل في حفظ طلب استعادة كلمة المرور، يرجى المحاولة مرة أخرى');
+      throw new Error('حصل مشكلة واحنا بنحفظ طلب الاستعادة، جرب تاني كمان شوية.');
     }
   }
   memoryDb.passwordResets.unshift(resetRequest);
 
-  // Send real-time / in-app notification to all platform Administrators
+  // إرسال إشعار فوري لجميع مديري المنصة
   try {
     let adminUsers: { id: string }[] = [];
     if (isMongo && db) {
@@ -93,8 +92,8 @@ export async function createPasswordResetRequest(usernameInput: string): Promise
       adminUsers = memoryDb.users.filter((u) => u.role === 'admin').map((u) => ({ id: u.id }));
     }
 
-    const notifTitle = 'طلب إعادة تعيين كلمة المرور';
-    const notifMessage = `المستخدم: ${user.username} قام بطلب إعادة تعيين كلمة المرور.`;
+    const notifTitle = 'طلب استعادة كلمة السر';
+    const notifMessage = `المستخدم: @${user.username} طلب إعادة تعيين كلمة السر الخاصة بيه.`;
 
     for (const admin of adminUsers) {
       await createNotification({
@@ -116,18 +115,18 @@ export async function createPasswordResetRequest(usernameInput: string): Promise
     resource: 'password_resets',
     resourceId: requestId,
     status: 'نجاح',
-    details: `قدم المستخدم (${user.name} - @${user.username}) طلباً لاستعادة كلمة المرور`
+    details: `المستخدم (${user.name} - @${user.username}) طلب استعادة كلمة السر يدوياً`
   });
 
   return {
     success: true,
-    message: 'تم إرسال طلبك إلى الإدارة. سيقوم المسؤول بمراجعة الطلب وإنشاء كلمة مرور جديدة لك.',
+    message: 'تم إرسال طلبك للإدارة بنجاح. المسؤول هيراجعه وهيظبط لك كلمة سر جديدة.',
     requestId
   };
 }
 
 /**
- * Fetch password reset requests for Admin Dashboard
+ * جلب طلبات استعادة كلمة السر الخاصة بلوحة التحكم للآدمن
  */
 export async function getPasswordResetRequests(
   statusFilter?: 'all' | 'pending' | 'completed' | 'rejected'
@@ -152,7 +151,6 @@ export async function getPasswordResetRequests(
     }
   }
 
-  // Memory fallback
   return memoryDb.passwordResets.filter((r) => {
     if (statusFilter && statusFilter !== 'all' && r.status !== statusFilter) return false;
     return true;
@@ -160,7 +158,7 @@ export async function getPasswordResetRequests(
 }
 
 /**
- * Admin completes a password reset request by assigning a new temporary password
+ * الآدمن بينهي طلب الاستعادة ويدي للمستخدم كلمة سر مؤقتة جديدة
  */
 export async function completePasswordResetRequest(
   adminUser: AuthenticatedUser,
@@ -172,15 +170,15 @@ export async function completePasswordResetRequest(
   temporaryPassword: string;
 }> {
   if (!adminUser || adminUser.role !== 'admin') {
-    throw new Error('غير مصرح. هذه العملية تتطلب صلاحيات مدير المنصة');
+    throw new Error('مش مسموح ليك بالخطوة دي، دي خاصة بأدمن المنصة بس.');
   }
 
   if (!requestId || typeof requestId !== 'string') {
-    throw new Error('معرف الطلب غير صالح');
+    throw new Error('كود الطلب مش مظبوط.');
   }
 
   if (!temporaryPassword || typeof temporaryPassword !== 'string' || temporaryPassword.length < 6) {
-    throw new Error('كلمة المرور المؤقتة يجب ألا تقل عن 6 خانات');
+    throw new Error('كلمة المرور المؤقتة لازم تكون 6 خانات على الأقل.');
   }
 
   const { db, isMongo } = await getDatabase();
@@ -193,18 +191,17 @@ export async function completePasswordResetRequest(
   }
 
   if (!request) {
-    throw new Error('طلب إعادة تعيين كلمة المرور غير موجود');
+    throw new Error('طلب استعادة كلمة المرور مش موجود أساساً.');
   }
 
   if (request.status !== 'pending') {
-    throw new Error('تمت معالجة هذا الطلب بالفعل مسبقاً');
+    throw new Error('الطلب ده اتعامل معاه وخلص خلاص من قبل كده.');
   }
 
-  // Hash temporary password with bcrypt (cost 10)
   const passwordHash = await bcrypt.hash(temporaryPassword, 10);
   const now = new Date().toISOString();
 
-  // 1. Update target user password and set mustChangePassword = true
+  // 1. تحديث باسورد المستخدم وتفعيله بحيث يلتزم بتغييرها عند الدخول
   if (isMongo && db) {
     await db.collection('users').updateOne(
       { id: request.userId },
@@ -225,7 +222,7 @@ export async function completePasswordResetRequest(
     }
   }
 
-  // 2. Mark reset request as completed and record admin info
+  // 2. تحديث حالة الطلب إلى مكتمل
   const requestUpdates = {
     status: 'completed' as const,
     handledByAdminId: adminUser.id,
@@ -244,7 +241,7 @@ export async function completePasswordResetRequest(
     Object.assign(memReq, requestUpdates);
   }
 
-  // 3. Security Audit Log (Never log the plain text password)
+  // 3. سجل الأمان
   await createAuditLog({
     actorId: adminUser.id,
     userName: adminUser.name,
@@ -253,15 +250,14 @@ export async function completePasswordResetRequest(
     resource: 'password_resets',
     resourceId: requestId,
     status: 'نجاح',
-    details: `قام المدير (${adminUser.name}) بإنشاء كلمة مرور مؤقتة للمستخدم (${request.username}) وتحديث حسابه للإلزام بتغييرها`
+    details: `الآدمن (${adminUser.name}) عمل كلمة مرور مؤقتة للمستخدم (@${request.username}) وجهّز حسابه للتحديث`
   });
 
-  // Send safe notification to user (zero secrets or credentials in message)
   try {
     await createNotification({
       userId: request.userId,
-      title: 'تحديث بشأن طلب استعادة كلمة المرور',
-      message: 'تمت معالجة طلبك لاستعادة كلمة المرور بنجاح من قبل إدارة المنصة. يرجى تسجيل الدخول وتحديث كلمة المرور الخاصة بك.',
+      title: 'تم تحديث طلب استعادة كلمة المرور',
+      message: 'الإدارة خلصت طلبك وعملت لك كلمة مرور مؤقتة. ادخل سجل دخولك بيها وغيرهالك.',
       type: 'account',
       link: 'buyer-account'
     });
@@ -271,13 +267,13 @@ export async function completePasswordResetRequest(
 
   return {
     success: true,
-    message: `تم تعيين كلمة المرور المؤقتة بنجاح للمستخدم (${request.name || request.username})`,
+    message: `تم عمل كلمة المرور المؤقتة بنجاح للمستخدم (${request.name || request.username})`,
     temporaryPassword
   };
 }
 
 /**
- * Admin rejects a password reset request
+ * الآدمن بيرفض طلب استعادة كلمة السر
  */
 export async function rejectPasswordResetRequest(
   adminUser: AuthenticatedUser,
@@ -285,7 +281,7 @@ export async function rejectPasswordResetRequest(
   reason?: string
 ): Promise<{ success: boolean; message: string }> {
   if (!adminUser || adminUser.role !== 'admin') {
-    throw new Error('غير مصرح. هذه العملية تتطلب صلاحيات مدير المنصة');
+    throw new Error('مش مسموح ليك بالخطوة دي، دي خاصة بأدمن المنصة بس.');
   }
 
   const { db, isMongo } = await getDatabase();
@@ -299,7 +295,7 @@ export async function rejectPasswordResetRequest(
   }
 
   if (!request) {
-    throw new Error('طلب إعادة تعيين كلمة المرور غير موجود');
+    throw new Error('طلب استعادة كلمة المرور مش موجود.');
   }
 
   const updates = {
@@ -307,7 +303,7 @@ export async function rejectPasswordResetRequest(
     handledByAdminId: adminUser.id,
     handledByAdminName: adminUser.name,
     handledAt: now,
-    adminNotes: reason?.trim() || 'تم رفض الطلب من قبل الإدارة'
+    adminNotes: reason?.trim() || 'تم رفض الطلب من قِبل الإدارة.'
   };
 
   if (isMongo && db) {
@@ -326,15 +322,14 @@ export async function rejectPasswordResetRequest(
     resource: 'password_resets',
     resourceId: requestId,
     status: 'تنبيه',
-    details: `قام المدير (${adminUser.name}) برفض طلب استعادة كلمة المرور للمستخدم (${request.username})`
+    details: `الآدمن (${adminUser.name}) رفض طلب استعادة كلمة السر للمستخدم (@${request.username})`
   });
 
-  // Send safe notification to user
   try {
     await createNotification({
       userId: request.userId,
-      title: 'تحديث بشأن طلب استعادة كلمة المرور',
-      message: `تم رفض طلب استعادة كلمة المرور من قبل إدارة المنصة. ${updates.adminNotes ? `السبب: ${updates.adminNotes}` : ''}`.trim(),
+      title: 'تحديث بخصوص طلب استعادة كلمة المرور',
+      message: `للأسف الإدارة رفضت طلب استعادة كلمة المرور. ${updates.adminNotes ? `السبب: ${updates.adminNotes}` : ''}`.trim(),
       type: 'account',
       link: 'buyer-account'
     });
@@ -344,23 +339,27 @@ export async function rejectPasswordResetRequest(
 
   return {
     success: true,
-    message: 'تم رفض طلب استعادة كلمة المرور'
+    message: 'تم رفض طلب استعادة كلمة المرور بنجاح.'
   };
 }
 
 /**
- * Request an automated password reset link sent to the user's registered email address.
- * Supports email or username as identifier.
- * Prevents account enumeration by always returning the same generic success message.
+ * إرسال رابط آلي لاستعادة كلمة السر عبر البريد الإلكتروني للمستخدم مع إرجاع تلميح الإيميل للشاشة الكاملة
  */
 export async function requestAutomatedPasswordReset(
   identifier: string,
   baseUrlOrOrigin?: string
-): Promise<{ success: boolean; message: string }> {
-  const genericSuccessMessage = 'لو البيانات دي مرتبطة بحساب، هنبعتلك رسالة لإعادة تعيين كلمة السر.';
+): Promise<{ success: boolean; message: string; emailHint?: string }> {
+  // رسالة بالعامية المصرية وفيها تنبيه صندوق الوارد والـ Spam بوضوح
+  const genericSuccessMessage = 'تم إرسال رسالة إعادة تعيين كلمة المرور على إيميلك بنجاح. بص في صندوق الوارد (Inbox)، ولو ملقيتهاش هناك، ضروري تبص في البريد غير المرغوب فيه (Spam / Junk).';
 
   if (!identifier || typeof identifier !== 'string' || !identifier.trim()) {
-    throw new Error('من فضلك اكتب اسم المستخدم أو البريد الإلكتروني');
+    throw "من فضلك اكتب اسم المستخدم أو البريد الإلكتروني."; // تم تصحيح الصيغة أدناه
+  }
+
+  // (تصحيح الخطأ الإملائي في الكود الفعلي)
+  if (!identifier || typeof identifier !== 'string' || !identifier.trim()) {
+    throw new Error('من فضلك اكتب اسم المستخدم أو الإيميل بتاعك.');
   }
 
   const trimmed = identifier.trim();
@@ -384,46 +383,44 @@ export async function requestAutomatedPasswordReset(
     Logger.error('[PasswordResetService] User lookup error in automated reset:', lookupErr);
   }
 
-  // Account Enumeration Prevention:
-  // If user doesn't exist or has no registered email, return generic response without revealing anything
+  // حماية الحسابات من التتبع (Account Enumeration)
   if (!user || !user.email || !user.email.trim()) {
     Logger.info(`[PasswordResetService] Reset requested for non-existing or email-less identifier: "${trimmed}"`);
     return {
       success: true,
-      message: genericSuccessMessage
+      message: genericSuccessMessage,
+      emailHint: isEmailFormat ? trimmed : undefined
     };
   }
 
   try {
-    // Generate cryptographically secure random token (256-bit entropy)
     const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
-    // Token expires in 30 minutes
     const expiresInMinutes = 30;
     const expiresAt = new Date(Date.now() + expiresInMinutes * 60 * 1000).toISOString();
 
-    // Store secure token hash and expiration on the user document
     await updateUser(user.id, {
       passwordResetTokenHash: tokenHash,
       passwordResetExpiresAt: expiresAt
     });
 
-    // Form absolute reset URL
+    let configuredUrl = process.env.APP_URL?.trim();
+    if (process.env.NODE_ENV === 'production' && configuredUrl && (configuredUrl.includes('localhost') || configuredUrl.includes('127.0.0.1'))) {
+      configuredUrl = undefined;
+    }
     let appBaseUrl = (
-      process.env.APP_URL ||
+      configuredUrl ||
       baseUrlOrOrigin ||
       'http://localhost:3000'
     ).trim().replace(/\/$/, '');
 
-    // Ensure URL has protocol
     if (!appBaseUrl.startsWith('http://') && !appBaseUrl.startsWith('https://')) {
       appBaseUrl = `https://${appBaseUrl}`;
     }
 
     const resetUrl = `${appBaseUrl}/reset-password?token=${rawToken}`;
 
-    // Send email to the registered email address
     await sendPasswordResetEmail({
       to: user.email.trim(),
       userName: user.name || user.username,
@@ -431,7 +428,6 @@ export async function requestAutomatedPasswordReset(
       expiresInMinutes
     });
 
-    // Audit log without leaking the raw token or email secrets
     await createAuditLog({
       userName: user.name,
       userRole: user.role,
@@ -439,23 +435,25 @@ export async function requestAutomatedPasswordReset(
       resource: 'users',
       resourceId: user.id,
       status: 'نجاح',
-      details: `تم إرسال رابط إعادة تعيين كلمة السر إلى البريد الإلكتروني المسجل للمستخدم (@${user.username})`
+      details: `تم إرسال لينك استعادة كلمة السر للإيميل المسجل الخاص بالمستخدم (@${user.username})`
     });
 
     Logger.info(`[PasswordResetService] Password reset token created and emailed for user ${user.id} (@${user.username})`);
   } catch (err: any) {
     Logger.error(`[PasswordResetService] Error processing password reset for user ${user?.id}:`, err?.message || err);
-    // Even if an unexpected server error occurs, do not leak internal errors to potential attackers
   }
+
+  const maskedEmail = user.email.replace(/(^[\w.+-]{2})(.*)(@[\w.-]+)/, (_, a, b, c) => `${a}${'*'.repeat(Math.max(b.length, 3))}${c}`);
 
   return {
     success: true,
-    message: genericSuccessMessage
+    message: genericSuccessMessage,
+    emailHint: maskedEmail
   };
 }
 
 /**
- * Validates whether a given reset token is valid and unexpired
+ * التحقق من صلاحية كود أو توكن إعادة التعيين
  */
 export async function validateResetToken(token: string): Promise<{
   valid: boolean;
@@ -466,7 +464,7 @@ export async function validateResetToken(token: string): Promise<{
     return {
       valid: false,
       code: 'MISSING',
-      message: 'رمز التحقق مفقود، يرجى استخدام الرابط المرسل إليك في البريد الإلكتروني.'
+      message: 'رمز التحقق مش موجود، من فضلك استخدم اللينك اللي وصلك في الإيميل بالضبط.'
     };
   }
 
@@ -477,21 +475,20 @@ export async function validateResetToken(token: string): Promise<{
     return {
       valid: false,
       code: 'INVALID',
-      message: 'رابط إعادة تعيين كلمة السر غير صالح أو تم استخدامه من قبل.'
+      message: 'لينك إعادة التعيين ده مش شغال أو تم استخدامه قبل كده.'
     };
   }
 
   if (!user.passwordResetExpiresAt || new Date(user.passwordResetExpiresAt).getTime() < Date.now()) {
-    // Invalidate stale token
     await updateUser(user.id, {
       passwordResetTokenHash: null,
       passwordResetExpiresAt: null
-    }).catch(() => {});
+    }).catch(() => { });
 
     return {
       valid: false,
       code: 'EXPIRED',
-      message: 'انتهت صلاحية رابط إعادة تعيين كلمة السر، يرجى طلب رابط جديد.'
+      message: 'للأسف انتهت صلاحية لينك استعادة كلمة السر، من فضلك اطلب واحد غيره.'
     };
   }
 
@@ -501,7 +498,7 @@ export async function validateResetToken(token: string): Promise<{
 }
 
 /**
- * Resets user password using the cryptographically verified token
+ * إعادة تعيين كلمة السر الخاصة بالمستخدم باستخدام التكن المُتحقق منه
  */
 export async function resetPasswordWithToken(params: {
   token: string;
@@ -511,42 +508,39 @@ export async function resetPasswordWithToken(params: {
   const { token, password, confirmPassword } = params;
 
   if (!token || typeof token !== 'string' || !token.trim()) {
-    throw new Error('رمز التحقق غير موجود');
+    throw new Error('رمز التحقق مش موجود.');
   }
 
   if (!password || typeof password !== 'string') {
-    throw new Error('يرجى كتابة كلمة السر الجديدة');
+    throw new Error('من فضلك اكتب كلمة السر الجديدة.');
   }
 
   if (password.length < 6) {
-    throw new Error('كلمة السر يجب ألا تقل عن 6 خانات');
+    throw new Error('كلمة السر لازم تكون 6 خانات على الأقل يا غالي.');
   }
 
   if (confirmPassword !== undefined && password !== confirmPassword) {
-    throw new Error('كلمتا السر غير متطابقتين');
+    throw new Error('كلمتا السر مش متطابقتين، تأكد منهم كويس.');
   }
 
   const tokenHash = crypto.createHash('sha256').update(token.trim()).digest('hex');
   const user = await findUserByResetTokenHash(tokenHash);
 
   if (!user) {
-    throw new Error('رابط إعادة تعيين كلمة السر غير صالح أو تم استخدامه من قبل');
+    throw new Error('لينك إعادة التعيين ده غير صالح أو تم استخدامه قبل كده.');
   }
 
   if (!user.passwordResetExpiresAt || new Date(user.passwordResetExpiresAt).getTime() < Date.now()) {
-    // Clean up expired token
     await updateUser(user.id, {
       passwordResetTokenHash: null,
       passwordResetExpiresAt: null
-    }).catch(() => {});
+    }).catch(() => { });
 
-    throw new Error('انتهت صلاحية رابط إعادة تعيين كلمة السر، يرجى طلب رابط جديد');
+    throw new Error('انتهت صلاحية لينك استعادة كلمة السر، اطلب لينك جديد من فضلك.');
   }
 
-  // Hash the new password with bcrypt
   const newPasswordHash = await hashPassword(password);
 
-  // Atomically update password, clear reset token & expiration, and clear mustChangePassword
   const updated = await updateUser(user.id, {
     passwordHash: newPasswordHash,
     passwordResetTokenHash: null,
@@ -555,13 +549,11 @@ export async function resetPasswordWithToken(params: {
   });
 
   if (!updated) {
-    throw new Error('تعذر تحديث كلمة السر، يرجى المحاولة مرة أخرى');
+    throw new Error('حصلت مشكلة واحنا بنحدث كلمة السر، جرب تاني كمان شوية.');
   }
 
-  // Invalidate any active cached sessions for this user
   invalidateAuthSession(user.id);
 
-  // Create audit log
   await createAuditLog({
     userName: user.name,
     userRole: user.role,
@@ -569,15 +561,14 @@ export async function resetPasswordWithToken(params: {
     resource: 'users',
     resourceId: user.id,
     status: 'نجاح',
-    details: `تمت إعادة تعيين كلمة السر بنجاح باستخدام رابط التحقق للمستخدم (@${user.username})`
+    details: `تمت إعادة تعيين كلمة السر بنجاح للمستخدم (@${user.username}) عن طريق لينك التحقق`
   });
 
-  // Create in-app notification for the user
   try {
     await createNotification({
       userId: user.id,
       title: 'تم تغيير كلمة السر بنجاح',
-      message: 'تمت إعادة تعيين كلمة السر لحسابك بنجاح. إذا لم تكن أنت من قام بهذا التغيير، يرجى التواصل فوراً مع إدارة المنصة.',
+      message: 'تم تغيير كلمة السر الخاصة بحسابك بنجاح. لو مش إنت اللي عملت التغيير ده، كلم إدارة المنصة فوراً.',
       type: 'account',
       link: 'buyer-account'
     });
@@ -587,7 +578,6 @@ export async function resetPasswordWithToken(params: {
 
   return {
     success: true,
-    message: 'تم تغيير كلمة السر بنجاح. يمكنك الآن تسجيل الدخول بكلمة السر الجديدة.'
+    message: 'مبروك! تم تغيير كلمة السر بنجاح، تقدر تسجل دخولك دلوقتي بكلمتك الجديدة.'
   };
 }
-

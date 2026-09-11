@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { useApp } from '../../context/AppContext';
 import { api } from '../../services/api';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import {
   X,
   Eye,
@@ -89,6 +90,15 @@ export const AuthModal: React.FC = () => {
   const [forgotIdentifier, setForgotIdentifier] =
     useState('');
 
+  const [isForgotSuccessModalOpen, setIsForgotSuccessModalOpen] =
+    useState(false);
+
+  const [forgotSuccessEmailHint, setForgotSuccessEmailHint] =
+    useState<string | undefined>(undefined);
+
+  const [forgotSuccessMessage, setForgotSuccessMessage] =
+    useState<string | undefined>(undefined);
+
   const [showPassword, setShowPassword] =
     useState(false);
 
@@ -157,6 +167,10 @@ export const AuthModal: React.FC = () => {
         event.key === 'Escape' &&
         !submitting
       ) {
+        if (isForgotSuccessModalOpen) {
+          setIsForgotSuccessModalOpen(false);
+          return;
+        }
         setIsAuthModalOpen(false);
       }
     };
@@ -174,6 +188,7 @@ export const AuthModal: React.FC = () => {
     };
   }, [
     isAuthModalOpen,
+    isForgotSuccessModalOpen,
     submitting,
     setIsAuthModalOpen,
   ]);
@@ -189,6 +204,7 @@ export const AuthModal: React.FC = () => {
   const closeModal = () => {
     if (submitting) return;
 
+    setIsForgotSuccessModalOpen(false);
     setIsAuthModalOpen(false);
 
     setForgotPassword(false);
@@ -531,11 +547,12 @@ export const AuthModal: React.FC = () => {
     ) => {
       event.preventDefault();
 
+      if (submitting) return;
+
       setError('');
 
-      if (
-        !forgotIdentifier.trim()
-      ) {
+      const trimmedIdentifier = forgotIdentifier.trim();
+      if (!trimmedIdentifier) {
         setError(
           'اكتب اسم المستخدم أو الإيميل بتاعك.'
         );
@@ -546,17 +563,26 @@ export const AuthModal: React.FC = () => {
         setSubmitting(true);
 
         const res = await api.requestPasswordReset(
-          forgotIdentifier.trim()
+          trimmedIdentifier
         );
 
-        addToast(
-          res?.message || 'لو البيانات دي مرتبطة بحساب، هنبعتلك رسالة لإعادة تعيين كلمة السر.',
-          'success'
-        );
+        // Determine email hint:
+        // Pass user's entered email when an email was entered.
+        // If username was entered, do not display username as email and avoid enumeration.
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedIdentifier);
+        const emailHint = isEmail ? trimmedIdentifier : undefined;
 
+        setForgotSuccessEmailHint(emailHint);
+        setForgotSuccessMessage(res?.message);
+        setIsForgotSuccessModalOpen(true);
+
+        // Reset inline forgot-password form back to login tab so when modal closes, user is on login
         setForgotPassword(false);
         setForgotIdentifier('');
+        setAuthModalTab('login');
       } catch (err: any) {
+        // Do NOT open modal on failure
+        setIsForgotSuccessModalOpen(false);
         setError(
           err?.message ||
           'حصلت مشكلة وإحنا بنبعت طلب استرجاع كلمة السر، جرّب تاني.'
@@ -2150,6 +2176,16 @@ export const AuthModal: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* =====================================================
+          FORGOT PASSWORD SUCCESS MODAL
+      ===================================================== */}
+      <ForgotPasswordModal
+        isOpen={isForgotSuccessModalOpen}
+        onClose={() => setIsForgotSuccessModalOpen(false)}
+        emailHint={forgotSuccessEmailHint}
+        message={forgotSuccessMessage}
+      />
     </div>
   );
 };

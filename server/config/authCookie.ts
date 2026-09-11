@@ -57,5 +57,10 @@ export function getAuthTokenFromRequest(req: Request): string | null {
     }
   }
 
+  // 5. Query parameter token (essential for browser EventSource / SSE endpoints)
+  if (req.query && typeof req.query.token === 'string' && req.query.token.trim()) {
+    return req.query.token.trim();
+  }
+
   return null;
 }

@@ -1533,7 +1533,7 @@ router.delete('/people/:id', requireAdmin, async (req: AuthenticatedRequest, res
 // 8. UPPER EGYPT FOOD (أكل الصعيد التراثي)
 // ==========================================
 
-router.get('/food', async (req: Request, res: Response) => {
+router.get(['/food', '/foods'], async (req: Request, res: Response) => {
   try {
     const { governorate, status } = req.query;
     const { db, isMongo } = await getMongoOrMemory();
@@ -1563,7 +1563,7 @@ router.get('/food', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/food/:slugOrId', async (req: Request, res: Response) => {
+router.get(['/food/:slugOrId', '/foods/:slugOrId'], async (req: Request, res: Response) => {
   try {
     const { slugOrId } = req.params;
     if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
@@ -1595,7 +1595,7 @@ router.get('/food/:slugOrId', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/food', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.post(['/food', '/foods'], requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const item: UpperEgyptFoodDoc = req.body;
     if (!item.title) return res.status(400).json({ success: false, error: 'اسم الأكلة التراثية مطلوب' });
@@ -1631,7 +1631,7 @@ router.post('/food', requireAdmin, async (req: AuthenticatedRequest, res: Respon
   }
 });
 
-router.put('/food/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.put(['/food/:id', '/foods/:id'], requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body, updatedAt: new Date().toISOString() };
@@ -1648,7 +1648,7 @@ router.put('/food/:id', requireAdmin, async (req: AuthenticatedRequest, res: Res
   }
 });
 
-router.delete('/food/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
+router.delete(['/food/:id', '/foods/:id'], requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { db, isMongo } = await getMongoOrMemory();

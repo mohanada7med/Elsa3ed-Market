@@ -479,7 +479,7 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-audit-logs': '/admin-audit-logs',
   'admin-settings': '/admin-settings',
   'admin-media': '/admin-media',
-  'dialect-dictionary': '',
+  'dialect-dictionary': '/dialect-dictionary',
   'reset-password': '/reset-password'
 };
 

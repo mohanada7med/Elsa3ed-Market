@@ -1811,7 +1811,7 @@ export const api = {
 
   // ==================== FORGOT & RESET PASSWORD WORKFLOW API ====================
 
-  async requestPasswordReset(identifier: string): Promise<{ success: boolean; message: string }> {
+  async requestPasswordReset(identifier: string): Promise<{ success: boolean; message: string; emailHint?: string }> {
     const res = await fetch(`${API_BASE}/auth/forgot-password`, {
       method: 'POST',
       credentials: 'include',

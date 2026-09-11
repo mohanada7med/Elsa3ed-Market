@@ -347,7 +347,8 @@ router.post('/forgot-password', forgotPasswordLimiter, async (req: Request, res:
 
     res.json({
       success: true,
-      message: result.message
+      message: result.message,
+      emailHint: result.emailHint
     });
   } catch (error: any) {
     console.error('[authRoutes] Error in forgot-password:', error?.message || error);

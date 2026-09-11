@@ -612,7 +612,7 @@ const MainContent: React.FC = () => {
             )}
 
             {/* Dialect Dictionary & Quiz */}
-            {(activePage === 'quize') && (
+            {(activePage === 'quize' || activePage === 'dialect-dictionary') && (
               <React.Suspense fallback={<LazySectionFallback />}>
                 <DialectDictionaryPage />
               </React.Suspense>
