@@ -38,7 +38,8 @@ export const BuyerAccountPage: React.FC = () => {
     removeProfileImage,
     applyToBecomeSeller,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    confirmModal
   } = useApp();
 
   const [name, setName] = useState(currentUser.name || '');
@@ -201,20 +202,26 @@ export const BuyerAccountPage: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  const handleRemoveProfileImage = async () => {
-    if (!window.confirm('هل أنت متأكد من رغبتك في حذف صورة الملف الشخصي؟')) return;
-
-    setImageError(null);
-    setIsRemovingImage(true);
-    try {
-      await removeProfileImage();
-      setPreviewImage(null);
-    } catch (err: any) {
-      console.error('[BuyerAccountPage] Remove error:', err);
-      setImageError(err?.message || 'فشل في حذف صورة الملف الشخصي');
-    } finally {
-      setIsRemovingImage(false);
-    }
+  const handleRemoveProfileImage = () => {
+    confirmModal({
+      title: 'حذف صورة الملف الشخصي',
+      message: 'هل أنت متأكد من رغبتك في حذف صورة الملف الشخصي؟',
+      confirmText: 'نعم، حذف الصورة',
+      danger: true,
+      onConfirm: async () => {
+        setImageError(null);
+        setIsRemovingImage(true);
+        try {
+          await removeProfileImage();
+          setPreviewImage(null);
+        } catch (err: any) {
+          console.error('[BuyerAccountPage] Remove error:', err);
+          setImageError(err?.message || 'فشل في حذف صورة الملف الشخصي');
+        } finally {
+          setIsRemovingImage(false);
+        }
+      }
+    });
   };
 
   const handleSaveProfile = async (e: React.FormEvent) => {

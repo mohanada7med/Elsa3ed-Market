@@ -38,7 +38,8 @@ export const CraftReelsPage: React.FC = () => {
     setIsAuthModalOpen,
     setAuthModalTab,
     sellerProducts,
-    sellers
+    sellers,
+    confirmModal
   } = useApp();
 
   const [reels, setReels] = useState<CraftReel[]>([]);
@@ -64,20 +65,23 @@ export const CraftReelsPage: React.FC = () => {
     type: 'unauthenticated'
   });
 
-  const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
+  const handleAdminDeleteReel = (e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
-    const confirmed = window.confirm(
-      `هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً من المنصة بصفتك مديراً؟`
-    );
-    if (!confirmed) return;
-
-    try {
-      await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
-      setReels((prev) => prev.filter((r) => r.id !== reel.id));
-      addToast('تم حذف الفيديو بنجاح', `تم حذف فيديو "${reel.title}" من المنصة وقاعدة البيانات`, 'info');
-    } catch (err: any) {
-      addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
-    }
+    confirmModal({
+      title: 'حذف مقطع الحرفة',
+      message: `هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً من المنصة بصفتك مديراً؟`,
+      confirmText: 'نعم، حذف الفيديو',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
+          setReels((prev) => prev.filter((r) => r.id !== reel.id));
+          addToast('تم حذف الفيديو بنجاح', `تم حذف فيديو "${reel.title}" من المنصة وقاعدة البيانات`, 'info');
+        } catch (err: any) {
+          addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
+        }
+      }
+    });
   };
 
   const loadReelsFromDb = async () => {

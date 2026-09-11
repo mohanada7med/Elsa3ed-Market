@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { ToastContainer } from './components/layout/ToastContainer';
+import { GlobalConfirmModal } from './components/common/GlobalConfirmModal';
 import { IntroExperience } from './components/layout/IntroExperience';
 import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
@@ -633,6 +634,7 @@ const MainContent: React.FC = () => {
       <ForceChangePasswordModal />
       <IntroExperience />
       <ToastContainer />
+      <GlobalConfirmModal />
     </main>
   );
 };

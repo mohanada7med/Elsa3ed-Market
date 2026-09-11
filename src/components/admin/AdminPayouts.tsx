@@ -26,6 +26,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { api } from '../../services/api.ts';
+import { useApp } from '../../context/AppContext.tsx';
 import type {
   PayoutRequest,
   AdminPayoutSummary,
@@ -39,6 +40,7 @@ interface AdminPayoutsProps {
 }
 
 export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
+  const { confirmModal, addToast } = useApp();
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [summary, setSummary] = useState<AdminPayoutSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -120,23 +122,30 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
     }
   };
 
-  const handleApprove = async (id: string) => {
-    if (!window.confirm('هل أنت متأكد من الموافقة على طلب الصرف هذا؟')) return;
-
-    try {
-      setActionLoading(true);
-      await api.approveAdminPayout(user, id);
-      setSuccessMsg('تمت الموافقة على طلب الصرف بنجاح وإشعار الحرفي');
-      setTimeout(() => setSuccessMsg(null), 5000);
-      await fetchPayouts();
-      if (selectedPayoutId === id) {
-        handleOpenDetails(id);
+  const handleApprove = (id: string) => {
+    confirmModal({
+      title: 'الموافقة على طلب الصرف',
+      message: 'هل أنت متأكد من الموافقة على طلب الصرف هذا وتحويله للإجراءات التالية؟',
+      confirmText: 'تأكيد الموافقة',
+      danger: false,
+      onConfirm: async () => {
+        try {
+          setActionLoading(true);
+          await api.approveAdminPayout(user, id);
+          setSuccessMsg('تمت الموافقة على طلب الصرف بنجاح وإشعار الحرفي');
+          addToast('تمت الموافقة', 'تمت الموافقة على طلب الصرف بنجاح', 'success');
+          setTimeout(() => setSuccessMsg(null), 5000);
+          await fetchPayouts();
+          if (selectedPayoutId === id) {
+            handleOpenDetails(id);
+          }
+        } catch (err: any) {
+          addToast('خطأ', err?.message || 'تعذر الموافقة على طلب الصرف', 'error');
+        } finally {
+          setActionLoading(false);
+        }
       }
-    } catch (err: any) {
-      alert(err?.message || 'تعذر الموافقة على طلب الصرف');
-    } finally {
-      setActionLoading(false);
-    }
+    });
   };
 
   const handleMarkProcessing = async (id: string) => {

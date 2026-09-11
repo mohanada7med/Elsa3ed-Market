@@ -21,6 +21,7 @@ import {
   History
 } from 'lucide-react';
 import { api } from '../../services/api.ts';
+import { useApp } from '../../context/AppContext.tsx';
 import type { PayoutRequest, SellerPayoutSummary, PayoutMethod } from '../../types.ts';
 
 interface SellerPayoutsProps {
@@ -29,6 +30,7 @@ interface SellerPayoutsProps {
 }
 
 export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateToAccount }) => {
+  const { confirmModal, addToast } = useApp();
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [summary, setSummary] = useState<SellerPayoutSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -125,25 +127,30 @@ export const SellerPayouts: React.FC<SellerPayoutsProps> = ({ user, onNavigateTo
     }
   };
 
-  const handleCancelPayout = async (id: string) => {
-    if (!window.confirm('هل أنت متأكد من رغبتك في إلغاء طلب الصرف هذا؟')) {
-      return;
-    }
-
-    try {
-      setActionLoading(true);
-      await api.cancelSellerPayout(user, id);
-      setSuccessMsg('تم إلغاء طلب الصرف بنجاح');
-      setTimeout(() => setSuccessMsg(null), 5000);
-      await fetchPayoutData();
-      if (selectedPayout?.id === id) {
-        setSelectedPayout(null);
+  const handleCancelPayout = (id: string) => {
+    confirmModal({
+      title: 'إلغاء طلب الصرف',
+      message: 'هل أنت متأكد من رغبتك في إلغاء طلب الصرف هذا؟',
+      confirmText: 'نعم، إلغاء الطلب',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          setActionLoading(true);
+          await api.cancelSellerPayout(user, id);
+          setSuccessMsg('تم إلغاء طلب الصرف بنجاح');
+          addToast('تم الإلغاء', 'تم إلغاء طلب الصرف بنجاح', 'info');
+          setTimeout(() => setSuccessMsg(null), 5000);
+          await fetchPayoutData();
+          if (selectedPayout?.id === id) {
+            setSelectedPayout(null);
+          }
+        } catch (err: any) {
+          addToast('خطأ', err?.message || 'تعذر إلغاء طلب الصرف', 'error');
+        } finally {
+          setActionLoading(false);
+        }
       }
-    } catch (err: any) {
-      alert(err?.message || 'تعذر إلغاء طلب الصرف');
-    } finally {
-      setActionLoading(false);
-    }
+    });
   };
 
   const getMethodIcon = (method?: PayoutMethod) => {

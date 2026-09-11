@@ -48,6 +48,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     requestBrowserNotificationPermission,
     updateBrowserNotificationSettings,
     sendTestBrowserNotification,
+    confirmModal,
   } = useApp();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -188,20 +189,19 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   const handleClearAll = () => {
-    if (
-      !window.confirm(
-        'هل أنت متأكد من مسح جميع الإشعارات؟'
-      )
-    ) {
-      return;
-    }
-
-    notificationService.clearAll(
-      role,
-      targetSellerId
-    );
-
-    loadNotifications();
+    confirmModal({
+      title: 'مسح جميع الإشعارات',
+      message: 'هل أنت متأكد من مسح جميع الإشعارات؟',
+      confirmText: 'مسح الكل',
+      danger: true,
+      onConfirm: async () => {
+        notificationService.clearAll(
+          role,
+          targetSellerId
+        );
+        loadNotifications();
+      }
+    });
   };
 
   const handleNotificationClick = (

@@ -32,6 +32,15 @@ export interface ToastNotification {
   timestamp: string;
 }
 
+export interface ConfirmModalOptions {
+  title?: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  danger?: boolean;
+  onConfirm: () => Promise<void> | void;
+}
+
 interface AppContextType {
   // Navigation & Page State
   activePage: ActivePage;
@@ -279,6 +288,11 @@ interface AppContextType {
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
   openChatWithArtisan: (params: { sellerId: string; productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
+
+  // Global Confirm Dialog
+  confirmModalState: ConfirmModalOptions | null;
+  confirmModal: (options: ConfirmModalOptions) => void;
+  closeConfirmModal: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -1046,6 +1060,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
+  }, []);
+
+  // Global Confirm Dialog State
+  const [confirmModalState, setConfirmModalState] = useState<ConfirmModalOptions | null>(null);
+
+  const confirmModal = useCallback((options: ConfirmModalOptions) => {
+    setConfirmModalState(options);
+  }, []);
+
+  const closeConfirmModal = useCallback(() => {
+    setConfirmModalState(null);
   }, []);
 
   // Browser Push & Native Notification State
@@ -3105,7 +3130,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         refreshChatUnreadCount,
         activeConversationId,
         setActiveConversationId,
-        openChatWithArtisan
+        openChatWithArtisan,
+
+        confirmModalState,
+        confirmModal,
+        closeConfirmModal
       }}
     >
       {children}

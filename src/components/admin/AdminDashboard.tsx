@@ -134,7 +134,8 @@ export const AdminDashboard: React.FC = () => {
     addToast,
     currentUser,
     activePage,
-    setActivePage
+    setActivePage,
+    confirmModal
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
@@ -176,16 +177,22 @@ export const AdminDashboard: React.FC = () => {
     addToast('تم تحديث الفيديو', `تم تعديل بيانات الفيديو "${updatedReel.title}" وحفظها في قاعدة البيانات`, 'success');
   };
 
-  const handleAdminDeleteReel = async (reelId: string, reelTitle: string) => {
-    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات والمنصة؟`)) {
-      try {
-        await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reelId);
-        await refreshAdminReelsFromDb();
-        addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات`, 'info');
-      } catch (err: any) {
-        addToast('خطأ في الحذف', err?.message || 'فشل حذف الفيديو من قاعدة البيانات', 'error');
+  const handleAdminDeleteReel = (reelId: string, reelTitle: string) => {
+    confirmModal({
+      title: 'حذف فيديو الحرفة',
+      message: `هل أنت متأكد من حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات والمنصة؟`,
+      confirmText: 'حذف نهائي',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reelId);
+          await refreshAdminReelsFromDb();
+          addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" نهائياً من قاعدة البيانات`, 'info');
+        } catch (err: any) {
+          addToast('خطأ في الحذف', err?.message || 'فشل حذف الفيديو من قاعدة البيانات', 'error');
+        }
       }
-    }
+    });
   };
 
   // Synchronize activeTab when navigation changes via URL or Header links
@@ -739,34 +746,37 @@ export const AdminDashboard: React.FC = () => {
   };
 
   // Permanent Delete Seller Completely Handler (Admin Exclusive Control)
-  const handleDeleteSellerCompletely = async (seller: Seller) => {
+  const handleDeleteSellerCompletely = (seller: Seller) => {
     const workshopName = seller.brandName || seller.name || 'الورشة';
-    const confirmed = window.confirm(
-      `هل أنت متأكد من حذف ورشة "${workshopName}" نهائياً من النظام؟\n\nتنبيه إداري فوري: سيؤدي هذا الإجراء إلى حذف حساب الورشة وكافة منتجاتها التراثية وفيديوهات الحرفيين (Reels) التابعة لها نهائياً لمنع أي بيانات يتيمة، ولا يمكن التراجع عن هذه العملية.`
-    );
-    if (!confirmed) return;
-
-    setDeletingSellerId(seller.id);
-    try {
-      if (typeof deleteSellerCompletely === 'function') {
-        await deleteSellerCompletely(seller.id);
-      } else {
-        const res = await api.deleteSellerCompletely(
-          { id: currentUser.id, role: currentUser.role },
-          seller.id
-        );
-        addToast('تم الحذف النهائي', res?.message || `تم حذف ورشة "${workshopName}" وكل متعلقاتها بنجاح`, 'success');
-        await refreshSellers();
+    confirmModal({
+      title: 'حذف الورشة نهائياً',
+      message: `هل أنت متأكد من حذف ورشة "${workshopName}" نهائياً من النظام؟\n\nتنبيه إداري فوري: سيؤدي هذا الإجراء إلى حذف حساب الورشة وكافة منتجاتها التراثية وفيديوهات الحرفيين (Reels) التابعة لها نهائياً لمنع أي بيانات يتيمة، ولا يمكن التراجع عن هذه العملية.`,
+      confirmText: 'تأكيد الحذف الشامل',
+      danger: true,
+      onConfirm: async () => {
+        setDeletingSellerId(seller.id);
+        try {
+          if (typeof deleteSellerCompletely === 'function') {
+            await deleteSellerCompletely(seller.id);
+          } else {
+            const res = await api.deleteSellerCompletely(
+              { id: currentUser.id, role: currentUser.role },
+              seller.id
+            );
+            addToast('تم الحذف النهائي', res?.message || `تم حذف ورشة "${workshopName}" وكل متعلقاتها بنجاح`, 'success');
+            await refreshSellers();
+          }
+          if (typeof refreshAdminProducts === 'function') {
+            refreshAdminProducts();
+          }
+        } catch (err: any) {
+          console.error('Error deleting seller completely:', err);
+          addToast('خطأ في الحذف', err?.message || 'تعذر حذف الورشة نهائياً من النظام', 'error');
+        } finally {
+          setDeletingSellerId(null);
+        }
       }
-      if (typeof refreshAdminProducts === 'function') {
-        refreshAdminProducts();
-      }
-    } catch (err: any) {
-      console.error('Error deleting seller completely:', err);
-      addToast('خطأ في الحذف', err?.message || 'تعذر حذف الورشة نهائياً من النظام', 'error');
-    } finally {
-      setDeletingSellerId(null);
-    }
+    });
   };
 
   // Product Add & Edit Handlers (Admin Control)
@@ -1153,17 +1163,22 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleDeleteCraftStory = async (story: CraftStory) => {
-    if (!confirm(`متأكد إنك عايز تحذف حكاية "${story.title}" نهائي من قاعدة البيانات؟`)) {
-      return;
-    }
-    try {
-      await api.deleteAdminCraftStory({ id: currentUser.id, role: 'admin' }, story.id);
-      setCraftStories((prev) => prev.filter((s) => s.id !== story.id));
-      addToast('اتحذفت', `تم حذف حكاية "${story.title}" بنجاح من قاعدة البيانات`, 'info');
-    } catch (err: any) {
-      addToast('مشكلة في الحذف', err?.message || 'معرفناش نحذف حكاية الصنعة دلوقتي', 'error');
-    }
+  const handleDeleteCraftStory = (story: CraftStory) => {
+    confirmModal({
+      title: 'حذف حكاية الصنعة',
+      message: `متأكد إنك عايز تحذف حكاية "${story.title}" نهائي من قاعدة البيانات؟`,
+      confirmText: 'حذف الحكاية',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await api.deleteAdminCraftStory({ id: currentUser.id, role: 'admin' }, story.id);
+          setCraftStories((prev) => prev.filter((s) => s.id !== story.id));
+          addToast('اتحذفت', `تم حذف حكاية "${story.title}" بنجاح من قاعدة البيانات`, 'info');
+        } catch (err: any) {
+          addToast('مشكلة في الحذف', err?.message || 'معرفناش نحذف حكاية الصنعة دلوقتي', 'error');
+        }
+      }
+    });
   };
 
   const handleToggleCraftStoryActive = async (story: CraftStory) => {
@@ -1965,9 +1980,15 @@ export const AdminDashboard: React.FC = () => {
                         type="button"
                         id={`admin-delete-prod-${prod.id}`}
                         onClick={() => {
-                          if (window.confirm(`متأكد إنك عايز تحذف منتج "${prod.title}" نهائي من المنصة؟`)) {
-                            deleteProduct(prod.id);
-                          }
+                          confirmModal({
+                            title: 'حذف المنتج',
+                            message: `متأكد إنك عايز تحذف منتج "${prod.title}" نهائي من المنصة؟`,
+                            confirmText: 'نعم، حذف نهائي',
+                            danger: true,
+                            onConfirm: async () => {
+                              await deleteProduct(prod.id);
+                            }
+                          });
                         }}
                         className="px-3 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
                         title="حذف المنتج نهائياً"
@@ -2080,11 +2101,17 @@ export const AdminDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      if (confirm(`متأكد إنك عايز تحذف قسم "${cat.name}"؟`)) {
-                        deleteCategory(cat.id);
-                      }
+                      confirmModal({
+                        title: 'حذف القسم التراثي',
+                        message: `متأكد إنك عايز تحذف قسم "${cat.name}"؟`,
+                        confirmText: 'حذف القسم',
+                        danger: true,
+                        onConfirm: async () => {
+                          await deleteCategory(cat.id);
+                        }
+                      });
                     }}
-                    className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1"
+                    className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>حذف</span>
@@ -2661,9 +2688,15 @@ export const AdminDashboard: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        if (window.confirm(`هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟`)) {
-                          deleteReview(rev.id);
-                        }
+                        confirmModal({
+                          title: 'حذف التقييم',
+                          message: 'هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟',
+                          confirmText: 'حذف التقييم',
+                          danger: true,
+                          onConfirm: async () => {
+                            await deleteReview(rev.id);
+                          }
+                        });
                       }}
                       className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                       title="حذف التقييم نهائياً"
@@ -3174,9 +3207,15 @@ export const AdminDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => {
-                                if (window.confirm(`هل أنت متأكد من حذف الطلب #${ord.orderNumber} نهائياً؟`)) {
-                                  deleteOrder(ord.id);
-                                }
+                                confirmModal({
+                                  title: 'حذف الطلب نهائياً',
+                                  message: `هل أنت متأكد من حذف الطلب #${ord.orderNumber} نهائياً؟`,
+                                  confirmText: 'حذف الطلب',
+                                  danger: true,
+                                  onConfirm: async () => {
+                                    await deleteOrder(ord.id);
+                                  }
+                                });
                               }}
                               className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
                               title="حذف الطلب نهائياً"
@@ -3442,9 +3481,15 @@ export const AdminDashboard: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            if (window.confirm(`هل أنت متأكد من حذف كود الخصم "${c.code}"؟`)) {
-                              handleDeleteCoupon(c);
-                            }
+                            confirmModal({
+                              title: 'حذف كود الخصم',
+                              message: `هل أنت متأكد من حذف كود الخصم "${c.code}"؟`,
+                              confirmText: 'حذف الكوبون',
+                              danger: true,
+                              onConfirm: async () => {
+                                await handleDeleteCoupon(c);
+                              }
+                            });
                           }}
                           className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
                           title="حذف الكوبون نهائياً"
@@ -3476,9 +3521,15 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (window.confirm('هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.')) {
-                    clearAuditLogs();
-                  }
+                  confirmModal({
+                    title: 'مسح كامل سجل العمليات',
+                    message: 'هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.',
+                    confirmText: 'تفريغ السجل',
+                    danger: true,
+                    onConfirm: async () => {
+                      await clearAuditLogs();
+                    }
+                  });
                 }}
                 className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
                 title="مسح سجل العمليات بالكامل"
@@ -3533,9 +3584,15 @@ export const AdminDashboard: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          if (window.confirm('هل تريد حذف بند السجل هذا؟')) {
-                            deleteAuditLog(log.id);
-                          }
+                          confirmModal({
+                            title: 'حذف بند السجل',
+                            message: 'هل أنت متأكد من رغبتك في حذف بند السجل هذا نهائياً؟',
+                            confirmText: 'حذف',
+                            danger: true,
+                            onConfirm: async () => {
+                              await deleteAuditLog(log.id);
+                            }
+                          });
                         }}
                         className="p-1 rounded-lg hover:bg-rose-50 text-black/40 hover:text-rose-600 transition-colors cursor-pointer"
                         title="حذف بند السجل"

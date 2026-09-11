@@ -21,7 +21,7 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrdersTrackingPage: React.FC = () => {
-  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage } = useApp();
+  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage, confirmModal } = useApp();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -54,19 +54,23 @@ export const OrdersTrackingPage: React.FC = () => {
     }
   };
 
-  const handleCancelOrder = async (orderId: string) => {
-    if (!window.confirm('متأكد إنك عايز تلغي الطلب ده؟ القطع هترجع للمخزون فوراً.')) {
-      return;
-    }
-
-    setIsCancelling(true);
-    try {
-      await cancelOrder(orderId, 'المشتري طلب الإلغاء');
-    } catch (err: any) {
-      addToast('مشكلة في الإلغاء', err?.message || 'ماعرفناش نلغي الطلب دلوقتي، جرّب تاني', 'error');
-    } finally {
-      setIsCancelling(false);
-    }
+  const handleCancelOrder = (orderId: string) => {
+    confirmModal({
+      title: 'إلغاء الطلب',
+      message: 'متأكد إنك عايز تلغي الطلب ده؟ القطع هترجع للمخزون فوراً.',
+      confirmText: 'نعم، إلغاء الطلب',
+      danger: true,
+      onConfirm: async () => {
+        setIsCancelling(true);
+        try {
+          await cancelOrder(orderId, 'المشتري طلب الإلغاء');
+        } catch (err: any) {
+          addToast('مشكلة في الإلغاء', err?.message || 'ماعرفناش نلغي الطلب دلوقتي، جرّب تاني', 'error');
+        } finally {
+          setIsCancelling(false);
+        }
+      }
+    });
   };
 
   return (

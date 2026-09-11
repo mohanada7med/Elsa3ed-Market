@@ -16,7 +16,7 @@ import {
 import { motion } from 'motion/react';
 
 export const CraftReelsSection: React.FC = () => {
-  const { setActivePage, addToCart, addToast, currentUser } = useApp();
+  const { setActivePage, addToCart, addToast, currentUser, confirmModal } = useApp();
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [selectedReelId, setSelectedReelId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,18 +30,23 @@ export const CraftReelsSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleAdminDeleteReel = async (e: React.MouseEvent, reel: CraftReel) => {
+  const handleAdminDeleteReel = (e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
-    const confirmed = window.confirm(`متأكد إنك عايز تحذف فيديو "${reel.title}" خالص؟`);
-    if (!confirmed) return;
-
-    try {
-      await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
-      setReels((prev) => prev.filter((r) => r.id !== reel.id));
-      addToast('اتحذف خلاص', 'مسحنا الفيديو من المنصة بنجاح', 'info');
-    } catch (err: any) {
-      addToast('في مشكلة في الحذف', err?.message || 'فشل الحذف', 'error');
-    }
+    confirmModal({
+      title: 'حذف فيديو الحرفة',
+      message: `متأكد إنك عايز تحذف فيديو "${reel.title}" خالص؟`,
+      confirmText: 'نعم، حذف الفيديو',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
+          setReels((prev) => prev.filter((r) => r.id !== reel.id));
+          addToast('اتحذف خلاص', 'مسحنا الفيديو من المنصة بنجاح', 'info');
+        } catch (err: any) {
+          addToast('في مشكلة في الحذف', err?.message || 'فشل الحذف', 'error');
+        }
+      }
+    });
   };
 
   const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {

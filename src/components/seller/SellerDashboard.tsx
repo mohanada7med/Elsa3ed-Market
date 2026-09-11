@@ -88,7 +88,8 @@ export const SellerDashboard: React.FC = () => {
     sellerStats,
     refreshSellerStats,
     updateSellerProfile,
-    chatUnreadCount
+    chatUnreadCount,
+    confirmModal
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
@@ -161,16 +162,22 @@ export const SellerDashboard: React.FC = () => {
     addToast('تم تحديث الفيديو', `تم تحديث بيانات الفيديو "${updatedReel.title}" وحفظها في قاعدة البيانات`, 'success');
   };
 
-  const handleDeleteReel = async (reelId: string, reelTitle: string) => {
-    if (window.confirm(`هل أنت متأكد من حذف مقطع "${reelTitle}" من ورشتك؟`)) {
-      try {
-        await craftReelsService.deleteReelAsync(currentUser || { role: 'seller', sellerId: effectiveSellerId }, reelId);
-        await refreshSellerReelsFromDb();
-        addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح من قاعدة البيانات`, 'info');
-      } catch (err: any) {
-        addToast('خطأ في الحذف', err?.message || 'فشل حذف مقطع الفيديو', 'error');
+  const handleDeleteReel = (reelId: string, reelTitle: string) => {
+    confirmModal({
+      title: 'حذف فيديو من الورشة',
+      message: `هل أنت متأكد من حذف مقطع "${reelTitle}" من ورشتك؟`,
+      confirmText: 'نعم، حذف الفيديو',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await craftReelsService.deleteReelAsync(currentUser || { role: 'seller', sellerId: effectiveSellerId }, reelId);
+          await refreshSellerReelsFromDb();
+          addToast('تم حذف الفيديو', `تم حذف مقطع "${reelTitle}" بنجاح من قاعدة البيانات`, 'info');
+        } catch (err: any) {
+          addToast('خطأ في الحذف', err?.message || 'فشل حذف مقطع الفيديو', 'error');
+        }
       }
-    }
+    });
   };
 
   // Synchronize activeTab when navigation changes via URL or Header links
@@ -1480,9 +1487,15 @@ export const SellerDashboard: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          if (confirm(`هل أنت متأكد من حذف المنتج "${prod.title}"؟`)) {
-                            deleteProduct(prod.id);
-                          }
+                          confirmModal({
+                            title: 'حذف المنتج',
+                            message: `هل أنت متأكد من حذف المنتج "${prod.title}" من ورشتك نهائياً؟`,
+                            confirmText: 'نعم، حذف المنتج',
+                            danger: true,
+                            onConfirm: async () => {
+                              await deleteProduct(prod.id);
+                            }
+                          });
                         }}
                         className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-colors cursor-pointer"
                         title="حذف"

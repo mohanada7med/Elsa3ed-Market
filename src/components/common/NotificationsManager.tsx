@@ -64,7 +64,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
     browserNotificationSettings,
     requestBrowserNotificationPermission,
     updateBrowserNotificationSettings,
-    sendTestBrowserNotification
+    sendTestBrowserNotification,
+    confirmModal
   } = useApp();
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [filterType, setFilterType] = useState<string>('all');
@@ -159,11 +160,17 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   };
 
   const handleClearAll = () => {
-    if (window.confirm('هل أنت متأكد من حذف كافة سجل الإشعارات؟')) {
-      notificationService.clearAll(viewMode, targetSellerId);
-      refreshList();
-      addToast('تم المسح', 'تم مسح سجل الإشعارات بنجاح', 'info');
-    }
+    confirmModal({
+      title: 'حذف سجل الإشعارات',
+      message: 'هل أنت متأكد من حذف كافة سجل الإشعارات؟',
+      confirmText: 'مسح السجل',
+      danger: true,
+      onConfirm: async () => {
+        notificationService.clearAll(viewMode, targetSellerId);
+        refreshList();
+        addToast('تم المسح', 'تم مسح سجل الإشعارات بنجاح', 'info');
+      }
+    });
   };
 
   const handleResetBroadcastForm = () => {
