@@ -807,6 +807,7 @@ export interface CulturalEvent {
 }
 
 export interface MapGovernorateData {
+  [x: string]: any;
   id: string;
   name: string;
   slug: string;

@@ -2,20 +2,15 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   MessageSquare,
   Send,
-  ArrowRight,
   Package,
   ShoppingBag,
-  Clock,
   Check,
   CheckCheck,
   Search,
-  Store,
-  ExternalLink,
   ShieldCheck,
   RefreshCw,
   Sparkles,
   Info,
-  ChevronLeft,
   ChevronRight
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext.tsx';
@@ -23,10 +18,10 @@ import { api } from '../../services/api.ts';
 import type { Conversation, ChatMessage } from '../../types.ts';
 
 const QUICK_INQUIRIES = [
-  'هل هذا العمل متوفر بالمقاس المطلوب؟',
-  'كم يستغرق تجهيز القطعة وشحنها؟',
-  'هل يمكن تخصيص الألوان أو النقوش؟',
-  'ما هي المواد والخامات الطبيعية المستخدمة؟'
+  'القطعة دي موجودة بالمقاس اللي عاوزه؟',
+  'تاخد وقت قد إيه على ما تجهز وتتشحن؟',
+  'ينفع نغير الألوان أو نعدل في النقشة؟',
+  'إيه الخامات الطبيعية اللي شغّالين بيها؟'
 ];
 
 interface ChatViewProps {
@@ -62,7 +57,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     messagesEndRef.current?.scrollIntoView({ behavior });
   }, []);
 
-  // 1. Fetch conversations list
+  // 1. جلب قائمة المحادثات
   const fetchConversations = useCallback(async (silent = false) => {
     if (!currentUser?.id) return;
     if (!silent) setIsLoadingConvs(true);
@@ -75,7 +70,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       setConversations(data);
     } catch (err: any) {
       if (!silent) {
-        console.error('[ChatView] Failed to load conversations:', err);
+        console.error('[ChatView] فشل في تحميل المحادثات:', err);
       }
     } finally {
       if (!silent) setIsLoadingConvs(false);
@@ -86,7 +81,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     fetchConversations();
   }, [fetchConversations]);
 
-  // 2. Select initial or activated conversation
+  // 2. اختيار المحادثة المحددة أو النشطة
   useEffect(() => {
     if (conversations.length === 0) {
       if (!isLoadingConvs) {
@@ -103,13 +98,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       }
     }
 
-    // Default to first conversation on desktop if none selected
     if (typeof window !== 'undefined' && window.innerWidth >= 768 && !selectedConv) {
       setSelectedConv(conversations[0]);
     }
   }, [conversations, activeConversationId, isLoadingConvs]);
 
-  // 3. Fetch messages when selected conversation changes
+  // 3. جلب الرسايل أول ما نفتح محادثة
   const loadMessages = useCallback(async (convId: string, silent = false) => {
     if (!currentUser?.id || !convId) return;
     if (!silent) setIsLoadingMessages(true);
@@ -122,7 +116,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       setMessages(msgs);
       setTimeout(() => scrollToBottom('auto'), 100);
 
-      // Mark as read
+      // تعليم الرسايل كمقروءة
       await api.markConversationRead(convId, {
         id: currentUser.id,
         role: currentRole,
@@ -130,7 +124,6 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       });
       refreshChatUnreadCount();
 
-      // Update local unread counter
       setConversations((prev) =>
         prev.map((c) => {
           if (c.id === convId) {
@@ -141,7 +134,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
         })
       );
     } catch (err: any) {
-      console.error('[ChatView] Error loading messages:', err);
+      console.error('[ChatView] حصل عطل في تحميل الرسايل:', err);
     } finally {
       if (!silent) setIsLoadingMessages(false);
     }
@@ -155,7 +148,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     }
   }, [selectedConv?.id, loadMessages]);
 
-  // 4. Listen for real-time messages in the active conversation
+  // 4. استماع لحظي للرسايل الجديدة
   useEffect(() => {
     if (!currentUser?.id || typeof window === 'undefined') return;
 
@@ -172,7 +165,6 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
           const newMsg: ChatMessage = data.message;
           const updatedConv: Conversation = data.conversation;
 
-          // Update conversation in list
           if (updatedConv) {
             setConversations((prev) => {
               const idx = prev.findIndex((c) => c.id === updatedConv.id);
@@ -185,7 +177,6 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
             });
           }
 
-          // If this message belongs to currently open conversation, append it
           if (selectedConv && newMsg.conversationId === selectedConv.id) {
             setMessages((prev) => {
               if (prev.some((m) => m.id === newMsg.id)) return prev;
@@ -193,17 +184,16 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
             });
             setTimeout(() => scrollToBottom('smooth'), 50);
 
-            // If we are the receiver and viewing the conversation, mark it read
             if (newMsg.receiverId === currentUser.id) {
               api.markConversationRead(selectedConv.id, {
                 id: currentUser.id,
                 role: currentRole,
                 sellerId: currentUser.sellerId || currentUser.id
-              }).catch(() => {});
+              }).catch(() => { });
             }
           }
         } catch (err) {
-          console.error('[ChatView] SSE parse error:', err);
+          console.error('[ChatView] مشكلة في قراءة بيانات الشات:', err);
         }
       });
 
@@ -215,10 +205,10 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
               prev.map((m) => (m.senderId === currentUser.id ? { ...m, isRead: true, readAt: data.readAt } : m))
             );
           }
-        } catch {}
+        } catch { }
       });
     } catch (err) {
-      console.warn('[ChatView] SSE initialization error:', err);
+      console.warn('[ChatView] مشكلة في فتح اتصال البث:', err);
     }
 
     return () => {
@@ -228,7 +218,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     };
   }, [currentUser?.id, currentRole, selectedConv, scrollToBottom]);
 
-  // 5. Send message action
+  // 5. إرسال الرسالة
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
     if (!text || !selectedConv || isSending) return;
@@ -252,7 +242,6 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
         return [...prev, res.message];
       });
 
-      // Update conversation in list
       setConversations((prev) => {
         const next = prev.map((c) => (c.id === selectedConv.id ? res.conversation : c));
         return next.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
@@ -261,9 +250,8 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       setTimeout(() => scrollToBottom('smooth'), 50);
       inputRef.current?.focus();
     } catch (err: any) {
-      console.error('[ChatView] Send message error:', err);
-      addToast('خطأ بالإرسال', err?.message || 'تعذر إرسال الرسالة', 'error');
-      // Restore input text on failure
+      console.error('[ChatView] عطل في الإرسال:', err);
+      addToast('مشكلة في الإرسال', err?.message || 'الرسالة موصلتش، جرّب تاني', 'error');
       setInputText(text);
     } finally {
       setIsSending(false);
@@ -277,7 +265,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
     }
   };
 
-  // Filtered conversations
+  // تصفية المحادثات
   const filteredConversations = conversations.filter((c) => {
     const isBuyer = c.buyerId === currentUser.id;
     const partnerName = isBuyer ? c.sellerName : c.buyerName;
@@ -299,100 +287,96 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
   const partnerAvatar = selectedConv ? (isCurrentBuyer ? selectedConv.sellerAvatar : selectedConv.buyerAvatar) : '';
 
   return (
-    <div id="chat-center-view" className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-6 animate-fadeIn">
-      {/* Page Title & Breadcrumb */}
+    <div id="chat-center-view" className="w-full max-w-7xl mx-auto px-2 sm:px-4 py-4 md:py-6 animate-fadeIn" dir="rtl">
+      {/* عنوان الصفحة والمقدمة */}
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-            {isSellerMode ? 'محادثات ورشة العمل والحرفيين' : 'مركز المحادثات المباشرة مع الحرفيين'}
+            {isSellerMode ? 'رسايل ومحادثات الورشة' : 'دردشة حية ومباشرة مع الصنّاع والحرفيين'}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">
-            تواصل فوري وموثوق للاستفسار عن المنتجات التراثية، المقاسات، والتخصيص
+            اتكلم علطول مع الحرفي واسأله عن المقاسات، الخامات، أو طلبك المخصوص
           </p>
         </div>
 
         <button
           onClick={() => fetchConversations()}
-          className="p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors"
-          title="تحديث المحادثات"
+          className="p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors cursor-pointer"
+          title="حدّث المحادثات"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
 
-      {/* Main Chat Container */}
+      {/* صندوق الشات الرئيسي */}
       <div className="bg-white dark:bg-stone-900 rounded-2xl shadow-sm border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col md:flex-row h-[calc(100vh-210px)] min-h-[550px] max-h-[750px]">
-        
-        {/* Left Side: Conversation List (Visible on mobile if no conversation selected, always on desktop) */}
+
+        {/* القايمة اليمين: المحادثات */}
         <div
-          className={`w-full md:w-80 lg:w-96 border-l border-stone-200 dark:border-stone-800 flex flex-col bg-stone-50/50 dark:bg-stone-900/50 ${
-            selectedConv ? 'hidden md:flex' : 'flex'
-          }`}
+          className={`w-full md:w-80 lg:w-96 border-l border-stone-200 dark:border-stone-800 flex flex-col bg-stone-50/50 dark:bg-stone-900/50 ${selectedConv ? 'hidden md:flex' : 'flex'
+            }`}
         >
-          {/* Search & Filter Header */}
+          {/* شريط البحث والفلترة */}
           <div className="p-3 border-b border-stone-200 dark:border-stone-800 space-y-2">
             <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="بحث في المحادثات أو الحرفيين..."
+                placeholder="دوّر في الرسايل أو أسماء الصنّاع..."
                 className="w-full pl-3 pr-9 py-2 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/20 text-stone-900 dark:text-stone-100 placeholder-stone-400"
               />
               <Search className="w-4 h-4 text-stone-400 absolute right-3 top-2.5" />
             </div>
 
-            {/* Filter Tabs */}
+            {/* أزرار الفلترة */}
             <div className="flex gap-1 bg-stone-200/60 dark:bg-stone-800 p-1 rounded-xl text-xs font-medium">
               <button
                 onClick={() => setFilterType('all')}
-                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center ${
-                  filterType === 'all'
-                    ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-                }`}
+                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center cursor-pointer ${filterType === 'all'
+                  ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                  }`}
               >
                 الكل ({conversations.length})
               </button>
               <button
                 onClick={() => setFilterType('products')}
-                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center ${
-                  filterType === 'products'
-                    ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-                }`}
+                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center cursor-pointer ${filterType === 'products'
+                  ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                  }`}
               >
-                المنتجات
+                شغل ومنتجات
               </button>
               <button
                 onClick={() => setFilterType('orders')}
-                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center ${
-                  filterType === 'orders'
-                    ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
-                    : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-                }`}
+                className={`flex-1 py-1 px-2 rounded-lg transition-all text-center cursor-pointer ${filterType === 'orders'
+                  ? 'bg-white dark:bg-stone-700 text-amber-700 dark:text-amber-300 shadow-xs font-semibold'
+                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
+                  }`}
               >
-                الطلبات
+                الطلبيات
               </button>
             </div>
           </div>
 
-          {/* Conversations List Scroll Area */}
+          {/* لستة المحادثات */}
           <div className="flex-1 overflow-y-auto divide-y divide-stone-100 dark:divide-stone-800/60">
             {isLoadingConvs ? (
               <div className="p-8 text-center text-stone-400 space-y-2">
                 <div className="inline-block w-6 h-6 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-xs">جاري تحميل المحادثات...</p>
+                <p className="text-xs">بنحمّل المحادثات ثواني...</p>
               </div>
             ) : filteredConversations.length === 0 ? (
               <div className="p-8 text-center text-stone-400 space-y-3">
                 <MessageSquare className="w-10 h-10 mx-auto text-stone-300 dark:text-stone-600" />
                 <p className="text-xs sm:text-sm font-medium text-stone-600 dark:text-stone-300">
-                  {searchQuery ? 'لا توجد محادثات تطابق بحثك' : 'لا توجد محادثات سابقة'}
+                  {searchQuery ? 'ملقيناش محادثة تطابق كلامك' : 'لسه مفيش أي رسايل سابقة'}
                 </p>
                 <p className="text-[11px] text-stone-400 max-w-[200px] mx-auto">
-                  يمكنك بدء محادثة مباشرة مع أي حرفي من صفحة أي منتج أو طلب
+                  تقدر تفتح شات وتدردش مع أي صانع أو حرفي علطول من صفحة المنتج أو الطلب بتاعه
                 </p>
               </div>
             ) : (
@@ -410,13 +394,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                       setSelectedConv(conv);
                       setActiveConversationId(conv.id);
                     }}
-                    className={`w-full text-right p-3 transition-colors flex items-start gap-3 relative ${
-                      isSelected
-                        ? 'bg-amber-50/80 dark:bg-amber-950/20 border-r-4 border-amber-600'
-                        : 'hover:bg-stone-100/70 dark:hover:bg-stone-800/40'
-                    }`}
+                    className={`w-full text-right p-3 transition-colors flex items-start gap-3 relative cursor-pointer ${isSelected
+                      ? 'bg-amber-50/80 dark:bg-amber-950/20 border-r-4 border-amber-600'
+                      : 'hover:bg-stone-100/70 dark:hover:bg-stone-800/40'
+                      }`}
                   >
-                    {/* Avatar */}
+                    {/* الصورة الشخصية */}
                     <div className="relative shrink-0">
                       {otherAvatar ? (
                         <img
@@ -426,7 +409,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         />
                       ) : (
                         <div className="w-11 h-11 rounded-full bg-amber-100 dark:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold flex items-center justify-center text-sm">
-                          {otherName ? otherName.slice(0, 2) : 'ح'}
+                          {otherName ? otherName.slice(0, 2) : 'ص'}
                         </div>
                       )}
                       {unread > 0 && (
@@ -436,7 +419,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                       )}
                     </div>
 
-                    {/* Content */}
+                    {/* تفاصيل المحادثة */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="font-semibold text-xs sm:text-sm text-stone-900 dark:text-stone-100 truncate">
@@ -445,14 +428,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         <span className="text-[10px] text-stone-400 shrink-0 mr-1">
                           {conv.lastMessageAt
                             ? new Date(conv.lastMessageAt).toLocaleDateString('ar-EG', {
-                                month: 'short',
-                                day: 'numeric'
-                              })
+                              month: 'short',
+                              day: 'numeric'
+                            })
                             : ''}
                         </span>
                       </div>
 
-                      {/* Context badge (Product or Order) */}
+                      {/* شارة السياق (منتج أو طلب) */}
                       {conv.productTitle && (
                         <div className="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 mb-0.5 truncate">
                           <ShoppingBag className="w-3 h-3 shrink-0" />
@@ -467,15 +450,14 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         </div>
                       )}
 
-                      {/* Last Message Snippet */}
+                      {/* آخر رسالة */}
                       <p
-                        className={`text-xs truncate ${
-                          unread > 0
-                            ? 'font-bold text-stone-900 dark:text-stone-100'
-                            : 'text-stone-500 dark:text-stone-400'
-                        }`}
+                        className={`text-xs truncate ${unread > 0
+                          ? 'font-bold text-stone-900 dark:text-stone-100'
+                          : 'text-stone-500 dark:text-stone-400'
+                          }`}
                       >
-                        {conv.lastMessageText || 'محادثة جديدة'}
+                        {conv.lastMessageText || 'دردشة جديدة'}
                       </p>
                     </div>
                   </button>
@@ -485,27 +467,27 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
           </div>
         </div>
 
-        {/* Right Side: Active Conversation Panel */}
+        {/* الجزء الأيسر: شاشة الشات المفتوحة */}
         <div className={`flex-1 flex flex-col bg-white dark:bg-stone-900 ${!selectedConv ? 'hidden md:flex' : 'flex'}`}>
           {selectedConv ? (
             <>
-              {/* Header */}
+              {/* ترويسة الشات */}
               <div className="p-3 sm:p-4 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50/70 dark:bg-stone-900">
                 <div className="flex items-center gap-3">
-                  {/* Mobile Back Button */}
+                  {/* زرار الرجوع للموبايل */}
                   <button
                     onClick={() => {
                       setSelectedConv(null);
                       setActiveConversationId(null);
                     }}
                     className="md:hidden p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-800 rounded-lg min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
-                    title="الرجوع لقائمة المحادثات"
-                    aria-label="الرجوع لقائمة المحادثات"
+                    title="ارجع لقائمة الرسايل"
+                    aria-label="ارجع لقائمة الرسايل"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
 
-                  {/* Avatar */}
+                  {/* الصورة والحالة */}
                   <div className="relative">
                     {partnerAvatar ? (
                       <img
@@ -529,12 +511,12 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                       {isCurrentBuyer && (
                         <span className="inline-flex items-center gap-0.5 text-[10px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded-full font-medium">
                           <ShieldCheck className="w-3 h-3" />
-                          حرفي موثق
+                          حرفي شاطر ومعتمد
                         </span>
                       )}
                     </div>
                     <p className="text-[11px] text-stone-400">
-                      {isCurrentBuyer ? 'ورشة حرفية مرخصة - سوق الصعيد' : 'عميل مسجل'}
+                      {isCurrentBuyer ? 'ورشة أصيلة من سوق الصعيد' : 'زبون مسجل'}
                     </p>
                   </div>
                 </div>
@@ -543,26 +525,26 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   {selectedConv.productId && (
                     <button
                       onClick={() => navigateToProduct(selectedConv.productId!)}
-                      className="text-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1 transition-colors"
+                      className="text-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/60 px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1 transition-colors cursor-pointer"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">صفحة المنتج</span>
+                      <span className="hidden sm:inline">شوف القطعة دي</span>
                     </button>
                   )}
 
                   {selectedConv.orderId && (
                     <button
                       onClick={() => navigateToOrder(selectedConv.orderId!)}
-                      className="text-xs bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1 transition-colors"
+                      className="text-xs bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/60 px-2.5 py-1.5 rounded-lg font-medium flex items-center gap-1 transition-colors cursor-pointer"
                     >
                       <Package className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">تفاصيل الطلب</span>
+                      <span className="hidden sm:inline">تفاصيل الطلبية</span>
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Context Banner (Product or Order) */}
+              {/* شريط معلومات المنتج أو الطلب المتعلق بالمحادثة */}
               {(selectedConv.productTitle || selectedConv.orderNumber) && (
                 <div className="bg-amber-50/60 dark:bg-stone-800/40 border-b border-amber-200/40 dark:border-stone-800 p-2.5 px-4 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -576,17 +558,17 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                     <div className="min-w-0">
                       {selectedConv.productTitle && (
                         <p className="font-semibold text-stone-900 dark:text-stone-100 truncate">
-                          حول منتج: {selectedConv.productTitle}
+                          الكلام عن: {selectedConv.productTitle}
                           {selectedConv.productPrice && (
                             <span className="text-amber-700 dark:text-amber-400 font-bold mr-2">
-                              {selectedConv.productPrice} ج.م
+                              {selectedConv.productPrice} جنيه
                             </span>
                           )}
                         </p>
                       )}
                       {selectedConv.orderNumber && (
                         <p className="font-semibold text-stone-900 dark:text-stone-100">
-                          بشأن الطلب: <span className="font-mono text-blue-600">{selectedConv.orderNumber}</span>
+                          بخصوص طلبية: <span className="font-mono text-blue-600">#{selectedConv.orderNumber}</span>
                           {selectedConv.orderStatus && (
                             <span className="mr-2 text-[10px] px-1.5 py-0.5 rounded-full bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300">
                               {selectedConv.orderStatus}
@@ -599,26 +581,26 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
 
                   <span className="text-[10px] text-stone-400 shrink-0 mr-2 flex items-center gap-1">
                     <Info className="w-3 h-3" />
-                    محادثة مرتبطة بالمعاملة
+                    شات مرتبط بالطلبية
                   </span>
                 </div>
               )}
 
-              {/* Messages Scroll Area */}
+              {/* مساحة عرض الرسايل */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50/30 dark:bg-stone-900/30">
                 {isLoadingMessages ? (
                   <div className="p-8 text-center text-stone-400 space-y-2">
                     <div className="inline-block w-6 h-6 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-xs">جاري تحميل الرسائل...</p>
+                    <p className="text-xs">بنحضّر الرسايل ثانية واحدة...</p>
                   </div>
                 ) : messages.length === 0 ? (
                   <div className="p-8 text-center text-stone-400 space-y-3">
                     <Sparkles className="w-8 h-8 mx-auto text-amber-500/60" />
                     <p className="text-sm font-semibold text-stone-700 dark:text-stone-200">
-                      ابدأ الحديث مع {partnerName}
+                      صبّح أو مسّي على {partnerName} وابدأ كلامك
                     </p>
-                    <p className="text-xs text-stone-400 max-w-sm mx-auto">
-                      يمكنك الاستفسار عن تفاصيل الحرفة اليدوية، خامات التصنيع، تخصيص المقاسات والألوان، أو مواعيد التسليم.
+                    <p className="text-xs text-stone-400 max-w-sm mx-auto leading-relaxed">
+                      اسأله براحتك عن أصل الشغل اليدوي، المقاسات المضبوطة، إمكانية تعديل الألوان، أو ميعاد التسليم والشحن لبلدك.
                     </p>
                   </div>
                 ) : (
@@ -643,19 +625,17 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         )}
 
                         <div className={`flex items-end gap-2 ${isMe ? 'justify-start' : 'justify-end'}`}>
-                          {/* Chat bubble */}
+                          {/* فقاعة الرسالة */}
                           <div
-                            className={`max-w-[78%] sm:max-w-[65%] rounded-2xl p-3 shadow-xs text-xs sm:text-sm leading-relaxed ${
-                              isMe
-                                ? 'bg-amber-600 text-white rounded-br-xs'
-                                : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-200/80 dark:border-stone-700/80 rounded-bl-xs'
-                            }`}
+                            className={`max-w-[78%] sm:max-w-[65%] rounded-2xl p-3 shadow-xs text-xs sm:text-sm leading-relaxed ${isMe
+                              ? 'bg-amber-600 text-white rounded-br-xs'
+                              : 'bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 border border-stone-200/80 dark:border-stone-700/80 rounded-bl-xs'
+                              }`}
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
                             <div
-                              className={`flex items-center gap-1 justify-end text-[10px] mt-1 ${
-                                isMe ? 'text-amber-200' : 'text-stone-400'
-                              }`}
+                              className={`flex items-center gap-1 justify-end text-[10px] mt-1 ${isMe ? 'text-amber-200' : 'text-stone-400'
+                                }`}
                             >
                               <span>
                                 {new Date(msg.createdAt).toLocaleTimeString('ar-EG', {
@@ -664,7 +644,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                                 })}
                               </span>
                               {isMe && (
-                                <span title={msg.isRead ? 'تمت القراءة' : 'تم الإرسال'}>
+                                <span title={msg.isRead ? 'اتقرأت' : 'وصلت'}>
                                   {msg.isRead ? (
                                     <CheckCheck className="w-3.5 h-3.5 text-amber-200" />
                                   ) : (
@@ -682,15 +662,15 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick Inquiry Suggestions */}
+              {/* أسئلة مقترحة سريعة */}
               {isCurrentBuyer && messages.length <= 2 && (
                 <div className="px-3 py-2 bg-stone-50 dark:bg-stone-800/60 border-t border-stone-200/60 dark:border-stone-800 flex items-center gap-1.5 overflow-x-auto text-xs no-scrollbar">
-                  <span className="text-[10px] text-stone-400 shrink-0 font-medium">مقترحات:</span>
+                  <span className="text-[10px] text-stone-400 shrink-0 font-medium">أسئلة سريعة:</span>
                   {QUICK_INQUIRIES.map((inq, i) => (
                     <button
                       key={i}
                       onClick={() => handleSendMessage(inq)}
-                      className="bg-white dark:bg-stone-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-stone-700 dark:text-stone-200 hover:text-amber-800 border border-stone-200 dark:border-stone-600 px-2.5 py-1 rounded-full text-[11px] whitespace-nowrap transition-colors"
+                      className="bg-white dark:bg-stone-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-stone-700 dark:text-stone-200 hover:text-amber-800 border border-stone-200 dark:border-stone-600 px-2.5 py-1 rounded-full text-[11px] whitespace-nowrap transition-colors cursor-pointer"
                     >
                       {inq}
                     </button>
@@ -698,7 +678,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                 </div>
               )}
 
-              {/* Input Area */}
+              {/* مكان كتابة الرسالة */}
               <div className="p-3 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800">
                 <form
                   onSubmit={(e) => {
@@ -713,7 +693,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       onKeyDown={handleKeyDown}
-                      placeholder="اكتب رسالتك للحرفي هنا... (Enter للإرسال)"
+                      placeholder="اكتب رسالتك للحرفي هنا... (ودوس Enter عشان تبعت)"
                       rows={1}
                       maxLength={2000}
                       className="w-full resize-none py-2.5 px-3.5 bg-stone-100 dark:bg-stone-800 border border-transparent focus:border-amber-500 rounded-xl text-xs sm:text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 max-h-32 transition-all"
@@ -723,8 +703,8 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   <button
                     type="submit"
                     disabled={!inputText.trim() || isSending}
-                    className="p-2.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl shadow-xs transition-colors flex items-center justify-center shrink-0"
-                    title="إرسال"
+                    className="p-2.5 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl shadow-xs transition-colors flex items-center justify-center shrink-0 cursor-pointer"
+                    title="ابعت"
                   >
                     {isSending ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -736,16 +716,16 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
               </div>
             </>
           ) : (
-            /* No Selected Conversation (Desktop Empty State) */
+            /* حالة عدم اختيار محادثة */
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-stone-50/40 dark:bg-stone-900/40">
               <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center mb-4 shadow-xs">
                 <MessageSquare className="w-8 h-8" />
               </div>
               <h3 className="text-base font-bold text-stone-900 dark:text-stone-100 mb-1">
-                اختر محادثة لبدء التواصل
+                اختر محادثة من القايمة عشان تبدأ كلام
               </h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 max-w-sm leading-relaxed">
-                تواصل مباشر مع ورش وحرفيي الصعيد حول التفاصيل الفنية، الخامات الطبيعية، وحالة الطلبات
+                تواصل علطول مع ورش وشيوخ صنايعية الصعيد عشان تعرف تفاصيل الشغل، الخامات، ومتابعة الطلبيات أولاً بأول
               </p>
             </div>
           )}

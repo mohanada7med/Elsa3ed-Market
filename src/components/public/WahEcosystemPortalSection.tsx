@@ -9,7 +9,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
   const portals = [
     {
       id: 'map',
-      title: 'أطلس الصعيد التفاعلي',
+      title: 'لفة في الصعيد',
       tagline: 'خريطة النيل ومعالم الصعيد الحية',
       desc: 'لف في محافظات الصعيد من الفيوم وبني سويف لحد أسوان والنوبة على خريطة تفاعلية تاخدك لكل حتة.',
       badge: 'التفاعلي',

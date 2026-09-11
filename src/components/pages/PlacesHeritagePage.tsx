@@ -701,17 +701,16 @@ export const PlacesHeritagePage: React.FC = () => {
                             </span>
                             {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
                               <span
-                                className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${
-                                  place.visitInfo.visitStatus === 'closed_to_public'
+                                className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${place.visitInfo.visitStatus === 'closed_to_public'
                                     ? 'bg-red-600 text-white'
                                     : place.visitInfo.visitStatus === 'closed_for_restoration'
-                                    ? 'bg-amber-600 text-white'
-                                    : place.visitInfo.visitStatus === 'public_landmark'
-                                    ? 'bg-emerald-600 text-white'
-                                    : place.visitInfo.visitStatus === 'active_institution'
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-orange-600 text-white'
-                                }`}
+                                      ? 'bg-amber-600 text-white'
+                                      : place.visitInfo.visitStatus === 'public_landmark'
+                                        ? 'bg-emerald-600 text-white'
+                                        : place.visitInfo.visitStatus === 'active_institution'
+                                          ? 'bg-indigo-600 text-white'
+                                          : 'bg-orange-600 text-white'
+                                  }`}
                               >
                                 {place.visitInfo.visitStatus === 'closed_to_public' && 'مقفول للجمهور'}
                                 {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مقفول للترميم'}
@@ -885,7 +884,7 @@ export const PlacesHeritagePage: React.FC = () => {
 
               <div className="flex flex-col gap-4">
                 <p className="text-sm leading-8 text-white/55">
-                  افتح أطلس الصعيد وشوف الأماكن على الخريطة واكتشف اللي حواليها.
+                  افتح لفة في الصعيد وشوف الأماكن على الخريطة واكتشف اللي حواليها.
                 </p>
                 <button
                   onClick={() => setActivePage('map')}

@@ -100,7 +100,7 @@ export const Footer: React.FC = () => {
 
   // جميع بوابات وصفحات التطبيق مرتبة ومنظمة باحترافية
   const appPortals = [
-    { label: 'أطلس الصعيد التفاعلي', page: 'map' },
+    { label: 'لفة في الصعيد', page: 'map' },
     { label: 'محافظات الصعيد', page: 'governorates' },
     { label: 'المعالم والتراث المعماري', page: 'places' },
     { label: 'حرف وصنايع الصعيد', page: 'cultural-crafts' },

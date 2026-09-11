@@ -8,32 +8,21 @@ import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import {
   Film,
   Play,
-  Heart,
-  Eye,
-  Share2,
   Sparkles,
   ShoppingBag,
   Store,
   Flame,
   Search,
-  Filter,
-  Layers,
   MapPin,
-  Maximize2,
   ArrowLeft,
-  ArrowUpLeft,
-  BadgeCheck,
   Plus,
-  Upload,
-  ShieldAlert,
   LogIn,
-  UserCheck,
   X,
   Lock,
-  ChevronLeft,
   Trash2,
   Grid,
-  Tv
+  Tv,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -53,7 +42,7 @@ export const CraftReelsPage: React.FC = () => {
   } = useApp();
 
   const [reels, setReels] = useState<CraftReel[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'feed' | 'grid'>('grid');
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
   const [selectedContentType, setSelectedContentType] = useState<string>('all');
@@ -168,15 +157,22 @@ export const CraftReelsPage: React.FC = () => {
   ];
 
   const governoratesDiscovery = [
-    { name: 'all', label: 'كل الصعيد', tag: 'جميع الحكايات', img: 'https' },
-    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?auto=format&fit=crop&w=300&q=80' },
-    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&w=300&q=80' },
-    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://images.unsplash.com/photo-1590076215667-875d4ef2d7ee?auto=format&fit=crop&w=300&q=80' },
-    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=300&q=80' },
-    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=300&q=80' },
-    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=300&q=80' },
-    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=300&q=80' },
-    { name: 'الوادي الجديد', label: 'الواحات', tag: 'سحر الطبيعة والعيون', img: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=300&q=80' }
+    {
+      name: 'all',
+      label: 'كل الصعيد',
+      tag: 'جميع الحكايات',
+      img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png'
+    },
+    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/aswan/cover.jpg' },
+    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/luxor/cover.jpg' },
+    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/qena/cover.jpg' },
+    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015790/WAH/provinces/sohag/cover.jpg' },
+    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015789/WAH/provinces/asyut/cover.jpg' },
+    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/WAH/provinces/minya/cover.jpg' },
+    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788699005/WAH/provinces/beni-suef/cover.jpg' },
+    { name: 'الوادي الجديد', label: 'الوادي الجديد', tag: 'سحر الطبيعة والعيون', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715713/WAH/heritage-places/white-desert-farafra/img_2340_1788715713136_1exk.jpg' },
+    { name: 'البحر الأحمر', label: 'البحر الأحمر', tag: 'بوابة قوافل الصعيد وحصن القصير التاريخي', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789125643/b615782b-1a99-4025-90b0-40d7f1696b9c.png' },
+    { name: 'الفيوم', label: 'الفيوم', tag: 'واحة الخضرة والمية العذبة', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789125631/f7be86e1-059c-4bbe-9914-44b2e3ffe16e.png' }
   ];
 
   // Filtered Reels
@@ -239,7 +235,6 @@ export const CraftReelsPage: React.FC = () => {
       return;
     }
 
-    // Role is seller or admin -> Allowed
     setIsUploadModalOpen(true);
   };
 
@@ -300,9 +295,7 @@ export const CraftReelsPage: React.FC = () => {
         dark:text-white
       "
     >
-      {/* =====================================================
-          NAVBAR
-      ===================================================== */}
+      {/* NAVBAR */}
       <header className="relative z-50 border-b border-black/10 dark:border-white/10">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
@@ -369,9 +362,7 @@ export const CraftReelsPage: React.FC = () => {
         </div>
       </header>
 
-      {/* =====================================================
-          HERO SECTION
-      ===================================================== */}
+      {/* HERO SECTION */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
         <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
@@ -388,15 +379,15 @@ export const CraftReelsPage: React.FC = () => {
 
               <h1
                 className="
-    max-w-5xl
-    text-[14vw]
-    font-black
-    leading-[0.78]
-    tracking-[-0.08em]
-    sm:text-[11vw]
-    lg:text-[9rem]
-    xl:text-[11rem]
-  "
+                  max-w-5xl
+                  text-[14vw]
+                  font-black
+                  leading-[0.78]
+                  tracking-[-0.08em]
+                  sm:text-[11vw]
+                  lg:text-[9rem]
+                  xl:text-[11rem]
+                "
               >
                 شوف
                 <br />
@@ -470,9 +461,7 @@ export const CraftReelsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          UPPER EGYPT DISCOVERY BAR (Governorates)
-      ===================================================== */}
+      {/* UPPER EGYPT DISCOVERY BAR */}
       <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pb-8">
         <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2">
           {governoratesDiscovery.map((gov) => {
@@ -486,8 +475,8 @@ export const CraftReelsPage: React.FC = () => {
               >
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
-                      ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
-                      : 'bg-black/10 dark:bg-white/10 group-hover:bg-[#9a6a35]/40'
+                    ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
+                    : 'bg-black/10 dark:bg-white/10 group-hover:bg-[#9a6a35]/40'
                     }`}
                 >
                   <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
@@ -514,9 +503,7 @@ export const CraftReelsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          FLOATING CONTROLS BAR (View Mode & Filters)
-      ===================================================== */}
+      {/* FLOATING CONTROLS BAR */}
       <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 mb-10">
         <div
           className="
@@ -567,6 +554,7 @@ export const CraftReelsPage: React.FC = () => {
               />
               {searchQuery && (
                 <button
+                  type="button"
                   onClick={() => setSearchQuery('')}
                   className="
                     absolute left-3 top-1/2
@@ -659,11 +647,16 @@ export const CraftReelsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          MAIN CONTENT AREA (Feed or Grid)
-      ===================================================== */}
+      {/* MAIN CONTENT AREA */}
       <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
-        {viewMode === 'feed' ? (
+        {isLoading ? (
+          <div className="py-20 flex flex-col items-center justify-center gap-4 text-center">
+            <Loader2 className="w-10 h-10 animate-spin text-[#9a6a35]" />
+            <p className="text-sm font-bold text-black/60 dark:text-white/60">
+              جارٍ تحميل حكايات الصعيد الأصيلة...
+            </p>
+          </div>
+        ) : viewMode === 'feed' ? (
           <div className="w-full flex justify-center sm:py-4">
             <div className="fixed inset-0 z-40 bg-black sm:relative sm:inset-auto sm:z-auto sm:max-w-[420px] sm:h-[min(94dvh,860px)] sm:rounded-3xl overflow-hidden shadow-2xl border-0 sm:border sm:border-white/10">
               {/* Mobile Top Floating Switch to Grid button */}
@@ -696,7 +689,10 @@ export const CraftReelsPage: React.FC = () => {
             {filteredReels.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
                 {filteredReels.map((reel) => {
-                  const categoryLabel = contentTypesList.find(c => c.id === reel.contentType)?.label || reel.craftType || 'حكاية';
+                  const categoryLabel =
+                    contentTypesList.find((c) => c.id === reel.contentType)?.label ||
+                    reel.craftType ||
+                    'حكاية';
                   const displayLoc = reel.location || reel.governorate;
 
                   return (
@@ -752,12 +748,12 @@ export const CraftReelsPage: React.FC = () => {
                         {/* Location & Category Badges */}
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {displayLoc && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-xs border border-white/10">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/10">
                               <MapPin size={10} className="text-[#9a6a35]" />
                               <span>{displayLoc}</span>
                             </span>
                           )}
-                          <span className="text-[9px] font-medium text-white/70 bg-white/15 px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          <span className="text-[9px] font-medium text-white/70 bg-white/15 px-2 py-0.5 rounded-full backdrop-blur-sm">
                             {categoryLabel}
                           </span>
                         </div>
@@ -767,7 +763,7 @@ export const CraftReelsPage: React.FC = () => {
                           {reel.title}
                         </h3>
 
-                        {/* Product Quick Buy Bar (ONLY rendered if reel has a product) */}
+                        {/* Product Quick Buy Bar */}
                         {reel.productId && reel.productId !== 'none' && reel.productPrice && (
                           <div className="pt-2 border-t border-white/20 flex items-center justify-between gap-1">
                             <div className="min-w-0">
@@ -817,9 +813,7 @@ export const CraftReelsPage: React.FC = () => {
         )}
       </section>
 
-      {/* =====================================================
-          FINAL CTA
-      ===================================================== */}
+      {/* FINAL CTA */}
       <section className="border-t border-black/10 dark:border-white/10">
         <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div
@@ -891,7 +885,7 @@ export const CraftReelsPage: React.FC = () => {
         />
       )}
 
-      {/* Upload Reel Modal (Accessible only to sellers and admin) */}
+      {/* Upload Reel Modal */}
       <ReelUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
@@ -909,7 +903,7 @@ export const CraftReelsPage: React.FC = () => {
       {/* Permission Restriction Barrier Modal */}
       <AnimatePresence>
         {permissionAlert.isOpen && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}

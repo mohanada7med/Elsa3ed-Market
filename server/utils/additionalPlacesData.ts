@@ -1,5 +1,5 @@
-import { HeritagePlaceDoc } from '@/server/models/types.ts';
-import { GovernorateDoc } from '@/src/types';
+import { HeritagePlaceDoc } from '../models/types';
+import { GovernorateDoc } from '../models/types';
 import dotenv from 'dotenv';
 dotenv.config();
 import { MongoClient } from 'mongodb';

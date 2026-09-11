@@ -316,7 +316,7 @@ export const MobileBottomBar: React.FC = () => {
               type="button"
               onClick={() => setActivePage('map' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
-              aria-label="أطلس الصعيد"
+              aria-label="لفة في الصعيد"
             >
               <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
                 <MapPin className="w-5 h-5 text-[#9a6a35]" />
