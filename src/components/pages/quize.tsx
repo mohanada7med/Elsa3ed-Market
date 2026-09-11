@@ -18,7 +18,6 @@ import {
   Flame,
   Gem,
   MessageCircle,
-  Play,
   RefreshCw,
   ScrollText,
   Share2,
@@ -436,7 +435,8 @@ const createQuiz = (): QuizQuestion[] => {
 };
 
 export const DialectDictionaryPage: React.FC = () => {
-  const { setActivePage } = useApp();
+  // سحب activePage من السياق لمعرفة الصفحة الحالية
+  const { activePage, setActivePage } = useApp();
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -481,13 +481,19 @@ export const DialectDictionaryPage: React.FC = () => {
   }, []);
 
   // مؤقت الجولة الشامل
+  // مؤقت الجولة الشامل مع صوت تحذيري في آخر 5 ثواني
   useEffect(() => {
     if (!gameStarted || completed) return;
 
     if (timeLeft <= 0) {
-      playBeep(220, 'sawtooth', 0.4);
+      playBeep(220, 'sawtooth', 0.4); // صوت انتهاء الوقت
       setCompleted(true);
       return;
+    }
+
+    // تكتكة تحذيرية حادة وسريعة لآخر 5 ثواني (5, 4, 3, 2, 1)
+    if (timeLeft <= 5) {
+      playBeep(880, 'square', 0.08);
     }
 
     const timer = setInterval(() => {
@@ -496,7 +502,6 @@ export const DialectDictionaryPage: React.FC = () => {
 
     return () => clearInterval(timer);
   }, [gameStarted, completed, timeLeft]);
-
   const beginGame = () => {
     playBeep(440, 'triangle', 0.15);
     setShowIntro(false);
@@ -529,7 +534,7 @@ export const DialectDictionaryPage: React.FC = () => {
     if (score >= 10) {
       return {
         badge: 'عمدة الصعيد',
-        title: ' صعيدي أصيل في الكلام 👳‍♂️',
+        title: 'صعيدي أصيل في الكلام 👳‍♂️',
         description: 'ما شاء الله عليك، جبت الدرجة النهائية وفهمت كل الكلمات وأصولها.',
         isSaidi: true,
       };
@@ -589,10 +594,7 @@ export const DialectDictionaryPage: React.FC = () => {
     const isCorrect = answer === currentQuestion.correctAnswer;
 
     if (isCorrect) {
-      playBeep(620, 'sine', 0.12);
       setScore((prev) => prev + 1);
-    } else {
-      playBeep(230, 'sawtooth', 0.18);
     }
 
     window.setTimeout(() => {
@@ -701,19 +703,24 @@ export const DialectDictionaryPage: React.FC = () => {
       ===================================================== */}
       <header className="relative z-50 border-b border-black/[0.07] bg-[#f3eee5]/80 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#090908]/80">
         <div className="mx-auto flex h-[72px] max-w-[1700px] items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-16">
-          <button
-            type="button"
-            onClick={() => setActivePage('home')}
-            className="group flex items-center gap-3 text-xs font-black transition-all hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer"
-          >
-            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 transition-all group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
-              <ArrowLeft
-                size={15}
-                className="transition-transform group-hover:-translate-x-0.5"
-              />
-            </span>
-            <span className="hidden sm:block">الرئيسية</span>
-          </button>
+          {/* إخفاء زر الرئيسية لو activePage == 'home' */}
+          {activePage !== 'home' ? (
+            <button
+              type="button"
+              onClick={() => setActivePage('home')}
+              className="group flex items-center gap-3 text-xs font-black transition-all hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 transition-all group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
+                <ArrowLeft
+                  size={15}
+                  className="transition-transform group-hover:-translate-x-0.5"
+                />
+              </span>
+              <span className="hidden sm:block">الرئيسية</span>
+            </button>
+          ) : (
+            <div />
+          )}
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
             <div className="text-[8px] font-black tracking-[0.45em] text-[#9a6a35] dark:text-[#d6aa72]">
@@ -884,7 +891,8 @@ export const DialectDictionaryPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={beginGame}
-                  className="group inline-flex items-center justify-center gap-2.5 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-6 py-3 rounded-2xl border border-black/10 dark:border-white/10 transition-all duration-300 shadow-md self-start md:self-auto cursor-pointer"                >
+                  className="group inline-flex items-center justify-center gap-2.5 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-6 py-3 rounded-2xl border border-black/10 dark:border-white/10 transition-all duration-300 shadow-md self-start md:self-auto cursor-pointer"
+                >
                   ابدأ التحدي الآن
                 </button>
               </div>
@@ -1088,7 +1096,8 @@ export const DialectDictionaryPage: React.FC = () => {
                     className="text-[#9a6a35] dark:text-[#d6aa72]"
                   />
                   <span className="text-xs font-black">
-                    صعيدي أباً عن جد.. ودانك واعية للكلام وعارف أصل الحكاية.                  </span>
+                    صعيدي أباً عن جد.. ودانك واعية للكلام وعارف أصل الحكاية.
+                  </span>
                 </div>
               )}
 
@@ -1172,13 +1181,15 @@ export const DialectDictionaryPage: React.FC = () => {
                   جولة جديدة بأسئلة مختلفة
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setActivePage('home')}
-                  className="flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-black/10 px-8 text-xs font-black text-black/70 hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5 transition-all cursor-pointer"
-                >
-                  العودة للرئيسية
-                </button>
+                {activePage !== 'home' && (
+                  <button
+                    type="button"
+                    onClick={() => setActivePage('home')}
+                    className="flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-black/10 px-8 text-xs font-black text-black/70 hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5 transition-all cursor-pointer"
+                  >
+                    العودة للرئيسية
+                  </button>
+                )}
               </div>
             </div>
           </div>
