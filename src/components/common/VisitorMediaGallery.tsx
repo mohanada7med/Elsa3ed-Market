@@ -3,38 +3,33 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  useRef,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useApp } from '../../context/AppContext';
 import { adminMediaApi } from '../../services/api';
 import { AdminMediaUploader } from './AdminMediaUploader';
 
 import {
-  Camera,
-  Video,
-  Play,
-  Maximize2,
-  ChevronRight,
-  ChevronLeft,
-  X,
+  Sparkles,
+  Images,
+  Film,
   Star,
   Trash2,
   Plus,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
+  Maximize2,
   Download,
   Share2,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  Play,
   Settings2,
-  Film,
-  Image as ImageIcon,
-  ArrowUpRight,
-  GripHorizontal,
-  Layers3,
-  Sparkles,
-  Check,
-  Images,
-  MonitorPlay,
+  AlertCircle,
+  Eye,
+  Sliders,
+  Compass
 } from 'lucide-react';
 
 export interface VisitorMediaGalleryProps {
@@ -64,7 +59,7 @@ export interface VisitorMediaGalleryProps {
 
 export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   id,
-  title = 'معرض الصور والتوثيق المرئي',
+  title = 'الأرشيف البصري والتوثيق',
   entityType,
   entityId,
   entitySlug,
@@ -80,24 +75,19 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 }) => {
   const { currentUser, currentRole, addToast } = useApp();
 
-  const isAdmin =
-    currentRole === 'admin' || currentUser?.role === 'admin';
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
 
   const userAuth = useMemo(
     () => ({
       id: currentUser?.id || 'admin',
-      role: isAdmin
-        ? 'admin'
-        : currentUser?.role || currentRole || 'admin',
+      role: isAdmin ? 'admin' : currentUser?.role || currentRole || 'admin',
     }),
     [currentUser, currentRole, isAdmin]
   );
 
   const targetEntityKey = entityId || entitySlug || '';
 
-  // =========================================================
-  // LOCAL STATE
-  // =========================================================
+  // States
   const [localGallery, setLocalGallery] = useState<string[]>(() =>
     Array.isArray(gallery) ? gallery.filter(Boolean) : []
   );
@@ -108,33 +98,28 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
   );
 
   const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(
     videoUrl || (videos && videos[0]) || null
   );
 
-  // LIGHTBOX
+  // Lightbox State
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [lightboxZoom, setLightboxZoom] = useState(1);
+  const [showOverlayControls, setShowOverlayControls] = useState(true);
 
-  // ADMIN MODAL & ACTIONS
+  // Touch Swipe
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  // Admin Modals
   const [adminModalOpen, setAdminModalOpen] = useState(false);
-  const [adminActiveTab, setAdminActiveTab] = useState<'gallery' | 'video'>('gallery');
+  const [adminTab, setAdminTab] = useState<'images' | 'video'>('images');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [imagePendingDelete, setImagePendingDelete] = useState<string | null>(null);
-  const [videoPendingDelete, setVideoPendingDelete] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
 
-  // =========================================================
-  // SYNC PROPS SAFELY
-  // =========================================================
+  // Sync
   useEffect(() => {
-    if (Array.isArray(gallery)) {
-      setLocalGallery((prev) => {
-        const next = gallery.filter(Boolean);
-        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
-      });
-    }
+    if (Array.isArray(gallery)) setLocalGallery(gallery.filter(Boolean));
   }, [gallery]);
 
   useEffect(() => {
@@ -143,288 +128,110 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
   useEffect(() => {
     setLocalVideoUrl(videoUrl);
-    if (videoUrl && !selectedVideoUrl) {
-      setSelectedVideoUrl(videoUrl);
-    }
-  }, [videoUrl, selectedVideoUrl]);
+    if (videoUrl && !selectedVideo) setSelectedVideo(videoUrl);
+  }, [videoUrl, selectedVideo]);
 
   useEffect(() => {
     if (Array.isArray(videos)) {
-      const cleanVids = videos.filter(Boolean);
-      setLocalVideos(cleanVids);
-      if (cleanVids.length > 0 && !selectedVideoUrl) {
-        setSelectedVideoUrl(cleanVids[0]);
-      }
+      const clean = videos.filter(Boolean);
+      setLocalVideos(clean);
+      if (clean.length > 0 && !selectedVideo) setSelectedVideo(clean[0]);
     }
-  }, [videos, selectedVideoUrl]);
+  }, [videos, selectedVideo]);
 
-  // =========================================================
-  // MEMOIZED MEDIA LISTS
-  // =========================================================
   const allVideos = useMemo(() => {
     return Array.from(
-      new Set([
-        ...(localVideoUrl ? [localVideoUrl] : []),
-        ...(localVideos || []),
-      ])
+      new Set([...(localVideoUrl ? [localVideoUrl] : []), ...(localVideos || [])])
     ).filter(Boolean);
   }, [localVideoUrl, localVideos]);
 
-  const activeImage = localGallery[
-    Math.min(activeImageIndex, Math.max(localGallery.length - 1, 0))
-  ];
+  // Lock mobile background scrolling
+  useEffect(() => {
+    if (lightboxOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [lightboxOpen]);
 
-  // =========================================================
-  // LIGHTBOX CONTROLS
-  // =========================================================
+  // Lightbox Navigation
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
-    setLightboxZoom(1);
     setLightboxOpen(true);
+    setShowOverlayControls(true);
   };
 
   const closeLightbox = () => {
     setLightboxOpen(false);
-    setLightboxZoom(1);
   };
 
-  const nextImage = useCallback(() => {
-    if (localGallery.length === 0) return;
+  const nextLightboxImage = useCallback(() => {
+    if (!localGallery.length) return;
     setLightboxIndex((prev) => (prev + 1) % localGallery.length);
-    setLightboxZoom(1);
   }, [localGallery.length]);
 
-  const prevImage = useCallback(() => {
-    if (localGallery.length === 0) return;
-    setLightboxIndex(
-      (prev) => (prev - 1 + localGallery.length) % localGallery.length
-    );
-    setLightboxZoom(1);
+  const prevLightboxImage = useCallback(() => {
+    if (!localGallery.length) return;
+    setLightboxIndex((prev) => (prev - 1 + localGallery.length) % localGallery.length);
   }, [localGallery.length]);
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) nextLightboxImage();
+      else prevLightboxImage();
+    }
+  };
 
   useEffect(() => {
     if (!lightboxOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowRight') prevImage();
-      if (e.key === 'ArrowLeft') nextImage();
+      if (e.key === 'ArrowRight') prevLightboxImage();
+      if (e.key === 'ArrowLeft') nextLightboxImage();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxOpen, nextImage, prevImage]);
+  }, [lightboxOpen, nextLightboxImage, prevLightboxImage]);
 
-  // =========================================================
-  // DOWNLOAD & SHARE
-  // =========================================================
-  const handleDownloadImage = (url: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.download = `${entityTitle || 'heritage-image'}-${lightboxIndex + 1}.jpg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    addToast('بدء التحميل', 'جاري تنزيل الصورة التوثيقية', 'info');
-  };
-
-  const handleShareImage = async (url: string) => {
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          title: entityTitle || 'المعرض التوثيقي',
-          url,
-        });
-        return;
-      }
-      if (navigator.clipboard) {
-        await navigator.clipboard.writeText(url);
-        addToast('تم النسخ', 'تم نسخ رابط الصورة بنجاح', 'success');
-      }
-    } catch {
-      // User cancelled share
-    }
-  };
-
-  // =========================================================
-  // SET COVER
-  // =========================================================
-  const handleSetCover = async (imageUrl: string) => {
+  // Mutations
+  const handleSetCover = async (url: string) => {
     if (!isAdmin || isProcessing) return;
     setIsProcessing(true);
-
     try {
       const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: targetEntityKey,
         entitySlug: entitySlug || targetEntityKey,
         action: 'setCover',
-        imageUrl,
+        imageUrl: url,
       });
-
-      if (res?.success !== false) {
-        const newCover = res?.coverImage || imageUrl;
-        setLocalCover(newCover);
-        onCoverChange?.(newCover);
-        if (res?.gallery && Array.isArray(res.gallery)) {
-          setLocalGallery(res.gallery);
-          onGalleryChange?.(res.gallery);
-        }
-        addToast('تم التعيين', 'تم تعيين الصورة كغلاف رئيسي في قاعدة البيانات بنجاح', 'success');
-      }
+      const newCover = res?.coverImage || url;
+      setLocalCover(newCover);
+      onCoverChange?.(newCover);
+      addToast('تم التحديث', 'تم اعتماد الصورة كغلاف رئيسي', 'success');
     } catch (err: any) {
-      addToast('خطأ', err?.message || 'فشل تعيين الصورة كغلاف', 'error');
+      addToast('خطأ', err?.message || 'تعذر تعيين الغلاف', 'error');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // =========================================================
-  // BATCH UPLOAD
-  // =========================================================
-  const handleNewImagesUploaded = async (newUrls: string[]) => {
-    if (!newUrls || newUrls.length === 0 || isProcessing) return;
-
-    const validUrls = newUrls
-      .filter((u): u is string => typeof u === 'string')
-      .map((u) => u.trim())
-      .filter(Boolean);
-
-    if (validUrls.length === 0) return;
-
-    const realEntityId = entityId || entitySlug || '';
-    if (!realEntityId) {
-      addToast('خطأ برمجي', 'لم يتم العثور على مُعرّف الكيان (entityId مفقود)', 'error');
-      return;
-    }
-
-    const updatedGallery = Array.from(new Set([...localGallery, ...validUrls]));
-    setLocalGallery(updatedGallery);
-    onGalleryChange?.(updatedGallery);
-
-    let nextCover = localCover;
-    if (!localCover && validUrls[0]) {
-      nextCover = validUrls[0];
-      setLocalCover(nextCover);
-      onCoverChange?.(nextCover);
-    }
-
-    setIsProcessing(true);
-
-    try {
-      let res = await adminMediaApi.manageEntityGallery(userAuth, {
-        entityType,
-        entityId: realEntityId,
-        entitySlug: entitySlug || realEntityId,
-        action: 'updateGallery',
-        galleryUrls: updatedGallery,
-        coverImage: nextCover,
-      });
-
-      if (!res || res.success === false) {
-        for (const url of validUrls) {
-          res = await adminMediaApi.manageEntityGallery(userAuth, {
-            entityType,
-            entityId: realEntityId,
-            entitySlug: entitySlug || realEntityId,
-            action: 'add',
-            imageUrl: url,
-          });
-        }
-      }
-
-      if (res?.gallery && Array.isArray(res.gallery)) {
-        setLocalGallery(res.gallery);
-        onGalleryChange?.(res.gallery);
-      }
-      if (res?.coverImage) {
-        setLocalCover(res.coverImage);
-        onCoverChange?.(res.coverImage);
-      }
-
-      addToast('تم الحفظ', 'تم حفظ الصور في قاعدة البيانات والتخزين السحابي بنجاح', 'success');
-    } catch (err: any) {
-      addToast('فشل الحفظ في الخادم', err?.message || 'الصور رُفعت لكن لم يتم ربطها بقاعدة البيانات', 'error');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  // =========================================================
-  // DELETE IMAGE
-  // =========================================================
-  const handleRemoveFromGallery = async (imageUrl: string) => {
-    if (!isAdmin || !imageUrl || isProcessing) return;
-
-    setIsProcessing(true);
-    const targetClean = imageUrl.trim();
-    const targetPath = targetClean.split('?')[0];
-
-    const updated = localGallery.filter((url) => {
-      if (!url) return false;
-      const clean = url.trim();
-      return clean !== targetClean && clean.split('?')[0] !== targetPath;
-    });
-
-    try {
-      const res = await adminMediaApi.manageEntityGallery(userAuth, {
-        entityType,
-        entityId: targetEntityKey,
-        entitySlug: entitySlug || targetEntityKey,
-        action: 'remove',
-        imageUrl: targetClean,
-        galleryUrls: updated,
-      });
-
-      const finalGallery = res?.gallery && Array.isArray(res.gallery) ? res.gallery : updated;
-      setLocalGallery(finalGallery);
-      onGalleryChange?.(finalGallery);
-
-      const resolvedCover: string = res?.coverImage !== undefined ? (res.coverImage || '') : (
-        localCover && (localCover.trim() === targetClean || localCover.trim().split('?')[0] === targetPath)
-          ? (finalGallery[0] || '')
-          : (localCover || '')
-      );
-
-      setLocalCover(resolvedCover || undefined);
-      onCoverChange?.(resolvedCover);
-
-      if (activeImageIndex >= finalGallery.length) {
-        setActiveImageIndex(Math.max(0, finalGallery.length - 1));
-      }
-
-      if (lightboxOpen && finalGallery.length === 0) {
-        closeLightbox();
-      }
-
-      addToast('تم الحذف', 'تم حذف الصورة من المكان والتخزين السحابي Cloudinary بنجاح', 'success');
-    } catch (err: any) {
-      addToast('خطأ في الحذف', err?.message || 'فشل حذف الصورة من الخادم أو السحابة', 'error');
-    } finally {
-      setIsProcessing(false);
-      setImagePendingDelete(null);
-    }
-  };
-
-  // =========================================================
-  // REORDER IMAGES
-  // =========================================================
-  const handleMoveImage = async (
-    currentIndex: number,
-    direction: 'left' | 'right'
-  ) => {
-    const targetIndex =
-      direction === 'left' ? currentIndex - 1 : currentIndex + 1;
-
-    if (
-      targetIndex < 0 ||
-      targetIndex >= localGallery.length ||
-      isProcessing
-    ) {
-      return;
-    }
+  const handleReorder = async (index: number, direction: 'forward' | 'backward') => {
+    const targetIndex = direction === 'forward' ? index + 1 : index - 1;
+    if (targetIndex < 0 || targetIndex >= localGallery.length || isProcessing) return;
 
     const reordered = [...localGallery];
-    const [moved] = reordered.splice(currentIndex, 1);
+    const [moved] = reordered.splice(index, 1);
     reordered.splice(targetIndex, 0, moved);
 
     setLocalGallery(reordered);
@@ -437,689 +244,617 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         action: 'updateGallery',
         galleryUrls: reordered,
       });
-      addToast('تم الترتيب', 'تم تحديث ترتيب صور المعرض بنجاح', 'success');
+      addToast('تم الترتيب', 'تم تحديث أولوية العرض', 'success');
     } catch (err) {
-      console.warn('Failed to persist gallery order:', err);
+      console.warn('Reorder error:', err);
     }
   };
 
-  // =========================================================
-  // VIDEO CONTROLS
-  // =========================================================
-  const handleNewVideoUploaded = async (newVideoUrl: string) => {
-    if (!newVideoUrl || typeof newVideoUrl !== 'string' || isProcessing) return;
-    const cleanVid = newVideoUrl.trim();
-    if (!cleanVid) return;
-
-    const updatedVideos = Array.from(new Set([...localVideos, cleanVid]));
-
-    setLocalVideoUrl(cleanVid);
-    setLocalVideos(updatedVideos);
-    setSelectedVideoUrl(cleanVid);
-    onVideoChange?.(cleanVid, updatedVideos);
-
+  const handleDeleteImage = async (imageUrl: string) => {
+    if (!isAdmin || isProcessing) return;
     setIsProcessing(true);
 
+    const updated = localGallery.filter((img) => img !== imageUrl);
     try {
-      await adminMediaApi.manageEntityGallery(userAuth, {
+      const res = await adminMediaApi.manageEntityGallery(userAuth, {
         entityType,
         entityId: targetEntityKey,
-        action: 'setVideo',
-        videoUrl: cleanVid,
+        entitySlug: entitySlug || targetEntityKey,
+        action: 'remove',
+        imageUrl,
+        galleryUrls: updated,
       });
-      addToast('تم الحفظ', 'تم رفع وتوثيق مقطع الفيديو بنجاح', 'success');
+
+      const finalGallery = res?.gallery || updated;
+      setLocalGallery(finalGallery);
+      onGalleryChange?.(finalGallery);
+
+      if (localCover === imageUrl) {
+        const nextCover = finalGallery[0] || '';
+        setLocalCover(nextCover || undefined);
+        onCoverChange?.(nextCover);
+      }
+
+      if (lightboxOpen && finalGallery.length === 0) closeLightbox();
+      addToast('تم الحذف', 'تم حذف الصورة من الأرشيف', 'success');
     } catch (err: any) {
-      addToast('خطأ', err?.message || 'فشل ربط مقطع الفيديو بالخادم', 'error');
+      addToast('خطأ', err?.message || 'فشل حذف الصورة', 'error');
     } finally {
       setIsProcessing(false);
+      setItemToDelete(null);
     }
   };
 
-  const handleRemoveVideo = async (targetUrl: string) => {
-    if (!isAdmin || !targetUrl || isProcessing) return;
+  const handleDownload = (url: string) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `archive-${Date.now()}.jpg`;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
 
-    setIsProcessing(true);
-
-    try {
-      await adminMediaApi.manageEntityGallery(userAuth, {
-        entityType,
-        entityId: targetEntityKey,
-        action: 'removeVideo',
-        videoUrl: targetUrl,
-      });
-
-      const remaining = localVideos.filter(
-        (v) => v !== targetUrl && v.trim() !== targetUrl.trim()
-      );
-
-      setLocalVideos(remaining);
-
-      const newPrimary =
-        localVideoUrl === targetUrl ? remaining[0] ?? null : localVideoUrl ?? null;
-
-      setLocalVideoUrl(newPrimary);
-      setSelectedVideoUrl(newPrimary);
-      onVideoChange?.(newPrimary, remaining);
-
-      addToast('تم الحذف', 'تم حذف مقطع الفيديو بنجاح', 'success');
-    } catch (err: any) {
-      addToast('خطأ', err?.message || 'فشل حذف الفيديو من الخادم', 'error');
-    } finally {
-      setIsProcessing(false);
-      setVideoPendingDelete(null);
+  const handleShare = async (url: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: entityTitle || 'الأرشيف التوثيقي', url });
+      } catch { }
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      addToast('تم النسخ', 'تم نسخ الرابط إلى الحافظة', 'success');
     }
   };
 
   return (
-    <>
-      {localGallery.length === 0 && allVideos.length === 0 ? (
-        <section
-          id={id}
-          dir="rtl"
-          className={`relative overflow-hidden rounded-[2rem] border border-black/10 bg-[#f4efe7] shadow-xl dark:border-white/10 dark:bg-[#151311] ${className}`}
-        >
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#9a6a35]/10 blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-[#9a6a35]/10 blur-3xl" />
+    <section
+      id={id}
+      dir="rtl"
+      className={`relative w-full overflow-hidden rounded-3xl border border-[#9a6a35]/20 bg-[#9a6a35]/[0.03] p-4 text-black/85 dark:text-white/85 sm:p-7 md:p-8 ${className}`}
+    >
+      {/* Background accents matching #9a6a35 */}
+      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#9a6a35]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-[#9a6a35]/10 blur-3xl" />
+
+      {/* Header Bar */}
+      <header className="relative z-10 mb-7 flex flex-col gap-4 border-b border-[#9a6a35]/15 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2 mb-1.5 text-[#9a6a35] font-black text-xs sm:text-sm">
+            <Sparkles className="w-4 h-4" />
+            <span>معرض وسائط التوثيق</span>
+          </div>
+          <h3 className="font-serif text-2xl font-bold text-black/85 dark:text-white/85 sm:text-3xl">
+            {title}
+          </h3>
+        </div>
+
+        {/* Tab Switcher & Admin Button */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex rounded-2xl border border-[#9a6a35]/20 bg-[#9a6a35]/10 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('photos')}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeTab === 'photos'
+                ? 'bg-[#9a6a35] text-white shadow-sm'
+                : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'
+                }`}
+            >
+              <Images className="h-3.5 w-3.5" />
+              <span>الصور ({localGallery.length})</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('videos')}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${activeTab === 'videos'
+                ? 'bg-[#9a6a35] text-white shadow-sm'
+                : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'
+                }`}
+            >
+              <Film className="h-3.5 w-3.5" />
+              <span>المقاطع ({allVideos.length})</span>
+            </button>
           </div>
 
-          <div className="relative flex min-h-[380px] flex-col items-center justify-center px-5 py-12 text-center sm:px-8">
-            <div className="relative mb-7">
-              <div className="absolute inset-0 rounded-[2rem] bg-[#9a6a35]/10 blur-xl" />
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[#9a6a35]/20 bg-white shadow-sm dark:bg-white/[0.04]">
-                <Images className="h-9 w-9 text-[#9a6a35]" />
-              </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => setAdminModalOpen(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#9a6a35]/30 bg-[#9a6a35]/10 text-[#9a6a35] transition hover:bg-[#9a6a35] hover:text-white cursor-pointer"
+              title="إدارة وسائط الأرشيف"
+            >
+              <Settings2 className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+      </header>
+
+      {/* PHOTOS TAB */}
+      {activeTab === 'photos' && (
+        <div>
+          {localGallery.length === 0 ? (
+            <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#9a6a35]/30 bg-[#9a6a35]/5 py-12 text-center">
+              <Images className="h-10 w-10 text-[#9a6a35]/40" />
+              <p className="mt-3 text-sm font-bold text-black/60 dark:text-white/60">
+                لا توجد صور موثقة في هذا القسم حالياً
+              </p>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminTab('images');
+                    setAdminModalOpen(true);
+                  }}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#9a6a35] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#9a6a35]/90 cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                  إضافة صور جديدة
+                </button>
+              )}
             </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {localGallery.map((url, idx) => {
+                const isCover = url === localCover;
 
-            <span className="mb-3 rounded-full bg-[#9a6a35]/10 px-3 py-1.5 text-[9px] font-black tracking-[0.25em] text-[#9a6a35]">
-              VISUAL ARCHIVE
-            </span>
-
-            <h3 className="font-serif text-2xl font-black text-[#171411] dark:text-white sm:text-3xl">
-              المعرض لسه فاضي
-            </h3>
-
-            <p className="mt-3 max-w-md text-xs leading-7 text-black/45 dark:text-white/40">
-              أضف الصور والفيديوهات التوثيقية علشان تبدأ بناء الأرشيف البصري الخاص بـ{' '}
-              {entityTitle || 'هذا المكان'}.
-            </p>
-
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => {
-                  setAdminActiveTab('gallery');
-                  setAdminModalOpen(true);
-                }}
-                className="mt-7 flex items-center gap-2 rounded-2xl bg-[#9a6a35] px-6 py-3.5 text-xs font-black text-white shadow-lg shadow-[#9a6a35]/20 transition hover:-translate-y-0.5 hover:bg-[#83592c] cursor-pointer"
-              >
-                <Plus className="h-4 w-4" />
-                ابدأ إضافة الوسائط
-              </button>
-            )}
-          </div>
-        </section>
-      ) : (
-        <section
-          id={id}
-          dir="rtl"
-          className={`relative overflow-hidden rounded-[2rem] border border-black/10 bg-[#f5f1eb] text-[#171411] shadow-2xl dark:border-white/10 dark:bg-[#12110f] dark:text-white ${className}`}
-        >
-          <header className="relative z-20 overflow-hidden border-b border-black/10 bg-white/80 px-4 py-5 backdrop-blur-xl dark:border-white/10 dark:bg-[#171512]/80 sm:px-6 lg:px-8">
-            <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-l from-[#9a6a35] via-[#c18b4f] to-transparent" />
-
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <div className="min-w-0">
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#9a6a35]/10 text-[#9a6a35]">
-                    <Sparkles className="h-4 w-4" />
-                  </span>
-                  <span className="text-[9px] font-black tracking-[0.25em] text-[#9a6a35]">
-                    HERITAGE VISUAL ARCHIVE
-                  </span>
-                </div>
-
-                <h2 className="font-serif text-xl font-black leading-tight sm:text-2xl lg:text-3xl">
-                  {title}
-                </h2>
-
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-black/40 dark:text-white/40">
-                  <span>{entityTitle || 'المحتوى التوثيقي'}</span>
-                  <span className="h-1 w-1 rounded-full bg-[#9a6a35]/50" />
-                  <span>{localGallery.length} صور</span>
-                  <span className="h-1 w-1 rounded-full bg-[#9a6a35]/50" />
-                  <span>{allVideos.length} فيديو</span>
-                </div>
-              </div>
-
-              <div className="flex w-full items-center gap-2 lg:w-auto">
-                <div className="flex min-w-0 flex-1 items-center rounded-2xl border border-black/10 bg-black/[0.025] p-1 dark:border-white/10 dark:bg-white/[0.025] lg:flex-none">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('photos')}
-                    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-black transition sm:px-4 ${activeTab === 'photos'
-                      ? 'bg-[#171411] text-white shadow-lg dark:bg-white dark:text-black'
-                      : 'text-black/45 hover:text-black dark:text-white/45 dark:hover:text-white'
-                      }`}
+                return (
+                  <div
+                    key={`${url}-${idx}`}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-[#9a6a35]/25 bg-white/70 shadow-sm transition-all duration-300 hover:border-[#9a6a35]/60 hover:shadow-md dark:bg-white/[0.03]"
                   >
-                    <ImageIcon className="h-4 w-4 shrink-0" />
-                    <span>الصور</span>
-                    <span className="font-mono text-[9px] opacity-50">
-                      {localGallery.length}
-                    </span>
-                  </button>
+                    {/* Image Viewport Canvas */}
+                    <div
+                      className="relative aspect-[4/3] w-full overflow-hidden bg-black/5 cursor-pointer"
+                      onClick={() => openLightbox(idx)}
+                    >
+                      <img
+                        src={url}
+                        alt={`${entityTitle || 'توثيق'} - ${idx + 1}`}
+                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                        loading="lazy"
+                      />
 
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('videos')}
-                    className={`flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-black transition sm:px-4 ${activeTab === 'videos'
-                      ? 'bg-[#171411] text-white shadow-lg dark:bg-white dark:text-black'
-                      : 'text-black/45 hover:text-black dark:text-white/45 dark:hover:text-white'
-                      }`}
-                  >
-                    <Film className="h-4 w-4 shrink-0" />
-                    <span>الفيديو</span>
-                    <span className="font-mono text-[9px] opacity-50">
-                      {allVideos.length}
-                    </span>
-                  </button>
-                </div>
-
-                {isAdmin && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAdminActiveTab('gallery');
-                      setAdminModalOpen(true);
-                    }}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-black/10 bg-white text-black/60 shadow-sm transition hover:border-[#9a6a35]/30 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35] dark:border-white/10 dark:bg-white/[0.03] dark:text-white/60 cursor-pointer"
-                    title="إدارة الوسائط"
-                  >
-                    <Settings2 className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {activeTab === 'photos' && (
-            <div>
-              {localGallery.length === 0 ? (
-                <div className="flex min-h-[360px] items-center justify-center px-5">
-                  <div className="text-center">
-                    <ImageIcon className="mx-auto mb-4 h-12 w-12 text-black/15 dark:text-white/15" />
-                    <p className="text-sm font-black text-black/40 dark:text-white/40">
-                      لا توجد صور
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="relative overflow-hidden bg-[#11100e]">
-                    <div className="absolute inset-0">
-                      {activeImage && (
-                        <img
-                          src={activeImage}
-                          alt=""
-                          aria-hidden="true"
-                          className="h-full w-full scale-110 object-cover opacity-30 blur-3xl"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-black/65" />
-                    </div>
-
-                    <div className="relative flex min-h-[420px] items-center justify-center p-3 sm:min-h-[520px] sm:p-6 lg:min-h-[620px] lg:p-10">
-                      {activeImage && (
-                        <div className="relative flex max-h-[580px] w-full items-center justify-center">
-                          <img
-                            src={activeImage}
-                            alt={`${entityTitle || 'المكان'} - صورة ${activeImageIndex + 1}`}
-                            className="relative z-10 max-h-[72vh] w-auto max-w-full rounded-2xl object-contain shadow-2xl sm:rounded-3xl"
-                          />
-                          <div className="pointer-events-none absolute inset-0 z-20 rounded-3xl ring-1 ring-white/10" />
-                        </div>
-                      )}
-
-                      <div className="absolute left-4 top-4 z-30 sm:left-7 sm:top-7">
-                        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-2 backdrop-blur-xl">
-                          <Images className="h-3.5 w-3.5 text-[#c18b4f]" />
-                          <span className="font-mono text-[10px] font-bold text-white">
-                            {String(activeImageIndex + 1).padStart(2, '0')} /{' '}
-                            {String(localGallery.length).padStart(2, '0')}
+                      {/* Top Overlay Badge */}
+                      <div className="absolute top-2.5 right-2.5 left-2.5 flex items-center justify-between pointer-events-none">
+                        {isCover ? (
+                          <span className="flex items-center gap-1 rounded-full bg-[#9a6a35] px-2.5 py-0.5 text-[10px] font-bold text-white shadow pointer-events-auto">
+                            <Star className="h-3 w-3 fill-white" /> الغلاف
                           </span>
-                        </div>
-                      </div>
-
-                      {/* أزرار وشارات التحكم: ظاهرة ومتاحة للموبايل وسطح المكتب لمدراء النظام */}
-                      <div className="absolute right-3 top-3 z-30 flex max-w-[85%] flex-wrap items-center justify-end gap-1.5 sm:right-7 sm:top-7 sm:gap-2">
-                        {activeImage === localCover ? (
-                          <div className="flex items-center gap-1.5 rounded-full bg-[#9a6a35] px-3 py-1.5 text-[11px] font-black text-white shadow-xl backdrop-blur-md sm:text-xs">
-                            <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
-                            <span>الصورة الرئيسية</span>
-                          </div>
                         ) : (
-                          isAdmin && activeImage && (
-                            <button
-                              type="button"
-                              onClick={() => handleSetCover(activeImage)}
-                              disabled={isProcessing}
-                              className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
-                              title="تعيين هذه الصورة كغلاف رئيسي للمكان"
-                            >
-                              <Star className="h-3.5 w-3.5 text-amber-400" />
-                              <span>تعيين كغلاف</span>
-                            </button>
-                          )
+                          <div />
                         )}
 
-                        {isAdmin && activeImage && (
-                          <>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openLightbox(idx);
+                          }}
+                          className="flex h-8 w-8 items-center justify-center rounded-xl bg-black/60 text-white backdrop-blur-md transition hover:bg-[#9a6a35] pointer-events-auto cursor-pointer"
+                          title="شاشة كاملة"
+                        >
+                          <Maximize2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bottom Document Bar */}
+                    <div className="flex items-center justify-between border-t border-[#9a6a35]/15 bg-[#9a6a35]/5 px-3.5 py-2.5">
+                      <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#9a6a35]">
+                        <Compass className="h-3.5 w-3.5" />
+                        <span>توثيق #{idx + 1}</span>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => openLightbox(idx)}
+                          className="flex items-center gap-1 text-[11px] font-bold text-black/70 hover:text-[#9a6a35] transition dark:text-white/70 cursor-pointer"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          <span>معاينة</span>
+                        </button>
+
+                        {isAdmin && (
+                          <div className="mr-2 flex items-center gap-1 border-r border-[#9a6a35]/20 pr-2">
+                            {!isCover && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetCover(url)}
+                                title="تعيين كغلاف"
+                                className="rounded-lg p-1 text-[#9a6a35] hover:bg-[#9a6a35]/15 transition cursor-pointer"
+                              >
+                                <Star className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleReorder(idx, 'backward')}
+                                title="تقديم"
+                                className="rounded-lg p-1 text-black/60 hover:text-black dark:text-white/60 cursor-pointer"
+                              >
+                                <ChevronRight className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                            {idx < localGallery.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleReorder(idx, 'forward')}
+                                title="تأخير"
+                                className="rounded-lg p-1 text-black/60 hover:text-black dark:text-white/60 cursor-pointer"
+                              >
+                                <ChevronLeft className="h-3.5 w-3.5" />
+                              </button>
+                            )}
                             <button
                               type="button"
-                              onClick={() => setImagePendingDelete(activeImage)}
-                              disabled={isProcessing}
-                              className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-600/85 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-red-600 active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
-                              title="حذف الصورة من المكان وقاعدة البيانات والتخزين السحابي"
+                              onClick={() => setItemToDelete({ type: 'image', url })}
+                              title="حذف"
+                              className="rounded-lg p-1 text-red-500 hover:bg-red-500/10 cursor-pointer"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
-                              <span>حذف</span>
                             </button>
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAdminActiveTab('gallery');
-                                setAdminModalOpen(true);
-                              }}
-                              className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/20 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl backdrop-blur-md transition hover:bg-white hover:text-black active:scale-95 cursor-pointer min-h-[36px] sm:text-xs"
-                              title="إضافة صور جديدة للمعرض"
-                            >
-                              <Plus className="h-3.5 w-3.5" />
-                              <span>إضافة صور</span>
-                            </button>
-                          </>
+                          </div>
                         )}
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={() => openLightbox(activeImageIndex)}
-                        className="absolute bottom-4 left-4 z-30 flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:bottom-7 sm:left-7 cursor-pointer"
-                        title="عرض بالحجم الكامل"
-                      >
-                        <Maximize2 className="h-4 w-4" />
-                      </button>
-
-                      {localGallery.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActiveImageIndex(
-                              (prev) =>
-                                (prev - 1 + localGallery.length) %
-                                localGallery.length
-                            )
-                          }
-                          className="absolute right-3 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:right-7 sm:h-12 sm:w-12 cursor-pointer"
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </button>
-                      )}
-
-                      {localGallery.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActiveImageIndex(
-                              (prev) => (prev + 1) % localGallery.length
-                            )
-                          }
-                          className="absolute left-3 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white backdrop-blur-xl transition hover:bg-white hover:text-black sm:left-7 sm:h-12 sm:w-12 cursor-pointer"
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </button>
-                      )}
                     </div>
                   </div>
-
-                  <div className="border-b border-black/10 bg-white px-4 py-4 dark:border-white/10 dark:bg-[#171512] sm:px-6 lg:px-8">
-                    <div className="flex gap-3 overflow-x-auto pb-1">
-                      {isAdmin && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAdminActiveTab('gallery');
-                            setAdminModalOpen(true);
-                          }}
-                          className="group flex h-20 w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-[#9a6a35]/40 bg-[#9a6a35]/5 text-[#9a6a35] transition hover:border-[#9a6a35] hover:bg-[#9a6a35]/15 sm:h-24 sm:w-28 cursor-pointer active:scale-95"
-                          title="إضافة صور جديدة لهذا المكان"
-                        >
-                          <Plus className="h-5 w-5" />
-                          <span className="text-[10px] font-black">إضافة صور</span>
-                        </button>
-                      )}
-                      {localGallery.map((imgUrl, idx) => {
-                        const isActive = idx === activeImageIndex;
-                        const isCover = imgUrl === localCover;
-
-                        return (
-                          <button
-                            type="button"
-                            key={`${imgUrl}-${idx}`}
-                            onClick={() => setActiveImageIndex(idx)}
-                            className={`group relative h-20 w-28 shrink-0 overflow-hidden rounded-2xl transition sm:h-24 sm:w-36 cursor-pointer ${isActive
-                              ? 'ring-2 ring-[#9a6a35] ring-offset-2 ring-offset-white dark:ring-offset-[#171512]'
-                              : 'opacity-55 hover:opacity-100'
-                              }`}
-                          >
-                            <img
-                              src={imgUrl}
-                              alt={`صورة ${idx + 1}`}
-                              className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                              loading="lazy"
-                            />
-                            {isCover && (
-                              <span className="absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-lg bg-[#9a6a35] text-white shadow-lg">
-                                <Star className="h-3 w-3 fill-current" />
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </>
-              )}
+                );
+              })}
             </div>
           )}
-
-          {activeTab === 'videos' && (
-            <div className="p-4 sm:p-6 lg:p-8">
-              {allVideos.length === 0 ? (
-                <div className="flex min-h-[360px] items-center justify-center">
-                  <div className="text-center">
-                    <Film className="mx-auto mb-4 h-12 w-12 text-black/15 dark:text-white/15" />
-                    <p className="text-sm font-black text-black/40 dark:text-white/40">
-                      لا توجد فيديوهات
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-                  <div className="overflow-hidden rounded-[1.75rem] border border-black/10 bg-black shadow-xl dark:border-white/10">
-                    <div className="relative aspect-video bg-black">
-                      {selectedVideoUrl && (
-                        <video
-                          key={selectedVideoUrl}
-                          src={selectedVideoUrl}
-                          controls
-                          playsInline
-                          className="h-full w-full object-contain"
-                          poster={localCover || undefined}
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  <aside className="overflow-hidden rounded-[1.75rem] border border-black/10 bg-white dark:border-white/10 dark:bg-[#171512]">
-                    <div className="max-h-[520px] space-y-2 overflow-y-auto p-3">
-                      {allVideos.map((vidUrl, idx) => {
-                        const isSelected = vidUrl === selectedVideoUrl;
-
-                        return (
-                          <button
-                            type="button"
-                            key={`${vidUrl}-${idx}`}
-                            onClick={() => setSelectedVideoUrl(vidUrl)}
-                            className={`group flex w-full items-center gap-3 rounded-2xl p-2 text-right transition cursor-pointer ${isSelected
-                              ? 'bg-[#9a6a35]/10 ring-1 ring-[#9a6a35]/30'
-                              : 'hover:bg-black/[0.035] dark:hover:bg-white/[0.035]'
-                              }`}
-                          >
-                            <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-black">
-                              <video
-                                src={vidUrl}
-                                muted
-                                preload="metadata"
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <span className="text-xs font-bold truncate">فيديو توثيقي #{idx + 1}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </aside>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* LIGHTBOX MODAL */}
-      {lightboxOpen && localGallery.length > 0 && (
-        <div
-          dir="rtl"
-          className="fixed inset-0 z-[9999] flex flex-col bg-[#070706]/98 text-white backdrop-blur-2xl"
-        >
-          <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/30 px-3 py-3 sm:px-6 sm:py-4">
-            <span className="font-serif text-sm font-black">{entityTitle || 'المعرض التوثيقي'}</span>
-            <div className="flex items-center gap-2">
-              {isAdmin && localGallery[lightboxIndex] && (
-                <>
-                  {localGallery[lightboxIndex] === localCover ? (
-                    <span className="flex items-center gap-1.5 rounded-xl bg-[#9a6a35] px-3 py-1.5 text-xs font-bold text-white shadow">
-                      <Star className="h-3.5 w-3.5 fill-current text-amber-200" />
-                      <span className="hidden sm:inline">الغلاف الرئيسي</span>
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleSetCover(localGallery[lightboxIndex])}
-                      disabled={isProcessing}
-                      className="flex items-center gap-1.5 rounded-xl border border-white/20 bg-black/60 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#9a6a35] hover:border-[#9a6a35] active:scale-95 cursor-pointer min-h-[36px]"
-                      title="تعيين كغلاف رئيسي للمكان"
-                    >
-                      <Star className="h-3.5 w-3.5 text-amber-400" />
-                      <span>تعيين كغلاف</span>
-                    </button>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => setImagePendingDelete(localGallery[lightboxIndex])}
-                    disabled={isProcessing}
-                    className="flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-600/80 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-red-600 active:scale-95 cursor-pointer min-h-[36px]"
-                    title="حذف الصورة نهائياً"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    <span>حذف</span>
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                onClick={closeLightbox}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition hover:bg-red-600 cursor-pointer"
-                title="إغلاق"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3 sm:p-6">
-            <img
-              src={localGallery[lightboxIndex]}
-              alt=""
-              className="max-h-[76vh] max-w-[88vw] rounded-2xl object-contain shadow-2xl"
-            />
-          </div>
         </div>
       )}
 
-      {/* ADMIN PANEL MODAL */}
+      {/* VIDEOS TAB */}
+      {activeTab === 'videos' && (
+        <div>
+          {allVideos.length === 0 ? (
+            <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#9a6a35]/30 bg-[#9a6a35]/5 py-12 text-center">
+              <Film className="h-10 w-10 text-[#9a6a35]/40" />
+              <p className="mt-3 text-sm font-bold text-black/60 dark:text-white/60">
+                لا توجد تسجيلات مرئية متاحة
+              </p>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAdminTab('video');
+                    setAdminModalOpen(true);
+                  }}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#9a6a35] px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-[#9a6a35]/90 cursor-pointer"
+                >
+                  <Plus className="h-4 w-4" />
+                  رفع مقطع توثيقي
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              <div className="lg:col-span-8 overflow-hidden rounded-2xl border border-[#9a6a35]/25 bg-black shadow-md">
+                <div className="relative aspect-video w-full bg-black">
+                  {selectedVideo && (
+                    <video
+                      key={selectedVideo}
+                      src={selectedVideo}
+                      controls
+                      playsInline
+                      poster={localCover}
+                      className="h-full w-full object-contain"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="lg:col-span-4 space-y-2.5">
+                <div className="flex items-center justify-between px-1">
+                  <h4 className="text-xs font-bold text-[#9a6a35]">
+                    المقاطع المسجلة ({allVideos.length})
+                  </h4>
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAdminTab('video');
+                        setAdminModalOpen(true);
+                      }}
+                      className="text-xs font-bold text-[#9a6a35] hover:underline cursor-pointer"
+                    >
+                      + رفع مقطع
+                    </button>
+                  )}
+                </div>
+
+                <div className="max-h-[380px] space-y-2 overflow-y-auto pr-1">
+                  {allVideos.map((vidUrl, idx) => {
+                    const isSelected = vidUrl === selectedVideo;
+                    return (
+                      <div
+                        key={`${vidUrl}-${idx}`}
+                        onClick={() => setSelectedVideo(vidUrl)}
+                        className={`group flex items-center justify-between gap-3 rounded-xl border p-2.5 transition cursor-pointer ${isSelected
+                          ? 'border-[#9a6a35] bg-[#9a6a35]/15 shadow-sm'
+                          : 'border-[#9a6a35]/15 bg-white/60 hover:bg-[#9a6a35]/5 dark:border-white/10 dark:bg-white/5'
+                          }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="relative flex h-11 w-14 shrink-0 items-center justify-center rounded-lg bg-[#9a6a35] text-white">
+                            <Play className="h-4 w-4 fill-white" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="truncate text-xs font-bold text-black/85 dark:text-white/85">
+                              تسجيل وثائقي #{idx + 1}
+                            </p>
+                            <span className="text-[10px] text-black/50 dark:text-white/50">
+                              انقر للتشغيل في المشغل
+                            </span>
+                          </div>
+                        </div>
+
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setItemToDelete({ type: 'video', url: vidUrl });
+                            }}
+                            className="rounded-lg p-1.5 text-red-500 hover:bg-red-500/10 transition cursor-pointer"
+                            title="حذف"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* PORTAL-BASED CINEMATIC BLURRED VIEWER */}
+      {lightboxOpen &&
+        localGallery.length > 0 &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            dir="rtl"
+            className="fixed inset-0 z-[9999999] h-[100dvh] w-screen select-none overflow-hidden touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* 1. Backdrop: Same Image with Blur + Dark Fade */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              <img
+                src={localGallery[lightboxIndex]}
+                alt=""
+                className="h-full w-full object-cover scale-125 blur-3xl brightness-40 transition-all duration-700 ease-out"
+              />
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-xl" />
+            </div>
+
+            {/* 2. Floating Top Header */}
+            <div
+              className={`absolute top-0 inset-x-0 z-50 transition-opacity duration-300 ${showOverlayControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                } flex items-center justify-between bg-gradient-to-b from-black/80 via-black/30 to-transparent p-4`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="rounded-full border border-[#9a6a35]/30 bg-[#9a6a35]/40 px-3 py-1 font-mono text-xs font-bold text-white shadow-sm backdrop-blur-md">
+                  {lightboxIndex + 1} / {localGallery.length}
+                </span>
+                <span className="hidden sm:inline-block text-xs font-bold text-white/90 truncate max-w-xs font-serif">
+                  {entityTitle || 'الأرشيف البصري'}
+                </span>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleDownload(localGallery[lightboxIndex])}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] cursor-pointer active:scale-95"
+                  title="تحميل الصورة"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleShare(localGallery[lightboxIndex])}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] cursor-pointer active:scale-95"
+                  title="مشاركة الصورة"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={closeLightbox}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/15 text-white backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] cursor-pointer active:scale-95"
+                  title="إغلاق"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* 3. Main Stage */}
+            <div
+              className="absolute inset-0 z-10 flex h-[100dvh] w-screen items-center justify-center cursor-pointer p-2 sm:p-4"
+              onClick={() => setShowOverlayControls((prev) => !prev)}
+            >
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevLightboxImage();
+                }}
+                className="hidden sm:flex absolute right-6 z-40 h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] cursor-pointer"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+
+              <img
+                src={localGallery[lightboxIndex]}
+                alt=""
+                className="max-h-full max-w-full object-contain pointer-events-none rounded-xl shadow-2xl drop-shadow-2xl transition-transform duration-300"
+              />
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextLightboxImage();
+                }}
+                className="hidden sm:flex absolute left-6 z-40 h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white backdrop-blur-md transition hover:bg-[#9a6a35] hover:border-[#9a6a35] cursor-pointer"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* 4. Bottom Strip */}
+            <div
+              className={`absolute bottom-0 inset-x-0 z-50 transition-opacity duration-300 ${showOverlayControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                } bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 sm:p-4`}
+            >
+              <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 no-scrollbar">
+                {localGallery.map((thumbUrl, tIdx) => {
+                  const isActive = tIdx === lightboxIndex;
+                  return (
+                    <button
+                      key={`thumb-${tIdx}`}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLightboxIndex(tIdx);
+                      }}
+                      className={`relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${isActive
+                        ? 'border-[#9a6a35] scale-105 shadow-lg shadow-[#9a6a35]/60 brightness-105'
+                        : 'border-white/20 opacity-60 hover:opacity-100'
+                        }`}
+                    >
+                      <img src={thumbUrl} alt="" className="h-full w-full object-cover" />
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1 text-center text-[10px] text-white/70">
+                اسحب للتنقل بين اللقطات • اضغط في أي مكان لإخفاء الأزرار
+              </p>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* ADMIN UPLOAD MODAL */}
       {adminModalOpen && isAdmin && (
-        <div
-          dir="rtl"
-          className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/75 p-2 backdrop-blur-md sm:p-5"
-        >
-          <div className="flex max-h-[96vh] w-full max-w-6xl flex-col overflow-hidden rounded-[1.75rem] border border-black/10 bg-[#f5f1eb] shadow-2xl dark:border-white/10 dark:bg-[#171512]">
-            <div className="flex shrink-0 items-center justify-between border-b border-black/10 bg-white px-4 py-4 dark:border-white/10 dark:bg-[#1d1a17]">
-              <h3 className="font-serif text-base font-black">إدارة الوسائط والرفع الاحترافي</h3>
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
+          <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[#9a6a35]/25 bg-[#FAF7F2] shadow-2xl dark:border-white/10 dark:bg-[#181614]">
+            <div className="flex items-center justify-between border-b border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
+              <div className="flex items-center gap-2 text-[#9a6a35] font-bold">
+                <Sliders className="h-4 w-4" />
+                <h3 className="font-serif text-base text-black/85 dark:text-white/85">
+                  إدارة وسائط المعرض
+                </h3>
+              </div>
               <button
                 type="button"
                 onClick={() => setAdminModalOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-black/5 hover:bg-red-500 hover:text-white cursor-pointer"
+                className="rounded-xl p-2 text-black/50 hover:bg-red-500 hover:text-white transition cursor-pointer dark:text-white/50"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="flex border-b border-black/10 bg-white dark:border-white/10 dark:bg-[#1d1a17]">
+            <div className="flex border-b border-[#9a6a35]/15 px-6 pt-3">
               <button
                 type="button"
-                onClick={() => setAdminActiveTab('gallery')}
-                className={`flex items-center gap-2 border-b-2 px-6 py-4 text-xs font-black ${adminActiveTab === 'gallery' ? 'border-[#9a6a35] text-[#9a6a35]' : 'border-transparent opacity-50'
+                onClick={() => setAdminTab('images')}
+                className={`pb-3 text-xs font-bold transition border-b-2 ${adminTab === 'images'
+                  ? 'border-[#9a6a35] text-[#9a6a35]'
+                  : 'border-transparent text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white'
                   }`}
               >
-                الصور
+                إضافة صور
               </button>
               <button
                 type="button"
-                onClick={() => setAdminActiveTab('video')}
-                className={`flex items-center gap-2 border-b-2 px-6 py-4 text-xs font-black ${adminActiveTab === 'video' ? 'border-[#9a6a35] text-[#9a6a35]' : 'border-transparent opacity-50'
+                onClick={() => setAdminTab('video')}
+                className={`mr-6 pb-3 text-xs font-bold transition border-b-2 ${adminTab === 'video'
+                  ? 'border-[#9a6a35] text-[#9a6a35]'
+                  : 'border-transparent text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white'
                   }`}
               >
-                الفيديو
+                رفع فيديو
               </button>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-7">
-              {adminActiveTab === 'gallery' && (
-                <div className="space-y-6">
-                  {/* أداة الرفع الجديدة */}
-                  <AdminMediaUploader
-                    entityType={entityType}
-                    entitySlug={entitySlug || entityId}
-                    entityTitle={entityTitle}
-                    mediaCategory="image"
-                    multiple={true}
-                    value={[]}
-                    onChange={(uploaded: any) => {
-                      const urls: string[] = [];
-                      if (Array.isArray(uploaded)) {
-                        uploaded.forEach((item: any) => {
-                          const url = typeof item === 'string' ? item : item?.secureUrl || item?.url;
-                          if (url) urls.push(url.trim());
-                        });
-                      } else if (uploaded) {
-                        const url = typeof uploaded === 'string' ? uploaded : uploaded?.secureUrl || uploaded?.url;
-                        if (url) urls.push(url.trim());
-                      }
-                      if (urls.length > 0) handleNewImagesUploaded(urls);
-                    }}
-                    helperText="اختر صور جديدة للإضافة الفورية للأرشيف السحابي."
-                  />
-
-                  {/* إدارة واستعراض الصور القديمة المخزنة سحابياً وقاعدياً */}
-                  <div className="rounded-2xl border border-black/10 bg-white/50 p-4 dark:border-white/10 dark:bg-white/[0.02]">
-                    <div className="mb-3 flex items-center justify-between">
-                      <h4 className="text-xs font-black tracking-wider opacity-80">
-                        الصور الحالية في الأرشيف ({localGallery.length})
-                      </h4>
-                      <span className="text-[10px] opacity-50">إدارة مباشرة من السحابة وقاعدة البيانات</span>
-                    </div>
-
-                    {localGallery.length === 0 ? (
-                      <p className="py-6 text-center text-xs opacity-40">لا توجد صور مسجلة حالياً لهذا الكيان.</p>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[340px] overflow-y-auto p-1">
-                        {localGallery.map((imgUrl, idx) => {
-                          const isCover = imgUrl === localCover;
-                          return (
-                            <div
-                              key={`${imgUrl}-${idx}`}
-                              className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white dark:border-white/10 dark:bg-[#1f1b17] shadow-xs"
-                            >
-                              <div className="relative aspect-video w-full overflow-hidden bg-black/10">
-                                <img
-                                  src={imgUrl}
-                                  alt={`صورة أرشيفية ${idx + 1}`}
-                                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                                  loading="lazy"
-                                />
-
-                                {/* شارة الغلاف في زاوية الصورة */}
-                                {isCover && (
-                                  <span className="absolute top-2 right-2 flex items-center gap-1 rounded-lg bg-[#9a6a35] px-2 py-1 text-[10px] font-black text-white shadow-md">
-                                    <Star className="h-3 w-3 fill-current text-amber-200" />
-                                    <span>غلاف المكان</span>
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* أزرار التحكم السريع: ظاهرة دائماً على الموبايل وبمقاس لمس مريح */}
-                              <div className="flex items-center justify-between gap-1.5 p-2 bg-neutral-50 dark:bg-[#25201c] border-t border-black/5 dark:border-white/5">
-                                {!isCover ? (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSetCover(imgUrl)}
-                                    disabled={isProcessing}
-                                    title="تعيين كغلاف رئيسي"
-                                    className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-xl bg-[#9a6a35]/10 hover:bg-[#9a6a35] text-[#9a6a35] hover:text-white text-xs font-bold transition cursor-pointer min-h-[38px] active:scale-95"
-                                  >
-                                    <Star className="h-3.5 w-3.5" />
-                                    <span>تعيين غلاف</span>
-                                  </button>
-                                ) : (
-                                  <span className="flex-1 text-center py-1.5 text-xs font-black text-[#9a6a35] flex items-center justify-center gap-1">
-                                    <Check className="h-3.5 w-3.5" />
-                                    <span>الغلاف الحالي</span>
-                                  </span>
-                                )}
-
-                                <button
-                                  type="button"
-                                  onClick={() => setImagePendingDelete(imgUrl)}
-                                  disabled={isProcessing}
-                                  title="حذف من المكان والسحابة"
-                                  className="flex items-center justify-center gap-1 py-1.5 px-3 rounded-xl bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-xs font-bold transition cursor-pointer min-h-[38px] active:scale-95"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                  <span>حذف</span>
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {adminActiveTab === 'video' && (
+            <div className="overflow-y-auto p-6">
+              {adminTab === 'images' ? (
                 <AdminMediaUploader
                   entityType={entityType || 'heritage-place'}
                   entitySlug={entitySlug || entityId}
+                  entityId={entityId || entitySlug}
+                  entityTitle={entityTitle}
+                  mediaCategory="image"
+                  multiple={true}
+                  value={[]}
+                  onChange={(uploaded: any) => {
+                    const urls: string[] = [];
+                    if (Array.isArray(uploaded)) {
+                      uploaded.forEach((item: any) => {
+                        const u = typeof item === 'string' ? item : item?.secureUrl || item?.url;
+                        if (u) urls.push(u.trim());
+                      });
+                    } else if (uploaded) {
+                      const u = typeof uploaded === 'string' ? uploaded : uploaded?.secureUrl || uploaded?.url;
+                      if (u) urls.push(u.trim());
+                    }
+                    if (urls.length > 0) {
+                      const updated = Array.from(new Set([...localGallery, ...urls]));
+                      setLocalGallery(updated);
+                      onGalleryChange?.(updated);
+                      if (!localCover) {
+                        setLocalCover(urls[0]);
+                        onCoverChange?.(urls[0]);
+                      }
+                      addToast('تم الحفظ', 'تمت إضافة الصور بنجاح', 'success');
+                    }
+                  }}
+                  helperText="ارفع صوراً بصيغ JPG أو PNG أو WebP."
+                />
+              ) : (
+                <AdminMediaUploader
+                  entityType={entityType || 'heritage-place'}
+                  entitySlug={entitySlug || entityId}
+                  entityId={entityId || entitySlug}
                   entityTitle={entityTitle}
                   mediaCategory="video"
                   multiple={false}
                   value={localVideoUrl ? [localVideoUrl] : []}
                   onChange={(uploaded: any) => {
-                    let finalVidUrl = '';
+                    let vUrl = '';
                     if (Array.isArray(uploaded) && uploaded.length > 0) {
-                      finalVidUrl = uploaded[0]?.secureUrl || uploaded[0]?.url || uploaded[0];
+                      vUrl = uploaded[0]?.secureUrl || uploaded[0]?.url || uploaded[0];
                     } else if (typeof uploaded === 'string') {
-                      finalVidUrl = uploaded;
+                      vUrl = uploaded;
                     } else if (uploaded) {
-                      finalVidUrl = uploaded.secureUrl || uploaded.url || '';
+                      vUrl = uploaded.secureUrl || uploaded.url || '';
                     }
-                    if (finalVidUrl) handleNewVideoUploaded(finalVidUrl);
+                    if (vUrl) {
+                      const clean = vUrl.trim();
+                      const updated = Array.from(new Set([...localVideos, clean]));
+                      setLocalVideoUrl(clean);
+                      setLocalVideos(updated);
+                      setSelectedVideo(clean);
+                      onVideoChange?.(clean, updated);
+                      addToast('تم الحفظ', 'تم ربط الفيديو بنجاح', 'success');
+                    }
                   }}
-                  helperText="رفع فيديو توثيقي (يدعم معالجة وحفظ احترافي وتتبع الرفع بوضوح)."
+                  helperText="ارفع ملف فيديو MP4 واضح."
                 />
               )}
             </div>
@@ -1127,31 +862,50 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         </div>
       )}
 
-      {/* CONFIRM DELETE MODALS */}
-      {imagePendingDelete && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/75 p-4">
-          <div className="w-full max-w-md rounded-[2rem] bg-white p-6 dark:bg-[#211d19]">
-            <h3 className="text-base font-black mb-2">حذف الصورة نهائيًا؟</h3>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setImagePendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold cursor-pointer">إلغاء</button>
-              <button onClick={() => handleRemoveFromGallery(imagePendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white cursor-pointer">حذف</button>
+      {/* CONFIRM DELETE DIALOG */}
+      {itemToDelete && (
+        <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/75 p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-[#1c1a18]">
+            <div className="flex items-center gap-2 text-red-600 mb-3">
+              <AlertCircle className="h-5 w-5" />
+              <h4 className="font-bold text-sm">تأكيد الحذف</h4>
+            </div>
+            <p className="text-xs leading-relaxed text-black/70 dark:text-white/70">
+              هل أنت متأكد من رغبتك في حذف هذا {itemToDelete.type === 'image' ? 'الصورة' : 'المقطع'}؟ لا يمكن التراجع عن هذا الإجراء.
+            </p>
+            <div className="mt-6 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setItemToDelete(null)}
+                className="flex-1 rounded-xl bg-black/5 py-2.5 text-xs font-bold text-black/70 hover:bg-black/10 transition cursor-pointer dark:bg-white/5 dark:text-white/70"
+              >
+                إلغاء
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (itemToDelete.type === 'image') {
+                    handleDeleteImage(itemToDelete.url);
+                  } else {
+                    const remaining = localVideos.filter((v) => v !== itemToDelete.url);
+                    setLocalVideos(remaining);
+                    const nextVid: string | null = (localVideoUrl === itemToDelete.url ? remaining[0] : localVideoUrl) ?? null;
+                    setLocalVideoUrl(nextVid);
+                    setSelectedVideo(nextVid);
+                    onVideoChange?.(nextVid, remaining);
+                    setItemToDelete(null);
+                    addToast('تم الحذف', 'تم حذف الفيديو من القائمة', 'success');
+                  }
+                }}
+                className="flex-1 rounded-xl bg-red-600 py-2.5 text-xs font-bold text-white hover:bg-red-700 transition cursor-pointer"
+              >
+                تأكيد الحذف
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      {videoPendingDelete && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/75 p-4">
-          <div className="w-full max-w-md rounded-[2rem] bg-white p-6 dark:bg-[#211d19]">
-            <h3 className="text-base font-black mb-2">إزالة مقطع الفيديو؟</h3>
-            <div className="flex gap-2 mt-4">
-              <button onClick={() => setVideoPendingDelete(null)} className="flex-1 rounded-xl bg-black/5 py-3 text-xs font-bold cursor-pointer">إلغاء</button>
-              <button onClick={() => handleRemoveVideo(videoPendingDelete)} className="flex-1 rounded-xl bg-red-600 py-3 text-xs font-black text-white cursor-pointer">إزالة</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </section>
   );
 };
 

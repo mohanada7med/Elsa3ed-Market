@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useDeferredValue, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { HeritagePlace } from '../../types';
@@ -55,33 +55,258 @@ type CategoryFilter =
   | 'طبيعي';
 
 const FALLBACK_IMAGE =
-  'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=1600&q=85';
+  'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800&auto=format&fit=crop&q=75';
+
+const PAGE_SIZE = 8;
 
 const getImage = (place: HeritagePlace) =>
   place.coverImage || FALLBACK_IMAGE;
+
+// Hook مخصص لتتبع ظهور العنصر أثناء السكرول
+const useInView = (options = { threshold: 0.12, rootMargin: '0px 0px -50px 0px' }) => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsInView(true);
+      }
+    }, options);
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+      observer.disconnect();
+    };
+  }, [options]);
+
+  return { ref, isInView };
+};
+
+// كارت المكان مع أنيميشن التجميع الحركي
+interface PlaceTimelineCardProps {
+  place: HeritagePlace;
+  index: number;
+  onNavigate: (slug: string) => void;
+}
+
+const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
+  place,
+  index,
+  onNavigate,
+}) => {
+  const { ref, isInView } = useInView();
+  const isEven = index % 2 === 0;
+  const image = getImage(place);
+  const categoryLabel =
+    CATEGORY_LABELS[place.category] || place.category || 'معلم أثري';
+
+  return (
+    <article
+      ref={ref}
+      className={`
+        relative mb-24 last:mb-0 md:grid md:grid-cols-2 md:gap-20
+        transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]
+        ${isInView
+          ? 'opacity-100 translate-y-0 scale-100'
+          : 'opacity-0 translate-y-20 scale-[0.96]'
+        }
+      `}
+    >
+      {/* نقطة التايم لاين الزمني */}
+      <div
+        className={`
+          absolute right-[7px] top-8 z-10 flex h-6 w-6 items-center justify-center rounded-full
+          border-4 border-[#eee8dc] bg-[#9a6a35] dark:border-[#0b0b0a] md:right-1/2 md:-mr-3
+          transition-all duration-700 delay-300
+          ${isInView ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
+        `}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-white" />
+      </div>
+
+      {/* كارت الصورة */}
+      <div
+        className={`
+          pr-12 md:pr-0 transition-all duration-800 delay-150
+          ${isEven ? 'md:pl-10' : 'md:order-2 md:pr-10'}
+          ${isInView
+            ? 'opacity-100 translate-x-0'
+            : isEven
+              ? 'opacity-0 -translate-x-12'
+              : 'opacity-0 translate-x-12'
+          }
+        `}
+      >
+        <button
+          type="button"
+          onClick={() => onNavigate(place.slug)}
+          className="group block w-full overflow-hidden rounded-[30px] text-right cursor-pointer"
+        >
+          <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-white/5 shadow-md">
+            <img
+              src={image}
+              alt={place.title}
+              decoding="async"
+              loading={index > 1 ? 'lazy' : 'eager'}
+              className="
+                h-full w-full object-cover
+                transition-transform duration-700 ease-out
+                group-hover:scale-105
+              "
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
+
+            <div className="absolute right-5 top-5 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[9px] font-black text-white backdrop-blur-md">
+                {categoryLabel}
+              </span>
+              {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${place.visitInfo.visitStatus === 'closed_to_public'
+                      ? 'bg-red-600 text-white'
+                      : place.visitInfo.visitStatus === 'closed_for_restoration'
+                        ? 'bg-amber-600 text-white'
+                        : place.visitInfo.visitStatus === 'public_landmark'
+                          ? 'bg-emerald-600 text-white'
+                          : place.visitInfo.visitStatus === 'active_institution'
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-orange-600 text-white'
+                    }`}
+                >
+                  {place.visitInfo.visitStatus === 'closed_to_public' && 'مقفول للجمهور'}
+                  {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مقفول للترميم'}
+                  {place.visitInfo.visitStatus === 'public_landmark' && 'ميدان ومعلم عام'}
+                  {place.visitInfo.visitStatus === 'active_institution' && 'صرح تعليمي وديني'}
+                  {place.visitInfo.visitStatus === 'requires_safari_permit' && 'محمية وسفاري'}
+                </span>
+              )}
+            </div>
+
+            <div className="absolute bottom-5 right-5 left-5 flex items-end justify-between gap-4">
+              <span className="text-5xl font-black leading-none text-white/25">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-colors duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+                <ArrowLeft className="h-4 w-4" />
+              </span>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* المحتوى النصي */}
+      <div
+        className={`
+          mt-7 pr-12 md:mt-0 md:flex md:flex-col md:justify-center md:pr-0
+          transition-all duration-800 delay-200
+          ${isEven ? 'md:order-2 md:pl-10' : 'md:order-1 md:pr-10'}
+          ${isInView
+            ? 'opacity-100 translate-x-0'
+            : isEven
+              ? 'opacity-0 translate-x-12'
+              : 'opacity-0 -translate-x-12'
+          }
+        `}
+      >
+        <div className="mb-4 flex items-center gap-3">
+          <span className="text-[10px] font-black tracking-[0.25em] text-[#9a6a35]">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+
+          <span className="h-px w-8 bg-[#9a6a35]/40" />
+
+          {place.governorateName && (
+            <span className="flex items-center gap-1.5 text-[10px] font-bold text-black/60 dark:text-white/60">
+              <MapPin className="h-3 w-3 text-[#9a6a35]" />
+              {place.governorateName}
+            </span>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onNavigate(place.slug)}
+          className="group text-right cursor-pointer"
+        >
+          <h3 className="text-3xl font-black leading-tight tracking-tight transition-colors group-hover:text-[#9a6a35] sm:text-4xl">
+            {place.title}
+          </h3>
+
+          {place.historicalEra && (
+            <p className="mt-3 text-xs font-bold text-[#9a6a35]">
+              {place.historicalEra}
+            </p>
+          )}
+
+          <p className="mt-5 line-clamp-4 max-w-lg text-sm leading-8 text-black/65 dark:text-white/65">
+            {place.shortDescription ||
+              place.description ||
+              'شوف تفاصيل المكان ده وحكايته.'}
+          </p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate(place.slug)}
+          className="
+            mt-7 flex w-fit items-center gap-3 text-xs font-black
+            transition-colors hover:text-[#9a6a35] cursor-pointer
+          "
+        >
+          اعرف الحكاية
+          <span
+            className="
+              flex h-8 w-8 items-center justify-center rounded-full
+              border border-black/10 transition-colors hover:border-[#9a6a35]
+              dark:border-white/10
+            "
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+          </span>
+        </button>
+      </div>
+    </article>
+  );
+};
 
 export const PlacesHeritagePage: React.FC = () => {
   const { navigateToPlace, setActivePage } = useApp();
 
   const cachedPlaces = wahApi.getCachedPlaces();
-  const [places, setPlaces] = useState<HeritagePlace[]>(() => (cachedPlaces && cachedPlaces.length > 0 ? cachedPlaces : []));
-  const [isLoading, setIsLoading] = useState<boolean>(() => !cachedPlaces || cachedPlaces.length === 0);
+  const hasValidCache = Boolean(cachedPlaces && cachedPlaces.length > 0);
+
+  const [places, setPlaces] = useState<HeritagePlace[]>(() =>
+    hasValidCache ? (cachedPlaces as HeritagePlace[]) : []
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(() => !hasValidCache);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] =
-    useState<CategoryFilter>('all');
-  const [governorateFilter, setGovernorateFilter] =
-    useState('all');
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [governorateFilter, setGovernorateFilter] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     let active = true;
 
     const loadPlaces = async () => {
-      if (!cachedPlaces || cachedPlaces.length === 0) {
-        setIsLoading(true);
+      if (hasValidCache) {
+        return;
       }
 
       try {
+        setIsLoading(true);
         const data = await wahApi.getPlaces();
 
         if (active && Array.isArray(data) && data.length > 0) {
@@ -101,7 +326,11 @@ export const PlacesHeritagePage: React.FC = () => {
     return () => {
       active = false;
     };
-  }, []);
+  }, [hasValidCache]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [deferredSearchQuery, categoryFilter, governorateFilter]);
 
   const governorates = useMemo(() => {
     return Array.from(
@@ -113,18 +342,8 @@ export const PlacesHeritagePage: React.FC = () => {
     );
   }, [places]);
 
-  const categories = useMemo(() => {
-    return Array.from(
-      new Set(
-        places
-          .map((place) => place.category)
-          .filter(Boolean)
-      )
-    );
-  }, [places]);
-
   const filteredPlaces = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase();
+    const query = deferredSearchQuery.trim().toLowerCase();
 
     return places.filter((place) => {
       const title = place.title || '';
@@ -155,10 +374,14 @@ export const PlacesHeritagePage: React.FC = () => {
     });
   }, [
     places,
-    searchQuery,
+    deferredSearchQuery,
     categoryFilter,
     governorateFilter,
   ]);
+
+  const displayedPlaces = useMemo(() => {
+    return filteredPlaces.slice(0, visibleCount);
+  }, [filteredPlaces, visibleCount]);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -184,9 +407,7 @@ export const PlacesHeritagePage: React.FC = () => {
         dark:text-[#f5f0e7]
       "
     >
-      {/* =====================================================
-          NAVBAR
-      ===================================================== */}
+      {/* NAVBAR */}
       <header className="relative z-50 border-b border-black/10 dark:border-white/10">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
@@ -252,9 +473,7 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </header>
 
-      {/* =====================================================
-          HERO SECTION
-      ===================================================== */}
+      {/* HERO SECTION */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
         <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
@@ -351,10 +570,7 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </section>
 
-
-      {/* =====================================================
-          FLOATING FILTERS BAR
-      ===================================================== */}
+      {/* FLOATING FILTERS BAR */}
       <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
         <div
           className="
@@ -527,18 +743,14 @@ export const PlacesHeritagePage: React.FC = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          TIMELINE SECTION (حافظنا على نفس الشكل المطلوب تماماً)
-      ===================================================== */}
+      {/* TIMELINE SECTION */}
       <section className="px-4 py-16 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
         <div className="mx-auto max-w-[1200px]">
-          {/* Section heading */}
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#9a6a35]">
                 THE ARCHIVE
               </p>
-
               <h2 className="text-3xl font-black sm:text-5xl">
                 رحلتك بتبدأ من هنا
               </h2>
@@ -561,10 +773,7 @@ export const PlacesHeritagePage: React.FC = () => {
                     grid
                     gap-8
                     md:grid-cols-2
-                    ${index % 2 === 0
-                      ? ''
-                      : 'md:[&>div:first-child]:order-2'
-                    }
+                    ${index % 2 === 0 ? '' : 'md:[&>div:first-child]:order-2'}
                   `}
                 >
                   <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-white/5" />
@@ -580,9 +789,7 @@ export const PlacesHeritagePage: React.FC = () => {
           ) : filteredPlaces.length === 0 ? (
             <div className="rounded-[32px] border border-black/10 bg-white/70 p-5 dark:border-white/10 dark:bg-[#151513]">
               <WAHEmptyState
-                icon={
-                  <Landmark className="h-9 w-9 text-[#9a6a35]" />
-                }
+                icon={<Landmark className="h-9 w-9 text-[#9a6a35]" />}
                 title="ملقيناش المكان ده"
                 description="جرب كلمة بحث تانية أو غير الفلاتر."
                 actionLabel="فضّي الفلاتر"
@@ -591,7 +798,7 @@ export const PlacesHeritagePage: React.FC = () => {
             </div>
           ) : (
             <div className="relative">
-              {/* Central line */}
+              {/* الخط الرأسي للتايم لاين */}
               <div
                 className="
                   absolute
@@ -607,244 +814,45 @@ export const PlacesHeritagePage: React.FC = () => {
                 "
               />
 
-              {filteredPlaces.map((place, index) => {
-                const isEven = index % 2 === 0;
-                const image = getImage(place);
-                const categoryLabel = CATEGORY_LABELS[place.category] || place.category || 'معلم أثري';
+              {displayedPlaces.map((place, index) => (
+                <PlaceTimelineCard
+                  key={place.id || place.slug}
+                  place={place}
+                  index={index}
+                  onNavigate={navigateToPlace}
+                />
+              ))}
 
-                return (
-                  <article
-                    key={place.id || place.slug}
-                    className={`
-                      relative
-                      mb-24
-                      last:mb-0
-                      md:grid
-                      md:grid-cols-2
-                      md:gap-20
-                    `}
+              {/* زر تحميل المزيد لتقسيم الكروت وتسريع الصفحة */}
+              {displayedPlaces.length < filteredPlaces.length && (
+                <div className="relative z-20 mt-16 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                    className="
+                      inline-flex items-center gap-2
+                      rounded-full bg-[#211d18] px-8 py-3.5
+                      text-xs font-bold text-white
+                      shadow-lg transition-all
+                      hover:bg-[#9a6a35]
+                      dark:bg-white dark:text-black
+                      dark:hover:bg-[#9a6a35] dark:hover:text-white
+                      cursor-pointer
+                    "
                   >
-                    {/* Timeline point */}
-                    <div
-                      className="
-                        absolute
-                        right-[7px]
-                        top-8
-                        z-10
-                        flex
-                        h-6
-                        w-6
-                        items-center
-                        justify-center
-                        rounded-full
-                        border-4
-                        border-[#eee8dc]
-                        bg-[#9a6a35]
-                        dark:border-[#0b0b0a]
-                        md:right-1/2
-                        md:-mr-3
-                      "
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    </div>
-
-                    {/* Image */}
-                    <div
-                      className={`
-                        pr-12
-                        md:pr-0
-                        ${isEven
-                          ? 'md:pl-10'
-                          : 'md:order-2 md:pr-10'
-                        }
-                      `}
-                    >
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigateToPlace(place.slug)
-                        }
-                        className="
-                          group
-                          block
-                          w-full
-                          overflow-hidden
-                          rounded-[30px]
-                          text-right
-                          cursor-pointer
-                        "
-                      >
-                        <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-white/5">
-                          <img
-                            src={image}
-                            alt={place.title}
-                            loading={
-                              index > 2
-                                ? 'lazy'
-                                : 'eager'
-                            }
-                            className="
-                              h-full
-                              w-full
-                              object-cover
-                              transition-transform
-                              duration-700
-                              group-hover:scale-105
-                            "
-                          />
-
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
-
-                          <div className="absolute right-5 top-5 flex flex-wrap items-center gap-2">
-                            <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[9px] font-black text-white backdrop-blur-md">
-                              {categoryLabel}
-                            </span>
-                            {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
-                              <span
-                                className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${place.visitInfo.visitStatus === 'closed_to_public'
-                                    ? 'bg-red-600 text-white'
-                                    : place.visitInfo.visitStatus === 'closed_for_restoration'
-                                      ? 'bg-amber-600 text-white'
-                                      : place.visitInfo.visitStatus === 'public_landmark'
-                                        ? 'bg-emerald-600 text-white'
-                                        : place.visitInfo.visitStatus === 'active_institution'
-                                          ? 'bg-indigo-600 text-white'
-                                          : 'bg-orange-600 text-white'
-                                  }`}
-                              >
-                                {place.visitInfo.visitStatus === 'closed_to_public' && 'مقفول للجمهور'}
-                                {place.visitInfo.visitStatus === 'closed_for_restoration' && 'مقفول للترميم'}
-                                {place.visitInfo.visitStatus === 'public_landmark' && 'ميدان ومعلم عام'}
-                                {place.visitInfo.visitStatus === 'active_institution' && 'صرح تعليمي وديني'}
-                                {place.visitInfo.visitStatus === 'requires_safari_permit' && 'محمية وسفاري'}
-                              </span>
-                            )}
-                          </div>
-
-                          <div className="absolute bottom-5 right-5 left-5 flex items-end justify-between gap-4">
-                            <span className="text-5xl font-black leading-none text-white/25">
-                              {String(index + 1).padStart(
-                                2,
-                                '0'
-                              )}
-                            </span>
-
-                            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition group-hover:bg-[#9a6a35] group-hover:text-white">
-                              <ArrowLeft className="h-4 w-4" />
-                            </span>
-                          </div>
-                        </div>
-                      </button>
-                    </div>
-
-                    {/* Content */}
-                    <div
-                      className={`
-                        mt-7
-                        pr-12
-                        md:mt-0
-                        md:flex
-                        md:flex-col
-                        md:justify-center
-                        md:pr-0
-                        ${isEven
-                          ? 'md:order-2 md:pl-10'
-                          : 'md:order-1 md:pr-10'
-                        }
-                      `}
-                    >
-                      <div className="mb-4 flex items-center gap-3">
-                        <span className="text-[10px] font-black tracking-[0.25em] text-[#9a6a35]">
-                          {String(index + 1).padStart(
-                            2,
-                            '0'
-                          )}
-                        </span>
-
-                        <span className="h-px w-8 bg-[#9a6a35]/40" />
-
-                        {place.governorateName && (
-                          <span className="flex items-center gap-1.5 text-[10px] font-bold text-black/60 dark:text-white/60">
-                            <MapPin className="h-3 w-3 text-[#9a6a35]" />
-                            {place.governorateName}
-                          </span>
-                        )}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigateToPlace(place.slug)
-                        }
-                        className="group text-right cursor-pointer"
-                      >
-                        <h3 className="text-3xl font-black leading-tight tracking-tight transition group-hover:text-[#9a6a35] sm:text-4xl">
-                          {place.title}
-                        </h3>
-
-                        {place.historicalEra && (
-                          <p className="mt-3 text-xs font-bold text-[#9a6a35]">
-                            {place.historicalEra}
-                          </p>
-                        )}
-
-                        <p className="mt-5 line-clamp-4 max-w-lg text-sm leading-8 text-black/65 dark:text-white/65">
-                          {place.shortDescription ||
-                            place.description ||
-                            'شوف تفاصيل المكان ده وحكايته.'}
-                        </p>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigateToPlace(place.slug)
-                        }
-                        className="
-                          mt-7
-                          flex
-                          w-fit
-                          items-center
-                          gap-3
-                          text-xs
-                          font-black
-                          transition
-                          hover:text-[#9a6a35]
-                          cursor-pointer
-                        "
-                      >
-                        اعرف الحكاية
-
-                        <span
-                          className="
-                            flex
-                            h-8
-                            w-8
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-black/10
-                            transition
-                            hover:border-[#9a6a35]
-                            dark:border-white/10
-                          "
-                        >
-                          <ArrowLeft className="h-3.5 w-3.5" />
-                        </span>
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
+                    <span>
+                      حمّل أماكن أكتر ({filteredPlaces.length - displayedPlaces.length} مكان متبقي)
+                    </span>
+                    <ChevronDown size={15} />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
       </section>
 
-      {/* =====================================================
-          DISCOVER MAP BANNER
-      ===================================================== */}
+      {/* DISCOVER MAP BANNER */}
       {!isLoading && filteredPlaces.length > 0 && (
         <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
           <div
@@ -899,9 +907,7 @@ export const PlacesHeritagePage: React.FC = () => {
         </section>
       )}
 
-      {/* =====================================================
-          FOOTER
-      ===================================================== */}
+      {/* FOOTER */}
       <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
           <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />

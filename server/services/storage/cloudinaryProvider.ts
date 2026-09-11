@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { validateImage } from '../../utils/imageValidator.ts';
+import { getCloudinaryFolder, isValidWahEntityType, sanitizeSlug } from '../../utils/cloudinaryFolders.ts';
 import { Logger } from '../../utils/logger.ts';
 import type { IStorageProvider, UploadFileOptions, UploadResult } from './storageProvider.ts';
 
@@ -284,7 +285,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       return false;
     }
 
-    const isVideo = fileKey.includes('/reels/') || fileKey.includes('/videos/');
+    const isVideo = fileKey.includes('/reels/') || fileKey.includes('/videos/') || fileKey.startsWith('WAH/videos/') || fileKey.includes('video');
 
     try {
       const res = await cloudinary.uploader.destroy(fileKey, isVideo ? { resource_type: 'video' } : undefined);
@@ -309,6 +310,9 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     role: string;
     sellerId?: string;
     filename?: string;
+    folder?: string;
+    entityType?: string;
+    entitySlug?: string;
   }): {
     signature: string;
     timestamp: number;
@@ -343,7 +347,15 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     }
 
     let folder: string;
-    if (options.role === 'admin' && !options.sellerId) {
+    if (options.folder) {
+      folder = options.folder;
+    } else if (options.entityType && isValidWahEntityType(options.entityType)) {
+      folder = getCloudinaryFolder({
+        entityType: options.entityType,
+        entitySlug: options.entitySlug,
+        resourceType: 'video'
+      });
+    } else if (options.role === 'admin' && !options.sellerId) {
       folder = 'WAH/admin/videos';
     } else if (options.sellerId) {
       const cleanSellerId = options.sellerId.replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -352,8 +364,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
       folder = 'WAH/videos';
     }
 
-    const rawFilename = options.filename || 'reel_video';
-    const cleanFilename = rawFilename.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const rawFilename = options.filename || 'place_video';
+    const cleanFilename = sanitizeSlug(rawFilename.replace(/\.[^/.]+$/, '')) || 'video';
     const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const publicId = `${cleanFilename}_${uniqueSuffix}`;
 

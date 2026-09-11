@@ -183,6 +183,12 @@ export const adminMediaApi = {
     onProgress?: (percent: number) => void
   ): Promise<MediaItem> {
     return new Promise((resolve, reject) => {
+      const isVideo =
+        payload.resourceType === 'video' ||
+        (payload.file instanceof File && payload.file.type.startsWith('video/')) ||
+        (payload.mimeType && payload.mimeType.startsWith('video/'));
+      const resourceLabel = isVideo ? 'الفيديو' : 'الصورة';
+
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `${API_BASE}/admin/media/upload`, true);
 
@@ -201,25 +207,49 @@ export const adminMediaApi = {
       }
 
       xhr.onload = () => {
+        let json: any = null;
         try {
-          const json = JSON.parse(xhr.responseText);
-          if (xhr.status >= 200 && xhr.status < 300 && json.success && json.data) {
-            resolve(json.data);
-          } else {
-            reject(new Error(json.error || `فشل في رفع الصورة (${xhr.status})`));
-          }
+          json = JSON.parse(xhr.responseText);
         } catch {
-          reject(new Error('استجابة غير صالحة من خادم رفع الصور'));
+          // In case the response is HTML error from reverse proxy or server crash
+        }
+
+        if (xhr.status >= 200 && xhr.status < 300 && json && json.success && json.data) {
+          resolve(json.data);
+        } else {
+          const serverMsg = json?.error || json?.message;
+          if (serverMsg) {
+            reject(new Error(serverMsg));
+          } else if (xhr.status === 413) {
+            reject(new Error(`حجم ${resourceLabel} كبير جداً ويتجاوز الحد الأقصى المسموح به`));
+          } else if (xhr.status === 504 || xhr.status === 408) {
+            reject(new Error(`انتهت مهلة معالجة ${resourceLabel} في الخادم. يرجى المحاولة مرة أخرى`));
+          } else if (xhr.status >= 500) {
+            reject(new Error(`خطأ في خادم معالجة ${resourceLabel} (${xhr.status})`));
+          } else if (json) {
+            reject(new Error(json.error || `فشل في رفع ${resourceLabel} (${xhr.status})`));
+          } else {
+            reject(
+              new Error(
+                `استجابة غير صالحة من خادم رفع ${resourceLabel}. كود الحالة: ${xhr.status || 'غير معروف'}`
+              )
+            );
+          }
         }
       };
 
       xhr.onerror = () => {
-        reject(new Error('خطأ في الاتصال بالشبكة أثناء رفع الصورة'));
+        reject(new Error(`خطأ في الاتصال بالشبكة أثناء رفع ${resourceLabel}`));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error(`انتهت مهلة الاتصال بالشبكة أثناء رفع ${resourceLabel}`));
       };
 
       if (payload.file) {
         const formData = new FormData();
-        formData.append('file', payload.file, payload.filename || (payload.file as File).name || 'image.jpg');
+        const fallbackName = isVideo ? 'video.mp4' : 'image.jpg';
+        formData.append('file', payload.file, payload.filename || (payload.file as File).name || fallbackName);
         formData.append('entityType', payload.entityType);
         if (payload.resourceType) formData.append('resourceType', payload.resourceType);
         if (payload.entitySlug) formData.append('entitySlug', payload.entitySlug);
@@ -234,6 +264,441 @@ export const adminMediaApi = {
         xhr.send(JSON.stringify(payload));
       }
     });
+  },
+
+  async getAdminVideoUploadSignature(
+    user: { id?: string; role?: string },
+    params: {
+      filename?: string;
+      fileSize?: number;
+      entityType?: string;
+      entitySlug?: string;
+      entityId?: string;
+    }
+  ): Promise<{
+    success: boolean;
+    directUpload: boolean;
+    data: {
+      signature: string;
+      timestamp: number;
+      apiKey: string;
+      cloudName: string;
+      folder: string;
+      publicId: string;
+      resourceType: 'video';
+    };
+  }> {
+    const query = new URLSearchParams();
+    if (params.filename) query.append('filename', params.filename);
+    if (params.fileSize) query.append('fileSize', String(params.fileSize));
+    if (params.entityType) query.append('entityType', params.entityType);
+    if (params.entitySlug) query.append('entitySlug', params.entitySlug);
+    if (params.entityId) query.append('entityId', params.entityId);
+
+    const res = await fetch(`${API_BASE}/admin/media/upload-signature?${query.toString()}`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر الحصول على ترخيص الرفع السحابي للفيديو');
+    }
+    return json;
+  },
+
+  async verifyAdminVideoAsset(
+    user: { id?: string; role?: string },
+    publicId: string
+  ): Promise<{
+    exists: boolean;
+    isReady: boolean;
+    status: 'ready' | 'processing' | 'not_found';
+    url?: string;
+    thumbnailUrl?: string;
+    bytes?: number;
+    format?: string;
+    duration?: number;
+    width?: number;
+    height?: number;
+    message?: string;
+  }> {
+    const res = await fetch(`${API_BASE}/admin/media/verify-upload`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify({ publicId })
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر التحقق من حالة معالجة الفيديو في السحابة');
+    }
+    return json.data;
+  },
+
+  async confirmAdminVideo(
+    user: { id?: string; role?: string },
+    payload: {
+      publicId: string;
+      secureUrl?: string;
+      url?: string;
+      folder?: string;
+      bytes?: number;
+      width?: number;
+      height?: number;
+      duration?: number;
+      format?: string;
+      filename?: string;
+      entityType?: string;
+      entitySlug?: string;
+      entityId?: string;
+      alt?: string;
+      caption?: string;
+      isPrimary?: boolean;
+      addToGallery?: boolean;
+    }
+  ): Promise<MediaItem> {
+    const res = await fetch(`${API_BASE}/admin/media/confirm-video`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'فشل توثيق وحفظ مقطع الفيديو في قاعدة البيانات');
+    }
+    return json.data;
+  },
+
+  async uploadAdminVideoWithLifecycle(options: {
+    user: { id?: string; role?: string };
+    file: File | Blob;
+    filename?: string;
+    entityType?: string;
+    entitySlug?: string;
+    entityId?: string;
+    alt?: string;
+    caption?: string;
+    isPrimary?: boolean;
+    addToGallery?: boolean;
+    onProgress?: (info: {
+      loaded: number;
+      total: number;
+      percentage: number;
+      state: 'uploading' | 'uploaded' | 'processing' | 'ready';
+      currentChunk?: number;
+      totalChunks?: number;
+    }) => void;
+    onCancelRef?: (cancelFn: () => void) => void;
+  }): Promise<MediaItem> {
+    const {
+      user,
+      file,
+      filename: customFilename,
+      entityType = 'heritage-place',
+      entitySlug,
+      entityId,
+      alt,
+      caption,
+      isPrimary = false,
+      addToGallery = false,
+      onProgress,
+      onCancelRef
+    } = options;
+
+    const fileName = customFilename || (file instanceof File ? file.name : 'place_video.mp4');
+    const fileSize = file.size;
+
+    if (!file || fileSize <= 0) {
+      throw new Error('ملف الفيديو المحدد فارغ أو غير صالح');
+    }
+
+    let isCancelled = false;
+    let activeXhr: XMLHttpRequest | null = null;
+
+    if (onCancelRef) {
+      onCancelRef(() => {
+        isCancelled = true;
+        if (activeXhr) {
+          try {
+            activeXhr.abort();
+          } catch { }
+        }
+      });
+    }
+
+    // 1. Request signature for direct Cloudinary upload
+    let signatureResponse: any = null;
+    try {
+      signatureResponse = await adminMediaApi.getAdminVideoUploadSignature(user, {
+        filename: fileName,
+        fileSize,
+        entityType,
+        entitySlug,
+        entityId
+      });
+    } catch {
+      // Signature error fallback to server multipart upload
+    }
+
+    // 2. Direct Chunked Upload to Cloudinary if signature available
+    if (signatureResponse?.directUpload && signatureResponse.data) {
+      const sig = signatureResponse.data;
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${sig.cloudName}/video/upload`;
+      const uniqueUploadId = `cld_adm_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+      let CHUNK_SIZE = 20 * 1024 * 1024;
+      if (fileSize <= 20 * 1024 * 1024) {
+        CHUNK_SIZE = fileSize;
+      } else if (fileSize <= 100 * 1024 * 1024) {
+        CHUNK_SIZE = 10 * 1024 * 1024;
+      } else {
+        CHUNK_SIZE = 20 * 1024 * 1024;
+      }
+
+      const totalChunks = Math.ceil(fileSize / CHUNK_SIZE) || 1;
+      let finalResult: any = null;
+      let hasTriggeredProcessing = false;
+
+      for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        if (isCancelled) {
+          throw new Error('تم إلغاء عملية الرفع');
+        }
+
+        const start = chunkIndex * CHUNK_SIZE;
+        const end = Math.min(start + CHUNK_SIZE, fileSize);
+        const isLastChunk = chunkIndex === totalChunks - 1;
+        const chunkBlob = file.slice(start, end);
+
+        let chunkSuccess = false;
+        let lastChunkError: any = null;
+
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          if (isCancelled) {
+            throw new Error('تم إلغاء عملية الرفع');
+          }
+
+          try {
+            const chunkPromise = new Promise<any>((chunkResolve, chunkReject) => {
+              const xhr = new XMLHttpRequest();
+              activeXhr = xhr;
+
+              xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable && event.total > 0) {
+                  const cumulativeLoaded = Math.min(fileSize, start + event.loaded);
+                  const isCompleteBytes = cumulativeLoaded >= fileSize;
+                  const percentage = isCompleteBytes ? 100 : Math.min(99, Math.round((cumulativeLoaded / fileSize) * 100));
+
+                  onProgress?.({
+                    loaded: cumulativeLoaded,
+                    total: fileSize,
+                    percentage,
+                    state: isCompleteBytes ? 'uploaded' : 'uploading',
+                    currentChunk: chunkIndex + 1,
+                    totalChunks
+                  });
+
+                  if (isCompleteBytes && !hasTriggeredProcessing) {
+                    hasTriggeredProcessing = true;
+                    setTimeout(() => {
+                      if (!isCancelled) {
+                        onProgress?.({
+                          loaded: fileSize,
+                          total: fileSize,
+                          percentage: 100,
+                          state: 'processing',
+                          currentChunk: totalChunks,
+                          totalChunks
+                        });
+                      }
+                    }, 400);
+                  }
+                }
+              };
+
+              if (isLastChunk) {
+                xhr.upload.onload = () => {
+                  onProgress?.({
+                    loaded: fileSize,
+                    total: fileSize,
+                    percentage: 100,
+                    state: 'uploaded',
+                    currentChunk: totalChunks,
+                    totalChunks
+                  });
+                };
+              }
+
+              xhr.onload = () => {
+                let resJson: any = null;
+                try {
+                  resJson = JSON.parse(xhr.responseText);
+                } catch { }
+
+                if (xhr.status >= 200 && xhr.status < 300) {
+                  chunkResolve(resJson);
+                } else {
+                  const errMsg = resJson?.error?.message || `فشل في رفع جزء الفيديو (${xhr.status})`;
+                  chunkReject(new Error(errMsg));
+                }
+              };
+
+              xhr.onerror = () => {
+                chunkReject(new Error('خطأ في الاتصال بالشبكة أثناء رفع الفيديو إلى السحابة'));
+              };
+
+              xhr.ontimeout = () => {
+                chunkReject(new Error('انتهت مهلة الاتصال بالشبكة أثناء رفع الفيديو'));
+              };
+
+              xhr.open('POST', uploadUrl, true);
+
+              if (totalChunks > 1) {
+                xhr.setRequestHeader('Content-Range', `bytes ${start}-${end - 1}/${fileSize}`);
+                xhr.setRequestHeader('X-Unique-Upload-Id', uniqueUploadId);
+              }
+
+              const formData = new FormData();
+              formData.append('file', chunkBlob);
+              formData.append('api_key', sig.apiKey);
+              formData.append('timestamp', String(sig.timestamp));
+              formData.append('signature', sig.signature);
+              formData.append('folder', sig.folder);
+              formData.append('public_id', sig.publicId);
+
+              xhr.send(formData);
+            });
+
+            const res = await chunkPromise;
+            if (isLastChunk) {
+              finalResult = res;
+            }
+            chunkSuccess = true;
+            break;
+          } catch (chunkErr: any) {
+            lastChunkError = chunkErr;
+            if (attempt < 3 && !isCancelled) {
+              await new Promise((r) => setTimeout(r, 1000 * attempt));
+            }
+          }
+        }
+
+        if (!chunkSuccess) {
+          throw new Error(lastChunkError?.message || 'تعذر رفع جزء من الفيديو بعد عدة محاولات');
+        }
+      }
+
+      // 3. Inform lifecycle state: processing
+      onProgress?.({
+        loaded: fileSize,
+        total: fileSize,
+        percentage: 100,
+        state: 'processing',
+        currentChunk: totalChunks,
+        totalChunks
+      });
+
+      const fullPublicId = `${sig.folder}/${sig.publicId}`;
+
+      // 4. Polling Verification
+      let assetMetadata = finalResult || {};
+      for (let pollAttempt = 1; pollAttempt <= 15; pollAttempt++) {
+        if (isCancelled) {
+          throw new Error('تم إلغاء عملية الرفع');
+        }
+
+        try {
+          const verifyData = await adminMediaApi.verifyAdminVideoAsset(user, fullPublicId);
+          if (verifyData.isReady && verifyData.url) {
+            assetMetadata = {
+              ...assetMetadata,
+              secure_url: verifyData.url,
+              url: verifyData.url,
+              duration: verifyData.duration,
+              bytes: verifyData.bytes,
+              format: verifyData.format,
+              width: verifyData.width,
+              height: verifyData.height
+            };
+            break;
+          }
+        } catch {
+          // Retry polling
+        }
+
+        await new Promise((r) => setTimeout(r, 1500));
+      }
+
+      const videoUrl =
+        assetMetadata.secure_url ||
+        assetMetadata.url ||
+        `https://res.cloudinary.com/${sig.cloudName}/video/upload/${fullPublicId}.mp4`;
+
+      // 5. Confirm Video in Backend DB & Place Gallery
+      const confirmedMedia = await adminMediaApi.confirmAdminVideo(user, {
+        publicId: fullPublicId,
+        secureUrl: videoUrl,
+        url: videoUrl,
+        folder: sig.folder,
+        bytes: assetMetadata.bytes || fileSize,
+        width: assetMetadata.width,
+        height: assetMetadata.height,
+        duration: assetMetadata.duration,
+        format: assetMetadata.format || fileName.split('.').pop() || 'mp4',
+        filename: fileName,
+        entityType,
+        entitySlug,
+        entityId,
+        alt,
+        caption,
+        isPrimary,
+        addToGallery
+      });
+
+      // 6. Notify complete
+      onProgress?.({
+        loaded: fileSize,
+        total: fileSize,
+        percentage: 100,
+        state: 'ready',
+        currentChunk: totalChunks,
+        totalChunks
+      });
+
+      return confirmedMedia;
+    }
+
+    // Fallback: server multipart upload
+    return await adminMediaApi.uploadAdminMedia(
+      user,
+      {
+        file,
+        filename: fileName,
+        resourceType: 'video',
+        entityType,
+        entitySlug,
+        entityId,
+        alt,
+        caption,
+        isPrimary,
+        addToGallery
+      },
+      (percent) => {
+        onProgress?.({
+          loaded: Math.round((percent / 100) * fileSize),
+          total: fileSize,
+          percentage: percent,
+          state: percent >= 100 ? 'uploaded' : 'uploading'
+        });
+      }
+    );
   },
 
   async saveAdminMediaUrl(

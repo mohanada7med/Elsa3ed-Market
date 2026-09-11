@@ -1,10 +1,14 @@
 import express from 'express';
 import type { Response } from 'express';
 import multer from 'multer';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { requireAdmin } from '../middleware/auth.ts';
 import type { AuthenticatedRequest } from '../middleware/auth.ts';
 import {
   uploadAdminMedia,
+  confirmAdminVideo,
   replaceAdminMedia,
   deleteAdminMedia,
   updateAdminMediaMetadata,
@@ -18,6 +22,7 @@ import {
 } from '../services/mediaService.ts';
 import { getDatabase } from '../db/mongodb.ts';
 import { isValidWahEntityType } from '../utils/cloudinaryFolders.ts';
+import { cloudinaryStorage } from '../services/storage/cloudinaryProvider.ts';
 import { Logger } from '../utils/logger.ts';
 
 const router = express.Router();
@@ -35,9 +40,18 @@ router.use((req: AuthenticatedRequest, res: Response, next) => {
   next();
 });
 
-// Configure Multer with 1GB limit for media uploads
+// Configure Multer with disk storage for streaming/binary multipart video and media uploads
+// Streaming to temporary disk avoids exhausting Node.js heap memory on large video files (up to 1GB)
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, os.tmpdir());
+    },
+    filename: (_req, file, cb) => {
+      const unique = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+      cb(null, `admin_media_${unique}_${file.originalname || 'file'}`);
+    }
+  }),
   limits: {
     fileSize: 1024 * 1024 * 1024 // 1 GB (1,073,741,824 bytes) max file size
   },
@@ -108,7 +122,13 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
     let filename = file?.originalname || body.filename || 'media_asset';
     let mimeType = file?.mimetype || body.mimeType || 'image/jpeg';
 
-    if (file && file.buffer) {
+    if (file && (file as any).path) {
+      try {
+        buffer = fs.readFileSync((file as any).path);
+      } finally {
+        fs.unlink((file as any).path, () => { });
+      }
+    } else if (file && file.buffer) {
       buffer = file.buffer;
     } else if (body.data || body.fileData || body.base64) {
       buffer = body.data || body.fileData || body.base64;
@@ -180,10 +200,149 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
     });
   } catch (error: any) {
     Logger.error('[AdminMedia] Upload error:', error?.message || error);
+    const isVideoReq = req.body?.resourceType === 'video' || req.file?.mimetype?.startsWith('video/');
     return res.status(400).json({
       success: false,
-      error: error?.message || 'فشل في رفع الصورة',
+      error: error?.message || (isVideoReq ? 'فشل في رفع مقطع الفيديو' : 'فشل في رفع الصورة'),
       code: 'UPLOAD_FAILED'
+    });
+  }
+});
+
+// =========================================================================
+// 1.1 Direct Video Upload Signature: GET/POST /api/admin/media/upload-signature
+// Enables direct chunked frontend uploads to Cloudinary without Node.js RAM overhead
+// =========================================================================
+const handleAdminVideoSignature = (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const rawFilename = (req.body?.filename || req.query.filename as string) || 'place_video.mp4';
+    const entityType = (req.body?.entityType || req.query.entityType as string) || 'heritage-place';
+    const entitySlug = (req.body?.entitySlug || req.query.entitySlug as string) || '';
+
+    const signatureData = cloudinaryStorage.generateVideoUploadSignature({
+      role: 'admin',
+      filename: rawFilename,
+      entityType,
+      entitySlug
+    });
+
+    Logger.info(`[AdminMedia] Generated direct video signature for ${entityType}/${entitySlug || 'general'}`);
+
+    return res.json({
+      success: true,
+      directUpload: true,
+      data: signatureData
+    });
+  } catch (err: any) {
+    Logger.error('[AdminMedia] Error generating video signature:', err?.message || err);
+    return res.status(500).json({
+      success: false,
+      error: err?.message || 'فشل في توليد توقيع الرفع السحابي للفيديو',
+      code: 'SIGNATURE_FAILED'
+    });
+  }
+};
+
+router.get('/upload-signature', handleAdminVideoSignature);
+router.post('/upload-signature', handleAdminVideoSignature);
+
+// =========================================================================
+// 1.2 Video Asset Verification: GET/POST /api/admin/media/verify-upload
+// Enables client-side lifecycle polling while Cloudinary processes video
+// =========================================================================
+const handleAdminVerifyUpload = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const publicId = (req.body?.publicId || req.body?.fileKey || req.query?.publicId || req.query?.fileKey) as string;
+    if (!publicId || typeof publicId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'المعرف السحابي للملف مطلوب',
+        code: 'MISSING_PUBLIC_ID'
+      });
+    }
+
+    const verification = await cloudinaryStorage.verifyVideoAsset(publicId);
+    return res.json({
+      success: true,
+      data: verification
+    });
+  } catch (err: any) {
+    Logger.error('[AdminMedia] Video asset verification error:', err?.message || err);
+    return res.status(500).json({
+      success: false,
+      error: 'فشل في التحقق من حالة الفيديو السحابي',
+      code: 'VERIFICATION_FAILED'
+    });
+  }
+};
+
+router.get('/verify-upload', handleAdminVerifyUpload);
+router.post('/verify-upload', handleAdminVerifyUpload);
+
+// =========================================================================
+// 1.3 Confirm & Persist Video Asset: POST /api/admin/media/confirm-video
+// Persists verified direct-uploaded video to wah_media and syncs with entity
+// =========================================================================
+router.post('/confirm-video', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const {
+      publicId,
+      secureUrl,
+      url,
+      entityType = 'heritage-place',
+      entityId,
+      entitySlug,
+      filename,
+      duration,
+      format,
+      bytes,
+      width,
+      height,
+      alt,
+      caption
+    } = req.body || {};
+
+    if (!publicId || (!secureUrl && !url)) {
+      return res.status(400).json({
+        success: false,
+        error: 'بيانات الفيديو غير مكتملة (المعرف والرابط السحابي مطلوبان)',
+        code: 'MISSING_FIELDS'
+      });
+    }
+
+    const media = await confirmAdminVideo({
+      publicId,
+      secureUrl: secureUrl || url,
+      url: url || secureUrl,
+      entityType,
+      entityId,
+      entitySlug,
+      filename,
+      duration,
+      format,
+      bytes,
+      width,
+      height,
+      alt,
+      caption,
+      user: {
+        id: req.user!.id,
+        role: req.user!.role,
+        name: req.user!.name
+      }
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'تم حفظ وتوثيق مقطع الفيديو بنجاح',
+      data: media
+    });
+  } catch (err: any) {
+    Logger.error('[AdminMedia] Confirm video error:', err?.message || err);
+    return res.status(400).json({
+      success: false,
+      error: err?.message || 'فشل في توثيق مقطع الفيديو في قاعدة البيانات',
+      code: 'CONFIRM_FAILED'
     });
   }
 });

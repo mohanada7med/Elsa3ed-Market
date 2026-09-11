@@ -1,3 +1,6 @@
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
 import type { UploadApiResponse } from 'cloudinary';
 import { ObjectId } from 'mongodb';
@@ -418,19 +421,32 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     };
 
     try {
-      if (Buffer.isBuffer(uploadPayload)) {
+      if (isVideo) {
+        let tempFilePath: string | null = null;
+        try {
+          if (Buffer.isBuffer(uploadPayload)) {
+            tempFilePath = path.join(os.tmpdir(), `admin_vid_${Date.now()}_${publicId}.mp4`);
+            fs.writeFileSync(tempFilePath, uploadPayload);
+            uploadResult = (await cloudinary.uploader.upload_large(tempFilePath, uploadOptions)) as UploadApiResponse;
+          } else {
+            uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
+          }
+        } finally {
+          if (tempFilePath && fs.existsSync(tempFilePath)) {
+            try { fs.unlinkSync(tempFilePath); } catch { }
+          }
+        }
+      } else if (Buffer.isBuffer(uploadPayload)) {
         uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(uploadOptions, (err, res) => {
             if (err || !res) {
-              reject(err || new Error(isVideo ? 'فشل رفع الفيديو إلى Cloudinary' : 'فشل رفع الصورة إلى Cloudinary'));
+              reject(err || new Error('فشل رفع الصورة إلى Cloudinary'));
             } else {
               resolve(res);
             }
           });
           stream.end(uploadPayload);
         });
-      } else if (isVideo) {
-        uploadResult = (await cloudinary.uploader.upload_large(uploadPayload, uploadOptions)) as UploadApiResponse;
       } else {
         uploadResult = await cloudinary.uploader.upload(uploadPayload, uploadOptions);
       }
@@ -492,10 +508,106 @@ export async function uploadAdminMedia(options: UploadAdminMediaOptions): Promis
     return mediaDoc;
   } catch (dbErr: any) {
     try {
-      await cloudinary.uploader.destroy(mediaDoc.publicId!);
+      await cloudinary.uploader.destroy(mediaDoc.publicId!, { resource_type: isVideo ? 'video' : 'image' });
     } catch (cleanupErr) { }
     throw new Error('فشل حفظ بيانات الوسائط في قاعدة البيانات بعد الرفع');
   }
+}
+
+export interface ConfirmAdminVideoOptions {
+  publicId: string;
+  secureUrl: string;
+  url?: string;
+  entityType: string;
+  entityId?: string;
+  entitySlug?: string;
+  filename?: string;
+  duration?: number;
+  format?: string;
+  bytes?: number;
+  width?: number;
+  height?: number;
+  alt?: string;
+  caption?: string;
+  user: {
+    id: string;
+    role: UserRole;
+    name?: string;
+  };
+}
+
+export async function confirmAdminVideo(options: ConfirmAdminVideoOptions): Promise<MediaAssetDoc> {
+  const {
+    publicId,
+    secureUrl,
+    url = secureUrl,
+    entityType,
+    entityId,
+    entitySlug,
+    filename = 'place_video.mp4',
+    duration,
+    format = 'mp4',
+    bytes = 0,
+    width,
+    height,
+    alt,
+    caption = '',
+    user
+  } = options;
+
+  if (!user || user.role !== 'admin') {
+    throw new Error('عفواً، هذه العملية مخصصة لمدراء النظام فقط');
+  }
+
+  const mediaId = `media-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const suggestedAlt = alt || `${filename} - منصة وه للتراث`;
+  const folder = publicId.includes('/') ? publicId.substring(0, publicId.lastIndexOf('/')) : 'WAH/videos';
+
+  const mediaDoc: any = {
+    _id: mediaId,
+    id: mediaId,
+    title: suggestedAlt,
+    url,
+    secureUrl,
+    publicId,
+    folder,
+    type: 'video',
+    resourceType: 'video',
+    category: (entityType as any) || 'videos',
+    entityType,
+    entityId: entityId || undefined,
+    entitySlug: sanitizeSlug(entitySlug) || undefined,
+    uploadedBy: user.id,
+    uploaderRole: 'admin',
+    sizeBytes: bytes,
+    bytes,
+    width,
+    height,
+    duration,
+    format,
+    alt: suggestedAlt,
+    caption,
+    isPrimary: false,
+    status: 'verified',
+    metadata: {
+      originalFilename: filename,
+    },
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    await db.collection<MediaAssetDoc>('wah_media').insertOne({ ...mediaDoc } as any);
+  }
+  memoryDb.media.unshift(mediaDoc);
+
+  const targetEntity = entityId || entitySlug;
+  if (targetEntity) {
+    await syncMediaWithEntity(entityType, targetEntity, secureUrl, false, false, 'video');
+  }
+
+  return mediaDoc;
 }
 
 export async function saveExternalUrlMedia(options: ExternalUrlMediaOptions): Promise<MediaAssetDoc> {

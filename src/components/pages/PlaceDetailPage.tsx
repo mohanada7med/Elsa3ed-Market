@@ -868,26 +868,26 @@ export const PlaceDetailPage: React.FC = () => {
               {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
                 <div
                   className={`mb-6 p-6 rounded-2xl border flex items-start gap-4 ${place.visitInfo.visitStatus === 'closed_to_public'
-                      ? 'bg-red-500/10 border-red-500/30 text-red-950 dark:text-red-100'
-                      : place.visitInfo.visitStatus === 'closed_for_restoration'
-                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-100'
-                        : place.visitInfo.visitStatus === 'public_landmark'
-                          ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-100'
-                          : place.visitInfo.visitStatus === 'active_institution'
-                            ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-950 dark:text-indigo-100'
-                            : 'bg-[#9a6a35]/10 border-[#9a6a35]/30 text-amber-950 dark:text-amber-100'
+                    ? 'bg-red-500/10 border-red-500/30 text-red-950 dark:text-red-100'
+                    : place.visitInfo.visitStatus === 'closed_for_restoration'
+                      ? 'bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-100'
+                      : place.visitInfo.visitStatus === 'public_landmark'
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-100'
+                        : place.visitInfo.visitStatus === 'active_institution'
+                          ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-950 dark:text-indigo-100'
+                          : 'bg-[#9a6a35]/10 border-[#9a6a35]/30 text-amber-950 dark:text-amber-100'
                     }`}
                 >
                   <div
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${place.visitInfo.visitStatus === 'closed_to_public'
-                        ? 'bg-red-500/20 text-red-600 dark:text-red-400'
-                        : place.visitInfo.visitStatus === 'closed_for_restoration'
-                          ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
-                          : place.visitInfo.visitStatus === 'public_landmark'
-                            ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-                            : place.visitInfo.visitStatus === 'active_institution'
-                              ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
-                              : 'bg-[#9a6a35]/20 text-[#9a6a35]'
+                      ? 'bg-red-500/20 text-red-600 dark:text-red-400'
+                      : place.visitInfo.visitStatus === 'closed_for_restoration'
+                        ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                        : place.visitInfo.visitStatus === 'public_landmark'
+                          ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                          : place.visitInfo.visitStatus === 'active_institution'
+                            ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                            : 'bg-[#9a6a35]/20 text-[#9a6a35]'
                       }`}
                   >
                     {place.visitInfo.visitStatus === 'closed_to_public' && (

@@ -54,7 +54,8 @@ interface StagedFile {
   sizeBytes: number;
   format: string;
   progress: number;
-  status: 'pending' | 'uploading' | 'success' | 'error';
+  status: 'pending' | 'uploading' | 'uploaded' | 'processing' | 'success' | 'error';
+  statusText?: string;
   errorMessage?: string;
   isVideo?: boolean;
 }
@@ -275,24 +276,70 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
   // Upload single item helper
   const uploadSingleItem = async (item: StagedFile, isFirst: boolean): Promise<MediaItem> => {
     const isVideo = item.isVideo || item.file.type.startsWith('video/');
+
+    if (isVideo) {
+      return await api.uploadAdminVideoWithLifecycle({
+        user: authUser,
+        file: item.file,
+        filename: item.file.name,
+        entityType: entityType || 'heritage-place',
+        entitySlug,
+        entityId,
+        alt: item.alt || getSuggestedAlt(),
+        caption: item.caption,
+        isPrimary: !multiple || isFirst,
+        addToGallery: false,
+        onProgress: (info) => {
+          setStagedFiles((prev) =>
+            prev.map((p) =>
+              p.id === item.id
+                ? {
+                  ...p,
+                  progress: info.percentage,
+                  status: info.state === 'ready' ? 'uploading' : info.state,
+                  statusText:
+                    info.state === 'uploading'
+                      ? `جاري الرفع... ${info.percentage}%`
+                      : info.state === 'uploaded'
+                        ? 'اكتمل نقل الملف (100%)، جاري التهيئة...'
+                        : info.state === 'processing'
+                          ? 'جاري المعالجة السحابية والتحقق...'
+                          : undefined
+                }
+                : p
+            )
+          );
+        }
+      });
+    }
+
     return await api.uploadAdminMedia(
       authUser,
       {
         file: item.file,
         filename: item.file.name,
         mimeType: item.file.type,
-        resourceType: isVideo ? 'video' : 'image',
-        entityType: entityType || (isVideo ? 'videos' : 'general'),
+        resourceType: 'image',
+        entityType: entityType || 'heritage-place',
         entitySlug,
         entityId,
         alt: item.alt || getSuggestedAlt(),
         caption: item.caption,
         isPrimary: !multiple || isFirst,
-        addToGallery: multiple && !isVideo
+        addToGallery: multiple
       },
       (progressPercent) => {
         setStagedFiles((prev) =>
-          prev.map((p) => (p.id === item.id ? { ...p, progress: progressPercent } : p))
+          prev.map((p) =>
+            p.id === item.id
+              ? {
+                ...p,
+                progress: progressPercent,
+                status: 'uploading',
+                statusText: `جاري الرفع... ${progressPercent}%`
+              }
+              : p
+          )
         );
       }
     );
@@ -313,7 +360,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
       const item = pendingItems[i];
 
       setStagedFiles((prev) =>
-        prev.map((p) => (p.id === item.id ? { ...p, status: 'uploading', progress: 5, errorMessage: undefined } : p))
+        prev.map((p) => (p.id === item.id ? { ...p, status: 'uploading', progress: 5, statusText: undefined, errorMessage: undefined } : p))
       );
 
       const isFirstImage = currentItems.length === 0 && uploadedResults.length === 0;
@@ -323,12 +370,12 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
         uploadedResults.push(uploadedMedia);
 
         setStagedFiles((prev) =>
-          prev.map((p) => (p.id === item.id ? { ...p, status: 'success', progress: 100 } : p))
+          prev.map((p) => (p.id === item.id ? { ...p, status: 'success', progress: 100, statusText: undefined } : p))
         );
       } catch (err: any) {
         hadErrors = true;
         setStagedFiles((prev) =>
-          prev.map((p) => (p.id === item.id ? { ...p, status: 'error', errorMessage: err?.message || 'فشل الرفع' } : p))
+          prev.map((p) => (p.id === item.id ? { ...p, status: 'error', errorMessage: err?.message || 'فشل الرفع', statusText: undefined } : p))
         );
       }
     }
@@ -923,13 +970,25 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     {sf.status === 'uploading' && (
                       <span className="text-[#9a6a35] dark:text-[#d5a56d] flex items-center gap-1 font-bold">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                        <span>جاري الرفع... {sf.progress}%</span>
+                        <span>{sf.statusText || `جاري الرفع... ${sf.progress}%`}</span>
+                      </span>
+                    )}
+                    {sf.status === 'uploaded' && (
+                      <span className="text-blue-600 dark:text-blue-400 flex items-center gap-1 font-bold">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>{sf.statusText || 'اكتمل نقل الملف (100%)، جاري التهيئة...'}</span>
+                      </span>
+                    )}
+                    {sf.status === 'processing' && (
+                      <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1 font-bold">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>{sf.statusText || 'جاري المعالجة السحابية والتحقق...'}</span>
                       </span>
                     )}
                     {sf.status === 'success' && (
                       <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>تم الرفع بنجاح بالسحابة</span>
+                        <span>{sf.isVideo ? 'تم رفع وتوثيق مقطع الفيديو بنجاح' : 'تم الرفع بنجاح بالسحابة'}</span>
                       </span>
                     )}
                     {sf.status === 'error' && (
