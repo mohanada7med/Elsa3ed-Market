@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
+import { getOptimizedVideoUrl } from '../../utils/cloudinaryMedia.ts';
 
 export type VideoUploadState =
   | 'idle'
@@ -385,6 +386,8 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
               <video
                 ref={videoRef}
                 src={previewUrl}
+                playsInline
+                preload="metadata"
                 className="w-full h-full object-contain"
                 onLoadedMetadata={(e) => {
                   setVideoDuration(e.currentTarget.duration);
@@ -570,8 +573,10 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
             <div className="relative aspect-video max-h-48 rounded-lg overflow-hidden bg-black/90 flex items-center justify-center">
               <video
                 ref={videoRef}
-                src={previewUrl || uploadedUrl}
+                src={getOptimizedVideoUrl(previewUrl || uploadedUrl)}
                 controls
+                playsInline
+                preload="metadata"
                 className="w-full h-full object-contain"
               />
             </div>

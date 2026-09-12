@@ -25,6 +25,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 
 export const CraftReelsPage: React.FC = () => {
   const {
@@ -296,7 +297,7 @@ export const CraftReelsPage: React.FC = () => {
         bg-[#eee8dc]
         text-[#211d18]
         dark:bg-[#0b0b0a]
-        dark:text-white
+        dark:text-[#f5f0e7]
       "
     >
       {/* NAVBAR */}
@@ -684,7 +685,7 @@ export const CraftReelsPage: React.FC = () => {
                   setReels((prev) => prev.filter((r) => r.id !== deletedId));
                 }}
                 showCloseButton={false}
-                hasBottomNav={true}
+                hasBottomNav={false}
               />
             </div>
           </div>
@@ -708,8 +709,10 @@ export const CraftReelsPage: React.FC = () => {
                     >
                       {/* Poster Image / Video Preview */}
                       <img
-                        src={reel.posterUrl}
+                        src={getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 600)}
                         alt={reel.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                       />
 

@@ -36,13 +36,13 @@ export const ProductsPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#f3eee5]
+        bg-[#eee8dc]
         text-[#211d18]
         transition-colors
         duration-500
 
-        dark:bg-[#090908]
-        dark:text-[#f4eee5]
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
       "
     >
       {/* =====================================================
@@ -105,11 +105,11 @@ export const ProductsPage: React.FC = () => {
           z-50
           border-b
           border-black/[0.07]
-          bg-[#f3eee5]/80
+          bg-[#eee8dc]/80
           backdrop-blur-2xl
 
           dark:border-white/[0.08]
-          dark:bg-[#090908]/80
+          dark:bg-[#0b0b0a]/80
         "
       >
         <div

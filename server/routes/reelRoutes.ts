@@ -49,6 +49,34 @@ const videoMulter = multer({
   }
 });
 
+/**
+ * Normalizes reel video and poster URLs for optimal delivery.
+ * Automatically fixes historical database records where posterUrl mistakenly pointed to raw .mov video.
+ */
+function normalizeReelMedia(reel: CraftReelDocument): CraftReelDocument {
+  if (!reel) return reel;
+  const videoUrl = reel.videoUrl || '';
+  let posterUrl = reel.posterUrl || '';
+
+  const isPosterVideo =
+    posterUrl &&
+    (posterUrl.endsWith('.mov') ||
+      posterUrl.endsWith('.MOV') ||
+      posterUrl.endsWith('.mp4') ||
+      posterUrl.endsWith('.webm'));
+
+  if ((!posterUrl || isPosterVideo) && videoUrl && videoUrl.includes('/video/upload/')) {
+    posterUrl = videoUrl
+      .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
+      .replace(/\.[^/.]+$/, '.jpg');
+  }
+
+  return {
+    ...reel,
+    videoUrl,
+    posterUrl
+  };
+}
 
 // GET /api/reels - Get all reels with optional filters
 router.get('/', async (req, res: Response) => {
@@ -150,7 +178,7 @@ router.get('/', async (req, res: Response) => {
 
     return res.json({
       success: true,
-      data: reels,
+      data: reels.map(normalizeReelMedia),
       count: reels.length
     });
   } catch (err: any) {
@@ -454,7 +482,7 @@ router.get('/:id', async (req, res: Response) => {
 
     return res.json({
       success: true,
-      data: reel
+      data: normalizeReelMedia(reel)
     });
   } catch (err: any) {
     Logger.error('[Reels] Error getting reel by id:', err);

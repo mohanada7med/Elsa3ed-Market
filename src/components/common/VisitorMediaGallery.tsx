@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 import { useApp } from '../../context/AppContext';
 import { adminMediaApi } from '../../services/api';
 import { AdminMediaUploader } from './AdminMediaUploader';
+import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia';
 
 import {
   Sparkles,
@@ -536,10 +537,11 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                   {selectedVideo && (
                     <video
                       key={selectedVideo}
-                      src={selectedVideo}
+                      src={getOptimizedVideoUrl(selectedVideo, { maxDimension: 1080 })}
                       controls
                       playsInline
-                      poster={localCover}
+                      preload="metadata"
+                      poster={getOptimizedVideoPoster(selectedVideo, localCover, 800)}
                       className="h-full w-full object-contain"
                     />
                   )}
@@ -578,8 +580,16 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                           }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="relative flex h-11 w-14 shrink-0 items-center justify-center rounded-lg bg-[#9a6a35] text-white">
-                            <Play className="h-4 w-4 fill-white" />
+                          <div className="relative flex h-11 w-16 shrink-0 items-center justify-center rounded-lg bg-black overflow-hidden border border-white/10">
+                            <img
+                              src={getOptimizedVideoPoster(vidUrl, undefined, 200)}
+                              alt=""
+                              className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                              <Play className="h-3.5 w-3.5 fill-white text-white drop-shadow" />
+                            </div>
                           </div>
                           <div className="min-w-0">
                             <p className="truncate text-xs font-bold text-black/85 dark:text-white/85">

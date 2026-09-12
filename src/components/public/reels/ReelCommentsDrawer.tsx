@@ -449,7 +449,7 @@ export const ReelCommentsDrawer: React.FC<
                           >
                             {comment.comment}
                           </p>
-                        </div>ذ
+                        </div>
                       </div>
                     ))}
                   </div>

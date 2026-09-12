@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { api } from '../../services/api.ts';
 import type { MediaItem } from '../../types.ts';
+import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 import {
   Upload,
   Link as LinkIcon,
@@ -904,6 +905,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                     {sf.isVideo ? (
                       <video
                         src={sf.localPreviewUrl}
+                        preload="metadata"
                         className="w-full h-full object-cover"
                         muted
                       />
@@ -1208,8 +1210,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           <div className="relative w-full aspect-video sm:aspect-21/9 max-h-[260px] rounded-xl overflow-hidden bg-black/10 flex items-center justify-center">
             {isVideoUrl(currentItems[0].url) ? (
               <video
-                src={currentItems[0].url}
+                src={getOptimizedVideoUrl(currentItems[0].url)}
                 controls
+                playsInline
+                preload="metadata"
+                poster={getOptimizedVideoPoster(currentItems[0].url, undefined, 800)}
                 className="w-full h-full object-contain"
               />
             ) : (
@@ -1316,10 +1321,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-black/10 flex items-center justify-center">
                     {isVideo ? (
                       <>
-                        <video
-                          src={img.url}
+                        <img
+                          src={getOptimizedVideoPoster(img.url, undefined, 400)}
+                          alt=""
                           className="w-full h-full object-cover"
-                          muted
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/25">
                           <div className="w-9 h-9 rounded-full bg-black/60 flex items-center justify-center text-white shadow-xs">
@@ -1481,7 +1487,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             {/* Thumbnail Preview */}
             <div className="w-full aspect-video rounded-xl overflow-hidden bg-black/10 border border-black/10 dark:border-white/10">
               {isVideoUrl(itemPendingDelete.url) ? (
-                <video src={itemPendingDelete.url} className="w-full h-full object-cover" muted />
+                <video src={getOptimizedVideoUrl(itemPendingDelete.url)} preload="metadata" className="w-full h-full object-cover" muted />
               ) : (
                 <img src={itemPendingDelete.url} alt="معاينة الحذف" className="w-full h-full object-cover" />
               )}
@@ -1533,9 +1539,11 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
             </button>
             {isVideoUrl(previewModalUrl) ? (
               <video
-                src={previewModalUrl}
+                src={getOptimizedVideoUrl(previewModalUrl)}
                 controls
                 autoPlay
+                playsInline
+                preload="metadata"
                 className="max-h-[78vh] max-w-full rounded-xl"
               />
             ) : (

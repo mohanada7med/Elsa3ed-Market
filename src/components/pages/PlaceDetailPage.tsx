@@ -366,9 +366,9 @@ export const PlaceDetailPage: React.FC = () => {
           className="
             absolute inset-0
             bg-gradient-to-l
-            from-[#110E0C]/95
-            via-[#110E0C]/50
-            to-[#110E0C]/15
+            from-[#0b0b0a]/95
+            via-[#0b0b0a]/50
+            to-[#0b0b0a]/15
           "
         />
 
@@ -376,8 +376,8 @@ export const PlaceDetailPage: React.FC = () => {
           className="
             absolute inset-0
             bg-gradient-to-t
-            from-[#110E0C]
-            via-[#110E0C]/45
+            from-[#0b0b0a]
+            via-[#0b0b0a]/45
             to-transparent
           "
         />

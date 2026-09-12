@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CraftReel, Governorate, Product, Seller } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { VideoUploadProgress } from './VideoUploadProgress.tsx';
+import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 import {
   Film,
   X,
@@ -280,10 +281,11 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   <>
                     <video
                       ref={videoRef}
-                      src={videoUrl}
-                      poster={posterUrl || productImage}
+                      src={getOptimizedVideoUrl(videoUrl, { maxDimension: 1080 })}
+                      poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 800)}
                       loop
                       playsInline
+                      preload="metadata"
                       className="w-full h-full object-cover"
                       onPlay={() => setIsPlaying(true)}
                       onPause={() => setIsPlaying(false)}
@@ -323,22 +325,20 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setVideoInputMode('url')}
-                      className={`px-2 py-1 rounded-md font-bold transition-all ${
-                        videoInputMode === 'url'
+                      className={`px-2 py-1 rounded-md font-bold transition-all ${videoInputMode === 'url'
                           ? 'bg-[#9a6a35] text-white'
                           : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
-                      }`}
+                        }`}
                     >
                       رابط URL
                     </button>
                     <button
                       type="button"
                       onClick={() => setVideoInputMode('upload')}
-                      className={`px-2 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${
-                        videoInputMode === 'upload'
+                      className={`px-2 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${videoInputMode === 'upload'
                           ? 'bg-[#9a6a35] text-white'
                           : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
-                      }`}
+                        }`}
                     >
                       <Upload className="w-3 h-3" />
                       <span>رفع ملف جديد</span>

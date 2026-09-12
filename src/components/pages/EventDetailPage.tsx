@@ -165,10 +165,10 @@ export const EventDetailPage: React.FC = () => {
           min-h-screen
           items-center
           justify-center
-          bg-[#f7f3eb]
-          text-[#201c17]
-          dark:bg-[#080807]
-          dark:text-[#f5f0e8]
+          bg-[#eee8dc]
+          text-[#211d18]
+          dark:bg-[#0b0b0a]
+          dark:text-[#f5f0e7]
         "
       >
         <div className="px-6 text-center">
@@ -230,12 +230,12 @@ export const EventDetailPage: React.FC = () => {
           min-h-screen
           items-center
           justify-center
-          bg-[#f7f3eb]
+          bg-[#eee8dc]
           px-5
-          text-[#201c17]
+          text-[#211d18]
 
-          dark:bg-[#080807]
-          dark:text-[#f5f0e8]
+          dark:bg-[#0b0b0a]
+          dark:text-[#f5f0e7]
         "
       >
         <div className="max-w-md text-center">
@@ -323,13 +323,13 @@ export const EventDetailPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#f7f3eb]
-        text-[#201c17]
+        bg-[#eee8dc]
+        text-[#211d18]
         transition-colors
         duration-500
 
-        dark:bg-[#080807]
-        dark:text-[#f5f0e8]
+        dark:bg-[#0b0b0a]
+        dark:text-[#f5f0e7]
       "
     >
       {/* =====================================================
@@ -379,11 +379,11 @@ export const EventDetailPage: React.FC = () => {
           z-[100]
           border-b
           border-black/[0.07]
-          bg-[#f7f3eb]/85
+          bg-[#eee8dc]/85
           backdrop-blur-2xl
 
           dark:border-white/[0.08]
-          dark:bg-[#080807]/85
+          dark:bg-[#0b0b0a]/85
         "
       >
         <div

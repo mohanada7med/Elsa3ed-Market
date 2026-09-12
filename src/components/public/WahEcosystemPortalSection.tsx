@@ -127,22 +127,42 @@ export const WahEcosystemPortalSection: React.FC = () => {
       "
     >
       {/* الرأس التحريري */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 pb-6 border-b border-black/10 dark:border-white/10">
-        <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-[#9a6a35] tracking-wider mb-2">
-            <Compass className="w-4 h-4 animate-spin-slow" />
-            <span>أبواب ودليل «وه»</span>
+      <div className="relative z-10 mb-12 sm:mb-16 text-[#211d18] dark:text-[#f5f0e7] select-none">
+        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+          <div>
+            {/* الشارة العلوية */}
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
+                <Compass size={14} className="animate-spin-slow text-[#9a6a35] dark:text-[#d6aa72]" />
+              </span>
+              DISCOVER / أبواب ودليل «وه»
+            </div>
+
+            {/* العنوان التايبوغرافي الضخم */}
+            <h2 className="font-heritage text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
+              الصعيد فى مكان واحد
+              <br />
+              <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+                «وه»
+              </span>
+            </h2>
+
+            {/* الشرح والمؤشر الجانبي */}
+            <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
+              <div className="hidden sm:block">
+                <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
+                  هتلاقى ايه
+                </div>
+                <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+              </div>
+
+              <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
+                لف في أبواب «وه» واكتشف بلاد الصعيد وناسه وتراثه؛ اسمع حكاياته وتفاصيله اللي مميزة كل حتة فيه من الجيزة لأسوان في مكان واحد.
+              </p>
+            </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
-            الصعيد كله في مكان واحد
-          </h2>
         </div>
-
-        <p className="text-sm text-black/60 dark:text-white/60 max-w-md">
-          لف في أبواب «وه» واكتشف بلاد الصعيد وناسه وتراثه، واسمع حكاياته وتفاصيله اللي مميزة كل حتة فيه.
-        </p>
       </div>
-
       {/* شاشة سطح المكتب: أكورديون أفقي متمدد سينمائي */}
       <div className="hidden lg:flex gap-3 h-[520px] w-full">
         {portals.map((portal, idx) => {

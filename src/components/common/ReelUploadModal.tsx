@@ -4,6 +4,7 @@ import { craftReelsService, HERITAGE_VIDEO_PRESETS } from '../../services/craftR
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
 import { VideoUploadProgress } from './VideoUploadProgress.tsx';
+import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 
 import {
   Film,
@@ -776,12 +777,13 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     {videoUrl ? (
                       <video
                         ref={previewVideoRef}
-                        src={videoUrl}
-                        poster={posterUrl || productImage}
+                        src={getOptimizedVideoUrl(videoUrl, { maxDimension: 1080 })}
+                        poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 800)}
                         autoPlay
                         loop
                         muted
                         playsInline
+                        preload="metadata"
                         className="w-full h-full object-cover"
                       />
                     ) : (

@@ -433,19 +433,27 @@ export class CloudinaryStorageProvider implements IStorageProvider {
         const isReady = !isProcessing && Boolean(resource.secure_url || resource.url);
         const rawUrl = resource.secure_url || resource.url;
 
-        // Automatically derive instant Cloudinary video poster thumbnail (frame at 1.0s, high quality jpg)
+        // Automatically derive instant Cloudinary video poster thumbnail (frame at 0s, fast f_auto,q_auto,w_800 jpg)
         let thumbnailUrl: string | undefined;
+        let optimizedUrl = rawUrl;
         if (rawUrl) {
-          thumbnailUrl = rawUrl.includes('/video/upload/')
-            ? rawUrl.replace('/video/upload/', '/video/upload/so_1.0/').replace(/\.[^/.]+$/, '.jpg')
-            : rawUrl.replace(/\.[^/.]+$/, '.jpg');
+          if (rawUrl.includes('/video/upload/')) {
+            thumbnailUrl = rawUrl
+              .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
+              .replace(/\.[^/.]+$/, '.jpg');
+            optimizedUrl = rawUrl
+              .replace('/video/upload/', '/video/upload/f_auto,q_auto/')
+              .replace(/\.(mov|MOV|webm|m4v)$/, '.mp4');
+          } else {
+            thumbnailUrl = rawUrl.replace(/\.[^/.]+$/, '.jpg');
+          }
         }
 
         return {
           exists: true,
           isReady,
           status: isReady ? 'ready' : 'processing',
-          url: rawUrl,
+          url: optimizedUrl,
           thumbnailUrl,
           duration: resource.duration,
           bytes: resource.bytes,

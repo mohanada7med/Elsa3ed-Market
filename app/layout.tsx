@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#B24C2B',
+  themeColor: '#9a6a35',
   width: 'device-width',
   initialScale: 1,
 };
@@ -38,7 +38,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[var(--wah-background,#FAF7F2)] dark:bg-[var(--wah-background,#110E0C)] text-[var(--wah-text,#241E1A)] dark:text-[var(--wah-text,#F7F3EE)] antialiased selection:bg-[var(--wah-primary,#B24C2B)]/20 selection:text-[var(--wah-primary,#B24C2B)]">
+      <body className="bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] antialiased selection:bg-[#9a6a35]/20 selection:text-[#9a6a35]">
         {children}
       </body>
     </html>

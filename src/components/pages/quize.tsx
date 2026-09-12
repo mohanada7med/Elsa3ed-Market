@@ -3,6 +3,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  useCallback,
 } from 'react';
 
 import { useApp } from '../../context/AppContext';
@@ -25,6 +26,7 @@ import {
   Trophy,
   X,
   Zap,
+  Target,
 } from 'lucide-react';
 
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
@@ -38,28 +40,44 @@ interface QuizQuestion {
 }
 
 const WAH_INTRO_AUDIO_URL = '/audio/site-intro.mp3';
-const TOTAL_QUIZ_TIME = 50; // 50 ثانية للاختبار كاملاً
+export const TOTAL_QUIZ_TIME = 50;
 
-const playBeep = (freq = 440, type: OscillatorType = 'sine', duration = 0.15) => {
-  try {
+// Singleton AudioContext لمنع تسريب الذاكرة والتعليق
+let globalAudioCtx: AudioContext | null = null;
+
+const getAudioContext = (): AudioContext | null => {
+  if (typeof window === 'undefined') return null;
+  if (!globalAudioCtx) {
     const AudioCtx =
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext })
         .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    if (AudioCtx) {
+      globalAudioCtx = new AudioCtx();
+    }
+  }
+  if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
+    globalAudioCtx.resume();
+  }
+  return globalAudioCtx;
+};
+
+const playBeep = (freq = 440, type: OscillatorType = 'sine', duration = 0.15) => {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start();
     osc.stop(ctx.currentTime + duration);
   } catch {
-    // AudioContext fallback
+    // تجاهل أخطاء تشغيل الصوت في المتصفحات المقيدة
   }
 };
 
@@ -435,7 +453,6 @@ const createQuiz = (): QuizQuestion[] => {
 };
 
 export const DialectDictionaryPage: React.FC = () => {
-  // سحب activePage من السياق لمعرفة الصفحة الحالية
   const { activePage, setActivePage } = useApp();
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
@@ -449,14 +466,13 @@ export const DialectDictionaryPage: React.FC = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(TOTAL_QUIZ_TIME);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   const introAudioRef = useRef<HTMLAudioElement | null>(null);
   const victoryPlayedRef = useRef(false);
 
   const currentQuestion = questions[currentIndex];
 
-  const startQuiz = () => {
+  const startQuiz = useCallback(() => {
     setQuestions(createQuiz());
     setCurrentIndex(0);
     setSelectedAnswer(null);
@@ -467,41 +483,42 @@ export const DialectDictionaryPage: React.FC = () => {
     setGameStarted(false);
     setCountdown(null);
     setTimeLeft(TOTAL_QUIZ_TIME);
-    setIsPlayingAudio(false);
     victoryPlayedRef.current = false;
 
     if (introAudioRef.current) {
       introAudioRef.current.pause();
       introAudioRef.current.currentTime = 0;
     }
-  };
+  }, []);
 
   useEffect(() => {
     startQuiz();
-  }, []);
+  }, [startQuiz]);
 
-  // مؤقت الجولة الشامل
-  // مؤقت الجولة الشامل مع صوت تحذيري في آخر 5 ثواني
+  // تايمر محسّن يعمل بفاصل زمني ثابت دون إعادة إنشاء الـ Interval كل ثانية
   useEffect(() => {
     if (!gameStarted || completed) return;
 
-    if (timeLeft <= 0) {
-      playBeep(220, 'sawtooth', 0.4); // صوت انتهاء الوقت
-      setCompleted(true);
-      return;
-    }
-
-    // تكتكة تحذيرية حادة وسريعة لآخر 5 ثواني (5, 4, 3, 2, 1)
-    if (timeLeft <= 5) {
-      playBeep(880, 'square', 0.08);
-    }
-
     const timer = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          playBeep(220, 'sawtooth', 0.4);
+          setCompleted(true);
+          return 0;
+        }
+
+        if (prev <= 6 && prev > 1) {
+          playBeep(880, 'square', 0.06);
+        }
+
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [gameStarted, completed, timeLeft]);
+  }, [gameStarted, completed]);
+
   const beginGame = () => {
     playBeep(440, 'triangle', 0.15);
     setShowIntro(false);
@@ -580,10 +597,8 @@ export const DialectDictionaryPage: React.FC = () => {
       audio.currentTime = 0;
       audio.volume = 0.9;
       await audio.play();
-      setIsPlayingAudio(true);
-      audio.onended = () => setIsPlayingAudio(false);
     } catch {
-      setIsPlayingAudio(false);
+      // تجاهل أخطاء تشغيل الصوت
     }
   };
 
@@ -650,7 +665,7 @@ export const DialectDictionaryPage: React.FC = () => {
           url: shareUrl,
         });
       } catch {
-        // user cancel
+        // تم إلغاء المشاركة
       }
       return;
     }
@@ -671,7 +686,7 @@ export const DialectDictionaryPage: React.FC = () => {
 
   if (!questions.length) {
     return (
-      <div className="min-h-screen bg-[#f3eee5] dark:bg-[#090908] flex items-center justify-center">
+      <div className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#9a6a35]/20 border-t-[#9a6a35] dark:border-[#d6aa72]/20 dark:border-t-[#d6aa72] rounded-full animate-spin mx-auto mb-4" />
           <p className="text-black/55 dark:text-white/55 font-bold text-sm">
@@ -685,32 +700,28 @@ export const DialectDictionaryPage: React.FC = () => {
   return (
     <main
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-[#f3eee5] text-[#211d18] transition-colors duration-500 dark:bg-[#090908] dark:text-[#f4eee5]"
+      className="min-h-screen overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7]"
     >
-      {/* =====================================================
-          DECORATIVE BACKGROUND
-      ===================================================== */}
+      {/* خلفية مخففة جداً للموبايل لتقليل إجهاد كارت الشاشة */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <NubianGeometricPattern opacity={0.04} />
-
-        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-[#9a6a35]/[0.07] dark:border-[#d6aa72]/[0.06]" />
-        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-[#9a6a35]/[0.05] dark:border-[#d6aa72]/[0.05]" />
-        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-[#9a6a35]/30 dark:bg-[#d6aa72]/30" />
+        <div className="opacity-40">
+          <NubianGeometricPattern opacity={0.03} />
+        </div>
+        {/* إخفاء الحلقات الضخمة في الشاشات الصغيرة */}
+        <div className="hidden sm:block absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-[#9a6a35]/[0.05] dark:border-[#d6aa72]/[0.04]" />
+        <div className="hidden sm:block absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-[#9a6a35]/[0.04] dark:border-[#d6aa72]/[0.03]" />
       </div>
 
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
-      <header className="relative z-50 border-b border-black/[0.07] bg-[#f3eee5]/80 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#090908]/80">
-        <div className="mx-auto flex h-[72px] max-w-[1700px] items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-16">
-          {/* إخفاء زر الرئيسية لو activePage == 'home' */}
+      {/* الهيدر مع تقليل البلور على الموبايل */}
+      <header className="relative z-50 border-b border-black/[0.07] bg-[#eee8dc]/95 sm:bg-[#eee8dc]/80 sm:backdrop-blur-md dark:border-white/[0.08] dark:bg-[#0b0b0a]/95 sm:dark:bg-[#0b0b0a]/80">
+        <div className="mx-auto flex h-[64px] sm:h-[72px] max-w-[1700px] items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-16">
           {activePage !== 'home' ? (
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="group flex items-center gap-3 text-xs font-black transition-all hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer"
+              className="group flex items-center gap-3 text-xs font-black hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 transition-all group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
                 <ArrowLeft
                   size={15}
                   className="transition-transform group-hover:-translate-x-0.5"
@@ -726,13 +737,13 @@ export const DialectDictionaryPage: React.FC = () => {
             <div className="text-[8px] font-black tracking-[0.45em] text-[#9a6a35] dark:text-[#d6aa72]">
               WAH
             </div>
-            <div className="mt-1 text-xs font-black">اختبار اللهجة</div>
+            <div className="mt-0.5 text-xs font-black">اختبار اللهجة</div>
           </div>
 
           <button
             type="button"
             onClick={() => setActivePage('categories')}
-            className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black transition-all hover:bg-[#211d18] hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer"
+            className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black hover:bg-[#211d18] hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer"
           >
             <span className="hidden sm:block">اكتشف التصنيفات</span>
             <ArrowUpLeft
@@ -743,20 +754,18 @@ export const DialectDictionaryPage: React.FC = () => {
         </div>
       </header>
 
-      {/* =====================================================
-          1. COUNTDOWN STATE
-      ===================================================== */}
+      {/* 1. مرحلة العد التنازلي */}
       {countdown !== null && (
         <section className="relative z-10 flex min-h-[calc(100vh-72px)] items-center justify-center px-5 py-12">
           <div className="relative text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-[#121210]/70 text-[9px] font-black tracking-[0.25em] text-[#9a6a35] dark:text-[#d6aa72] mb-6 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#121210] text-[9px] font-black tracking-[0.25em] text-[#9a6a35] dark:text-[#d6aa72] mb-6">
               <Zap size={14} />
               PREPARE FOR THE QUIZ
             </div>
 
             <div
               key={countdown}
-              className="text-[9rem] sm:text-[13rem] leading-none font-black text-[#9a6a35] dark:text-[#d6aa72] select-none animate-pulse"
+              className="text-[8rem] sm:text-[13rem] leading-none font-black text-[#9a6a35] dark:text-[#d6aa72] select-none"
             >
               {countdown}
             </div>
@@ -768,39 +777,36 @@ export const DialectDictionaryPage: React.FC = () => {
         </section>
       )}
 
-      {/* =====================================================
-          2. LOBBY / INTRO STATE
-      ===================================================== */}
+      {/* 2. شاشة البداية */}
       {showIntro && countdown === null && (
         <div className="relative z-10">
-          <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-28 xl:px-16">
-            <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
-              {/* Main Title Section */}
+          <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 xl:px-16">
+            <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
-                <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
+                <div className="mb-6 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                    <Sparkles size={13} />
+                    <Target size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
                   </span>
                   WAH / DIALECT CHALLENGE
                 </div>
 
-                <h1 className="max-w-6xl text-[18vw] font-black leading-[0.78] tracking-[-0.1em] sm:text-[13vw] lg:text-[9rem] xl:text-[10.5rem]">
+                <h1 className="max-w-6xl text-[16vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[13vw] lg:text-[9rem]">
                   انت
                   <br />
-                  <span className="mr-[8vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-28">
+                  <span className="mr-[6vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-28">
                     صعيدي؟
                   </span>
                 </h1>
 
-                <div className="mt-10 grid max-w-3xl gap-7 sm:grid-cols-[90px_1fr]">
+                <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[90px_1fr]">
                   <div className="hidden sm:block">
                     <div className="text-[9px] font-black tracking-[0.2em] text-black/35 dark:text-white/30">
-                      01
+                      اختبار اللهجة
                     </div>
                     <div className="mt-3 h-px w-12 bg-[#9a6a35] dark:bg-[#d6aa72]" />
                   </div>
 
-                  <p className="max-w-2xl text-sm font-medium leading-8 text-black/55 dark:text-white/55 sm:text-base sm:leading-9">
+                  <p className="max-w-2xl text-sm font-medium leading-7 text-black/60 dark:text-white/60 sm:text-base sm:leading-8">
                     10 أسئلة سريعة تقيس فهمك الحقيقي لمفردات وكلام أهل الصعيد.
                     معاك {TOTAL_QUIZ_TIME} ثانية للجولة كاملة. لو خلص الوقت هيتم
                     اعتماد درجتك فوري!
@@ -808,14 +814,12 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Side Card / Stats Box */}
+              {/* بطاقة معلومات الاختبار */}
               <div className="relative">
-                <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-[#e8e0d2] p-7 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8">
-                  <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full border border-[#9a6a35]/15 dark:border-[#d6aa72]/10" />
-
+                <div className="relative overflow-hidden rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8">
                   <div className="relative">
-                    <div className="mb-10 flex items-center justify-between">
-                      <div className="text-[8px] font-black tracking-[0.3em] text-black/35 dark:text-white/35">
+                    <div className="mb-8 flex items-center justify-between">
+                      <div className="text-[8px] font-black tracking-[0.3em] text-black/40 dark:text-white/40">
                         QUIZ OVERVIEW
                       </div>
                       <Flame
@@ -824,38 +828,38 @@ export const DialectDictionaryPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-3">
                       <div>
-                        <div className="text-4xl font-black tracking-[-0.07em]">
+                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
                           10
                         </div>
-                        <div className="mt-2 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
                           أسئلة
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-4xl font-black tracking-[-0.07em]">
+                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
                           {formatTime(TOTAL_QUIZ_TIME)}
                         </div>
-                        <div className="mt-2 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
                           وقت الجولة
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-4xl font-black tracking-[-0.07em]">
+                        <div className="text-3xl sm:text-4xl font-black tracking-tighter">
                           50
                         </div>
-                        <div className="mt-2 text-[10px] font-medium text-black/50 dark:text-white/40">
+                        <div className="mt-1 text-[10px] font-medium text-black/50 dark:text-white/40">
                           كلمة بالبنك
                         </div>
                       </div>
                     </div>
 
-                    <div className="mt-8 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
+                    <div className="mt-6 flex items-center gap-2 border-t border-black/10 pt-4 dark:border-white/10">
                       <CircleDot
-                        size={13}
+                        size={12}
                         className="text-[#9a6a35] dark:text-[#d6aa72]"
                       />
                       <span className="text-[10px] font-bold">
@@ -868,30 +872,26 @@ export const DialectDictionaryPage: React.FC = () => {
             </div>
           </section>
 
-          {/* CTA Box */}
-          <section className="relative z-30 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pb-16">
-            <div className="relative overflow-hidden rounded-[2.5rem] bg-[#211d18] px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-16">
-              <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full border border-white/[0.08]" />
-              <div className="pointer-events-none absolute -bottom-32 right-[30%] h-72 w-72 rounded-full border border-white/[0.05]" />
-
+          {/* زر بدء اللعبة */}
+          <section className="relative z-30 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pb-12">
+            <div className="relative overflow-hidden rounded-3xl bg-[#211d18] px-6 py-8 text-white sm:px-10 sm:py-12">
               <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <div className="mb-3 text-[9px] font-black tracking-[0.25em] text-[#d6aa72]">
+                  <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-[#d6aa72]">
                     READY TO START?
                   </div>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.05em]">
+                  <h2 className="text-2xl sm:text-4xl font-black">
                     مستعد لاختبار الصعيد؟
                   </h2>
-                  <p className="mt-3 max-w-xl text-xs sm:text-sm leading-7 text-white/50">
-                    شوف نفسك صعيدي أصيل وتستحق لقب العمدة ولا محتاج تزور قنا
-                    وأسيوط وسوهاج تاني.
+                  <p className="mt-2 max-w-xl text-xs sm:text-sm leading-6 text-white/50">
+                    شوف نفسك صعيدي أصيل وتستحق لقب العمدة ولا محتاج تلف لفة تانية في القرى.
                   </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={beginGame}
-                  className="group inline-flex items-center justify-center gap-2.5 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-6 py-3 rounded-2xl border border-black/10 dark:border-white/10 transition-all duration-300 shadow-md self-start md:self-auto cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-7 py-3.5 rounded-xl border border-white/10 transition-colors shadow-sm self-start lg:self-auto cursor-pointer"
                 >
                   ابدأ التحدي الآن
                 </button>
@@ -901,198 +901,177 @@ export const DialectDictionaryPage: React.FC = () => {
         </div>
       )}
 
-      {/* =====================================================
-          3. ACTIVE GAMEPLAY INTERACTION
-      ===================================================== */}
+      {/* 3. شاشة الأسئلة والتفاعل */}
       {!completed && currentQuestion && gameStarted && (
-        <section className="relative z-20 mx-auto max-w-[1100px] px-5 pt-8 pb-24 sm:px-8 sm:pt-12">
-          {/* Top Bar: Progress & Timer */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3 text-xs font-black">
-              <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] dark:bg-[#d6aa72]/15 dark:text-[#d6aa72]">
-                <Flame size={17} />
+        <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-20 sm:px-8 sm:pt-10">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs font-black">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#9a6a35]/10 text-[#9a6a35] dark:bg-[#d6aa72]/15 dark:text-[#d6aa72]">
+                <Flame size={15} />
               </span>
               سؤال {currentIndex + 1} من {questions.length}
             </div>
 
-            {/* Timer Badge */}
             <div
-              className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black transition-colors ${timeLeft <= 15
-                ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 animate-pulse'
+              className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-black ${timeLeft <= 15
+                ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
                 : 'bg-[#e8e0d2] text-[#211d18] dark:bg-[#121210] dark:text-[#f4eee5] border border-black/5 dark:border-white/10'
                 }`}
             >
-              <Clock size={15} />
+              <Clock size={14} />
               <span>{formatTime(timeLeft)}</span>
             </div>
 
-            {/* Score */}
-            <div className="rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10 border border-[#9a6a35]/20 dark:border-[#d6aa72]/20 px-4 py-2 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
+            <div className="rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10 border border-[#9a6a35]/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
               النقاط: {score}
             </div>
           </div>
 
-          {/* Time Progress Bar */}
-          <div className="mb-8 h-1.5 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
+          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
             <div
-              className={`h-full transition-all duration-1000 ${timeLeft <= 15 ? 'bg-rose-500' : 'bg-[#9a6a35] dark:bg-[#d6aa72]'
+              className={`h-full transition-all duration-300 ${timeLeft <= 15 ? 'bg-rose-500' : 'bg-[#9a6a35] dark:bg-[#d6aa72]'
                 }`}
               style={{ width: `${(timeLeft / TOTAL_QUIZ_TIME) * 100}%` }}
             />
           </div>
 
-          {/* Main Question Card */}
           <div
             key={currentQuestion.id}
-            className="relative overflow-hidden rounded-[2.5rem] border border-black/[0.08] bg-[#e8e0d2]/70 p-6 backdrop-blur-xl dark:border-white/[0.08] dark:bg-[#121210] sm:p-10"
+            className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-5 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8"
           >
-            <div className="pointer-events-none absolute -left-20 -top-20 h-52 w-52 rounded-full border border-[#9a6a35]/15 dark:border-[#d6aa72]/10" />
-
-            <div className="relative z-10">
-              <div className="mb-6 inline-flex items-center gap-2 text-[9px] font-black tracking-[0.25em] text-[#9a6a35] dark:text-[#d6aa72]">
-                <ScrollText size={13} />
-                QUESTION ARCHIVE
-              </div>
-
-              <h2 className="mb-8 text-2xl font-black leading-relaxed sm:text-3xl lg:text-4xl">
-                {currentQuestion.question}
-              </h2>
-
-              <div className="grid gap-3 sm:gap-4">
-                {currentQuestion.options.map((option, index) => {
-                  const isSelected = selectedAnswer === option;
-                  const isCorrect = option === currentQuestion.correctAnswer;
-
-                  let cardClass =
-                    'border-black/[0.08] bg-white/70 dark:border-white/[0.08] dark:bg-white/[0.04] hover:bg-white dark:hover:bg-white/[0.08] text-[#211d18] dark:text-[#f4eee5]';
-
-                  if (selectedAnswer) {
-                    if (isCorrect) {
-                      cardClass =
-                        'border-emerald-500 bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200';
-                    } else if (isSelected) {
-                      cardClass =
-                        'border-rose-500 bg-rose-50/90 dark:bg-rose-950/40 text-rose-900 dark:text-rose-200';
-                    } else {
-                      cardClass =
-                        'border-black/[0.05] dark:border-white/[0.05] opacity-35';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={`${currentQuestion.id}-${index}`}
-                      type="button"
-                      disabled={Boolean(selectedAnswer)}
-                      onClick={() => handleAnswer(option)}
-                      className={`flex w-full cursor-pointer items-center gap-4 rounded-2xl border p-4 text-right transition-all sm:p-5 ${cardClass}`}
-                    >
-                      <span
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-black transition-all ${selectedAnswer && isCorrect
-                          ? 'bg-emerald-500 text-white'
-                          : selectedAnswer && isSelected
-                            ? 'bg-rose-500 text-white'
-                            : 'border border-black/10 bg-white dark:border-white/10 dark:bg-[#1f1d1a] text-[#9a6a35] dark:text-[#d6aa72]'
-                          }`}
-                      >
-                        {selectedAnswer && isCorrect ? (
-                          <Check size={16} />
-                        ) : selectedAnswer && isSelected ? (
-                          <X size={16} />
-                        ) : (
-                          String.fromCharCode(65 + index)
-                        )}
-                      </span>
-
-                      <span className="text-sm font-bold leading-7 sm:text-base">
-                        {option}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Instant Explanation Box */}
-              {selectedAnswer && (
-                <div className="mt-6 rounded-2xl border border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-[#1a1916]">
-                  <div className="mb-2 flex items-center gap-2">
-                    {selectedAnswer === currentQuestion.correctAnswer ? (
-                      <Check
-                        size={17}
-                        className="text-emerald-600 dark:text-emerald-400"
-                      />
-                    ) : (
-                      <X
-                        size={17}
-                        className="text-rose-500 dark:text-rose-400"
-                      />
-                    )}
-                    <span className="text-xs font-black">
-                      {selectedAnswer === currentQuestion.correctAnswer
-                        ? 'إجابة صحيحة'
-                        : 'إجابة خاطئة'}
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm leading-7 text-black/65 dark:text-white/65 font-medium">
-                    {currentQuestion.explanation}
-                  </p>
-                </div>
-              )}
+            <div className="mb-4 inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] text-[#9a6a35] dark:text-[#d6aa72]">
+              <ScrollText size={12} />
+              QUESTION ARCHIVE
             </div>
+
+            <h2 className="mb-6 text-xl font-black leading-snug sm:text-3xl">
+              {currentQuestion.question}
+            </h2>
+
+            <div className="grid gap-3">
+              {currentQuestion.options.map((option, index) => {
+                const isSelected = selectedAnswer === option;
+                const isCorrect = option === currentQuestion.correctAnswer;
+
+                let cardClass =
+                  'border-black/[0.08] bg-white dark:border-white/[0.08] dark:bg-[#181715] text-[#211d18] dark:text-[#f4eee5]';
+
+                if (selectedAnswer) {
+                  if (isCorrect) {
+                    cardClass =
+                      'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200';
+                  } else if (isSelected) {
+                    cardClass =
+                      'border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-900 dark:text-rose-200';
+                  } else {
+                    cardClass =
+                      'border-black/[0.04] dark:border-white/[0.04] opacity-40';
+                  }
+                }
+
+                return (
+                  <button
+                    key={`${currentQuestion.id}-${index}`}
+                    type="button"
+                    disabled={Boolean(selectedAnswer)}
+                    onClick={() => handleAnswer(option)}
+                    className={`flex w-full cursor-pointer items-center gap-3.5 rounded-xl border p-3.5 text-right transition-colors sm:p-4 ${cardClass}`}
+                  >
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black ${selectedAnswer && isCorrect
+                        ? 'bg-emerald-500 text-white'
+                        : selectedAnswer && isSelected
+                          ? 'bg-rose-500 text-white'
+                          : 'border border-black/10 bg-[#f7f5f0] dark:border-white/10 dark:bg-[#201e1b] text-[#9a6a35] dark:text-[#d6aa72]'
+                        }`}
+                    >
+                      {selectedAnswer && isCorrect ? (
+                        <Check size={14} />
+                      ) : selectedAnswer && isSelected ? (
+                        <X size={14} />
+                      ) : (
+                        String.fromCharCode(65 + index)
+                      )}
+                    </span>
+
+                    <span className="text-xs font-bold leading-6 sm:text-base">
+                      {option}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {selectedAnswer && (
+              <div className="mt-5 rounded-xl border border-black/10 bg-white/90 p-4 dark:border-white/10 dark:bg-[#181715]">
+                <div className="mb-1.5 flex items-center gap-1.5">
+                  {selectedAnswer === currentQuestion.correctAnswer ? (
+                    <Check
+                      size={15}
+                      className="text-emerald-600 dark:text-emerald-400"
+                    />
+                  ) : (
+                    <X
+                      size={15}
+                      className="text-rose-500 dark:text-rose-400"
+                    />
+                  )}
+                  <span className="text-xs font-black">
+                    {selectedAnswer === currentQuestion.correctAnswer
+                      ? 'إجابة صحيحة'
+                      : 'إجابة خاطئة'}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm leading-6 text-black/70 dark:text-white/70 font-medium">
+                  {currentQuestion.explanation}
+                </p>
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* =====================================================
-          4. RESULTS SCREEN (BRAND STATEMENT & SHARE)
-      ===================================================== */}
+      {/* 4. شاشة النتائج */}
       {completed && (
-        <section className="relative z-20 mx-auto max-w-[1200px] px-5 pt-8 pb-20 sm:px-8 sm:pt-14">
-          <div className="relative overflow-hidden rounded-[2.5rem] border border-black/[0.08] bg-[#e8e0d2]/70 p-6 sm:p-12 text-center backdrop-blur-xl dark:border-white/[0.08] dark:bg-[#121210]">
-            <div className="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full border border-[#9a6a35]/15 dark:border-[#d6aa72]/10" />
-            <div className="pointer-events-none absolute -right-32 -bottom-32 h-80 w-80 rounded-full border border-black/5 dark:border-white/5" />
-
-            <div className="relative z-10 max-w-2xl mx-auto">
-              {/* Badge */}
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#1a1815] px-4 py-2 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
-                <Trophy size={16} />
+        <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-16 sm:px-8 sm:pt-10">
+          <div className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 sm:p-10 text-center dark:border-white/[0.08] dark:bg-[#121210]">
+            <div className="max-w-xl mx-auto">
+              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
+                <Trophy size={14} />
                 {result.badge}
               </div>
 
-              {/* Time out notice if unfinished */}
               {timeLeft <= 0 && currentIndex < questions.length - 1 && (
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-rose-500/10 px-4 py-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 border border-rose-500/20">
-                  <Clock size={14} />
+                <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3.5 py-1 text-xs font-bold text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                  <Clock size={13} />
                   انتهى الوقت المحدد للاختبار!
                 </div>
               )}
 
-              {/* Score Display */}
-              <div className="my-6">
-                <div className="text-[10px] font-black tracking-[0.3em] text-black/40 dark:text-white/40 mb-2">
+              <div className="my-4">
+                <div className="text-[9px] font-black tracking-[0.25em] text-black/40 dark:text-white/40 mb-1">
                   YOUR FINAL SCORE
                 </div>
-                <div className="text-7xl sm:text-9xl font-black text-[#9a6a35] dark:text-[#d6aa72] tracking-tighter">
+                <div className="text-6xl sm:text-8xl font-black text-[#9a6a35] dark:text-[#d6aa72] tracking-tight">
                   {score}
-                  <span className="text-2xl sm:text-4xl text-black/40 dark:text-white/40 font-bold">
+                  <span className="text-xl sm:text-3xl text-black/40 dark:text-white/40 font-bold">
                     /10
                   </span>
                 </div>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-black tracking-tight mb-4">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-3">
                 {result.title}
               </h2>
 
-              <p className="text-sm sm:text-base leading-8 text-black/60 dark:text-white/60 mb-8 font-medium">
+              <p className="text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60 mb-6 font-medium">
                 {result.description}
               </p>
 
-              {/* Cultural recognition callout */}
               {result.isSaidi && (
-                <div className="mb-8 inline-flex items-center gap-3 rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#1a1815] px-5 py-3.5">
+                <div className="mb-6 inline-flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-4 py-2.5">
                   <Gem
-                    size={18}
+                    size={16}
                     className="text-[#9a6a35] dark:text-[#d6aa72]"
                   />
                   <span className="text-xs font-black">
@@ -1101,10 +1080,10 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Share Box Styled Like Market Dark Cards */}
-              <div className="rounded-[2rem] bg-[#211d18] p-6 sm:p-8 text-white text-right relative overflow-hidden mb-6">
-                <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-4">
-                  <div className="text-[9px] font-black tracking-[0.25em] text-[#d6aa72]">
+              {/* بطاقة المشاركة */}
+              <div className="rounded-2xl bg-[#211d18] p-5 sm:p-6 text-white text-right relative overflow-hidden mb-6">
+                <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-3">
+                  <div className="text-[8px] font-black tracking-[0.2em] text-[#d6aa72]">
                     WAH ARCHIVE CERTIFICATE
                   </div>
                   <div className="text-xs font-bold text-white/50">
@@ -1113,56 +1092,55 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
 
                 <div className="py-2 text-center">
-                  <div className="text-4xl sm:text-5xl font-black text-[#d6aa72] mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-[#d6aa72] mb-1">
                     {score} / 10
                   </div>
-                  <div className="text-base font-bold text-white/90">
+                  <div className="text-sm font-bold text-white/90">
                     {result.title}
                   </div>
                 </div>
 
-                {/* Social Share Buttons */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <button
                     type="button"
                     onClick={shareWhatsAppMessage}
-                    className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
+                    className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
                   >
-                    <MessageCircle size={16} />
+                    <MessageCircle size={15} />
                     واتساب
                   </button>
 
                   <button
                     type="button"
                     onClick={shareFacebookPost}
-                    className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#1877F2] hover:bg-[#0d6efd] text-white text-xs font-black transition-colors cursor-pointer"
+                    className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[#1877F2] hover:bg-[#0d6efd] text-white text-xs font-black transition-colors cursor-pointer"
                   >
-                    <Facebook size={16} />
+                    <Facebook size={15} />
                     فيسبوك
                   </button>
 
                   <button
                     type="button"
                     onClick={handleNativeShare}
-                    className="sm:col-span-2 flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E1306C] via-[#FD1D1D] to-[#F56040] text-white text-xs font-black transition-opacity hover:opacity-90 cursor-pointer"
+                    className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#E1306C] via-[#FD1D1D] to-[#F56040] text-white text-xs font-black transition-opacity hover:opacity-90 cursor-pointer"
                   >
-                    <Share2 size={16} />
+                    <Share2 size={15} />
                     مشاركة النتيجة ستوري
                   </button>
 
                   <button
                     type="button"
                     onClick={copyResult}
-                    className="sm:col-span-2 flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/15 text-white text-xs font-black transition-colors cursor-pointer"
+                    className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 hover:bg-white/15 text-white text-xs font-black transition-colors cursor-pointer"
                   >
                     {copied ? (
                       <>
-                        <Check size={16} className="text-emerald-400" />
+                        <Check size={15} className="text-emerald-400" />
                         تم نسخ الرابط والنتيجة
                       </>
                     ) : (
                       <>
-                        <Copy size={16} />
+                        <Copy size={15} />
                         نسخ نص النتيجة
                       </>
                     )}
@@ -1170,14 +1148,14 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* أزرار الإعادة */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   type="button"
                   onClick={startQuiz}
-                  className="group flex h-14 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-[#211d18] px-8 text-xs font-black text-white hover:bg-[#9a6a35] dark:bg-white dark:text-black dark:hover:bg-[#d6aa72] transition-all cursor-pointer"
+                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#211d18] px-6 text-xs font-black text-white hover:bg-[#9a6a35] dark:bg-white dark:text-black dark:hover:bg-[#d6aa72] transition-colors cursor-pointer"
                 >
-                  <RefreshCw size={15} />
+                  <RefreshCw size={14} />
                   جولة جديدة بأسئلة مختلفة
                 </button>
 
@@ -1185,7 +1163,7 @@ export const DialectDictionaryPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActivePage('home')}
-                    className="flex h-14 w-full sm:w-auto items-center justify-center gap-2 rounded-full border border-black/10 px-8 text-xs font-black text-black/70 hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5 transition-all cursor-pointer"
+                    className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-black/10 px-6 text-xs font-black text-black/70 hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     العودة للرئيسية
                   </button>
@@ -1196,18 +1174,16 @@ export const DialectDictionaryPage: React.FC = () => {
         </section>
       )}
 
-      {/* =====================================================
-          FOOTER SPACER & HERITAGE STATEMENT
-      ===================================================== */}
-      <section className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-12">
-        <div className="mx-auto max-w-[1700px] px-5 py-12 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium text-black/40 dark:text-white/40">
+      {/* تذييل الصفحة */}
+      <footer className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-8">
+        <div className="mx-auto max-w-[1700px] px-5 py-8 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium text-black/40 dark:text-white/40">
           <div className="flex items-center gap-2">
-            <CircleDot size={12} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+            <CircleDot size={11} className="text-[#9a6a35] dark:text-[#d6aa72]" />
             <span>وه • توثيق الحكاية واللهجة الصعيدية الأصلية</span>
           </div>
           <div>جميع الحقوق محفوظة © {new Date().getFullYear()}</div>
         </div>
-      </section>
+      </footer>
     </main>
   );
 };

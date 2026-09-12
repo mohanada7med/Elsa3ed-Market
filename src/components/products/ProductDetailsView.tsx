@@ -206,8 +206,8 @@ export const ProductDetailsView: React.FC = () => {
           flex
           items-center
           justify-center
-          bg-[#f1ece3]
-          dark:bg-[#090908]
+          bg-[#eee8dc]
+          dark:bg-[#0b0b0a]
           px-5
         "
       >
@@ -245,8 +245,8 @@ export const ProductDetailsView: React.FC = () => {
           flex
           items-center
           justify-center
-          bg-[#f1ece3]
-          dark:bg-[#090908]
+          bg-[#eee8dc]
+          dark:bg-[#0b0b0a]
           px-5
         "
       >
@@ -332,11 +332,11 @@ export const ProductDetailsView: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#f1ece3]
+        bg-[#eee8dc]
         text-[#211d18]
         transition-colors
         duration-500
-        dark:bg-[#090908]
+        dark:bg-[#0b0b0a]
         dark:text-[#f5f0e7]
       "
     >
@@ -2498,12 +2498,12 @@ export const ProductDetailsView: React.FC = () => {
               z-50
               border-t
               border-black/10
-              bg-[#f7f3eb]/95
+              bg-[#eee8dc]/95
               p-3
               shadow-[0_-10px_40px_rgba(0,0,0,0.12)]
               backdrop-blur-2xl
               dark:border-white/10
-              dark:bg-[#11110f]/95
+              dark:bg-[#0b0b0a]/95
               sm:hidden
             "
           >

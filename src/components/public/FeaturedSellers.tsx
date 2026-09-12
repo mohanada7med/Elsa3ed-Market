@@ -1,8 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Star, MapPin, CheckCircle2, ArrowLeft } from 'lucide-react';
-import { motion } from 'motion/react';
-import { WAHSection } from '../../design-system/WAHSection';
+import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { WAHBadge } from '../../design-system/WAHBadge';
 
 export const FeaturedSellers: React.FC = () => {
@@ -13,27 +12,63 @@ export const FeaturedSellers: React.FC = () => {
   }
 
   return (
-    <WAHSection
+    <section
       id="featured-sellers-section"
-      eyebrow="شيوخ الصنعة وحرفيين الصعيد"
-
-      title="ورش وحكايات أهل الصنعة"
-
-      subtitle="اتعرف على أهل الصنعة، وشوف ورشهم واسمع حكاياتهم وحكايات تعبهم اللي اتوارثوها جيل ورا جيل في بلاد ونجوع الصعيد"
-
-      pattern="geometry"
-      action={
-        <button
-          type="button"
-          id="view-all-sellers-btn"
-          onClick={() => setActivePage('sellers')}
-          className="text-xs sm:text-sm font-bold text-[#9a6a35] hover:underline flex items-center gap-1 cursor-pointer"
-        >
-          <span>شوف كل الورش والحرفيين</span>
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-      }
+      dir="rtl"
+      className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 text-[#211d18] dark:text-[#f5f0e7] select-none"
     >
+      {/* Header Section بالتصميم التايبوغرافي المتناسق */}
+      <div className="relative z-10 mb-12 sm:mb-16">
+        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
+          <div>
+            {/* الشارة العلوية */}
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
+                <Sparkles size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+              </span>
+              MASTERS / شيوخ الصنعة وحرفيين الصعيد
+            </div>
+
+            {/* العنوان التايبوغرافي الضخم */}
+            <h2 className="font-heritage text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
+              أهل
+              <br />
+              <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+                الصنعة!
+              </span>
+            </h2>
+
+            {/* الشرح والمؤشر الجانبي */}
+            <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
+              <div className="hidden sm:block">
+                <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
+                  فنانين وه
+                </div>
+                <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+              </div>
+
+              <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
+                اتعرف على أهل الصنعة، وشوف ورشهم واسمع حكايات شقاهم وتعبهم اللي اتوارثوها جيل ورا جيل في بلاد ونجوع الصعيد.
+              </p>
+            </div>
+          </div>
+
+          {/* زر التوجيه بستايل الكبسولة المتطابق */}
+          <div className="lg:pb-3">
+            <button
+              type="button"
+              id="view-all-sellers-btn"
+              onClick={() => setActivePage('sellers')}
+              className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-[#9a6a35] dark:bg-zinc-800 dark:hover:bg-[#9a6a35] px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+            >
+              <span>شوف كل الورش والحرفيين</span>
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* بطاقات البائعين والورش */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sellers.slice(0, 6).map((seller, idx) => (
           <motion.div
@@ -117,7 +152,7 @@ export const FeaturedSellers: React.FC = () => {
           </motion.div>
         ))}
       </div>
-    </WAHSection>
+    </section>
   );
 };
 

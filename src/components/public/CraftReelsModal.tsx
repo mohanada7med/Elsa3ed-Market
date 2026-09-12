@@ -11,6 +11,7 @@ interface CraftReelsModalProps {
   onSelectProduct?: (productId: string) => void;
   onSelectSeller?: (sellerId: string) => void;
   onDeleteReel?: (reelId: string) => void;
+  hasBottomNav?: boolean;
 }
 
 export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
@@ -20,9 +21,9 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
   onClose,
   onSelectProduct,
   onSelectSeller,
-  onDeleteReel
+  onDeleteReel,
+  hasBottomNav = false
 }) => {
-  // Lock parent page scroll when modal is open and restore state cleanly upon unmount / close
   useEffect(() => {
     if (!isOpen) return;
 
@@ -39,6 +40,11 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
     document.body.style.width = '100%';
     document.documentElement.style.overflow = 'hidden';
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
       document.body.style.overflow = originalOverflow;
       document.body.style.position = originalPosition;
@@ -46,8 +52,9 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
       document.body.style.width = originalWidth;
       document.documentElement.style.overflow = originalHtmlOverflow;
       window.scrollTo(0, scrollY);
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen || reels.length === 0) return null;
 
@@ -55,20 +62,19 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
     <AnimatePresence>
       <div
         id="craft-reels-modal-overlay"
-        className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 select-none animate-in fade-in duration-200"
+        className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-lg flex items-center justify-center select-none"
         style={{
           height: '100dvh',
           maxHeight: '100dvh',
-          overscrollBehavior: 'contain',
-          overscrollBehaviorY: 'contain'
+          overscrollBehavior: 'contain'
         }}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
+          exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="w-full h-full flex items-center justify-center overflow-hidden"
+          className="w-full h-full flex items-center justify-center overflow-hidden relative"
         >
           <ReelFeed
             reels={reels}
@@ -78,7 +84,7 @@ export const CraftReelsModal: React.FC<CraftReelsModalProps> = ({
             onDeleteReel={onDeleteReel}
             onClose={onClose}
             showCloseButton={true}
-            hasBottomNav={false}
+            hasBottomNav={hasBottomNav}
           />
         </motion.div>
       </div>

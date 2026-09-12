@@ -113,7 +113,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-[#fdfbf7] dark:bg-[#14120e] text-[#211d18] dark:text-[#f5f0e7] transition-colors">
+    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] transition-colors">
       <div className="w-full max-w-md">
         {/* Card Container */}
         <div className="relative rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#1c1813]/90 backdrop-blur-xl shadow-xl overflow-hidden p-6 sm:p-8">

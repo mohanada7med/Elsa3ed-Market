@@ -157,7 +157,7 @@ export const AdminMapEditorPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black/5 dark:bg-white/5 text-[#241E1A] dark:text-[#FAF6F2] font-sans pb-16">
+    <div className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] font-sans pb-16">
       {/* Top Header */}
       <header className="border-b border-black/10 dark:border-white/10 dark:border-[#2C2420] bg-white/80 dark:bg-[#1A1614]/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4 flex-wrap">
