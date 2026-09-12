@@ -131,8 +131,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
         <main
             dir="rtl"
             className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] select-none transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting
-                    ? 'opacity-0 -translate-y-6 scale-[0.97] pointer-events-none'
-                    : 'opacity-100 translate-y-0 scale-100'
+                ? 'opacity-0 -translate-y-6 scale-[0.97] pointer-events-none'
+                : 'opacity-100 translate-y-0 scale-100'
                 }`}
         >
             {/* زر التخطي السريع */}
@@ -158,8 +158,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                 {/* شريط الصعيد العلوي */}
                 <div
                     className={`mb-6 flex items-center gap-3 text-xs font-bold tracking-[0.3em] text-[#80633f]/70 dark:text-[#c7a781] transition-all duration-500 ease-out ${phase === 'idle'
-                            ? 'opacity-100 translate-y-0'
-                            : 'opacity-0 -translate-y-4 pointer-events-none'
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-4 pointer-events-none'
                         }`}
                 >
                     <span className="h-px w-8 bg-[#9a6a35]/40" />
@@ -183,20 +183,20 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         disabled={phase !== 'idle'}
                         aria-label="شعار وه"
                         className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/90 dark:bg-white/5 backdrop-blur-md shadow-lg transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                ? 'h-36 w-36 cursor-pointer hover:scale-105 active:scale-95'
-                                : phase === 'welcoming'
-                                    ? 'h-28 w-28 cursor-default shadow-md'
-                                    : 'h-20 w-20 cursor-default shadow-sm'
+                            ? 'h-36 w-36 cursor-pointer hover:scale-105 active:scale-95'
+                            : phase === 'welcoming'
+                                ? 'h-28 w-28 cursor-default shadow-md'
+                                : 'h-20 w-20 cursor-default shadow-sm'
                             }`}
                     >
                         <img
                             src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
                             alt="لوجو وه"
                             className={`object-contain select-none transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                    ? 'h-24 w-24 drop-shadow'
-                                    : phase === 'welcoming'
-                                        ? 'h-18 w-18'
-                                        : 'h-12 w-12'
+                                ? 'h-24 w-24 drop-shadow'
+                                : phase === 'welcoming'
+                                    ? 'h-18 w-18'
+                                    : 'h-12 w-12'
                                 }`}
                         />
                     </button>
@@ -207,8 +207,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     {/* 1. مرحلة الزرار */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                                : 'opacity-0 translate-y-3 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 pointer-events-auto'
+                            : 'opacity-0 translate-y-3 pointer-events-none'
                             }`}
                     >
                         <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl whitespace-nowrap">
@@ -222,8 +222,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     {/* 2. مرحلة الترحيب */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'welcoming'
-                                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
-                                : 'opacity-0 scale-95 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                            : 'opacity-0 scale-95 pointer-events-none'
                             }`}
                     >
                         <div className="mb-2 flex items-center justify-center gap-2">
@@ -239,15 +239,15 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             ومطرحك
                         </h2>
                         <p className="mt-2 text-xs font-medium text-[#806f5b]/80 dark:text-[#a89988] whitespace-nowrap">
-                            أهلاً بيك في منصة وه المتكاملة
+                            أهلاً بيك في "وه" اول منصه متاكمله للصعيد
                         </p>
                     </div>
 
                     {/* 3. مرحلة التحميل والركائز (بدون أي تقطيع أو كسر سطر) */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center text-center w-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'loading_pillars'
-                                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                                : 'opacity-0 translate-y-3 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 pointer-events-auto'
+                            : 'opacity-0 translate-y-3 pointer-events-none'
                             }`}
                     >
                         <div className="grid grid-cols-1 place-items-center w-full min-h-[80px]">
@@ -259,8 +259,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                     <div
                                         key={idx}
                                         className={`col-start-1 row-start-1 flex flex-col items-center justify-center w-full transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive
-                                                ? 'opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto'
-                                                : 'opacity-0 translate-y-2 scale-[0.98] blur-[2px] pointer-events-none'
+                                            ? 'opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto'
+                                            : 'opacity-0 translate-y-2 scale-[0.98] blur-[2px] pointer-events-none'
                                             }`}
                                     >
                                         {/* شارة العنوان */}
@@ -286,8 +286,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                 <span
                                     key={idx}
                                     className={`h-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${pillarIndex === idx
-                                            ? 'w-6 bg-[#9a6a35]'
-                                            : 'w-1.5 bg-black/15 dark:bg-white/20'
+                                        ? 'w-6 bg-[#9a6a35]'
+                                        : 'w-1.5 bg-black/15 dark:bg-white/20'
                                         }`}
                                 />
                             ))}
