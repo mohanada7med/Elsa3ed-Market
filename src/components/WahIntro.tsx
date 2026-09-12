@@ -5,7 +5,7 @@ import { ShoppingBag, Film, Landmark } from 'lucide-react';
 
 interface WahIntroProps {
     onFinish: () => void;
-    onEnter?: () => void;
+    onBeforeFinish?: () => void;
 }
 
 const PILLARS = [
@@ -28,7 +28,7 @@ const PILLARS = [
 
 type IntroPhase = 'idle' | 'welcoming' | 'loading_pillars';
 
-export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
+export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onBeforeFinish }) => {
     const [phase, setPhase] = useState<IntroPhase>('idle');
     const [pillarIndex, setPillarIndex] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
@@ -38,11 +38,13 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
 
     const handleComplete = () => {
         setIsExiting(true);
-        // منح مهلة لإتمام حركة التلاشي الناعمة قبل إزالة المكون من الـ DOM
+        // إشعار الـ App بالبدء في الظهور بالتزامن
+        onBeforeFinish?.();
+
+        // إزالة الـ Intro بعد اكتمال الـ Transition
         setTimeout(() => {
             onFinish();
-            onEnter?.();
-        }, 500);
+        }, 650);
     };
 
     useEffect(() => {
@@ -51,7 +53,6 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
         };
     }, []);
 
-    // إدارة مؤقتات شرائح التحميل
     useEffect(() => {
         if (phase !== 'loading_pillars') return;
 
@@ -87,7 +88,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
             }
             await audioRef.current.play();
         } catch {
-            // التعامل الصامت عند منع التشغيل التلقائي من المتصفح
+            // Audio fallback
         }
 
         timerRef.current = setTimeout(() => {
@@ -100,17 +101,19 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
     return (
         <main
             dir="rtl"
-            className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] select-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting ? 'scale-[1.04] opacity-0 blur-sm pointer-events-none' : 'scale-100 opacity-100 blur-0'
+            className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] select-none transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting
+                ? 'opacity-0 -translate-y-4 scale-[0.98] pointer-events-none'
+                : 'opacity-100 translate-y-0 scale-100'
                 }`}
         >
-            {/* إضاءة خلفية خفيفة عالية الأداء */}
+            {/* إضاءة محيطية */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[450px] rounded-full bg-[#d6a15a]/12 blur-[80px]" />
             </div>
 
             <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6">
 
-                {/* المرحلة 1: شاشة الضغط على اللوجو */}
+                {/* Phase 1: Idle */}
                 <div
                     className={`flex flex-col items-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                         ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
@@ -129,7 +132,6 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                         aria-label="دوس على اللوجو للدخول"
                         className="group relative flex items-center justify-center outline-none cursor-pointer p-4"
                     >
-                        {/* إشعاع وحلقة مرنة تفاعلية */}
                         <div className="pointer-events-none absolute h-56 w-56 rounded-full bg-[#d6a15a]/15 blur-2xl transition-transform duration-500 group-hover:scale-125" />
                         <span className="absolute h-52 w-52 rounded-full border border-[#b98545]/30 transition-transform duration-500 group-hover:scale-105" />
 
@@ -152,7 +154,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                     </div>
                 </div>
 
-                {/* المرحلة 2: الترحيب (نورت بيتك ومطرحك) */}
+                {/* Phase 2: Welcoming */}
                 <div
                     className={`flex flex-col items-center text-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'welcoming'
                         ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
@@ -176,14 +178,13 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                     </p>
                 </div>
 
-                {/* المرحلة 3: استعراض ركائز المنصة والتحميل */}
+                {/* Phase 3: Pillars */}
                 <div
                     className={`flex flex-col items-center text-center w-full transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'loading_pillars'
                         ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
                         : 'opacity-0 translate-y-4 scale-95 pointer-events-none absolute'
                         }`}
                 >
-                    {/* لوجو مدمج ومصغر */}
                     <div className="relative flex items-center justify-center mb-6">
                         <div className="w-20 h-20 rounded-full bg-white/60 dark:bg-white/5 border border-[#9a6a35]/25 flex items-center justify-center backdrop-blur-sm p-3 shadow-sm">
                             <img
@@ -194,7 +195,6 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                         </div>
                     </div>
 
-                    {/* عنوان الميزة المتغيرة مع تبديل ناعم */}
                     <div
                         key={`title-${pillarIndex}`}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#9a6a35]/12 text-[#805423] dark:text-[#d5a56d] border border-[#9a6a35]/20 text-xs font-bold mb-2 transition-all duration-300"
@@ -203,7 +203,6 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                         <span>{PILLARS[pillarIndex].title}</span>
                     </div>
 
-                    {/* نص الشرح */}
                     <div className="h-10 flex items-center justify-center">
                         <p
                             key={`sub-${pillarIndex}`}
@@ -213,7 +212,6 @@ export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
                         </p>
                     </div>
 
-                    {/* مؤشر النقاط الصغير */}
                     <div className="mt-5 flex items-center gap-1.5">
                         {PILLARS.map((_, idx) => (
                             <span
