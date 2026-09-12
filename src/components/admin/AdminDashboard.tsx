@@ -64,7 +64,11 @@ import {
   ChevronLeft,
   ChevronRight,
   SlidersHorizontal,
-  ArrowLeft
+  ArrowLeft,
+  PanelLeft,
+  Columns2,
+  StretchHorizontal,
+  LayoutGrid
 } from 'lucide-react';
 
 const HERITAGE_COVER_PRESETS = [
@@ -1429,6 +1433,26 @@ export const AdminDashboard: React.FC = () => {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [navSearchQuery, setNavSearchQuery] = useState('');
 
+  type AdminLayoutMode = 'sidebar' | 'compact-rail' | 'full-hub' | 'bento';
+  const [layoutMode, setLayoutMode] = useState<AdminLayoutMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('wah_admin_layout_mode');
+      if (saved === 'sidebar' || saved === 'compact-rail' || saved === 'full-hub' || saved === 'bento') {
+        return saved as AdminLayoutMode;
+      }
+    }
+    return 'sidebar';
+  });
+
+  const handleLayoutChange = (mode: AdminLayoutMode) => {
+    setLayoutMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('wah_admin_layout_mode', mode);
+    }
+  };
+
+  const [activeHubSection, setActiveHubSection] = useState<string>('control');
+
   const pendingPasswordResetsCount = passwordResets.filter((r) => r.status === 'pending').length;
 
   const handleSelectTab = (tabId: typeof activeTab) => {
@@ -1690,6 +1714,73 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Quick Header Actions */}
           <div className="flex flex-wrap items-center gap-2.5">
+            {/* Layout Mode Switcher */}
+            <div
+              id="admin-layout-switcher"
+              className="flex items-center bg-black/30 dark:bg-black/50 border border-white/10 rounded-xl p-1 gap-1 shadow-inner"
+              title="تغيير مظهر وعرض لوحة الإدارة"
+            >
+              <button
+                type="button"
+                id="admin-layout-sidebar-btn"
+                onClick={() => handleLayoutChange('sidebar')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'sidebar'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض الشريط الجانبي (Sidebar)"
+              >
+                <PanelLeft className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">شريط جانبي</span>
+              </button>
+
+              <button
+                type="button"
+                id="admin-layout-rail-btn"
+                onClick={() => handleLayoutChange('compact-rail')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'compact-rail'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
+              >
+                <Columns2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">شريط رفيع</span>
+              </button>
+
+              <button
+                type="button"
+                id="admin-layout-hub-btn"
+                onClick={() => handleLayoutChange('full-hub')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'full-hub'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض التبويب العريض (Full-Width Hub)"
+              >
+                <StretchHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">تبويب عريض</span>
+              </button>
+
+              <button
+                type="button"
+                id="admin-layout-bento-btn"
+                onClick={() => handleLayoutChange('bento')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'bento'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض البطاقات السريعة (Bento Grid)"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">بطاقات Bento</span>
+              </button>
+            </div>
+
             <RefreshDataButton
               onRefresh={async () => {
                 await Promise.all([
@@ -1959,41 +2050,146 @@ export const AdminDashboard: React.FC = () => {
       )}
 
       {/* =====================================================
-          MAIN WORKPLACE: DESKTOP SIDEBAR + CONTENT PANE
+          MAIN WORKPLACE: DYNAMIC LAYOUT (SIDEBAR / COMPACT-RAIL / FULL-HUB / BENTO)
           ===================================================== */}
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
-        {/* DESKTOP STICKY SIDEBAR (lg:) */}
-        <aside className="hidden lg:flex flex-col w-72 xl:w-80 shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl p-4 bg-[#fdfbf7] dark:bg-[#141311] border border-[#3d3328]/15 dark:border-white/10 shadow-sm space-y-4">
-          {/* Quick Search */}
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={navSearchQuery}
-              onChange={(e) => setNavSearchQuery(e.target.value)}
-              placeholder="بحث في أدوات الإدارة..."
-              className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] transition-all"
-            />
-            {navSearchQuery && (
-              <button
-                type="button"
-                onClick={() => setNavSearchQuery('')}
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
-              >
-                ×
-              </button>
-            )}
-          </div>
+      <div className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex flex-col lg:flex-row gap-5 items-start" : "w-full space-y-6"}>
+        {/* =====================================================
+            LAYOUT 1: DESKTOP STICKY SIDEBAR (lg:)
+            ===================================================== */}
+        {layoutMode === 'sidebar' && (
+          <aside className="hidden lg:flex flex-col w-72 xl:w-80 shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl p-4 bg-[#fdfbf7] dark:bg-[#141311] border border-[#3d3328]/15 dark:border-white/10 shadow-sm space-y-4">
+            {/* Quick Search */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={navSearchQuery}
+                onChange={(e) => setNavSearchQuery(e.target.value)}
+                placeholder="بحث في أدوات الإدارة..."
+                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] transition-all"
+              />
+              {navSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setNavSearchQuery('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                >
+                  ×
+                </button>
+              )}
+            </div>
 
-          {/* Categorized Sections */}
-          <div className="space-y-4">
-            {filteredSections.map((section) => (
-              <div key={section.id} className="space-y-1">
-                <div className="text-[11px] font-black text-[#9a6a35] dark:text-[#d5a56d] px-2 py-1 uppercase tracking-wider flex items-center justify-between">
-                  <span>{section.title}</span>
+            {/* Categorized Sections */}
+            <div className="space-y-4">
+              {filteredSections.map((section) => (
+                <div key={section.id} className="space-y-1">
+                  <div className="text-[11px] font-black text-[#9a6a35] dark:text-[#d5a56d] px-2 py-1 uppercase tracking-wider flex items-center justify-between">
+                    <span>{section.title}</span>
+                  </div>
+
+                  <div className="space-y-1">
+                    {section.items.map((item) => {
+                      const isActive = activeTab === item.id;
+                      const Icon = item.icon;
+
+                      if (item.isExternal) {
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            id={item.elementId}
+                            onClick={() => {
+                              if (item.action) item.action();
+                            }}
+                            className="w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-7 h-7 rounded-lg bg-amber-200/60 dark:bg-amber-900/60 flex items-center justify-center shrink-0">
+                                <Icon className="w-4 h-4 text-amber-700 dark:text-amber-300" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="truncate font-bold">{item.label}</div>
+                                {item.sublabel && (
+                                  <div className="text-[10px] text-amber-800/70 dark:text-amber-300/60 truncate">{item.sublabel}</div>
+                                )}
+                              </div>
+                            </div>
+                            <ExternalLink className="w-3.5 h-3.5 text-amber-700 shrink-0 mr-1" />
+                          </button>
+                        );
+                      }
+
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          id={item.elementId}
+                          onClick={() => handleSelectTab(item.id as typeof activeTab)}
+                          className={`w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${
+                            isActive
+                              ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-1 ring-[#9a6a35]'
+                              : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="truncate font-bold">{item.label}</div>
+                              {item.sublabel && (
+                                <div className={`text-[10px] truncate ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>
+                                  {item.sublabel}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {typeof item.badge === 'number' && item.badge > 0 && (
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
+                              isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
+                            }`}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
+              ))}
+            </div>
+          </aside>
+        )}
 
-                <div className="space-y-1">
+        {/* =====================================================
+            LAYOUT 1B: COMPACT ICONIC RAIL (compact-rail)
+            ===================================================== */}
+        {layoutMode === 'compact-rail' && (
+          <aside className="hidden lg:flex flex-col w-20 xl:w-22 shrink-0 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-3xl py-4 px-2 bg-[#fdfbf7] dark:bg-[#141311] border border-[#3d3328]/15 dark:border-white/10 shadow-sm items-center space-y-3 scrollbar-none">
+            {/* Switch to full sidebar tooltip button */}
+            <button
+              type="button"
+              onClick={() => handleLayoutChange('sidebar')}
+              title="توسيع إلى الشريط الجانبي الكامل"
+              className="w-11 h-11 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center transition-all cursor-pointer group relative"
+            >
+              <PanelLeft className="w-5 h-5" />
+              <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900 dark:bg-neutral-800 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl whitespace-nowrap shadow-xl border border-white/10">
+                توسيع للشريط الكامل
+              </div>
+            </button>
+
+            <div className="w-8 h-[1px] bg-black/10 dark:bg-white/10 my-1" />
+
+            {/* Categorized Icons in Rail */}
+            <div className="space-y-4 w-full flex flex-col items-center">
+              {filteredSections.map((section, sIdx) => (
+                <div key={section.id} className="w-full flex flex-col items-center space-y-1.5">
+                  {sIdx > 0 && <div className="w-6 h-[1px] bg-black/10 dark:bg-white/10 my-1" />}
+                  
                   {section.items.map((item) => {
                     const isActive = activeTab === item.id;
                     const Icon = item.icon;
@@ -2007,20 +2203,16 @@ export const AdminDashboard: React.FC = () => {
                           onClick={() => {
                             if (item.action) item.action();
                           }}
-                          className="w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
+                          className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-800 dark:text-amber-200 border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-amber-200/60 dark:bg-amber-900/60 flex items-center justify-center shrink-0">
-                              <Icon className="w-4 h-4 text-amber-700 dark:text-amber-300" />
+                          <Icon className="w-5 h-5" />
+                          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900 dark:bg-neutral-800 text-white text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap shadow-xl border border-white/10 text-right">
+                            <div className="font-bold flex items-center gap-1">
+                              <span>{item.label}</span>
+                              <ExternalLink className="w-3 h-3 text-amber-400" />
                             </div>
-                            <div className="min-w-0">
-                              <div className="truncate font-bold">{item.label}</div>
-                              {item.sublabel && (
-                                <div className="text-[10px] text-amber-800/70 dark:text-amber-300/60 truncate">{item.sublabel}</div>
-                              )}
-                            </div>
+                            {item.sublabel && <div className="text-[10px] text-white/60 font-normal">{item.sublabel}</div>}
                           </div>
-                          <ExternalLink className="w-3.5 h-3.5 text-amber-700 shrink-0 mr-1" />
                         </button>
                       );
                     }
@@ -2031,46 +2223,499 @@ export const AdminDashboard: React.FC = () => {
                         type="button"
                         id={item.elementId}
                         onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                        className={`w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group cursor-pointer ${
                           isActive
-                            ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-1 ring-[#9a6a35]'
+                            ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/40'
                             : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                            isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
-                          }`}>
-                            <Icon className="w-4 h-4" />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="truncate font-bold">{item.label}</div>
-                            {item.sublabel && (
-                              <div className={`text-[10px] truncate ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>
-                                {item.sublabel}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        <Icon className="w-5 h-5" />
 
                         {typeof item.badge === 'number' && item.badge > 0 && (
-                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                            isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
-                          }`}>
+                          <span className="absolute -top-1 -left-1 text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center bg-amber-500 text-white border-2 border-white dark:border-[#141311] shadow-xs">
                             {item.badge}
                           </span>
                         )}
+
+                        {/* Hover Tooltip Popup */}
+                        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900 dark:bg-neutral-800 text-white text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap shadow-xl border border-white/10 text-right">
+                          <div className="font-bold text-white">{item.label}</div>
+                          {item.sublabel && <div className="text-[10px] text-white/70 font-normal mt-0.5">{item.sublabel}</div>}
+                          <div className="text-[9px] text-[#d5a56d] font-bold mt-1">انقر للفتح</div>
+                        </div>
                       </button>
                     );
                   })}
                 </div>
+              ))}
+            </div>
+          </aside>
+        )}
+
+        {/* =====================================================
+            LAYOUT 2: FULL-WIDTH HUB NAVIGATION (full-hub)
+            ===================================================== */}
+        {layoutMode === 'full-hub' && (
+          <div className="w-full bg-[#fdfbf7] dark:bg-[#141311] border border-[#3d3328]/15 dark:border-white/10 rounded-3xl p-5 sm:p-6 space-y-5 shadow-xs">
+            {/* Hub Header & Section Switcher */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <StretchHorizontal className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">
+                    مركز التحكم الموسع (Full-Width Hub)
+                  </h3>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]">
+                    عرض عريض
+                  </span>
+                </div>
+                <p className="text-xs text-black/60 dark:text-white/60">
+                  تصفح شامل وسريع لكافة أدوات الإدارة مع إمكانية التصفية حسب قطاع العمل
+                </p>
               </div>
-            ))}
+
+              {/* Hub Quick Search */}
+              <div className="relative w-full md:w-72">
+                <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={navSearchQuery}
+                  onChange={(e) => setNavSearchQuery(e.target.value)}
+                  placeholder="بحث سريع في كل الأدوات..."
+                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                />
+                {navSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setNavSearchQuery('')}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Hub Section Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <button
+                type="button"
+                onClick={() => setActiveHubSection('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  activeHubSection === 'all'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                }`}
+              >
+                جميع الأدوات ({allNavItems.length})
+              </button>
+              {navSections.map((sec) => {
+                const isSelected = activeHubSection === sec.id;
+                return (
+                  <button
+                    key={sec.id}
+                    type="button"
+                    onClick={() => setActiveHubSection(sec.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#9a6a35] text-white shadow-xs'
+                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                    }`}
+                  >
+                    <span>{sec.title}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                      {sec.items.length}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Hub Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {(activeHubSection === 'all'
+                ? filteredSections.flatMap((s) => s.items)
+                : (filteredSections.find((s) => s.id === activeHubSection)?.items || [])
+              ).map((item) => {
+                const isActive = activeTab === item.id;
+                const Icon = item.icon;
+
+                if (item.isExternal) {
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      id={item.elementId}
+                      onClick={() => {
+                        if (item.action) item.action();
+                      }}
+                      className="p-3.5 rounded-2xl border transition-all text-right flex items-start justify-between bg-amber-50/70 dark:bg-amber-950/20 hover:bg-amber-100/70 border-amber-300/70 dark:border-amber-800/50 cursor-pointer shadow-2xs group"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-xl bg-amber-200/60 dark:bg-amber-900/60 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                          <Icon className="w-5 h-5 text-amber-800 dark:text-amber-300" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-xs text-amber-950 dark:text-amber-100 truncate">{item.label}</div>
+                          {item.sublabel && (
+                            <div className="text-[11px] text-amber-800/70 dark:text-amber-300/60 line-clamp-1 mt-0.5">{item.sublabel}</div>
+                          )}
+                        </div>
+                      </div>
+                      <ExternalLink className="w-4 h-4 text-amber-700 shrink-0 mt-1" />
+                    </button>
+                  );
+                }
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    id={item.elementId}
+                    onClick={() => handleSelectTab(item.id as typeof activeTab)}
+                    className={`p-3.5 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group ${
+                      isActive
+                        ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/30'
+                        : 'bg-white dark:bg-[#1a1917] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:bg-[#9a6a35]/5 text-[#211d18] dark:text-[#eee8dc]'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                      }`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs truncate">{item.label}</div>
+                        {item.sublabel && (
+                          <div className={`text-[11px] line-clamp-1 mt-0.5 ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>
+                            {item.sublabel}
+                          </div>
+                        )}
+                        {isActive && (
+                          <span className="inline-block mt-2 text-[10px] font-black px-2 py-0.5 rounded-full bg-white/20 text-white">
+                            القسم النشط حالياً
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {typeof item.badge === 'number' && item.badge > 0 && (
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
+                        isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Currently Active Pane Indicator */}
+            {currentActiveItem && (
+              <div className="flex items-center justify-between px-4 py-2.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
+                <div className="flex items-center gap-2 text-black/70 dark:text-white/70">
+                  <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">القسم المعروض بالأسفل:</span>
+                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{currentActiveItem.label}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('admin-main-pane');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="text-[#9a6a35] dark:text-[#d5a56d] font-bold hover:underline cursor-pointer"
+                >
+                  الانتقال للقسم ↓
+                </button>
+              </div>
+            )}
           </div>
-        </aside>
+        )}
+
+        {/* =====================================================
+            LAYOUT 3: BENTO COMMAND GRID (bento)
+            ===================================================== */}
+        {layoutMode === 'bento' && (
+          <div className="w-full space-y-4">
+            {/* Bento Grid Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#fdfbf7] dark:bg-[#141311] border border-[#3d3328]/15 dark:border-white/10 rounded-3xl p-4 sm:p-5 shadow-xs">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center shrink-0">
+                  <LayoutGrid className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">
+                    شبكة بينتو الذكية (Bento Command Grid)
+                  </h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    بطاقات تحكم سريعة ومختصرة للوصول الفوري لكل قطاعات ومسارات الموقع
+                  </p>
+                </div>
+              </div>
+
+              {/* Active Tab Anchor in Bento */}
+              {currentActiveItem && (
+                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
+                  <span className="text-black/50 dark:text-white/50">الأداة النشطة:</span>
+                  <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem.label}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Bento Modular Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Bento Card 1: Approvals (Hero Card - Span 2) */}
+              <div
+                onClick={() => handleSelectTab('approvals')}
+                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'approvals'
+                    ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
+                    }`}>
+                      سوق وه التراثي
+                    </span>
+                    <h4 className="font-black text-lg mt-1">فحص واعتماد معروضات الصعيد</h4>
+                    <p className={`text-xs max-w-sm ${activeTab === 'approvals' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                      مراجعة أصالة منتجات الفخار والخيامية والتلي والسجاد وتأكيد مطابقتها للتراث الصعيدي
+                    </p>
+                  </div>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
+                    activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    <Package className="w-6 h-6" />
+                  </div>
+                </div>
+
+                <div className="mt-5 flex items-center gap-3">
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${
+                    pendingProducts.length > 0
+                      ? 'bg-amber-500 text-white animate-pulse'
+                      : activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                  }`}>
+                    {pendingProducts.length > 0 ? (
+                      <>
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        <span>{pendingProducts.length} منتج في الانتظار</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>تم فحص كل المعروضات</span>
+                      </>
+                    )}
+                  </div>
+                  <span className={`text-xs ${activeTab === 'approvals' ? 'text-white/70' : 'text-black/50 dark:text-white/50'}`}>
+                    إجمالي {adminProducts.length} منتج مسجل
+                  </span>
+                </div>
+              </div>
+
+              {/* Bento Card 2: Sellers & Workshops */}
+              <div
+                onClick={() => handleSelectTab('sellers')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'sellers'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Store className="w-5 h-5" />
+                  </div>
+                  {pendingSellersCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500 text-white animate-pulse">
+                      {pendingSellersCount} طلب جديد
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">الورش وشيوخ الصنعة</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'sellers' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  إدارة ملفات الورش، صور الأغلفة والتوثيق
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">{sellers.length} ورشة نشطة</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">إدارة ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 3: Orders & Logistics */}
+              <div
+                onClick={() => handleSelectTab('orders')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'orders'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                    activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                  }`}>
+                    {orders.length} طلب
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">الشحنات والطلبات</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'orders' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  تتبع مسار شحن الطرود وتأكيد الاستلام
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">{orders.filter(o => o.status === 'processing').length} جاري التجهيز</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">متابعة ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 4: Craft Reels */}
+              <div
+                onClick={() => handleSelectTab('craft-reels')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'craft-reels'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Film className="w-5 h-5" />
+                  </div>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                    activeTab === 'craft-reels' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                  }`}>
+                    {adminReels.length} فيديو
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">ريلز حكايات الحرفيين</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'craft-reels' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  مقاطع فيديو حية من قلب ورش الصعيد
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">فيديوهات قصيرة</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">عرض ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 5: Media Library (Cloudinary) */}
+              <div
+                onClick={() => handleSelectTab('media-library')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'media-library'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-cyan-100 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <ImageIcon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-cyan-700 dark:text-cyan-400">
+                    Cloudinary CDN
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">مكتبة الوسائط السحابية</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'media-library' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  رفع وتحسين وفهرسة صور الورش والمنتجات
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">استعراض الصور</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">فتح ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 6: Users & Password Resets */}
+              <div
+                onClick={() => handleSelectTab('users')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'users'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  {pendingPasswordResetsCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500 text-white animate-pulse">
+                      {pendingPasswordResetsCount} استعادة باسورد
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">المستخدمون والأمان</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'users' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  إدارة الصلاحيات وتوليد الباسوردات المؤقتة
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">الأمان والرقابة</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">دخول ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 7: Payment Settings */}
+              <div
+                onClick={() => handleSelectTab('payment-settings')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'payment-settings'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Wallet className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                    InstaPay
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">بوابات الدفع والمحافظ</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'payment-settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  ضبط أرقام فودافون كاش وانستاباي للمنصة
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">إعدادات الدفع</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">ضبط ←</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bento Context Bar */}
+            <div className="flex items-center justify-between p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-black/60 dark:text-white/60">أداة الإدارة المعروضة بالأسفل:</span>
+                <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem?.label}</span>
+                {currentActiveItem?.sublabel && (
+                  <span className="hidden sm:inline text-black/40 dark:text-white/40">({currentActiveItem.sublabel})</span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('admin-main-pane');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
+              >
+                الانتقال للعملية ↓
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* MAIN CONTENT PANE (ACTIVE TAB CONTAINER) */}
-        <main className="flex-1 min-w-0 w-full space-y-6">
+        <main id="admin-main-pane" className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex-1 min-w-0 w-full space-y-6" : "w-full space-y-6"}>
 
       {/* TAB: MEDIA LIBRARY (CLOUDINARY) */}
       {activeTab === 'media-library' && (
@@ -4494,6 +5139,80 @@ export const AdminDashboard: React.FC = () => {
       )}
         </main>
       </div>
+
+      {/* Mobile Floating Bottom Rail for compact-rail mode */}
+      {layoutMode === 'compact-rail' && (
+        <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center bg-[#1c1917]/95 dark:bg-[#141311]/95 backdrop-blur-md border border-[#9a6a35]/40 rounded-full px-3 py-2 shadow-2xl gap-1 text-white">
+          <button
+            type="button"
+            onClick={() => handleSelectTab('overview')}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${
+              activeTab === 'overview' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+            title="نظرة عامة"
+          >
+            <TrendingUp className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectTab('approvals')}
+            className={`p-2.5 rounded-full transition-all relative cursor-pointer ${
+              activeTab === 'approvals' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+            title="اعتماد المعروضات"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            {pendingProducts.length > 0 && (
+              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-amber-500 ring-2 ring-black" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectTab('sellers')}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${
+              activeTab === 'sellers' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+            title="الورش والحرفيين"
+          >
+            <Store className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectTab('orders')}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${
+              activeTab === 'orders' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+            title="الطلبات والشحنات"
+          >
+            <Truck className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSelectTab('craft-reels')}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${
+              activeTab === 'craft-reels' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+            title="ريلز الحرفيين"
+          >
+            <Film className="w-4 h-4" />
+          </button>
+
+          <div className="w-[1px] h-5 bg-white/20 mx-1" />
+
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen(true)}
+            className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+            title="كل الأقسام"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Category Add / Edit Modal (Phase 4) */}
       {isCategoryModalOpen && (
