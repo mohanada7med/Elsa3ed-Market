@@ -292,7 +292,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            <MessageSquare className="w-6 h-6 text-amber-600 dark:text-[#d6aa72]" />
             {isSellerMode ? 'رسايل ومحادثات الورشة' : 'دردشة حية ومباشرة مع الصنّاع والحرفيين'}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">
@@ -437,7 +437,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
 
                       {/* شارة السياق (منتج أو طلب) */}
                       {conv.productTitle && (
-                        <div className="flex items-center gap-1 text-[11px] text-amber-700 dark:text-amber-400 mb-0.5 truncate">
+                        <div className="flex items-center gap-1 text-[11px] text-amber-700 dark:text-[#d6aa72] mb-0.5 truncate">
                           <ShoppingBag className="w-3 h-3 shrink-0" />
                           <span className="truncate">{conv.productTitle}</span>
                         </div>
@@ -560,7 +560,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                         <p className="font-semibold text-stone-900 dark:text-stone-100 truncate">
                           الكلام عن: {selectedConv.productTitle}
                           {selectedConv.productPrice && (
-                            <span className="text-amber-700 dark:text-amber-400 font-bold mr-2">
+                            <span className="text-amber-700 dark:text-[#d6aa72] font-bold mr-2">
                               {selectedConv.productPrice} جنيه
                             </span>
                           )}
@@ -634,7 +634,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                           >
                             <p className="whitespace-pre-wrap break-words">{msg.text}</p>
                             <div
-                              className={`flex items-center gap-1 justify-end text-[10px] mt-1 ${isMe ? 'text-amber-200' : 'text-stone-400'
+                              className={`flex items-center gap-1 justify-end text-[10px] mt-1 ${isMe ? 'text-[#d5a56d]' : 'text-stone-400'
                                 }`}
                             >
                               <span>
@@ -646,7 +646,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                               {isMe && (
                                 <span title={msg.isRead ? 'اتقرأت' : 'وصلت'}>
                                   {msg.isRead ? (
-                                    <CheckCheck className="w-3.5 h-3.5 text-amber-200" />
+                                    <CheckCheck className="w-3.5 h-3.5 text-[#d5a56d]" />
                                   ) : (
                                     <Check className="w-3.5 h-3.5 text-amber-300/80" />
                                   )}
@@ -718,7 +718,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
           ) : (
             /* حالة عدم اختيار محادثة */
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-stone-50/40 dark:bg-stone-900/40">
-              <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center mb-4 shadow-xs">
+              <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-[#d6aa72] flex items-center justify-center mb-4 shadow-xs">
                 <MessageSquare className="w-8 h-8" />
               </div>
               <h3 className="text-base font-bold text-stone-900 dark:text-stone-100 mb-1">

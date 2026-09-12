@@ -70,6 +70,49 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 
+// ==========================================
+// 1. مصفوفة الـ 6 صور المعتمدة لغلاف الورشة
+// (يمكنك تغيير الروابط والعناوين بحسب رغبتك)
+// ==========================================
+interface WorkshopCoverPreset {
+  id: string;
+  title: string;
+  craft: string;
+  craftCategory: 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture';
+  url: string;
+}
+
+const STATIC_WORKSHOP_COVERS: WorkshopCoverPreset[] = [
+  {
+    id: 'cover-1',
+    title: 'ورشة الفخار',
+    craft: 'تشكيل الفخار اليدوي',
+    craftCategory: 'pottery',
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789225979/38796941-1937-41aa-b0cd-3619e161219a.png',
+  },
+  {
+    id: 'cover-2',
+    title: 'ورشة التلي',
+    craft: 'تطريز التلي الصعيدي',
+    craftCategory: 'tally',
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789226376/6096106f-bff1-463f-b82d-2b999259e734.png',
+  },
+  {
+    id: 'cover-3',
+    title: 'أنوال الكليم اليدوي',
+    craft: 'غزل ونسيج صوف طبيعي',
+    craftCategory: 'weaving',
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789226417/94e7d0f5-d39a-438d-8dca-7b5f84064ac4.png',
+  },
+  {
+    id: 'cover-4',
+    title: 'ورشة الخوص وسعف النخيل',
+    craft: 'جدل الخوص وسلال التمر',
+    craftCategory: 'khous',
+    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789226500/54cc63f6-5896-43cb-b786-d9c28c38d045.png',
+  },
+];
+
 export const SellerDashboard: React.FC = () => {
   const {
     activePage,
@@ -136,7 +179,7 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
-  // Reels Management State (Seller Workshop Control)
+  // Reels Management State
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [isReelUploadOpen, setIsReelUploadOpen] = useState(false);
   const [sellerEditingReel, setSellerEditingReel] = useState<CraftReel | null>(null);
@@ -144,66 +187,13 @@ export const SellerDashboard: React.FC = () => {
   const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
   const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
 
-  // Curated Heritage Craft Workshop Cover Presets (Filtered exclusively to workshops: pottery, tally, etc.)
-  const [cloudImages, setCloudImages] = useState<Array<{ id: string; title: string; url: string; region?: string; craft?: string; craftCategory?: 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture' }>>([]);
+  // تصنيف وتصفية صور الغلاف الـ 6 المعتمدة
   const [workshopCraftFilter, setWorkshopCraftFilter] = useState<'all' | 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture'>('all');
-  const [isLoadingCloudImages, setIsLoadingCloudImages] = useState(false);
 
-  useEffect(() => {
-    const loadCloudImages = async () => {
-      setIsLoadingCloudImages(true);
-      try {
-        const images = await api.fetchCloudinaryImages();
-        if (images && images.length > 0) {
-          // Strictly ensure only workshop-related items appear (pottery, tally, weaving, khous, alabaster)
-          const isWorkshop = (img: any) => {
-            const text = `${img.public_id || ''} ${img.title || ''} ${img.craft || ''}`.toLowerCase();
-            const forbidden = ['dates', 'honey', 'temple', 'dendera', 'karnak', 'archaeological', 'receipt', 'avatar', 'user', 'تمور', 'عسل', 'معبد'];
-            if (forbidden.some((bad) => text.includes(bad))) return false;
-            return true;
-          };
-
-          const formatted = images.filter(isWorkshop).map((img: any, index: number) => {
-            const lower = `${img.public_id || ''} ${img.title || ''} ${img.craft || ''}`.toLowerCase();
-            let category: 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture' = 'pottery';
-            if (lower.includes('tally') || lower.includes('telli') || lower.includes('تلي') || lower.includes('فضة')) {
-              category = 'tally';
-            } else if (lower.includes('weav') || lower.includes('loom') || lower.includes('أخميم') || lower.includes('نسيج') || lower.includes('كليم') || lower.includes('سجاد')) {
-              category = 'weaving';
-            } else if (lower.includes('khous') || lower.includes('palm') || lower.includes('خوص') || lower.includes('سعف') || lower.includes('جريد') || lower.includes('سلال')) {
-              category = 'khous';
-            } else if (lower.includes('alabaster') || lower.includes('ألاباستر') || lower.includes('نحاس') || lower.includes('خشب') || lower.includes('أرابيسك')) {
-              category = 'sculpture';
-            } else if (lower.includes('pottery') || lower.includes('fokhar') || lower.includes('fukhar') || lower.includes('فخار') || lower.includes('طين') || lower.includes('قلل')) {
-              category = 'pottery';
-            }
-
-            return {
-              id: img.id || `cloud-${index}`,
-              title: img.title || (img.public_id ? img.public_id.split('/').pop() : `ورشة تراثية ${index + 1}`),
-              region: img.region || 'ورشة صعيدية',
-              craft: img.craft || 'حرفة يدوية أصيلة',
-              craftCategory: (img.craftCategory as any) || category,
-              url: img.secure_url || img.url
-            };
-          });
-          setCloudImages(formatted);
-        }
-      } catch (err) {
-        console.error('Error loading cloud images:', err);
-      } finally {
-        setIsLoadingCloudImages(false);
-      }
-    };
-
-    loadCloudImages();
-  }, []);
-
-  // تصفية صور الورش المعروضة بناءً على نوع الحرفة
   const filteredWorkshopImages = useMemo(() => {
-    if (workshopCraftFilter === 'all') return cloudImages;
-    return cloudImages.filter((img) => img.craftCategory === workshopCraftFilter);
-  }, [cloudImages, workshopCraftFilter]);
+    if (workshopCraftFilter === 'all') return STATIC_WORKSHOP_COVERS;
+    return STATIC_WORKSHOP_COVERS.filter((img) => img.craftCategory === workshopCraftFilter);
+  }, [workshopCraftFilter]);
 
   const effectiveSellerId = currentUser?.sellerId || currentUser?.id;
 
@@ -212,7 +202,6 @@ export const SellerDashboard: React.FC = () => {
       const allDbReels = await craftReelsService.fetchReelsFromDb({
         sellerId: effectiveSellerId
       });
-      // Ensure only videos belonging to this seller are shown in their dashboard
       const myReels = allDbReels.filter(
         (r) => r.sellerId === effectiveSellerId || r.sellerId === currentUser?.sellerId || r.sellerId === currentUser?.id
       );
@@ -254,7 +243,6 @@ export const SellerDashboard: React.FC = () => {
     });
   };
 
-  // Synchronize activeTab when navigation changes via URL or Header links
   useEffect(() => {
     if (activePage === 'seller-products') setActiveTab('products');
     else if (activePage === 'seller-inventory') setActiveTab('inventory');
@@ -265,10 +253,9 @@ export const SellerDashboard: React.FC = () => {
     else if (activePage === 'seller-dashboard') setActiveTab('overview');
   }, [activePage]);
 
-  // Find current seller from store data
   const currentSeller = sellers.find((s) => s.id === currentUser.sellerId || s.id === currentUser.id);
 
-  // Product Modal State (Add or Edit)
+  // Product Modal State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -306,7 +293,7 @@ export const SellerDashboard: React.FC = () => {
   const [sellerSpecialty, setSellerSpecialty] = useState(currentSeller?.specialty || 'فخار نيلي وأواني فخارية تراثية');
   const [sellerGovernorate, setSellerGovernorate] = useState<Governorate>(currentSeller?.governorate || currentUser.governorate || 'قنا');
   const [sellerCoverImage, setSellerCoverImage] = useState<string>(
-    currentSeller?.coverImage || 'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80'
+    currentSeller?.coverImage || STATIC_WORKSHOP_COVERS[0].url
   );
   const [sellerAvatar, setSellerAvatar] = useState<string>(
     currentSeller?.avatar || currentUser.profileImage?.secureUrl || currentUser.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'
@@ -325,7 +312,6 @@ export const SellerDashboard: React.FC = () => {
   const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
-  // Sync state with current seller when available
   useEffect(() => {
     if (currentSeller) {
       if (currentSeller.brandName) setBrandName(currentSeller.brandName);
@@ -346,7 +332,7 @@ export const SellerDashboard: React.FC = () => {
   const [payoutNumber, setPayoutNumber] = useState('01012345678');
   const [payoutAmount, setPayoutAmount] = useState(1500);
 
-  // Seller review status state (defaults to currentUser.sellerStatus)
+  // Seller review status state
   const [sellerStatus, setSellerStatus] = useState<string>(currentUser.sellerStatus || 'pending');
   const [statusDetails, setStatusDetails] = useState<any>(null);
   const [isCheckingStatus, setIsCheckingStatus] = useState(false);
@@ -432,7 +418,7 @@ export const SellerDashboard: React.FC = () => {
     if (!files || files.length === 0) return;
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    const maxSizeBytes = 5 * 1024 * 1024; // 5 MB
+    const maxSizeBytes = 5 * 1024 * 1024;
 
     if (selectedImages.length + existingImages.length + files.length > 5) {
       setUploadError('الحد الأقصى لعدد صور المنتج هو 5 صور');
@@ -592,7 +578,6 @@ export const SellerDashboard: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate type and size (5MB max)
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
       setCoverUploadError('يرجى اختيار صورة بصيغة JPG أو PNG أو WebP');
@@ -613,7 +598,6 @@ export const SellerDashboard: React.FC = () => {
       reader.onload = async () => {
         const dataUri = reader.result as string;
         try {
-          // Upload to Cloudinary / storage backend
           const uploadRes = await api.uploadSellerCoverImage(
             { id: currentUser.id, role: 'seller', sellerId: currentUser.sellerId || currentUser.id },
             dataUri,
@@ -893,31 +877,15 @@ export const SellerDashboard: React.FC = () => {
     }
   };
 
-  // If seller status is not approved, show appropriate Arabic state banner / screen
   if (sellerStatus !== 'approved') {
     return (
       <div
         dir="rtl"
-        className="
-          min-h-screen
-          overflow-x-hidden
-          bg-[#eee8dc]
-          text-[#211d18]
-          transition-colors duration-500
-          dark:bg-[#0b0b0a]
-          dark:text-[#f5f0e7]
-          max-w-[1600px]
-          mx-auto
-          px-5
-          sm:px-8
-          lg:px-12
-          py-12
-        "
+        className="min-h-screen overflow-x-hidden bg-[#eee8dc] text-[#211d18] transition-colors duration-500 dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-12"
       >
         <div className="max-w-4xl mx-auto space-y-6">
           {sellerStatus === 'pending' && (
             <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
-              {/* Top Amber Header Banner */}
               <div className="rounded-t-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
                 <div className="absolute top-0 left-0 w-48 h-48 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
                 <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
@@ -939,7 +907,6 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Workflow Progress Steps */}
               <div className="p-6 sm:p-8 bg-black/[0.02] dark:bg-white/[0.02] border-b border-black/10 dark:border-white/10">
                 <h2 className="text-xs font-bold text-black/60 dark:text-white/60 uppercase tracking-wider mb-4">
                   مراحل اعتماد وتوثيق الورشة
@@ -977,7 +944,6 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Seller Submitted Details Summary */}
               <div className="p-6 sm:p-8 space-y-6">
                 <div className="bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-5">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
@@ -1004,7 +970,6 @@ export const SellerDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Notice Card */}
                 <div className="p-4 bg-[#9a6a35]/10 border border-[#9a6a35]/25 rounded-2xl flex items-start gap-3 text-xs text-black/70 dark:text-white/70 leading-relaxed">
                   <AlertCircle className="w-5 h-5 text-[#9a6a35] shrink-0 mt-0.5" />
                   <p>
@@ -1012,7 +977,6 @@ export const SellerDashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black/10 dark:border-white/10">
                   <button
                     type="button"
@@ -1093,7 +1057,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
               <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-8 text-white flex items-center gap-5">
                 <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
-                  <ShieldAlert className="w-8 h-8 text-amber-200" />
+                  <ShieldAlert className="w-8 h-8 text-[#d5a56d]" />
                 </div>
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/40 text-orange-100 text-xs font-bold mb-2 border border-orange-400/30">
@@ -1148,26 +1112,10 @@ export const SellerDashboard: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="
-        min-h-screen
-        overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
-        transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
-        max-w-[1600px]
-        mx-auto
-        px-5
-        sm:px-8
-        lg:px-12
-        py-8
-        space-y-8
-      "
+      className="min-h-screen overflow-x-hidden bg-[#eee8dc] text-[#211d18] transition-colors duration-500 dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8"
     >
       {/* Top Header with Workshop Cover Background Accent */}
       <div className="relative overflow-hidden rounded-[2rem] text-white shadow-xl border border-black/10 dark:border-white/10 backdrop-blur-xl">
-        {/* Background Cover Image with Rich Overlay */}
         <div className="absolute inset-0 z-0">
           <img
             src={sellerCoverImage}
@@ -1215,7 +1163,6 @@ export const SellerDashboard: React.FC = () => {
 
           {/* Quick Header Actions */}
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* Layout Mode Switcher */}
             <div
               id="seller-layout-switcher"
               className="flex items-center bg-black/30 dark:bg-black/50 border border-white/10 rounded-xl p-1 gap-1 shadow-inner"
@@ -1225,11 +1172,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-layout-sidebar-btn"
                 onClick={() => handleLayoutChange('sidebar')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'sidebar'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض الشريط الجانبي (Sidebar)"
               >
                 <PanelLeft className="w-3.5 h-3.5" />
@@ -1240,11 +1186,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-layout-rail-btn"
                 onClick={() => handleLayoutChange('compact-rail')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'compact-rail'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
               >
                 <Columns2 className="w-3.5 h-3.5" />
@@ -1255,11 +1200,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-layout-hub-btn"
                 onClick={() => handleLayoutChange('full-hub')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'full-hub'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض التبويب العريض (Full-Width Hub)"
               >
                 <StretchHorizontal className="w-3.5 h-3.5" />
@@ -1270,11 +1214,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-layout-bento-btn"
                 onClick={() => handleLayoutChange('bento')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'bento'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض البطاقات السريعة (Bento Grid)"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
@@ -1305,14 +1248,11 @@ export const SellerDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* =====================================================
-          MAIN WORKPLACE: DYNAMIC LAYOUT (SIDEBAR / COMPACT-RAIL / FULL-HUB / BENTO)
-          ===================================================== */}
+      {/* Main Workplace Layout */}
       <div className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex flex-col lg:flex-row gap-5 items-start" : "w-full space-y-6"}>
-        {/* LAYOUT 1: EXPANSIVE WORKSHOP SIDEBAR */}
+        {/* LAYOUT 1: SIDEBAR */}
         {layoutMode === 'sidebar' && (
           <aside className="w-full lg:w-72 xl:w-80 shrink-0 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-4 space-y-4 shadow-xl sticky lg:top-4 z-20">
-            {/* Mobile View Navigation Toggle */}
             <div className="flex lg:hidden items-center justify-between p-2 bg-black/5 dark:bg-white/5 rounded-xl">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <Store className="w-4 h-4 text-[#9a6a35]" />
@@ -1328,7 +1268,6 @@ export const SellerDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* Sidebar Search */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
@@ -1349,7 +1288,6 @@ export const SellerDashboard: React.FC = () => {
               )}
             </div>
 
-            {/* Nav Sections */}
             <div className="space-y-4 max-h-[calc(100vh-14rem)] overflow-y-auto pr-1">
               {filteredSections.map((sec) => (
                 <div key={sec.id} className="space-y-1">
@@ -1372,20 +1310,18 @@ export const SellerDashboard: React.FC = () => {
                           type="button"
                           id={item.elementId}
                           onClick={() => handleSelectTab(item.id)}
-                          className={`w-full p-2.5 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${
-                            isActive
-                              ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
-                          }`}
+                          className={`w-full p-2.5 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${isActive
+                            ? 'bg-[#9a6a35] text-white shadow-xs'
+                            : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                            }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#9a6a35]'}`} />
                             <div className="truncate text-right">
                               <span className="block truncate">{item.label}</span>
                               {item.sublabel && (
-                                <span className={`text-[10px] block font-normal truncate ${
-                                  isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'
-                                }`}>
+                                <span className={`text-[10px] block font-normal truncate ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'
+                                  }`}>
                                   {item.sublabel}
                                 </span>
                               )}
@@ -1393,11 +1329,10 @@ export const SellerDashboard: React.FC = () => {
                           </div>
 
                           {item.badge !== undefined && (
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
-                              isActive
-                                ? 'bg-white/20 text-white'
-                                : 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300'
-                            }`}>
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${isActive
+                              ? 'bg-white/20 text-white'
+                              : 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300'
+                              }`}>
                               {item.badge}
                             </span>
                           )}
@@ -1409,7 +1344,6 @@ export const SellerDashboard: React.FC = () => {
               ))}
             </div>
 
-            {/* Quick Action Button in Sidebar */}
             <div className="pt-2 border-t border-black/10 dark:border-white/10">
               <button
                 type="button"
@@ -1423,10 +1357,9 @@ export const SellerDashboard: React.FC = () => {
           </aside>
         )}
 
-        {/* LAYOUT 2: COMPACT ICONIC RAIL (DESKTOP) */}
+        {/* LAYOUT 2: COMPACT RAIL */}
         {layoutMode === 'compact-rail' && (
           <aside className="hidden lg:flex flex-col items-center w-20 shrink-0 bg-white/85 dark:bg-[#151513]/90 backdrop-blur-xl rounded-3xl border border-black/10 dark:border-white/10 py-5 px-2 gap-3 shadow-xl sticky top-4 z-20">
-            {/* Artisan Workshop Stamp */}
             <div className="w-11 h-11 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center font-black text-base font-serif shadow-xs mb-1">
               {sellerAvatar ? (
                 <img src={sellerAvatar} alt="ص" className="w-full h-full object-cover rounded-2xl" />
@@ -1437,7 +1370,6 @@ export const SellerDashboard: React.FC = () => {
 
             <div className="w-8 h-[1px] bg-black/10 dark:border-white/10 my-1" />
 
-            {/* Rail Navigation Icons with Smart Floating Tooltips */}
             <div className="flex flex-col items-center gap-1.5 w-full">
               {allNavItems.map((item) => {
                 const Icon = item.icon;
@@ -1448,21 +1380,18 @@ export const SellerDashboard: React.FC = () => {
                       type="button"
                       id={`rail-${item.elementId}`}
                       onClick={() => handleSelectTab(item.id)}
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${
-                        isActive
-                          ? 'bg-[#9a6a35] text-white shadow-md scale-105'
-                          : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/15 hover:text-[#9a6a35]'
-                      }`}
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${isActive
+                        ? 'bg-[#9a6a35] text-white shadow-md scale-105'
+                        : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/15 hover:text-[#9a6a35]'
+                        }`}
                       aria-label={item.label}
                     >
                       <Icon className="w-5 h-5" />
-                      {/* Floating Indicator / Badge Dot */}
                       {item.badge !== undefined && (
                         <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 ring-2 ring-white dark:ring-[#151513]" />
                       )}
                     </button>
 
-                    {/* Smart Floating Tooltip (RTL Positioned to Left of Rail) */}
                     <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-2 bg-[#211d18] dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold whitespace-nowrap shadow-xl opacity-0 translate-x-2 group-hover/rail:opacity-100 group-hover/rail:translate-x-0 transition-all pointer-events-none z-50 flex items-center gap-2">
                       <span>{item.label}</span>
                       {item.badge !== undefined && (
@@ -1479,7 +1408,6 @@ export const SellerDashboard: React.FC = () => {
 
             <div className="w-8 h-[1px] bg-black/10 dark:border-white/10 mt-auto my-1" />
 
-            {/* Expand / Switch to Sidebar Button */}
             <button
               type="button"
               onClick={() => handleLayoutChange('sidebar')}
@@ -1491,10 +1419,9 @@ export const SellerDashboard: React.FC = () => {
           </aside>
         )}
 
-        {/* LAYOUT 3: FULL-WIDTH HUB */}
+        {/* LAYOUT 3: FULL HUB */}
         {layoutMode === 'full-hub' && (
           <div className="w-full bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
-            {/* Hub Header & Search */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -1511,7 +1438,6 @@ export const SellerDashboard: React.FC = () => {
                 </p>
               </div>
 
-              {/* Hub Quick Search */}
               <div className="relative w-full md:w-72">
                 <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
@@ -1533,16 +1459,14 @@ export const SellerDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Hub Section Filter Pills */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               <button
                 type="button"
                 onClick={() => setActiveHubSection('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                  activeHubSection === 'all'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
-                }`}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeHubSection === 'all'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                  }`}
               >
                 جميع الأدوات ({allNavItems.length})
               </button>
@@ -1553,11 +1477,10 @@ export const SellerDashboard: React.FC = () => {
                     key={sec.id}
                     type="button"
                     onClick={() => setActiveHubSection(sec.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-[#9a6a35] text-white shadow-xs'
-                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
-                    }`}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${isSelected
+                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      }`}
                   >
                     <span>{sec.title}</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
@@ -1568,7 +1491,6 @@ export const SellerDashboard: React.FC = () => {
               })}
             </div>
 
-            {/* Hub Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {(activeHubSection === 'all'
                 ? filteredSections.flatMap((s) => s.items)
@@ -1582,16 +1504,14 @@ export const SellerDashboard: React.FC = () => {
                     type="button"
                     id={`hub-${item.elementId}`}
                     onClick={() => handleSelectTab(item.id)}
-                    className={`p-4 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group shadow-2xs ${
-                      isActive
-                        ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md ring-2 ring-[#9a6a35]/30'
-                        : 'bg-white dark:bg-[#161513] hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10'
-                    }`}
+                    className={`p-4 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group shadow-2xs ${isActive
+                      ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md ring-2 ring-[#9a6a35]/30'
+                      : 'bg-white dark:bg-[#161513] hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10'
+                      }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/10 text-[#9a6a35]'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/10 text-[#9a6a35]'
+                        }`}>
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
@@ -1605,9 +1525,8 @@ export const SellerDashboard: React.FC = () => {
                     </div>
 
                     {item.badge !== undefined && (
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                      }`}>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                        }`}>
                         {item.badge}
                       </span>
                     )}
@@ -1618,10 +1537,9 @@ export const SellerDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* LAYOUT 4: BENTO MATRIX */}
+        {/* LAYOUT 4: BENTO */}
         {layoutMode === 'bento' && (
           <div className="w-full bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
-            {/* Bento Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2">
                 <LayoutGrid className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
@@ -1640,22 +1558,18 @@ export const SellerDashboard: React.FC = () => {
               )}
             </div>
 
-            {/* Bento Modular Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Bento Card 1: Products & Craftsmanship (Hero - Span 2) */}
               <div
                 onClick={() => handleSelectTab('products')}
-                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'products'
-                    ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'products'
+                  ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                      activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
-                    }`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
+                      }`}>
                       قطع الصنعة المعروضة
                     </span>
                     <h4 className="font-black text-lg mt-1">إدارة واعتماد معروضات الورشة</h4>
@@ -1663,19 +1577,17 @@ export const SellerDashboard: React.FC = () => {
                       رفع قطع يدوية جديدة، تعديل الأسعار، ومتابعة اعتماد المنصة للتراث الصعيدي
                     </p>
                   </div>
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
-                    activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
-                  }`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                    }`}>
                     <Package className="w-6 h-6" />
                   </div>
                 </div>
 
                 <div className="mt-5 flex items-center gap-3">
-                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${
-                    pendingProductsCount > 0
-                      ? 'bg-amber-500 text-white animate-pulse'
-                      : activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
-                  }`}>
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${pendingProductsCount > 0
+                    ? 'bg-amber-500 text-white animate-pulse'
+                    : activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                    }`}>
                     {pendingProductsCount > 0 ? (
                       <>
                         <AlertCircle className="w-3.5 h-3.5" />
@@ -1694,14 +1606,12 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bento Card 2: Orders & Packing */}
               <div
                 onClick={() => handleSelectTab('orders')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'orders'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'orders'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -1723,14 +1633,12 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bento Card 3: Inventory Alerts */}
               <div
                 onClick={() => handleSelectTab('inventory')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'inventory'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'inventory'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -1752,14 +1660,12 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Bento Card 4: Financials & Payouts */}
               <div
                 onClick={() => handleSelectTab('payouts')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'payouts'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'payouts'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -1770,95 +1676,12 @@ export const SellerDashboard: React.FC = () => {
                   </span>
                 </div>
                 <h4 className="font-black text-sm mt-3">أرباح ومستحقات الورشة</h4>
-                <p className={`text-xs mt-1 font-mono font-bold text-base text-[#9a6a35] dark:text-[#d5a56d]`}>
+                <p className="text-xs mt-1 font-mono font-bold text-base text-[#9a6a35] dark:text-[#d5a56d]">
                   {totalRevenue.toLocaleString('ar-EG')} ج.م
                 </p>
                 <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
                   <span className="text-black/60 dark:text-white/60">سحب الأرباح</span>
                   <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">طلب صرف ←</span>
-                </div>
-              </div>
-
-              {/* Bento Card 5: Direct Messages */}
-              <div
-                onClick={() => handleSelectTab('messages')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'messages'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <MessageSquare className="w-5 h-5" />
-                  </div>
-                  {chatUnreadCount > 0 && (
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#9a6a35] text-white animate-pulse">
-                      {chatUnreadCount} جديد
-                    </span>
-                  )}
-                </div>
-                <h4 className="font-black text-sm mt-3">محادثات الزبائن</h4>
-                <p className={`text-xs mt-1 ${activeTab === 'messages' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  ردود فورية على استفسارات المشترين
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">شات مباشر</span>
-                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">فتح المحادثة ←</span>
-                </div>
-              </div>
-
-              {/* Bento Card 6: Craft Reels */}
-              <div
-                onClick={() => handleSelectTab('reels')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'reels'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Film className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
-                    {reels.length} مقطع
-                  </span>
-                </div>
-                <h4 className="font-black text-sm mt-3">فيديوهات الورشة (Reels)</h4>
-                <p className={`text-xs mt-1 ${activeTab === 'reels' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  توثيق كواليس الصنع اليدوي لزيادة الثقة
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">فيديو الصنعة</span>
-                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">استعراض ←</span>
-                </div>
-              </div>
-
-              {/* Bento Card 7: Workshop Identity & Settings */}
-              <div
-                onClick={() => handleSelectTab('settings')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'settings'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Settings className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-bold text-[#9a6a35] dark:text-[#d5a56d]">
-                    {sellerGovernorate}
-                  </span>
-                </div>
-                <h4 className="font-black text-sm mt-3">هوية الورشة والغلاف</h4>
-                <p className={`text-xs mt-1 ${activeTab === 'settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
-                  {brandName} • صورة الغلاف والشعار
-                </p>
-                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">تعديل الهوية</span>
-                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">تخصيص ←</span>
                 </div>
               </div>
             </div>
@@ -1867,7 +1690,6 @@ export const SellerDashboard: React.FC = () => {
 
         {/* MAIN WORKPLACE CONTENT PANE */}
         <main id="seller-main-pane" className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex-1 min-w-0 w-full space-y-6" : "w-full space-y-6"}>
-          {/* Quick 4 Action Cards for Sidebar and Compact-Rail modes */}
           {(layoutMode === 'sidebar' || layoutMode === 'compact-rail') && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button
@@ -1889,11 +1711,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-primary-prods-card"
                 onClick={() => handleSelectTab('products')}
-                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
-                  activeTab === 'products'
-                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-                }`}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${activeTab === 'products'
+                  ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                  : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                  }`}
               >
                 <div>
                   <span className="text-xs font-bold block">معروضاتي</span>
@@ -1908,11 +1729,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-primary-orders-card"
                 onClick={() => handleSelectTab('orders')}
-                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
-                  activeTab === 'orders'
-                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-                }`}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${activeTab === 'orders'
+                  ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                  : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                  }`}
               >
                 <div>
                   <span className="text-xs font-bold block">الطلبات</span>
@@ -1927,11 +1747,10 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-primary-account-card"
                 onClick={() => handleSelectTab('settings')}
-                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
-                  activeTab === 'settings'
-                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-                }`}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${activeTab === 'settings'
+                  ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                  : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                  }`}
               >
                 <div>
                   <span className="text-xs font-bold block">غلاف الورشة</span>
@@ -1944,1366 +1763,830 @@ export const SellerDashboard: React.FC = () => {
             </div>
           )}
 
-      {/* TAB 1: OVERVIEW */}
-      {activeTab === 'overview' && (
-        <div className="space-y-8">
-          {/* Overview Top Header with Refresh Button */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/75 dark:bg-[#151513]/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-            <div>
-              <h2 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">لوحة أداء ومبيعات الورشة</h2>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                متابعة حركة الإيرادات، حالة الطلبات، والقطع المعتمدة في ورشتكم
-              </p>
-            </div>
-            <RefreshDataButton
-              onRefresh={async () => {
-                await Promise.all([
-                  refreshSellerStats(),
-                  refreshSellerProducts(),
-                  refreshOrders(),
-                  refreshSellerInventory()
-                ]);
-              }}
-              label="تحديث المؤشرات"
-            />
-          </div>
-
-          {/* 4 KPI Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>إجمالي المبيعات المحققة</span>
-                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                  <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalRevenue.toLocaleString()} ج.م</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                {orders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
-              </span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>إجمالي الطلبات</span>
-                <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
-                  <Truck className="w-4 h-4 text-[#9a6a35]" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length}</span>
-              <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">طلبات من محافظات الجمهورية</span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>القطع المعروضة والمخزون</span>
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                  <Package className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{sellerProducts.length} منتج</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                {sellerProducts.filter((p) => p.approvalStatus === 'approved').length} معتمد ومنشور بالسوق
-              </span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>تقييم المشترين الموثق</span>
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                  <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">4.9 / 5.0</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">100% تقييمات بمشتريات مؤكدة</span>
-            </div>
-          </div>
-
-          {/* Quick Inventory Alert Bar */}
-          {(lowStockCount > 0 || outOfStockCount > 0) && (
-            <div className="p-5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 rounded-[1.5rem] flex flex-col sm:flex-row sm:items-center justify-between gap-4 backdrop-blur-xl">
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
-                <div className="text-xs">
-                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">تنبيهات المخزون الحرج:</span>
-                  <span className="text-black/70 dark:text-white/70">
-                    لديك {outOfStockCount} منتجات نفذ رصيدها بالكامل، و {lowStockCount} منتجات قاربت على النفاذ (أقل من 5 قطع).
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('inventory')}
-                className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
-              >
-                تحديث الجرد والمخزون
-              </button>
-            </div>
-          )}
-
-          {/* Pending products status notice */}
-          {sellerProducts.some((p) => p.approvalStatus === 'pending') && (
-            <div className="p-5 bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 border border-[#9a6a35]/30 rounded-[1.5rem] flex items-center justify-between gap-4 backdrop-blur-xl">
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-[#9a6a35] shrink-0" />
+          {/* TAB 1: OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div className="space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/75 dark:bg-[#151513]/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
                 <div>
-                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">لديك منتجات قيد فحص الجودة والأصالة</h4>
-                  <p className="text-[11px] text-black/70 dark:text-white/70">
-                    يقوم مسؤولو منصة وه بمراجعة بيانات قطعك والتأكد من أصالتها قبل النشر العام للجمهور.
+                  <h2 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">لوحة أداء ومبيعات الورشة</h2>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                    متابعة حركة الإيرادات، حالة الطلبات، والقطع المعتمدة في ورشتكم
                   </p>
                 </div>
+                <RefreshDataButton
+                  onRefresh={async () => {
+                    await Promise.all([
+                      refreshSellerStats(),
+                      refreshSellerProducts(),
+                      refreshOrders(),
+                      refreshSellerInventory()
+                    ]);
+                  }}
+                  label="تحديث المؤشرات"
+                />
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('products')}
-                className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold shrink-0 cursor-pointer transition-colors shadow-sm"
-              >
-                متابعة الحالات
-              </button>
-            </div>
-          )}
 
-          {/* Rejection notices if any */}
-          {sellerProducts.some((p) => p.approvalStatus === 'rejected') && (
-            <div className="p-5 bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/30 rounded-[1.5rem] flex items-center justify-between gap-4 backdrop-blur-xl">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
-                <div>
-                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">يوجد منتجات تحتاج لتعديل وتصحيح لإعادة النشر</h4>
-                  <p className="text-[11px] text-black/70 dark:text-white/70">
-                    راجع أسباب الرفض المسجلة من إدارة المنصة وقم بتصحيح البيانات ثم أعد تقديمها للمراجعة.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveTab('products')}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shrink-0 cursor-pointer transition-colors shadow-sm"
-              >
-                عرض الملاحظات
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* TAB 2: PRODUCTS MANAGER */}
-      {activeTab === 'products' && (
-        <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">كتالوج قطع الورشة ومتابعة دورة الاعتماد</h3>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                جميع المنتجات تمر بدورة اعتماد: إنشاء مسودة أو تقديم للمراجعة ← فحص الإدارة ← نشر بالسوق العام
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <RefreshDataButton
-                onRefresh={refreshSellerProducts}
-                label="تحديث المنتجات"
-              />
-
-              <button
-                type="button"
-                id="seller-tab-add-product"
-                onClick={openAddProductModal}
-                className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>إضافة قطعة جديدة</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Products List with Full Moderation Lifecycle */}
-          <div className="space-y-4">
-            {sellerProducts.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] rounded-[1.5rem]">
-                <Package className="w-10 h-10 text-black/40 dark:text-white/40 mx-auto mb-2 opacity-60" />
-                <p className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد منتجات مسجلة حتى الآن</p>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-1">ابدأ بإضافة أول قطعة تراثية من ورشتك</p>
-                <button
-                  type="button"
-                  onClick={openAddProductModal}
-                  className="mt-4 px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
-                >
-                  إضافة منتج الآن
-                </button>
-              </div>
-            ) : (
-              sellerProducts.map((prod) => (
-                <div
-                  key={prod.id}
-                  className={`p-4 sm:p-5 rounded-2xl border transition-all ${prod.approvalStatus === 'rejected'
-                    ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/30'
-                    : prod.approvalStatus === 'pending'
-                      ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/30'
-                      : 'bg-white/60 dark:bg-white/[0.03] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-                    }`}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-start sm:items-center gap-3.5">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
-                        alt={prod.title}
-                        className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0 shadow-sm"
-                      />
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
-                          {getStatusBadge(prod.approvalStatus)}
-                          <span className="text-[10px] bg-[#9a6a35]/15 text-[#9a6a35] px-2 py-0.5 rounded font-bold">
-                            {prod.categoryName}
-                          </span>
-                        </div>
-                        <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                          السعر: <strong className="text-[#9a6a35] font-mono">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
-                        </p>
-                        <p className="text-[11px] text-black/50 dark:text-white/50">
-                          تاريخ الإدراج: {prod.createdAt} • المحافظة: {prod.sellerGovernorate}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-black/10 dark:border-white/10 w-full md:w-auto">
-                      {/* Quick stock adjustment button */}
-                      <button
-                        type="button"
-                        onClick={() => openStockModal(prod)}
-                        className="px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
-                        title="تعديل المخزون المتاح"
-                      >
-                        <Boxes className="w-3.5 h-3.5 text-[#9a6a35]" />
-                        <span>تعديل المخزون ({prod.stockCount})</span>
-                      </button>
-
-                      {/* If Draft or Rejected, allow submitting to review */}
-                      {(prod.approvalStatus === 'draft' || prod.approvalStatus === 'rejected') && (
-                        <button
-                          type="button"
-                          onClick={() => handleSubmitForReview(prod.id)}
-                          className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                          title="إرسال للمراجعة والاعتماد"
-                        >
-                          <Send className="w-3.5 h-3.5" />
-                          <span>إرسال للمراجعة</span>
-                        </button>
-                      )}
-
-                      <button
-                        type="button"
-                        onClick={() => openEditProductModal(prod)}
-                        className="p-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 transition-colors cursor-pointer"
-                        title="تعديل"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          confirmModal({
-                            title: 'حذف المنتج',
-                            message: `هل أنت متأكد من حذف المنتج "${prod.title}" من ورشتك نهائياً؟`,
-                            confirmText: 'نعم، حذف المنتج',
-                            danger: true,
-                            onConfirm: async () => {
-                              await deleteProduct(prod.id);
-                            }
-                          });
-                        }}
-                        className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-colors cursor-pointer"
-                        title="حذف"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
+                    <span>إجمالي المبيعات المحققة</span>
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                      <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     </div>
                   </div>
-
-                  {/* If product was rejected by Admin, show rejection reason box */}
-                  {prod.approvalStatus === 'rejected' && prod.rejectionReason && (
-                    <div className="mt-3 p-3 bg-rose-500/10 dark:bg-rose-500/20 border border-rose-500/30 rounded-xl text-xs space-y-1">
-                      <div className="flex items-center gap-1.5 text-rose-900 dark:text-rose-200 font-bold">
-                        <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                        <span>سبب الرفض المسجل من إدارة المنصة:</span>
-                      </div>
-                      <p className="text-rose-800 dark:text-rose-300 text-xs pr-5 leading-relaxed">{prod.rejectionReason}</p>
-                      <div className="pt-1 pr-5">
-                        <button
-                          type="button"
-                          onClick={() => openEditProductModal(prod)}
-                          className="text-[11px] font-bold text-rose-900 dark:text-rose-200 underline hover:text-rose-950 dark:hover:text-rose-100 cursor-pointer"
-                        >
-                          انقر هنا لتصحيح البيانات وإعادة إرسال المنتج للمراجعة
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalRevenue.toLocaleString()} ج.م</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                    {orders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
+                  </span>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
 
-      {/* TAB: INVENTORY & STOCK MOVEMENTS (PHASE 4) */}
-      {activeTab === 'inventory' && (
-        <div className="space-y-6">
-          {/* Inventory KPI Summary */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">إجمالي القطع في الورشة</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة
-              </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">جاهزة للشحن المباشر</span>
-            </div>
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
+                    <span>إجمالي الطلبات</span>
+                    <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
+                      <Truck className="w-4 h-4 text-[#9a6a35]" />
+                    </div>
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length}</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">طلبات من محافظات الجمهورية</span>
+                </div>
 
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون الإجمالية</span>
-              <span className="text-2xl font-black text-[#9a6a35] font-mono">
-                {totalValuation.toLocaleString()} ج.م
-              </span>
-              <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">بسعر البيع الفعلي</span>
-            </div>
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
+                    <span>القطع المعروضة والمخزون</span>
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                      <Package className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
+                    </div>
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{sellerProducts.length} منتج</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                    {sellerProducts.filter((p) => p.approvalStatus === 'approved').length} معتمد ومنشور بالسوق
+                  </span>
+                </div>
 
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع أوشكت على النفاذ</span>
-              <span className={`text-2xl font-black font-mono ${lowStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
-                {lowStockCount} منتجات
-              </span>
-              <span className="text-[10px] text-amber-700 dark:text-amber-400 font-bold block mt-1">مخزون أقل من 5 قطع</span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع نفذت بالكامل</span>
-              <span className={`text-2xl font-black font-mono ${outOfStockCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-black/40 dark:text-white/40'}`}>
-                {outOfStockCount} منتج
-              </span>
-              <span className="text-[10px] text-rose-700 dark:text-rose-400 font-bold block mt-1">تحتاج إنتاج دفعة جديدة بالورشة</span>
-            </div>
-          </div>
-
-          {/* Real Inventory Table with instant stock adjustment */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">إدارة المخزون والتوريدات اليدوية</h3>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
-                  سجل حركة زيادة أو إنقاص القطع فور إتمام الصنعة بالورشة أو عند حرق دفعة جديدة
-                </p>
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
+                    <span>تقييم المشترين الموثق</span>
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                    </div>
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">4.9 / 5.0</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">100% تقييمات بمشتريات مؤكدة</span>
+                </div>
               </div>
 
-              <RefreshDataButton
-                onRefresh={async () => {
-                  await Promise.all([
-                    refreshSellerInventory(),
-                    refreshStockMovements()
-                  ]);
-                }}
-                label="مزامنة وتحديث المخزن"
-              />
+              {(lowStockCount > 0 || outOfStockCount > 0) && (
+                <div className="p-5 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 rounded-[1.5rem] flex flex-col sm:flex-row sm:items-center justify-between gap-4 backdrop-blur-xl">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-[#d6aa72] shrink-0" />
+                    <div className="text-xs">
+                      <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">تنبيهات المخزون الحرج:</span>
+                      <span className="text-black/70 dark:text-white/70">
+                        لديك {outOfStockCount} منتجات نفذ رصيدها بالكامل، و {lowStockCount} منتجات قاربت على النفاذ (أقل من 5 قطع).
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('inventory')}
+                    className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
+                  >
+                    تحديث الجرد والمخزون
+                  </button>
+                </div>
+              )}
             </div>
+          )}
 
-            {/* Desktop Table View */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-right text-xs">
-                <thead>
-                  <tr className="border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 font-bold">
-                    <th className="pb-3 pr-2">المنتج والورشة</th>
-                    <th className="pb-3">التصنيف</th>
-                    <th className="pb-3">سعر القطعة</th>
-                    <th className="pb-3">الرصيد الحالي</th>
-                    <th className="pb-3">حالة الوفرة</th>
-                    <th className="pb-3 text-left pl-2">إجراءات التعديل</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                  {sellerProducts.map((prod) => {
-                    const isOutOfStock = prod.stockCount === 0;
-                    const isLow = prod.stockCount > 0 && prod.stockCount <= 5;
-                    return (
-                      <tr key={prod.id} className="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
-                        <td className="py-3.5 pr-2">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
-                              alt={prod.title}
-                              className="w-10 h-10 rounded-xl object-cover border border-black/10 dark:border-white/10 shadow-xs"
-                            />
-                            <div>
-                              <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">{prod.title}</span>
-                              <span className="text-[10px] text-black/50 dark:text-white/50">{prod.specifications?.material || 'خامات طبيعية'}</span>
+          {/* TAB 2: PRODUCTS MANAGER */}
+          {activeTab === 'products' && (
+            <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">كتالوج قطع الورشة ومتابعة دورة الاعتماد</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                    جميع المنتجات تمر بدورة اعتماد: إنشاء مسودة أو تقديم للمراجعة ← فحص الإدارة ← نشر بالسوق العام
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                  <RefreshDataButton
+                    onRefresh={refreshSellerProducts}
+                    label="تحديث المنتجات"
+                  />
+                  <button
+                    type="button"
+                    id="seller-tab-add-product"
+                    onClick={openAddProductModal}
+                    className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>إضافة قطعة جديدة</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {sellerProducts.length === 0 ? (
+                  <div className="text-center py-12 border border-dashed border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] rounded-[1.5rem]">
+                    <Package className="w-10 h-10 text-black/40 dark:text-white/40 mx-auto mb-2 opacity-60" />
+                    <p className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد منتجات مسجلة حتى الآن</p>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">ابدأ بإضافة أول قطعة تراثية من ورشتك</p>
+                    <button
+                      type="button"
+                      onClick={openAddProductModal}
+                      className="mt-4 px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
+                    >
+                      إضافة منتج الآن
+                    </button>
+                  </div>
+                ) : (
+                  sellerProducts.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className={`p-4 sm:p-5 rounded-2xl border transition-all ${prod.approvalStatus === 'rejected'
+                        ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/30'
+                        : prod.approvalStatus === 'pending'
+                          ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/30'
+                          : 'bg-white/60 dark:bg-white/[0.03] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                        }`}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-start sm:items-center gap-3.5">
+                          <img
+                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                            alt={prod.title}
+                            className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0 shadow-sm"
+                          />
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
+                              {getStatusBadge(prod.approvalStatus)}
+                              <span className="text-[10px] bg-[#9a6a35]/15 text-[#9a6a35] px-2 py-0.5 rounded font-bold">
+                                {prod.categoryName}
+                              </span>
                             </div>
+                            <p className="text-xs text-black/60 dark:text-white/60 font-medium">
+                              السعر: <strong className="text-[#9a6a35] font-mono">{prod.price} ج.م</strong> • المخزون: <span className={prod.stockCount === 0 ? 'text-rose-600 dark:text-rose-400 font-bold' : prod.stockCount <= 5 ? 'text-amber-600 dark:text-[#d6aa72] font-bold' : 'text-emerald-700 dark:text-emerald-400 font-bold'}>{prod.stockCount} قطعة</span> • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
+                            </p>
                           </div>
-                        </td>
-                        <td className="py-3.5 text-black/60 dark:text-white/60 font-medium">{prod.categoryName}</td>
-                        <td className="py-3.5 font-black font-mono text-[#9a6a35]">{prod.price} ج.م</td>
-                        <td className="py-3.5">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.stockCount}</span>
-                            <span className="text-[10px] text-black/50 dark:text-white/50">قطعة</span>
-                          </div>
-                        </td>
-                        <td className="py-3.5">
-                          {isOutOfStock ? (
-                            <span className="inline-flex items-center gap-1 bg-rose-500/15 text-rose-800 dark:text-rose-300 font-bold px-2 py-0.5 rounded-full text-[10px]">
-                              <AlertCircle className="w-3 h-3" />
-                              <span>نفذ من المخزن</span>
-                            </span>
-                          ) : isLow ? (
-                            <span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-900 dark:text-amber-200 font-bold px-2 py-0.5 rounded-full text-[10px]">
-                              <AlertTriangle className="w-3 h-3" />
-                              <span>مخزون منخفض ({prod.stockCount})</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full text-[10px]">
-                              <Check className="w-3 h-3" />
-                              <span>متوفر ({prod.stockCount})</span>
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3.5 text-left pl-2">
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-black/10 dark:border-white/10 w-full md:w-auto">
                           <button
                             type="button"
                             onClick={() => openStockModal(prod)}
-                            className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
+                            className="px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
                           >
-                            <Sliders className="w-3.5 h-3.5" />
-                            <span>تعديل الرصيد</span>
+                            <Boxes className="w-3.5 h-3.5 text-[#9a6a35]" />
+                            <span>تعديل المخزون ({prod.stockCount})</span>
                           </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
 
-            {/* Mobile Cards View for Inventory */}
-            <div className="md:hidden space-y-3">
-              {sellerProducts.map((prod) => {
-                const isOutOfStock = prod.stockCount === 0;
-                const isLow = prod.stockCount > 0 && prod.stockCount <= 5;
-                return (
-                  <div key={prod.id} className="p-4 rounded-2xl bg-white/60 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 space-y-3 shadow-xs">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
-                        alt={prod.title}
-                        className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0 shadow-xs"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7] block truncate">{prod.title}</span>
-                        <span className="text-[11px] text-black/60 dark:text-white/60 block">
-                          {prod.categoryName} • <strong className="text-[#9a6a35] font-mono">{prod.price} ج.م</strong>
-                        </span>
+                          {(prod.approvalStatus === 'draft' || prod.approvalStatus === 'rejected') && (
+                            <button
+                              type="button"
+                              onClick={() => handleSubmitForReview(prod.id)}
+                              className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                            >
+                              <Send className="w-3.5 h-3.5" />
+                              <span>إرسال للمراجعة</span>
+                            </button>
+                          )}
+
+                          <button
+                            type="button"
+                            onClick={() => openEditProductModal(prod)}
+                            className="p-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 transition-colors cursor-pointer"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              confirmModal({
+                                title: 'حذف المنتج',
+                                message: `هل أنت متأكد من حذف المنتج "${prod.title}" من ورشتك نهائياً؟`,
+                                confirmText: 'نعم، حذف المنتج',
+                                danger: true,
+                                onConfirm: async () => {
+                                  await deleteProduct(prod.id);
+                                }
+                              });
+                            }}
+                            className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/20 transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-black/60 dark:text-white/60">الرصيد:</span>
-                        <span className="font-mono font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.stockCount} قطعة</span>
-                        {isOutOfStock ? (
-                          <span className="bg-rose-500/15 text-rose-800 dark:text-rose-300 text-[10px] font-bold px-2 py-0.5 rounded-full">نفذ</span>
-                        ) : isLow ? (
-                          <span className="bg-amber-500/15 text-amber-900 dark:text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">منخفض</span>
-                        ) : (
-                          <span className="bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full">متوفر</span>
-                        )}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => openStockModal(prod)}
-                        className="px-3.5 py-1.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs min-h-[36px] flex items-center gap-1 cursor-pointer transition-colors"
-                      >
-                        <Sliders className="w-3 h-3" />
-                        <span>تعديل</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Stock Movements Audit Trail */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2 font-serif">
-                  <History className="w-5 h-5 text-[#9a6a35]" />
-                  <span>سجل حركات وتوريدات المخزن (Audit Trail)</span>
-                </h3>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">توثيق دقيق لكل عملية بيع أو إنتاج يدوي أو تسوية جردية</p>
+                  ))
+                )}
               </div>
             </div>
+          )}
 
-            <div className="space-y-2">
-              {stockMovements.length === 0 ? (
-                <div className="p-6 text-center text-xs text-black/50 dark:text-white/50 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
-                  لا توجد حركات مسجلة مؤخراً. سيتم تدوين العمليات فور تعديل الرصيد أو البيع.
+          {/* TAB 3: INVENTORY */}
+          {activeTab === 'inventory' && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">إجمالي القطع في الورشة</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                    {sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة
+                  </span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">جاهزة للشحن المباشر</span>
                 </div>
-              ) : (
-                stockMovements.slice(0, 10).map((mov, idx) => (
-                  <div
-                    key={mov.id || idx}
-                    className="p-4 rounded-2xl bg-white/60 dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className={`w-2.5 h-2.5 rounded-full ${mov.type === 'STOCK_ADDED' ? 'bg-emerald-500' : mov.type === 'ORDER_SOLD' ? 'bg-blue-500' : 'bg-amber-500'
-                        }`} />
-                      <div>
-                        <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{mov.productTitle || 'منتج بالورشة'}</span>
-                        <span className="text-black/60 dark:text-white/60 block text-[11px] mt-0.5">
-                          السبب: {mov.reason} • القائم بالعملية: {mov.actorName || 'الحرفي'}
-                        </span>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-4 self-end sm:self-center font-mono">
-                      <div className="text-right">
-                        <span className="text-black/50 dark:text-white/50 text-[10px] block">الرصيد السابق ← الجديد</span>
-                        <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                          {mov.previousStock} ← <strong className="text-[#9a6a35]">{mov.newStock}</strong>
-                        </span>
-                      </div>
-                      <span className={`font-bold px-2.5 py-1 rounded-full text-xs ${mov.quantity >= 0 ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300' : 'bg-rose-500/15 text-rose-800 dark:text-rose-300'
-                        }`}>
-                        {mov.quantity > 0 ? `+${mov.quantity}` : mov.quantity}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: ORDERS */}
-      {activeTab === 'orders' && (
-        <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
-            <div>
-              <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">إدارة وشحن طلبات العملاء</h3>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">قم بتحديث حالة الشحنة فور تجهيز الطرد بالورشة</p>
-            </div>
-            <RefreshDataButton
-              onRefresh={refreshOrders}
-              label="تحديث الطلبات"
-            />
-          </div>
-
-          <div className="space-y-4">
-            {orders.length === 0 ? (
-              <div className="p-8 text-center text-xs text-black/50 dark:text-white/50 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
-                لا توجد طلبات جديدة موجهة لمنتجاتك حالياً.
-              </div>
-            ) : (
-              orders.map((ord) => (
-                <div key={ord.id} className="p-5 bg-white/60 dark:bg-white/[0.03] rounded-2xl border border-black/10 dark:border-white/10 space-y-3 shadow-xs">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-3">
-                    <div>
-                      <span className="font-mono font-bold text-xs text-[#9a6a35] block">
-                        {ord.orderNumber || ord.id}
-                      </span>
-                      <span className="text-xs text-[#211d18] dark:text-[#f5f0e7]">
-                        المشتري: <strong>{ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}</strong> (
-                        {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone})
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-black/60 dark:text-white/60 font-medium">تحديث الحالة:</span>
-                      <select
-                        value={ord.status}
-                        onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
-                        className="px-3 py-1.5 bg-white/80 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#9a6a35] outline-none cursor-pointer focus:border-[#9a6a35]"
-                      >
-                        <option value="pending">طلب جديد (Pending)</option>
-                        <option value="confirmed">تأكيد الورشة (Confirmed)</option>
-                        <option value="processing">جاري التجهيز والتغليف بالورشة</option>
-                        <option value="shipped">تم تسليم الشحنة لشركة التوصيل</option>
-                        <option value="delivered">تم الاستلام من العميل</option>
-                        <option value="cancelled">ملغي (Cancelled)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <span className="font-bold">العنوان:</span> {ord.shippingAddress?.governorate || 'المحافظة'} - {ord.shippingAddress?.city || 'المدينة'} ({ord.shippingAddress?.streetAddress || (ord.shippingAddress as any)?.address || 'العنوان'})
-                    </div>
-                    <div className="font-bold font-mono text-[#9a6a35]">
-                      إجمالي الفاتورة: {ord.total} ج.م
-                    </div>
-                  </div>
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قيمة المخزون الإجمالية</span>
+                  <span className="text-2xl font-black text-[#9a6a35] font-mono">
+                    {totalValuation.toLocaleString()} ج.م
+                  </span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">بسعر البيع الفعلي</span>
                 </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
 
-      {/* TAB 4: PAYOUTS */}
-      {activeTab === 'payouts' && (
-        <SellerPayouts
-          user={currentUser}
-          onNavigateToAccount={() => setActiveTab('settings')}
-        />
-      )}
-
-      {/* TAB 5: WORKSHOP SETTINGS & PROFILE */}
-      {activeTab === 'settings' && (
-        <div className="space-y-6">
-          {/* Header Card */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/10 text-[#9a6a35] border border-[#9a6a35]/20 text-xs font-bold mb-2">
-                  <Sparkles className="w-3.5 h-3.5 text-[#9a6a35]" />
-                  <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع أوشكت على النفاذ</span>
+                  <span className={`text-2xl font-black font-mono ${lowStockCount > 0 ? 'text-amber-600 dark:text-[#d6aa72]' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                    {lowStockCount} منتجات
+                  </span>
+                  <span className="text-[10px] text-amber-700 dark:text-[#d6aa72] font-bold block mt-1">مخزون أقل من 5 قطع</span>
                 </div>
-                <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">
-                  هوية وغلاف الورشة في منصة وه
-                </h3>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-2xl leading-relaxed font-medium">
-                  خصص صورة الغلاف وشعار ورشتكم والبيانات التعريفية. تظهر هذه الصورة في صدارة بطاقة ورشتكم بقسم
-                  <strong className="text-[#211d18] dark:text-[#f5f0e7] font-bold mx-1">"الورش والتعاونيات الحرفية المعتمدة"</strong>
-                  بالصفحة الرئيسية، ودليل الحرفيين، والمتجر التراثي الخاص بكم.
-                </p>
+
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                  <span className="text-xs text-black/60 dark:text-white/60 block mb-1 font-medium">قطع نفذت بالكامل</span>
+                  <span className={`text-2xl font-black font-mono ${outOfStockCount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-black/40 dark:text-white/40'}`}>
+                    {outOfStockCount} منتج
+                  </span>
+                  <span className="text-[10px] text-rose-700 dark:text-rose-400 font-bold block mt-1">تحتاج إنتاج دفعة جديدة بالورشة</span>
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-                <RefreshDataButton
-                  onRefresh={refreshSellers}
-                  label="تحديث بيانات الورشة"
-                />
-                <button
-                  type="button"
-                  onClick={() => setActivePage('sellers')}
-                  className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <Eye className="w-4 h-4 text-[#9a6a35]" />
-                  <span>مشاهدة قسم الورش بالمنصة</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Column: Cover Selection & Settings Form (7 cols) */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Cover Image Selector Box */}
               <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
-                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center">
-                      <Camera className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">اختيار وتحديث صورة الغلاف</h4>
-                      <p className="text-[11px] text-black/60 dark:text-white/60">اختر من المعرض التراثي المعتمد أو ارفع صورة خاصة لورشتك</p>
-                    </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">إدارة المخزون والتوريدات اليدوية</h3>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                      سجل حركة زيادة أو إنقاص القطع فور إتمام الصنعة بالورشة أو عند حرق دفعة جديدة
+                    </p>
                   </div>
 
-                  {sellerCoverImage && (
-                    <span className="text-[11px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      <span>تم تعيين الغلاف</span>
-                    </span>
-                  )}
+                  <RefreshDataButton
+                    onRefresh={async () => {
+                      await Promise.all([
+                        refreshSellerInventory(),
+                        refreshStockMovements()
+                      ]);
+                    }}
+                    label="مزامنة وتحديث المخزن"
+                  />
                 </div>
 
-                {/* Cover Picker Tabs */}
-                <div className="flex items-center gap-2 p-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
-                  <button
-                    type="button"
-                    onClick={() => setCoverPickerTab('presets')}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'presets'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                      : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-                      }`}
-                  >
-                    <Palette className="w-3.5 h-3.5" />
-                    <span>معرض ورش الصنعة ({cloudImages.length})</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCoverPickerTab('upload')}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'upload'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                      : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-                      }`}
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>رفع من جهازك</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCoverPickerTab('url')}
-                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'url'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                      : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
-                      }`}
-                  >
-                    <LinkIcon className="w-3.5 h-3.5" />
-                    <span>رابط صورة</span>
-                  </button>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead>
+                      <tr className="border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 font-bold">
+                        <th className="pb-3 pr-2">المنتج والورشة</th>
+                        <th className="pb-3">التصنيف</th>
+                        <th className="pb-3">سعر القطعة</th>
+                        <th className="pb-3">الرصيد الحالي</th>
+                        <th className="pb-3">حالة الوفرة</th>
+                        <th className="pb-3 text-left pl-2">إجراءات التعديل</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/10 dark:divide-white/10">
+                      {sellerProducts.map((prod) => (
+                        <tr key={prod.id} className="hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
+                          <td className="py-3.5 pr-2">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                                alt={prod.title}
+                                className="w-10 h-10 rounded-xl object-cover border border-black/10 dark:border-white/10 shadow-xs"
+                              />
+                              <div>
+                                <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">{prod.title}</span>
+                                <span className="text-[10px] text-black/50 dark:text-white/50">{prod.specifications?.material || 'خامات طبيعية'}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3.5 text-black/60 dark:text-white/60 font-medium">{prod.categoryName}</td>
+                          <td className="py-3.5 font-black font-mono text-[#9a6a35]">{prod.price} ج.م</td>
+                          <td className="py-3.5 font-mono font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.stockCount} قطعة</td>
+                          <td className="py-3.5">
+                            {prod.stockCount === 0 ? (
+                              <span className="inline-flex items-center gap-1 bg-rose-500/15 text-rose-800 dark:text-rose-300 font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                <AlertCircle className="w-3 h-3" />
+                                <span>نفذ من المخزن</span>
+                              </span>
+                            ) : prod.stockCount <= 5 ? (
+                              <span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-900 dark:text-[#d5a56d] font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                <AlertTriangle className="w-3 h-3" />
+                                <span>مخزون منخفض ({prod.stockCount})</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full text-[10px]">
+                                <Check className="w-3 h-3" />
+                                <span>متوفر ({prod.stockCount})</span>
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 text-left pl-2">
+                            <button
+                              type="button"
+                              onClick={() => openStockModal(prod)}
+                              className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
+                            >
+                              <Sliders className="w-3.5 h-3.5" />
+                              <span>تعديل الرصيد</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              </div>
+            </div>
+          )}
 
-                {/* TAB 1: CURATED WORKSHOP PRESETS GALLERY */}
-                {coverPickerTab === 'presets' && (
-                  <div className="space-y-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                      <div>
-                        <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] font-bold">
-                          اختر صورة غلاف موثقة تمثل طابع ورشتكم وحرفتكم التراثية الأصيلة:
-                        </p>
-                        <p className="text-[11px] text-[#9a6a35] dark:text-[#d4af37] font-medium mt-0.5">
-                          معرض مخصص حصرياً لصور ورش الصنعة والحرف اليدوية (فخار، تلي، نول، خوص، ألاباستر)
-                        </p>
+          {/* TAB 4: ORDERS */}
+          {activeTab === 'orders' && (
+            <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+                <div>
+                  <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">إدارة وشحن طلبات العملاء</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">قم بتحديث حالة الشحنة فور تجهيز الطرد بالورشة</p>
+                </div>
+                <RefreshDataButton
+                  onRefresh={refreshOrders}
+                  label="تحديث الطلبات"
+                />
+              </div>
+
+              <div className="space-y-4">
+                {orders.length === 0 ? (
+                  <div className="p-8 text-center text-xs text-black/50 dark:text-white/50 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
+                    لا توجد طلبات جديدة موجهة لمنتجاتك حالياً.
+                  </div>
+                ) : (
+                  orders.map((ord) => (
+                    <div key={ord.id} className="p-5 bg-white/60 dark:bg-white/[0.03] rounded-2xl border border-black/10 dark:border-white/10 space-y-3 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-3">
+                        <div>
+                          <span className="font-mono font-bold text-xs text-[#9a6a35] block">
+                            {ord.orderNumber || ord.id}
+                          </span>
+                          <span className="text-xs text-[#211d18] dark:text-[#f5f0e7]">
+                            المشتري: <strong>{ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}</strong>
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-black/60 dark:text-white/60 font-medium">تحديث الحالة:</span>
+                          <select
+                            value={ord.status}
+                            onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
+                            className="px-3 py-1.5 bg-white/80 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#9a6a35] outline-none cursor-pointer focus:border-[#9a6a35]"
+                          >
+                            <option value="pending">طلب جديد (Pending)</option>
+                            <option value="confirmed">تأكيد الورشة (Confirmed)</option>
+                            <option value="processing">جاري التجهيز والتغليف</option>
+                            <option value="shipped">تم تسليم الشحنة لشركة التوصيل</option>
+                            <option value="delivered">تم الاستلام من العميل</option>
+                            <option value="cancelled">ملغي (Cancelled)</option>
+                          </select>
+                        </div>
                       </div>
-                      {isLoadingCloudImages && (
-                        <span className="text-xs text-[#9a6a35] flex items-center gap-1 shrink-0">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>جاري جلب صور الورش...</span>
+                      <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <span className="font-bold">العنوان:</span> {ord.shippingAddress?.governorate} - {ord.shippingAddress?.city}
+                        </div>
+                        <div className="font-bold font-mono text-[#9a6a35]">
+                          إجمالي الفاتورة: {ord.total} ج.م
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: PAYOUTS */}
+          {activeTab === 'payouts' && (
+            <SellerPayouts
+              user={currentUser}
+              onNavigateToAccount={() => setActiveTab('settings')}
+            />
+          )}
+
+          {/* TAB 6: SETTINGS (معرض الـ 6 صور هنا) */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
+              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/10 text-[#9a6a35] border border-[#9a6a35]/20 text-xs font-bold mb-2">
+                      <Sparkles className="w-3.5 h-3.5 text-[#9a6a35]" />
+                      <span>واجهة عرض الورشة في قسم الورش والتعاونيات الحرفية المعتمدة</span>
+                    </div>
+                    <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">
+                      هوية وغلاف الورشة في منصة وه
+                    </h3>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1 max-w-2xl leading-relaxed font-medium">
+                      خصص صورة الغلاف وشعار ورشتكم والبيانات التعريفية. تظهر هذه الصورة في صدارة بطاقة ورشتكم بالمنصة.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+                    <RefreshDataButton
+                      onRefresh={refreshSellers}
+                      label="تحديث بيانات الورشة"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div className="lg:col-span-7 space-y-6">
+                  {/* صندوق اختيار صورة الغلاف */}
+                  <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
+                    <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center">
+                          <Camera className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">اختيار وتحديث صورة الغلاف</h4>
+                          <p className="text-[11px] text-black/60 dark:text-white/60">اختر من المعرض التراثي المعتمد أو ارفع صورة خاصة</p>
+                        </div>
+                      </div>
+                      {sellerCoverImage && (
+                        <span className="text-[11px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                          <Check className="w-3 h-3" />
+                          <span>تم تعيين الغلاف</span>
                         </span>
                       )}
                     </div>
 
-                    {/* Craft Category Filter Pills */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-thin">
+                    {/* أزرار التبديل */}
+                    <div className="flex items-center gap-2 p-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
                       <button
                         type="button"
-                        onClick={() => setWorkshopCraftFilter('all')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'all'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                        onClick={() => setCoverPickerTab('presets')}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'presets'
+                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
-                        كل الورش ({cloudImages.length})
+                        <Palette className="w-3.5 h-3.5" />
+                        <span>معرض ورش الصنعة ({STATIC_WORKSHOP_COVERS.length})</span>
                       </button>
+
                       <button
                         type="button"
-                        onClick={() => setWorkshopCraftFilter('pottery')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'pottery'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                        onClick={() => setCoverPickerTab('upload')}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'upload'
+                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
-                        <span>🏺</span>
-                        <span>الفخار والخزف</span>
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>رفع من جهازك</span>
                       </button>
+
                       <button
                         type="button"
-                        onClick={() => setWorkshopCraftFilter('tally')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'tally'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                        onClick={() => setCoverPickerTab('url')}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'url'
+                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
-                        <span>🪡</span>
-                        <span>التلي والفضة</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setWorkshopCraftFilter('weaving')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'weaving'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
-                          }`}
-                      >
-                        <span>🧵</span>
-                        <span>النول والكليم</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setWorkshopCraftFilter('khous')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'khous'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
-                          }`}
-                      >
-                        <span>🧺</span>
-                        <span>الخوص والنخيل</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setWorkshopCraftFilter('sculpture')}
-                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'sculpture'
-                          ? 'bg-[#9a6a35] text-white shadow-xs'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
-                          }`}
-                      >
-                        <span>🗿</span>
-                        <span>الألاباستر والنحت</span>
+                        <LinkIcon className="w-3.5 h-3.5" />
+                        <span>رابط صورة</span>
                       </button>
                     </div>
 
-                    {/* Workshop Presets Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
-                      {filteredWorkshopImages.length === 0 && !isLoadingCloudImages ? (
-                        <div className="col-span-full text-center py-8 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10">
-                          <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                            لا توجد صور متوفرة في هذا التصنيف حالياً.
+                    {/* المعرض الـ 6 المعتمد */}
+                    {coverPickerTab === 'presets' && (
+                      <div className="space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] font-bold">
+                            اختر صورة غلاف تمثل طابع ورشتكم وحرفتكم التراثية الأصيلة:
                           </p>
+                        </div>
+
+                        {/* فلاتر الحرفة */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-thin">
                           <button
                             type="button"
                             onClick={() => setWorkshopCraftFilter('all')}
-                            className="mt-2 text-xs text-[#9a6a35] font-bold hover:underline cursor-pointer"
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'all'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
                           >
-                            عرض جميع ورش الصنعة
+                            كل الورش ({STATIC_WORKSHOP_COVERS.length})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('pottery')}
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'pottery'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
+                          >
+                            الفخار والخزف
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('tally')}
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'tally'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
+                          >
+                            التلي والفضة
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('weaving')}
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'weaving'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
+                          >
+                            النول والكليم
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('khous')}
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'khous'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
+                          >
+                            الخوص والنخيل
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('sculpture')}
+                            className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'sculpture'
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              }`}
+                          >
+                            الألاباستر والنحت
                           </button>
                         </div>
-                      ) : (
-                        filteredWorkshopImages.map((preset) => {
-                          const isSelected = sellerCoverImage === preset.url;
-                          const categoryBadge = preset.craftCategory === 'pottery'
-                            ? 'ورشة فخار'
-                            : preset.craftCategory === 'tally'
-                              ? 'ورشة تلي'
-                              : preset.craftCategory === 'weaving'
-                                ? 'ورشة نسيج'
-                                : preset.craftCategory === 'khous'
-                                  ? 'ورشة خوص'
-                                  : 'ورشة نحت وتشكيل';
 
-                          return (
-                            <button
-                              type="button"
-                              key={preset.id}
-                              onClick={() => handleSelectPresetCover(preset.url, preset.title)}
-                              className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${isSelected
-                                ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
-                                : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
-                                }`}
-                            >
-                              <div className="h-28 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
-                                <img
-                                  src={preset.url}
-                                  alt={preset.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+                        {/* شبكة الصور */}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-1">
+                          {filteredWorkshopImages.map((preset) => {
+                            const isSelected = sellerCoverImage === preset.url;
+                            return (
+                              <button
+                                type="button"
+                                key={preset.id}
+                                onClick={() => handleSelectPresetCover(preset.url, preset.title)}
+                                className={`group relative rounded-2xl overflow-hidden border-2 text-right transition-all cursor-pointer ${isSelected
+                                  ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/30 shadow-md scale-[1.02]'
+                                  : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
+                                  }`}
+                              >
+                                <div className="h-28 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
+                                  <img
+                                    src={preset.url}
+                                    alt={preset.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
 
-                                {/* Category Tag */}
-                                <div className="absolute top-2 right-2">
-                                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-amber-200 backdrop-blur-xs border border-white/15">
-                                    {categoryBadge}
-                                  </span>
-                                </div>
+                                  {isSelected && (
+                                    <div className="absolute top-2 left-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
+                                      <Check className="w-3 h-3 stroke-[3]" />
+                                    </div>
+                                  )}
 
-                                {isSelected && (
-                                  <div className="absolute top-2 left-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
-                                    <Check className="w-3 h-3 stroke-[3]" />
+                                  <div className="absolute bottom-2 right-2 left-2 text-white space-y-0.5">
+                                    <span className="text-[11px] font-bold text-white block truncate drop-shadow-xs leading-tight">
+                                      {preset.title}
+                                    </span>
                                   </div>
-                                )}
-
-                                <div className="absolute bottom-2 right-2 left-2 text-white space-y-0.5">
-                                  <span className="text-[11px] font-bold text-white block truncate drop-shadow-xs leading-tight">
-                                    {preset.title}
-                                  </span>
-                                  <span className="text-[9px] text-white/70 block truncate">
-                                    {preset.region || preset.craft || 'حرفة صعيدية أصيلة'}
-                                  </span>
                                 </div>
-                              </div>
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* TAB 2: UPLOAD FROM DEVICE */}
-                {coverPickerTab === 'upload' && (
-                  <div className="space-y-4">
-                    <label
-                      htmlFor="seller-cover-upload-input"
-                      className={`border-2 border-dashed rounded-3xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 ${isUploadingCover
-                        ? 'border-amber-400 bg-amber-500/10'
-                        : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02]'
-                        }`}
-                    >
-                      <input
-                        id="seller-cover-upload-input"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp,image/jpg"
-                        onChange={handleCoverImageFileSelect}
-                        disabled={isUploadingCover}
-                        className="hidden"
-                      />
-
-                      {isUploadingCover ? (
-                        <>
-                          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-300 animate-spin">
-                            <Loader2 className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <span className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7] block">جاري رفع وحفظ صورة الغلاف...</span>
-                            <span className="text-xs text-black/60 dark:text-white/60">يتم معالجة الصورة السحابية بدقة عالية</span>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Upload className="w-6 h-6" />
-                          </div>
-                          <div>
-                            <span className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7] block mb-1">
-                              انقر هنا لاختيار صورة الغلاف من جهازك
-                            </span>
-                            <span className="text-xs text-black/60 dark:text-white/60 block">
-                              الصيغ المدعومة: JPG, PNG, WebP (الحجم الأقصى: 5 ميجابايت)
-                            </span>
-                          </div>
-                          <span className="px-5 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors">
-                            تصفح الملفات
-                          </span>
-                        </>
-                      )}
-                    </label>
-
-                    {coverUploadError && (
-                      <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 rounded-xl flex items-center gap-2 text-xs">
-                        <AlertCircle className="w-4 h-4 shrink-0" />
-                        <span>{coverUploadError}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
-                  </div>
-                )}
 
-                {/* TAB 3: CUSTOM IMAGE URL */}
-                {coverPickerTab === 'url' && (
-                  <form onSubmit={handleApplyCoverUrl} className="space-y-3">
-                    <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                      إذا كانت لديك صورة مرفوعة مسبقاً على الإنترنت، يمكنك لصق الرابط المباشر هنا:
-                    </p>
-                    <div className="flex gap-2">
-                      <input
-                        type="url"
-                        value={customCoverUrl}
-                        onChange={(e) => setCustomCoverUrl(e.target.value)}
-                        placeholder="https://example.com/workshop-cover.jpg"
-                        className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] dir-ltr text-left"
-                      />
-                      <button
-                        type="submit"
-                        className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shrink-0 transition-colors shadow-md cursor-pointer"
-                      >
-                        تطبيق الرابط
-                      </button>
-                    </div>
-                    {coverUploadError && (
-                      <p className="text-xs text-rose-600 font-semibold">{coverUploadError}</p>
-                    )}
-                  </form>
-                )}
-              </div>
-
-              {/* Workshop Identity & Payout Form */}
-              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
-                <div className="flex items-center gap-2 border-b border-black/10 dark:border-white/10 pb-3">
-                  <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center">
-                    <Store className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">البيانات الرسمية وهوية المتجر</h4>
-                    <p className="text-[11px] text-black/60 dark:text-white/60">تعديل اسم الورشة، المحافظة، التخصص، وبيانات الحساب</p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleSaveWorkshopProfile} className="space-y-4">
-                  {/* Workshop Logo / Avatar */}
-                  <div className="p-4 bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 rounded-2xl flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white dark:border-stone-800 shadow-xs bg-gray-100 dark:bg-stone-800 shrink-0 relative">
-                        <img
-                          src={sellerAvatar}
-                          alt={brandName}
-                          className="w-full h-full object-cover"
-                        />
-                        {isUploadingAvatar && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] block">شعار الورشة / صورة الحرفي</span>
-                        <span className="text-[11px] text-black/60 dark:text-white/60 block">تظهر في الدائرة الصغيرة على بطاقة الورشة</span>
-                      </div>
-                    </div>
-
-                    <label
-                      htmlFor="seller-avatar-upload"
-                      className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-bold cursor-pointer transition-all shadow-xs shrink-0"
-                    >
-                      <input
-                        id="seller-avatar-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleAvatarFileSelect}
-                        disabled={isUploadingAvatar}
-                        className="hidden"
-                      />
-                      تغيير الشعار
-                    </label>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
-                      اسم الورشة أو العلامة الحرفية *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={brandName}
-                      onChange={(e) => setBrandName(e.target.value)}
-                      className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
-                        محافظة المنشأ الحرفي *
-                      </label>
-                      <select
-                        value={sellerGovernorate}
-                        onChange={(e) => setSellerGovernorate(e.target.value as Governorate)}
-                        className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
-                      >
-                        <option value="قنا">قنا</option>
-                        <option value="سوهاج">سوهاج</option>
-                        <option value="أسوان">أسوان</option>
-                        <option value="الأقصر">الأقصر</option>
-                        <option value="أسيوط">أسيوط</option>
-                        <option value="المنيا">المنيا</option>
-                        <option value="الوادي الجديد">الوادي الجديد</option>
-                        <option value="بني سويف">بني سويف</option>
-                        <option value="الفيوم">الفيوم</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
-                        التخصص الحرفي الأصيل
-                      </label>
-                      <input
-                        type="text"
-                        value={sellerSpecialty}
-                        onChange={(e) => setSellerSpecialty(e.target.value)}
-                        placeholder="مثال: فخار نيلي، تلي أسيوط، كليم أخميم"
-                        className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
-                      نبذة عن تاريخ الورشة وأصالة الصنعة
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={sellerBio}
-                      onChange={(e) => setSellerBio(e.target.value)}
-                      placeholder="اكتب نبذة تراثية تجذب المشترين وتعرفهم بتاريخ ورشتكم في الصعيد..."
-                      className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] leading-relaxed"
-                    />
-                  </div>
-
-                  <div className="border-t border-black/10 dark:border-white/10 pt-4 space-y-3">
-                    <h4 className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7]">إعدادات استلام المستحقات المالية</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">طريقة التسوية المفضلة</label>
-                        <select
-                          value={sellerPayoutMethod}
-                          onChange={(e) => setSellerPayoutMethod(e.target.value as any)}
-                          className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                    {/* رفع من الجهاز */}
+                    {coverPickerTab === 'upload' && (
+                      <div className="space-y-4">
+                        <label
+                          htmlFor="seller-cover-upload-input"
+                          className="border-2 border-dashed rounded-3xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02]"
                         >
-                          <option value="vodafone_cash">فودافون كاش / محافظ الكترونية</option>
-                          <option value="instapay">شبكة المدفوعات اللحظية InstaPay</option>
-                          <option value="bank_transfer">تحويل بنكي مباشر</option>
-                        </select>
+                          <input
+                            id="seller-cover-upload-input"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,image/jpg"
+                            onChange={handleCoverImageFileSelect}
+                            disabled={isUploadingCover}
+                            className="hidden"
+                          />
+                          {isUploadingCover ? (
+                            <Loader2 className="w-6 h-6 animate-spin text-[#9a6a35]" />
+                          ) : (
+                            <>
+                              <Upload className="w-6 h-6 text-[#9a6a35]" />
+                              <span className="text-sm font-bold">انقر لاختيار صورة من جهازك</span>
+                            </>
+                          )}
+                        </label>
                       </div>
+                    )}
 
+                    {/* رابط مباشر */}
+                    {coverPickerTab === 'url' && (
+                      <form onSubmit={handleApplyCoverUrl} className="space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            value={customCoverUrl}
+                            onChange={(e) => setCustomCoverUrl(e.target.value)}
+                            placeholder="https://example.com/workshop-cover.jpg"
+                            className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] dir-ltr text-left"
+                          />
+                          <button
+                            type="submit"
+                            className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                          >
+                            تطبيق
+                          </button>
+                        </div>
+                      </form>
+                    )}
+                  </div>
+
+                  {/* بيانات المتجر */}
+                  <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl space-y-5">
+                    <form onSubmit={handleSaveWorkshopProfile} className="space-y-4">
                       <div>
-                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">رقم الحساب أو عنوان IPA</label>
+                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
+                          اسم الورشة أو العلامة الحرفية *
+                        </label>
                         <input
                           type="text"
-                          value={sellerPayoutAccount}
-                          onChange={(e) => setSellerPayoutAccount(e.target.value)}
+                          required
+                          value={brandName}
+                          onChange={(e) => setBrandName(e.target.value)}
                           className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="pt-2 flex items-center justify-between gap-4">
-                    <button
-                      type="submit"
-                      disabled={isSavingProfile}
-                      className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
-                    >
-                      {isSavingProfile ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>جاري حفظ الغلاف والبيانات...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          <span>حفظ التعديلات واعتماد الغلاف</span>
-                        </>
-                      )}
-                    </button>
-
-                    <span className="text-[11px] text-black/60 dark:text-white/60 font-medium">
-                      يتم تحديث بطاقة الورشة فوراً في الصفحة الرئيسية
-                    </span>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            {/* Right Column: Live Interactive Card Preview (5 cols) */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="sticky top-6 space-y-4">
-                <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] p-6 text-[#211d18] dark:text-[#f5f0e7] shadow-xl space-y-4 border border-black/10 dark:border-white/10 backdrop-blur-xl">
-                  <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4 text-[#9a6a35]" />
-                      <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">معاينة حية ومباشرة</h4>
-                    </div>
-                    <span className="text-[10px] bg-[#9a6a35]/15 text-[#9a6a35] font-bold px-2 py-0.5 rounded-full border border-[#9a6a35]/20">
-                      قسم الورش المعتمدة
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed font-medium">
-                    هكذا تظهر بطاقة ورشتكم للمشترين في قسم
-                    <strong className="text-[#211d18] dark:text-[#f5f0e7] font-bold mx-1">"الورش والتعاونيات الحرفية المعتمدة"</strong>
-                    بالصفحة الرئيسية ودليل الحرفيين:
-                  </p>
-
-                  {/* The Exact Realistic Card from FeaturedSellers.tsx */}
-                  <div className="bg-white/90 dark:bg-[#151513] rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-lg group transition-all text-[#211d18] dark:text-[#f5f0e7]">
-                    {/* Workshop Cover Banner */}
-                    <div className="h-44 relative overflow-hidden bg-black/10 dark:bg-white/10">
-                      <img
-                        src={sellerCoverImage}
-                        alt={brandName}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                      {/* Governorate Badge */}
-                      <div className="absolute top-3 right-3 bg-white/90 dark:bg-[#151513]/90 backdrop-blur-xs text-[#211d18] dark:text-[#f5f0e7] text-[11px] font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1 border border-black/10 dark:border-white/10">
-                        <MapPin className="w-3 h-3 text-[#9a6a35]" />
-                        <span>محافظة {sellerGovernorate}</span>
-                      </div>
-
-                      {/* Verified Badge */}
-                      <div className="absolute top-3 left-3 bg-[#9a6a35] text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        <span>مُعتمد</span>
-                      </div>
-
-                      {/* Workshop Avatar Overlap */}
-                      <div className="absolute -bottom-6 right-5">
-                        <div className="w-16 h-16 rounded-2xl border-3 border-white dark:border-[#151513] overflow-hidden shadow-md bg-white dark:bg-[#151513]">
-                          <img
-                            src={sellerAvatar}
-                            alt={brandName}
-                            className="w-full h-full object-cover"
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
+                            محافظة المنشأ الحرفي *
+                          </label>
+                          <select
+                            value={sellerGovernorate}
+                            onChange={(e) => setSellerGovernorate(e.target.value as Governorate)}
+                            className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                          >
+                            <option value="قنا">قنا</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="الفيوم">الفيوم</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
+                            التخصص الحرفي
+                          </label>
+                          <input
+                            type="text"
+                            value={sellerSpecialty}
+                            onChange={(e) => setSellerSpecialty(e.target.value)}
+                            className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                           />
                         </div>
                       </div>
-                    </div>
 
-                    {/* Card Content Details */}
-                    <div className="p-5 pt-8 space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7] font-serif group-hover:text-[#9a6a35] transition-colors">
-                            {brandName}
-                          </h4>
-                          <span className="inline-block text-[11px] font-bold text-[#9a6a35] bg-[#9a6a35]/10 px-2 py-0.5 rounded-md mt-1 border border-[#9a6a35]/20">
+                      <div>
+                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
+                          نبذة عن تاريخ الورشة
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={sellerBio}
+                          onChange={(e) => setSellerBio(e.target.value)}
+                          className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSavingProfile}
+                        className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
+                      >
+                        {isSavingProfile ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>جاري الحفظ...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4" />
+                            <span>حفظ التعديلات واعتماد الغلاف</span>
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+
+                {/* المعاينة الحية */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="sticky top-6 space-y-4">
+                    <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] p-6 text-[#211d18] dark:text-[#f5f0e7] shadow-xl border border-black/10 dark:border-white/10 backdrop-blur-xl">
+                      <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3 mb-4">
+                        <div className="flex items-center gap-2">
+                          <Eye className="w-4 h-4 text-[#9a6a35]" />
+                          <h4 className="font-bold text-sm">معاينة حية لبطاقة الورشة</h4>
+                        </div>
+                      </div>
+
+                      <div className="bg-white/90 dark:bg-[#151513] rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-lg group transition-all text-[#211d18] dark:text-[#f5f0e7]">
+                        <div className="h-44 relative overflow-hidden bg-black/10 dark:bg-white/10">
+                          <img
+                            src={sellerCoverImage}
+                            alt={brandName}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                          <div className="absolute top-3 right-3 bg-white/90 dark:bg-[#151513]/90 backdrop-blur-xs text-[#211d18] dark:text-[#f5f0e7] text-[11px] font-bold px-3 py-1 rounded-full shadow-xs flex items-center gap-1 border border-black/10 dark:border-white/10">
+                            <MapPin className="w-3 h-3 text-[#9a6a35]" />
+                            <span>محافظة {sellerGovernorate}</span>
+                          </div>
+                          <div className="absolute -bottom-6 right-5">
+                            <div className="w-16 h-16 rounded-2xl border-3 border-white dark:border-[#151513] overflow-hidden shadow-md bg-white dark:bg-[#151513]">
+                              <img
+                                src={sellerAvatar}
+                                alt={brandName}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-5 pt-8 space-y-3">
+                          <h4 className="font-bold text-base font-serif">{brandName}</h4>
+                          <span className="inline-block text-[11px] font-bold text-[#9a6a35] bg-[#9a6a35]/10 px-2 py-0.5 rounded-md">
                             {sellerSpecialty || 'حرفة يدوية تراثية أصيلة'}
                           </span>
+                          <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">
+                            {sellerBio}
+                          </p>
                         </div>
-
-                        {/* Rating */}
-                        <div className="flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-xl text-amber-800 dark:text-amber-300 text-xs font-bold shrink-0 border border-amber-500/20">
-                          <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                          <span>4.9</span>
-                        </div>
-                      </div>
-
-                      {/* Bio text */}
-                      <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
-                        {sellerBio || 'ورشة تراثية متخصصة في الحرف اليدوية الصعيدية الأصيلة بجودة ممتازة.'}
-                      </p>
-
-                      {/* Card Footer */}
-                      <div className="border-t border-black/10 dark:border-white/10 pt-3 flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-1.5 text-black/60 dark:text-white/60">
-                          <Package className="w-4 h-4 text-[#9a6a35]" />
-                          <span className="font-semibold">{sellerProducts.length} قطعة معروضة</span>
-                        </div>
-
-                        <span className="text-[#9a6a35] font-bold text-xs flex items-center gap-1 group-hover:translate-x-[-2px] transition-transform">
-                          <span>زيارة المتجر</span>
-                          <ChevronRight className="w-3.5 h-3.5 rotate-180" />
-                        </span>
                       </div>
                     </div>
                   </div>
-
-                  {/* Helper Callout */}
-                  <div className="p-3.5 bg-black/[0.03] dark:bg-white/[0.03] rounded-2xl border border-black/10 dark:border-white/10 flex items-start gap-2.5 text-[11px] text-black/70 dark:text-white/70">
-                    <Info className="w-4 h-4 text-[#9a6a35] shrink-0 mt-0.5" />
-                    <span>
-                      أي تغيير في صورة الغلاف أو المحافظة أو التخصص ينعكس على الفور في المعاينة أعلاه وموقع المنصة بمجرد الضغط على زر الحفظ.
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* TAB 6: CRAFT REELS (VIDEOS) MANAGEMENT */}
-      {activeTab === 'reels' && (
-        <div className="space-y-8 animate-in fade-in">
-          {/* Header Banner */}
-          <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2e261f] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#d5a56d] text-xs font-bold border border-white/15">
-                  <Film className="w-4 h-4 text-[#d5a56d]" />
-                  <span>فيديوهات ورشة الصنعة القصيرة • Shoppable Craft Reels</span>
+          {/* TAB 7: REELS */}
+          {activeTab === 'reels' && (
+            <div className="space-y-8 animate-in fade-in">
+              <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2e261f] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div>
+                  <h2 className="text-xl sm:text-3xl font-black font-serif">فيديوهات ورشة الصنعة القصيرة</h2>
+                  <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي</p>
                 </div>
-                <h2 className="text-xl sm:text-3xl font-black font-serif tracking-tight">
-                  سجّل كواليس الصنعة واجعل الزبائن يشترون مباشرة من الفيديو!
-                </h2>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed font-medium">
-                  ارفع مقاطع فيديو عمودية (9:16) تبرز خطوات تشكيل الطين، نسج النول، أو نقش النحاس. يرتبط كل مقطع بمنتج معروض في ورشتك للشراء الفوري.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                id="seller-upload-reel-main-btn"
-                onClick={() => setIsReelUploadOpen(true)}
-                className="px-6 py-3.5 bg-white text-black hover:bg-[#9a6a35] hover:text-white text-xs sm:text-sm font-bold rounded-2xl shadow-xl flex items-center gap-2.5 transition-all hover:scale-105 shrink-0 cursor-pointer"
-              >
-                <Plus className="w-5 h-5" />
-                <span>رفع فيديو جديد للورشة (Craft Reel)</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 4 Reels Key Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>إجمالي المقاطع المنشورة</span>
-                <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
-                  <Film className="w-4 h-4 text-[#9a6a35]" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{reels.length} فيديو</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">معروضة للجمهور بالرئيسية وصفحة الريلز</span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>إجمالي المشاهدات التفاعلية</span>
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                  <Eye className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {reels.reduce((acc, r) => acc + r.viewsCount, 0).toLocaleString()}
-              </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                {reels.length > 0 ? `${reels.length} مقطع موثق للورشة` : 'مقاطع مرئية وتوثيق حي'}
-              </span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>الإعجابات ودعم الحرفة</span>
-                <div className="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center">
-                  <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {reels.reduce((acc, r) => acc + r.likesCount, 0).toLocaleString()}
-              </span>
-              <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل مباشر من عشاق التراث</span>
-            </div>
-
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                <span>تحويلات الشراء المباشر</span>
-                <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                  <Package className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {reels.reduce((acc, r) => acc + r.sharesCount, 0) * 3} نقرة شراء
-              </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">مبيعات من خلال زر الشراء بالفيديو</span>
-            </div>
-          </div>
-
-          {/* Reels Grid */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <h3 className="text-xl font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2 font-serif">
-                <Film className="w-5 h-5 text-[#9a6a35]" />
-                <span>المقاطع المسجلة والمعروضة ({reels.length})</span>
-              </h3>
-              <div className="flex items-center gap-2">
-                <RefreshDataButton
-                  onRefresh={refreshSellerReelsFromDb}
-                  label="تحديث المقاطع"
-                />
                 <button
                   type="button"
                   onClick={() => setIsReelUploadOpen(true)}
-                  className="text-xs font-bold text-[#9a6a35] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="px-6 py-3.5 bg-white text-black hover:bg-[#9a6a35] hover:text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 cursor-pointer transition-all"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>إضافة مقطع جديد</span>
+                  <Plus className="w-4 h-4" />
+                  <span>رفع فيديو جديد</span>
                 </button>
               </div>
-            </div>
 
-            {reels.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {reels.map((reel) => (
-                  <div
-                    key={reel.id}
-                    className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col group backdrop-blur-xl"
-                  >
-                    {/* 9:16 Video Thumbnail Container */}
+                  <div key={reel.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg flex flex-col group backdrop-blur-xl">
                     <div
                       onClick={() => {
                         setSelectedReelPreviewId(reel.id);
@@ -3311,308 +2594,60 @@ export const SellerDashboard: React.FC = () => {
                       }}
                       className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
                     >
-                      <img
-                        src={reel.posterUrl}
-                        alt={reel.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
+                      <img src={reel.posterUrl} alt={reel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40">
                           <Play className="w-5 h-5 fill-white mr-0.5" />
                         </div>
                       </div>
-
-                      {/* Top Badges */}
-                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                        <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                          {reel.duration}
-                        </span>
-                        <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                          {reel.location || reel.governorate}
-                        </span>
-                      </div>
-
-                      {/* Bottom Info on Poster */}
-                      <div className="absolute bottom-3 inset-x-3 z-10 space-y-1">
-                        <p className="text-xs font-bold text-white line-clamp-2 drop-shadow-md">
-                          {reel.title}
-                        </p>
-                        <p className="text-[10px] text-amber-300 truncate">
-                          {reel.contentType || reel.craftType || 'حكاية صعيدية'}
-                        </p>
+                      <div className="absolute bottom-3 inset-x-3 text-white text-xs font-bold truncate">
+                        {reel.title}
                       </div>
                     </div>
-
-                    {/* Bottom Metadata & Actions */}
-                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/[0.02] dark:bg-white/[0.02]">
-                      {/* Linked Product Quick View (Optional) */}
-                      {reel.productId && reel.productTitle ? (
-                        <div className="p-2.5 bg-white/80 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
-                          {reel.productImage && (
-                            <img
-                              src={reel.productImage}
-                              alt={reel.productTitle}
-                              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-black/10 dark:border-white/10"
-                            />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
-                            <span className="text-xs font-black font-mono text-[#9a6a35]">{reel.productPrice} ج.م</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
-                          <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
-                            محتوى وثائقي / بدون منتج مرتبط
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Engagement Stats & Cloud DB Status */}
-                      <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-[11px]">
-                            <Eye className="w-3.5 h-3.5 text-black/40 dark:text-white/40" />
-                            <span>{reel.viewsCount}</span>
-                          </span>
-                          <span className="flex items-center gap-1 text-[11px] text-rose-600 font-bold">
-                            <Heart className="w-3.5 h-3.5 fill-rose-600" />
-                            <span>{reel.likesCount}</span>
-                          </span>
-                        </div>
-                        <span className="text-[9px] bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full font-bold border border-emerald-500/20">
-                          قاعدة البيانات ✓
-                        </span>
-                      </div>
-
-                      {/* Actions Buttons (Seller Full Control over own video) */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-black/10 dark:border-white/10">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedReelPreviewId(reel.id);
-                            setIsReelPreviewOpen(true);
-                          }}
-                          className="flex-1 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-sm transition-colors cursor-pointer"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          <span>مشاهدة المقطع</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSellerEditingReel(reel);
-                            setIsSellerReelEditOpen(true);
-                          }}
-                          className="p-2 text-[#211d18] dark:text-[#f5f0e7] hover:text-[#9a6a35] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
-                          title="تعديل بيانات الفيديو والمنتج المربوط"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteReel(reel.id, reel.title)}
-                          className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer border border-transparent"
-                          title="حذف الفيديو من ورشتك"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                    <div className="p-4 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteReel(reel.id, reel.title)}
+                        className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
-                <Film className="w-16 h-16 text-black/20 dark:text-white/20 mx-auto" />
-                <h4 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7]">لم تقم برفع أي فيديوهات لورشتك بعد</h4>
-                <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
-                  فيديوهات كواليس الصنع اليدوي تزيد من ثقة الزبائن ومبيعات المنتجات بنسبة تفوق 300%. ابدأ برفع أول فيديو الآن!
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setIsReelUploadOpen(true)}
-                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
-                >
-                  رفع أول مقطع فيديو للورشة
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* TAB: SELLER LIVE CHAT */}
-      {activeTab === 'messages' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-2 sm:p-4 shadow-lg">
-          <ChatView isSellerMode={true} />
-        </div>
-      )}
+          {/* TAB: MESSAGES */}
+          {activeTab === 'messages' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-2 sm:p-4 shadow-lg">
+              <ChatView isSellerMode={true} />
+            </div>
+          )}
 
-      {/* TAB 7: NOTIFICATIONS & ALERTS */}
-      {activeTab === 'notifications' && (
-        <NotificationsManager
-          viewMode="seller"
-          onNavigateTab={(tab) => {
-            if (tab === 'orders') setActiveTab('orders');
-            else if (tab === 'products') setActiveTab('products');
-            else if (tab === 'inventory') setActiveTab('inventory');
-            else if (tab === 'payouts') setActiveTab('payouts');
-            else if (tab === 'settings') setActiveTab('settings');
-          }}
-        />
-      )}
+          {/* TAB: NOTIFICATIONS */}
+          {activeTab === 'notifications' && (
+            <NotificationsManager
+              viewMode="seller"
+              onNavigateTab={(tab) => {
+                if (tab === 'orders') setActiveTab('orders');
+                else if (tab === 'products') setActiveTab('products');
+                else if (tab === 'inventory') setActiveTab('inventory');
+                else if (tab === 'payouts') setActiveTab('payouts');
+                else if (tab === 'settings') setActiveTab('settings');
+              }}
+            />
+          )}
         </main>
       </div>
 
-      {/* Mobile Floating Bottom Rail for compact-rail mode */}
-      {layoutMode === 'compact-rail' && (
-        <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center bg-[#1c1917]/95 dark:bg-[#141311]/95 backdrop-blur-md border border-[#9a6a35]/40 rounded-full px-3 py-2 shadow-2xl gap-1 text-white">
-          <button
-            type="button"
-            onClick={() => handleSelectTab('overview')}
-            className={`p-2.5 rounded-full transition-all relative ${
-              activeTab === 'overview' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
-            }`}
-            title="نظرة عامة"
-          >
-            <TrendingUp className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSelectTab('products')}
-            className={`p-2.5 rounded-full transition-all relative ${
-              activeTab === 'products' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
-            }`}
-            title="المنتجات"
-          >
-            <Package className="w-4 h-4" />
-            {pendingProductsCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSelectTab('orders')}
-            className={`p-2.5 rounded-full transition-all relative ${
-              activeTab === 'orders' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
-            }`}
-            title="الطلبات"
-          >
-            <Truck className="w-4 h-4" />
-            {pendingOrdersCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSelectTab('messages')}
-            className={`p-2.5 rounded-full transition-all relative ${
-              activeTab === 'messages' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
-            }`}
-            title="المحادثات"
-          >
-            <MessageSquare className="w-4 h-4" />
-            {chatUnreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#9a6a35]" />
-            )}
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSelectTab('reels')}
-            className={`p-2.5 rounded-full transition-all relative ${
-              activeTab === 'reels' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
-            }`}
-            title="ريلز الورشة"
-          >
-            <Film className="w-4 h-4" />
-          </button>
-          <div className="w-[1px] h-5 bg-white/20 mx-1" />
-          <button
-            type="button"
-            onClick={() => setIsMobileNavOpen(true)}
-            className="p-2.5 rounded-full text-white/80 hover:text-white cursor-pointer"
-            title="كل الأقسام"
-          >
-            <Menu className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Mobile Navigation Sheet / Drawer */}
-      {isMobileNavOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
-          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-              <div className="flex items-center gap-2">
-                <Store className="w-5 h-5 text-[#9a6a35]" />
-                <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">أقسام لوحة تحكم الورشة</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMobileNavOpen(false)}
-                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {navSections.map((sec) => (
-                <div key={sec.id} className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-[#9a6a35] dark:text-[#d5a56d] block">{sec.title}</span>
-                  <div className="grid grid-cols-1 gap-1.5">
-                    {sec.items.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = activeTab === item.id;
-                      return (
-                        <button
-                          key={item.id}
-                          type="button"
-                          id={`mobile-${item.elementId}`}
-                          onClick={() => handleSelectTab(item.id)}
-                          className={`w-full p-2.5 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${
-                            isActive
-                              ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/15'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <Icon className="w-4 h-4 shrink-0" />
-                            <span className="truncate">{item.label}</span>
-                          </div>
-                          {item.badge !== undefined && (
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-                              isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                            }`}>
-                              {item.badge}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stock Adjustment Modal (Phase 4) */}
+      {/* Stock Adjustment Modal */}
       {isStockModalOpen && stockTargetProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl backdrop-blur-2xl">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-              <div>
-                <h3 className="font-black text-lg text-[#211d18] dark:text-[#f5f0e7] font-serif">تعديل رصيد المخزون</h3>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-0.5 font-medium">{stockTargetProduct.title}</p>
-              </div>
+              <h3 className="font-black text-lg text-[#211d18] dark:text-[#f5f0e7] font-serif">تعديل رصيد المخزون</h3>
               <button
                 type="button"
                 onClick={() => setIsStockModalOpen(false)}
@@ -3621,7 +2656,6 @@ export const SellerDashboard: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <form onSubmit={handleStockUpdateSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
@@ -3631,7 +2665,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setNewStockValue((prev) => Math.max(0, prev - 1))}
-                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-lg font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center justify-center cursor-pointer border border-black/10 dark:border-white/10"
+                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
                   >
                     -
                   </button>
@@ -3641,45 +2675,29 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={newStockValue}
                     onChange={(e) => setNewStockValue(Number(e.target.value))}
-                    className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-center text-base font-bold font-mono outline-none focus:border-[#9a6a35]"
+                    className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-center font-bold font-mono outline-none focus:border-[#9a6a35]"
                   />
                   <button
                     type="button"
                     onClick={() => setNewStockValue((prev) => prev + 1)}
-                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-lg font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center justify-center cursor-pointer border border-black/10 dark:border-white/10"
+                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
                   >
                     +
                   </button>
                 </div>
               </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">سبب التعديل أو رقم الدفعة *</label>
-                <select
-                  value={stockAdjustmentReason}
-                  onChange={(e) => setStockAdjustmentReason(e.target.value)}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
-                >
-                  <option value="إنتاج دفعة جديدة بالورشة">إنتاج دفعة جديدة بالورشة (+)</option>
-                  <option value="حرق دفعة فخار جديدة في الفرن">حرق دفعة فخار جديدة في الفرن (+)</option>
-                  <option value="جرد دوري للمخزن">جرد دوري وتصحيح رصيد</option>
-                  <option value="تلف أو كسر بالورشة">تلف أو كسر بالورشة (-)</option>
-                  <option value="بيع مباشر خارج المنصة">بيع مباشر من المعرض (-)</option>
-                </select>
-              </div>
-
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsStockModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold cursor-pointer"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={isUpdatingStock}
-                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 cursor-pointer transition-colors"
+                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl cursor-pointer"
                 >
                   {isUpdatingStock ? 'جاري التحديث...' : 'حفظ الرصيد الجديد'}
                 </button>
@@ -3714,8 +2732,7 @@ export const SellerDashboard: React.FC = () => {
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="مثال: قلة قناوية فخار مسامية أصلية"
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -3725,7 +2742,7 @@ export const SellerDashboard: React.FC = () => {
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -3734,21 +2751,18 @@ export const SellerDashboard: React.FC = () => {
                     ))}
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">محافظة المنشأ الأصيلة</label>
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
                     <option value="أسوان">أسوان</option>
                     <option value="الأقصر">الأقصر</option>
                     <option value="أسيوط">أسيوط</option>
-                    <option value="المنيا">المنيا</option>
-                    <option value="الوادي الجديد">الوادي الجديد</option>
                   </select>
                 </div>
               </div>
@@ -3762,10 +2776,9 @@ export const SellerDashboard: React.FC = () => {
                     min={1}
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">السعر قبل الخصم</label>
                   <input
@@ -3773,10 +2786,9 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={originalPrice}
                     onChange={(e) => setOriginalPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">المخزون المتاح</label>
                   <input
@@ -3784,180 +2796,25 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={stockCount}
                     onChange={(e) => setStockCount(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">الخامات الطبيعية المستخدمة</label>
-                  <input
-                    type="text"
-                    value={material}
-                    onChange={(e) => setMaterial(e.target.value)}
-                    placeholder="مثال: طمي نيل معتق وخيوط قطنية"
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">أسلوب الصنعة اليدوية</label>
-                  <input
-                    type="text"
-                    value={craftsmanship}
-                    onChange={(e) => setCraftsmanship(e.target.value)}
-                    placeholder="مثال: نسج نول يدوي أصيل"
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                  />
-                </div>
-              </div>
-
-              {/* Arabic Product Images Upload Section (Cloudinary Integration) */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                    صور المنتج *
-                    <span className="text-[10px] text-black/60 dark:text-white/60 font-normal mr-2">
-                      (الحد الأقصى 5 صور - JPG, PNG, WebP حتى 5 ميجابايت)
-                    </span>
-                  </label>
-                  <span className="text-xs text-black/60 dark:text-white/60 font-mono">
-                    {selectedImages.length + existingImages.length} / 5
-                  </span>
-                </div>
-
-                {uploadError && (
-                  <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-800 dark:text-rose-300 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                    <span>{uploadError}</span>
-                  </div>
-                )}
-
-                {/* Previews Grid */}
-                {(existingImages.length > 0 || selectedImages.length > 0) && (
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 mb-2">
-                    {/* Existing Images */}
-                    {existingImages.map((url, idx) => (
-                      <div
-                        key={`existing-${idx}`}
-                        className="relative group rounded-xl overflow-hidden border-2 border-black/10 dark:border-white/10 aspect-square bg-black/5 dark:bg-white/5 shadow-xs"
-                      >
-                        <img src={url} alt={`صورة ${idx + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => setExistingImages((prev) => prev.filter((_, i) => i !== idx))}
-                          className="absolute top-1 left-1 p-1 bg-black/60 hover:bg-rose-600 text-white rounded-full transition-colors cursor-pointer"
-                          title="حذف الصورة"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/60 text-white text-[9px] rounded font-mono">
-                          محفوظة
-                        </span>
-                      </div>
-                    ))}
-
-                    {/* Newly Selected Local Images */}
-                    {selectedImages.map((img, idx) => (
-                      <div
-                        key={`selected-${idx}`}
-                        className="relative group rounded-xl overflow-hidden border-2 border-[#9a6a35] aspect-square bg-black/5 dark:bg-white/5 shadow-xs"
-                      >
-                        <img src={img.dataUri} alt={img.name} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => setSelectedImages((prev) => prev.filter((_, i) => i !== idx))}
-                          className="absolute top-1 left-1 p-1 bg-black/60 hover:bg-rose-600 text-white rounded-full transition-colors cursor-pointer"
-                          title="إلغاء التحديد"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                        <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-[#9a6a35] text-white text-[9px] rounded font-bold">
-                          جديدة
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Upload Button & File Input */}
-                {selectedImages.length + existingImages.length < 5 && (
-                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl p-5 cursor-pointer transition-colors text-center group">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleImageFileSelect}
-                      className="hidden"
-                      id="product-image-file-input"
-                    />
-                    <div className="w-10 h-10 rounded-full bg-[#9a6a35]/10 group-hover:bg-[#9a6a35]/20 flex items-center justify-center text-[#9a6a35] mb-1.5 transition-colors">
-                      <Upload className="w-5 h-5" />
-                    </div>
-                    <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] block">
-                      رفع الصور
-                    </span>
-                    <span className="text-[10px] text-black/50 dark:text-white/50 block mt-0.5 font-medium">
-                      اضغط لاختيار صور عالية الدقة من جهازك
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">وصف أصالة القطعة وقصتها</label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="صف مراحل التصنيع بالورشة وفوائد القطعة التراثية..."
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                />
-              </div>
-
-              {/* Section 3: Review & Submission Notice */}
-              <div className="p-4 bg-[#9a6a35]/10 dark:bg-[#9a6a35]/15 border border-[#9a6a35]/30 rounded-2xl text-xs space-y-1.5">
-                <p className="font-bold flex items-center gap-1.5 text-sm text-[#9a6a35]">
-                  <Sparkles className="w-4 h-4 text-[#9a6a35]" />
-                  <span>مراجعة واعتماد المنتج</span>
-                </p>
-                <p className="leading-relaxed text-black/70 dark:text-white/70">
-                  بعد إرسال المنتج سيتم مراجعته من الإدارة قبل ظهوره في المتجر.
-                </p>
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setIsProductModalOpen(false)}
-                  className="px-5 py-3 text-xs sm:text-sm font-bold text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 rounded-2xl transition-colors cursor-pointer"
+                  className="px-5 py-3 text-xs font-bold cursor-pointer"
                 >
                   إلغاء
                 </button>
-
                 <button
                   type="submit"
-                  id="submit-product-review-btn"
                   disabled={isSubmitting || isUploadingImages}
-                  className="px-7 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold rounded-2xl shadow-md flex items-center gap-2 disabled:opacity-50 transition-colors cursor-pointer"
+                  className="px-7 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-2xl shadow-md cursor-pointer"
                 >
-                  {isUploadingImages ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>جاري رفع الصور...</span>
-                    </>
-                  ) : isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>جاري حفظ المنتج...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>{editingProduct ? 'حفظ التعديلات' : 'إرسال المنتج للمراجعة'}</span>
-                    </>
-                  )}
+                  {isSubmitting ? 'جاري الحفظ...' : editingProduct ? 'حفظ التعديلات' : 'إرسال للمراجعة'}
                 </button>
               </div>
             </form>
@@ -3977,47 +2834,22 @@ export const SellerDashboard: React.FC = () => {
                   type="number"
                   required
                   min={100}
-                  max={4850}
                   value={payoutAmount}
                   onChange={(e) => setPayoutAmount(Number(e.target.value))}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">وسيلة التحويل</label>
-                <select
-                  value={payoutMethod}
-                  onChange={(e) => setPayoutMethod(e.target.value as any)}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
-                >
-                  <option value="vodafone_cash">فودافون كاش (Vodafone Cash)</option>
-                  <option value="instapay">إنستاباي (InstaPay IPA)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">رقم المحفظة / عنوان إنستاباي</label>
-                <input
-                  type="text"
-                  required
-                  value={payoutNumber}
-                  onChange={(e) => setPayoutNumber(e.target.value)}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                />
-              </div>
-
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsPayoutModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold cursor-pointer"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer"
                 >
                   تأكيد التحويل
                 </button>
@@ -4041,7 +2873,7 @@ export const SellerDashboard: React.FC = () => {
         currentUser={currentUser}
       />
 
-      {/* Reel Edit Modal (Seller Workshop Control) */}
+      {/* Reel Edit Modal */}
       <ReelEditModal
         isOpen={isSellerReelEditOpen}
         onClose={() => {

@@ -379,7 +379,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
         <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-gray-500 dark:text-[#A89C90]">طلبات قيد الانتظار</span>
-            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-[#d6aa72] flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
@@ -387,7 +387,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             <div className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">
               {summary ? `${summary.totalPendingAmount.toLocaleString('ar-EG')} ج.م` : '—'}
             </div>
-            <div className="flex items-center gap-1.5 mt-1 text-xs text-amber-700 dark:text-amber-400 font-medium">
+            <div className="flex items-center gap-1.5 mt-1 text-xs text-amber-700 dark:text-[#d6aa72] font-medium">
               <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
               <span>{summary?.totalPendingCount || 0} طلب يحتاج مراجعة</span>
             </div>
@@ -464,11 +464,10 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             <button
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-xl transition cursor-pointer ${
-                statusFilter === tab.id
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-gray-50 dark:bg-[#110E0C] border border-gray-100 dark:border-[#352B24] text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#2C2420]'
-              }`}
+              className={`px-3 py-1.5 text-xs font-medium rounded-xl transition cursor-pointer ${statusFilter === tab.id
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'bg-gray-50 dark:bg-[#110E0C] border border-gray-100 dark:border-[#352B24] text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#2C2420]'
+                }`}
             >
               {tab.label}
             </button>
@@ -571,7 +570,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                         <button
                           onClick={() => handleOpenDetails(payout.id)}
                           title="عرض ومراجعة الطلب"
-                          className="p-1.5 text-gray-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 bg-gray-50 dark:bg-[#161210] hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition border border-gray-200 dark:border-[#352B24] cursor-pointer"
+                          className="p-1.5 text-gray-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-[#d6aa72] bg-gray-50 dark:bg-[#161210] hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition border border-gray-200 dark:border-[#352B24] cursor-pointer"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -662,8 +661,8 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 {/* Seller Real-Time Financial Balance Safety Audit */}
                 <div className="p-4 bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-900 dark:text-amber-200">فحص الرصيد الفعلي للبائع:</span>
-                    <span className="text-xs bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded font-mono">
+                    <span className="text-xs font-bold text-amber-900 dark:text-[#d5a56d]">فحص الرصيد الفعلي للبائع:</span>
+                    <span className="text-xs bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-[#d5a56d] px-2 py-0.5 rounded font-mono">
                       محسوب مباشرة من قاعدة البيانات
                     </span>
                   </div>
@@ -1024,8 +1023,8 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
               </div>
 
               {/* Manual Confirmation Warning */}
-              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2">
-                <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl text-[11px] text-amber-900 dark:text-[#d5a56d] flex items-start gap-2">
+                <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-[#d6aa72] shrink-0 mt-0.5" />
                 <p>
                   بتأكيد هذا الإجراء، تقر بأنك قمت بتحويل المبلغ يدوياً بالكامل إلى الحرفي خارج النظام، وسيقوم النظام فوراً بتحديث رصيد الحرفي وإرسال إشعار رسمي له.
                 </p>

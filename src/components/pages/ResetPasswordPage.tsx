@@ -117,7 +117,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
       <div className="w-full max-w-md">
         {/* Card Container */}
         <div className="relative rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#1c1813]/90 backdrop-blur-xl shadow-xl overflow-hidden p-6 sm:p-8">
-          
+
           {/* Brand header */}
           <div className="text-center mb-8">
             <div className="mx-auto w-14 h-14 rounded-2xl bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 text-[#9a6a35] flex items-center justify-center mb-4 shadow-inner">
@@ -170,7 +170,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Invalid / Expired / Missing Token state */}
           {!isCheckingToken && !isSuccess && tokenStatus !== 'valid' && (
             <div className="space-y-6 text-center py-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-[#d6aa72] flex items-center justify-center">
                 <AlertCircle size={36} />
               </div>
 
@@ -179,8 +179,8 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                   {tokenStatus === 'expired'
                     ? 'انتهت صلاحية الرابط'
                     : tokenStatus === 'missing'
-                    ? 'رابط غير مكتمل'
-                    : 'رابط غير صالح'}
+                      ? 'رابط غير مكتمل'
+                      : 'رابط غير صالح'}
                 </h2>
                 <p className="mt-2 text-xs sm:text-sm text-black/60 dark:text-white/60 leading-relaxed">
                   {errorMessage ||

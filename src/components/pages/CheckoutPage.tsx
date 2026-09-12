@@ -179,7 +179,7 @@ export const CheckoutPage: React.FC = () => {
           {isManualTransfer && (
             <div className="p-4 rounded-[1.5rem] bg-amber-500/10 border border-amber-500/20 text-right space-y-2">
               <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-bold text-xs">
-                <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <Clock className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
                 <span>حالة الدفع: قيد مراجعة وتأكيد التحويل من الإدارة</span>
               </div>
               <p className="text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed">
@@ -467,11 +467,10 @@ export const CheckoutPage: React.FC = () => {
               <div className="space-y-3">
                 {/* 1. InstaPay */}
                 <label
-                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${
-                    paymentMethod === 'instapay'
+                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${paymentMethod === 'instapay'
                       ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
                       : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -542,11 +541,10 @@ export const CheckoutPage: React.FC = () => {
 
                 {/* 2. Vodafone Cash */}
                 <label
-                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${
-                    paymentMethod === 'vodafone_cash'
+                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${paymentMethod === 'vodafone_cash'
                       ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
                       : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -617,11 +615,10 @@ export const CheckoutPage: React.FC = () => {
 
                 {/* 3. Cash on Delivery */}
                 <label
-                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-2 cursor-pointer transition-all duration-300 ${
-                    paymentMethod === 'cod'
+                  className={`p-4 rounded-[1.5rem] border flex flex-col gap-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'cod'
                       ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
                       : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -668,9 +665,8 @@ export const CheckoutPage: React.FC = () => {
               type="submit"
               id="place-order-submit-btn"
               disabled={isSubmitting}
-              className={`w-full py-4 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[50px] ${
-                isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              className={`w-full py-4 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[50px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
             >
               {isSubmitting ? (
                 <span>بنأكد طلبك دلوقتي...</span>

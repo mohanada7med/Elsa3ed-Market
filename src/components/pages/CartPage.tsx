@@ -138,7 +138,7 @@ export const CartPage: React.FC = () => {
 
           {cart.length > 0 && (
             <div className="flex items-center justify-between sm:justify-start gap-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 text-xs font-bold border border-amber-300 dark:border-amber-700">
+              <span className="px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-[#d5a56d] text-xs font-bold border border-amber-300 dark:border-amber-700">
                 {cartCount} {cartCount === 1 ? 'قطعة' : 'قطع مختارة'}
               </span>
               <button
@@ -303,7 +303,7 @@ export const CartPage: React.FC = () => {
                         </div>
 
                         {stockCount < 5 && stockCount > 0 && (
-                          <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                          <p className="text-[11px] font-semibold text-amber-700 dark:text-[#d6aa72]">
                             متبقي في الورشة {stockCount} قطع فقط
                           </p>
                         )}

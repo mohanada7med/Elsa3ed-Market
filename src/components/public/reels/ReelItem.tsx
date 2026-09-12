@@ -261,7 +261,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             </span>
           )}
           <span className="hidden xs:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm border border-amber-500/30">
-            <Sparkles className="w-3 h-3 text-amber-200" />
+            <Sparkles className="w-3 h-3 text-[#d5a56d]" />
             <span>ريلز الصعيد</span>
           </span>
         </div>
@@ -273,7 +273,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all cursor-pointer active:scale-90"
             title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-amber-400" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-[#d6aa72]" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
           {showCloseButton && onClose && (
@@ -288,7 +288,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           )}
         </div>
       </div>
-      
+
       {/* 3. Media Canvas */}
       <div
         className="relative w-full h-full flex items-center justify-center cursor-pointer bg-black overflow-hidden"
@@ -336,7 +336,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
         {hasVideoError && (
           <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20 space-y-4">
-            <AlertTriangle className="w-12 h-12 text-amber-400" />
+            <AlertTriangle className="w-12 h-12 text-[#d6aa72]" />
             <p className="text-sm font-medium text-white">تعذر تحميل مقطع الفيديو</p>
             <button
               type="button"

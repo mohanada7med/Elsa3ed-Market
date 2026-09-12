@@ -21,7 +21,7 @@ export const ToastContainer: React.FC = () => {
           } else if (toast.type === 'warning') {
             Icon = AlertTriangle;
             borderClass = 'border-amber-300 dark:border-amber-800/60 bg-amber-50 dark:bg-[#271C0F] text-amber-950 dark:text-amber-100 shadow-md';
-            iconColor = 'text-amber-600 dark:text-amber-400';
+            iconColor = 'text-amber-600 dark:text-[#d6aa72]';
           } else if (toast.type === 'info') {
             Icon = Info;
             borderClass = 'border-orange-300 dark:border-orange-800/60 bg-orange-50 dark:bg-[#261710] text-orange-950 dark:text-orange-100 shadow-md';

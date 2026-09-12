@@ -101,7 +101,7 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
           </span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-extrabold text-amber-400">
+          <span className="text-[11px] font-extrabold text-[#d6aa72]">
             {productPrice} ج.م
           </span>
           {reel.productOriginalPrice && reel.productOriginalPrice > productPrice && (
@@ -117,11 +117,10 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
         type="button"
         id={`reel-quick-buy-${reel.id}`}
         onClick={handleQuickAdd}
-        className={`px-2.5 py-1 text-[11px] font-bold rounded-full flex items-center gap-1 transition-all duration-200 shrink-0 cursor-pointer ${
-          isAdded
+        className={`px-2.5 py-1 text-[11px] font-bold rounded-full flex items-center gap-1 transition-all duration-200 shrink-0 cursor-pointer ${isAdded
             ? 'bg-emerald-600 text-white'
             : 'bg-[#9a6a35] hover:bg-[#83592c] text-white active:scale-95'
-        }`}
+          }`}
         title="إضافة سريعة إلى السلة"
         aria-label="إضافة سريعة إلى السلة"
       >

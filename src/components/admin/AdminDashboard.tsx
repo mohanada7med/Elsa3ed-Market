@@ -1681,7 +1681,7 @@ export const AdminDashboard: React.FC = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <ShieldAlert className="w-8 h-8 text-amber-400" />
+                  <ShieldAlert className="w-8 h-8 text-[#d6aa72]" />
                 )}
               </div>
               <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-[#211d18] rounded-full" title="متصل بالنظام" />
@@ -1704,7 +1704,7 @@ export const AdminDashboard: React.FC = () => {
                   type="button"
                   id="admin-profile-settings-btn"
                   onClick={() => setActivePage('buyer-account')}
-                  className="text-amber-300 hover:text-amber-200 underline font-medium cursor-pointer transition-colors"
+                  className="text-amber-300 hover:text-[#d5a56d] underline font-medium cursor-pointer transition-colors"
                 >
                   تعديل الملف الشخصي
                 </button>
@@ -1724,11 +1724,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-layout-sidebar-btn"
                 onClick={() => handleLayoutChange('sidebar')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'sidebar'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'sidebar'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض الشريط الجانبي (Sidebar)"
               >
                 <PanelLeft className="w-3.5 h-3.5" />
@@ -1739,11 +1738,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-layout-rail-btn"
                 onClick={() => handleLayoutChange('compact-rail')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'compact-rail'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'compact-rail'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
               >
                 <Columns2 className="w-3.5 h-3.5" />
@@ -1754,11 +1752,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-layout-hub-btn"
                 onClick={() => handleLayoutChange('full-hub')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'full-hub'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'full-hub'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض التبويب العريض (Full-Width Hub)"
               >
                 <StretchHorizontal className="w-3.5 h-3.5" />
@@ -1769,11 +1766,10 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="admin-layout-bento-btn"
                 onClick={() => handleLayoutChange('bento')}
-                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                  layoutMode === 'bento'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${layoutMode === 'bento'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
                 title="عرض البطاقات السريعة (Bento Grid)"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
@@ -1828,11 +1824,11 @@ export const AdminDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => handleSelectTab('approvals')}
-              className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 text-amber-200 text-xs font-bold transition-all cursor-pointer"
+              className="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 px-3 py-1.5 rounded-xl flex items-center gap-2 text-[#d5a56d] text-xs font-bold transition-all cursor-pointer"
             >
-              <Package className="w-3.5 h-3.5 text-amber-400" />
+              <Package className="w-3.5 h-3.5 text-[#d6aa72]" />
               <span>{pendingProducts.length} منتج بانتظار الفحص</span>
-              <ArrowLeft className="w-3 h-3 text-amber-400" />
+              <ArrowLeft className="w-3 h-3 text-[#d6aa72]" />
             </button>
           ) : (
             <span className="bg-white/5 border border-white/10 px-3 py-1 rounded-xl text-white/70 text-[11px] flex items-center gap-1.5">
@@ -1912,18 +1908,16 @@ export const AdminDashboard: React.FC = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleSelectTab(item.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
-                  isActive
-                    ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25'
-                    : 'bg-[#fdfbf7] dark:bg-[#141311] text-[#211d18] dark:text-[#eee8dc] hover:bg-[#9a6a35]/10 border border-[#3d3328]/10 dark:border-white/10'
-                }`}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${isActive
+                  ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25'
+                  : 'bg-[#fdfbf7] dark:bg-[#141311] text-[#211d18] dark:text-[#eee8dc] hover:bg-[#9a6a35]/10 border border-[#3d3328]/10 dark:border-white/10'
+                  }`}
               >
                 <Icon className="w-3.5 h-3.5" />
                 <span>{item.label}</span>
                 {typeof item.badge === 'number' && item.badge > 0 && (
-                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white'
-                  }`}>
+                  <span className={`text-[10px] font-black px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white'
+                    }`}>
                     {item.badge}
                   </span>
                 )}
@@ -1992,7 +1986,7 @@ export const AdminDashboard: React.FC = () => {
                               setIsMobileNavOpen(false);
                               if (item.action) item.action();
                             }}
-                            className="w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800/60 cursor-pointer"
+                            className="w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-[#d5a56d] border border-amber-300 dark:border-amber-800/60 cursor-pointer"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <Icon className="w-4 h-4 text-amber-600 shrink-0" />
@@ -2014,11 +2008,10 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={item.elementId}
                           onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                          className={`w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${
-                            isActive
-                              ? 'bg-[#9a6a35] text-white shadow-md'
-                              : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc]'
-                          }`}
+                          className={`w-full p-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
+                            ? 'bg-[#9a6a35] text-white shadow-md'
+                            : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc]'
+                            }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#9a6a35] dark:text-[#d5a56d]'}`} />
@@ -2032,9 +2025,8 @@ export const AdminDashboard: React.FC = () => {
                             </div>
                           </div>
                           {typeof item.badge === 'number' && item.badge > 0 && (
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                              isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
-                            }`}>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
+                              }`}>
                               {item.badge}
                             </span>
                           )}
@@ -2101,7 +2093,7 @@ export const AdminDashboard: React.FC = () => {
                             onClick={() => {
                               if (item.action) item.action();
                             }}
-                            className="w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
+                            className="w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-900 dark:text-[#d5a56d] border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div className="w-7 h-7 rounded-lg bg-amber-200/60 dark:bg-amber-900/60 flex items-center justify-center shrink-0">
@@ -2125,16 +2117,14 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={item.elementId}
                           onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                          className={`w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${
-                            isActive
-                              ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-1 ring-[#9a6a35]'
-                              : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
-                          }`}
+                          className={`w-full p-2.5 rounded-2xl text-xs font-bold transition-all flex items-center justify-between text-right cursor-pointer ${isActive
+                            ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-1 ring-[#9a6a35]'
+                            : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
+                            }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
-                              isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
-                            }`}>
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                              }`}>
                               <Icon className="w-4 h-4" />
                             </div>
                             <div className="min-w-0">
@@ -2148,9 +2138,8 @@ export const AdminDashboard: React.FC = () => {
                           </div>
 
                           {typeof item.badge === 'number' && item.badge > 0 && (
-                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                              isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
-                            }`}>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
+                              }`}>
                               {item.badge}
                             </span>
                           )}
@@ -2189,7 +2178,7 @@ export const AdminDashboard: React.FC = () => {
               {filteredSections.map((section, sIdx) => (
                 <div key={section.id} className="w-full flex flex-col items-center space-y-1.5">
                   {sIdx > 0 && <div className="w-6 h-[1px] bg-black/10 dark:bg-white/10 my-1" />}
-                  
+
                   {section.items.map((item) => {
                     const isActive = activeTab === item.id;
                     const Icon = item.icon;
@@ -2203,13 +2192,13 @@ export const AdminDashboard: React.FC = () => {
                           onClick={() => {
                             if (item.action) item.action();
                           }}
-                          className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-800 dark:text-amber-200 border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
+                          className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group bg-amber-50 dark:bg-amber-950/30 hover:bg-amber-100 text-amber-800 dark:text-[#d5a56d] border border-amber-300/80 dark:border-amber-800/60 cursor-pointer shadow-2xs"
                         >
                           <Icon className="w-5 h-5" />
                           <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900 dark:bg-neutral-800 text-white text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap shadow-xl border border-white/10 text-right">
                             <div className="font-bold flex items-center gap-1">
                               <span>{item.label}</span>
-                              <ExternalLink className="w-3 h-3 text-amber-400" />
+                              <ExternalLink className="w-3 h-3 text-[#d6aa72]" />
                             </div>
                             {item.sublabel && <div className="text-[10px] text-white/60 font-normal">{item.sublabel}</div>}
                           </div>
@@ -2223,11 +2212,10 @@ export const AdminDashboard: React.FC = () => {
                         type="button"
                         id={item.elementId}
                         onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group cursor-pointer ${
-                          isActive
-                            ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/40'
-                            : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
-                        }`}
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative group cursor-pointer ${isActive
+                          ? 'bg-[#9a6a35] text-white shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/40'
+                          : 'bg-transparent hover:bg-[#9a6a35]/10 text-[#211d18] dark:text-[#eee8dc] hover:text-[#9a6a35]'
+                          }`}
                       >
                         <Icon className="w-5 h-5" />
 
@@ -2301,11 +2289,10 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActiveHubSection('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-                  activeHubSection === 'all'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
-                }`}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeHubSection === 'all'
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                  }`}
               >
                 جميع الأدوات ({allNavItems.length})
               </button>
@@ -2316,11 +2303,10 @@ export const AdminDashboard: React.FC = () => {
                     key={sec.id}
                     type="button"
                     onClick={() => setActiveHubSection(sec.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
-                      isSelected
-                        ? 'bg-[#9a6a35] text-white shadow-xs'
-                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
-                    }`}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${isSelected
+                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      }`}
                   >
                     <span>{sec.title}</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
@@ -2373,18 +2359,16 @@ export const AdminDashboard: React.FC = () => {
                     type="button"
                     id={item.elementId}
                     onClick={() => handleSelectTab(item.id as typeof activeTab)}
-                    className={`p-3.5 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group ${
-                      isActive
-                        ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/30'
-                        : 'bg-white dark:bg-[#1a1917] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:bg-[#9a6a35]/5 text-[#211d18] dark:text-[#eee8dc]'
-                    }`}
+                    className={`p-3.5 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group ${isActive
+                      ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md shadow-[#9a6a35]/25 ring-2 ring-[#9a6a35]/30'
+                      : 'bg-white dark:bg-[#1a1917] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:bg-[#9a6a35]/5 text-[#211d18] dark:text-[#eee8dc]'
+                      }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
-                        isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
-                      }`}>
+                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive
+                        ? 'bg-white/20 text-white'
+                        : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                        }`}>
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="min-w-0">
@@ -2403,9 +2387,8 @@ export const AdminDashboard: React.FC = () => {
                     </div>
 
                     {typeof item.badge === 'number' && item.badge > 0 && (
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
-                        isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
-                      }`}>
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${isActive ? 'bg-white text-[#9a6a35]' : 'bg-amber-500 text-white animate-pulse'
+                        }`}>
                         {item.badge}
                       </span>
                     )}
@@ -2471,17 +2454,15 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 1: Approvals (Hero Card - Span 2) */}
               <div
                 onClick={() => handleSelectTab('approvals')}
-                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'approvals'
-                    ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'approvals'
+                  ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                      activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
-                    }`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
+                      }`}>
                       سوق وه التراثي
                     </span>
                     <h4 className="font-black text-lg mt-1">فحص واعتماد معروضات الصعيد</h4>
@@ -2489,19 +2470,17 @@ export const AdminDashboard: React.FC = () => {
                       مراجعة أصالة منتجات الفخار والخيامية والتلي والسجاد وتأكيد مطابقتها للتراث الصعيدي
                     </p>
                   </div>
-                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
-                    activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
-                  }`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                    }`}>
                     <Package className="w-6 h-6" />
                   </div>
                 </div>
 
                 <div className="mt-5 flex items-center gap-3">
-                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${
-                    pendingProducts.length > 0
-                      ? 'bg-amber-500 text-white animate-pulse'
-                      : activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
-                  }`}>
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${pendingProducts.length > 0
+                    ? 'bg-amber-500 text-white animate-pulse'
+                    : activeTab === 'approvals' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                    }`}>
                     {pendingProducts.length > 0 ? (
                       <>
                         <AlertCircle className="w-3.5 h-3.5" />
@@ -2523,11 +2502,10 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 2: Sellers & Workshops */}
               <div
                 onClick={() => handleSelectTab('sellers')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'sellers'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'sellers'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -2552,19 +2530,17 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 3: Orders & Logistics */}
               <div
                 onClick={() => handleSelectTab('orders')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'orders'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'orders'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Truck className="w-5 h-5" />
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                    activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
-                  }`}>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                    }`}>
                     {orders.length} طلب
                   </span>
                 </div>
@@ -2581,19 +2557,17 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 4: Craft Reels */}
               <div
                 onClick={() => handleSelectTab('craft-reels')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'craft-reels'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'craft-reels'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Film className="w-5 h-5" />
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                    activeTab === 'craft-reels' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
-                  }`}>
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'craft-reels' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                    }`}>
                     {adminReels.length} فيديو
                   </span>
                 </div>
@@ -2610,11 +2584,10 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 5: Media Library (Cloudinary) */}
               <div
                 onClick={() => handleSelectTab('media-library')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'media-library'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'media-library'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-cyan-100 dark:bg-cyan-950/40 text-cyan-800 dark:text-cyan-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -2637,11 +2610,10 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 6: Users & Password Resets */}
               <div
                 onClick={() => handleSelectTab('users')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'users'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'users'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -2666,11 +2638,10 @@ export const AdminDashboard: React.FC = () => {
               {/* Bento Card 7: Payment Settings */}
               <div
                 onClick={() => handleSelectTab('payment-settings')}
-                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  activeTab === 'payment-settings'
-                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
-                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                }`}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'payment-settings'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -2717,569 +2688,400 @@ export const AdminDashboard: React.FC = () => {
         {/* MAIN CONTENT PANE (ACTIVE TAB CONTAINER) */}
         <main id="admin-main-pane" className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex-1 min-w-0 w-full space-y-6" : "w-full space-y-6"}>
 
-      {/* TAB: MEDIA LIBRARY (CLOUDINARY) */}
-      {activeTab === 'media-library' && (
-        <div className="space-y-6">
-          <AdminMediaLibraryPage />
-        </div>
-      )}
-
-      {/* TAB 1: OVERVIEW */}
-      {activeTab === 'overview' && (
-        <div className="space-y-6">
-          {/* Overview Top Header with Refresh Button */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
-            <div>
-              <h2 className="font-black text-lg text-[#211d18] dark:text-[#f5f0e7]">نظرة عامة على شغل المنصة</h2>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                متابعة حية للمبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
-              </p>
+          {/* TAB: MEDIA LIBRARY (CLOUDINARY) */}
+          {activeTab === 'media-library' && (
+            <div className="space-y-6">
+              <AdminMediaLibraryPage />
             </div>
-            <RefreshDataButton
-              onRefresh={async () => {
-                await Promise.all([
-                  refreshAdminProducts(),
-                  refreshSellers(),
-                  refreshOrders()
-                ]);
-              }}
-              label="تحديث الأرقام"
-            />
-          </div>
+          )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي مبيعات المنصة (GMV)</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                {orders.length > 0 ? `إجمالي ${orders.length} طلب متسجل` : 'مؤشر المبيعات المباشرة'}
-              </span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي الحرفيين والورش</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{sellers.length} ورشة</span>
-              <span className="text-[10px] text-[#9a6a35] dark:text-[#d5a56d] font-bold block mt-1">
-                {new Set(sellers.map((s) => s.governorate).filter(Boolean)).size > 0
-                  ? `بتغطي ${new Set(sellers.map((s) => s.governorate).filter(Boolean)).size} محافظات في الصعيد`
-                  : 'شبكة ورش الصعيد'}
-              </span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">المنتجات الحرفية النشطة</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
-              </span>
-              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                {adminProducts.length > 0
-                  ? `${Math.round((adminProducts.filter((p) => p.approvalStatus === 'approved').length / adminProducts.length) * 100)}% نسبة الاعتماد`
-                  : 'توثيق الحرف اليدوية'}
-              </span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">طلبات الشحن المتنفذة</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length} شحنة</span>
-              <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mt-1">
-                {orders.length > 0
-                  ? `${orders.filter((o) => o.status === 'delivered').length} شحنة اتسلّمت خلاص`
-                  : 'شحن مباشر من الورش'}
-              </span>
-            </div>
-          </div>
-
-          {/* Pending Queue Highlight */}
-          <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور المراجعة السريعة للمنتجات الجديدة</h3>
-              <button
-                type="button"
-                onClick={() => setActiveTab('approvals')}
-                className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
-              >
-                افتح قايمة الاعتماد كاملة ({pendingProducts.length})
-              </button>
-            </div>
-
-            {pendingProducts.length === 0 ? (
-              <div className="text-center py-8 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
-                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش طلبات معلقة دلوقتي - كل المنتجات اتراجعت تمام</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {pendingProducts.slice(0, 3).map((prod) => (
-                  <div
-                    key={prod.id}
-                    className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
-                        alt=""
-                        className="w-14 h-14 rounded-xl object-cover border border-black/10 dark:border-white/10"
-                      />
-                      <div>
-                        <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
-                        <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
-                          الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: {prod.price} ج.م
-                        </p>
-                        <p className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] mt-0.5">
-                          الخامات: {prod.specifications?.material || 'خامات طبيعية'} • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 self-end sm:self-center">
-                      <button
-                        type="button"
-                        onClick={() => handleApprove(prod.id)}
-                        disabled={isProcessing}
-                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
-                      >
-                        <Check className="w-3.5 h-3.5" />
-                        <span>موافقة ونشر</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => openRejectModal(prod.id)}
-                        disabled={isProcessing}
-                        className="px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                        <span>رفض مع ذكر السبب</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: APPROVALS QUEUE & CATALOG AUDIT */}
-      {activeTab === 'approvals' && (
-        <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور فحص واعتماد المنتجات التراثية</h3>
-              <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
-                كل قطعة لازم تتفحص كويس للتأكد من أصالتها ومطابقتها للمواصفات التراثية قبل ما تظهر للمشترين في المتجر
-              </p>
-            </div>
-
-            {/* Filter Tabs & Add Product Button */}
-            <div className="flex flex-wrap items-center gap-2">
-              <RefreshDataButton
-                onRefresh={refreshAdminProducts}
-                label="تحديث قايمة المنتجات"
-              />
-
-              <button
-                type="button"
-                id="admin-add-new-product-btn"
-                onClick={openAdminAddProductModal}
-                className="px-4 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>إضافة منتج كمسؤول</span>
-              </button>
-
-              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('all')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#211d18] text-white dark:bg-white dark:text-black' : 'text-black/60 dark:text-white/60'
-                    }`}
-                >
-                  الكل ({adminProducts.length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('pending')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
-                    }`}
-                >
-                  <span>قيد المراجعة</span>
-                  <span className="bg-amber-400 text-amber-950 text-[10px] px-1 rounded-full font-black">
-                    {pendingProducts.length}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('approved')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
-                    }`}
-                >
-                  معتمد
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatusFilter('rejected')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
-                    }`}
-                >
-                  مرفوض
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Search bar */}
-          <div className="relative">
-            <Search className="w-4 h-4 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 absolute right-3.5 top-3" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="دور باسم المنتج، الورشة، أو المحافظة..."
-              className="w-full pr-10 pl-4 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
-            />
-          </div>
-
-          {/* Products List */}
-          <div className="space-y-4">
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-12 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
-                <Package className="w-8 h-8 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mx-auto mb-2 opacity-50" />
-                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش منتجات متطابقة مع البحث دلوقتي</p>
-              </div>
-            ) : (
-              filteredProducts.map((prod) => (
-                <div
-                  key={prod.id}
-                  className={`p-4 rounded-2xl border transition-all ${prod.approvalStatus === 'pending'
-                    ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/60'
-                    : prod.approvalStatus === 'rejected'
-                      ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60'
-                      : 'bg-black/5 dark:bg-white/5 dark:bg-[#1E1916] border-black/10 dark:border-white/10'
-                    }`}
-                >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-start gap-3.5">
-                      <img
-                        src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
-                        alt={prod.title}
-                        className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0"
-                      />
-                      <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
-                          {getStatusBadge(prod.approvalStatus)}
-                          <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded font-bold">
-                            {prod.categoryName}
-                          </span>
-                        </div>
-                        <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
-                          الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{prod.price} ج.م</strong>
-                        </p>
-                        <p className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
-                          الخامات: {prod.specifications?.material || 'خامات طبيعية'} • أسلوب الصنع: {prod.specifications?.craftsmanship || 'يدوية'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Moderation Controls */}
-                    <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-[#352B24] w-full md:w-auto">
-                      <button
-                        type="button"
-                        id={`admin-edit-prod-${prod.id}`}
-                        onClick={() => openAdminEditProductModal(prod)}
-                        className="px-3.5 py-2 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] hover:bg-black/5 dark:bg-white/5 dark:hover:bg-[#322923] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
-                        title="تعديل بيانات المنتج كمسؤول"
-                      >
-                        <Edit2 className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
-                        <span>تعديل</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        id={`admin-delete-prod-${prod.id}`}
-                        onClick={() => {
-                          confirmModal({
-                            title: 'حذف المنتج',
-                            message: `متأكد إنك عايز تحذف منتج "${prod.title}" نهائي من المنصة؟`,
-                            confirmText: 'نعم، حذف نهائي',
-                            danger: true,
-                            onConfirm: async () => {
-                              await deleteProduct(prod.id);
-                            }
-                          });
-                        }}
-                        className="px-3 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
-                        title="حذف المنتج نهائياً"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>حذف</span>
-                      </button>
-
-                      {prod.approvalStatus !== 'approved' && (
-                        <button
-                          type="button"
-                          onClick={() => handleApprove(prod.id)}
-                          disabled={isProcessing}
-                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
-                        >
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>موافقة ونشر</span>
-                        </button>
-                      )}
-
-                      {prod.approvalStatus !== 'rejected' && (
-                        <button
-                          type="button"
-                          onClick={() => openRejectModal(prod.id)}
-                          disabled={isProcessing}
-                          className="px-4 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          <span>رفض المنتج</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Rejection reason if any */}
-                  {prod.approvalStatus === 'rejected' && prod.rejectionReason && (
-                    <div className="mt-3 p-3 bg-rose-100/80 dark:bg-rose-950/50 border border-rose-300 dark:border-rose-900/60 rounded-xl text-xs space-y-1">
-                      <span className="font-bold text-rose-900 dark:text-rose-200 block">سبب الرفض المسجل للحرفي:</span>
-                      <p className="text-rose-800 dark:text-rose-300 leading-relaxed">{prod.rejectionReason}</p>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB: CATEGORIES MANAGEMENT (PHASE 4) */}
-      {activeTab === 'categories' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة أقسام وتصنيفات الحرف التراثية</h3>
-              <p className="text-xs text-black/60 dark:text-white/60">
-                تقسيم القطع الحرفية حسب نوع الفن (فخار، نسيج، خوص، نحاس، حلي، خشب، مأكولات صعيدية)
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <RefreshDataButton
-                onRefresh={refreshCategories}
-                label="تحديث الأقسام"
-              />
-
-              <button
-                type="button"
-                onClick={openAddCategoryModal}
-                className="px-4 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
-              >
-                <Plus className="w-4 h-4" />
-                <span>إضافة قسم تراثي جديد</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categories.map((cat) => (
-              <div
-                key={cat.id}
-                className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3 flex flex-col justify-between"
-              >
+          {/* TAB 1: OVERVIEW */}
+          {activeTab === 'overview' && (
+            <div className="space-y-6">
+              {/* Overview Top Header with Refresh Button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
                 <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl">{cat.icon || '🏺'}</span>
-                      <div>
-                        <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{cat.name}</h4>
-                        {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-mono">{cat.nameEn}</span>}
-                      </div>
-                    </div>
-                    <span className="text-[11px] font-bold font-mono bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded-full">
-                      {cat.productCount || 0} منتج
-                    </span>
+                  <h2 className="font-black text-lg text-[#211d18] dark:text-[#f5f0e7]">نظرة عامة على شغل المنصة</h2>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                    متابعة حية للمبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
+                  </p>
+                </div>
+                <RefreshDataButton
+                  onRefresh={async () => {
+                    await Promise.all([
+                      refreshAdminProducts(),
+                      refreshSellers(),
+                      refreshOrders()
+                    ]);
+                  }}
+                  label="تحديث الأرقام"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي مبيعات المنصة (GMV)</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                    {orders.length > 0 ? `إجمالي ${orders.length} طلب متسجل` : 'مؤشر المبيعات المباشرة'}
+                  </span>
+                </div>
+
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي الحرفيين والورش</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{sellers.length} ورشة</span>
+                  <span className="text-[10px] text-[#9a6a35] dark:text-[#d5a56d] font-bold block mt-1">
+                    {new Set(sellers.map((s) => s.governorate).filter(Boolean)).size > 0
+                      ? `بتغطي ${new Set(sellers.map((s) => s.governorate).filter(Boolean)).size} محافظات في الصعيد`
+                      : 'شبكة ورش الصعيد'}
+                  </span>
+                </div>
+
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">المنتجات الحرفية النشطة</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                    {adminProducts.filter((p) => p.approvalStatus === 'approved').length} قطعة
+                  </span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                    {adminProducts.length > 0
+                      ? `${Math.round((adminProducts.filter((p) => p.approvalStatus === 'approved').length / adminProducts.length) * 100)}% نسبة الاعتماد`
+                      : 'توثيق الحرف اليدوية'}
+                  </span>
+                </div>
+
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">طلبات الشحن المتنفذة</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length} شحنة</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mt-1">
+                    {orders.length > 0
+                      ? `${orders.filter((o) => o.status === 'delivered').length} شحنة اتسلّمت خلاص`
+                      : 'شحن مباشر من الورش'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Pending Queue Highlight */}
+              <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور المراجعة السريعة للمنتجات الجديدة</h3>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('approvals')}
+                    className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
+                  >
+                    افتح قايمة الاعتماد كاملة ({pendingProducts.length})
+                  </button>
+                </div>
+
+                {pendingProducts.length === 0 ? (
+                  <div className="text-center py-8 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
+                    <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
+                    <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش طلبات معلقة دلوقتي - كل المنتجات اتراجعت تمام</p>
                   </div>
-                  <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
-                    {cat.description || 'الحرف اليدوية والفنون التراثية الأصيلة في محافظات الصعيد.'}
+                ) : (
+                  <div className="space-y-3">
+                    {pendingProducts.slice(0, 3).map((prod) => (
+                      <div
+                        key={prod.id}
+                        className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                            alt=""
+                            className="w-14 h-14 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                          />
+                          <div>
+                            <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
+                            <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
+                              الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: {prod.price} ج.م
+                            </p>
+                            <p className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] mt-0.5">
+                              الخامات: {prod.specifications?.material || 'خامات طبيعية'} • الصنعة: {prod.specifications?.craftsmanship || 'يدوية'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 self-end sm:self-center">
+                          <button
+                            type="button"
+                            onClick={() => handleApprove(prod.id)}
+                            disabled={isProcessing}
+                            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>موافقة ونشر</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openRejectModal(prod.id)}
+                            disabled={isProcessing}
+                            className="px-3.5 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl flex items-center gap-1 cursor-pointer"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                            <span>رفض مع ذكر السبب</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: APPROVALS QUEUE & CATALOG AUDIT */}
+          {activeTab === 'approvals' && (
+            <div className="bg-white dark:bg-[#1B1613] rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طابور فحص واعتماد المنتجات التراثية</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
+                    كل قطعة لازم تتفحص كويس للتأكد من أصالتها ومطابقتها للمواصفات التراثية قبل ما تظهر للمشترين في المتجر
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
+                {/* Filter Tabs & Add Product Button */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <RefreshDataButton
+                    onRefresh={refreshAdminProducts}
+                    label="تحديث قايمة المنتجات"
+                  />
+
                   <button
                     type="button"
-                    onClick={() => openEditCategoryModal(cat)}
-                    className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-black/10 dark:border-white/10 text-xs font-bold flex items-center gap-1"
+                    id="admin-add-new-product-btn"
+                    onClick={openAdminAddProductModal}
+                    className="px-4 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
                   >
-                    <Edit2 className="w-3.5 h-3.5" />
-                    <span>تعديل</span>
+                    <Plus className="w-4 h-4" />
+                    <span>إضافة منتج كمسؤول</span>
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      confirmModal({
-                        title: 'حذف القسم التراثي',
-                        message: `متأكد إنك عايز تحذف قسم "${cat.name}"؟`,
-                        confirmText: 'حذف القسم',
-                        danger: true,
-                        onConfirm: async () => {
-                          await deleteCategory(cat.id);
-                        }
-                      });
-                    }}
-                    className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>حذف</span>
-                  </button>
+
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter('all')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#211d18] text-white dark:bg-white dark:text-black' : 'text-black/60 dark:text-white/60'
+                        }`}
+                    >
+                      الكل ({adminProducts.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter('pending')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${statusFilter === 'pending' ? 'bg-amber-600 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
+                        }`}
+                    >
+                      <span>قيد المراجعة</span>
+                      <span className="bg-amber-400 text-amber-950 text-[10px] px-1 rounded-full font-black">
+                        {pendingProducts.length}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter('approved')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'approved' ? 'bg-emerald-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
+                        }`}
+                    >
+                      معتمد
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter('rejected')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'rejected' ? 'bg-rose-700 text-white' : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
+                        }`}
+                    >
+                      مرفوض
+                    </button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* TAB: CRAFT STORIES MANAGEMENT (قصص الصنعة وأسرار الأجداد) */}
-      {activeTab === 'craft-stories' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-600" />
-                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">حكايات الصنعة وأسرار الأجداد (قاعدة البيانات)</h3>
-                <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[10px] font-bold px-2 py-0.5 rounded-full">
-                  craft_stories collection
-                </span>
+              {/* Search bar */}
+              <div className="relative">
+                <Search className="w-4 h-4 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 absolute right-3.5 top-3" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="دور باسم المنتج، الورشة، أو المحافظة..."
+                  className="w-full pr-10 pl-4 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
+                />
               </div>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                إدارة أطلس الحرف التراثية وأسرار الصنايعية المعروضة في واجهة المتجر الرئيسية، مع إمكانية التعديل والإضافة والإخفاء فوراً.
-              </p>
-            </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              <RefreshDataButton
-                onRefresh={fetchCraftStories}
-                isLoading={isLoadingCraftStories}
-                label="تحديث الحكايات"
-              />
-
-              <button
-                type="button"
-                id="admin-add-craft-story-btn"
-                onClick={openAddCraftStoryModal}
-                className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>إضافة حكاية صنعة جديدة</span>
-              </button>
-            </div>
-          </div>
-
-          {isLoadingCraftStories && craftStories.length === 0 ? (
-            <div className="py-12 text-center text-gray-500 text-xs flex flex-col items-center gap-3">
-              <RefreshCw className="w-6 h-6 animate-spin text-[#9a6a35] dark:text-[#d5a56d]" />
-              <span>بنحمّل حكايات الصنعة من قاعدة البيانات...</span>
-            </div>
-          ) : craftStories.length === 0 ? (
-            <div className="p-8 text-center bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-3">
-              <Sparkles className="w-8 h-8 text-amber-500 mx-auto" />
-              <p className="text-sm font-bold text-gray-700">مفيش حكايات صنعة متسجلة دلوقتي في قاعدة البيانات</p>
-              <button
-                type="button"
-                onClick={openAddCraftStoryModal}
-                className="px-4 py-2 bg-[#9a6a35] text-white text-xs font-bold rounded-xl shadow-xs"
-              >
-                ضيف أول حكاية دلوقتي
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {craftStories.map((story) => (
-                <div
-                  key={story.id}
-                  className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-black/10 dark:border-white/10 hover:border-amber-700/30'
-                    }`}
-                >
-                  <div className="p-5 space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-gray-200 shadow-xs relative">
-                        <img
-                          src={story.image}
-                          alt={story.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-sm">
-                          #{story.displayOrder ?? 1}
-                        </span>
-                      </div>
-
-                      <div className="flex-1 min-w-0 space-y-1">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-[10px] font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                            {story.governorate}
-                          </span>
-                          <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${story.active === false
-                              ? 'bg-gray-200 text-gray-600'
-                              : 'bg-emerald-100 text-emerald-800'
-                              }`}
-                          >
-                            {story.active === false ? 'مخفية من الواجهة' : 'شغالة وظاهرة'}
-                          </span>
+              {/* Products List */}
+              <div className="space-y-4">
+                {filteredProducts.length === 0 ? (
+                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                    <Package className="w-8 h-8 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mx-auto mb-2 opacity-50" />
+                    <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش منتجات متطابقة مع البحث دلوقتي</p>
+                  </div>
+                ) : (
+                  filteredProducts.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className={`p-4 rounded-2xl border transition-all ${prod.approvalStatus === 'pending'
+                        ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/60'
+                        : prod.approvalStatus === 'rejected'
+                          ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60'
+                          : 'bg-black/5 dark:bg-white/5 dark:bg-[#1E1916] border-black/10 dark:border-white/10'
+                        }`}
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex items-start gap-3.5">
+                          <img
+                            src={prod.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=400&q=80'}
+                            alt={prod.title}
+                            className="w-16 h-16 rounded-xl object-cover border border-black/10 dark:border-white/10 shrink-0"
+                          />
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{prod.title}</h4>
+                              {getStatusBadge(prod.approvalStatus)}
+                              <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded font-bold">
+                                {prod.categoryName}
+                              </span>
+                            </div>
+                            <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
+                              الورشة: <strong>{prod.sellerName}</strong> • محافظة {prod.sellerGovernorate} • السعر: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{prod.price} ج.م</strong>
+                            </p>
+                            <p className="text-[11px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
+                              الخامات: {prod.specifications?.material || 'خامات طبيعية'} • أسلوب الصنع: {prod.specifications?.craftsmanship || 'يدوية'}
+                            </p>
+                          </div>
                         </div>
 
-                        <h4 className="font-bold text-sm text-gray-900 line-clamp-1">{story.title}</h4>
-                        <p className="text-xs text-amber-800 font-medium line-clamp-1">{story.subtitle}</p>
-                        <p className="text-[11px] text-gray-500 font-mono">العمر: {story.historyAge}</p>
-                      </div>
-                    </div>
+                        {/* Moderation Controls */}
+                        <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-[#352B24] w-full md:w-auto">
+                          <button
+                            type="button"
+                            id={`admin-edit-prod-${prod.id}`}
+                            onClick={() => openAdminEditProductModal(prod)}
+                            className="px-3.5 py-2 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] hover:bg-black/5 dark:bg-white/5 dark:hover:bg-[#322923] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                            title="تعديل بيانات المنتج كمسؤول"
+                          >
+                            <Edit2 className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                            <span>تعديل</span>
+                          </button>
 
-                    <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[#ebdccd]">
-                      {story.description}
-                    </p>
+                          <button
+                            type="button"
+                            id={`admin-delete-prod-${prod.id}`}
+                            onClick={() => {
+                              confirmModal({
+                                title: 'حذف المنتج',
+                                message: `متأكد إنك عايز تحذف منتج "${prod.title}" نهائي من المنصة؟`,
+                                confirmText: 'نعم، حذف نهائي',
+                                danger: true,
+                                onConfirm: async () => {
+                                  await deleteProduct(prod.id);
+                                }
+                              });
+                            }}
+                            className="px-3 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                            title="حذف المنتج نهائياً"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>حذف</span>
+                          </button>
 
-                    {/* Key features pill list */}
-                    {Array.isArray(story.keyFeatures) && story.keyFeatures.length > 0 && (
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-bold text-gray-500 block">أسرار الصنعة المسجلة:</span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {story.keyFeatures.slice(0, 3).map((feat, fi) => (
-                            <span
-                              key={fi}
-                              className="text-[10px] bg-white text-gray-700 px-2 py-0.5 rounded-md border border-gray-200 flex items-center gap-1"
+                          {prod.approvalStatus !== 'approved' && (
+                            <button
+                              type="button"
+                              onClick={() => handleApprove(prod.id)}
+                              disabled={isProcessing}
+                              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
                             >
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
-                              <span className="line-clamp-1">{feat}</span>
-                            </span>
-                          ))}
-                          {story.keyFeatures.length > 3 && (
-                            <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md font-mono">
-                              +{story.keyFeatures.length - 3}
-                            </span>
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>موافقة ونشر</span>
+                            </button>
+                          )}
+
+                          {prod.approvalStatus !== 'rejected' && (
+                            <button
+                              type="button"
+                              onClick={() => openRejectModal(prod.id)}
+                              disabled={isProcessing}
+                              className="px-4 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                            >
+                              <XCircle className="w-4 h-4" />
+                              <span>رفض المنتج</span>
+                            </button>
                           )}
                         </div>
                       </div>
-                    )}
-                  </div>
 
-                  <div className="px-5 py-3 bg-black/5 dark:bg-white/5 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleToggleCraftStoryActive(story)}
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all ${story.active === false
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                        }`}
-                    >
-                      {story.active === false ? 'تفعيل وإظهار' : 'إخفاء من المتجر'}
-                    </button>
+                      {/* Rejection reason if any */}
+                      {prod.approvalStatus === 'rejected' && prod.rejectionReason && (
+                        <div className="mt-3 p-3 bg-rose-100/80 dark:bg-rose-950/50 border border-rose-300 dark:border-rose-900/60 rounded-xl text-xs space-y-1">
+                          <span className="font-bold text-rose-900 dark:text-rose-200 block">سبب الرفض المسجل للحرفي:</span>
+                          <p className="text-rose-800 dark:text-rose-300 leading-relaxed">{prod.rejectionReason}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
 
-                    <div className="flex items-center gap-2">
+          {/* TAB: CATEGORIES MANAGEMENT (PHASE 4) */}
+          {activeTab === 'categories' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة أقسام وتصنيفات الحرف التراثية</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    تقسيم القطع الحرفية حسب نوع الفن (فخار، نسيج، خوص، نحاس، حلي، خشب، مأكولات صعيدية)
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                  <RefreshDataButton
+                    onRefresh={refreshCategories}
+                    label="تحديث الأقسام"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={openAddCategoryModal}
+                    className="px-4 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 self-start sm:self-auto"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>إضافة قسم تراثي جديد</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categories.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-2xl">{cat.icon || '🏺'}</span>
+                          <div>
+                            <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">{cat.name}</h4>
+                            {cat.nameEn && <span className="text-[10px] text-black/60 dark:text-white/60 block font-mono">{cat.nameEn}</span>}
+                          </div>
+                        </div>
+                        <span className="text-[11px] font-bold font-mono bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] px-2 py-0.5 rounded-full">
+                          {cat.productCount || 0} منتج
+                        </span>
+                      </div>
+                      <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 leading-relaxed">
+                        {cat.description || 'الحرف اليدوية والفنون التراثية الأصيلة في محافظات الصعيد.'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/10 dark:border-white/10">
                       <button
                         type="button"
-                        onClick={() => openEditCraftStoryModal(story)}
+                        onClick={() => openEditCategoryModal(cat)}
                         className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-black/10 dark:border-white/10 text-xs font-bold flex items-center gap-1"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -3287,1856 +3089,2025 @@ export const AdminDashboard: React.FC = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => handleDeleteCraftStory(story)}
-                        className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1"
+                        onClick={() => {
+                          confirmModal({
+                            title: 'حذف القسم التراثي',
+                            message: `متأكد إنك عايز تحذف قسم "${cat.name}"؟`,
+                            confirmText: 'حذف القسم',
+                            danger: true,
+                            onConfirm: async () => {
+                              await deleteCategory(cat.id);
+                            }
+                          });
+                        }}
+                        className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>حذف</span>
                       </button>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* TAB: CRAFT REELS (VIDEOS) MANAGEMENT */}
-      {activeTab === 'craft-reels' && (
-        <div className="space-y-6 animate-in fade-in">
-          {/* Header Banner */}
-          <div className="relative rounded-3xl bg-gradient-to-r from-[#211d18] via-[#28221c] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-amber-300 text-xs font-bold border border-white/15">
-                  <Film className="w-4 h-4 text-amber-400" />
-                  <span>الإشراف على محتوى وه Stories وحكايات الصعيد</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-black font-heritage">
-                  إدارة الفيديوهات والحكايات المصورة والتفاعل المباشر
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                  متابعة الفيديوهات المصورة لمعالم الصعيد وتراثه وأسواقه وأكلاته وحرفه، وإدارة التصنيفات والمحافظات، وربطها بالمنتجات لو تحب.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 shrink-0 flex-wrap">
-                <RefreshDataButton
-                  onRefresh={refreshAdminReelsFromDb}
-                  label="تحديث الفيديوهات"
-                  variant="outline"
-                  className="bg-white/10 text-white hover:bg-white/20 border-white/20"
-                />
-
-                <button
-                  type="button"
-                  id="admin-upload-reel-btn"
-                  onClick={() => setIsAdminReelUploadOpen(true)}
-                  className="px-5 py-3 bg-gradient-to-r from-[#9a6a35] to-[#7d5427] hover:from-[#7d5427] hover:to-[#623f1a] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>نشر حكاية/فيديو جديد</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-                <span>إجمالي الفيديوهات</span>
-                <Film className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminReels.length} فيديو</span>
-              <span className="text-[10px] text-emerald-700 font-bold block mt-1">بتغطي بلاد الصعيد كلها</span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-                <span>إجمالي المشاهدات</span>
-                <Eye className="w-4 h-4 text-amber-600" />
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0).toLocaleString()}
-              </span>
-              <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات حقيقية وتفاعل عالي</span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-                <span>إجمالي الإعجابات</span>
-                <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0).toLocaleString()}
-              </span>
-              <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل الناس في المنصة</span>
-            </div>
-
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-                <span>الحكايات والفيديوهات</span>
-                <Store className="w-4 h-4 text-indigo-600" />
-              </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
-                {adminReels.length} حكاية
-              </span>
-              <span className="text-[10px] text-indigo-700 font-bold block mt-1">محتوى توثيقي وصنايعية</span>
-            </div>
-          </div>
-
-          {/* Search and Filters Bar */}
-          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
-            {/* Governorate Filter */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-              <button
-                type="button"
-                onClick={() => setAdminReelGovFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === 'all'
-                  ? 'bg-[#9a6a35] text-white shadow-md'
-                  : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
-                  }`}
-              >
-                كل المحافظات ({adminReels.length})
-              </button>
-              {(['قنا', 'سوهاج', 'أسوان', 'أسيوط', 'الأقصر', 'الوادي الجديد', 'الفيوم'] as Governorate[]).map((gov) => {
-                const count = adminReels.filter((r) => r.governorate === gov).length;
-                if (count === 0) return null;
-                return (
-                  <button
-                    key={gov}
-                    type="button"
-                    onClick={() => setAdminReelGovFilter(gov)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === gov
-                      ? 'bg-[#9a6a35] text-white shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
-                      }`}
-                  >
-                    {gov} ({count})
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Search Input */}
-            <div className="relative min-w-[240px]">
-              <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={adminReelSearchTerm}
-                onChange={(e) => setAdminReelSearchTerm(e.target.value)}
-                placeholder="دور بالعنوان، المكان، التصنيف..."
-                className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
-              />
-              {adminReelSearchTerm && (
-                <button
-                  type="button"
-                  onClick={() => setAdminReelSearchTerm('')}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Reels Grid */}
-          {adminReels.filter((r) => {
-            const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
-            const term = adminReelSearchTerm.trim().toLowerCase();
-            const matchesSearch =
-              term === '' ||
-              r.title.toLowerCase().includes(term) ||
-              (r.location && r.location.toLowerCase().includes(term)) ||
-              (r.contentType && r.contentType.toLowerCase().includes(term)) ||
-              (r.description && r.description.toLowerCase().includes(term)) ||
-              (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
-              (r.craftType && r.craftType.toLowerCase().includes(term)) ||
-              (r.productTitle && r.productTitle.toLowerCase().includes(term));
-            return matchesGov && matchesSearch;
-          }).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {adminReels
-                .filter((r) => {
-                  const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
-                  const term = adminReelSearchTerm.trim().toLowerCase();
-                  const matchesSearch =
-                    term === '' ||
-                    r.title.toLowerCase().includes(term) ||
-                    (r.location && r.location.toLowerCase().includes(term)) ||
-                    (r.contentType && r.contentType.toLowerCase().includes(term)) ||
-                    (r.description && r.description.toLowerCase().includes(term)) ||
-                    (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
-                    (r.craftType && r.craftType.toLowerCase().includes(term)) ||
-                    (r.productTitle && r.productTitle.toLowerCase().includes(term));
-                  return matchesGov && matchesSearch;
-                })
-                .map((reel) => (
-                  <div
-                    key={reel.id}
-                    className="bg-white rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
-                  >
-                    {/* 9:16 Video Thumbnail Container */}
-                    <div
-                      onClick={() => {
-                        setAdminSelectedReelPreviewId(reel.id);
-                        setIsAdminReelPreviewOpen(true);
-                      }}
-                      className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
-                    >
-                      <img
-                        src={reel.posterUrl}
-                        alt={reel.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                      {/* Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
-                          <Play className="w-5 h-5 fill-white mr-0.5" />
-                        </div>
-                      </div>
-
-                      {/* Top Badges */}
-                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                        <div className="flex items-center gap-1">
-                          <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                            {reel.duration}
-                          </span>
-                          {(reel as any).isFeatured && (
-                            <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
-                              مميز ★
-                            </span>
-                          )}
-                          {(reel as any).isPinned && (
-                            <span className="bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
-                              مثبت 📌
-                            </span>
-                          )}
-                        </div>
-                        <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                          {reel.location || reel.governorate}
-                        </span>
-                      </div>
-
-                      {/* Bottom Info on Poster */}
-                      <div className="absolute bottom-3 inset-x-3 z-10 space-y-1">
-                        <p className="text-xs font-bold text-white line-clamp-2 drop-shadow-md">
-                          {reel.title}
-                        </p>
-                        <p className="text-[10px] text-amber-300 truncate">
-                          {reel.contentType || reel.craftType || 'حكاية صعيدية'}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Bottom Metadata & Actions */}
-                    <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-white/5/40">
-                      {/* Linked Product (Optional) */}
-                      {reel.productId && reel.productTitle ? (
-                        <div className="p-2.5 bg-white dark:bg-[#1c1c19] rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
-                          {reel.productImage && (
-                            <img
-                              src={reel.productImage}
-                              alt={reel.productTitle}
-                              className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100 dark:border-white/10"
-                            />
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
-                            <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">{reel.productPrice} ج.م</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
-                          <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
-                            محتوى توثيقي / من غير منتج مرتبط
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Engagement Stats & Database Sync Badge */}
-                      <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1 text-[11px]">
-                            <Eye className="w-3.5 h-3.5 text-gray-500" />
-                            <span>{reel.viewsCount}</span>
-                          </span>
-                          <span className="flex items-center gap-1 text-[11px] text-rose-600 font-bold">
-                            <Heart className="w-3.5 h-3.5 fill-rose-600" />
-                            <span>{reel.likesCount}</span>
-                          </span>
-                        </div>
-                        <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
-                          قاعدة البيانات ✓
-                        </span>
-                      </div>
-
-                      {/* Actions Buttons: View, Edit, Delete (Full Admin Control) */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-black/10 dark:border-white/10">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAdminSelectedReelPreviewId(reel.id);
-                            setIsAdminReelPreviewOpen(true);
-                          }}
-                          className="flex-1 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-white" />
-                          <span>معاينة وتشغيل</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAdminEditingReel(reel);
-                            setIsAdminReelEditOpen(true);
-                          }}
-                          className="p-2 text-gray-600 hover:text-[#9a6a35] dark:text-[#d5a56d] hover:bg-black/5 dark:bg-white/5 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
-                          title="تعديل الفيديو والمنتج والورشة بالكامل"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleAdminDeleteReel(reel.id, reel.title)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-transparent"
-                          title="حذف الفيديو نهائياً من قاعدة البيانات والمنصة"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
                 ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-3xl p-12 text-center border border-black/10 dark:border-white/10 space-y-4">
-              <Film className="w-16 h-16 text-gray-300 mx-auto" />
-              <h4 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش فيديوهات متطابقة مع البحث</h4>
-              <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
-                تقدر ترفع فيديو جديد لأي حرفي أو تمسح كلمة البحث عشان تشوف كل فيديوهات الورش.
-              </p>
+              </div>
             </div>
           )}
-        </div>
-      )}
 
-      {/* TAB: REVIEWS MODERATION (PHASE 4) */}
-      {activeTab === 'reviews' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إشراف ومراجعة تقييمات المشترين</h3>
-              <p className="text-xs text-black/60 dark:text-white/60">
-                مراجعة آراء وتعليقات الزباين، وشارة الشراء المؤكد، ومنع أي تقييم عشوائي أو مش مناسب
-              </p>
-            </div>
-
-            <RefreshDataButton
-              onRefresh={refreshReviews}
-              label="تحديث التقييمات"
-            />
-          </div>
-
-          <div className="space-y-3">
-            {reviews.length === 0 ? (
-              <div className="text-center py-12 bg-black/5 dark:bg-white/5 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
-                <MessageSquare className="w-8 h-8 text-black/60 dark:text-white/60 mx-auto mb-2 opacity-50" />
-                <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش تقييمات متسجلة لحد دلوقتي</p>
-              </div>
-            ) : (
-              reviews.map((rev) => (
-                <div
-                  key={rev.id}
-                  className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7]">{rev.userName || 'مشتري موثق'}</span>
-                      {rev.verifiedPurchase && (
-                        <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
-                          <BadgeCheck className="w-3 h-3 text-emerald-600" />
-                          <span>شروة متأكدة (Verified)</span>
-                        </span>
-                      )}
-                      <div className="flex items-center text-amber-500 mr-2">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3.5 h-3.5 ${i < rev.rating ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
-                              }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-[10px] text-black/60 dark:text-white/60 font-mono">{rev.date}</span>
-                    </div>
-
-                    <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">"{rev.comment}"</p>
-
-                    <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
-                      <span>المنتج: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{rev.productTitle || rev.productId}</strong></span>
-                      <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-end md:self-center shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => moderateReview(rev.id, 'published')}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>قبول ونشر</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moderateReview(rev.id, 'hidden')}
-                      className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                      <span>إخفاء</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        confirmModal({
-                          title: 'حذف التقييم',
-                          message: 'هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟',
-                          confirmText: 'حذف التقييم',
-                          danger: true,
-                          onConfirm: async () => {
-                            await deleteReview(rev.id);
-                          }
-                        });
-                      }}
-                      className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                      title="حذف التقييم نهائياً"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>حذف</span>
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: SELLERS MANAGEMENT & APPROVALS */}
-      {activeTab === 'sellers' && (
-        <div className="space-y-6">
-          {/* Header & Stats Banner */}
-          <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-bold text-lg text-[#211d18] dark:text-[#f5f0e7] font-heritage">إدارة الورش واعتماد الصنايعية</h3>
-                {pendingSellersCount > 0 && (
-                  <span className="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black px-2.5 py-0.5 rounded-full animate-pulse">
-                    {pendingSellersCount} طلب مستني المراجعة
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                مراجعة طلبات انضمام الورش، وتوثيق صنايعية الصعيد، والموافقة على الحسابات أو وقفها
-              </p>
-            </div>
-
-            {/* Quick Action / Refresh */}
-            <div className="flex items-center gap-2">
-              <RefreshDataButton
-                id="admin-refresh-sellers-btn"
-                onRefresh={refreshSellers}
-                label="تحديث الورش"
-              />
-            </div>
-          </div>
-
-          {/* Filter Tabs & Search Bar */}
-          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
-            {/* Status Filter Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-              <button
-                type="button"
-                id="filter-sellers-all"
-                onClick={() => setSellerStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'all'
-                  ? 'bg-[#9a6a35] text-white shadow-md'
-                  : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
-                  }`}
-              >
-                الكل ({sellers.length})
-              </button>
-
-              <button
-                type="button"
-                id="filter-sellers-pending"
-                onClick={() => setSellerStatusFilter('pending')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${sellerStatusFilter === 'pending'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
-                  }`}
-              >
-                <span>مستني المراجعة</span>
-                <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold">
-                  {pendingSellersCount}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                id="filter-sellers-approved"
-                onClick={() => setSellerStatusFilter('approved')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'approved'
-                  ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100'
-                  }`}
-              >
-                معتمد ومتوثق ({sellers.filter((s) => s.status === 'approved').length})
-              </button>
-
-              <button
-                type="button"
-                id="filter-sellers-suspended"
-                onClick={() => setSellerStatusFilter('suspended')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'suspended'
-                  ? 'bg-orange-600 text-white shadow-xs'
-                  : 'bg-orange-50 text-orange-900 border border-orange-200 hover:bg-orange-100'
-                  }`}
-              >
-                متوقف مؤقتاً ({sellers.filter((s) => s.status === 'suspended').length})
-              </button>
-
-              <button
-                type="button"
-                id="filter-sellers-rejected"
-                onClick={() => setSellerStatusFilter('rejected')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'rejected'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100'
-                  }`}
-              >
-                مرفوض ({sellers.filter((s) => s.status === 'rejected').length})
-              </button>
-            </div>
-
-            {/* Search Input */}
-            <div className="relative min-w-[240px]">
-              <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                id="seller-search-input"
-                value={sellerSearchTerm}
-                onChange={(e) => setSellerSearchTerm(e.target.value)}
-                placeholder="دور بالاسم، الورشة، المحافظة..."
-                className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
-              />
-              {sellerSearchTerm && (
-                <button
-                  type="button"
-                  onClick={() => setSellerSearchTerm('')}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Sellers Cards Grid / List */}
-          <div className="space-y-3">
-            {filteredSellers.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-12 text-center shadow-xs">
-                <Store className="w-12 h-12 text-black/60 dark:text-white/60/40 mx-auto mb-3" />
-                <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">مفيش ورش متطابقة مع البحث</h4>
-                <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                  جرب تغير الفلتر أو تمسح كلمة البحث عشان تشوف كل الورش المسجلة
-                </p>
-              </div>
-            ) : (
-              filteredSellers.map((s) => (
-                <div
-                  key={s.id}
-                  id={`seller-card-${s.id}`}
-                  className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-5 shadow-sm text-[#211d18] dark:text-[#f5f0e7] hover:border-[#9a6a35]/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
-                >
-                  {/* Seller Info Column */}
-                  <div className="flex items-start gap-4">
-                    <img
-                      src={s.avatar}
-                      alt={s.brandName}
-                      className="w-14 h-14 rounded-2xl object-cover border border-black/10 dark:border-white/10 shrink-0"
-                    />
-                    <div className="space-y-1.5">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h4 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">{s.brandName}</h4>
-
-                        {/* Status Badge */}
-                        {s.status === 'approved' && (
-                          <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                            <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                            <span>معتمد ومتوثق</span>
-                          </span>
-                        )}
-                        {s.status === 'pending' && (
-                          <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
-                            <Clock className="w-3 h-3 text-amber-600" />
-                            <span>مستني المراجعة والاعتماد</span>
-                          </span>
-                        )}
-                        {s.status === 'suspended' && (
-                          <span className="bg-orange-100 text-orange-900 border border-orange-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                            <ShieldAlert className="w-3 h-3 text-orange-600" />
-                            <span>متوقف مؤقتاً</span>
-                          </span>
-                        )}
-                        {s.status === 'rejected' && (
-                          <span className="bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                            <XCircle className="w-3 h-3 text-rose-600" />
-                            <span>مرفوض</span>
-                          </span>
-                        )}
-
-                        <span className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 text-[10px] font-semibold px-2 py-0.5 rounded-md">
-                          محافظة {s.governorate}
-                        </span>
-                      </div>
-
-                      {/* Details & Specs */}
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-black/60 dark:text-white/60">
-                        <span>صاحب الورشة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.name}</strong></span>
-                        <span>كود الحساب: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono text-[11px]">{s.userId || s.id}</strong></span>
-                        <span>الحرفة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.specialty || 'مشغولات تراثية'}</strong></span>
-                        <span>الهاتف: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono">{s.phone}</strong></span>
-                        {s.email && <span>البريد: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.email}</strong></span>}
-                        {s.createdAt && <span>تاريخ التقديم: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.createdAt.split('T')[0]}</strong></span>}
-                      </div>
-
-                      {/* Reasons display if rejected or suspended */}
-                      {s.status === 'rejected' && s.rejectionReason && (
-                        <div className="text-xs bg-rose-50 text-rose-800 px-3 py-1 rounded-lg border border-rose-200 inline-block mt-1">
-                          <strong>سبب الرفض:</strong> {s.rejectionReason}
-                        </div>
-                      )}
-                      {s.status === 'suspended' && s.suspensionReason && (
-                        <div className="text-xs bg-orange-50 text-orange-900 px-3 py-1 rounded-lg border border-orange-200 inline-block mt-1">
-                          <strong>سبب الوقف:</strong> {s.suspensionReason}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Actions Column */}
-                  <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
-                    <button
-                      type="button"
-                      id={`admin-view-seller-${s.id}`}
-                      onClick={() => openEditSellerModal(s)}
-                      className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
-                      title="معاينة تفاصيل طلب الورشة وتعديل الغلاف"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
-                      <span>تفاصيل الورشة</span>
-                    </button>
-
-                    {/* Action buttons based on current state */}
-                    {s.status === 'pending' && (
-                      <>
-                        <button
-                          type="button"
-                          id={`admin-approve-seller-${s.id}`}
-                          onClick={() => approveSeller(s.id)}
-                          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>الموافقة على الورشة</span>
-                        </button>
-                        <button
-                          type="button"
-                          id={`admin-reject-seller-${s.id}`}
-                          onClick={() =>
-                            setSelectedSellerForAction({
-                              id: s.id,
-                              name: s.brandName || s.name,
-                              action: 'reject'
-                            })
-                          }
-                          className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                          <span>رفض الطلب</span>
-                        </button>
-                      </>
-                    )}
-
-                    {s.status === 'approved' && (
-                      <button
-                        type="button"
-                        id={`admin-suspend-seller-${s.id}`}
-                        onClick={() =>
-                          setSelectedSellerForAction({
-                            id: s.id,
-                            name: s.brandName || s.name,
-                            action: 'suspend'
-                          })
-                        }
-                        className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
-                      >
-                        <ShieldAlert className="w-3.5 h-3.5" />
-                        <span>وقف الحساب مؤقتاً</span>
-                      </button>
-                    )}
-
-                    {(s.status === 'suspended' || s.status === 'rejected') && (
-                      <button
-                        type="button"
-                        id={`admin-reactivate-seller-${s.id}`}
-                        onClick={() => approveSeller(s.id)}
-                        className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        <span>إعادة التفعيل والموافقة</span>
-                      </button>
-                    )}
-
-                    {/* Permanent Delete Seller Completely Button */}
-                    <button
-                      type="button"
-                      id={`admin-delete-seller-${s.id}`}
-                      disabled={deletingSellerId === s.id}
-                      onClick={() => handleDeleteSellerCompletely(s)}
-                      className="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                      title="حذف نهائي للورشة وكافة المنتجات والفيديوهات المرتبطة بها"
-                    >
-                      {deletingSellerId === s.id ? (
-                        <>
-                          <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-600" />
-                          <span>جاري الحذف...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-                          <span>حذف نهائي</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: ORDERS */}
-      {activeTab === 'orders' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طلبات وشحنات المنصة</h3>
-              <p className="text-xs text-black/60 dark:text-white/60">متابعة الأوردرات والتأكد من تحويلات الفلوس (إنستاباي / فودافون كاش)</p>
-            </div>
-
-            {/* Summary Counters & Refresh */}
-            <div className="flex flex-wrap items-center gap-2">
-              <RefreshDataButton
-                onRefresh={refreshOrders}
-                label="تحديث الأوردرات"
-              />
-
-              <span className="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-amber-600" />
-                <span>
-                  {orders.filter((o) => o.paymentStatus === 'payment_pending_verification').length} مستنيين تأكيد التحويل
-                </span>
-              </span>
-              <span className="px-3 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>
-                  {orders.filter((o) => o.paymentStatus === 'paid').length} اتدفعت خلاص
-                </span>
-              </span>
-            </div>
-          </div>
-
-          {/* Payment Status Filter Buttons */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-gray-500 font-bold ml-1">فلترة حسب طريقة الدفع:</span>
-            {[
-              { id: 'all', label: 'كل الأوردرات' },
-              { id: 'pending_verification', label: '⚠️ مستنيين تأكيد التحويل' },
-              { id: 'paid', label: '✅ الدفع اتأكد' },
-              { id: 'payment_rejected', label: '❌ تحويلات اترفضت' },
-              { id: 'cod', label: '💵 الدفع وقت الاستلام' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setOrderPaymentFilter(tab.id as any)}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${orderPaymentFilter === tab.id
-                  ? 'bg-[#9a6a35] text-white'
-                  : 'bg-black/5 dark:bg-white/5 text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
-                  }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
-            <table className="w-full text-xs text-right">
-              <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
-                <tr>
-                  <th className="py-3 px-4 font-bold">رقم الأوردر</th>
-                  <th className="py-3 px-4 font-bold">المشتري</th>
-                  <th className="py-3 px-4 font-bold">طريقة الدفع</th>
-                  <th className="py-3 px-4 font-bold">بيانات التحويل</th>
-                  <th className="py-3 px-4 font-bold">المبلغ</th>
-                  <th className="py-3 px-4 font-bold">حالة الدفع</th>
-                  <th className="py-3 px-4 font-bold">حالة الأوردر</th>
-                  <th className="py-3 px-4 font-bold text-center">التأكيد والشحن</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                {orders
-                  .filter((ord) => {
-                    if (orderPaymentFilter === 'all') return true;
-                    if (orderPaymentFilter === 'pending_verification') return ord.paymentStatus === 'payment_pending_verification';
-                    if (orderPaymentFilter === 'paid') return ord.paymentStatus === 'paid';
-                    if (orderPaymentFilter === 'payment_rejected') return ord.paymentStatus === 'payment_rejected';
-                    if (orderPaymentFilter === 'cod') return ord.paymentMethod === 'cod';
-                    return true;
-                  })
-                  .map((ord) => {
-                    const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
-                    return (
-                      <tr key={ord.id} className={`hover:bg-black/5 dark:bg-white/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
-                        <td className="py-3 px-4 font-mono font-bold text-[#9a6a35] dark:text-[#d5a56d]">
-                          #{ord.orderNumber || ord.id}
-                        </td>
-                        <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                          {ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}
-                          <span className="block text-[10px] text-gray-500 font-normal">
-                            {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone} • {ord.shippingAddress?.governorate || 'المحافظة'}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 font-bold">
-                          {ord.paymentMethod === 'vodafone_cash' ? (
-                            <span className="text-red-700 flex items-center gap-1">
-                              <Wallet className="w-3.5 h-3.5" />
-                              فودافون كاش
-                            </span>
-                          ) : ord.paymentMethod === 'instapay' ? (
-                            <span className="text-blue-700 flex items-center gap-1">
-                              <CreditCard className="w-3.5 h-3.5" />
-                              إنستاباي
-                            </span>
-                          ) : ord.paymentMethod === 'credit_card' ? (
-                            <span className="text-amber-800">كارت بنكي</span>
-                          ) : (
-                            <span className="text-emerald-700 flex items-center gap-1">
-                              <Truck className="w-3.5 h-3.5" />
-                              وقت الاستلام
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          {ord.paymentReference ? (
-                            <div className="bg-black/5 dark:bg-white/5 p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
-                              <span className="text-[10px] text-gray-500 block">رقم التحويل / الحساب:</span>
-                              {ord.paymentReference}
-                            </div>
-                          ) : (
-                            <span className="text-[10px] text-gray-400">مش متسجل</span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4 font-black text-[#9a6a35] dark:text-[#d5a56d] text-sm">{ord.total} ج.م</td>
-                        <td className="py-3 px-4">
-                          {ord.paymentStatus === 'payment_pending_verification' ? (
-                            <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-[10px] font-bold inline-flex items-center gap-1 animate-pulse">
-                              <Clock className="w-3 h-3 text-amber-700" />
-                              <span>مستني تأكيد التحويل</span>
-                            </span>
-                          ) : ord.paymentStatus === 'paid' ? (
-                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                              <span>اتأكد الدفع خلاص</span>
-                            </span>
-                          ) : ord.paymentStatus === 'payment_rejected' ? (
-                            <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
-                              <XCircle className="w-3 h-3 text-rose-700" />
-                              <span>تحويل مرفوض</span>
-                            </span>
-                          ) : (
-                            <span className="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-[10px] font-bold">
-                              {ord.paymentMethod === 'cod' ? 'تحصيل وقت الاستلام' : 'معلق'}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          <select
-                            value={ord.status}
-                            onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
-                            className="px-2 py-1 bg-white border border-black/10 dark:border-white/10 rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
-                          >
-                            <option value="pending">جديد (Pending)</option>
-                            <option value="confirmed">متأكد (Confirmed)</option>
-                            <option value="processing">بيتجهز (Processing)</option>
-                            <option value="shipped">في الطريق (Shipped)</option>
-                            <option value="delivered">اتسلم (Delivered)</option>
-                            <option value="cancelled">ملغي (Cancelled)</option>
-                          </select>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center justify-center gap-1.5">
-                            {isPendingVerification && (
-                              <>
-                                <button
-                                  type="button"
-                                  disabled={verifyingOrderId === ord.id}
-                                  onClick={() => handleAdminVerifyPayment(ord.id)}
-                                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
-                                  title="تأكيد استلام التحويل واعتماد الطلب"
-                                >
-                                  <Check className="w-3.5 h-3.5" />
-                                  <span>{verifyingOrderId === ord.id ? 'بنأكد...' : 'تأكيد الاستلام'}</span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  disabled={rejectingOrderId === ord.id}
-                                  onClick={() => handleAdminRejectPayment(ord.id)}
-                                  className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                                  title="رفض التحويل وإشعار المشتري"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                  <span>رفض</span>
-                                </button>
-                              </>
-                            )}
-
-                            <button
-                              type="button"
-                              onClick={() => {
-                                confirmModal({
-                                  title: 'حذف الطلب نهائياً',
-                                  message: `هل أنت متأكد من حذف الطلب #${ord.orderNumber} نهائياً؟`,
-                                  confirmText: 'حذف الطلب',
-                                  danger: true,
-                                  onConfirm: async () => {
-                                    await deleteOrder(ord.id);
-                                  }
-                                });
-                              }}
-                              className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                              title="حذف الطلب نهائياً"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              <span>حذف</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB: PAYMENT SETTINGS */}
-      {activeTab === 'payment-settings' && (
-        <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
-            <div>
-              <h3 className="font-bold text-base sm:text-lg text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
-                <span>إعدادات طرق الدفع وحسابات المنصة (إنستاباي وفودافون كاش)</span>
-              </h3>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                ظبط حسابات ورقم المحفظة اللي الزباين هيبعتوا عليها الفلوس في صفحة الدفع.
-              </p>
-            </div>
-            <RefreshDataButton
-              onRefresh={fetchAdminPaymentSettings}
-              label="تحديث الإعدادات"
-            />
-          </div>
-
-          <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
-            {/* InstaPay Section */}
-            <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/30 space-y-4">
-              <div className="flex items-center justify-between border-b border-blue-100 pb-2">
-                <h4 className="font-bold text-sm text-blue-950 flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-blue-600" />
-                  <span>حساب إنستاباي (InstaPay)</span>
-                </h4>
-                <label className="flex items-center gap-2 text-xs font-bold text-blue-900 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={adminPaymentSettings.isInstaPayActive}
-                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded"
-                  />
-                  <span>شغال في الدفع</span>
-                </label>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  عنوان إنستاباي للمنصة (IPA):
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={adminPaymentSettings.instaPayAccount}
-                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
-                  placeholder="مثال: wah@instapay"
-                  className="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-blue-500"
-                  dir="ltr"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  تعليمات للزبون لما يختار إنستاباي:
-                </label>
-                <textarea
-                  value={adminPaymentSettings.instaPayInstructions || ''}
-                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayInstructions: e.target.value })}
-                  placeholder="اكتب التعليمات اللي تظهر للزبون..."
-                  rows={2}
-                  className="w-full px-3.5 py-2 bg-white border border-blue-200 rounded-xl text-xs text-gray-800 outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            {/* Vodafone Cash Section */}
-            <div className="p-5 rounded-2xl border border-red-200 bg-red-50/30 space-y-4">
-              <div className="flex items-center justify-between border-b border-red-100 pb-2">
-                <h4 className="font-bold text-sm text-red-950 flex items-center gap-2">
-                  <Wallet className="w-4 h-4 text-red-600" />
-                  <span>محفظة فودافون كاش</span>
-                </h4>
-                <label className="flex items-center gap-2 text-xs font-bold text-red-900 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={adminPaymentSettings.isVodafoneCashActive}
-                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
-                    className="w-4 h-4 text-red-600 rounded"
-                  />
-                  <span>شغال في الدفع</span>
-                </label>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  رقم محفظة فودافون كاش المعتمد:
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={adminPaymentSettings.vodafoneCashNumber}
-                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
-                  placeholder="مثال: 01158969931"
-                  className="w-full px-3.5 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-red-500"
-                  dir="ltr"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  تعليمات للزبون لما يختار فودافون كاش:
-                </label>
-                <textarea
-                  value={adminPaymentSettings.vodafoneCashInstructions || ''}
-                  onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashInstructions: e.target.value })}
-                  placeholder="اكتب التعليمات اللي تظهر للزبون..."
-                  rows={2}
-                  className="w-full px-3.5 py-2 bg-white border border-red-200 rounded-xl text-xs text-gray-800 outline-none focus:border-red-500"
-                />
-              </div>
-            </div>
-
-            {/* Cash on Delivery Section */}
-            <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-2">
-                  <Truck className="w-4 h-4 text-emerald-600" />
-                  <span>الدفع كاش وقت الاستلام (COD)</span>
-                </h4>
-                <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={adminPaymentSettings.isCashOnDeliveryActive}
-                    onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isCashOnDeliveryActive: e.target.checked })}
-                    className="w-4 h-4 text-emerald-600 rounded"
-                  />
-                  <span>شغال في الدفع</span>
-                </label>
-              </div>
-              <p className="text-xs text-emerald-800">
-                تشغيل خيار دفع الفلوس كاش في إيد مندوب الشحن أول ما الأوردر يوصل.
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSavingPaymentSettings}
-              className="px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
-            >
-              {isSavingPaymentSettings ? (
-                <span>بنحفظ الإعدادات...</span>
-              ) : (
-                <>
-                  <Check className="w-4 h-4" />
-                  <span>حفظ وتطبيق إعدادات الدفع</span>
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* TAB 5: COUPONS */}
-      {activeTab === 'coupons' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة كوبونات وأكواد الخصم</h3>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                عمل ومتابعة كوبونات الخصم، وصلاحيتها، والحد الأدنى للأوردر
-              </p>
-            </div>
-            <RefreshDataButton
-              onRefresh={async () => {
-                // Re-sync coupons
-              }}
-              label="تحديث الكوبونات"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-5">
-              <form onSubmit={handleCreateCoupon} className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
-                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إضافة كوبون خصم جديد</h3>
-
+          {/* TAB: CRAFT STORIES MANAGEMENT (قصص الصنعة وأسرار الأجداد) */}
+          {activeTab === 'craft-stories' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">كود الكوبون (حروف إنجليزي)</label>
-                  <input
-                    type="text"
-                    required
-                    value={newCode}
-                    onChange={(e) => setNewCode(e.target.value)}
-                    placeholder="مثال: UPPEREGYPT25"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono uppercase outline-none focus:border-[#9a6a35]"
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-amber-600" />
+                    <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">حكايات الصنعة وأسرار الأجداد (قاعدة البيانات)</h3>
+                    <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      craft_stories collection
+                    </span>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                    إدارة أطلس الحرف التراثية وأسرار الصنايعية المعروضة في واجهة المتجر الرئيسية، مع إمكانية التعديل والإضافة والإخفاء فوراً.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <RefreshDataButton
+                    onRefresh={fetchCraftStories}
+                    isLoading={isLoadingCraftStories}
+                    label="تحديث الحكايات"
                   />
+
+                  <button
+                    type="button"
+                    id="admin-add-craft-story-btn"
+                    onClick={openAddCraftStoryModal}
+                    className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>إضافة حكاية صنعة جديدة</span>
+                  </button>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">نسبة الخصم (%)</label>
-                    <input
-                      type="number"
-                      required
-                      min={1}
-                      max={90}
-                      value={newDiscount}
-                      onChange={(e) => setNewDiscount(Number(e.target.value))}
-                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">أقل قيمة للأوردر (ج.م)</label>
-                    <input
-                      type="number"
-                      required
-                      min={0}
-                      value={newMinOrder}
-                      onChange={(e) => setNewMinOrder(Number(e.target.value))}
-                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-                    />
-                  </div>
+              {isLoadingCraftStories && craftStories.length === 0 ? (
+                <div className="py-12 text-center text-gray-500 text-xs flex flex-col items-center gap-3">
+                  <RefreshCw className="w-6 h-6 animate-spin text-[#9a6a35] dark:text-[#d5a56d]" />
+                  <span>بنحمّل حكايات الصنعة من قاعدة البيانات...</span>
                 </div>
+              ) : craftStories.length === 0 ? (
+                <div className="p-8 text-center bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-3">
+                  <Sparkles className="w-8 h-8 text-amber-500 mx-auto" />
+                  <p className="text-sm font-bold text-gray-700">مفيش حكايات صنعة متسجلة دلوقتي في قاعدة البيانات</p>
+                  <button
+                    type="button"
+                    onClick={openAddCraftStoryModal}
+                    className="px-4 py-2 bg-[#9a6a35] text-white text-xs font-bold rounded-xl shadow-xs"
+                  >
+                    ضيف أول حكاية دلوقتي
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {craftStories.map((story) => (
+                    <div
+                      key={story.id}
+                      className={`rounded-2xl border transition-all overflow-hidden flex flex-col justify-between bg-white shadow-xs ${story.active === false ? 'border-gray-300 opacity-70 bg-gray-50' : 'border-black/10 dark:border-white/10 hover:border-amber-700/30'
+                        }`}
+                    >
+                      <div className="p-5 space-y-4">
+                        <div className="flex items-start gap-4">
+                          <div className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-gray-200 shadow-xs relative">
+                            <img
+                              src={story.image}
+                              alt={story.title}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-sm">
+                              #{story.displayOrder ?? 1}
+                            </span>
+                          </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-[#9a6a35] hover:bg-[#7d5427] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>تفعيل ونشر الكوبون</span>
-                </button>
-              </form>
-            </div>
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-[10px] font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                {story.governorate}
+                              </span>
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${story.active === false
+                                  ? 'bg-gray-200 text-gray-600'
+                                  : 'bg-emerald-100 text-emerald-800'
+                                  }`}
+                              >
+                                {story.active === false ? 'مخفية من الواجهة' : 'شغالة وظاهرة'}
+                              </span>
+                            </div>
 
-            <div className="lg:col-span-7">
-              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
-                <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">كوبونات الخصم الشغالة دلوقتي</h3>
+                            <h4 className="font-bold text-sm text-gray-900 line-clamp-1">{story.title}</h4>
+                            <p className="text-xs text-amber-800 font-medium line-clamp-1">{story.subtitle}</p>
+                            <p className="text-[11px] text-gray-500 font-mono">العمر: {story.historyAge}</p>
+                          </div>
+                        </div>
 
-                <div className="space-y-3">
-                  {coupons.map((c, i) => (
-                    <div key={i} className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between">
-                      <div>
-                        <span className="font-mono font-black text-sm text-[#9a6a35] dark:text-[#d5a56d] block">{c.code}</span>
-                        <span className="text-xs text-black/60 dark:text-white/60">
-                          خصم <strong>{c.discount}%</strong> • للطلبات فوق {c.minOrder} ج.م
-                        </span>
+                        <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[#ebdccd]">
+                          {story.description}
+                        </p>
+
+                        {/* Key features pill list */}
+                        {Array.isArray(story.keyFeatures) && story.keyFeatures.length > 0 && (
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-gray-500 block">أسرار الصنعة المسجلة:</span>
+                            <div className="flex flex-wrap gap-1.5">
+                              {story.keyFeatures.slice(0, 3).map((feat, fi) => (
+                                <span
+                                  key={fi}
+                                  className="text-[10px] bg-white text-gray-700 px-2 py-0.5 rounded-md border border-gray-200 flex items-center gap-1"
+                                >
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                                  <span className="line-clamp-1">{feat}</span>
+                                </span>
+                              ))}
+                              {story.keyFeatures.length > 3 && (
+                                <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md font-mono">
+                                  +{story.keyFeatures.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">
-                          شغال ومفعل
-                        </span>
+                      <div className="px-5 py-3 bg-black/5 dark:bg-white/5 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
                         <button
                           type="button"
-                          onClick={() => {
-                            confirmModal({
-                              title: 'حذف كود الخصم',
-                              message: `هل أنت متأكد من حذف كود الخصم "${c.code}"؟`,
-                              confirmText: 'حذف الكوبون',
-                              danger: true,
-                              onConfirm: async () => {
-                                await handleDeleteCoupon(c);
-                              }
-                            });
-                          }}
-                          className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
-                          title="حذف الكوبون نهائياً"
+                          onClick={() => handleToggleCraftStoryActive(story)}
+                          className={`text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all ${story.active === false
+                            ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                            }`}
                         >
-                          <Trash2 className="w-4 h-4" />
-                          <span className="hidden sm:inline">حذف</span>
+                          {story.active === false ? 'تفعيل وإظهار' : 'إخفاء من المتجر'}
                         </button>
+
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditCraftStoryModal(story)}
+                            className="p-2 rounded-lg bg-white hover:bg-gray-100 text-gray-700 border border-black/10 dark:border-white/10 text-xs font-bold flex items-center gap-1"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                            <span>تعديل</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCraftStory(story)}
+                            className="p-2 rounded-lg bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>حذف</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: CRAFT REELS (VIDEOS) MANAGEMENT */}
+          {activeTab === 'craft-reels' && (
+            <div className="space-y-6 animate-in fade-in">
+              {/* Header Banner */}
+              <div className="relative rounded-3xl bg-gradient-to-r from-[#211d18] via-[#28221c] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                  <div className="space-y-2 max-w-2xl">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-amber-300 text-xs font-bold border border-white/15">
+                      <Film className="w-4 h-4 text-[#d6aa72]" />
+                      <span>الإشراف على محتوى وه Stories وحكايات الصعيد</span>
+                    </div>
+                    <h2 className="text-xl sm:text-2xl font-black font-heritage">
+                      إدارة الفيديوهات والحكايات المصورة والتفاعل المباشر
+                    </h2>
+                    <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                      متابعة الفيديوهات المصورة لمعالم الصعيد وتراثه وأسواقه وأكلاته وحرفه، وإدارة التصنيفات والمحافظات، وربطها بالمنتجات لو تحب.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0 flex-wrap">
+                    <RefreshDataButton
+                      onRefresh={refreshAdminReelsFromDb}
+                      label="تحديث الفيديوهات"
+                      variant="outline"
+                      className="bg-white/10 text-white hover:bg-white/20 border-white/20"
+                    />
+
+                    <button
+                      type="button"
+                      id="admin-upload-reel-btn"
+                      onClick={() => setIsAdminReelUploadOpen(true)}
+                      className="px-5 py-3 bg-gradient-to-r from-[#9a6a35] to-[#7d5427] hover:from-[#7d5427] hover:to-[#623f1a] text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>نشر حكاية/فيديو جديد</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* TAB 6: AUDIT LOGS */}
-      {activeTab === 'audit' && (
-        <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">سجل العمليات والنشاط (Audit Logs)</h3>
-              <p className="text-xs text-black/60 dark:text-white/60">
-                سجل بيوضح كل عمليات الاعتماد والرفض وتعديل المنتجات مع الوقت واسم المسؤول
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  confirmModal({
-                    title: 'مسح كامل سجل العمليات',
-                    message: 'هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.',
-                    confirmText: 'تفريغ السجل',
-                    danger: true,
-                    onConfirm: async () => {
-                      await clearAuditLogs();
-                    }
-                  });
-                }}
-                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
-                title="مسح سجل العمليات بالكامل"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>مسح كامل السجل</span>
-              </button>
-              <RefreshDataButton
-                onRefresh={refreshAuditLogs}
-                label="تحديث السجل"
-              />
-            </div>
-          </div>
+              {/* Quick Metrics */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                    <span>إجمالي الفيديوهات</span>
+                    <Film className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminReels.length} فيديو</span>
+                  <span className="text-[10px] text-emerald-700 font-bold block mt-1">بتغطي بلاد الصعيد كلها</span>
+                </div>
 
-          <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
-            <table className="w-full text-xs text-right">
-              <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
-                <tr>
-                  <th className="py-3 px-4 font-bold">الوقت والتاريخ</th>
-                  <th className="py-3 px-4 font-bold">المستخدم والدور</th>
-                  <th className="py-3 px-4 font-bold">العملية</th>
-                  <th className="py-3 px-4 font-bold">القسم / العنصر</th>
-                  <th className="py-3 px-4 font-bold">تفاصيل العملية</th>
-                  <th className="py-3 px-4 font-bold">الحالة</th>
-                  <th className="py-3 px-4 font-bold text-center">إجراءات</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                {auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-black/5 dark:bg-white/5">
-                    <td className="py-3 px-4 font-mono text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
-                    <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                      {log.userName}
-                      <span className="block text-[10px] text-black/60 dark:text-white/60 font-normal">{log.userRole}</span>
-                    </td>
-                    <td className="py-3 px-4 font-bold text-[#9a6a35] dark:text-[#d5a56d]">{log.action}</td>
-                    <td className="py-3 px-4 text-[#211d18] dark:text-[#f5f0e7]">{log.resource}</td>
-                    <td className="py-3 px-4 text-black/60 dark:text-white/60 max-w-xs">{log.details}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${log.status === 'نجاح'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : log.status === 'تنبيه'
-                            ? 'bg-amber-100 text-amber-800'
-                            : 'bg-rose-100 text-rose-800'
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                    <span>إجمالي المشاهدات</span>
+                    <Eye className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                    {adminReels.reduce((acc, r) => acc + (r.viewsCount || 0), 0).toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-emerald-700 font-bold block mt-1">مشاهدات حقيقية وتفاعل عالي</span>
+                </div>
+
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                    <span>إجمالي الإعجابات</span>
+                    <Heart className="w-4 h-4 text-rose-500 fill-rose-500" />
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                    {adminReels.reduce((acc, r) => acc + (r.likesCount || 0), 0).toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">تفاعل الناس في المنصة</span>
+                </div>
+
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                    <span>الحكايات والفيديوهات</span>
+                    <Store className="w-4 h-4 text-indigo-600" />
+                  </div>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                    {adminReels.length} حكاية
+                  </span>
+                  <span className="text-[10px] text-indigo-700 font-bold block mt-1">محتوى توثيقي وصنايعية</span>
+                </div>
+              </div>
+
+              {/* Search and Filters Bar */}
+              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
+                {/* Governorate Filter */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                  <button
+                    type="button"
+                    onClick={() => setAdminReelGovFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === 'all'
+                      ? 'bg-[#9a6a35] text-white shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
+                      }`}
+                  >
+                    كل المحافظات ({adminReels.length})
+                  </button>
+                  {(['قنا', 'سوهاج', 'أسوان', 'أسيوط', 'الأقصر', 'الوادي الجديد', 'الفيوم'] as Governorate[]).map((gov) => {
+                    const count = adminReels.filter((r) => r.governorate === gov).length;
+                    if (count === 0) return null;
+                    return (
+                      <button
+                        key={gov}
+                        type="button"
+                        onClick={() => setAdminReelGovFilter(gov)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === gov
+                          ? 'bg-[#9a6a35] text-white shadow-md'
+                          : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
                           }`}
                       >
-                        {log.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-center">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          confirmModal({
-                            title: 'حذف بند السجل',
-                            message: 'هل أنت متأكد من رغبتك في حذف بند السجل هذا نهائياً؟',
-                            confirmText: 'حذف',
-                            danger: true,
-                            onConfirm: async () => {
-                              await deleteAuditLog(log.id);
-                            }
-                          });
-                        }}
-                        className="p-1 rounded-lg hover:bg-rose-50 text-black/40 hover:text-rose-600 transition-colors cursor-pointer"
-                        title="حذف بند السجل"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        {gov} ({count})
                       </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+                    );
+                  })}
+                </div>
 
-      {/* TAB 9: USERS MANAGEMENT (FULL CONTROL) */}
-      {activeTab === 'users' && (
-        <div className="space-y-6">
-          {/* Quick Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">إجمالي المستخدمين</span>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminUsers.length}</span>
-            </div>
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المشترين (Buyers)</span>
-              <span className="text-2xl font-black text-blue-700 font-mono">
-                {adminUsers.filter((u) => u.role === 'buyer').length}
-              </span>
-            </div>
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">الورش والحرفيين (Sellers)</span>
-              <span className="text-2xl font-black text-amber-700 font-mono">
-                {adminUsers.filter((u) => u.role === 'seller').length}
-              </span>
-            </div>
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المسؤولين (Admins)</span>
-              <span className="text-2xl font-black text-purple-700 font-mono">
-                {adminUsers.filter((u) => u.role === 'admin').length}
-              </span>
-            </div>
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات شغالة</span>
-              <span className="text-2xl font-black text-emerald-700 font-mono">
-                {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
-              </span>
-            </div>
-            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-              <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات متوقفة</span>
-              <span className="text-2xl font-black text-rose-700 font-mono">
-                {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
-              </span>
-            </div>
-          </div>
-
-          {/* Search, Filters & Action Bar */}
-          <div className="bg-white p-4 sm:p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
-              <input
-                type="text"
-                id="admin-users-search-input"
-                value={userSearchTerm}
-                onChange={(e) => setUserSearchTerm(e.target.value)}
-                placeholder="دور بالاسم، اسم المستخدم، الإيميل، أو الموبايل..."
-                className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
-              />
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2.5">
-              <RefreshDataButton
-                onRefresh={fetchAdminUsers}
-                label="تحديث الحسابات"
-              />
-
-              {/* Role filter */}
-              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
-                <Filter className="w-3.5 h-3.5 text-black/60 dark:text-white/60" />
-                <select
-                  id="admin-users-role-filter"
-                  value={userRoleFilter}
-                  onChange={(e) => setUserRoleFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
-                >
-                  <option value="all">كل الأدوار</option>
-                  <option value="buyer">المشترين</option>
-                  <option value="seller">الورش والصنايعية</option>
-                  <option value="admin">المسؤولين</option>
-                </select>
-              </div>
-
-              {/* Status filter */}
-              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
-                <select
-                  id="admin-users-status-filter"
-                  value={userStatusFilter}
-                  onChange={(e) => setUserStatusFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
-                >
-                  <option value="all">كل الحالات</option>
-                  <option value="active">الحسابات الشغالة بس</option>
-                  <option value="suspended">الحسابات المتوقفة بس</option>
-                </select>
-              </div>
-
-              {/* Governorate filter */}
-              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
-                <select
-                  id="admin-users-gov-filter"
-                  value={userGovernorateFilter}
-                  onChange={(e) => setUserGovernorateFilter(e.target.value)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
-                >
-                  <option value="all">كل المحافظات</option>
-                  <option value="قنا">قنا</option>
-                  <option value="سوهاج">سوهاج</option>
-                  <option value="أسوان">أسوان</option>
-                  <option value="الأقصر">الأقصر</option>
-                  <option value="أسيوط">أسيوط</option>
-                  <option value="المنيا">المنيا</option>
-                  <option value="بني سويف">بني سويف</option>
-                  <option value="الوادي الجديد">الوادي الجديد</option>
-                  <option value="القاهرة">القاهرة</option>
-                  <option value="الجيزة">الجيزة</option>
-                  <option value="الإسكندرية">الإسكندرية</option>
-                  <option value="أخرى">أخرى</option>
-                </select>
-              </div>
-
-              {/* Refresh button */}
-              <button
-                type="button"
-                id="admin-users-refresh-btn"
-                onClick={fetchAdminUsers}
-                disabled={isLoadingUsers}
-                className="p-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
-                title="تحديث البيانات"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">تحديث</span>
-              </button>
-
-              {/* Add User button */}
-              <button
-                type="button"
-                id="admin-add-user-btn"
-                onClick={() => setIsCreateUserModalOpen(true)}
-                className="px-3.5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-              >
-                <UserPlus className="w-4 h-4" />
-                <span>إضافة مستخدم جديد</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Users Table */}
-          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
-            <div className="wah-table-container overflow-x-auto">
-              <table className="w-full text-right text-xs">
-                <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
-                  <tr>
-                    <th className="py-3.5 px-4 font-bold">المستخدم</th>
-                    <th className="py-3.5 px-4 font-bold">الدور</th>
-                    <th className="py-3.5 px-4 font-bold">الحالة</th>
-                    <th className="py-3.5 px-4 font-bold">المحافظة</th>
-                    <th className="py-3.5 px-4 font-bold">الموبايل</th>
-                    <th className="py-3.5 px-4 font-bold">تاريخ الانضمام</th>
-                    <th className="py-3.5 px-4 font-bold text-center">التحكم والإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                  {isLoadingUsers ? (
-                    <tr>
-                      <td colSpan={7} className="py-12 text-center text-gray-500">
-                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
-                        <span>بنحمّل بيانات المستخدمين...</span>
-                      </td>
-                    </tr>
-                  ) : adminUsers.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-12 text-center text-gray-500">
-                        مفيش حسابات متطابقة مع البحث والفلتر.
-                      </td>
-                    </tr>
-                  ) : (
-                    adminUsers.map((u) => {
-                      const isCurrentAdmin = currentUser.id === u.id;
-                      const isSuspended = u.status === 'suspended' || u.status === 'blocked';
-                      return (
-                        <tr key={u.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-3">
-                              <div className="relative shrink-0">
-                                <img
-                                  src={u.profileImage?.secureUrl || u.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
-                                  alt={u.name}
-                                  className="w-10 h-10 rounded-xl object-cover border border-black/10 dark:border-white/10"
-                                />
-                                <span
-                                  className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
-                                    }`}
-                                  title={isSuspended ? 'حساب متوقف' : 'حساب شغال'}
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{u.name}</span>
-                                  {isCurrentAdmin && (
-                                    <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
-                                      أنت
-                                    </span>
-                                  )}
-                                </div>
-                                <span className="text-[11px] text-gray-500 block truncate">
-                                  {u.username ? `@${u.username}` : ''} {u.email ? `• ${u.email}` : ''}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${u.role === 'admin'
-                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                : u.role === 'seller'
-                                  ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                                  : 'bg-blue-100 text-blue-800 border border-blue-200'
-                                }`}
-                            >
-                              {u.role === 'admin' ? 'مسؤول منصة' : u.role === 'seller' ? 'ورشة وصنايعي' : 'مشتري موثق'}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4">
-                            <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${isSuspended
-                                ? 'bg-rose-100 text-rose-800 border border-rose-200'
-                                : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                                }`}
-                            >
-                              <span className={`w-1.5 h-1.5 rounded-full ${isSuspended ? 'bg-rose-600' : 'bg-emerald-600'}`} />
-                              <span>{isSuspended ? 'متوقف' : 'شغال'}</span>
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">{u.governorate || 'مش محدد'}</td>
-                          <td className="py-3 px-4 font-mono text-gray-600">{u.phone || '---'}</td>
-                          <td className="py-3 px-4 text-gray-500 text-[11px]">
-                            {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
-                          </td>
-                          <td className="py-3 px-4 text-center">
-                            <div className="flex items-center justify-center gap-1.5">
-                              {/* View Details */}
-                              <button
-                                type="button"
-                                id={`view-user-${u.id}`}
-                                onClick={() => openUserDetails(u.id)}
-                                title="تفاصيل الحساب"
-                                className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                              >
-                                <Eye className="w-3.5 h-3.5 text-gray-600" />
-                                <span className="hidden xl:inline">تفاصيل</span>
-                              </button>
-
-                              {/* Edit Profile */}
-                              <button
-                                type="button"
-                                id={`edit-user-${u.id}`}
-                                onClick={() => handleOpenEditUser(u)}
-                                title="تعديل الحساب"
-                                className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                              >
-                                <Edit2 className="w-3.5 h-3.5 text-blue-600" />
-                                <span className="hidden xl:inline">تعديل</span>
-                              </button>
-
-                              {/* Reset Password */}
-                              <button
-                                type="button"
-                                id={`reset-pwd-${u.id}`}
-                                onClick={() => handleOpenResetPassword(u)}
-                                title="تغيير كلمة السر"
-                                className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                              >
-                                <Key className="w-3.5 h-3.5 text-amber-600" />
-                                <span className="hidden xl:inline">الباسورد</span>
-                              </button>
-
-                              {/* Toggle Suspension (Suspend / Activate) */}
-                              {!isCurrentAdmin && (
-                                <button
-                                  type="button"
-                                  id={`toggle-status-${u.id}`}
-                                  onClick={() => handleToggleUserStatus(u)}
-                                  disabled={isTogglingStatus === u.id}
-                                  title={isSuspended ? 'تفعيل الحساب' : 'وقف الحساب مؤقتاً'}
-                                  className={`p-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${isSuspended
-                                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
-                                    : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
-                                    }`}
-                                >
-                                  {isTogglingStatus === u.id ? (
-                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                                  ) : isSuspended ? (
-                                    <UserCheck className="w-3.5 h-3.5" />
-                                  ) : (
-                                    <UserX className="w-3.5 h-3.5" />
-                                  )}
-                                  <span className="hidden xl:inline">{isSuspended ? 'تفعيل' : 'وقف'}</span>
-                                </button>
-                              )}
-
-                              {/* Delete User */}
-                              {isCurrentAdmin ? (
-                                <span
-                                  title="حسابك الشخصي (ما ينفعش تحذف نفسك)"
-                                  className="p-2 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed"
-                                >
-                                  <Lock className="w-3.5 h-3.5" />
-                                </span>
-                              ) : (
-                                <button
-                                  type="button"
-                                  id={`delete-user-${u.id}`}
-                                  onClick={() => setSelectedUserForDelete(u)}
-                                  title="حذف الحساب نهائياً"
-                                  className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                  <span className="hidden xl:inline">حذف</span>
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
+                {/* Search Input */}
+                <div className="relative min-w-[240px]">
+                  <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={adminReelSearchTerm}
+                    onChange={(e) => setAdminReelSearchTerm(e.target.value)}
+                    placeholder="دور بالعنوان، المكان، التصنيف..."
+                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
+                  />
+                  {adminReelSearchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setAdminReelSearchTerm('')}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
                   )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 10: PASSWORD RESET REQUESTS */}
-      {activeTab === 'password-resets' && (
-        <div className="space-y-6 animate-in fade-in">
-          {/* Header & Metrics Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
-            <div>
-              <h2 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
-                <span>طلبات تغيير كلمات السر</span>
-              </h2>
-              <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                متابعة طلبات الناس اللي نسيت الباسورد، وتعملهم باسورد مؤقت عشان يعرفوا يسجلوا دخول.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl text-xs font-bold text-amber-800">
-                <Clock className="w-4 h-4 text-amber-600" />
-                <span>طلبات مستنية: {passwordResets.filter((r) => r.status === 'pending').length}</span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
-                <Filter className="w-3.5 h-3.5 text-gray-400" />
-                <select
-                  id="admin-password-resets-filter"
-                  value={passwordResetFilter}
-                  onChange={(e) => setPasswordResetFilter(e.target.value as any)}
-                  className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
-                >
-                  <option value="all">كل الطلبات ({passwordResets.length})</option>
-                  <option value="pending">طلبات مستنية ({passwordResets.filter((r) => r.status === 'pending').length})</option>
-                  <option value="completed">اتنفذت خلاص ({passwordResets.filter((r) => r.status === 'completed').length})</option>
-                  <option value="rejected">مرفوضة ({passwordResets.filter((r) => r.status === 'rejected').length})</option>
-                </select>
-              </div>
+              {/* Reels Grid */}
+              {adminReels.filter((r) => {
+                const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+                const term = adminReelSearchTerm.trim().toLowerCase();
+                const matchesSearch =
+                  term === '' ||
+                  r.title.toLowerCase().includes(term) ||
+                  (r.location && r.location.toLowerCase().includes(term)) ||
+                  (r.contentType && r.contentType.toLowerCase().includes(term)) ||
+                  (r.description && r.description.toLowerCase().includes(term)) ||
+                  (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
+                  (r.craftType && r.craftType.toLowerCase().includes(term)) ||
+                  (r.productTitle && r.productTitle.toLowerCase().includes(term));
+                return matchesGov && matchesSearch;
+              }).length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {adminReels
+                    .filter((r) => {
+                      const matchesGov = adminReelGovFilter === 'all' || r.governorate === adminReelGovFilter;
+                      const term = adminReelSearchTerm.trim().toLowerCase();
+                      const matchesSearch =
+                        term === '' ||
+                        r.title.toLowerCase().includes(term) ||
+                        (r.location && r.location.toLowerCase().includes(term)) ||
+                        (r.contentType && r.contentType.toLowerCase().includes(term)) ||
+                        (r.description && r.description.toLowerCase().includes(term)) ||
+                        (r.artisanName && r.artisanName.toLowerCase().includes(term)) ||
+                        (r.craftType && r.craftType.toLowerCase().includes(term)) ||
+                        (r.productTitle && r.productTitle.toLowerCase().includes(term));
+                      return matchesGov && matchesSearch;
+                    })
+                    .map((reel) => (
+                      <div
+                        key={reel.id}
+                        className="bg-white rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col group"
+                      >
+                        {/* 9:16 Video Thumbnail Container */}
+                        <div
+                          onClick={() => {
+                            setAdminSelectedReelPreviewId(reel.id);
+                            setIsAdminReelPreviewOpen(true);
+                          }}
+                          className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
+                        >
+                          <img
+                            src={reel.posterUrl}
+                            alt={reel.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              <RefreshDataButton
-                id="admin-password-resets-refresh-btn"
-                onRefresh={fetchPasswordResets}
-                isLoading={isLoadingPasswordResets}
-                label="تحديث الطلبات"
-              />
-            </div>
-          </div>
+                          {/* Play Button Overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40 shadow-lg group-hover:scale-110 transition-transform">
+                              <Play className="w-5 h-5 fill-white mr-0.5" />
+                            </div>
+                          </div>
 
-          {/* Table */}
-          <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
-            <div className="wah-table-container overflow-x-auto">
-              <table className="w-full text-right text-xs">
-                <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
-                  <tr>
-                    <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
-                    <th className="py-3.5 px-4 font-bold">رقم الموبايل</th>
-                    <th className="py-3.5 px-4 font-bold">تاريخ الطلب</th>
-                    <th className="py-3.5 px-4 font-bold">الحالة</th>
-                    <th className="py-3.5 px-4 font-bold">المسؤول اللي نفذ</th>
-                    <th className="py-3.5 px-4 font-bold">تاريخ التنفيذ</th>
-                    <th className="py-3.5 px-4 font-bold text-center">الإجراءات</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-black/10 dark:divide-white/10">
-                  {isLoadingPasswordResets ? (
-                    <tr>
-                      <td colSpan={7} className="py-12 text-center text-gray-500">
-                        <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
-                        <span>بنحمّل طلبات تغيير الباسورد...</span>
-                      </td>
-                    </tr>
-                  ) : passwordResets.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-12 text-center text-gray-500">
-                        مفيش طلبات تغيير باسورد متطابقة مع الفلتر.
-                      </td>
-                    </tr>
-                  ) : (
-                    passwordResets.map((r) => {
-                      const isPending = r.status === 'pending';
-                      const isCompleted = r.status === 'completed';
-                      return (
-                        <tr key={r.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
-                          <td className="py-3 px-4">
-                            <div>
-                              <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">
-                                {r.name || r.username}
+                          {/* Top Badges */}
+                          <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
+                            <div className="flex items-center gap-1">
+                              <span className="bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
+                                {reel.duration}
                               </span>
-                              <span className="text-[11px] text-gray-500 font-mono">
-                                @{r.username}
+                              {(reel as any).isFeatured && (
+                                <span className="bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
+                                  مميز ★
+                                </span>
+                              )}
+                              {(reel as any).isPinned && (
+                                <span className="bg-blue-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs">
+                                  مثبت 📌
+                                </span>
+                              )}
+                            </div>
+                            <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              {reel.location || reel.governorate}
+                            </span>
+                          </div>
+
+                          {/* Bottom Info on Poster */}
+                          <div className="absolute bottom-3 inset-x-3 z-10 space-y-1">
+                            <p className="text-xs font-bold text-white line-clamp-2 drop-shadow-md">
+                              {reel.title}
+                            </p>
+                            <p className="text-[10px] text-amber-300 truncate">
+                              {reel.contentType || reel.craftType || 'حكاية صعيدية'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Bottom Metadata & Actions */}
+                        <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-white/5/40">
+                          {/* Linked Product (Optional) */}
+                          {reel.productId && reel.productTitle ? (
+                            <div className="p-2.5 bg-white dark:bg-[#1c1c19] rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
+                              {reel.productImage && (
+                                <img
+                                  src={reel.productImage}
+                                  alt={reel.productTitle}
+                                  className="w-10 h-10 rounded-xl object-cover shrink-0 border border-gray-100 dark:border-white/10"
+                                />
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[11px] font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{reel.productTitle}</p>
+                                <span className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d]">{reel.productPrice} ج.م</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
+                              <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
+                                محتوى توثيقي / من غير منتج مرتبط
                               </span>
                             </div>
-                          </td>
-                          <td className="py-3 px-4 font-mono">
-                            {r.phone || 'مش متسجل'}
-                          </td>
-                          <td className="py-3 px-4 text-gray-600">
-                            {r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '-'}
-                          </td>
-                          <td className="py-3 px-4">
-                            {isPending ? (
-                              <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          )}
+
+                          {/* Engagement Stats & Database Sync Badge */}
+                          <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 pt-1">
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1 text-[11px]">
+                                <Eye className="w-3.5 h-3.5 text-gray-500" />
+                                <span>{reel.viewsCount}</span>
+                              </span>
+                              <span className="flex items-center gap-1 text-[11px] text-rose-600 font-bold">
+                                <Heart className="w-3.5 h-3.5 fill-rose-600" />
+                                <span>{reel.likesCount}</span>
+                              </span>
+                            </div>
+                            <span className="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">
+                              قاعدة البيانات ✓
+                            </span>
+                          </div>
+
+                          {/* Actions Buttons: View, Edit, Delete (Full Admin Control) */}
+                          <div className="flex items-center gap-2 pt-2 border-t border-black/10 dark:border-white/10">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminSelectedReelPreviewId(reel.id);
+                                setIsAdminReelPreviewOpen(true);
+                              }}
+                              className="flex-1 py-2 bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5 fill-white" />
+                              <span>معاينة وتشغيل</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAdminEditingReel(reel);
+                                setIsAdminReelEditOpen(true);
+                              }}
+                              className="p-2 text-gray-600 hover:text-[#9a6a35] dark:text-[#d5a56d] hover:bg-black/5 dark:bg-white/5 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
+                              title="تعديل الفيديو والمنتج والورشة بالكامل"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleAdminDeleteReel(reel.id, reel.title)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors cursor-pointer border border-transparent"
+                              title="حذف الفيديو نهائياً من قاعدة البيانات والمنصة"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-3xl p-12 text-center border border-black/10 dark:border-white/10 space-y-4">
+                  <Film className="w-16 h-16 text-gray-300 mx-auto" />
+                  <h4 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش فيديوهات متطابقة مع البحث</h4>
+                  <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
+                    تقدر ترفع فيديو جديد لأي حرفي أو تمسح كلمة البحث عشان تشوف كل فيديوهات الورش.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: REVIEWS MODERATION (PHASE 4) */}
+          {activeTab === 'reviews' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إشراف ومراجعة تقييمات المشترين</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    مراجعة آراء وتعليقات الزباين، وشارة الشراء المؤكد، ومنع أي تقييم عشوائي أو مش مناسب
+                  </p>
+                </div>
+
+                <RefreshDataButton
+                  onRefresh={refreshReviews}
+                  label="تحديث التقييمات"
+                />
+              </div>
+
+              <div className="space-y-3">
+                {reviews.length === 0 ? (
+                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                    <MessageSquare className="w-8 h-8 text-black/60 dark:text-white/60 mx-auto mb-2 opacity-50" />
+                    <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش تقييمات متسجلة لحد دلوقتي</p>
+                  </div>
+                ) : (
+                  reviews.map((rev) => (
+                    <div
+                      key={rev.id}
+                      className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7]">{rev.userName || 'مشتري موثق'}</span>
+                          {rev.verifiedPurchase && (
+                            <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-300">
+                              <BadgeCheck className="w-3 h-3 text-emerald-600" />
+                              <span>شروة متأكدة (Verified)</span>
+                            </span>
+                          )}
+                          <div className="flex items-center text-amber-500 mr-2">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`w-3.5 h-3.5 ${i < rev.rating ? ' text-[#d6aa72]' : 'text-gray-300'
+                                  }`}
+                              />
+                            ))}
+                          </div>
+                          <span className="text-[10px] text-black/60 dark:text-white/60 font-mono">{rev.date}</span>
+                        </div>
+
+                        <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">"{rev.comment}"</p>
+
+                        <div className="text-[11px] text-black/60 dark:text-white/60 flex items-center gap-3">
+                          <span>المنتج: <strong className="text-[#9a6a35] dark:text-[#d5a56d]">{rev.productTitle || rev.productId}</strong></span>
+                          <span>المحافظة: {rev.userGovernorate || 'الصعيد'}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => moderateReview(rev.id, 'published')}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-xs cursor-pointer"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>قبول ونشر</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moderateReview(rev.id, 'hidden')}
+                          className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          <span>إخفاء</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            confirmModal({
+                              title: 'حذف التقييم',
+                              message: 'هل أنت متأكد من حذف هذا التقييم نهائياً من قاعدة البيانات؟',
+                              confirmText: 'حذف التقييم',
+                              danger: true,
+                              onConfirm: async () => {
+                                await deleteReview(rev.id);
+                              }
+                            });
+                          }}
+                          className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                          title="حذف التقييم نهائياً"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>حذف</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: SELLERS MANAGEMENT & APPROVALS */}
+          {activeTab === 'sellers' && (
+            <div className="space-y-6">
+              {/* Header & Stats Banner */}
+              <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-lg text-[#211d18] dark:text-[#f5f0e7] font-heritage">إدارة الورش واعتماد الصنايعية</h3>
+                    {pendingSellersCount > 0 && (
+                      <span className="bg-amber-100 text-amber-900 border border-amber-300 text-xs font-black px-2.5 py-0.5 rounded-full animate-pulse">
+                        {pendingSellersCount} طلب مستني المراجعة
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                    مراجعة طلبات انضمام الورش، وتوثيق صنايعية الصعيد، والموافقة على الحسابات أو وقفها
+                  </p>
+                </div>
+
+                {/* Quick Action / Refresh */}
+                <div className="flex items-center gap-2">
+                  <RefreshDataButton
+                    id="admin-refresh-sellers-btn"
+                    onRefresh={refreshSellers}
+                    label="تحديث الورش"
+                  />
+                </div>
+              </div>
+
+              {/* Filter Tabs & Search Bar */}
+              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm text-[#211d18] dark:text-[#f5f0e7] flex flex-col md:flex-row md:items-center justify-between gap-3">
+                {/* Status Filter Tabs */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                  <button
+                    type="button"
+                    id="filter-sellers-all"
+                    onClick={() => setSellerStatusFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'all'
+                      ? 'bg-[#9a6a35] text-white shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
+                      }`}
+                  >
+                    الكل ({sellers.length})
+                  </button>
+
+                  <button
+                    type="button"
+                    id="filter-sellers-pending"
+                    onClick={() => setSellerStatusFilter('pending')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${sellerStatusFilter === 'pending'
+                      ? 'bg-amber-600 text-white shadow-xs'
+                      : 'bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100'
+                      }`}
+                  >
+                    <span>مستني المراجعة</span>
+                    <span className="w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold">
+                      {pendingSellersCount}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    id="filter-sellers-approved"
+                    onClick={() => setSellerStatusFilter('approved')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'approved'
+                      ? 'bg-emerald-700 text-white shadow-xs'
+                      : 'bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100'
+                      }`}
+                  >
+                    معتمد ومتوثق ({sellers.filter((s) => s.status === 'approved').length})
+                  </button>
+
+                  <button
+                    type="button"
+                    id="filter-sellers-suspended"
+                    onClick={() => setSellerStatusFilter('suspended')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'suspended'
+                      ? 'bg-orange-600 text-white shadow-xs'
+                      : 'bg-orange-50 text-orange-900 border border-orange-200 hover:bg-orange-100'
+                      }`}
+                  >
+                    متوقف مؤقتاً ({sellers.filter((s) => s.status === 'suspended').length})
+                  </button>
+
+                  <button
+                    type="button"
+                    id="filter-sellers-rejected"
+                    onClick={() => setSellerStatusFilter('rejected')}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'rejected'
+                      ? 'bg-rose-600 text-white shadow-xs'
+                      : 'bg-rose-50 text-rose-900 border border-rose-200 hover:bg-rose-100'
+                      }`}
+                  >
+                    مرفوض ({sellers.filter((s) => s.status === 'rejected').length})
+                  </button>
+                </div>
+
+                {/* Search Input */}
+                <div className="relative min-w-[240px]">
+                  <Search className="w-4 h-4 text-black/60 dark:text-white/60 absolute right-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    id="seller-search-input"
+                    value={sellerSearchTerm}
+                    onChange={(e) => setSellerSearchTerm(e.target.value)}
+                    placeholder="دور بالاسم، الورشة، المحافظة..."
+                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
+                  />
+                  {sellerSearchTerm && (
+                    <button
+                      type="button"
+                      onClick={() => setSellerSearchTerm('')}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Sellers Cards Grid / List */}
+              <div className="space-y-3">
+                {filteredSellers.length === 0 ? (
+                  <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-12 text-center shadow-xs">
+                    <Store className="w-12 h-12 text-black/60 dark:text-white/60/40 mx-auto mb-3" />
+                    <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">مفيش ورش متطابقة مع البحث</h4>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                      جرب تغير الفلتر أو تمسح كلمة البحث عشان تشوف كل الورش المسجلة
+                    </p>
+                  </div>
+                ) : (
+                  filteredSellers.map((s) => (
+                    <div
+                      key={s.id}
+                      id={`seller-card-${s.id}`}
+                      className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 p-5 shadow-sm text-[#211d18] dark:text-[#f5f0e7] hover:border-[#9a6a35]/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    >
+                      {/* Seller Info Column */}
+                      <div className="flex items-start gap-4">
+                        <img
+                          src={s.avatar}
+                          alt={s.brandName}
+                          className="w-14 h-14 rounded-2xl object-cover border border-black/10 dark:border-white/10 shrink-0"
+                        />
+                        <div className="space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">{s.brandName}</h4>
+
+                            {/* Status Badge */}
+                            {s.status === 'approved' && (
+                              <span className="bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                                <span>معتمد ومتوثق</span>
+                              </span>
+                            )}
+                            {s.status === 'pending' && (
+                              <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
                                 <Clock className="w-3 h-3 text-amber-600" />
-                                <span>مستني المعالجة</span>
+                                <span>مستني المراجعة والاعتماد</span>
                               </span>
-                            ) : isCompleted ? (
-                              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                                <span>اتنفذ خلاص</span>
+                            )}
+                            {s.status === 'suspended' && (
+                              <span className="bg-orange-100 text-orange-900 border border-orange-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                                <ShieldAlert className="w-3 h-3 text-orange-600" />
+                                <span>متوقف مؤقتاً</span>
                               </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            )}
+                            {s.status === 'rejected' && (
+                              <span className="bg-rose-100 text-rose-800 border border-rose-200 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
                                 <XCircle className="w-3 h-3 text-rose-600" />
                                 <span>مرفوض</span>
                               </span>
                             )}
-                          </td>
-                          <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">
-                            {r.handledByAdminName ? (
-                              <span className="inline-flex items-center gap-1">
-                                <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                                <span>{r.handledByAdminName}</span>
-                              </span>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </td>
-                          <td className="py-3 px-4 text-gray-500">
-                            {r.handledAt ? new Date(r.handledAt).toLocaleString('ar-EG') : '-'}
-                          </td>
-                          <td className="py-3 px-4">
-                            <div className="flex items-center justify-center gap-2">
-                              {isPending ? (
-                                <>
-                                  <button
-                                    type="button"
-                                    id={`complete-reset-btn-${r.id}`}
-                                    onClick={() => openCreateTempPasswordModal(r)}
-                                    className="px-3 py-1.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
-                                  >
-                                    <Key className="w-3.5 h-3.5" />
-                                    <span>عمل باسورد جديد</span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRejectReset(r)}
-                                    className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                                    title="رفض الطلب"
-                                  >
-                                    <X className="w-3.5 h-3.5" />
-                                    <span>رفض</span>
-                                  </button>
-                                </>
-                              ) : (
-                                <span className="text-xs text-gray-400 font-medium">اتنفذ خلاص</span>
-                              )}
+
+                            <span className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 text-[10px] font-semibold px-2 py-0.5 rounded-md">
+                              محافظة {s.governorate}
+                            </span>
+                          </div>
+
+                          {/* Details & Specs */}
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-black/60 dark:text-white/60">
+                            <span>صاحب الورشة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.name}</strong></span>
+                            <span>كود الحساب: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono text-[11px]">{s.userId || s.id}</strong></span>
+                            <span>الحرفة: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.specialty || 'مشغولات تراثية'}</strong></span>
+                            <span>الهاتف: <strong className="text-[#211d18] dark:text-[#f5f0e7] font-mono">{s.phone}</strong></span>
+                            {s.email && <span>البريد: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.email}</strong></span>}
+                            {s.createdAt && <span>تاريخ التقديم: <strong className="text-[#211d18] dark:text-[#f5f0e7]">{s.createdAt.split('T')[0]}</strong></span>}
+                          </div>
+
+                          {/* Reasons display if rejected or suspended */}
+                          {s.status === 'rejected' && s.rejectionReason && (
+                            <div className="text-xs bg-rose-50 text-rose-800 px-3 py-1 rounded-lg border border-rose-200 inline-block mt-1">
+                              <strong>سبب الرفض:</strong> {s.rejectionReason}
                             </div>
+                          )}
+                          {s.status === 'suspended' && s.suspensionReason && (
+                            <div className="text-xs bg-orange-50 text-orange-900 px-3 py-1 rounded-lg border border-orange-200 inline-block mt-1">
+                              <strong>سبب الوقف:</strong> {s.suspensionReason}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions Column */}
+                      <div className="flex flex-wrap items-center justify-end sm:justify-start gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 w-full md:w-auto">
+                        <button
+                          type="button"
+                          id={`admin-view-seller-${s.id}`}
+                          onClick={() => openEditSellerModal(s)}
+                          className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                          title="معاينة تفاصيل طلب الورشة وتعديل الغلاف"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                          <span>تفاصيل الورشة</span>
+                        </button>
+
+                        {/* Action buttons based on current state */}
+                        {s.status === 'pending' && (
+                          <>
+                            <button
+                              type="button"
+                              id={`admin-approve-seller-${s.id}`}
+                              onClick={() => approveSeller(s.id)}
+                              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Check className="w-4 h-4" />
+                              <span>الموافقة على الورشة</span>
+                            </button>
+                            <button
+                              type="button"
+                              id={`admin-reject-seller-${s.id}`}
+                              onClick={() =>
+                                setSelectedSellerForAction({
+                                  id: s.id,
+                                  name: s.brandName || s.name,
+                                  action: 'reject'
+                                })
+                              }
+                              className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              <span>رفض الطلب</span>
+                            </button>
+                          </>
+                        )}
+
+                        {s.status === 'approved' && (
+                          <button
+                            type="button"
+                            id={`admin-suspend-seller-${s.id}`}
+                            onClick={() =>
+                              setSelectedSellerForAction({
+                                id: s.id,
+                                name: s.brandName || s.name,
+                                action: 'suspend'
+                              })
+                            }
+                            className="px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                          >
+                            <ShieldAlert className="w-3.5 h-3.5" />
+                            <span>وقف الحساب مؤقتاً</span>
+                          </button>
+                        )}
+
+                        {(s.status === 'suspended' || s.status === 'rejected') && (
+                          <button
+                            type="button"
+                            id={`admin-reactivate-seller-${s.id}`}
+                            onClick={() => approveSeller(s.id)}
+                            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                          >
+                            <ShieldCheck className="w-4 h-4" />
+                            <span>إعادة التفعيل والموافقة</span>
+                          </button>
+                        )}
+
+                        {/* Permanent Delete Seller Completely Button */}
+                        <button
+                          type="button"
+                          id={`admin-delete-seller-${s.id}`}
+                          disabled={deletingSellerId === s.id}
+                          onClick={() => handleDeleteSellerCompletely(s)}
+                          className="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                          title="حذف نهائي للورشة وكافة المنتجات والفيديوهات المرتبطة بها"
+                        >
+                          {deletingSellerId === s.id ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                              <span>جاري الحذف...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                              <span>حذف نهائي</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: ORDERS */}
+          {activeTab === 'orders' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-6 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">طلبات وشحنات المنصة</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">متابعة الأوردرات والتأكد من تحويلات الفلوس (إنستاباي / فودافون كاش)</p>
+                </div>
+
+                {/* Summary Counters & Refresh */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <RefreshDataButton
+                    onRefresh={refreshOrders}
+                    label="تحديث الأوردرات"
+                  />
+
+                  <span className="px-3 py-1 bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-amber-600" />
+                    <span>
+                      {orders.filter((o) => o.paymentStatus === 'payment_pending_verification').length} مستنيين تأكيد التحويل
+                    </span>
+                  </span>
+                  <span className="px-3 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-xl text-xs font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>
+                      {orders.filter((o) => o.paymentStatus === 'paid').length} اتدفعت خلاص
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Payment Status Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-gray-500 font-bold ml-1">فلترة حسب طريقة الدفع:</span>
+                {[
+                  { id: 'all', label: 'كل الأوردرات' },
+                  { id: 'pending_verification', label: '⚠️ مستنيين تأكيد التحويل' },
+                  { id: 'paid', label: '✅ الدفع اتأكد' },
+                  { id: 'payment_rejected', label: '❌ تحويلات اترفضت' },
+                  { id: 'cod', label: '💵 الدفع وقت الاستلام' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setOrderPaymentFilter(tab.id as any)}
+                    className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${orderPaymentFilter === tab.id
+                      ? 'bg-[#9a6a35] text-white'
+                      : 'bg-black/5 dark:bg-white/5 text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
+                      }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+                <table className="w-full text-xs text-right">
+                  <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
+                    <tr>
+                      <th className="py-3 px-4 font-bold">رقم الأوردر</th>
+                      <th className="py-3 px-4 font-bold">المشتري</th>
+                      <th className="py-3 px-4 font-bold">طريقة الدفع</th>
+                      <th className="py-3 px-4 font-bold">بيانات التحويل</th>
+                      <th className="py-3 px-4 font-bold">المبلغ</th>
+                      <th className="py-3 px-4 font-bold">حالة الدفع</th>
+                      <th className="py-3 px-4 font-bold">حالة الأوردر</th>
+                      <th className="py-3 px-4 font-bold text-center">التأكيد والشحن</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/10 dark:divide-white/10">
+                    {orders
+                      .filter((ord) => {
+                        if (orderPaymentFilter === 'all') return true;
+                        if (orderPaymentFilter === 'pending_verification') return ord.paymentStatus === 'payment_pending_verification';
+                        if (orderPaymentFilter === 'paid') return ord.paymentStatus === 'paid';
+                        if (orderPaymentFilter === 'payment_rejected') return ord.paymentStatus === 'payment_rejected';
+                        if (orderPaymentFilter === 'cod') return ord.paymentMethod === 'cod';
+                        return true;
+                      })
+                      .map((ord) => {
+                        const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
+                        return (
+                          <tr key={ord.id} className={`hover:bg-black/5 dark:bg-white/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
+                            <td className="py-3 px-4 font-mono font-bold text-[#9a6a35] dark:text-[#d5a56d]">
+                              #{ord.orderNumber || ord.id}
+                            </td>
+                            <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                              {ord.shippingAddress?.fullName || (ord.shippingAddress as any)?.buyerName || ord.buyerName}
+                              <span className="block text-[10px] text-gray-500 font-normal">
+                                {ord.shippingAddress?.phone || (ord.shippingAddress as any)?.buyerPhone || ord.buyerPhone} • {ord.shippingAddress?.governorate || 'المحافظة'}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 font-bold">
+                              {ord.paymentMethod === 'vodafone_cash' ? (
+                                <span className="text-red-700 flex items-center gap-1">
+                                  <Wallet className="w-3.5 h-3.5" />
+                                  فودافون كاش
+                                </span>
+                              ) : ord.paymentMethod === 'instapay' ? (
+                                <span className="text-blue-700 flex items-center gap-1">
+                                  <CreditCard className="w-3.5 h-3.5" />
+                                  إنستاباي
+                                </span>
+                              ) : ord.paymentMethod === 'credit_card' ? (
+                                <span className="text-amber-800">كارت بنكي</span>
+                              ) : (
+                                <span className="text-emerald-700 flex items-center gap-1">
+                                  <Truck className="w-3.5 h-3.5" />
+                                  وقت الاستلام
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              {ord.paymentReference ? (
+                                <div className="bg-black/5 dark:bg-white/5 p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
+                                  <span className="text-[10px] text-gray-500 block">رقم التحويل / الحساب:</span>
+                                  {ord.paymentReference}
+                                </div>
+                              ) : (
+                                <span className="text-[10px] text-gray-400">مش متسجل</span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4 font-black text-[#9a6a35] dark:text-[#d5a56d] text-sm">{ord.total} ج.م</td>
+                            <td className="py-3 px-4">
+                              {ord.paymentStatus === 'payment_pending_verification' ? (
+                                <span className="px-2.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-[10px] font-bold inline-flex items-center gap-1 animate-pulse">
+                                  <Clock className="w-3 h-3 text-amber-700" />
+                                  <span>مستني تأكيد التحويل</span>
+                                </span>
+                              ) : ord.paymentStatus === 'paid' ? (
+                                <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3 text-emerald-700" />
+                                  <span>اتأكد الدفع خلاص</span>
+                                </span>
+                              ) : ord.paymentStatus === 'payment_rejected' ? (
+                                <span className="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-bold inline-flex items-center gap-1">
+                                  <XCircle className="w-3 h-3 text-rose-700" />
+                                  <span>تحويل مرفوض</span>
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-full text-[10px] font-bold">
+                                  {ord.paymentMethod === 'cod' ? 'تحصيل وقت الاستلام' : 'معلق'}
+                                </span>
+                              )}
+                            </td>
+                            <td className="py-3 px-4">
+                              <select
+                                value={ord.status}
+                                onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
+                                className="px-2 py-1 bg-white border border-black/10 dark:border-white/10 rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
+                              >
+                                <option value="pending">جديد (Pending)</option>
+                                <option value="confirmed">متأكد (Confirmed)</option>
+                                <option value="processing">بيتجهز (Processing)</option>
+                                <option value="shipped">في الطريق (Shipped)</option>
+                                <option value="delivered">اتسلم (Delivered)</option>
+                                <option value="cancelled">ملغي (Cancelled)</option>
+                              </select>
+                            </td>
+                            <td className="py-3 px-4">
+                              <div className="flex items-center justify-center gap-1.5">
+                                {isPendingVerification && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      disabled={verifyingOrderId === ord.id}
+                                      onClick={() => handleAdminVerifyPayment(ord.id)}
+                                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-xs transition-colors cursor-pointer"
+                                      title="تأكيد استلام التحويل واعتماد الطلب"
+                                    >
+                                      <Check className="w-3.5 h-3.5" />
+                                      <span>{verifyingOrderId === ord.id ? 'بنأكد...' : 'تأكيد الاستلام'}</span>
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      disabled={rejectingOrderId === ord.id}
+                                      onClick={() => handleAdminRejectPayment(ord.id)}
+                                      className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                                      title="رفض التحويل وإشعار المشتري"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                      <span>رفض</span>
+                                    </button>
+                                  </>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    confirmModal({
+                                      title: 'حذف الطلب نهائياً',
+                                      message: `هل أنت متأكد من حذف الطلب #${ord.orderNumber} نهائياً؟`,
+                                      confirmText: 'حذف الطلب',
+                                      danger: true,
+                                      onConfirm: async () => {
+                                        await deleteOrder(ord.id);
+                                      }
+                                    });
+                                  }}
+                                  className="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                                  title="حذف الطلب نهائياً"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span>حذف</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PAYMENT SETTINGS */}
+          {activeTab === 'payment-settings' && (
+            <div className="bg-white rounded-3xl border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-xs space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+                <div>
+                  <h3 className="font-bold text-base sm:text-lg text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                    <span>إعدادات طرق الدفع وحسابات المنصة (إنستاباي وفودافون كاش)</span>
+                  </h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                    ظبط حسابات ورقم المحفظة اللي الزباين هيبعتوا عليها الفلوس في صفحة الدفع.
+                  </p>
+                </div>
+                <RefreshDataButton
+                  onRefresh={fetchAdminPaymentSettings}
+                  label="تحديث الإعدادات"
+                />
+              </div>
+
+              <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
+                {/* InstaPay Section */}
+                <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-blue-100 pb-2">
+                    <h4 className="font-bold text-sm text-blue-950 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-blue-600" />
+                      <span>حساب إنستاباي (InstaPay)</span>
+                    </h4>
+                    <label className="flex items-center gap-2 text-xs font-bold text-blue-900 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={adminPaymentSettings.isInstaPayActive}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
+                        className="w-4 h-4 text-blue-600 rounded"
+                      />
+                      <span>شغال في الدفع</span>
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      عنوان إنستاباي للمنصة (IPA):
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={adminPaymentSettings.instaPayAccount}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
+                      placeholder="مثال: wah@instapay"
+                      className="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-blue-500"
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      تعليمات للزبون لما يختار إنستاباي:
+                    </label>
+                    <textarea
+                      value={adminPaymentSettings.instaPayInstructions || ''}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayInstructions: e.target.value })}
+                      placeholder="اكتب التعليمات اللي تظهر للزبون..."
+                      rows={2}
+                      className="w-full px-3.5 py-2 bg-white border border-blue-200 rounded-xl text-xs text-gray-800 outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Vodafone Cash Section */}
+                <div className="p-5 rounded-2xl border border-red-200 bg-red-50/30 space-y-4">
+                  <div className="flex items-center justify-between border-b border-red-100 pb-2">
+                    <h4 className="font-bold text-sm text-red-950 flex items-center gap-2">
+                      <Wallet className="w-4 h-4 text-red-600" />
+                      <span>محفظة فودافون كاش</span>
+                    </h4>
+                    <label className="flex items-center gap-2 text-xs font-bold text-red-900 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={adminPaymentSettings.isVodafoneCashActive}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
+                        className="w-4 h-4 text-red-600 rounded"
+                      />
+                      <span>شغال في الدفع</span>
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      رقم محفظة فودافون كاش المعتمد:
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={adminPaymentSettings.vodafoneCashNumber}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
+                      placeholder="مثال: 01158969931"
+                      className="w-full px-3.5 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-red-500"
+                      dir="ltr"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      تعليمات للزبون لما يختار فودافون كاش:
+                    </label>
+                    <textarea
+                      value={adminPaymentSettings.vodafoneCashInstructions || ''}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashInstructions: e.target.value })}
+                      placeholder="اكتب التعليمات اللي تظهر للزبون..."
+                      rows={2}
+                      className="w-full px-3.5 py-2 bg-white border border-red-200 rounded-xl text-xs text-gray-800 outline-none focus:border-red-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Cash on Delivery Section */}
+                <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-2">
+                      <Truck className="w-4 h-4 text-emerald-600" />
+                      <span>الدفع كاش وقت الاستلام (COD)</span>
+                    </h4>
+                    <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={adminPaymentSettings.isCashOnDeliveryActive}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isCashOnDeliveryActive: e.target.checked })}
+                        className="w-4 h-4 text-emerald-600 rounded"
+                      />
+                      <span>شغال في الدفع</span>
+                    </label>
+                  </div>
+                  <p className="text-xs text-emerald-800">
+                    تشغيل خيار دفع الفلوس كاش في إيد مندوب الشحن أول ما الأوردر يوصل.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSavingPaymentSettings}
+                  className="px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+                >
+                  {isSavingPaymentSettings ? (
+                    <span>بنحفظ الإعدادات...</span>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>حفظ وتطبيق إعدادات الدفع</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* TAB 5: COUPONS */}
+          {activeTab === 'coupons' && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-xs">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إدارة كوبونات وأكواد الخصم</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                    عمل ومتابعة كوبونات الخصم، وصلاحيتها، والحد الأدنى للأوردر
+                  </p>
+                </div>
+                <RefreshDataButton
+                  onRefresh={async () => {
+                    // Re-sync coupons
+                  }}
+                  label="تحديث الكوبونات"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-5">
+                  <form onSubmit={handleCreateCoupon} className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
+                    <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">إضافة كوبون خصم جديد</h3>
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">كود الكوبون (حروف إنجليزي)</label>
+                      <input
+                        type="text"
+                        required
+                        value={newCode}
+                        onChange={(e) => setNewCode(e.target.value)}
+                        placeholder="مثال: UPPEREGYPT25"
+                        className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono uppercase outline-none focus:border-[#9a6a35]"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">نسبة الخصم (%)</label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          max={90}
+                          value={newDiscount}
+                          onChange={(e) => setNewDiscount(Number(e.target.value))}
+                          className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">أقل قيمة للأوردر (ج.م)</label>
+                        <input
+                          type="number"
+                          required
+                          min={0}
+                          value={newMinOrder}
+                          onChange={(e) => setNewMinOrder(Number(e.target.value))}
+                          className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full py-3 bg-[#9a6a35] hover:bg-[#7d5427] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>تفعيل ونشر الكوبون</span>
+                    </button>
+                  </form>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
+                    <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">كوبونات الخصم الشغالة دلوقتي</h3>
+
+                    <div className="space-y-3">
+                      {coupons.map((c, i) => (
+                        <div key={i} className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between">
+                          <div>
+                            <span className="font-mono font-black text-sm text-[#9a6a35] dark:text-[#d5a56d] block">{c.code}</span>
+                            <span className="text-xs text-black/60 dark:text-white/60">
+                              خصم <strong>{c.discount}%</strong> • للطلبات فوق {c.minOrder} ج.م
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold">
+                              شغال ومفعل
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                confirmModal({
+                                  title: 'حذف كود الخصم',
+                                  message: `هل أنت متأكد من حذف كود الخصم "${c.code}"؟`,
+                                  confirmText: 'حذف الكوبون',
+                                  danger: true,
+                                  onConfirm: async () => {
+                                    await handleDeleteCoupon(c);
+                                  }
+                                });
+                              }}
+                              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                              title="حذف الكوبون نهائياً"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              <span className="hidden sm:inline">حذف</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: AUDIT LOGS */}
+          {activeTab === 'audit' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-sm space-y-4 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">سجل العمليات والنشاط (Audit Logs)</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60">
+                    سجل بيوضح كل عمليات الاعتماد والرفض وتعديل المنتجات مع الوقت واسم المسؤول
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      confirmModal({
+                        title: 'مسح كامل سجل العمليات',
+                        message: 'هل أنت متأكد من مسح كامل سجل العمليات والنشاط؟ لا يمكن التراجع عن هذا الإجراء.',
+                        confirmText: 'تفريغ السجل',
+                        danger: true,
+                        onConfirm: async () => {
+                          await clearAuditLogs();
+                        }
+                      });
+                    }}
+                    className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                    title="مسح سجل العمليات بالكامل"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>مسح كامل السجل</span>
+                  </button>
+                  <RefreshDataButton
+                    onRefresh={refreshAuditLogs}
+                    label="تحديث السجل"
+                  />
+                </div>
+              </div>
+
+              <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+                <table className="w-full text-xs text-right">
+                  <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
+                    <tr>
+                      <th className="py-3 px-4 font-bold">الوقت والتاريخ</th>
+                      <th className="py-3 px-4 font-bold">المستخدم والدور</th>
+                      <th className="py-3 px-4 font-bold">العملية</th>
+                      <th className="py-3 px-4 font-bold">القسم / العنصر</th>
+                      <th className="py-3 px-4 font-bold">تفاصيل العملية</th>
+                      <th className="py-3 px-4 font-bold">الحالة</th>
+                      <th className="py-3 px-4 font-bold text-center">إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/10 dark:divide-white/10">
+                    {auditLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-black/5 dark:bg-white/5">
+                        <td className="py-3 px-4 font-mono text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
+                        <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                          {log.userName}
+                          <span className="block text-[10px] text-black/60 dark:text-white/60 font-normal">{log.userRole}</span>
+                        </td>
+                        <td className="py-3 px-4 font-bold text-[#9a6a35] dark:text-[#d5a56d]">{log.action}</td>
+                        <td className="py-3 px-4 text-[#211d18] dark:text-[#f5f0e7]">{log.resource}</td>
+                        <td className="py-3 px-4 text-black/60 dark:text-white/60 max-w-xs">{log.details}</td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${log.status === 'نجاح'
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : log.status === 'تنبيه'
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-rose-100 text-rose-800'
+                              }`}
+                          >
+                            {log.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              confirmModal({
+                                title: 'حذف بند السجل',
+                                message: 'هل أنت متأكد من رغبتك في حذف بند السجل هذا نهائياً؟',
+                                confirmText: 'حذف',
+                                danger: true,
+                                onConfirm: async () => {
+                                  await deleteAuditLog(log.id);
+                                }
+                              });
+                            }}
+                            className="p-1 rounded-lg hover:bg-rose-50 text-black/40 hover:text-rose-600 transition-colors cursor-pointer"
+                            title="حذف بند السجل"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: USERS MANAGEMENT (FULL CONTROL) */}
+          {activeTab === 'users' && (
+            <div className="space-y-6">
+              {/* Quick Metrics */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">إجمالي المستخدمين</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{adminUsers.length}</span>
+                </div>
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المشترين (Buyers)</span>
+                  <span className="text-2xl font-black text-blue-700 font-mono">
+                    {adminUsers.filter((u) => u.role === 'buyer').length}
+                  </span>
+                </div>
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">الورش والحرفيين (Sellers)</span>
+                  <span className="text-2xl font-black text-amber-700 font-mono">
+                    {adminUsers.filter((u) => u.role === 'seller').length}
+                  </span>
+                </div>
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">المسؤولين (Admins)</span>
+                  <span className="text-2xl font-black text-purple-700 font-mono">
+                    {adminUsers.filter((u) => u.role === 'admin').length}
+                  </span>
+                </div>
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات شغالة</span>
+                  <span className="text-2xl font-black text-emerald-700 font-mono">
+                    {adminUsers.filter((u) => (u.status || 'active') === 'active').length}
+                  </span>
+                </div>
+                <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-4 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                  <span className="text-[11px] text-black/60 dark:text-white/60 block mb-1">حسابات متوقفة</span>
+                  <span className="text-2xl font-black text-rose-700 font-mono">
+                    {adminUsers.filter((u) => u.status === 'suspended' || u.status === 'blocked').length}
+                  </span>
+                </div>
+              </div>
+
+              {/* Search, Filters & Action Bar */}
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
+                  <input
+                    type="text"
+                    id="admin-users-search-input"
+                    value={userSearchTerm}
+                    onChange={(e) => setUserSearchTerm(e.target.value)}
+                    placeholder="دور بالاسم، اسم المستخدم، الإيميل، أو الموبايل..."
+                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <RefreshDataButton
+                    onRefresh={fetchAdminUsers}
+                    label="تحديث الحسابات"
+                  />
+
+                  {/* Role filter */}
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                    <Filter className="w-3.5 h-3.5 text-black/60 dark:text-white/60" />
+                    <select
+                      id="admin-users-role-filter"
+                      value={userRoleFilter}
+                      onChange={(e) => setUserRoleFilter(e.target.value)}
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
+                    >
+                      <option value="all">كل الأدوار</option>
+                      <option value="buyer">المشترين</option>
+                      <option value="seller">الورش والصنايعية</option>
+                      <option value="admin">المسؤولين</option>
+                    </select>
+                  </div>
+
+                  {/* Status filter */}
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                    <select
+                      id="admin-users-status-filter"
+                      value={userStatusFilter}
+                      onChange={(e) => setUserStatusFilter(e.target.value)}
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
+                    >
+                      <option value="all">كل الحالات</option>
+                      <option value="active">الحسابات الشغالة بس</option>
+                      <option value="suspended">الحسابات المتوقفة بس</option>
+                    </select>
+                  </div>
+
+                  {/* Governorate filter */}
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                    <select
+                      id="admin-users-gov-filter"
+                      value={userGovernorateFilter}
+                      onChange={(e) => setUserGovernorateFilter(e.target.value)}
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
+                    >
+                      <option value="all">كل المحافظات</option>
+                      <option value="قنا">قنا</option>
+                      <option value="سوهاج">سوهاج</option>
+                      <option value="أسوان">أسوان</option>
+                      <option value="الأقصر">الأقصر</option>
+                      <option value="أسيوط">أسيوط</option>
+                      <option value="المنيا">المنيا</option>
+                      <option value="بني سويف">بني سويف</option>
+                      <option value="الوادي الجديد">الوادي الجديد</option>
+                      <option value="القاهرة">القاهرة</option>
+                      <option value="الجيزة">الجيزة</option>
+                      <option value="الإسكندرية">الإسكندرية</option>
+                      <option value="أخرى">أخرى</option>
+                    </select>
+                  </div>
+
+                  {/* Refresh button */}
+                  <button
+                    type="button"
+                    id="admin-users-refresh-btn"
+                    onClick={fetchAdminUsers}
+                    disabled={isLoadingUsers}
+                    className="p-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    title="تحديث البيانات"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} />
+                    <span className="hidden sm:inline">تحديث</span>
+                  </button>
+
+                  {/* Add User button */}
+                  <button
+                    type="button"
+                    id="admin-add-user-btn"
+                    onClick={() => setIsCreateUserModalOpen(true)}
+                    className="px-3.5 py-2.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    <span>إضافة مستخدم جديد</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Users Table */}
+              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
+                <div className="wah-table-container overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
+                      <tr>
+                        <th className="py-3.5 px-4 font-bold">المستخدم</th>
+                        <th className="py-3.5 px-4 font-bold">الدور</th>
+                        <th className="py-3.5 px-4 font-bold">الحالة</th>
+                        <th className="py-3.5 px-4 font-bold">المحافظة</th>
+                        <th className="py-3.5 px-4 font-bold">الموبايل</th>
+                        <th className="py-3.5 px-4 font-bold">تاريخ الانضمام</th>
+                        <th className="py-3.5 px-4 font-bold text-center">التحكم والإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/10 dark:divide-white/10">
+                      {isLoadingUsers ? (
+                        <tr>
+                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                            <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
+                            <span>بنحمّل بيانات المستخدمين...</span>
                           </td>
                         </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
+                      ) : adminUsers.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                            مفيش حسابات متطابقة مع البحث والفلتر.
+                          </td>
+                        </tr>
+                      ) : (
+                        adminUsers.map((u) => {
+                          const isCurrentAdmin = currentUser.id === u.id;
+                          const isSuspended = u.status === 'suspended' || u.status === 'blocked';
+                          return (
+                            <tr key={u.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
+                              <td className="py-3 px-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="relative shrink-0">
+                                    <img
+                                      src={u.profileImage?.secureUrl || u.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
+                                      alt={u.name}
+                                      className="w-10 h-10 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                                    />
+                                    <span
+                                      className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${isSuspended ? 'bg-rose-500' : 'bg-emerald-500'
+                                        }`}
+                                      title={isSuspended ? 'حساب متوقف' : 'حساب شغال'}
+                                    />
+                                  </div>
+                                  <div className="min-w-0">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] truncate">{u.name}</span>
+                                      {isCurrentAdmin && (
+                                        <span className="bg-amber-100 text-[#9a6a35] dark:text-[#d5a56d] text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                                          أنت
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[11px] text-gray-500 block truncate">
+                                      {u.username ? `@${u.username}` : ''} {u.email ? `• ${u.email}` : ''}
+                                    </span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${u.role === 'admin'
+                                    ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                    : u.role === 'seller'
+                                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                      : 'bg-blue-100 text-blue-800 border border-blue-200'
+                                    }`}
+                                >
+                                  {u.role === 'admin' ? 'مسؤول منصة' : u.role === 'seller' ? 'ورشة وصنايعي' : 'مشتري موثق'}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4">
+                                <span
+                                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${isSuspended
+                                    ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                    : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                    }`}
+                                >
+                                  <span className={`w-1.5 h-1.5 rounded-full ${isSuspended ? 'bg-rose-600' : 'bg-emerald-600'}`} />
+                                  <span>{isSuspended ? 'متوقف' : 'شغال'}</span>
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">{u.governorate || 'مش محدد'}</td>
+                              <td className="py-3 px-4 font-mono text-gray-600">{u.phone || '---'}</td>
+                              <td className="py-3 px-4 text-gray-500 text-[11px]">
+                                {u.createdAt ? new Date(u.createdAt).toLocaleDateString('ar-EG') : '---'}
+                              </td>
+                              <td className="py-3 px-4 text-center">
+                                <div className="flex items-center justify-center gap-1.5">
+                                  {/* View Details */}
+                                  <button
+                                    type="button"
+                                    id={`view-user-${u.id}`}
+                                    onClick={() => openUserDetails(u.id)}
+                                    title="تفاصيل الحساب"
+                                    className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Eye className="w-3.5 h-3.5 text-gray-600" />
+                                    <span className="hidden xl:inline">تفاصيل</span>
+                                  </button>
+
+                                  {/* Edit Profile */}
+                                  <button
+                                    type="button"
+                                    id={`edit-user-${u.id}`}
+                                    onClick={() => handleOpenEditUser(u)}
+                                    title="تعديل الحساب"
+                                    className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5 text-blue-600" />
+                                    <span className="hidden xl:inline">تعديل</span>
+                                  </button>
+
+                                  {/* Reset Password */}
+                                  <button
+                                    type="button"
+                                    id={`reset-pwd-${u.id}`}
+                                    onClick={() => handleOpenResetPassword(u)}
+                                    title="تغيير كلمة السر"
+                                    className="p-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                  >
+                                    <Key className="w-3.5 h-3.5 text-amber-600" />
+                                    <span className="hidden xl:inline">الباسورد</span>
+                                  </button>
+
+                                  {/* Toggle Suspension (Suspend / Activate) */}
+                                  {!isCurrentAdmin && (
+                                    <button
+                                      type="button"
+                                      id={`toggle-status-${u.id}`}
+                                      onClick={() => handleToggleUserStatus(u)}
+                                      disabled={isTogglingStatus === u.id}
+                                      title={isSuspended ? 'تفعيل الحساب' : 'وقف الحساب مؤقتاً'}
+                                      className={`p-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${isSuspended
+                                        ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200'
+                                        : 'bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-200'
+                                        }`}
+                                    >
+                                      {isTogglingStatus === u.id ? (
+                                        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                      ) : isSuspended ? (
+                                        <UserCheck className="w-3.5 h-3.5" />
+                                      ) : (
+                                        <UserX className="w-3.5 h-3.5" />
+                                      )}
+                                      <span className="hidden xl:inline">{isSuspended ? 'تفعيل' : 'وقف'}</span>
+                                    </button>
+                                  )}
+
+                                  {/* Delete User */}
+                                  {isCurrentAdmin ? (
+                                    <span
+                                      title="حسابك الشخصي (ما ينفعش تحذف نفسك)"
+                                      className="p-2 bg-gray-100 text-gray-400 border border-gray-200 rounded-xl text-xs font-bold cursor-not-allowed"
+                                    >
+                                      <Lock className="w-3.5 h-3.5" />
+                                    </span>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      id={`delete-user-${u.id}`}
+                                      onClick={() => setSelectedUserForDelete(u)}
+                                      title="حذف الحساب نهائياً"
+                                      className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                      <span className="hidden xl:inline">حذف</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
-      {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
+          {/* TAB 10: PASSWORD RESET REQUESTS */}
+          {activeTab === 'password-resets' && (
+            <div className="space-y-6 animate-in fade-in">
+              {/* Header & Metrics Bar */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
+                <div>
+                  <h2 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
+                    <KeyRound className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                    <span>طلبات تغيير كلمات السر</span>
+                  </h2>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                    متابعة طلبات الناس اللي نسيت الباسورد، وتعملهم باسورد مؤقت عشان يعرفوا يسجلوا دخول.
+                  </p>
+                </div>
 
-      {/* TAB 12: PLATFORM NOTIFICATIONS (مركز الإشعارات والتنبيهات العامة) */}
-      {activeTab === 'notifications' && (
-        <NotificationsManager
-          viewMode="admin"
-          onNavigateTab={(tab) => {
-            if (tab === 'orders') handleSelectTab('orders');
-            else if (tab === 'products' || tab === 'approvals') handleSelectTab('approvals');
-            else if (tab === 'payouts') handleSelectTab('payouts');
-            else if (tab === 'sellers') handleSelectTab('sellers');
-            else if (tab === 'users') handleSelectTab('users');
-            else if (tab === 'password-resets') handleSelectTab('password-resets');
-          }}
-        />
-      )}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-2 rounded-xl text-xs font-bold text-amber-800">
+                    <Clock className="w-4 h-4 text-amber-600" />
+                    <span>طلبات مستنية: {passwordResets.filter((r) => r.status === 'pending').length}</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                    <Filter className="w-3.5 h-3.5 text-gray-400" />
+                    <select
+                      id="admin-password-resets-filter"
+                      value={passwordResetFilter}
+                      onChange={(e) => setPasswordResetFilter(e.target.value as any)}
+                      className="bg-transparent text-xs font-medium outline-none py-1.5 cursor-pointer text-[#211d18] dark:text-[#f5f0e7]"
+                    >
+                      <option value="all">كل الطلبات ({passwordResets.length})</option>
+                      <option value="pending">طلبات مستنية ({passwordResets.filter((r) => r.status === 'pending').length})</option>
+                      <option value="completed">اتنفذت خلاص ({passwordResets.filter((r) => r.status === 'completed').length})</option>
+                      <option value="rejected">مرفوضة ({passwordResets.filter((r) => r.status === 'rejected').length})</option>
+                    </select>
+                  </div>
+
+                  <RefreshDataButton
+                    id="admin-password-resets-refresh-btn"
+                    onRefresh={fetchPasswordResets}
+                    isLoading={isLoadingPasswordResets}
+                    label="تحديث الطلبات"
+                  />
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
+                <div className="wah-table-container overflow-x-auto">
+                  <table className="w-full text-right text-xs">
+                    <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
+                      <tr>
+                        <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
+                        <th className="py-3.5 px-4 font-bold">رقم الموبايل</th>
+                        <th className="py-3.5 px-4 font-bold">تاريخ الطلب</th>
+                        <th className="py-3.5 px-4 font-bold">الحالة</th>
+                        <th className="py-3.5 px-4 font-bold">المسؤول اللي نفذ</th>
+                        <th className="py-3.5 px-4 font-bold">تاريخ التنفيذ</th>
+                        <th className="py-3.5 px-4 font-bold text-center">الإجراءات</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-black/10 dark:divide-white/10">
+                      {isLoadingPasswordResets ? (
+                        <tr>
+                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                            <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35] dark:text-[#d5a56d]" />
+                            <span>بنحمّل طلبات تغيير الباسورد...</span>
+                          </td>
+                        </tr>
+                      ) : passwordResets.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="py-12 text-center text-gray-500">
+                            مفيش طلبات تغيير باسورد متطابقة مع الفلتر.
+                          </td>
+                        </tr>
+                      ) : (
+                        passwordResets.map((r) => {
+                          const isPending = r.status === 'pending';
+                          const isCompleted = r.status === 'completed';
+                          return (
+                            <tr key={r.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
+                              <td className="py-3 px-4">
+                                <div>
+                                  <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">
+                                    {r.name || r.username}
+                                  </span>
+                                  <span className="text-[11px] text-gray-500 font-mono">
+                                    @{r.username}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="py-3 px-4 font-mono">
+                                {r.phone || 'مش متسجل'}
+                              </td>
+                              <td className="py-3 px-4 text-gray-600">
+                                {r.createdAt ? new Date(r.createdAt).toLocaleString('ar-EG') : '-'}
+                              </td>
+                              <td className="py-3 px-4">
+                                {isPending ? (
+                                  <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                    <Clock className="w-3 h-3 text-amber-600" />
+                                    <span>مستني المعالجة</span>
+                                  </span>
+                                ) : isCompleted ? (
+                                  <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-900 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                    <span>اتنفذ خلاص</span>
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-900 border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                    <XCircle className="w-3 h-3 text-rose-600" />
+                                    <span>مرفوض</span>
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4 font-medium text-[#211d18] dark:text-[#f5f0e7]">
+                                {r.handledByAdminName ? (
+                                  <span className="inline-flex items-center gap-1">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                                    <span>{r.handledByAdminName}</span>
+                                  </span>
+                                ) : (
+                                  <span className="text-gray-400">-</span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4 text-gray-500">
+                                {r.handledAt ? new Date(r.handledAt).toLocaleString('ar-EG') : '-'}
+                              </td>
+                              <td className="py-3 px-4">
+                                <div className="flex items-center justify-center gap-2">
+                                  {isPending ? (
+                                    <>
+                                      <button
+                                        type="button"
+                                        id={`complete-reset-btn-${r.id}`}
+                                        onClick={() => openCreateTempPasswordModal(r)}
+                                        className="px-3 py-1.5 bg-[#9a6a35] hover:bg-[#7d5427] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1 cursor-pointer"
+                                      >
+                                        <Key className="w-3.5 h-3.5" />
+                                        <span>عمل باسورد جديد</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRejectReset(r)}
+                                        className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                        title="رفض الطلب"
+                                      >
+                                        <X className="w-3.5 h-3.5" />
+                                        <span>رفض</span>
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <span className="text-xs text-gray-400 font-medium">اتنفذ خلاص</span>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 11: SELLER PAYOUT REQUESTS (طلبات صرف المستحقات) */}
+          {activeTab === 'payouts' && <AdminPayouts user={currentUser} />}
+
+          {/* TAB 12: PLATFORM NOTIFICATIONS (مركز الإشعارات والتنبيهات العامة) */}
+          {activeTab === 'notifications' && (
+            <NotificationsManager
+              viewMode="admin"
+              onNavigateTab={(tab) => {
+                if (tab === 'orders') handleSelectTab('orders');
+                else if (tab === 'products' || tab === 'approvals') handleSelectTab('approvals');
+                else if (tab === 'payouts') handleSelectTab('payouts');
+                else if (tab === 'sellers') handleSelectTab('sellers');
+                else if (tab === 'users') handleSelectTab('users');
+                else if (tab === 'password-resets') handleSelectTab('password-resets');
+              }}
+            />
+          )}
         </main>
       </div>
 
@@ -5146,9 +5117,8 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSelectTab('overview')}
-            className={`p-2.5 rounded-full transition-all cursor-pointer ${
-              activeTab === 'overview' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
-            }`}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${activeTab === 'overview' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+              }`}
             title="نظرة عامة"
           >
             <TrendingUp className="w-4 h-4" />
@@ -5157,9 +5127,8 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSelectTab('approvals')}
-            className={`p-2.5 rounded-full transition-all relative cursor-pointer ${
-              activeTab === 'approvals' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
-            }`}
+            className={`p-2.5 rounded-full transition-all relative cursor-pointer ${activeTab === 'approvals' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+              }`}
             title="اعتماد المعروضات"
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -5171,9 +5140,8 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSelectTab('sellers')}
-            className={`p-2.5 rounded-full transition-all cursor-pointer ${
-              activeTab === 'sellers' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
-            }`}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${activeTab === 'sellers' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+              }`}
             title="الورش والحرفيين"
           >
             <Store className="w-4 h-4" />
@@ -5182,9 +5150,8 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSelectTab('orders')}
-            className={`p-2.5 rounded-full transition-all cursor-pointer ${
-              activeTab === 'orders' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
-            }`}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${activeTab === 'orders' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+              }`}
             title="الطلبات والشحنات"
           >
             <Truck className="w-4 h-4" />
@@ -5193,9 +5160,8 @@ export const AdminDashboard: React.FC = () => {
           <button
             type="button"
             onClick={() => handleSelectTab('craft-reels')}
-            className={`p-2.5 rounded-full transition-all cursor-pointer ${
-              activeTab === 'craft-reels' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
-            }`}
+            className={`p-2.5 rounded-full transition-all cursor-pointer ${activeTab === 'craft-reels' ? 'bg-[#9a6a35] text-white shadow-xs' : 'text-white/70 hover:text-white'
+              }`}
             title="ريلز الحرفيين"
           >
             <Film className="w-4 h-4" />
@@ -6659,9 +6625,9 @@ export const AdminDashboard: React.FC = () => {
                           <h4 className="font-bold text-sm leading-tight text-white drop-shadow-xs">
                             {sellerEditBrandName || 'اسم الورشة'}
                           </h4>
-                          {sellerEditVerified && <BadgeCheck className="w-4 h-4 text-amber-400 shrink-0" />}
+                          {sellerEditVerified && <BadgeCheck className="w-4 h-4 text-[#d6aa72] shrink-0" />}
                         </div>
-                        <p className="text-[11px] text-amber-200">
+                        <p className="text-[11px] text-[#d5a56d]">
                           {sellerEditName} • محافظة {sellerEditGovernorate}
                         </p>
                       </div>

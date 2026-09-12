@@ -51,7 +51,7 @@ export const WhatsAppButton: React.FC = () => {
     },
     {
       icon: (
-        <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <Sparkles className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
       ),
       title: 'طلب تفصيل أو نقش مخصص على الحرف',
       text: 'السلام عليكم، أريد طلب قطعة يدوية مخصصة ونقش اسم/شعار خاص.',

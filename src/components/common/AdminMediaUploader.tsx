@@ -737,7 +737,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* Non-Admin Security Warning */}
       {!isAdmin && (
-        <div className="p-3 mb-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-200 text-xs flex items-center gap-2">
+        <div className="p-3 mb-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-[#d5a56d] text-xs flex items-center gap-2">
           <ShieldAlert className="w-4 h-4 shrink-0" />
           <span>ميزة رفع واستبدال الوسائط مخصصة لمدراء المنصة فقط. يمكنك تصفح ومعاينة الوسائط.</span>
         </div>
@@ -917,7 +917,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                       />
                     )}
                     <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-[9px] font-mono text-white flex items-center gap-1">
-                      {sf.isVideo ? <Video className="w-2.5 h-2.5 text-amber-400" /> : <ImageIcon className="w-2.5 h-2.5" />}
+                      {sf.isVideo ? <Video className="w-2.5 h-2.5 text-[#d6aa72]" /> : <ImageIcon className="w-2.5 h-2.5" />}
                       {sf.format}
                     </span>
                   </div>
@@ -982,7 +982,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                       </span>
                     )}
                     {sf.status === 'processing' && (
-                      <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1 font-bold">
+                      <span className="text-amber-600 dark:text-[#d6aa72] flex items-center gap-1 font-bold">
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         <span>{sf.statusText || 'جاري المعالجة السحابية والتحقق...'}</span>
                       </span>
@@ -1333,7 +1333,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                           </div>
                         </div>
                         <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-black/75 text-[10px] font-bold text-white flex items-center gap-1">
-                          <Video className="w-3 h-3 text-amber-400" />
+                          <Video className="w-3 h-3 text-[#d6aa72]" />
                           <span>فيديو</span>
                         </span>
                       </>

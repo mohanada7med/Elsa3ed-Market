@@ -57,7 +57,7 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
       {/* 1. Location and Category Meta Bar (No public creator identity) */}
       <div className="flex items-center gap-2 flex-wrap">
         {displayLocation && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-[11px] font-bold text-amber-200 shadow-md shrink-0">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-[11px] font-bold text-[#d5a56d] shadow-md shrink-0">
             <MapPin className="w-3 h-3 text-[#d5a56d]" />
             <span>{displayLocation}</span>
           </span>
@@ -65,7 +65,7 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
 
         {categoryLabel && (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#9a6a35]/80 backdrop-blur-md text-white text-[10px] font-extrabold shadow-md shrink-0">
-            <Compass className="w-2.5 h-2.5 text-amber-200" />
+            <Compass className="w-2.5 h-2.5 text-[#d5a56d]" />
             <span>{categoryLabel}</span>
           </span>
         )}
@@ -86,7 +86,7 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setIsExpanded((prev) => !prev)}
-                className="text-[11px] font-bold text-amber-300 hover:text-amber-200 mt-1 cursor-pointer underline underline-offset-2"
+                className="text-[11px] font-bold text-amber-300 hover:text-[#d5a56d] mt-1 cursor-pointer underline underline-offset-2"
               >
                 {isExpanded ? 'عرض أقل' : 'المزيد'}
               </button>

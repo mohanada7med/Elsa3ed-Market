@@ -96,7 +96,7 @@ export const CraftReelsSection: React.FC = () => {
       style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom, 0px))' }}
     >
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
-        {/* Header Section بالمظهر التايبوغرافي الجديد */}
+        {/* Header Section */}
         <div className="relative z-10 mb-12 sm:mb-16">
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
             <div>
@@ -127,7 +127,7 @@ export const CraftReelsSection: React.FC = () => {
                 </div>
 
                 <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
-                  الصعيد اللي عمرك ما شوفته قبل كده؛ أماكن متدارية وسط الجبال، فلوكة على ضهر النيل ساعة الغروب، وسر الصنعة اللي بيتنقل من جد لحفيد.
+                  الصعيد الحقيقي بعين تانية؛ هيبة المعابد القديمة والمتاحف اللي بتنطق تاريخ، حكايات الآثار في قلب الجبال، ونفَس الحرفي اللي واخد سر الصنعة أباً عن جد.
                 </p>
               </div>
             </div>
@@ -146,9 +146,9 @@ export const CraftReelsSection: React.FC = () => {
           </div>
         </div>
 
-        {/* عرض شبكي سينمائي بنسبة 9:16 */}
+        {/* عرض شبكي سينمائي (5 فيديوهات فقط مع شاشات xl:grid-cols-5) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-          {reels.map((reel, idx) => (
+          {reels.slice(0, 5).map((reel, idx) => (
             <motion.div
               key={reel.id}
               initial={{ opacity: 0, y: 20 }}
@@ -173,8 +173,8 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* عناصر الجزء العلوي */}
               <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                <span className="bg-black/50 backdrop-blur-md text-amber-200 text-[11px] font-medium px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-[#d5a56d]" />
+                <span className="bg-black/50 backdrop-blur-md text-[#d6aa72] dark:text-[#d6aa72] font-medium px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
+                  <MapPin className="w-3 h-3 text-[#9a6a35] dark:text-[#d6aa72]" />
                   {reel.location || reel.governorate}
                 </span>
 
@@ -189,7 +189,7 @@ export const CraftReelsSection: React.FC = () => {
                     </button>
                   )}
                   <span className="bg-black/50 backdrop-blur-md text-white text-[11px] font-bold px-2 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                    <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    <Flame className="w-3 h-3 text-[#d6aa72] fill-[#d6aa72]" />
                     {reel.likesCount}
                   </span>
                 </div>
@@ -202,13 +202,10 @@ export const CraftReelsSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* الجزء السفلي العائم (معلومات المنتج والعنوان) */}
+              {/* الجزء السفلي العائم (معلومات المنتج والعنوان بدون تصنيف الحرفة) */}
               <div className="absolute inset-x-0 bottom-0 p-3.5 z-10 flex flex-col justify-end space-y-2.5">
                 <div>
-                  <span className="text-[10px] font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20 inline-block mb-1">
-                    {reel.craftType || 'حرفة يدوية'}
-                  </span>
-                  <h3 className="text-white text-sm font-bold line-clamp-1 group-hover:text-amber-300 transition-colors">
+                  <h3 className="text-white text-sm font-bold line-clamp-1 group-hover:text-[#d6aa72] transition-colors">
                     {reel.title}
                   </h3>
                 </div>
@@ -220,7 +217,7 @@ export const CraftReelsSection: React.FC = () => {
                       <span className="text-[10px] text-zinc-300 block truncate">
                         {reel.productTitle || 'القطعة المعروضة'}
                       </span>
-                      <span className="text-xs font-black text-amber-400 font-mono">
+                      <span className="text-xs font-black text-[#d6aa72] font-mono">
                         {reel.productPrice} ج.م
                       </span>
                     </div>

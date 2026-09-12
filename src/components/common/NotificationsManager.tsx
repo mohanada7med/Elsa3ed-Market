@@ -276,15 +276,15 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       case 'product_rejected':
         return <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />;
       case 'product_pending_review':
-        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />;
+        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-[#d6aa72]" />;
       case 'low_stock':
-        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-amber-400" />;
+        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-[#d6aa72]" />;
       case 'payout_requested':
       case 'payout_approved':
       case 'payout_paid':
         return <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
       case 'new_review':
-        return <Star className="w-5 h-5 text-amber-400 fill-amber-400" />;
+        return <Star className="w-5 h-5 text-[#d6aa72] " />;
       case 'new_seller_registered':
         return <UserPlus className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />;
       case 'password_reset_requested':
@@ -401,19 +401,18 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   إشعارات المتصفح الفورية والتنبيهات الصوتية (Web Push)
                 </h3>
                 <span
-                  className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${
-                    browserNotificationPermission === 'granted'
-                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
-                      : browserNotificationPermission === 'denied'
+                  className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${browserNotificationPermission === 'granted'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300'
+                    : browserNotificationPermission === 'denied'
                       ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/50 dark:text-rose-300'
                       : 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
-                  }`}
+                    }`}
                 >
                   {browserNotificationPermission === 'granted'
                     ? '● الإشعارات مفعلة'
                     : browserNotificationPermission === 'denied'
-                    ? '● محظورة بالمتصفح'
-                    : '○ بانتظار الإذن'}
+                      ? '● محظورة بالمتصفح'
+                      : '○ بانتظار الإذن'}
                 </span>
               </div>
               <p className="text-xs text-black/60 dark:text-white/60 max-w-2xl leading-relaxed font-medium">
@@ -459,19 +458,17 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 soundEnabled: !browserNotificationSettings.soundEnabled
               })
             }
-            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-              browserNotificationSettings.soundEnabled
-                ? 'bg-[#9a6a35]/10 border-[#9a6a35]/30'
-                : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
-            }`}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.soundEnabled
+              ? 'bg-[#9a6a35]/10 border-[#9a6a35]/30'
+              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  browserNotificationSettings.soundEnabled
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
-                }`}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.soundEnabled
+                  ? 'bg-[#9a6a35] text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  }`}
               >
                 {browserNotificationSettings.soundEnabled ? (
                   <Volume2 className="w-4 h-4" />
@@ -489,14 +486,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
-                browserNotificationSettings.soundEnabled ? 'bg-[#9a6a35]' : 'bg-black/20 dark:bg-white/20'
-              }`}
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.soundEnabled ? 'bg-[#9a6a35]' : 'bg-black/20 dark:bg-white/20'
+                }`}
             >
               <div
-                className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                  browserNotificationSettings.soundEnabled ? 'translate-x-0' : '-translate-x-4'
-                }`}
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${browserNotificationSettings.soundEnabled ? 'translate-x-0' : '-translate-x-4'
+                  }`}
               />
             </div>
           </div>
@@ -508,19 +503,17 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 notifyOrders: !browserNotificationSettings.notifyOrders
               })
             }
-            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-              browserNotificationSettings.notifyOrders
-                ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50'
-                : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
-            }`}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyOrders
+              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50'
+              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  browserNotificationSettings.notifyOrders
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
-                }`}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyOrders
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  }`}
               >
                 <Package className="w-4 h-4" />
               </div>
@@ -534,14 +527,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
-                browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-white/20'
-              }`}
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-white/20'
+                }`}
             >
               <div
-                className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                  browserNotificationSettings.notifyOrders ? 'translate-x-0' : '-translate-x-4'
-                }`}
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${browserNotificationSettings.notifyOrders ? 'translate-x-0' : '-translate-x-4'
+                  }`}
               />
             </div>
           </div>
@@ -553,19 +544,17 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 notifyMessages: !browserNotificationSettings.notifyMessages
               })
             }
-            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-              browserNotificationSettings.notifyMessages
-                ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50'
-                : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
-            }`}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyMessages
+              ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50'
+              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  browserNotificationSettings.notifyMessages
-                    ? 'bg-blue-600 text-white shadow-xs'
-                    : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
-                }`}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyMessages
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  }`}
               >
                 <MessageSquare className="w-4 h-4" />
               </div>
@@ -579,14 +568,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
-                browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-white/20'
-              }`}
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-white/20'
+                }`}
             >
               <div
-                className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                  browserNotificationSettings.notifyMessages ? 'translate-x-0' : '-translate-x-4'
-                }`}
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${browserNotificationSettings.notifyMessages ? 'translate-x-0' : '-translate-x-4'
+                  }`}
               />
             </div>
           </div>
@@ -598,19 +585,17 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 notifyStock: !browserNotificationSettings.notifyStock
               })
             }
-            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
-              browserNotificationSettings.notifyStock
-                ? 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/50'
-                : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
-            }`}
+            className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyStock
+              ? 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/50'
+              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
-                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  browserNotificationSettings.notifyStock
-                    ? 'bg-purple-600 text-white shadow-xs'
-                    : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
-                }`}
+                className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyStock
+                  ? 'bg-purple-600 text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  }`}
               >
                 <AlertTriangle className="w-4 h-4" />
               </div>
@@ -624,14 +609,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${
-                browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-white/20'
-              }`}
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-white/20'
+                }`}
             >
               <div
-                className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                  browserNotificationSettings.notifyStock ? 'translate-x-0' : '-translate-x-4'
-                }`}
+                className={`w-5 h-5 rounded-full bg-white transition-transform ${browserNotificationSettings.notifyStock ? 'translate-x-0' : '-translate-x-4'
+                  }`}
               />
             </div>
           </div>
@@ -645,11 +628,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             type="button"
             id="admin-notifs-inbox-tab"
             onClick={() => setAdminSubTab('inbox')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-              adminSubTab === 'inbox'
-                ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'inbox'
+              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <Bell className="w-4 h-4" />
             <span>الإشعارات الواردة</span>
@@ -667,11 +649,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               setAdminSubTab('broadcasts');
               fetchBroadcastHistory();
             }}
-            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-              adminSubTab === 'broadcasts'
-                ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'broadcasts'
+              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <History className="w-4 h-4" />
             <span>سجل التنبيهات والإعلانات المرسلة (MongoDB)</span>
@@ -728,19 +709,19 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   bc.targetType === 'all'
                     ? 'كافة المستخدمين'
                     : bc.targetType === 'buyers'
-                    ? 'المشترين فقط'
-                    : bc.targetType === 'sellers'
-                    ? 'أصحاب الورش والحرفيين'
-                    : `مستخدم محدد (${bc.targetUserId || 'معرف'})`;
+                      ? 'المشترين فقط'
+                      : bc.targetType === 'sellers'
+                        ? 'أصحاب الورش والحرفيين'
+                        : `مستخدم محدد (${bc.targetUserId || 'معرف'})`;
 
                 const targetBadgeColor =
                   bc.targetType === 'all'
                     ? 'bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-300'
                     : bc.targetType === 'buyers'
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
-                    : bc.targetType === 'sellers'
-                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
-                    : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                      : bc.targetType === 'sellers'
+                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300'
+                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300';
 
                 const readCount = bc.readCount ?? (Array.isArray(bc.readBy) ? bc.readBy.length : 0);
                 const recipientsCount = bc.recipientsCount || 1;
@@ -820,326 +801,315 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       ) : (
         <>
           {/* KPI Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-          <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-            <span>إجمالي الإشعارات المسجلة</span>
-            <Bell className="w-4 h-4 text-[#9a6a35]" />
-          </div>
-          <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
-            {notifications.length} إشعار
-          </span>
-          <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-            سجل حي محدث تلقائياً
-          </span>
-        </div>
-
-        <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-          <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-            <span>الإشعارات غير المقروءة</span>
-            <AlertTriangle className="w-4 h-4 text-amber-500" />
-          </div>
-          <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
-            {unreadCount} جديد
-          </span>
-          <span className="text-[10px] text-black/50 dark:text-white/50 block mt-1 font-medium">
-            تحتاج إلى مراجعة وتدقيق
-          </span>
-        </div>
-
-        <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-          <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-            <span>إشعارات الطلبات والمبيعات</span>
-            <Package className="w-4 h-4 text-emerald-600" />
-          </div>
-          <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
-            {notifications.filter((n) => n.type === 'new_order').length}
-          </span>
-          <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-            حركة البيع المباشر
-          </span>
-        </div>
-
-        <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
-          <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
-            <span>إشعارات الماليات والتسويات</span>
-            <Wallet className="w-4 h-4 text-purple-600" />
-          </div>
-          <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
-            {notifications.filter((n) => n.type.startsWith('payout')).length}
-          </span>
-          <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block mt-1">
-            حسابات وسحوبات الورش
-          </span>
-        </div>
-      </div>
-
-      {/* Filter and Search Bar */}
-      <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 backdrop-blur-xl shadow-lg space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Read / Unread Filter */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-            <button
-              type="button"
-              onClick={() => setFilterRead('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${
-                filterRead === 'all'
-                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
-              }`}
-            >
-              كافة الإشعارات ({notifications.length})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterRead('unread')}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${
-                filterRead === 'unread'
-                  ? 'bg-[#9a6a35] text-white shadow-md'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
-              }`}
-            >
-              غير المقروءة ({unreadCount})
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterRead('read')}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${
-                filterRead === 'read'
-                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
-              }`}
-            >
-              المقروءة ({notifications.length - unreadCount})
-            </button>
-          </div>
-
-          {/* Quick Actions & Search */}
-          <div className="flex items-center gap-3">
-            <div className="relative min-w-[220px] flex-1">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث في نص الإشعار..."
-                className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
-              />
-              <Bell className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                <span>إجمالي الإشعارات المسجلة</span>
+                <Bell className="w-4 h-4 text-[#9a6a35]" />
+              </div>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+                {notifications.length} إشعار
+              </span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                سجل حي محدث تلقائياً
+              </span>
             </div>
 
-            {notifications.length > 0 && (
-              <button
-                type="button"
-                onClick={handleClearAll}
-                className="px-3.5 py-2.5 text-xs font-black text-black/50 dark:text-white/50 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors flex items-center gap-1.5 border border-transparent hover:border-red-200 cursor-pointer"
-                title="مسح كافة الإشعارات"
-              >
-                <Trash2 className="w-4 h-4" />
-                <span className="hidden sm:inline">مسح السجل</span>
-              </button>
-            )}
+            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                <span>الإشعارات غير المقروءة</span>
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+              </div>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+                {unreadCount} جديد
+              </span>
+              <span className="text-[10px] text-black/50 dark:text-white/50 block mt-1 font-medium">
+                تحتاج إلى مراجعة وتدقيق
+              </span>
+            </div>
+
+            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                <span>إشعارات الطلبات والمبيعات</span>
+                <Package className="w-4 h-4 text-emerald-600" />
+              </div>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+                {notifications.filter((n) => n.type === 'new_order').length}
+              </span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                حركة البيع المباشر
+              </span>
+            </div>
+
+            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+              <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
+                <span>إشعارات الماليات والتسويات</span>
+                <Wallet className="w-4 h-4 text-purple-600" />
+              </div>
+              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+                {notifications.filter((n) => n.type.startsWith('payout')).length}
+              </span>
+              <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block mt-1">
+                حسابات وسحوبات الورش
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Type Categories Filter */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-black/10 dark:border-white/10 text-xs">
-          <span className="text-black/60 dark:text-white/60 text-[11px] font-black shrink-0 ml-1">
-            تصنيف الإشعار:
-          </span>
-          <button
-            type="button"
-            onClick={() => setFilterType('all')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'all'
-                ? 'bg-[#211d18] dark:bg-white text-white dark:text-[#211d18] font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            الكل
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('new_order')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'new_order'
-                ? 'bg-emerald-600 text-white font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            الطلبات والمبيعات
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('product_approved')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'product_approved'
-                ? 'bg-emerald-600 text-white font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            اعتماد المنتجات
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('low_stock')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'low_stock'
-                ? 'bg-amber-600 text-white font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            تنبيهات المخزون
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('payout_paid')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'payout_paid'
-                ? 'bg-purple-600 text-white font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            التحويلات المالية
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType('new_review')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${
-              filterType === 'new_review'
-                ? 'bg-amber-600 text-white font-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-            }`}
-          >
-            تقييمات الزبائن
-          </button>
-        </div>
-      </div>
+          {/* Filter and Search Bar */}
+          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 backdrop-blur-xl shadow-lg space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              {/* Read / Unread Filter */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                <button
+                  type="button"
+                  onClick={() => setFilterRead('all')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'all'
+                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                >
+                  كافة الإشعارات ({notifications.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterRead('unread')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'unread'
+                    ? 'bg-[#9a6a35] text-white shadow-md'
+                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                >
+                  غير المقروءة ({unreadCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterRead('read')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'read'
+                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    }`}
+                >
+                  المقروءة ({notifications.length - unreadCount})
+                </button>
+              </div>
 
-      {/* Notifications List Content */}
-      <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden backdrop-blur-xl shadow-lg">
-        {filteredNotifications.length > 0 ? (
-          <div className="divide-y divide-black/5 dark:divide-white/5">
-            {filteredNotifications.map((notif) => (
-              <div
-                key={notif.id}
-                className={`p-5 sm:p-6 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group ${
-                  notif.read
-                    ? 'bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
-                    : 'bg-[#9a6a35]/5 hover:bg-[#9a6a35]/10'
-                }`}
-              >
-                {/* Left (RTL Right): Icon & Details */}
-                <div className="flex items-start gap-4 flex-1">
-                  <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#1f1d1a] border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 shadow-sm">
-                    {getNotificationIcon(notif.type)}
-                  </div>
-
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h4
-                        className={`text-sm sm:text-base font-black ${
-                          notif.read
-                            ? 'text-[#211d18] dark:text-[#f5f0e7]'
-                            : 'text-[#9a6a35]'
-                        }`}
-                      >
-                        {notif.title}
-                      </h4>
-                      {!notif.read && (
-                        <span className="px-2 py-0.5 bg-[#9a6a35] text-white text-[10px] font-black rounded-full">
-                          جديد
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-xs sm:text-sm text-black/70 dark:text-white/70 leading-relaxed max-w-3xl font-medium">
-                      {notif.message}
-                    </p>
-
-                    <div className="flex items-center gap-3 pt-1 text-[11px] text-black/50 dark:text-white/50 font-medium">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>{formatTimeAgo(notif.createdAt)}</span>
-                      </span>
-                      <span>•</span>
-                      <span>
-                        {new Date(notif.createdAt).toLocaleDateString('ar-EG', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    </div>
-                  </div>
+              {/* Quick Actions & Search */}
+              <div className="flex items-center gap-3">
+                <div className="relative min-w-[220px] flex-1">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="ابحث في نص الإشعار..."
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                  />
+                  <Bell className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2" />
                 </div>
 
-                {/* Right Actions */}
-                <div className="flex items-center gap-2 sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-black/5 dark:border-white/5">
-                  {!notif.read && (
-                    <button
-                      type="button"
-                      onClick={() => handleMarkAsRead(notif.id)}
-                      className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
-                      title="تعليم كمقروء"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>تعليم كمقروء</span>
-                    </button>
-                  )}
-
-                  {(notif.link || notif.actionPage || notif.metadata?.orderId || notif.metadata?.productId || (notif.actionTab && onNavigateTab)) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!notif.read) handleMarkAsRead(notif.id);
-                        if (notif.actionTab && onNavigateTab) {
-                          onNavigateTab(notif.actionTab);
-                        } else {
-                          resolveNotificationNavigation(notif as any, currentRole, {
-                            setActivePage,
-                            navigateToOrder,
-                            navigateToProduct,
-                            navigateToSeller,
-                            onNavigateTab
-                          });
-                        }
-                      }}
-                      className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <span>الانتقال والتفاصيل</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-
+                {notifications.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => handleDelete(notif.id)}
-                    className="p-2 text-black/40 dark:text-white/40 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors cursor-pointer"
-                    title="حذف هذا الإشعار"
+                    onClick={handleClearAll}
+                    className="px-3.5 py-2.5 text-xs font-black text-black/50 dark:text-white/50 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors flex items-center gap-1.5 border border-transparent hover:border-red-200 cursor-pointer"
+                    title="مسح كافة الإشعارات"
                   >
                     <Trash2 className="w-4 h-4" />
+                    <span className="hidden sm:inline">مسح السجل</span>
                   </button>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="p-12 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center mx-auto text-[#9a6a35]/40">
-              <Bell className="w-8 h-8" />
             </div>
-            <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
-              لا توجد إشعارات مطابقة للبحث أو التصفية الحالية
-            </h4>
-            <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto font-medium">
-              عند حدوث أي تفاعل جديد على منتجاتك، طلبياتك، أو حسابك ستظهر التنبيهات هنا فورياً مع إمكانية التفاعل معها بنقرة واحدة.
-            </p>
+
+            {/* Type Categories Filter */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-black/10 dark:border-white/10 text-xs">
+              <span className="text-black/60 dark:text-white/60 text-[11px] font-black shrink-0 ml-1">
+                تصنيف الإشعار:
+              </span>
+              <button
+                type="button"
+                onClick={() => setFilterType('all')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'all'
+                  ? 'bg-[#211d18] dark:bg-white text-white dark:text-[#211d18] font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                الكل
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('new_order')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'new_order'
+                  ? 'bg-emerald-600 text-white font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                الطلبات والمبيعات
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('product_approved')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'product_approved'
+                  ? 'bg-emerald-600 text-white font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                اعتماد المنتجات
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('low_stock')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'low_stock'
+                  ? 'bg-amber-600 text-white font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                تنبيهات المخزون
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('payout_paid')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'payout_paid'
+                  ? 'bg-purple-600 text-white font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                التحويلات المالية
+              </button>
+              <button
+                type="button"
+                onClick={() => setFilterType('new_review')}
+                className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'new_review'
+                  ? 'bg-amber-600 text-white font-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                تقييمات الزبائن
+              </button>
+            </div>
           </div>
-        )}
-      </div>
-      </>
+
+          {/* Notifications List Content */}
+          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden backdrop-blur-xl shadow-lg">
+            {filteredNotifications.length > 0 ? (
+              <div className="divide-y divide-black/5 dark:divide-white/5">
+                {filteredNotifications.map((notif) => (
+                  <div
+                    key={notif.id}
+                    className={`p-5 sm:p-6 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group ${notif.read
+                      ? 'bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
+                      : 'bg-[#9a6a35]/5 hover:bg-[#9a6a35]/10'
+                      }`}
+                  >
+                    {/* Left (RTL Right): Icon & Details */}
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="w-12 h-12 rounded-2xl bg-white dark:bg-[#1f1d1a] border border-black/10 dark:border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+                        {getNotificationIcon(notif.type)}
+                      </div>
+
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4
+                            className={`text-sm sm:text-base font-black ${notif.read
+                              ? 'text-[#211d18] dark:text-[#f5f0e7]'
+                              : 'text-[#9a6a35]'
+                              }`}
+                          >
+                            {notif.title}
+                          </h4>
+                          {!notif.read && (
+                            <span className="px-2 py-0.5 bg-[#9a6a35] text-white text-[10px] font-black rounded-full">
+                              جديد
+                            </span>
+                          )}
+                        </div>
+
+                        <p className="text-xs sm:text-sm text-black/70 dark:text-white/70 leading-relaxed max-w-3xl font-medium">
+                          {notif.message}
+                        </p>
+
+                        <div className="flex items-center gap-3 pt-1 text-[11px] text-black/50 dark:text-white/50 font-medium">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{formatTimeAgo(notif.createdAt)}</span>
+                          </span>
+                          <span>•</span>
+                          <span>
+                            {new Date(notif.createdAt).toLocaleDateString('ar-EG', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Actions */}
+                    <div className="flex items-center gap-2 sm:self-center shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-black/5 dark:border-white/5">
+                      {!notif.read && (
+                        <button
+                          type="button"
+                          onClick={() => handleMarkAsRead(notif.id)}
+                          className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                          title="تعليم كمقروء"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          <span>تعليم كمقروء</span>
+                        </button>
+                      )}
+
+                      {(notif.link || notif.actionPage || notif.metadata?.orderId || notif.metadata?.productId || (notif.actionTab && onNavigateTab)) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!notif.read) handleMarkAsRead(notif.id);
+                            if (notif.actionTab && onNavigateTab) {
+                              onNavigateTab(notif.actionTab);
+                            } else {
+                              resolveNotificationNavigation(notif as any, currentRole, {
+                                setActivePage,
+                                navigateToOrder,
+                                navigateToProduct,
+                                navigateToSeller,
+                                onNavigateTab
+                              });
+                            }
+                          }}
+                          className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <span>الانتقال والتفاصيل</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(notif.id)}
+                        className="p-2 text-black/40 dark:text-white/40 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors cursor-pointer"
+                        title="حذف هذا الإشعار"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-12 text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center mx-auto text-[#9a6a35]/40">
+                  <Bell className="w-8 h-8" />
+                </div>
+                <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
+                  لا توجد إشعارات مطابقة للبحث أو التصفية الحالية
+                </h4>
+                <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto font-medium">
+                  عند حدوث أي تفاعل جديد على منتجاتك، طلبياتك، أو حسابك ستظهر التنبيهات هنا فورياً مع إمكانية التفاعل معها بنقرة واحدة.
+                </p>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       {/* Broadcast Announcement & Targeted Notifications Modal (Admin Only) */}
@@ -1210,11 +1180,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUserId('');
                       setSelectedTargetUser(null);
                     }}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      broadcastTargetType === 'all'
-                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
-                    }`}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'all'
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      }`}
                   >
                     <Users className="w-4 h-4" />
                     <span className="font-black text-[11px]">كافة المستخدمين</span>
@@ -1226,11 +1195,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setBroadcastTargetType('user');
                       if (availableUsers.length === 0) fetchUsers();
                     }}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      broadcastTargetType === 'user'
-                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
-                    }`}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'user'
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      }`}
                   >
                     <User className="w-4 h-4" />
                     <span className="font-black text-[11px]">مستخدم محدد</span>
@@ -1243,11 +1211,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUserId('');
                       setSelectedTargetUser(null);
                     }}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      broadcastTargetType === 'buyers'
-                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
-                    }`}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'buyers'
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      }`}
                   >
                     <Package className="w-4 h-4" />
                     <span className="font-black text-[11px]">المشترين فقط</span>
@@ -1260,11 +1227,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUserId('');
                       setSelectedTargetUser(null);
                     }}
-                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${
-                      broadcastTargetType === 'sellers'
-                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                        : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
-                    }`}
+                    className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'sellers'
+                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      }`}
                   >
                     <Sparkles className="w-4 h-4" />
                     <span className="font-black text-[11px]">أصحاب الورش</span>
@@ -1339,16 +1305,16 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         {isLoadingUsers ? (
                           <div className="p-4 text-center text-xs text-black/50">جارٍ جلب المستخدمين...</div>
                         ) : availableUsers.filter((u) => {
-                            if (!userSearchQuery.trim()) return true;
-                            const q = userSearchQuery.toLowerCase();
-                            return (
-                              (u.name && u.name.toLowerCase().includes(q)) ||
-                              (u.fullName && u.fullName.toLowerCase().includes(q)) ||
-                              (u.email && u.email.toLowerCase().includes(q)) ||
-                              (u.id && u.id.toLowerCase().includes(q)) ||
-                              (u._id && String(u._id).toLowerCase().includes(q))
-                            );
-                          }).slice(0, 6).length > 0 ? (
+                          if (!userSearchQuery.trim()) return true;
+                          const q = userSearchQuery.toLowerCase();
+                          return (
+                            (u.name && u.name.toLowerCase().includes(q)) ||
+                            (u.fullName && u.fullName.toLowerCase().includes(q)) ||
+                            (u.email && u.email.toLowerCase().includes(q)) ||
+                            (u.id && u.id.toLowerCase().includes(q)) ||
+                            (u._id && String(u._id).toLowerCase().includes(q))
+                          );
+                        }).slice(0, 6).length > 0 ? (
                           availableUsers
                             .filter((u) => {
                               if (!userSearchQuery.trim()) return true;

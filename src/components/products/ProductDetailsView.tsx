@@ -1008,7 +1008,7 @@ export const ProductDetailsView: React.FC = () => {
                     size={16}
                     className={
                       star <= Math.floor(product.rating)
-                        ? 'fill-amber-400 text-amber-400'
+                        ? ' text-[#d6aa72]'
                         : 'text-black/15 dark:text-white/15'
                     }
                   />
@@ -1399,7 +1399,7 @@ export const ProductDetailsView: React.FC = () => {
                     p-4
                   "
                 >
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-200">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-[#d5a56d]">
                     <Store size={16} />
                     أنت مسجل كبائع وحرفي
                   </div>
@@ -1451,7 +1451,7 @@ export const ProductDetailsView: React.FC = () => {
                         text-amber-800
                         hover:bg-amber-50
                         dark:bg-[#1a1512]
-                        dark:text-amber-200
+                        dark:text-[#d5a56d]
                         cursor-pointer
                       "
                     >
@@ -2067,7 +2067,7 @@ export const ProductDetailsView: React.FC = () => {
                                     Math.floor(
                                       product.rating
                                     )
-                                    ? 'fill-amber-400 text-amber-400'
+                                    ? ' text-[#d6aa72]'
                                     : 'text-white/15'
                                 }
                               />
@@ -2172,7 +2172,7 @@ export const ProductDetailsView: React.FC = () => {
                                 <Star
                                   key={index}
                                   size={12}
-                                  className="fill-amber-400 text-amber-400"
+                                  className=" text-[#d6aa72]"
                                 />
                               ))}
                             </div>
@@ -2222,7 +2222,7 @@ export const ProductDetailsView: React.FC = () => {
                                 size={20}
                                 className={
                                   star <= newRating
-                                    ? 'fill-amber-400 text-amber-400'
+                                    ? ' text-[#d6aa72]'
                                     : 'text-black/15 dark:text-white/15'
                                 }
                               />

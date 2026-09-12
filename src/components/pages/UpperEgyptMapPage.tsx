@@ -540,7 +540,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                           <h3 className="text-3xl font-black text-white group-hover:text-[#d5a56d] transition-colors">
                             {gov.name}
                           </h3>
-                          <p className="mt-1 text-xs font-bold text-amber-200">{gov.nickname}</p>
+                          <p className="mt-1 text-xs font-bold text-[#d5a56d]">{gov.nickname}</p>
                           <p className="mt-2 line-clamp-2 text-xs text-white/75">{gov.shortIntro}</p>
 
                           {active && (
@@ -636,7 +636,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                     </h1>
 
                     {selectedGov?.nickname && (
-                      <p className="text-lg sm:text-2xl font-bold text-amber-200">{selectedGov.nickname}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-[#d5a56d]">{selectedGov.nickname}</p>
                     )}
 
                     {selectedGov?.shortIntro && (

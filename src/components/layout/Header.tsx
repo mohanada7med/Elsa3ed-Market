@@ -783,7 +783,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   color: mainText,
                 }}
               >
-                {isDark ? <Sun size={19} className="text-amber-400" /> : <Moon size={19} />}
+                {isDark ? <Sun size={19} className="text-[#d6aa72]" /> : <Moon size={19} />}
               </button>
 
               {/* MOBILE QUIZ BUTTON */}
@@ -930,7 +930,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     color: mainText,
                   }}
                 >
-                  {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+                  {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
                 </button>
 
                 {/* FAVORITES */}

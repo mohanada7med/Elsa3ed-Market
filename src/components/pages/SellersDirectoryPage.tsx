@@ -66,7 +66,7 @@ export const SellersDirectoryPage: React.FC = () => {
       {/* Header */}
       <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-6 sm:p-10 shadow-xl relative overflow-hidden border border-black/10 dark:border-white/10 backdrop-blur-xl">
         <div className="relative z-10 max-w-2xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 dark:bg-black/10 text-amber-200 dark:text-[#9a6a35] text-xs font-bold backdrop-blur-xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 dark:bg-black/10 text-[#d5a56d] dark:text-[#9a6a35] text-xs font-bold backdrop-blur-xs">
             <Store className="w-3.5 h-3.5" />
             <span>من الورشة لبيتك على طول</span>
           </div>
@@ -172,7 +172,7 @@ export const SellersDirectoryPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-2.5 py-1 rounded-xl text-xs font-bold backdrop-blur-md">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <Star className="w-3.5 h-3.5  text-[#d6aa72]" />
                       <span>{seller.rating}</span>
                       <span className="text-[10px] text-black/40 dark:text-white/40 font-normal">({seller.salesCount} مبيعة)</span>
                     </div>

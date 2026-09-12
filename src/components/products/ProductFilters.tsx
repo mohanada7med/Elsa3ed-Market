@@ -124,11 +124,10 @@ export const ProductFilters: React.FC = () => {
                   type="button"
                   id={`filter-gov-${gov}`}
                   onClick={() => setSelectedGovernorateFilter(gov)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
-                    isSelected
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${isSelected
                       ? 'bg-[#9a6a35] text-white shadow-xs'
                       : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
-                  }`}
+                    }`}
                 >
                   {gov === 'all' ? 'كل محافظات الصعيد' : gov}
                 </button>
@@ -148,11 +147,10 @@ export const ProductFilters: React.FC = () => {
               type="button"
               id="filter-cat-all"
               onClick={() => setSelectedCategoryFilter('all')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
-                selectedCategoryFilter === 'all'
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${selectedCategoryFilter === 'all'
                   ? 'bg-[#9a6a35] text-white shadow-xs'
                   : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
-              }`}
+                }`}
             >
               كل التصنيفات
             </button>
@@ -164,11 +162,10 @@ export const ProductFilters: React.FC = () => {
                   type="button"
                   id={`filter-cat-${cat.id}`}
                   onClick={() => setSelectedCategoryFilter(cat.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${
-                    isSelected
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${isSelected
                       ? 'bg-[#9a6a35] text-white shadow-xs'
                       : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
-                  }`}
+                    }`}
                 >
                   {cat.name}
                 </button>
@@ -188,7 +185,7 @@ export const ProductFilters: React.FC = () => {
               className="w-4 h-4 text-[#9a6a35] rounded focus:ring-[#9a6a35] border-black/20 dark:border-white/20 cursor-pointer"
             />
             <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-[#d6aa72]" />
               <span>شغل يدوي 100% بس بإيد شيوخ الصنعة</span>
             </span>
           </label>

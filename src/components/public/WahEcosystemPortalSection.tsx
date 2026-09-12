@@ -113,7 +113,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'موسم كسر القصب، مولد سيدي عبد الرحيم القنائي، ليالي التحطيب بالأقصر، وتعامد الشمس في أبو سمبل.',
       badge: 'مواسم حية',
       page: 'events' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
       nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70'
     }
@@ -168,14 +168,17 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
-                منظومة صعيدية متكاملة تجمع بين{' '}
-                <strong className="text-[#9a6a35] dark:text-[#d6aa72]">السوق التجاري الحرفي المباشر</strong>،{' '}
-                وريلز وتجارب صناع المحتوى الحية، والتوثيق الوثائقي التفاعلي لكل شبر في الصعيد.
+                كل خير وأصالة الصعيد — متجمعين في مكان واحد.
+                منصة بتفتحلك الباب على:
+                <br />
+                <strong className="text-[#9a6a35] dark:text-[#d6aa72]">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}
+                وفيديوهات وتجارب حقيقيه من صناع المحتوى، وتوثيق تفاعلي لكل شبر وسر في الصعيد.
               </p>
             </div>
           </div>
         </div>
       </div>
+
       {/* شاشة سطح المكتب: أكورديون أفقي متمدد سينمائي */}
       <div className="hidden lg:flex gap-3 h-[520px] w-full">
         {portals.map((portal, idx) => {
@@ -219,7 +222,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 className={`absolute inset-0 p-6 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
                   }`}
               >
-                <span className="font-mono text-xs text-white/50 font-light">
+                <span className="font-mono text-xs text-[#d5a56d] font-bold">
                   0{idx + 1}
                 </span>
 
@@ -242,7 +245,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-xs px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-amber-200 border border-white/10">
+                        <span className="font-mono text-xs px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-[#d5a56d] font-bold border border-white/10">
                           0{idx + 1}
                         </span>
 
@@ -270,7 +273,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                         {portal.desc}
                       </p>
 
-                      <div className="pt-2 border-t border-white/20 inline-flex items-center gap-2 text-xs text-amber-200/90">
+                      <div className="pt-2 border-t border-white/20 inline-flex items-center gap-2 text-xs text-[#d5a56d]/90">
                         <span className="italic">{portal.tagline}</span>
                       </div>
                     </div>
@@ -321,7 +324,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 cursor-pointer select-none
               "
             >
-              {/* الصورة مع تأثير Zoom ناعم */}
               <img
                 src={portal.image}
                 alt={portal.title}
@@ -334,17 +336,15 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 decoding="async"
               />
 
-              {/* طبقة تدرج لوني سينمائي متعدد الدرجات */}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
               <div className={`absolute inset-0 bg-gradient-to-b ${portal.accentColor} to-transparent opacity-40 mix-blend-overlay`} />
 
-              {/* نقشة هندسية مصغرة في أركان الكارت */}
               <div className="pointer-events-none absolute left-4 top-4 h-16 w-16 rounded-full border border-white/10" />
 
               {/* الجزء العلوي: الرقم والبادج وزر الأكشن */}
               <div className="relative z-10 flex items-center justify-between p-5">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-black tracking-wider text-amber-200 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/15">
+                  <span className="font-mono text-xs font-black tracking-wider text-[#d5a56d] bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/15">
                     0{idx + 1}
                   </span>
                   <span className="text-[11px] font-bold bg-[#9a6a35] text-white px-3 py-1 rounded-full shadow-md backdrop-blur-md">
@@ -372,7 +372,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 </p>
 
                 <div className="pt-2 border-t border-white/15 flex items-center justify-between">
-                  <span className="text-[11px] text-amber-200/90 font-medium italic truncate max-w-[85%]">
+                  <span className="text-[11px] text-[#d5a56d]/90 font-medium italic truncate max-w-[85%]">
                     {portal.tagline}
                   </span>
                   <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35]" />

@@ -882,7 +882,7 @@ export const PlaceDetailPage: React.FC = () => {
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${place.visitInfo.visitStatus === 'closed_to_public'
                       ? 'bg-red-500/20 text-red-600 dark:text-red-400'
                       : place.visitInfo.visitStatus === 'closed_for_restoration'
-                        ? 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
+                        ? 'bg-amber-500/20 text-amber-600 dark:text-[#d6aa72]'
                         : place.visitInfo.visitStatus === 'public_landmark'
                           ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           : place.visitInfo.visitStatus === 'active_institution'
@@ -1021,10 +1021,10 @@ export const PlaceDetailPage: React.FC = () => {
               {place.visitorTips && (
                 <div className="mt-4 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                    <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                    <Info className="w-5 h-5 text-amber-600 dark:text-[#d6aa72]" />
                   </div>
                   <div>
-                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-amber-400 mb-1">
+                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-[#d6aa72] mb-1">
                       نصيحة ذهبية للزائر
                     </span>
                     <p className="text-sm leading-relaxed text-black/80 dark:text-white/80 break-words">

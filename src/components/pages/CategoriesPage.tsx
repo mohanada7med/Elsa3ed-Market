@@ -55,8 +55,8 @@ export const CategoriesPage: React.FC = () => {
             type="button"
             onClick={() => setViewMode('interactive')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'interactive'
-                ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
-                : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
+              ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
+              : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
           >
             <Rows3 className="w-4 h-4" />
@@ -67,8 +67,8 @@ export const CategoriesPage: React.FC = () => {
             type="button"
             onClick={() => setViewMode('grid')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'grid'
-                ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
-                : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
+              ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
+              : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
               }`}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -112,8 +112,8 @@ export const CategoriesPage: React.FC = () => {
                     onMouseEnter={() => setSelectedCatId(cat.id)}
                     onClick={() => navigateToCategory(cat.id)}
                     className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 cursor-pointer flex items-center justify-between ${isSelected
-                        ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] dark:border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/30'
-                        : 'bg-white/50 dark:bg-[#151513]/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
+                      ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] dark:border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/30'
+                      : 'bg-white/50 dark:bg-[#151513]/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
                       }`}
                   >
                     <div className="flex items-center gap-4">
@@ -125,8 +125,8 @@ export const CategoriesPage: React.FC = () => {
                       <div>
                         <h3
                           className={`text-lg font-black font-serif transition-colors ${isSelected
-                              ? 'text-[#9a6a35] dark:text-[#d5a56d]'
-                              : 'text-[#211d18] dark:text-[#f5f0e7]'
+                            ? 'text-[#9a6a35] dark:text-[#d5a56d]'
+                            : 'text-[#211d18] dark:text-[#f5f0e7]'
                             }`}
                         >
                           {cat.name}
@@ -145,8 +145,8 @@ export const CategoriesPage: React.FC = () => {
                       )}
                       <ArrowUpLeft
                         className={`w-4 h-4 transition-transform duration-300 ${isSelected
-                            ? 'text-[#9a6a35] dark:text-[#d5a56d] -translate-x-1 -translate-y-1'
-                            : 'text-[#211d18]/30 dark:text-[#f5f0e7]/30 group-hover:opacity-100'
+                          ? 'text-[#9a6a35] dark:text-[#d5a56d] -translate-x-1 -translate-y-1'
+                          : 'text-[#211d18]/30 dark:text-[#f5f0e7]/30 group-hover:opacity-100'
                           }`}
                       />
                     </div>
@@ -229,8 +229,8 @@ export const CategoriesPage: React.FC = () => {
                 <div
                   key={cat.id}
                   className={`relative rounded-[1.5rem] border overflow-hidden transition-all duration-300 ${isOpen
-                      ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/20'
-                      : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10'
+                    ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/20'
+                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10'
                     }`}
                 >
                   {/* شريط الإضاءة النحاسي الجانبي للتمييز الاحترافي */}
@@ -248,8 +248,8 @@ export const CategoriesPage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span
                         className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
-                            ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
-                            : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                          ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
+                          : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
                           }`}
                       >
                         0{idx + 1}
@@ -272,8 +272,8 @@ export const CategoriesPage: React.FC = () => {
                       )}
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isOpen
-                            ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
-                            : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
+                          ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
+                          : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
                           }`}
                       >
                         <ChevronDown
@@ -318,7 +318,7 @@ export const CategoriesPage: React.FC = () => {
 
                             {/* شارة التوجيه بالأسفل */}
                             <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-white">
-                              <span className="text-xs font-semibold text-amber-200/90 flex items-center gap-1">
+                              <span className="text-xs font-semibold text-[#d5a56d]/90 flex items-center gap-1">
                                 <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
                                 <span>دوس على الصورة عشان تشوف المنتجات</span>
                               </span>

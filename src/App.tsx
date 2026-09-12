@@ -365,329 +365,329 @@ const MainContent: React.FC = () => {
           >
             <React.Suspense fallback={<LazySectionFallback />}>
               {activePage === 'home' && <HomePage />}
-            {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
-            {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
-            {activePage === 'categories' && <CategoriesPage />}
-            {activePage === 'category-details' && <ProductsPage />}
-            {activePage === 'crafts' && <CraftsPage />}
-            {activePage === 'reels' && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <CraftReelsPage />
-              </React.Suspense>
-            )}
-            {activePage === 'sellers' && <SellersDirectoryPage />}
-            {activePage === 'seller-details' && <SellerProfileView />}
+              {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
+              {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
+              {activePage === 'categories' && <CategoriesPage />}
+              {activePage === 'category-details' && <ProductsPage />}
+              {activePage === 'crafts' && <CraftsPage />}
+              {activePage === 'reels' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <CraftReelsPage />
+                </React.Suspense>
+              )}
+              {activePage === 'sellers' && <SellersDirectoryPage />}
+              {activePage === 'seller-details' && <SellerProfileView />}
 
-            {/* Cart */}
-            {activePage === 'cart' && (
-              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
-                <ForbiddenPage />
-              ) : (
-                <CartPage />
-              )
-            )}
+              {/* Cart */}
+              {activePage === 'cart' && (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                  <ForbiddenPage />
+                ) : (
+                  <CartPage />
+                )
+              )}
 
-            {/* Checkout */}
-            {activePage === 'checkout' && (
-              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
-                <ForbiddenPage />
-              ) : isAuthenticated ? (
-                <CheckoutPage />
-              ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl text-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto text-2xl">
-                    🔒
+              {/* Checkout */}
+              {activePage === 'checkout' && (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                  <ForbiddenPage />
+                ) : isAuthenticated ? (
+                  <CheckoutPage />
+                ) : (
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto text-2xl">
+                      🔒
+                    </div>
+                    <h2 className="text-xl font-bold font-serif">تسجيل الدخول لإتمام الطلب</h2>
+                    <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                      يرجى تسجيل الدخول أو إنشاء حساب جديد لحفظ بيانات الشحن ومتابعة حالة طلبك التراثي.
+                    </p>
+                    <div className="pt-2 flex flex-col gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthModalTab('login');
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+                      >
+                        تسجيل الدخول للمتابعة
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActivePage('products')}
+                        className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
+                      >
+                        متابعة التسوق أولاً
+                      </button>
+                    </div>
                   </div>
-                  <h2 className="text-xl font-bold font-serif">تسجيل الدخول لإتمام الطلب</h2>
-                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                    يرجى تسجيل الدخول أو إنشاء حساب جديد لحفظ بيانات الشحن ومتابعة حالة طلبك التراثي.
-                  </p>
-                  <div className="pt-2 flex flex-col gap-2">
+                )
+              )}
+
+              {(activePage === 'orders' || activePage === 'order-details') && (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                  <ForbiddenPage />
+                ) : (
+                  <React.Suspense fallback={<LazySectionFallback />}>
+                    <OrdersTrackingPage />
+                  </React.Suspense>
+                )
+              )}
+
+              {activePage === 'favorites' && (
+                isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
+                  <ForbiddenPage />
+                ) : (
+                  <FavoritesPage />
+                )
+              )}
+
+              {/* Notifications */}
+              {activePage === 'notifications' && <NotificationsPage />}
+
+              {/* Live Chat */}
+              {activePage === 'messages' && (
+                isAuthenticated ? (
+                  <ChatView isSellerMode={currentRole === 'seller'} />
+                ) : (
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-[#d6aa72] flex items-center justify-center mx-auto text-2xl">
+                      💬
+                    </div>
+                    <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">المحادثة المباشرة مع الحرفيين</h2>
+                    <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
+                      يرجى تسجيل الدخول لبدء أو استكمال محادثاتك مع ورش الحرف التراثية ومتابعة استفساراتك.
+                    </p>
                     <button
                       type="button"
                       onClick={() => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+                      className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
-                      تسجيل الدخول للمتابعة
+                      تسجيل الدخول للمحادثة
+                    </button>
+                  </div>
+                )
+              )}
+
+              {/* Buyer Account */}
+              {(activePage === 'buyer-account' || activePage === 'profile') && (
+                isAuthenticated ? (
+                  <BuyerAccountPage />
+                ) : (
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                      👤
+                    </div>
+                    <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">إعدادات الحساب الشخصي</h2>
+                    <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                      يرجى تسجيل الدخول للوصول إلى بياناتك الشخصية وعناوين الشحن المحفوظة.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('login');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                    >
+                      تسجيل الدخول الآن
+                    </button>
+                  </div>
+                )
+              )}
+
+              {/* Seller Dashboard */}
+              {activePage.startsWith('seller-') && activePage !== 'seller-details' && (isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') && currentUser?.sellerStatus !== 'pending' && currentUser?.sellerStatus !== 'rejected' ? (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <SellerDashboard />
+                </React.Suspense>
+              ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
+                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-[#d6aa72] flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
+                    ⏳
+                  </div>
+                  <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
+                    طلبك قيد المراجعة والاعتماد
+                  </span>
+                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    طلب انضمام ورشتك قيد الفحص الإداري
+                  </h2>
+                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                    تم استلام طلب اعتماد ورشة "{currentUser.seller?.brandName || 'ورشة الحرفي'}" بنجاح، ويجري حالياً تدقيق البيانات والمعايير التراثية من قبل إدارة منصة وه. ستتمكن من إضافة المنتجات وإدارة المتجر فور صدور الاعتماد.
+                  </p>
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setActivePage('buyer-account')}
+                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                    >
+                      متابعة حالة الطلب في حسابي
                     </button>
                     <button
                       type="button"
-                      onClick={() => setActivePage('products')}
-                      className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
+                      onClick={() => setActivePage('home')}
+                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
                     >
-                      متابعة التسوق أولاً
+                      العودة للرئيسية
                     </button>
                   </div>
                 </div>
-              )
-            )}
-
-            {(activePage === 'orders' || activePage === 'order-details') && (
-              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
-                <ForbiddenPage />
-              ) : (
-                <React.Suspense fallback={<LazySectionFallback />}>
-                  <OrdersTrackingPage />
-                </React.Suspense>
-              )
-            )}
-
-            {activePage === 'favorites' && (
-              isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') ? (
-                <ForbiddenPage />
-              ) : (
-                <FavoritesPage />
-              )
-            )}
-
-            {/* Notifications */}
-            {activePage === 'notifications' && <NotificationsPage />}
-
-            {/* Live Chat */}
-            {activePage === 'messages' && (
-              isAuthenticated ? (
-                <ChatView isSellerMode={currentRole === 'seller'} />
-              ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center mx-auto text-2xl">
-                    💬
+              ) : isAuthenticated && currentUser?.sellerStatus === 'rejected' ? (
+                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                  <div className="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/20">
+                    ⚠️
                   </div>
-                  <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">المحادثة المباشرة مع الحرفيين</h2>
-                  <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
-                    يرجى تسجيل الدخول لبدء أو استكمال محادثاتك مع ورش الحرف التراثية ومتابعة استفساراتك.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-                  >
-                    تسجيل الدخول للمحادثة
-                  </button>
-                </div>
-              )
-            )}
-
-            {/* Buyer Account */}
-            {(activePage === 'buyer-account' || activePage === 'profile') && (
-              isAuthenticated ? (
-                <BuyerAccountPage />
-              ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
-                    👤
-                  </div>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">إعدادات الحساب الشخصي</h2>
+                  <span className="inline-block px-3 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold">
+                    تم رفض طلب الاعتماد
+                  </span>
+                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    لم يتم قبول طلب الانضمام كبائع
+                  </h2>
                   <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    يرجى تسجيل الدخول للوصول إلى بياناتك الشخصية وعناوين الشحن المحفوظة.
+                    {currentUser.seller?.rejectionReason || 'عفواً، لم يستوفِ الطلب المعايير التراثية المعتمدة للمنصة في الوقت الحالي.'}
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-                  >
-                    تسجيل الدخول الآن
-                  </button>
+                  <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
+                    <button
+                      type="button"
+                      onClick={() => setActivePage('buyer-account')}
+                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                    >
+                      تعديل وإعادة تقديم الطلب
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActivePage('home')}
+                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                    >
+                      تصفح السوق
+                    </button>
+                  </div>
                 </div>
-              )
-            )}
-
-            {/* Seller Dashboard */}
-            {activePage.startsWith('seller-') && activePage !== 'seller-details' && (isAuthenticated && (currentRole === 'seller' || currentRole === 'admin') && currentUser?.sellerStatus !== 'pending' && currentUser?.sellerStatus !== 'rejected' ? (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <SellerDashboard />
-              </React.Suspense>
-            ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
-              <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
-                  ⏳
-                </div>
-                <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
-                  طلبك قيد المراجعة والاعتماد
-                </span>
-                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                  طلب انضمام ورشتك قيد الفحص الإداري
-                </h2>
-                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                  تم استلام طلب اعتماد ورشة "{currentUser.seller?.brandName || 'ورشة الحرفي'}" بنجاح، ويجري حالياً تدقيق البيانات والمعايير التراثية من قبل إدارة منصة وه. ستتمكن من إضافة المنتجات وإدارة المتجر فور صدور الاعتماد.
-                </p>
-                <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setActivePage('buyer-account')}
-                    className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
-                  >
-                    متابعة حالة الطلب في حسابي
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActivePage('home')}
-                    className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
-                  >
-                    العودة للرئيسية
-                  </button>
-                </div>
-              </div>
-            ) : isAuthenticated && currentUser?.sellerStatus === 'rejected' ? (
-              <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                <div className="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/20">
-                  ⚠️
-                </div>
-                <span className="inline-block px-3 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold">
-                  تم رفض طلب الاعتماد
-                </span>
-                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
-                  لم يتم قبول طلب الانضمام كبائع
-                </h2>
-                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                  {currentUser.seller?.rejectionReason || 'عفواً، لم يستوفِ الطلب المعايير التراثية المعتمدة للمنصة في الوقت الحالي.'}
-                </p>
-                <div className="pt-2 flex flex-col sm:flex-row gap-2.5 justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setActivePage('buyer-account')}
-                    className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
-                  >
-                    تعديل وإعادة تقديم الطلب
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActivePage('home')}
-                    className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
-                  >
-                    تصفح السوق
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
-                <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
-                  🏺
-                </div>
-                <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">لوحة تحكم ورش الصعيد</h2>
-                <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                  هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
-                </p>
-                <div className="pt-2 flex flex-col gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-                  >
-                    تسجيل دخول البائع
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (isAuthenticated) {
-                        setActivePage('buyer-account');
-                      } else {
-                        setAuthModalTab('register');
+              ) : (
+                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
+                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                    🏺
+                  </div>
+                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">لوحة تحكم ورش الصعيد</h2>
+                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                    هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
+                  </p>
+                  <div className="pt-2 flex flex-col gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('login');
                         setIsAuthModalOpen(true);
-                      }
-                    }}
-                    className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
-                  >
-                    تقديم طلب انضمام ورشة جديدة
-                  </button>
-                </div>
-              </div>
-            ))}
-
-            {/* Admin Dashboard */}
-            {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
-              isAuthenticated && currentRole === 'admin' ? (
-                <React.Suspense fallback={<LazySectionFallback />}>
-                  <AdminDashboard />
-                </React.Suspense>
-              ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
-                    🛡️
+                      }}
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                    >
+                      تسجيل دخول البائع
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isAuthenticated) {
+                          setActivePage('buyer-account');
+                        } else {
+                          setAuthModalTab('register');
+                          setIsAuthModalOpen(true);
+                        }
+                      }}
+                      className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                    >
+                      تقديم طلب انضمام ورشة جديدة
+                    </button>
                   </div>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">منطقة الإدارة العليا</h2>
-                  <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    هذه اللوحة مخصصة لمديري منصة وه فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthModalTab('login');
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
-                  >
-                    تسجيل الدخول الإداري
-                  </button>
                 </div>
-              )
-            )}
+              ))}
 
-            {activePage === 'reset-password' && <ResetPasswordPage />}
+              {/* Admin Dashboard */}
+              {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
+                isAuthenticated && currentRole === 'admin' ? (
+                  <React.Suspense fallback={<LazySectionFallback />}>
+                    <AdminDashboard />
+                  </React.Suspense>
+                ) : (
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                      🛡️
+                    </div>
+                    <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">منطقة الإدارة العليا</h2>
+                    <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
+                      هذه اللوحة مخصصة لمديري منصة وه فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthModalTab('login');
+                        setIsAuthModalOpen(true);
+                      }}
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                    >
+                      تسجيل الدخول الإداري
+                    </button>
+                  </div>
+                )
+              )}
 
-            {activePage === 'about' && (
-              <div className="py-8">
-                <AboutSection />
-              </div>
-            )}
+              {activePage === 'reset-password' && <ResetPasswordPage />}
 
-            {activePage === 'wholesale' && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <WholesalePage />
-              </React.Suspense>
-            )}
+              {activePage === 'about' && (
+                <div className="py-8">
+                  <AboutSection />
+                </div>
+              )}
 
-            {/* WAH Upper Egypt Digital Platform Routes */}
-            {(activePage === 'map' || activePage === 'explore') && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <UpperEgyptMapPage />
-              </React.Suspense>
-            )}
-            {activePage === 'governorates' && <GovernoratesPage />}
-            {activePage === 'governorate-details' && <GovernorateDetailPage />}
-            {activePage === 'places' && <PlacesHeritagePage />}
-            {activePage === 'place-details' && <PlaceDetailPage />}
-            {activePage === 'cultural-crafts' && <CulturalCraftsPage />}
-            {(activePage === 'craft-details' || activePage === 'cultural-craft-details') && <CulturalCraftDetailPage />}
-            {activePage === 'stories' && <StoriesPage />}
-            {activePage === 'story-details' && <StoryDetailPage />}
-            {activePage === 'people' && <PeoplePage />}
-            {activePage === 'person-details' && <PersonDetailPage />}
-            {activePage === 'food' && <FoodHeritagePage />}
-            {activePage === 'food-details' && <FoodDetailPage />}
-            {activePage === 'events' && <EventsPage />}
-            {activePage === 'event-details' && <EventDetailPage />}
-            {activePage === 'global-search' && <GlobalSearchResultsPage />}
-            {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <CulturalCmsAdminPage />
-              </React.Suspense>
-            )}
-            {activePage === 'admin-map-editor' && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <AdminMapEditorPage />
-              </React.Suspense>
-            )}
+              {activePage === 'wholesale' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <WholesalePage />
+                </React.Suspense>
+              )}
 
-            {/* Dialect Dictionary & Quiz */}
-            {(activePage === 'quize' || activePage === 'dialect-dictionary') && (
-              <React.Suspense fallback={<LazySectionFallback />}>
-                <DialectDictionaryPage />
-              </React.Suspense>
-            )}
+              {/* WAH Upper Egypt Digital Platform Routes */}
+              {(activePage === 'map' || activePage === 'explore') && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <UpperEgyptMapPage />
+                </React.Suspense>
+              )}
+              {activePage === 'governorates' && <GovernoratesPage />}
+              {activePage === 'governorate-details' && <GovernorateDetailPage />}
+              {activePage === 'places' && <PlacesHeritagePage />}
+              {activePage === 'place-details' && <PlaceDetailPage />}
+              {activePage === 'cultural-crafts' && <CulturalCraftsPage />}
+              {(activePage === 'craft-details' || activePage === 'cultural-craft-details') && <CulturalCraftDetailPage />}
+              {activePage === 'stories' && <StoriesPage />}
+              {activePage === 'story-details' && <StoryDetailPage />}
+              {activePage === 'people' && <PeoplePage />}
+              {activePage === 'person-details' && <PersonDetailPage />}
+              {activePage === 'food' && <FoodHeritagePage />}
+              {activePage === 'food-details' && <FoodDetailPage />}
+              {activePage === 'events' && <EventsPage />}
+              {activePage === 'event-details' && <EventDetailPage />}
+              {activePage === 'global-search' && <GlobalSearchResultsPage />}
+              {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <CulturalCmsAdminPage />
+                </React.Suspense>
+              )}
+              {activePage === 'admin-map-editor' && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <AdminMapEditorPage />
+                </React.Suspense>
+              )}
 
-            {!PAGE_ROUTES[activePage] && <NotFoundPage />}
+              {/* Dialect Dictionary & Quiz */}
+              {(activePage === 'quize' || activePage === 'dialect-dictionary') && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <DialectDictionaryPage />
+                </React.Suspense>
+              )}
+
+              {!PAGE_ROUTES[activePage] && <NotFoundPage />}
             </React.Suspense>
           </motion.div>
         </AnimatePresence>

@@ -151,7 +151,7 @@ export const SellerProfileView: React.FC = () => {
             <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
               <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
                 <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
-                  <Star className="w-3.5 h-3.5 fill-amber-400" />
+                  <Star className="w-3.5 h-3.5 " />
                   <span>{seller.rating}</span>
                 </div>
                 <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 block mt-0.5">تقييم المتسوقين</span>
@@ -184,7 +184,7 @@ export const SellerProfileView: React.FC = () => {
             {/* Contact / Workshop Info */}
             <div className="lg:col-span-4 bg-black/5 dark:bg-white/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70">
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <Calendar className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
                 <span>عضو معتمد في منصة وه منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>
               </div>
               <div className="flex items-center gap-2">

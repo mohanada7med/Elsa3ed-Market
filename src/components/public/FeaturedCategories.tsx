@@ -81,18 +81,16 @@ export const FeaturedCategories: React.FC = () => {
 
               {/* طبقة التدرج الداكنة */}
               <div
-                className={`absolute inset-0 transition-opacity duration-500 ${
-                  isActive
-                    ? 'bg-gradient-to-t from-black via-black/40 to-black/25'
-                    : 'bg-black/65 hover:bg-black/50'
-                }`}
+                className={`absolute inset-0 transition-opacity duration-500 ${isActive
+                  ? 'bg-gradient-to-t from-black via-black/40 to-black/25'
+                  : 'bg-black/65 hover:bg-black/50'
+                  }`}
               />
 
               {/* الحالة المنكمشة (Collapsed State): العنوان يظهر رأسياً بشكل أنيق */}
               <div
-                className={`absolute inset-0 p-6 flex flex-col justify-between items-center transition-opacity duration-300 ${
-                  isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                }`}
+                className={`absolute inset-0 p-6 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                  }`}
               >
                 <span className="font-mono text-xs text-white/50 font-light">
                   0{idx + 1}
@@ -118,7 +116,7 @@ export const FeaturedCategories: React.FC = () => {
                     {/* الجزء العلوي: الرقم وشارة المحافظة وزر الانتقال */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-xs px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-amber-200 border border-white/10">
+                        <span className="font-mono text-xs px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-[#d5a56d] border border-white/10">
                           0{idx + 1}
                         </span>
                         {cat.featuredGovernorate && (
@@ -149,8 +147,8 @@ export const FeaturedCategories: React.FC = () => {
                       </p>
 
                       {cat.heritageNote && (
-                        <div className="pt-3 border-t border-white/20 inline-flex items-center gap-2 text-xs text-amber-200/90">
-                          <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <div className="pt-3 border-t border-white/20 inline-flex items-center gap-2 text-xs text-[#d5a56d]/90">
+                          <Sparkles className="w-3.5 h-3.5 text-[#d6aa72] shrink-0" />
                           <span className="italic">{cat.heritageNote}</span>
                         </div>
                       )}

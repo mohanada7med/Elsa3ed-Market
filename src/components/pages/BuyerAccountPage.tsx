@@ -552,12 +552,12 @@ export const BuyerAccountPage: React.FC = () => {
               <>
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-[#d6aa72] border border-amber-500/20">
                     <Clock className="w-3 h-3" />
                     قيد المراجعة والتدقيق
                   </span>
                 </div>
-                <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 space-y-1">
+                <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-[#d5a56d] space-y-1">
                   <p className="font-bold">{currentUser.seller?.brandName || workshopName || 'ورشة مسجلة'}</p>
                   <p className="text-[11px] opacity-80">
                     محافظة {currentUser.seller?.governorate || applyGovernorate} • {currentUser.seller?.specialty || specialty}

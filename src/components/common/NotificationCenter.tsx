@@ -250,12 +250,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'product_pending_review':
         return (
-          <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <Sparkles className="h-4 w-4 text-amber-600 dark:text-[#d6aa72]" />
         );
 
       case 'low_stock':
         return (
-          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400" />
+          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-[#d6aa72]" />
         );
 
       case 'payout_requested':
@@ -267,7 +267,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'new_review':
         return (
-          <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+          <Star className="h-4 w-4 text-[#d6aa72] " />
         );
 
       case 'new_seller_registered':

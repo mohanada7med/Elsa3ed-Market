@@ -173,10 +173,8 @@ export const HeroSection: React.FC = () => {
           >
             أول منصة متكاملة لصعيد مصر تجمع بين{' '}
             <span className="font-bold text-[#9a6a35]">
-              السوق التجاري الحرفي، ريلز صناع المحتوى الحية، والتوثيق الوثائقي؛
+              سوق وه التجاري الحرفي، ريلز وه لصناع المحتوى الصعيدى، وتراث وه من أعمال توثيق وحفظ التراث
             </span>
-            <br />
-            تسوق منتجات الصعيد الأصلية واكتشف حكاوي وروح أهلنا من قلب الصعيد لكل الدنيا.
           </motion.p>
 
           <motion.div
@@ -208,7 +206,7 @@ export const HeroSection: React.FC = () => {
               className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-[#211d18] hover:bg-black text-white px-5 text-sm font-bold shadow-lg shadow-black/10 dark:bg-white dark:text-black dark:hover:bg-[#d5a56d] transition-all sm:min-w-[160px]"
             >
               <Film className="h-5 w-5 text-[#d6aa72] dark:text-[#9a6a35]" />
-              <span>ريلز الصعيد</span>
+              <span>ريلز وه</span>
               <ArrowLeft className="h-4 w-4 opacity-60 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
 
@@ -220,7 +218,7 @@ export const HeroSection: React.FC = () => {
               className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-[#9a6a35]/30 bg-white/85 px-5 text-sm font-bold text-[#2b241c] backdrop-blur-md transition-all hover:border-[#9a6a35] hover:bg-white hover:shadow-md hover:shadow-[#9a6a35]/15 dark:border-white/20 dark:bg-white/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[175px]"
             >
               <Landmark className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
-              <span>معالم وآثار الصعيد</span>
+              <span>معالم وآثار وه</span>
               <ArrowLeft className="h-4 w-4 opacity-50 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
 
@@ -232,7 +230,7 @@ export const HeroSection: React.FC = () => {
               className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-black/15 bg-white/70 px-5 text-sm font-bold text-[#211d18] backdrop-blur-md transition-all hover:border-[#9a6a35]/50 hover:bg-white hover:shadow-sm dark:border-white/20 dark:bg-white/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[155px]"
             >
               <Ship className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
-              <span>خريطة الصعيد</span>
+              <span>خريطة وه للصعيد</span>
               <ArrowLeft className="h-4 w-4 opacity-50 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
           </motion.div>
@@ -247,19 +245,19 @@ export const HeroSection: React.FC = () => {
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
                 <ShoppingBag className="h-3.5 w-3.5" />
               </span>
-              <span>سوق متكامل: تسوق مباشر ودفع آمن وشحن للباب</span>
+              <span>سوق كامل: اشترى على طول، ادفع بأمان، والتوصيل لحد باب بيتك</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
                 <Film className="h-3.5 w-3.5" />
               </span>
-              <span>ريلز حية من ورش الصعيد</span>
+              <span>فيديوهات حقيقيه من قلب ورش، وأماكن، وخبايا الصعيد</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
                 <Landmark className="h-3.5 w-3.5" />
               </span>
-              <span>وثائقيات ومعالم تفاعلية</span>
+              <span>حكايات ومعالم صعيدية تعيش معاها</span>
             </div>
           </motion.div>
 

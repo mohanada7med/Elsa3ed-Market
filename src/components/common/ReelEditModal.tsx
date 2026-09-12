@@ -326,8 +326,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       type="button"
                       onClick={() => setVideoInputMode('url')}
                       className={`px-2 py-1 rounded-md font-bold transition-all ${videoInputMode === 'url'
-                          ? 'bg-[#9a6a35] text-white'
-                          : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                        ? 'bg-[#9a6a35] text-white'
+                        : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
                       رابط URL
@@ -336,8 +336,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       type="button"
                       onClick={() => setVideoInputMode('upload')}
                       className={`px-2 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${videoInputMode === 'upload'
-                          ? 'bg-[#9a6a35] text-white'
-                          : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
+                        ? 'bg-[#9a6a35] text-white'
+                        : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
                       <Upload className="w-3 h-3" />
