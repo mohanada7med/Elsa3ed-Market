@@ -1,737 +1,235 @@
-import { useEffect, useRef, useState } from 'react';
+'use client';
 
-interface WahLogoIntroProps {
-    onEnter: () => void;
+import React, { useState, useEffect, useRef } from 'react';
+import { ShoppingBag, Film, Landmark } from 'lucide-react';
+
+interface WahIntroProps {
+    onFinish: () => void;
+    onEnter?: () => void;
 }
 
-const INTRO_STORAGE_KEY = 'elsa3ed_wah_intro_seen';
+const PILLARS = [
+    {
+        title: 'سوق وه.. من إيد الصانع لحد بيتك',
+        subtitle: 'اشترى أحلى شغل من الصعيد وخلّي طلبك يوصلك لحد بيتك',
+        icon: ShoppingBag,
+    },
+    {
+        title: 'ريلز وحكاوي من قلب الصعيد',
+        subtitle: 'شوف الصعيد على حقيقته ورش وأماكن أول مرة تشوفها',
+        icon: Film,
+    },
+    {
+        title: 'آثار ومعالم وحكاوي بلدنا',
+        subtitle: 'لفّ في بلادنا واعرف حكاية كل مكان من قلب الصعيد',
+        icon: Landmark,
+    },
+];
 
-export default function WahLogoIntro({
-    onEnter,
-}: WahLogoIntroProps) {
+type IntroPhase = 'idle' | 'welcoming' | 'loading_pillars';
+
+export const WahIntro: React.FC<WahIntroProps> = ({ onFinish, onEnter }) => {
+    const [phase, setPhase] = useState<IntroPhase>('idle');
+    const [pillarIndex, setPillarIndex] = useState(0);
+    const [isExiting, setIsExiting] = useState(false);
+
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const enterTimerRef = useRef<number | null>(null);
-    const leaveTimerRef = useRef<number | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const [isEntering, setIsEntering] = useState(false);
-    const [showWelcome, setShowWelcome] = useState(false);
-    const [isLeaving, setIsLeaving] = useState(false);
+    const handleComplete = () => {
+        setIsExiting(true);
+        // منح مهلة لإتمام حركة التلاشي الناعمة قبل إزالة المكون من الـ DOM
+        setTimeout(() => {
+            onFinish();
+            onEnter?.();
+        }, 500);
+    };
 
-    /*
-     * لو المستخدم شاف الـ Intro قبل كده
-     * ندخل الموقع مباشرة.
-     */
-    useEffect(() => {
-        const hasSeenIntro = localStorage.getItem(INTRO_STORAGE_KEY);
-
-        if (hasSeenIntro === 'true') {
-        }
-    }, [onEnter]);
-
-    /*
-     * تنظيف الـ timers فقط.
-     *
-     * مهم:
-     * لا نوقف الـ audio هنا عشان الصوت يقدر يكمل
-     * بعد خروج شاشة الـ Intro.
-     */
     useEffect(() => {
         return () => {
-            if (enterTimerRef.current !== null) {
-                window.clearTimeout(enterTimerRef.current);
-            }
-
-            if (leaveTimerRef.current !== null) {
-                window.clearTimeout(leaveTimerRef.current);
-            }
+            if (timerRef.current) clearTimeout(timerRef.current);
         };
     }, []);
 
+    // إدارة مؤقتات شرائح التحميل
+    useEffect(() => {
+        if (phase !== 'loading_pillars') return;
+
+        if (pillarIndex >= PILLARS.length - 1) {
+            timerRef.current = setTimeout(() => {
+                handleComplete();
+            }, 1200);
+            return () => {
+                if (timerRef.current) clearTimeout(timerRef.current);
+            };
+        }
+
+        timerRef.current = setTimeout(() => {
+            setPillarIndex((prev) => prev + 1);
+        }, 1200);
+
+        return () => {
+            if (timerRef.current) clearTimeout(timerRef.current);
+        };
+    }, [phase, pillarIndex]);
+
     const handleLogoClick = async () => {
-        if (isEntering) return;
+        if (phase !== 'idle') return;
 
-        setIsEntering(true);
-        setShowWelcome(true);
+        setPhase('welcoming');
 
-        /*
-         * نسجل إن المستخدم شاف الـ Intro.
-         *
-         * بالتالي في الـ Refresh القادم
-         * الـ Intro مش هيظهر.
-         */
-        localStorage.setItem(INTRO_STORAGE_KEY, 'true');
-
-        /*
-         * تشغيل الصوت
-         */
         try {
             if (!audioRef.current) {
                 const audio = new Audio('/audio/site-intro.mp3');
-
                 audio.loop = false;
-                audio.volume = 0.4;
-                audio.preload = 'auto';
-
+                audio.volume = 0.35;
                 audioRef.current = audio;
             }
-
             await audioRef.current.play();
-        } catch (error) {
-            console.error('Audio failed:', error);
+        } catch {
+            // التعامل الصامت عند منع التشغيل التلقائي من المتصفح
         }
 
-        /*
-         * عرض:
-         * نورت بيتك ومطرحك
-         */
-        enterTimerRef.current = window.setTimeout(() => {
-            /*
-             * بداية خروج الـ Intro
-             */
-            setIsLeaving(true);
-
-            /*
-             * انتقال سريع وناعم للموقع
-             */
-            leaveTimerRef.current = window.setTimeout(() => {
-                onEnter();
-            }, 450);
-        }, 1500);
+        timerRef.current = setTimeout(() => {
+            setPhase('loading_pillars');
+        }, 1300);
     };
+
+    const CurrentIcon = PILLARS[pillarIndex].icon;
 
     return (
         <main
-            className={`
-                fixed inset-0 z-[99999]
-                flex min-h-screen
-                items-center justify-center
-                overflow-hidden
-                bg-[#f8f4ec]
-
-                transition-all
-                duration-[450ms]
-                ease-[cubic-bezier(0.22,1,0.36,1)]
-
-                ${isLeaving
-                    ? 'scale-[1.02] opacity-0 blur-[5px]'
-                    : 'scale-100 opacity-100 blur-0'
-                }
-            `}
             dir="rtl"
+            className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] select-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting ? 'scale-[1.04] opacity-0 blur-sm pointer-events-none' : 'scale-100 opacity-100 blur-0'
+                }`}
         >
-
-            {/* =====================================================
-                BACKGROUND
-            ====================================================== */}
-
-            <div className="pointer-events-none absolute inset-0">
-
-                {/* Main Glow */}
-                <div
-                    className="
-                        absolute
-                        left-1/2 top-1/2
-                        h-[650px] w-[650px]
-                        -translate-x-1/2 -translate-y-1/2
-                        rounded-full
-                        bg-[#d6a15a]/15
-                        blur-[130px]
-                        animate-[pulse_4s_ease-in-out_infinite]
-                    "
-                />
-
-                {/* Top Light */}
-                <div
-                    className="
-                        absolute
-                        left-1/2 top-0
-                        h-[450px] w-[700px]
-                        -translate-x-1/2
-                        rounded-full
-                        bg-[#fff0c9]/70
-                        blur-[120px]
-                    "
-                />
-
-                {/* Right Light */}
-                <div
-                    className="
-                        absolute
-                        -right-40 top-1/3
-                        h-[450px] w-[450px]
-                        rounded-full
-                        bg-[#e6c38e]/20
-                        blur-[120px]
-                    "
-                />
-
-                {/* Left Light */}
-                <div
-                    className="
-                        absolute
-                        -left-40 bottom-1/4
-                        h-[450px] w-[450px]
-                        rounded-full
-                        bg-[#d6a15a]/10
-                        blur-[120px]
-                    "
-                />
-
-                {/* Pattern */}
-                <div
-                    className="
-                        absolute inset-0
-                        opacity-[0.035]
-                        bg-[radial-gradient(circle_at_center,#9a6a35_1px,transparent_1px)]
-                        bg-[size:30px_30px]
-                    "
-                />
-
-                {/* Welcome Glow */}
-                <div
-                    className={`
-                        absolute
-                        left-1/2 top-1/2
-                        h-[500px] w-[500px]
-                        -translate-x-1/2 -translate-y-1/2
-                        rounded-full
-                        bg-[#d6a15a]/10
-                        blur-[100px]
-                        transition-all
-                        duration-700
-                        ${showWelcome
-                            ? 'scale-150 opacity-100'
-                            : 'scale-75 opacity-0'
-                        }
-                    `}
-                />
+            {/* إضاءة خلفية خفيفة عالية الأداء */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[450px] w-[450px] rounded-full bg-[#d6a15a]/12 blur-[80px]" />
             </div>
 
-            {/* =====================================================
-                MAIN INTRO
-            ====================================================== */}
+            <div className="relative z-10 flex flex-col items-center max-w-sm w-full px-6">
 
-            <div
-                className={`
-                    relative z-10
-                    flex flex-col items-center
-
-                    transition-all
-                    duration-700
-                    ease-[cubic-bezier(0.22,1,0.36,1)]
-
-                    ${showWelcome
-                        ? 'scale-90 opacity-0'
-                        : 'scale-100 opacity-100'
-                    }
-                `}
-            >
-
-                {/* Small Title */}
+                {/* المرحلة 1: شاشة الضغط على اللوجو */}
                 <div
-                    className="
-                        mb-8
-                        flex items-center gap-3
-                        text-[10px]
-                        font-bold
-                        tracking-[0.35em]
-                        text-[#80633f]/60
-                    "
+                    className={`flex flex-col items-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
+                        ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                        : 'opacity-0 -translate-y-4 scale-95 pointer-events-none absolute'
+                        }`}
                 >
-                    <span className="h-px w-10 bg-[#9a6a35]/40" />
+                    <div className="mb-6 flex items-center gap-3 text-xs font-bold tracking-[0.3em] text-[#80633f]/70 dark:text-[#c7a781]">
+                        <span className="h-px w-8 bg-[#9a6a35]/40" />
+                        الصعيد
+                        <span className="h-px w-8 bg-[#9a6a35]/40" />
+                    </div>
 
-                    الصعيد
+                    <button
+                        type="button"
+                        onClick={handleLogoClick}
+                        aria-label="دوس على اللوجو للدخول"
+                        className="group relative flex items-center justify-center outline-none cursor-pointer p-4"
+                    >
+                        {/* إشعاع وحلقة مرنة تفاعلية */}
+                        <div className="pointer-events-none absolute h-56 w-56 rounded-full bg-[#d6a15a]/15 blur-2xl transition-transform duration-500 group-hover:scale-125" />
+                        <span className="absolute h-52 w-52 rounded-full border border-[#b98545]/30 transition-transform duration-500 group-hover:scale-105" />
 
-                    <span className="h-px w-10 bg-[#9a6a35]/40" />
+                        <span className="relative flex h-40 w-40 items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/90 dark:bg-white/5 backdrop-blur-md shadow-lg transition-transform duration-300 group-hover:scale-105 active:scale-95">
+                            <img
+                                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                                alt="لوجو وه"
+                                className="h-28 w-28 object-contain drop-shadow transition-transform duration-300 group-hover:scale-105"
+                            />
+                        </span>
+                    </button>
+
+                    <div className="mt-7 text-center">
+                        <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl">
+                            دوس على <span className="text-[#9a6a35]">اللوجو</span>
+                        </p>
+                        <p className="mt-1 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988]">
+                            وخلي الحكاية تبدأ
+                        </p>
+                    </div>
                 </div>
 
-                {/* =================================================
-                    LOGO
-                ================================================= */}
-
-                <button
-                    type="button"
-                    onClick={handleLogoClick}
-                    disabled={isEntering}
-                    aria-label="دوس على اللوجو للدخول"
-                    className="
-                        group
-                        relative
-                        flex
-                        items-center
-                        justify-center
-                        outline-none
-                    "
+                {/* المرحلة 2: الترحيب (نورت بيتك ومطرحك) */}
+                <div
+                    className={`flex flex-col items-center text-center transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'welcoming'
+                        ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                        : 'opacity-0 translate-y-4 scale-95 pointer-events-none absolute'
+                        }`}
                 >
-
-                    {/* Big Glow */}
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            h-[430px] w-[430px]
-                            rounded-full
-                            bg-[#d6a15a]/20
-                            blur-[90px]
-                            animate-[pulse_4s_ease-in-out_infinite]
-                        "
-                    />
-
-                    {/* =================================================
-                        LIGHT RAYS
-                    ================================================= */}
-
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            h-[440px] w-[440px]
-                            rounded-full
-                            animate-[spin_9s_linear_infinite]
-                        "
-                    >
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[2px] w-[220px]
-                                origin-left
-                                -translate-y-1/2
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#d6a15a]/70
-                                to-[#d6a15a]/0
-                                blur-[1px]
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[1px] w-[210px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-45
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#e7bd7c]/80
-                                to-[#d6a15a]/0
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[2px] w-[215px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-90
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#d6a15a]/60
-                                to-[#d6a15a]/0
-                                blur-[1px]
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[1px] w-[205px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-[135deg]
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#e7bd7c]/70
-                                to-[#d6a15a]/0
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[2px] w-[220px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-180
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#d6a15a]/65
-                                to-[#d6a15a]/0
-                                blur-[1px]
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[1px] w-[210px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-[225deg]
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#e7bd7c]/75
-                                to-[#d6a15a]/0
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[2px] w-[215px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-270
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#d6a15a]/60
-                                to-[#d6a15a]/0
-                                blur-[1px]
-                            "
-                        />
-
-                        <span
-                            className="
-                                absolute left-1/2 top-1/2
-                                h-[1px] w-[205px]
-                                origin-left
-                                -translate-y-1/2
-                                rotate-[315deg]
-                                bg-gradient-to-r
-                                from-[#d6a15a]/0
-                                via-[#e7bd7c]/70
-                                to-[#d6a15a]/0
-                            "
-                        />
+                    <div className="mb-4 flex items-center justify-center gap-2">
+                        <span className="h-px w-10 bg-[#9a6a35]/40" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#c28b4d]" />
+                        <span className="h-px w-10 bg-[#9a6a35]/40" />
                     </div>
 
-                    {/* Conic Glow */}
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            h-[370px] w-[370px]
-                            rounded-full
-                            bg-[conic-gradient(from_0deg,transparent,#d6a15a33,transparent,#e6bd7a44,transparent)]
-                            blur-[18px]
-                            animate-[spin_6s_linear_infinite_reverse]
-                        "
-                    />
-
-                    {/* Outer Ring */}
-                    <span
-                        className="
-                            absolute
-                            h-72 w-72
-                            rounded-full
-                            border
-                            border-[#b98545]/35
-                            shadow-[0_0_40px_rgba(154,106,53,0.12)]
-                            animate-[spin_18s_linear_infinite]
-                            transition-all
-                            duration-500
-                            group-hover:h-80
-                            group-hover:w-80
-                            group-hover:border-[#b98545]/60
-                            group-active:scale-90
-                        "
-                    />
-
-                    {/* Second Ring */}
-                    <span
-                        className="
-                            absolute
-                            h-60 w-60
-                            rounded-full
-                            border
-                            border-[#b98545]/25
-                            shadow-[0_0_30px_rgba(214,161,90,0.08)]
-                            animate-[spin_11s_linear_infinite_reverse]
-                        "
-                    />
-
-                    {/* Inner Ring */}
-                    <span
-                        className="
-                            absolute
-                            h-52 w-52
-                            rounded-full
-                            border
-                            border-[#d6a15a]/25
-                            shadow-[inset_0_0_30px_rgba(214,161,90,0.1)]
-                            animate-[spin_25s_linear_infinite]
-                        "
-                    />
-
-                    {/* Logo Circle */}
-                    <span
-                        className="
-                            relative
-                            flex
-                            h-48 w-48
-                            items-center
-                            justify-center
-                            rounded-full
-                            border
-                            border-[#c28b4d]/35
-                            bg-[#fffdf8]/95
-                            shadow-[0_10px_50px_rgba(154,106,53,0.16),0_0_100px_rgba(214,161,90,0.18)]
-                            backdrop-blur-md
-                            transition-all
-                            duration-500
-                            group-hover:scale-105
-                            group-hover:border-[#b98545]/70
-                            group-hover:shadow-[0_15px_70px_rgba(154,106,53,0.25),0_0_140px_rgba(214,161,90,0.3)]
-                        "
-                    >
-
-                        {/* Inner Light */}
-                        <span
-                            className="
-                                pointer-events-none
-                                absolute inset-3
-                                rounded-full
-                                bg-[radial-gradient(circle,rgba(214,161,90,0.18),transparent_68%)]
-                                animate-[pulse_3s_ease-in-out_infinite]
-                            "
-                        />
-
-                        {/* Shine */}
-                        <span
-                            className="
-                                pointer-events-none
-                                absolute
-                                left-[18%] top-[13%]
-                                h-8 w-16
-                                rotate-[-25deg]
-                                rounded-full
-                                bg-white/80
-                                blur-md
-                            "
-                        />
-
-                        <img
-                            src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
-                            alt="وَه"
-                            draggable={false}
-                            className="
-                                relative z-10
-                                h-36 w-36
-                                select-none
-                                object-contain
-                                drop-shadow-[0_5px_18px_rgba(120,80,35,0.2)]
-                                transition-all
-                                duration-500
-                                group-hover:scale-110
-                            "
-                        />
-                    </span>
-                </button>
-
-                {/* Text */}
-                <div className="mt-10 text-center">
-
-                    <p
-                        className="
-                            text-2xl
-                            font-black
-                            tracking-tight
-                            text-[#3d3328]
-                            sm:text-3xl
-                        "
-                    >
-                        دوس على{' '}
-                        <span className="text-[#9a6a35]">
-                            اللوجو
-                        </span>
-                    </p>
-
-                    <p
-                        className="
-                            mt-2
-                            text-sm
-                            font-semibold
-                            text-[#806f5b]/80
-                        "
-                    >
-                        وخلي الحكاية تبدأ
-                    </p>
-
-                    {/* Integrated Platform Badges with emphasis on Market */}
-                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 max-w-md mx-auto">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#9a6a35]/15 text-[#805423] border border-[#9a6a35]/30">
-                            <span>🛍️</span>
-                            <span>سوق وه للحرف والمنتجات</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/5 text-[#5e4b33]">
-                            <span>🎬</span>
-                            <span>ريلز تفاعلية</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/5 text-[#5e4b33]">
-                            <span>🏛️</span>
-                            <span>وثائقيات ومعالم</span>
-                        </span>
-                    </div>
-
-                </div>
-            </div>
-
-            {/* =====================================================
-                WELCOME SCREEN
-            ====================================================== */}
-
-            <div
-                className={`
-                    pointer-events-none
-                    absolute inset-0
-                    z-30
-                    flex items-center justify-center
-
-                    transition-all
-                    duration-500
-                    ease-[cubic-bezier(0.22,1,0.36,1)]
-
-                    ${showWelcome
-                        ? 'scale-100 opacity-100'
-                        : 'scale-90 opacity-0'
-                    }
-                `}
-            >
-
-                {/* Glow */}
-                <div
-                    className="
-                        absolute
-                        h-[550px] w-[550px]
-                        rounded-full
-                        bg-[#d6a15a]/20
-                        blur-[110px]
-                        animate-[pulse_2s_ease-in-out_infinite]
-                    "
-                />
-
-                {/* Ring 1 */}
-                <div
-                    className="
-                        absolute
-                        h-[500px] w-[500px]
-                        rounded-full
-                        border
-                        border-[#d6a15a]/10
-                        animate-[spin_12s_linear_infinite]
-                    "
-                />
-
-                {/* Ring 2 */}
-                <div
-                    className="
-                        absolute
-                        h-[400px] w-[400px]
-                        rounded-full
-                        border
-                        border-[#b98545]/10
-                        animate-[spin_8s_linear_infinite_reverse]
-                    "
-                />
-
-                {/* Welcome Text */}
-                <div className="relative text-center">
-
-                    <div className="mb-7 flex items-center justify-center gap-4">
-
-                        <span className="h-px w-16 bg-[#9a6a35]/30" />
-
-                        <span
-                            className="
-                                h-2 w-2
-                                rounded-full
-                                bg-[#c28b4d]
-                                shadow-[0_0_15px_rgba(194,139,77,0.5)]
-                            "
-                        />
-
-                        <span className="h-px w-16 bg-[#9a6a35]/30" />
-
-                    </div>
-
-                    <h1
-                        className="
-                            text-4xl
-                            font-black
-                            tracking-tight
-                            text-[#3d3328]
-                            sm:text-5xl
-                            md:text-6xl
-                        "
-                    >
+                    <h1 className="text-3xl font-black text-[#3d3328] dark:text-[#ede4d8] sm:text-4xl md:text-5xl">
                         نورت بيتك
                     </h1>
-
-                    <h2
-                        className="
-                            mt-2
-                            text-3xl
-                            font-black
-                            text-[#9a6a35]
-                            sm:text-4xl
-                            md:text-5xl
-                        "
-                    >
+                    <h2 className="mt-1 text-2xl font-black text-[#9a6a35] sm:text-3xl md:text-4xl">
                         ومطرحك
                     </h2>
-
-                    <p
-                        className="
-                            mt-6
-                            text-sm
-                            font-bold
-                            text-[#806f5b]/80
-                        "
-                    >
-                        أهلاً بيك في منصة وه المتكاملة — سوق، ريلز، وتوثيق الصعيد
+                    <p className="mt-3 text-xs sm:text-sm font-medium text-[#806f5b]/80 dark:text-[#a89988]">
+                        أهلاً بيك في منصة وه المتكاملة
                     </p>
+                </div>
 
-                    <div className="mt-7 flex items-center justify-center gap-4">
+                {/* المرحلة 3: استعراض ركائز المنصة والتحميل */}
+                <div
+                    className={`flex flex-col items-center text-center w-full transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'loading_pillars'
+                        ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                        : 'opacity-0 translate-y-4 scale-95 pointer-events-none absolute'
+                        }`}
+                >
+                    {/* لوجو مدمج ومصغر */}
+                    <div className="relative flex items-center justify-center mb-6">
+                        <div className="w-20 h-20 rounded-full bg-white/60 dark:bg-white/5 border border-[#9a6a35]/25 flex items-center justify-center backdrop-blur-sm p-3 shadow-sm">
+                            <img
+                                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                                alt="شعار وه"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
+                    </div>
 
-                        <span className="h-px w-16 bg-[#9a6a35]/30" />
+                    {/* عنوان الميزة المتغيرة مع تبديل ناعم */}
+                    <div
+                        key={`title-${pillarIndex}`}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#9a6a35]/12 text-[#805423] dark:text-[#d5a56d] border border-[#9a6a35]/20 text-xs font-bold mb-2 transition-all duration-300"
+                    >
+                        <CurrentIcon className="w-3.5 h-3.5" />
+                        <span>{PILLARS[pillarIndex].title}</span>
+                    </div>
 
-                        <span
-                            className="
-                                h-2 w-2
-                                rounded-full
-                                bg-[#c28b4d]
-                                shadow-[0_0_15px_rgba(194,139,77,0.5)]
-                            "
-                        />
+                    {/* نص الشرح */}
+                    <div className="h-10 flex items-center justify-center">
+                        <p
+                            key={`sub-${pillarIndex}`}
+                            className="text-xs sm:text-sm font-medium text-[#3d3328]/80 dark:text-[#ede4d8]/80 transition-opacity duration-300"
+                        >
+                            {PILLARS[pillarIndex].subtitle}
+                        </p>
+                    </div>
 
-                        <span className="h-px w-16 bg-[#9a6a35]/30" />
-
+                    {/* مؤشر النقاط الصغير */}
+                    <div className="mt-5 flex items-center gap-1.5">
+                        {PILLARS.map((_, idx) => (
+                            <span
+                                key={idx}
+                                className={`h-1 rounded-full transition-all duration-300 ${pillarIndex === idx
+                                    ? 'w-5 bg-[#9a6a35]'
+                                    : 'w-1 bg-black/15 dark:bg-white/20'
+                                    }`}
+                            />
+                        ))}
                     </div>
                 </div>
+
             </div>
-
-            {/* =====================================================
-                FOOTER
-            ====================================================== */}
-
-            <div
-                className="
-                    absolute
-                    bottom-7
-                    left-0
-                    right-0
-                    text-center
-                    text-[9px]
-                    font-medium
-                    tracking-[0.3em]
-                    text-[#806f5b]/40
-                "
-            >
-                ELSA3ED MARKET
-            </div>
-
         </main>
     );
-}
+};
+
+export default WahIntro;

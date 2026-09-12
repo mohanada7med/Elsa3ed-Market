@@ -11,7 +11,6 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { WahLoadingScreen } from './components/common/WahLoadingScreen';
 import { updatePageSEO } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
@@ -333,8 +332,7 @@ const MainContent: React.FC = () => {
 
   if (showIntro) {
     return (
-      <WahIntro
-        onEnter={() => setShowIntro(false)}
+      <WahIntro onFinish={() => setShowIntro(false)}
       />
     );
   }
@@ -346,7 +344,7 @@ const MainContent: React.FC = () => {
     activePage === 'buyer-account';
 
   if (isAuthChecking && isProtectedRoute) {
-    return <WahLoadingScreen />;
+    return <WahIntro onFinish={() => { }} />;
   }
 
   return (

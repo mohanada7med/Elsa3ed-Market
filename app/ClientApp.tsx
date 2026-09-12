@@ -2,33 +2,28 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import { WahLoadingScreen } from '../src/components/common/WahLoadingScreen';
+import WahIntro from '../src/components/WahIntro';
 
 const App = dynamic(() => import('../src/App'), {
   ssr: false,
 });
 
 export default function ClientApp() {
-  const [appLoaded, setAppLoaded] = useState(false);
-  const [messagesFinished, setMessagesFinished] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  // تبدأ بـ true دائماً لتعمل مع كل فتحة موقع
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
-    // App component has mounted successfully.
-    setAppLoaded(true);
+    setMounted(true);
   }, []);
 
-  const shouldShowLoading = !appLoaded || !messagesFinished;
+  if (!mounted) return null;
 
   return (
     <>
       <App />
-
-      {shouldShowLoading && (
-        <WahLoadingScreen
-          onComplete={() => {
-            setMessagesFinished(true);
-          }}
-        />
+      {showIntro && (
+        <WahIntro onFinish={() => setShowIntro(false)} />
       )}
     </>
   );
