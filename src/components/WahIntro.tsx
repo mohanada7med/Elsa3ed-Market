@@ -532,7 +532,7 @@ export default function WahLogoIntro({
                 </button>
 
                 {/* Text */}
-                <div className="mt-12 text-center">
+                <div className="mt-10 text-center">
 
                     <p
                         className="
@@ -551,14 +551,30 @@ export default function WahLogoIntro({
 
                     <p
                         className="
-                            mt-3
+                            mt-2
                             text-sm
-                            text-[#806f5b]/70
+                            font-semibold
+                            text-[#806f5b]/80
                         "
                     >
                         وخلي الحكاية تبدأ
                     </p>
 
+                    {/* Integrated Platform Badges with emphasis on Market */}
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 max-w-md mx-auto">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#9a6a35]/15 text-[#805423] border border-[#9a6a35]/30">
+                            <span>🛍️</span>
+                            <span>سوق وه للحرف والمنتجات</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/5 text-[#5e4b33]">
+                            <span>🎬</span>
+                            <span>ريلز تفاعلية</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-black/5 text-[#5e4b33]">
+                            <span>🏛️</span>
+                            <span>وثائقيات ومعالم</span>
+                        </span>
+                    </div>
 
                 </div>
             </div>
@@ -671,10 +687,11 @@ export default function WahLogoIntro({
                         className="
                             mt-6
                             text-sm
-                            text-[#806f5b]/65
+                            font-bold
+                            text-[#806f5b]/80
                         "
                     >
-                        أهلاً بيك في الصعيد...
+                        أهلاً بيك في منصة وه المتكاملة — سوق، ريلز، وتوثيق الصعيد
                     </p>
 
                     <div className="mt-7 flex items-center justify-center gap-4">

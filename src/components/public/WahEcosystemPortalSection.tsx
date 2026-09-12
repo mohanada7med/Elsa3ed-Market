@@ -8,6 +8,28 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
   const portals = [
     {
+      id: 'marketplace',
+      title: 'سوق وه للحرف والمنتجات',
+      tagline: 'تسوق أصيل من الورش لحد باب دارك',
+      desc: 'سوق متكامل لشراء حِرف ومنتجات الصعيد الأصلية 100% مباشرة من صانعيها، بدفع إلكتروني آمن وشحن سريع لكل المحافظات.',
+      badge: 'سوق وه التجاري',
+      page: 'products' as const,
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
+      nameEn: 'WAH Marketplace',
+      accentColor: 'from-amber-800/80'
+    },
+    {
+      id: 'reels',
+      title: 'ريلز وتجارب حية',
+      tagline: 'الصعيد بالصوت والصورة لحظة بلحظة',
+      desc: 'فيديوهات ريلز قصيرة وتفاعلية تاخدك جوة ورش الصنعة وأسواق وحكاوي الشارع الصعيدي الحي.',
+      badge: 'ريلز تفاعلية',
+      page: 'reels' as const,
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+      nameEn: 'Live Reels',
+      accentColor: 'from-orange-950/70'
+    },
+    {
       id: 'map',
       title: 'لفة في الصعيد',
       tagline: 'خريطة النيل ومعالم الصعيد الحية',
@@ -94,17 +116,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
       nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70'
-    },
-    {
-      id: 'marketplace',
-      title: 'سوق وه للحرف اليدوية',
-      tagline: 'من الورشة لحد دارك',
-      desc: 'اشتري قطع أصلية ومضمونة من ورش قنا وأسوان وسوهاج، بدفع مريح وشحن لحد باب بيتك.',
-      badge: 'سوق وه',
-      page: 'products' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
-      nameEn: 'WAH Marketplace',
-      accentColor: 'from-amber-800/60'
     }
   ];
 
@@ -157,7 +168,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
-                لف في أبواب «وه» واكتشف بلاد الصعيد وناسه وتراثه؛ اسمع حكاياته وتفاصيله اللي مميزة كل حتة فيه من الجيزة لأسوان في مكان واحد.
+                منظومة صعيدية متكاملة تجمع بين{' '}
+                <strong className="text-[#9a6a35] dark:text-[#d6aa72]">السوق التجاري الحرفي المباشر</strong>،{' '}
+                وريلز وتجارب صناع المحتوى الحية، والتوثيق الوثائقي التفاعلي لكل شبر في الصعيد.
               </p>
             </div>
           </div>

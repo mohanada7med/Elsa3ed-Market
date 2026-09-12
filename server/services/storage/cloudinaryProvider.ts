@@ -499,14 +499,40 @@ export function extractCloudinaryPublicId(urlOrKey: string): string | null {
   if (!urlOrKey || typeof urlOrKey !== 'string') return null;
   const trimmed = urlOrKey.trim();
   if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-    return trimmed;
+    return trimmed.split('?')[0].split('#')[0];
   }
-  // Match Cloudinary upload URL path: /upload/(?:v\d+/)?((?:WAH|WAH)/[^.?#]+)
-  const match = trimmed.match(/\/upload\/(?:v\d+\/)?((?:WAH|WAH)\/[^?#]+?)(?:\.[a-zA-Z0-9]+)?(?:[?#]|$)/);
-  if (match && match[1]) {
-    return match[1];
+  // Strip query and hash
+  const cleanUrl = trimmed.split('?')[0].split('#')[0];
+  const uploadIndex = cleanUrl.indexOf('/upload/');
+  if (uploadIndex === -1) {
+    // If it mentions WAH/ in path
+    const wahMatch = cleanUrl.match(/(WAH\/[^\.\?#]+)/);
+    return wahMatch ? decodeURIComponent(wahMatch[1]) : null;
   }
-  return null;
+
+  const afterUpload = cleanUrl.substring(uploadIndex + '/upload/'.length);
+  const segments = afterUpload.split('/');
+  const nonTransformSegments: string[] = [];
+  let foundVersion = false;
+
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
+    if (!foundVersion && /^v\d+$/.test(seg)) {
+      foundVersion = true;
+      continue;
+    }
+    // Check if segment is transformation parameters (e.g. w_800, so_0, c_limit, etc.)
+    if (!foundVersion && (seg.includes(',') || /^(?:c|w|h|q|f|so|b|g|r|fl|a|e|l|u|pg)_[a-zA-Z0-9_.-]+$/.test(seg))) {
+      continue;
+    }
+    nonTransformSegments.push(seg);
+  }
+
+  if (nonTransformSegments.length === 0) return null;
+  const fullPath = nonTransformSegments.join('/');
+  const lastDot = fullPath.lastIndexOf('.');
+  const publicId = lastDot > 0 ? fullPath.substring(0, lastDot) : fullPath;
+  return decodeURIComponent(publicId);
 }
 
 export const cloudinaryStorage = new CloudinaryStorageProvider();

@@ -176,10 +176,85 @@ router.get('/', async (req, res: Response) => {
       reels = memoryList;
     }
 
+    // تضمين فيديوهات الأماكن التراثية في خلاصة الريلز الشاملة مع منع أي تكرار
+    try {
+      let placeVideosList: any[] = [];
+      if (isMongo && db) {
+        placeVideosList = await db.collection('wah_heritage_places').find({
+          $or: [
+            { videoUrl: { $exists: true, $ne: null, $nin: ['', 'null'] } },
+            { videos: { $exists: true, $not: { $size: 0 } } }
+          ]
+        }).toArray();
+      } else {
+        placeVideosList = memoryDb.heritagePlaces.filter((p) => p.videoUrl || (p.videos && p.videos.length > 0));
+      }
+
+      for (const place of placeVideosList) {
+        const vUrl = place.videoUrl || place.videos?.[0];
+        if (!vUrl || !vUrl.trim()) continue;
+
+        const cleanVUrl = vUrl.trim();
+        const normKey = cleanVUrl.split('?')[0].toLowerCase();
+        const alreadyExists = reels.some((r) => (r.videoUrl || '').split('?')[0].toLowerCase() === normKey);
+
+        if (!alreadyExists) {
+          let poster = place.coverImage || place.imageUrl || '';
+          if ((!poster || poster.endsWith('.mp4') || poster.endsWith('.mov')) && cleanVUrl.includes('/video/upload/')) {
+            poster = cleanVUrl
+              .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
+              .replace(/\.[^/.]+$/, '.jpg');
+          }
+          const placeReel: CraftReelDocument = {
+            id: `reel-place-${place.id || place.slug}`,
+            title: place.title || place.name || 'معلم أثري وتراثي',
+            contentType: 'heritage_site',
+            location: place.location || place.city || place.governorate || 'مصر',
+            artisanName: 'توثيق تراثي',
+            artisanAvatar: poster || undefined,
+            workshopName: place.title || place.name || '',
+            governorate: place.governorate || 'الصعيد',
+            craftType: 'معلم أثري وتراثي',
+            videoUrl: cleanVUrl,
+            posterUrl: poster || '',
+            duration: '0:30',
+            likesCount: place.likesCount || 15,
+            viewsCount: place.viewsCount || 120,
+            sharesCount: 6,
+            description: place.description || place.shortDescription || `جولة توثيقية في رحاب ${place.title || place.name}`,
+            hashtags: ['#تراث_الصعيد', '#معالم_مصر', `#${(place.governorate || 'مصر').replace(/\s+/g, '_')}`],
+            isFeatured: true,
+            createdAt: place.createdAt || new Date().toISOString()
+          };
+          reels.push(placeReel);
+        }
+      }
+    } catch (placeReelErr) {
+      Logger.warn('[Reels] Error integrating place videos:', placeReelErr);
+    }
+
+    // تنقية وفلترة الريلز لمنع أي تكرار للفيديوهات نهائياً
+    const seenVideoUrls = new Set<string>();
+    const seenReelIds = new Set<string>();
+    const uniqueReels: CraftReelDocument[] = [];
+
+    for (const r of reels) {
+      if (!r || !r.videoUrl || !r.videoUrl.trim()) continue;
+      const normUrl = r.videoUrl.split('?')[0].trim().toLowerCase();
+      const normId = (r.id || '').trim().toLowerCase();
+
+      if (seenVideoUrls.has(normUrl) || (normId && seenReelIds.has(normId))) {
+        continue;
+      }
+      seenVideoUrls.add(normUrl);
+      if (normId) seenReelIds.add(normId);
+      uniqueReels.push(r);
+    }
+
     return res.json({
       success: true,
-      data: reels.map(normalizeReelMedia),
-      count: reels.length
+      data: uniqueReels.map(normalizeReelMedia),
+      count: uniqueReels.length
     });
   } catch (err: any) {
     Logger.error('[Reels] Error fetching reels:', err);

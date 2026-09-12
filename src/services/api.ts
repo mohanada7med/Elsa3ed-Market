@@ -370,9 +370,14 @@ export const adminMediaApi = {
       },
       body: JSON.stringify(payload)
     });
-    const json = await res.json();
-    if (!json.success || !json.data) {
-      throw new Error(json.error || 'فشل توثيق وحفظ مقطع الفيديو في قاعدة البيانات');
+    let json: any = null;
+    try {
+      json = await res.json();
+    } catch {
+      throw new Error(`استجابة غير صالحة من خادم حفظ الفيديو (كود الحالة: ${res.status})`);
+    }
+    if (!res.ok || !json.success || !json.data) {
+      throw new Error(json?.error || `فشل توثيق وحفظ مقطع الفيديو في قاعدة البيانات (${res.status})`);
     }
     return json.data;
   },
@@ -436,6 +441,7 @@ export const adminMediaApi = {
 
     // 1. Request signature for direct Cloudinary upload
     let signatureResponse: any = null;
+    let signatureErrorMsg = '';
     try {
       signatureResponse = await adminMediaApi.getAdminVideoUploadSignature(user, {
         filename: fileName,
@@ -444,8 +450,16 @@ export const adminMediaApi = {
         entitySlug,
         entityId
       });
-    } catch {
-      // Signature error fallback to server multipart upload
+    } catch (sigErr: any) {
+      signatureErrorMsg = sigErr?.message || '';
+      console.warn('[uploadAdminVideoWithLifecycle] Signature error:', sigErr);
+    }
+
+    if (!signatureResponse?.directUpload && fileSize > 25 * 1024 * 1024) {
+      throw new Error(
+        signatureErrorMsg ||
+        'حجم مقطع الفيديو كبير (أكثر من 25 ميجابايت) ويتطلب ترخيص الرفع السحابي المباشر. يرجى التحقق من اتصال الإنترنت وحساب المشرف.'
+      );
     }
 
     // 2. Direct Chunked Upload to Cloudinary if signature available
@@ -607,33 +621,35 @@ export const adminMediaApi = {
 
       const fullPublicId = `${sig.folder}/${sig.publicId}`;
 
-      // 4. Polling Verification
+      // 4. Polling Verification (فقط إذا لم يتم إرجاع رابط الفيديو جاهزاً في الاستجابة الأخيرة)
       let assetMetadata = finalResult || {};
-      for (let pollAttempt = 1; pollAttempt <= 15; pollAttempt++) {
-        if (isCancelled) {
-          throw new Error('تم إلغاء عملية الرفع');
-        }
-
-        try {
-          const verifyData = await adminMediaApi.verifyAdminVideoAsset(user, fullPublicId);
-          if (verifyData.isReady && verifyData.url) {
-            assetMetadata = {
-              ...assetMetadata,
-              secure_url: verifyData.url,
-              url: verifyData.url,
-              duration: verifyData.duration,
-              bytes: verifyData.bytes,
-              format: verifyData.format,
-              width: verifyData.width,
-              height: verifyData.height
-            };
-            break;
+      if (!assetMetadata?.secure_url && !assetMetadata?.url) {
+        for (let pollAttempt = 1; pollAttempt <= 8; pollAttempt++) {
+          if (isCancelled) {
+            throw new Error('تم إلغاء عملية الرفع');
           }
-        } catch {
-          // Retry polling
-        }
 
-        await new Promise((r) => setTimeout(r, 1500));
+          try {
+            const verifyData = await adminMediaApi.verifyAdminVideoAsset(user, fullPublicId);
+            if (verifyData.isReady && verifyData.url) {
+              assetMetadata = {
+                ...assetMetadata,
+                secure_url: verifyData.url,
+                url: verifyData.url,
+                duration: verifyData.duration,
+                bytes: verifyData.bytes,
+                format: verifyData.format,
+                width: verifyData.width,
+                height: verifyData.height
+              };
+              break;
+            }
+          } catch {
+            // Retry polling
+          }
+
+          await new Promise((r) => setTimeout(r, 1200));
+        }
       }
 
       const videoUrl =

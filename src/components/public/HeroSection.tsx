@@ -6,6 +6,7 @@ import {
   Ship,
   Landmark,
   ShoppingBag,
+  Film,
   MapPin,
   ChevronLeft,
 } from 'lucide-react';
@@ -257,7 +258,7 @@ export const HeroSection: React.FC = () => {
                 <Sparkles className="h-3.5 w-3.5 text-[#9a6a35]" />
               }
             >
-              «وه — حكاية الصعيد بشكل جديد»
+              «منصة صعيد مصر المتكاملة: سوق أصيل · ريلز · وثائقيات وتراث»
             </WAHBadge>
           </motion.div>
 
@@ -339,21 +340,21 @@ export const HeroSection: React.FC = () => {
               text-[14px]
               font-medium
               leading-8
-              text-black/75
-              dark:text-white/75
+              text-black/80
+              dark:text-white/80
               sm:text-base
             "
           >
-            أول منصة تلم روح وتراث الصعيد كله في مكان واحد؛
+            أول منصة متكاملة لصعيد مصر تجمع بين{' '}
             <span className="font-bold text-[#9a6a35]">
-              {' '}أماكنه، ناسه، صنعته، أكله وحكاياته،
+              السوق التجاري الحرفي، ريلز صناع المحتوى الحية، والتوثيق الوثائقي؛
             </span>
             <br />
-            {' '}من قلب الصعيد لكل الدنيا.
+            تسوق منتجات الصعيد الأصلية واكتشف حكاوي وروح أهلنا من قلب الصعيد لكل الدنيا.
           </motion.p>
 
           {/* =====================================================
-              ACTIONS
+              ACTIONS (4 CORE PILLARS: MARKET, REELS, PLACES, MAP)
               ===================================================== */}
 
           <motion.div
@@ -376,9 +377,166 @@ export const HeroSection: React.FC = () => {
               gap-3
               sm:flex-row
               sm:flex-wrap
+              items-stretch
+              sm:items-center
             "
           >
-            {/* Explore */}
+            {/* 1. Market (Primary Featured Action) */}
+            <motion.button
+              type="button"
+              whileHover={{
+                scale: 1.03,
+                y: -2,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              onClick={() => setActivePage('products')}
+              className="
+                group
+                flex
+                min-h-[52px]
+                items-center
+                justify-center
+                gap-3
+                rounded-2xl
+                bg-[#9a6a35]
+                hover:bg-[#805423]
+                text-white
+                px-6
+                text-sm
+                font-black
+                shadow-xl
+                shadow-[#9a6a35]/25
+                transition-all
+                sm:min-w-[210px]
+              "
+            >
+              <ShoppingBag className="h-5 w-5 transition-transform group-hover:scale-110" />
+
+              <span>ادخل سوق وه الحرفي</span>
+
+              <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold">
+                تسوق وشحن
+              </span>
+
+              <ArrowLeft
+                className="
+                  h-4 w-4
+                  transition-transform
+                  duration-300
+                  group-hover:-translate-x-1
+                "
+              />
+            </motion.button>
+
+            {/* 2. Reels (Craft Reels) */}
+            <motion.button
+              type="button"
+              whileHover={{
+                scale: 1.02,
+                y: -2,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              onClick={() => setActivePage('reels')}
+              className="
+                group
+                flex
+                min-h-[52px]
+                items-center
+                justify-center
+                gap-2.5
+                rounded-2xl
+                bg-[#211d18]
+                hover:bg-black
+                text-white
+                px-5
+                text-sm
+                font-bold
+                shadow-lg
+                shadow-black/10
+                dark:bg-white
+                dark:text-black
+                dark:hover:bg-[#d5a56d]
+                transition-all
+                sm:min-w-[160px]
+              "
+            >
+              <Film className="h-5 w-5 text-[#d6aa72] dark:text-[#9a6a35]" />
+
+              <span>ريلز الصعيد</span>
+
+              <ArrowLeft
+                className="
+                  h-4 w-4
+                  opacity-60
+                  transition-transform
+                  duration-300
+                  group-hover:-translate-x-1
+                  group-hover:opacity-100
+                "
+              />
+            </motion.button>
+
+            {/* 3. Heritage Places & Monuments (معالم وآثار الصعيد) */}
+            <motion.button
+              type="button"
+              whileHover={{
+                scale: 1.02,
+                y: -2,
+              }}
+              whileTap={{
+                scale: 0.98,
+              }}
+              onClick={() => setActivePage('places')}
+              className="
+                group
+                flex
+                min-h-[52px]
+                items-center
+                justify-center
+                gap-2.5
+                rounded-2xl
+                border
+                border-[#9a6a35]/30
+                bg-white/85
+                px-5
+                text-sm
+                font-bold
+                text-[#2b241c]
+                backdrop-blur-md
+                transition-all
+                hover:border-[#9a6a35]
+                hover:bg-white
+                hover:shadow-md
+                hover:shadow-[#9a6a35]/15
+                dark:border-white/20
+                dark:bg-white/[0.08]
+                dark:text-white
+                dark:hover:border-white/40
+                dark:hover:bg-white/[0.15]
+                sm:min-w-[175px]
+              "
+            >
+              <Landmark className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
+
+              <span>معالم وآثار الصعيد</span>
+
+              <ArrowLeft
+                className="
+                  h-4 w-4
+                  opacity-50
+                  transition-transform
+                  duration-300
+                  group-hover:-translate-x-1
+                  group-hover:opacity-100
+                "
+              />
+            </motion.button>
+
+            {/* 4. Interactive Map (خريطة الصعيد) */}
             <motion.button
               type="button"
               whileHover={{
@@ -392,54 +550,7 @@ export const HeroSection: React.FC = () => {
               className="
                 group
                 flex
-                min-h-[50px]
-                items-center
-                justify-center
-                gap-3
-                rounded-2xl
-                bg-[#211d18]
-                px-7
-                text-sm
-                font-bold
-                text-white
-                shadow-xl
-                shadow-black/10
-                transition-all
-                hover:bg-[#9a6a35]
-                dark:bg-white
-                dark:text-black
-                dark:hover:bg-[#d5a56d]
-                sm:min-w-[205px]
-              "
-            >
-              <Ship className="h-5 w-5" />
-
-              <span>اكتشف الصعيد</span>
-
-              <ArrowLeft
-                className="
-                  h-4 w-4
-                  transition-transform
-                  duration-300
-                  group-hover:-translate-x-1
-                "
-              />
-            </motion.button>
-
-            {/* Places */}
-            <motion.button
-              type="button"
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-              }}
-              whileTap={{
-                scale: 0.98,
-              }}
-              onClick={() => setActivePage('places')}
-              className="
-                flex
-                min-h-[50px]
+                min-h-[52px]
                 items-center
                 justify-center
                 gap-2.5
@@ -447,88 +558,65 @@ export const HeroSection: React.FC = () => {
                 border
                 border-black/15
                 bg-white/70
-                px-6
+                px-5
                 text-sm
                 font-bold
                 text-[#211d18]
                 backdrop-blur-md
                 transition-all
-                hover:border-[#9a6a35]/40
-                hover:bg-white/95
+                hover:border-[#9a6a35]/50
+                hover:bg-white
+                hover:shadow-sm
                 dark:border-white/20
                 dark:bg-white/[0.08]
                 dark:text-white
                 dark:hover:border-white/40
                 dark:hover:bg-white/[0.15]
-                sm:min-w-[175px]
+                sm:min-w-[155px]
               "
             >
-              <Landmark className="h-5 w-5 text-[#9a6a35]" />
+              <Ship className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
 
-              <span>المعالم والتراث</span>
-            </motion.button>
-
-            {/* Market */}
-            <motion.button
-              type="button"
-              whileHover={{
-                scale: 1.02,
-                y: -2,
-              }}
-              whileTap={{
-                scale: 0.98,
-              }}
-              onClick={() => setActivePage('products')}
-              className="
-                group
-                flex
-                min-h-[50px]
-                items-center
-                justify-center
-                gap-2.5
-                rounded-2xl
-                border
-                border-[#9a6a35]/30
-                bg-white/80
-                px-6
-                text-sm
-                font-bold
-                text-[#744e26]
-                backdrop-blur-md
-                transition-all
-                hover:border-[#9a6a35]
-                hover:bg-[#9a6a35]
-                hover:text-white
-                dark:border-[#d5a56d]/40
-                dark:bg-[#9a6a35]/30
-                dark:text-[#f4d5ad]
-                dark:hover:bg-[#9a6a35]
-                dark:hover:text-white
-                sm:min-w-[175px]
-              "
-            >
-              <ShoppingBag
-                className="
-                  h-5 w-5
-                  transition-transform
-                  duration-300
-                  group-hover:scale-110
-                "
-              />
-
-              <span>سوق وه</span>
+              <span>خريطة الصعيد</span>
 
               <ArrowLeft
                 className="
                   h-4 w-4
-                  opacity-60
-                  transition-all
+                  opacity-50
+                  transition-transform
                   duration-300
                   group-hover:-translate-x-1
                   group-hover:opacity-100
                 "
               />
             </motion.button>
+          </motion.div>
+
+          {/* Core Platform Highlights Bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.75, duration: 0.5 }}
+            className="mt-6 flex flex-wrap items-center gap-3 sm:gap-5 pt-4 border-t border-black/10 dark:border-white/10 text-xs font-bold text-[#211d18]/80 dark:text-white/80"
+          >
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+                <ShoppingBag className="h-3.5 w-3.5" />
+              </span>
+              <span>سوق متكامل: تسوق مباشر ودفع آمن وشحن للباب</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+                <Film className="h-3.5 w-3.5" />
+              </span>
+              <span>ريلز حية من ورش الصعيد</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+                <Landmark className="h-3.5 w-3.5" />
+              </span>
+              <span>وثائقيات ومعالم تفاعلية</span>
+            </div>
           </motion.div>
 
           {/* =====================================================
