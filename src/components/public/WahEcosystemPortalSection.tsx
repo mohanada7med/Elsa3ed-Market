@@ -14,7 +14,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'سوق متكامل لشراء حِرف ومنتجات الصعيد الأصلية 100% مباشرة من صانعيها، بدفع إلكتروني آمن وشحن سريع لكل المحافظات.',
       badge: 'سوق وه التجاري',
       page: 'products' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
       nameEn: 'WAH Marketplace',
       accentColor: 'from-amber-800/80'
     },
@@ -25,7 +25,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'فيديوهات ريلز قصيرة وتفاعلية تاخدك جوة ورش الصنعة وأسواق وحكاوي الشارع الصعيدي الحي.',
       badge: 'ريلز تفاعلية',
       page: 'reels' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
       nameEn: 'Live Reels',
       accentColor: 'from-orange-950/70'
     },
@@ -36,7 +36,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'لف في محافظات الصعيد من الفيوم وبني سويف لحد أسوان والنوبة على خريطة تفاعلية تاخدك لكل حتة.',
       badge: 'التفاعلي',
       page: 'map' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
       nameEn: 'Interactive Atlas',
       accentColor: 'from-amber-900/60'
     },
@@ -47,7 +47,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'دليل لكل محافظة: حكايتها، ناسها، وطابعها اللي بيميزها عن غيرها على شط النيل وفي حضن الجبل.',
       badge: `${wahStats?.governoratesCount || 8} محافظات`,
       page: 'governorates' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788791500/copy_of_.jpg',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788791500/copy_of_.jpg',
       nameEn: 'Governorates Guide',
       accentColor: 'from-stone-900/60'
     },
@@ -58,7 +58,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'من معابد الكرنك ودندرة وإدفو لحد الأديرة القديمة وقصور المنيا وعمارة النوبة على النيل.',
       badge: wahStats?.placesCount ? `${wahStats.placesCount} معلم متوثق` : 'معالم متوثقة',
       page: 'places' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
       nameEn: 'Architectural Heritage',
       accentColor: 'from-[#9a6a35]/70'
     },
@@ -69,7 +69,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'أسرار فخار قنا، تلي أسيوط الفضي، فركة نقادة، ألباستر القرنة، وسجاد أخميم اليدوي الأصيل.',
       badge: 'حرف صعيدية',
       page: 'cultural-crafts' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
       nameEn: 'Crafts Encyclopedia',
       accentColor: 'from-orange-950/70'
     },
@@ -80,7 +80,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'حكايات بتتوارث من جيل لجيل: مربعات ابن عروس، السيرة الهلالية، أساطير النيل، وحكاوي النجوع والبلاد.',
       badge: 'حكاوي ومرويات',
       page: 'stories' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png',
       nameEn: 'Oral History',
       accentColor: 'from-yellow-950/70'
     },
@@ -91,7 +91,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'اتعرف على ناس الصعيد الطيبين؛ شيوخ الصنعة، رواة السيرة، الشعراء، وفنانين التراث.',
       badge: 'وجوه من الصعيد',
       page: 'people' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
       nameEn: 'People of Upper Egypt',
       accentColor: 'from-[#744e26]/70'
     },
@@ -102,7 +102,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'العيش الشمسي، الفايش الصعيدي بالسمسم، الويكا بالمفراك، الكشك، وخيرات عسل القصب.',
       badge: 'أكلات ووصفات',
       page: 'food' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
+      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
       nameEn: 'Authentic Kitchen',
       accentColor: 'from-amber-950/70'
     },

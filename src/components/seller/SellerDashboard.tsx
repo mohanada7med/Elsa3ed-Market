@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { Product, Governorate, OrderStatus, ProductStatus, CraftReel } from '../../types.ts';
 import { api } from '../../services/api.ts';
@@ -59,7 +59,15 @@ import {
   Share2,
   Heart,
   Music,
-  MessageSquare
+  MessageSquare,
+  PanelLeft,
+  Columns2,
+  StretchHorizontal,
+  LayoutGrid,
+  Search,
+  Menu,
+  ChevronLeft,
+  SlidersHorizontal
 } from 'lucide-react';
 
 export const SellerDashboard: React.FC = () => {
@@ -94,6 +102,40 @@ export const SellerDashboard: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
 
+  // Multi-Layout Modes for Artisan Seller Dashboard
+  type SellerLayoutMode = 'sidebar' | 'compact-rail' | 'full-hub' | 'bento';
+  const [layoutMode, setLayoutMode] = useState<SellerLayoutMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('wah_seller_layout_mode');
+      if (saved === 'sidebar' || saved === 'compact-rail' || saved === 'full-hub' || saved === 'bento') {
+        return saved as SellerLayoutMode;
+      }
+    }
+    return 'sidebar';
+  });
+
+  const handleLayoutChange = (mode: SellerLayoutMode) => {
+    setLayoutMode(mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('wah_seller_layout_mode', mode);
+    }
+  };
+
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [navSearchQuery, setNavSearchQuery] = useState('');
+  const [activeHubSection, setActiveHubSection] = useState<string>('all');
+
+  const handleSelectTab = (tab: typeof activeTab) => {
+    setActiveTab(tab);
+    setIsMobileNavOpen(false);
+    if (typeof window !== 'undefined') {
+      const pane = document.getElementById('seller-main-pane');
+      if (pane) {
+        pane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
   // Reels Management State (Seller Workshop Control)
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [isReelUploadOpen, setIsReelUploadOpen] = useState(false);
@@ -102,8 +144,9 @@ export const SellerDashboard: React.FC = () => {
   const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
   const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
 
-  // Curated Heritage Craft Workshop Cover Presets (Linked to Cloudinary)
-  const [cloudImages, setCloudImages] = useState<Array<{ id: string; title: string; url: string }>>([]);
+  // Curated Heritage Craft Workshop Cover Presets (Filtered exclusively to workshops: pottery, tally, etc.)
+  const [cloudImages, setCloudImages] = useState<Array<{ id: string; title: string; url: string; region?: string; craft?: string; craftCategory?: 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture' }>>([]);
+  const [workshopCraftFilter, setWorkshopCraftFilter] = useState<'all' | 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture'>('all');
   const [isLoadingCloudImages, setIsLoadingCloudImages] = useState(false);
 
   useEffect(() => {
@@ -112,13 +155,38 @@ export const SellerDashboard: React.FC = () => {
       try {
         const images = await api.fetchCloudinaryImages();
         if (images && images.length > 0) {
-          const formatted = images.map((img: any, index: number) => ({
-            id: img.id || `cloud-${index}`,
-            title: img.title || (img.public_id ? img.public_id.split('/').pop() : `صورة تراثية ${index + 1}`),
-            region: img.region || 'ورشة معتمدة',
-            craft: img.craft || 'تراث صعيدي أصيل',
-            url: img.secure_url || img.url
-          }));
+          // Strictly ensure only workshop-related items appear (pottery, tally, weaving, khous, alabaster)
+          const isWorkshop = (img: any) => {
+            const text = `${img.public_id || ''} ${img.title || ''} ${img.craft || ''}`.toLowerCase();
+            const forbidden = ['dates', 'honey', 'temple', 'dendera', 'karnak', 'archaeological', 'receipt', 'avatar', 'user', 'تمور', 'عسل', 'معبد'];
+            if (forbidden.some((bad) => text.includes(bad))) return false;
+            return true;
+          };
+
+          const formatted = images.filter(isWorkshop).map((img: any, index: number) => {
+            const lower = `${img.public_id || ''} ${img.title || ''} ${img.craft || ''}`.toLowerCase();
+            let category: 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture' = 'pottery';
+            if (lower.includes('tally') || lower.includes('telli') || lower.includes('تلي') || lower.includes('فضة')) {
+              category = 'tally';
+            } else if (lower.includes('weav') || lower.includes('loom') || lower.includes('أخميم') || lower.includes('نسيج') || lower.includes('كليم') || lower.includes('سجاد')) {
+              category = 'weaving';
+            } else if (lower.includes('khous') || lower.includes('palm') || lower.includes('خوص') || lower.includes('سعف') || lower.includes('جريد') || lower.includes('سلال')) {
+              category = 'khous';
+            } else if (lower.includes('alabaster') || lower.includes('ألاباستر') || lower.includes('نحاس') || lower.includes('خشب') || lower.includes('أرابيسك')) {
+              category = 'sculpture';
+            } else if (lower.includes('pottery') || lower.includes('fokhar') || lower.includes('fukhar') || lower.includes('فخار') || lower.includes('طين') || lower.includes('قلل')) {
+              category = 'pottery';
+            }
+
+            return {
+              id: img.id || `cloud-${index}`,
+              title: img.title || (img.public_id ? img.public_id.split('/').pop() : `ورشة تراثية ${index + 1}`),
+              region: img.region || 'ورشة صعيدية',
+              craft: img.craft || 'حرفة يدوية أصيلة',
+              craftCategory: (img.craftCategory as any) || category,
+              url: img.secure_url || img.url
+            };
+          });
           setCloudImages(formatted);
         }
       } catch (err) {
@@ -130,6 +198,12 @@ export const SellerDashboard: React.FC = () => {
 
     loadCloudImages();
   }, []);
+
+  // تصفية صور الورش المعروضة بناءً على نوع الحرفة
+  const filteredWorkshopImages = useMemo(() => {
+    if (workshopCraftFilter === 'all') return cloudImages;
+    return cloudImages.filter((img) => img.craftCategory === workshopCraftFilter);
+  }, [cloudImages, workshopCraftFilter]);
 
   const effectiveSellerId = currentUser?.sellerId || currentUser?.id;
 
@@ -652,6 +726,138 @@ export const SellerDashboard: React.FC = () => {
   const lowStockCount = sellerProducts.filter((p) => p.stockCount > 0 && p.stockCount <= 5).length;
   const outOfStockCount = sellerProducts.filter((p) => p.stockCount === 0).length;
   const totalValuation = sellerProducts.reduce((sum, p) => sum + p.price * p.stockCount, 0);
+  const pendingOrdersCount = orders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
+  const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
+
+  interface SellerNavItem {
+    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings';
+    label: string;
+    sublabel?: string;
+    icon: React.ComponentType<{ className?: string }>;
+    badge?: string | number;
+    elementId: string;
+  }
+
+  interface SellerNavSection {
+    id: string;
+    title: string;
+    description: string;
+    items: SellerNavItem[];
+  }
+
+  const navSections: SellerNavSection[] = [
+    {
+      id: 'core',
+      title: 'الرئيسية والمالية',
+      description: 'أداء الورشة، المبيعات وسحب الأرباح',
+      items: [
+        {
+          id: 'overview',
+          label: 'نظرة عامة وإحصائيات',
+          sublabel: 'المؤشرات والرسوم البيانية',
+          icon: TrendingUp,
+          elementId: 'seller-nav-overview-btn'
+        },
+        {
+          id: 'payouts',
+          label: 'طلب صرف المستحقات',
+          sublabel: `المبيعات ${totalRevenue.toLocaleString('ar-EG')} ج.م`,
+          icon: CreditCard,
+          elementId: 'seller-nav-payouts-btn'
+        }
+      ]
+    },
+    {
+      id: 'products_inventory',
+      title: 'القطع الحرفية والمخزون',
+      description: 'معروضات الصنعة، الجرد وتنبيهات النواقص',
+      items: [
+        {
+          id: 'products',
+          label: 'إدارة المنتجات والاعتماد',
+          sublabel: `${sellerProducts.length} قطعة مسجلة`,
+          icon: Package,
+          badge: pendingProductsCount > 0 ? `${pendingProductsCount} قيد الاعتماد` : sellerProducts.length,
+          elementId: 'seller-nav-products-btn'
+        },
+        {
+          id: 'inventory',
+          label: 'المخزون وحركات الجرد',
+          sublabel: `${sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة بالمخزن`,
+          icon: Boxes,
+          badge: lowStockCount > 0 ? `${lowStockCount} نواقص` : undefined,
+          elementId: 'seller-nav-inventory-btn'
+        }
+      ]
+    },
+    {
+      id: 'logistics_customers',
+      title: 'الطلبات والزبائن',
+      description: 'الشحن والتوصيل والمحادثات المباشرة',
+      items: [
+        {
+          id: 'orders',
+          label: 'تنفيذ وتجهيز الطلبات',
+          sublabel: `${orders.length} طلب إجمالي`,
+          icon: Truck,
+          badge: pendingOrdersCount > 0 ? pendingOrdersCount : undefined,
+          elementId: 'seller-nav-orders-btn'
+        },
+        {
+          id: 'messages',
+          label: 'محادثات الزبائن المباشرة',
+          sublabel: 'تواصل فوري مع المشترين',
+          icon: MessageSquare,
+          badge: chatUnreadCount > 0 ? chatUnreadCount : undefined,
+          elementId: 'seller-nav-messages-btn'
+        }
+      ]
+    },
+    {
+      id: 'media_identity',
+      title: 'الهوية وإعلام الورشة',
+      description: 'ريلز الحرفة، التنبيهات والغلاف',
+      items: [
+        {
+          id: 'reels',
+          label: 'فيديوهات الصنعة (Reels)',
+          sublabel: `${reels.length} مقطع منشور`,
+          icon: Film,
+          badge: reels.length,
+          elementId: 'seller-nav-reels-btn'
+        },
+        {
+          id: 'notifications',
+          label: 'مركز التنبيهات والإشعارات',
+          sublabel: 'إشعارات الإدارة والطلبات',
+          icon: Bell,
+          elementId: 'seller-nav-notifications-btn'
+        },
+        {
+          id: 'settings',
+          label: 'بيانات الورشة والغلاف',
+          sublabel: 'الشعار والوصف والمحافظة',
+          icon: Settings,
+          elementId: 'seller-nav-settings-btn'
+        }
+      ]
+    }
+  ];
+
+  const allNavItems: SellerNavItem[] = navSections.flatMap((s) => s.items);
+  const currentActiveItem: SellerNavItem | undefined = allNavItems.find((i) => i.id === activeTab);
+
+  const filteredSections: SellerNavSection[] = navSections.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      if (!navSearchQuery.trim()) return true;
+      const q = navSearchQuery.toLowerCase();
+      return (
+        item.label.toLowerCase().includes(q) ||
+        (item.sublabel && item.sublabel.toLowerCase().includes(q))
+      );
+    })
+  })).filter((section) => section.items.length > 0);
 
   const getStatusBadge = (status: ProductStatus) => {
     switch (status) {
@@ -1008,224 +1214,735 @@ export const SellerDashboard: React.FC = () => {
           </div>
 
           {/* Quick Header Actions */}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Layout Mode Switcher */}
+            <div
+              id="seller-layout-switcher"
+              className="flex items-center bg-black/30 dark:bg-black/50 border border-white/10 rounded-xl p-1 gap-1 shadow-inner"
+              title="تغيير مظهر وعرض لوحة تحكم الورشة"
+            >
+              <button
+                type="button"
+                id="seller-layout-sidebar-btn"
+                onClick={() => handleLayoutChange('sidebar')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'sidebar'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض الشريط الجانبي (Sidebar)"
+              >
+                <PanelLeft className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">شريط جانبي</span>
+              </button>
+
+              <button
+                type="button"
+                id="seller-layout-rail-btn"
+                onClick={() => handleLayoutChange('compact-rail')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'compact-rail'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض الشريط الذكي الرفيع (Compact Iconic Rail)"
+              >
+                <Columns2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">شريط رفيع</span>
+              </button>
+
+              <button
+                type="button"
+                id="seller-layout-hub-btn"
+                onClick={() => handleLayoutChange('full-hub')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'full-hub'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض التبويب العريض (Full-Width Hub)"
+              >
+                <StretchHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">تبويب عريض</span>
+              </button>
+
+              <button
+                type="button"
+                id="seller-layout-bento-btn"
+                onClick={() => handleLayoutChange('bento')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  layoutMode === 'bento'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                title="عرض البطاقات السريعة (Bento Grid)"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">بطاقات Bento</span>
+              </button>
+            </div>
+
             <button
               type="button"
               id="seller-edit-cover-quick-btn"
               onClick={() => setActiveTab('settings')}
-              className="px-4 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl backdrop-blur-md flex items-center gap-2 transition-all cursor-pointer"
+              className="px-3.5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl backdrop-blur-md flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Palette className="w-4 h-4 text-[#d5a56d]" />
-              <span>تخصيص غلاف الورشة</span>
+              <Palette className="w-3.5 h-3.5 text-[#d5a56d]" />
+              <span className="hidden sm:inline">غلاف الورشة</span>
             </button>
 
             <button
               type="button"
               id="seller-add-product-btn"
               onClick={openAddProductModal}
-              className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer border border-white/10"
+              className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               <span>إضافة منتج جديد</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4 Older-User & Artisan Friendly Primary Action Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Action 1: Add Product */}
-        <button
-          type="button"
-          id="seller-primary-add-card"
-          onClick={openAddProductModal}
-          className="p-5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-[2rem] shadow-lg border border-black/10 dark:border-white/10 transition-all text-right flex items-center justify-between group cursor-pointer"
-        >
-          <div>
-            <span className="text-base font-bold block mb-1">إضافة منتج</span>
-            <span className="text-xs text-white/70 dark:text-black/70 block font-medium">رفع قطعة جديدة للاعتماد</span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-white/15 dark:bg-black/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-            <Plus className="w-6 h-6" />
-          </div>
-        </button>
+      {/* =====================================================
+          MAIN WORKPLACE: DYNAMIC LAYOUT (SIDEBAR / COMPACT-RAIL / FULL-HUB / BENTO)
+          ===================================================== */}
+      <div className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex flex-col lg:flex-row gap-5 items-start" : "w-full space-y-6"}>
+        {/* LAYOUT 1: EXPANSIVE WORKSHOP SIDEBAR */}
+        {layoutMode === 'sidebar' && (
+          <aside className="w-full lg:w-72 xl:w-80 shrink-0 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-4 space-y-4 shadow-xl sticky lg:top-4 z-20">
+            {/* Mobile View Navigation Toggle */}
+            <div className="flex lg:hidden items-center justify-between p-2 bg-black/5 dark:bg-white/5 rounded-xl">
+              <div className="flex items-center gap-2 text-xs font-bold">
+                <Store className="w-4 h-4 text-[#9a6a35]" />
+                <span>{currentActiveItem?.label || 'لوحة الورشة'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileNavOpen(true)}
+                className="px-3 py-1.5 bg-[#9a6a35] text-white rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <Menu className="w-3.5 h-3.5" />
+                <span>تبديل القسم</span>
+              </button>
+            </div>
 
-        {/* Action 2: My Products */}
-        <button
-          type="button"
-          id="seller-primary-prods-card"
-          onClick={() => setActiveTab('products')}
-          className={`p-5 rounded-[2rem] shadow-lg transition-all text-right flex items-center justify-between border cursor-pointer backdrop-blur-xl ${activeTab === 'products'
-            ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-            : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-            }`}
-        >
-          <div>
-            <span className="text-base font-bold block mb-1">منتجاتي</span>
-            <span className="text-xs text-black/60 dark:text-white/60 block font-medium">{sellerProducts.length} قطعة مسجلة بالورشة</span>
+            {/* Sidebar Search */}
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={navSearchQuery}
+                onChange={(e) => setNavSearchQuery(e.target.value)}
+                placeholder="بحث في أدوات الورشة..."
+                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+              />
+              {navSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setNavSearchQuery('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Nav Sections */}
+            <div className="space-y-4 max-h-[calc(100vh-14rem)] overflow-y-auto pr-1">
+              {filteredSections.map((sec) => (
+                <div key={sec.id} className="space-y-1">
+                  <div className="px-2 py-1 flex items-center justify-between">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-[#9a6a35] dark:text-[#d5a56d]">
+                      {sec.title}
+                    </span>
+                    <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
+                      {sec.items.length}
+                    </span>
+                  </div>
+
+                  <div className="space-y-0.5">
+                    {sec.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeTab === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          id={item.elementId}
+                          onClick={() => handleSelectTab(item.id)}
+                          className={`w-full p-2.5 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-[#9a6a35]'}`} />
+                            <div className="truncate text-right">
+                              <span className="block truncate">{item.label}</span>
+                              {item.sublabel && (
+                                <span className={`text-[10px] block font-normal truncate ${
+                                  isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'
+                                }`}>
+                                  {item.sublabel}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {item.badge !== undefined && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                              isActive
+                                ? 'bg-white/20 text-white'
+                                : 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300'
+                            }`}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Action Button in Sidebar */}
+            <div className="pt-2 border-t border-black/10 dark:border-white/10">
+              <button
+                type="button"
+                onClick={openAddProductModal}
+                className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span>إضافة قطعة جديدة</span>
+              </button>
+            </div>
+          </aside>
+        )}
+
+        {/* LAYOUT 2: COMPACT ICONIC RAIL (DESKTOP) */}
+        {layoutMode === 'compact-rail' && (
+          <aside className="hidden lg:flex flex-col items-center w-20 shrink-0 bg-white/85 dark:bg-[#151513]/90 backdrop-blur-xl rounded-3xl border border-black/10 dark:border-white/10 py-5 px-2 gap-3 shadow-xl sticky top-4 z-20">
+            {/* Artisan Workshop Stamp */}
+            <div className="w-11 h-11 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center font-black text-base font-serif shadow-xs mb-1">
+              {sellerAvatar ? (
+                <img src={sellerAvatar} alt="ص" className="w-full h-full object-cover rounded-2xl" />
+              ) : (
+                'ص'
+              )}
+            </div>
+
+            <div className="w-8 h-[1px] bg-black/10 dark:border-white/10 my-1" />
+
+            {/* Rail Navigation Icons with Smart Floating Tooltips */}
+            <div className="flex flex-col items-center gap-1.5 w-full">
+              {allNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <div key={item.id} className="relative group/rail flex items-center justify-center w-full">
+                    <button
+                      type="button"
+                      id={`rail-${item.elementId}`}
+                      onClick={() => handleSelectTab(item.id)}
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative ${
+                        isActive
+                          ? 'bg-[#9a6a35] text-white shadow-md scale-105'
+                          : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/15 hover:text-[#9a6a35]'
+                      }`}
+                      aria-label={item.label}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {/* Floating Indicator / Badge Dot */}
+                      {item.badge !== undefined && (
+                        <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 ring-2 ring-white dark:ring-[#151513]" />
+                      )}
+                    </button>
+
+                    {/* Smart Floating Tooltip (RTL Positioned to Left of Rail) */}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-2 bg-[#211d18] dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold whitespace-nowrap shadow-xl opacity-0 translate-x-2 group-hover/rail:opacity-100 group-hover/rail:translate-x-0 transition-all pointer-events-none z-50 flex items-center gap-2">
+                      <span>{item.label}</span>
+                      {item.badge !== undefined && (
+                        <span className="bg-[#9a6a35] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
+                          {item.badge}
+                        </span>
+                      )}
+                      <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 border-solid border-l-[#211d18] dark:border-l-white border-l-4 border-y-transparent border-y-4 border-r-0" />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="w-8 h-[1px] bg-black/10 dark:border-white/10 mt-auto my-1" />
+
+            {/* Expand / Switch to Sidebar Button */}
+            <button
+              type="button"
+              onClick={() => handleLayoutChange('sidebar')}
+              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-[#9a6a35]/15 text-black/60 dark:text-white/60 hover:text-[#9a6a35] flex items-center justify-center text-xs transition-colors cursor-pointer"
+              title="توسيع إلى شريط جانبي كامل"
+            >
+              <PanelLeft className="w-4 h-4" />
+            </button>
+          </aside>
+        )}
+
+        {/* LAYOUT 3: FULL-WIDTH HUB */}
+        {layoutMode === 'full-hub' && (
+          <div className="w-full bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
+            {/* Hub Header & Search */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <StretchHorizontal className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">
+                    مركز التحكم الموسع للورشة (Full-Width Hub)
+                  </h3>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]">
+                    عرض عريض
+                  </span>
+                </div>
+                <p className="text-xs text-black/60 dark:text-white/60">
+                  تصفح سريع لجميع أدوات الورشة وإدارة الطلبات والقطع الحرفية
+                </p>
+              </div>
+
+              {/* Hub Quick Search */}
+              <div className="relative w-full md:w-72">
+                <Search className="w-3.5 h-3.5 text-[#9a6a35] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={navSearchQuery}
+                  onChange={(e) => setNavSearchQuery(e.target.value)}
+                  placeholder="بحث سريع في كل أدوات الورشة..."
+                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                />
+                {navSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setNavSearchQuery('')}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Hub Section Filter Pills */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              <button
+                type="button"
+                onClick={() => setActiveHubSection('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+                  activeHubSection === 'all'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                }`}
+              >
+                جميع الأدوات ({allNavItems.length})
+              </button>
+              {navSections.map((sec) => {
+                const isSelected = activeHubSection === sec.id;
+                return (
+                  <button
+                    key={sec.id}
+                    type="button"
+                    onClick={() => setActiveHubSection(sec.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-[#9a6a35] text-white shadow-xs'
+                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                    }`}
+                  >
+                    <span>{sec.title}</span>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                      {sec.items.length}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Hub Cards Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {(activeHubSection === 'all'
+                ? filteredSections.flatMap((s) => s.items)
+                : (filteredSections.find((s) => s.id === activeHubSection)?.items || [])
+              ).map((item) => {
+                const isActive = activeTab === item.id;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    id={`hub-${item.elementId}`}
+                    onClick={() => handleSelectTab(item.id)}
+                    className={`p-4 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group shadow-2xs ${
+                      isActive
+                        ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-md ring-2 ring-[#9a6a35]/30'
+                        : 'bg-white dark:bg-[#161513] hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform ${
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/10 text-[#9a6a35]'
+                      }`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs truncate">{item.label}</div>
+                        {item.sublabel && (
+                          <div className={`text-[10px] truncate mt-0.5 ${isActive ? 'text-white/80' : 'text-black/50 dark:text-white/50'}`}>
+                            {item.sublabel}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {item.badge !== undefined && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 flex items-center justify-center text-[#9a6a35] shrink-0">
-            <Package className="w-6 h-6" />
+        )}
+
+        {/* LAYOUT 4: BENTO MATRIX */}
+        {layoutMode === 'bento' && (
+          <div className="w-full bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 space-y-5 shadow-xl">
+            {/* Bento Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <LayoutGrid className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d]" />
+                <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">
+                  شبكة البطاقات الذكية للورشة (Bento Matrix)
+                </h3>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]">
+                  نظرة شمولية
+                </span>
+              </div>
+              {currentActiveItem && (
+                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
+                  <span className="text-black/50 dark:text-white/50">القسم المعروض بالأسفل:</span>
+                  <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem.label}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Bento Modular Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Bento Card 1: Products & Craftsmanship (Hero - Span 2) */}
+              <div
+                onClick={() => handleSelectTab('products')}
+                className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'products'
+                    ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300'
+                    }`}>
+                      قطع الصنعة المعروضة
+                    </span>
+                    <h4 className="font-black text-lg mt-1">إدارة واعتماد معروضات الورشة</h4>
+                    <p className={`text-xs max-w-sm ${activeTab === 'products' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                      رفع قطع يدوية جديدة، تعديل الأسعار، ومتابعة اعتماد المنصة للتراث الصعيدي
+                    </p>
+                  </div>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${
+                    activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    <Package className="w-6 h-6" />
+                  </div>
+                </div>
+
+                <div className="mt-5 flex items-center gap-3">
+                  <div className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 ${
+                    pendingProductsCount > 0
+                      ? 'bg-amber-500 text-white animate-pulse'
+                      : activeTab === 'products' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800'
+                  }`}>
+                    {pendingProductsCount > 0 ? (
+                      <>
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        <span>{pendingProductsCount} قطعة قيد المراجعة</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>جميع المعروضات معتمدة</span>
+                      </>
+                    )}
+                  </div>
+                  <span className={`text-xs ${activeTab === 'products' ? 'text-white/70' : 'text-black/50 dark:text-white/50'}`}>
+                    {sellerProducts.length} قطعة بالورشة
+                  </span>
+                </div>
+              </div>
+
+              {/* Bento Card 2: Orders & Packing */}
+              <div
+                onClick={() => handleSelectTab('orders')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'orders'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  {pendingOrdersCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-500 text-white animate-pulse">
+                      {pendingOrdersCount} للتجهيز
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">طلبات الزبائن والشحن</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'orders' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  تأكيد الشحن وتحديث بوليصة التوصيل
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">{orders.length} طلب إجمالي</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">متابعة ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 3: Inventory Alerts */}
+              <div
+                onClick={() => handleSelectTab('inventory')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'inventory'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Boxes className="w-5 h-5" />
+                  </div>
+                  {lowStockCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500 text-white">
+                      {lowStockCount} أوشك
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">المخزون والجرد</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'inventory' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  حركات الدفعات وتنبيهات نفاد القطع
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">{sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة مخزنة</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">جرد ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 4: Financials & Payouts */}
+              <div
+                onClick={() => handleSelectTab('payouts')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'payouts'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-mono font-black text-emerald-600 dark:text-emerald-400">
+                    InstaPay / فودافون
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">أرباح ومستحقات الورشة</h4>
+                <p className={`text-xs mt-1 font-mono font-bold text-base text-[#9a6a35] dark:text-[#d5a56d]`}>
+                  {totalRevenue.toLocaleString('ar-EG')} ج.م
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="text-black/60 dark:text-white/60">سحب الأرباح</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">طلب صرف ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 5: Direct Messages */}
+              <div
+                onClick={() => handleSelectTab('messages')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'messages'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  {chatUnreadCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[#9a6a35] text-white animate-pulse">
+                      {chatUnreadCount} جديد
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">محادثات الزبائن</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'messages' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  ردود فورية على استفسارات المشترين
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">شات مباشر</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">فتح المحادثة ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 6: Craft Reels */}
+              <div
+                onClick={() => handleSelectTab('reels')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'reels'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-rose-100 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Film className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">
+                    {reels.length} مقطع
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">فيديوهات الورشة (Reels)</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'reels' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  توثيق كواليس الصنع اليدوي لزيادة الثقة
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">فيديو الصنعة</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">استعراض ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 7: Workshop Identity & Settings */}
+              <div
+                onClick={() => handleSelectTab('settings')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                  activeTab === 'settings'
+                    ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                    : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Settings className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold text-[#9a6a35] dark:text-[#d5a56d]">
+                    {sellerGovernorate}
+                  </span>
+                </div>
+                <h4 className="font-black text-sm mt-3">هوية الورشة والغلاف</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'settings' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  {brandName} • صورة الغلاف والشعار
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">تعديل الهوية</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">تخصيص ←</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </button>
+        )}
 
-        {/* Action 3: Orders */}
-        <button
-          type="button"
-          id="seller-primary-orders-card"
-          onClick={() => setActiveTab('orders')}
-          className={`p-5 rounded-[2rem] shadow-lg transition-all text-right flex items-center justify-between border cursor-pointer backdrop-blur-xl ${activeTab === 'orders'
-            ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-            : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-            }`}
-        >
-          <div>
-            <span className="text-base font-bold block mb-1">الطلبات</span>
-            <span className="text-xs text-black/60 dark:text-white/60 block font-medium">{orders.length} طلب من الزبائن</span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
-            <Truck className="w-6 h-6" />
-          </div>
-        </button>
+        {/* MAIN WORKPLACE CONTENT PANE */}
+        <main id="seller-main-pane" className={(layoutMode === 'sidebar' || layoutMode === 'compact-rail') ? "flex-1 min-w-0 w-full space-y-6" : "w-full space-y-6"}>
+          {/* Quick 4 Action Cards for Sidebar and Compact-Rail modes */}
+          {(layoutMode === 'sidebar' || layoutMode === 'compact-rail') && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <button
+                type="button"
+                id="seller-primary-add-card"
+                onClick={openAddProductModal}
+                className="p-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-2xl shadow-sm transition-all text-right flex items-center justify-between group cursor-pointer"
+              >
+                <div>
+                  <span className="text-xs font-bold block">إضافة منتج</span>
+                  <span className="text-[10px] text-white/70 dark:text-black/70 block">رفع قطعة جديدة</span>
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-white/15 dark:bg-black/10 flex items-center justify-center shrink-0">
+                  <Plus className="w-4 h-4" />
+                </div>
+              </button>
 
-        {/* Action 4: Workshop Identity & Cover */}
-        <button
-          type="button"
-          id="seller-primary-account-card"
-          onClick={() => setActiveTab('settings')}
-          className={`p-5 rounded-[2rem] shadow-lg transition-all text-right flex items-center justify-between border cursor-pointer backdrop-blur-xl ${activeTab === 'settings'
-            ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
-            : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
-            }`}
-        >
-          <div>
-            <span className="text-base font-bold block mb-1">غلاف وهوية الورشة</span>
-            <span className="text-xs text-black/60 dark:text-white/60 block font-medium">تعديل الغلاف وقسم الورش المعتمدة</span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400 shrink-0">
-            <Camera className="w-6 h-6" />
-          </div>
-        </button>
-      </div>
+              <button
+                type="button"
+                id="seller-primary-prods-card"
+                onClick={() => handleSelectTab('products')}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
+                  activeTab === 'products'
+                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                }`}
+              >
+                <div>
+                  <span className="text-xs font-bold block">معروضاتي</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block">{sellerProducts.length} قطعة</span>
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center text-[#9a6a35] shrink-0">
+                  <Package className="w-4 h-4" />
+                </div>
+              </button>
 
-      {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-black/10 dark:border-white/10 overflow-x-auto pb-2 no-scrollbar px-1">
-        <button
-          type="button"
-          onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'overview'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <TrendingUp className="w-4 h-4" />
-          <span>نظرة عامة وإحصائيات</span>
-        </button>
+              <button
+                type="button"
+                id="seller-primary-orders-card"
+                onClick={() => handleSelectTab('orders')}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
+                  activeTab === 'orders'
+                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                }`}
+              >
+                <div>
+                  <span className="text-xs font-bold block">الطلبات</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block">{orders.length} طلب</span>
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
+                  <Truck className="w-4 h-4" />
+                </div>
+              </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveTab('products')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'products'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Package className="w-4 h-4" />
-          <span>إدارة المنتجات والاعتماد ({sellerProducts.length})</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('inventory')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'inventory'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Boxes className="w-4 h-4" />
-          <span>المخزون وحركات الجرد ({sellerProducts.reduce((acc, p) => acc + p.stockCount, 0)} قطعة)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'orders'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Truck className="w-4 h-4" />
-          <span>تنفيذ وتجهيز الطلبات ({orders.length})</span>
-        </button>
-
-        <button
-          type="button"
-          id="seller-messages-tab-btn"
-          onClick={() => setActiveTab('messages')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'messages'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <MessageSquare className="w-4 h-4 text-[#9a6a35]" />
-          <span>محادثات الزبائن المباشرة</span>
-          {chatUnreadCount > 0 && (
-            <span className="bg-[#9a6a35] text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
-              {chatUnreadCount}
-            </span>
+              <button
+                type="button"
+                id="seller-primary-account-card"
+                onClick={() => handleSelectTab('settings')}
+                className={`p-3.5 rounded-2xl shadow-sm transition-all text-right flex items-center justify-between border cursor-pointer ${
+                  activeTab === 'settings'
+                    ? 'bg-white dark:bg-[#151513] border-[#9a6a35]'
+                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                }`}
+              >
+                <div>
+                  <span className="text-xs font-bold block">غلاف الورشة</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block">تعديل الهوية</span>
+                </div>
+                <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/40 flex items-center justify-center text-purple-700 dark:text-purple-400 shrink-0">
+                  <Camera className="w-4 h-4" />
+                </div>
+              </button>
+            </div>
           )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('payouts')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'payouts'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <CreditCard className="w-4 h-4" />
-          <span>طلب صرف المستحقات</span>
-        </button>
-
-        <button
-          type="button"
-          id="seller-reels-tab-btn"
-          onClick={() => setActiveTab('reels')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'reels'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Film className="w-4 h-4 text-[#9a6a35]" />
-          <span>فيديوهات ورشة الصنعة (Craft Reels) ({reels.length})</span>
-        </button>
-
-        <button
-          type="button"
-          id="seller-notifications-tab-btn"
-          onClick={() => setActiveTab('notifications')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'notifications'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Bell className="w-4 h-4" />
-          <span>مركز الإشعارات والتنبيهات</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveTab('settings')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${activeTab === 'settings'
-            ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-            : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
-            }`}
-        >
-          <Settings className="w-4 h-4" />
-          <span>بيانات الورشة والتسوية</span>
-        </button>
-      </div>
 
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
@@ -1914,7 +2631,7 @@ export const SellerDashboard: React.FC = () => {
                       }`}
                   >
                     <Palette className="w-3.5 h-3.5" />
-                    <span>المعرض التراثي ({cloudImages.length})</span>
+                    <span>معرض ورش الصنعة ({cloudImages.length})</span>
                   </button>
 
                   <button
@@ -1942,29 +2659,123 @@ export const SellerDashboard: React.FC = () => {
                   </button>
                 </div>
 
-                {/* TAB 1: CURATED PRESETS GALLERY */}
+                {/* TAB 1: CURATED WORKSHOP PRESETS GALLERY */}
                 {coverPickerTab === 'presets' && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-black/60 dark:text-white/60 font-medium">
-                        اختر صورة غلاف موثقة تمثل طابع ورشتكم وحرفتكم التراثية الأصيلة:
-                      </p>
+                  <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <p className="text-xs text-[#211d18] dark:text-[#f5f0e7] font-bold">
+                          اختر صورة غلاف موثقة تمثل طابع ورشتكم وحرفتكم التراثية الأصيلة:
+                        </p>
+                        <p className="text-[11px] text-[#9a6a35] dark:text-[#d4af37] font-medium mt-0.5">
+                          معرض مخصص حصرياً لصور ورش الصنعة والحرف اليدوية (فخار، تلي، نول، خوص، ألاباستر)
+                        </p>
+                      </div>
                       {isLoadingCloudImages && (
-                        <span className="text-xs text-[#9a6a35] flex items-center gap-1">
+                        <span className="text-xs text-[#9a6a35] flex items-center gap-1 shrink-0">
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>جاري جلب الصور السحابية...</span>
+                          <span>جاري جلب صور الورش...</span>
                         </span>
                       )}
                     </div>
 
+                    {/* Craft Category Filter Pills */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-thin">
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('all')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'all'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        كل الورش ({cloudImages.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('pottery')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'pottery'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        <span>🏺</span>
+                        <span>الفخار والخزف</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('tally')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'tally'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        <span>🪡</span>
+                        <span>التلي والفضة</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('weaving')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'weaving'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        <span>🧵</span>
+                        <span>النول والكليم</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('khous')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'khous'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        <span>🧺</span>
+                        <span>الخوص والنخيل</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWorkshopCraftFilter('sculpture')}
+                        className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer flex items-center gap-1 ${workshopCraftFilter === 'sculpture'
+                          ? 'bg-[#9a6a35] text-white shadow-xs'
+                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          }`}
+                      >
+                        <span>🗿</span>
+                        <span>الألاباستر والنحت</span>
+                      </button>
+                    </div>
+
+                    {/* Workshop Presets Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1">
-                      {cloudImages.length === 0 && !isLoadingCloudImages ? (
-                        <p className="col-span-full text-center text-xs text-black/50 py-6">
-                          لم يتم العثور على صور في المعرض حالياً.
-                        </p>
+                      {filteredWorkshopImages.length === 0 && !isLoadingCloudImages ? (
+                        <div className="col-span-full text-center py-8 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10">
+                          <p className="text-xs text-black/60 dark:text-white/60 font-medium">
+                            لا توجد صور متوفرة في هذا التصنيف حالياً.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setWorkshopCraftFilter('all')}
+                            className="mt-2 text-xs text-[#9a6a35] font-bold hover:underline cursor-pointer"
+                          >
+                            عرض جميع ورش الصنعة
+                          </button>
+                        </div>
                       ) : (
-                        cloudImages.map((preset) => {
+                        filteredWorkshopImages.map((preset) => {
                           const isSelected = sellerCoverImage === preset.url;
+                          const categoryBadge = preset.craftCategory === 'pottery'
+                            ? 'ورشة فخار'
+                            : preset.craftCategory === 'tally'
+                              ? 'ورشة تلي'
+                              : preset.craftCategory === 'weaving'
+                                ? 'ورشة نسيج'
+                                : preset.craftCategory === 'khous'
+                                  ? 'ورشة خوص'
+                                  : 'ورشة نحت وتشكيل';
+
                           return (
                             <button
                               type="button"
@@ -1975,21 +2786,33 @@ export const SellerDashboard: React.FC = () => {
                                 : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
                                 }`}
                             >
-                              <div className="h-24 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
+                              <div className="h-28 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
                                 <img
                                   src={preset.url}
                                   alt={preset.title}
                                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+
+                                {/* Category Tag */}
+                                <div className="absolute top-2 right-2">
+                                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-amber-200 backdrop-blur-xs border border-white/15">
+                                    {categoryBadge}
+                                  </span>
+                                </div>
+
                                 {isSelected && (
-                                  <div className="absolute top-2 right-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
+                                  <div className="absolute top-2 left-2 w-5 h-5 bg-[#9a6a35] text-white rounded-full flex items-center justify-center shadow-xs">
                                     <Check className="w-3 h-3 stroke-[3]" />
                                   </div>
                                 )}
-                                <div className="absolute bottom-1.5 right-2 left-2 text-white">
-                                  <span className="text-[10px] font-bold text-amber-200 block truncate drop-shadow-xs">
+
+                                <div className="absolute bottom-2 right-2 left-2 text-white space-y-0.5">
+                                  <span className="text-[11px] font-bold text-white block truncate drop-shadow-xs leading-tight">
                                     {preset.title}
+                                  </span>
+                                  <span className="text-[9px] text-white/70 block truncate">
+                                    {preset.region || preset.craft || 'حرفة صعيدية أصيلة'}
                                   </span>
                                 </div>
                               </div>
@@ -2643,6 +3466,142 @@ export const SellerDashboard: React.FC = () => {
             else if (tab === 'settings') setActiveTab('settings');
           }}
         />
+      )}
+        </main>
+      </div>
+
+      {/* Mobile Floating Bottom Rail for compact-rail mode */}
+      {layoutMode === 'compact-rail' && (
+        <div className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center bg-[#1c1917]/95 dark:bg-[#141311]/95 backdrop-blur-md border border-[#9a6a35]/40 rounded-full px-3 py-2 shadow-2xl gap-1 text-white">
+          <button
+            type="button"
+            onClick={() => handleSelectTab('overview')}
+            className={`p-2.5 rounded-full transition-all relative ${
+              activeTab === 'overview' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
+            }`}
+            title="نظرة عامة"
+          >
+            <TrendingUp className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectTab('products')}
+            className={`p-2.5 rounded-full transition-all relative ${
+              activeTab === 'products' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
+            }`}
+            title="المنتجات"
+          >
+            <Package className="w-4 h-4" />
+            {pendingProductsCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectTab('orders')}
+            className={`p-2.5 rounded-full transition-all relative ${
+              activeTab === 'orders' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
+            }`}
+            title="الطلبات"
+          >
+            <Truck className="w-4 h-4" />
+            {pendingOrdersCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-400" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectTab('messages')}
+            className={`p-2.5 rounded-full transition-all relative ${
+              activeTab === 'messages' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
+            }`}
+            title="المحادثات"
+          >
+            <MessageSquare className="w-4 h-4" />
+            {chatUnreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#9a6a35]" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSelectTab('reels')}
+            className={`p-2.5 rounded-full transition-all relative ${
+              activeTab === 'reels' ? 'bg-[#9a6a35] text-white' : 'text-white/70 hover:text-white'
+            }`}
+            title="ريلز الورشة"
+          >
+            <Film className="w-4 h-4" />
+          </button>
+          <div className="w-[1px] h-5 bg-white/20 mx-1" />
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen(true)}
+            className="p-2.5 rounded-full text-white/80 hover:text-white cursor-pointer"
+            title="كل الأقسام"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Mobile Navigation Sheet / Drawer */}
+      {isMobileNavOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white/95 dark:bg-[#151513]/95 backdrop-blur-2xl rounded-[2rem] border border-black/10 dark:border-white/10 max-w-md w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+              <div className="flex items-center gap-2">
+                <Store className="w-5 h-5 text-[#9a6a35]" />
+                <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">أقسام لوحة تحكم الورشة</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileNavOpen(false)}
+                className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {navSections.map((sec) => (
+                <div key={sec.id} className="space-y-1.5">
+                  <span className="text-[11px] font-bold text-[#9a6a35] dark:text-[#d5a56d] block">{sec.title}</span>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {sec.items.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeTab === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          id={`mobile-${item.elementId}`}
+                          onClick={() => handleSelectTab(item.id)}
+                          className={`w-full p-2.5 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${
+                            isActive
+                              ? 'bg-[#9a6a35] text-white shadow-xs'
+                              : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/15'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <Icon className="w-4 h-4 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                          {item.badge !== undefined && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                            }`}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Stock Adjustment Modal (Phase 4) */}

@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  compress: true,
+  poweredByHeader: false,
   serverExternalPackages: ['mongodb', 'bcryptjs', 'express', 'cookie-parser', 'cloudinary', 'multer'],
   allowedDevOrigins: ['192.168.1.3', 'localhost', '127.0.0.1', '192.168.1.3:3000', 'localhost:3000'],
   images: {

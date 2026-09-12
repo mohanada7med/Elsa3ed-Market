@@ -17,40 +17,104 @@ import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
 // Pages
 import { HomePage } from './components/pages/HomePage';
-import { ProductsPage } from './components/pages/ProductsPage';
-import { ProductDetailsView } from './components/products/ProductDetailsView';
-import { CategoriesPage } from './components/pages/CategoriesPage';
-import { CraftsPage } from './components/pages/CraftsPage';
-import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
-import { SellerProfileView } from './components/pages/SellerProfileView';
-import { CheckoutPage } from './components/pages/CheckoutPage';
-import { FavoritesPage } from './components/pages/FavoritesPage';
-import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
-import { AboutSection } from './components/public/AboutSection';
-import { CartPage } from './components/pages/CartPage';
-import { ChatView } from './components/chat/ChatView';
-import { ForbiddenPage } from './components/pages/ForbiddenPage';
 
-// WAH Upper Egypt Digital Platform Pages
-import { GovernoratesPage } from './components/pages/GovernoratesPage';
-import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
-import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
-import { PlaceDetailPage } from './components/pages/PlaceDetailPage';
-import { CulturalCraftsPage } from './components/pages/CulturalCraftsPage';
-import { CulturalCraftDetailPage } from './components/pages/CulturalCraftDetailPage';
-import { StoriesPage } from './components/pages/StoriesPage';
-import { StoryDetailPage } from './components/pages/StoryDetailPage';
-import { PeoplePage } from './components/pages/PeoplePage';
-import { PersonDetailPage } from './components/pages/PersonDetailPage';
-import { FoodHeritagePage } from './components/pages/FoodHeritagePage';
-import { FoodDetailPage } from './components/pages/FoodDetailPage';
-import { EventsPage } from './components/pages/EventsPage';
-import { EventDetailPage } from './components/pages/EventDetailPage';
-import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
-import { NotificationsPage } from './components/pages/NotificationsPage';
-import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
+// Dynamic code-splitting for all secondary pages so initial bundle is tiny & super fast
+const ProductsPage = React.lazy(() =>
+  import('./components/pages/ProductsPage').then((m) => ({ default: m.ProductsPage }))
+);
+const ProductDetailsView = React.lazy(() =>
+  import('./components/products/ProductDetailsView').then((m) => ({ default: m.ProductDetailsView }))
+);
+const CategoriesPage = React.lazy(() =>
+  import('./components/pages/CategoriesPage').then((m) => ({ default: m.CategoriesPage }))
+);
+const CraftsPage = React.lazy(() =>
+  import('./components/pages/CraftsPage').then((m) => ({ default: m.CraftsPage }))
+);
+const SellersDirectoryPage = React.lazy(() =>
+  import('./components/pages/SellersDirectoryPage').then((m) => ({ default: m.SellersDirectoryPage }))
+);
+const SellerProfileView = React.lazy(() =>
+  import('./components/pages/SellerProfileView').then((m) => ({ default: m.SellerProfileView }))
+);
+const CheckoutPage = React.lazy(() =>
+  import('./components/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
+);
+const FavoritesPage = React.lazy(() =>
+  import('./components/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
+);
+const BuyerAccountPage = React.lazy(() =>
+  import('./components/pages/BuyerAccountPage').then((m) => ({ default: m.BuyerAccountPage }))
+);
+const AboutSection = React.lazy(() =>
+  import('./components/public/AboutSection').then((m) => ({ default: m.AboutSection }))
+);
+const CartPage = React.lazy(() =>
+  import('./components/pages/CartPage').then((m) => ({ default: m.CartPage }))
+);
+const ChatView = React.lazy(() =>
+  import('./components/chat/ChatView').then((m) => ({ default: m.ChatView }))
+);
+const ForbiddenPage = React.lazy(() =>
+  import('./components/pages/ForbiddenPage').then((m) => ({ default: m.ForbiddenPage }))
+);
 
-import { NotFoundPage } from './components/pages/NotFoundPage';
+// WAH Upper Egypt Digital Platform Pages (Lazy Loaded)
+const GovernoratesPage = React.lazy(() =>
+  import('./components/pages/GovernoratesPage').then((m) => ({ default: m.GovernoratesPage }))
+);
+const GovernorateDetailPage = React.lazy(() =>
+  import('./components/pages/GovernorateDetailPage').then((m) => ({ default: m.GovernorateDetailPage }))
+);
+const PlacesHeritagePage = React.lazy(() =>
+  import('./components/pages/PlacesHeritagePage').then((m) => ({ default: m.PlacesHeritagePage }))
+);
+const PlaceDetailPage = React.lazy(() =>
+  import('./components/pages/PlaceDetailPage').then((m) => ({ default: m.PlaceDetailPage }))
+);
+const CulturalCraftsPage = React.lazy(() =>
+  import('./components/pages/CulturalCraftsPage').then((m) => ({ default: m.CulturalCraftsPage }))
+);
+const CulturalCraftDetailPage = React.lazy(() =>
+  import('./components/pages/CulturalCraftDetailPage').then((m) => ({ default: m.CulturalCraftDetailPage }))
+);
+const StoriesPage = React.lazy(() =>
+  import('./components/pages/StoriesPage').then((m) => ({ default: m.StoriesPage }))
+);
+const StoryDetailPage = React.lazy(() =>
+  import('./components/pages/StoryDetailPage').then((m) => ({ default: m.StoryDetailPage }))
+);
+const PeoplePage = React.lazy(() =>
+  import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage }))
+);
+const PersonDetailPage = React.lazy(() =>
+  import('./components/pages/PersonDetailPage').then((m) => ({ default: m.PersonDetailPage }))
+);
+const FoodHeritagePage = React.lazy(() =>
+  import('./components/pages/FoodHeritagePage').then((m) => ({ default: m.FoodHeritagePage }))
+);
+const FoodDetailPage = React.lazy(() =>
+  import('./components/pages/FoodDetailPage').then((m) => ({ default: m.FoodDetailPage }))
+);
+const EventsPage = React.lazy(() =>
+  import('./components/pages/EventsPage').then((m) => ({ default: m.EventsPage }))
+);
+const EventDetailPage = React.lazy(() =>
+  import('./components/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage }))
+);
+const GlobalSearchResultsPage = React.lazy(() =>
+  import('./components/pages/GlobalSearchResultsPage').then((m) => ({ default: m.GlobalSearchResultsPage }))
+);
+const NotificationsPage = React.lazy(() =>
+  import('./components/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
+);
+const ResetPasswordPage = React.lazy(() =>
+  import('./components/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
+);
+const NotFoundPage = React.lazy(() =>
+  import('./components/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
+);
+
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
 // Dynamic code-splitting for heavy non-public dashboard and heavy standalone page bundles
@@ -83,10 +147,9 @@ const OrdersTrackingPage = React.lazy(() =>
 );
 
 const LazySectionFallback: React.FC = () => (
-  <div className="min-h-[420px] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
-    <div className="w-12 h-12 border-4 border-black/10 dark:border-white/10 border-t-[#9a6a35] dark:border-t-[#d5a56d] rounded-full animate-spin mb-4" />
-    <p className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">جاري تحميل لوحة التحكم...</p>
-    <p className="text-xs text-black/60 dark:text-white/60 mt-1">وَه | WAH — العالم الرقمي لصعيد مصر</p>
+  <div className="min-h-[380px] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
+    <div className="w-10 h-10 border-3 border-[#9a6a35]/20 border-t-[#9a6a35] rounded-full animate-spin mb-3" />
+    <p className="text-xs font-bold text-[#9a6a35]">وَه | جاري فتح الصفحة...</p>
   </div>
 );
 
@@ -106,7 +169,7 @@ const MainContent: React.FC = () => {
   } = useApp();
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
 
   // Dynamic SEO meta updates on page transition
   useEffect(() => {
@@ -276,8 +339,13 @@ const MainContent: React.FC = () => {
     );
   }
 
-  // Initial Auth Verification State
-  if (isAuthChecking) {
+  // Initial Auth Verification State: only block for protected accounts/dashboards
+  const isProtectedRoute =
+    activePage.startsWith('admin') ||
+    activePage.startsWith('seller') ||
+    activePage === 'buyer-account';
+
+  if (isAuthChecking && isProtectedRoute) {
     return <WahLoadingScreen />;
   }
 
@@ -295,7 +363,8 @@ const MainContent: React.FC = () => {
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             id="main-route-container"
           >
-            {activePage === 'home' && <HomePage />}
+            <React.Suspense fallback={<LazySectionFallback />}>
+              {activePage === 'home' && <HomePage />}
             {(activePage === 'products' || activePage === 'search' || activePage === 'market' || activePage === 'wah-market') && <ProductsPage />}
             {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
             {activePage === 'categories' && <CategoriesPage />}
@@ -619,6 +688,7 @@ const MainContent: React.FC = () => {
             )}
 
             {!PAGE_ROUTES[activePage] && <NotFoundPage />}
+            </React.Suspense>
           </motion.div>
         </AnimatePresence>
       </div>
