@@ -157,42 +157,50 @@ export const AuthModal: React.FC = () => {
      ESCAPE KEY
   ========================================================= */
 
+  /* =========================================================
+       PREVENT BACKGROUND SCROLL (SOLID LOCK)
+    ========================================================= */
+
   useEffect(() => {
     if (!isAuthModalOpen) return;
 
-    const handleEscape = (
-      event: KeyboardEvent
-    ) => {
-      if (
-        event.key === 'Escape' &&
-        !submitting
-      ) {
-        if (isForgotSuccessModalOpen) {
-          setIsForgotSuccessModalOpen(false);
-          return;
-        }
-        setIsAuthModalOpen(false);
-      }
-    };
+    // حساب عرض السكرول بار لمنع اهتزاز الصفحة على الديسكتوب
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollY = window.scrollY;
 
-    document.addEventListener(
-      'keydown',
-      handleEscape
-    );
+    const originalOverflow = document.body.style.overflow;
+    const originalPosition = document.body.style.position;
+    const originalTop = document.body.style.top;
+    const originalWidth = document.body.style.width;
+    const originalPaddingRight = document.body.style.paddingRight;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    // قفل كامل على HTML و Body
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
     return () => {
-      document.removeEventListener(
-        'keydown',
-        handleEscape
-      );
-    };
-  }, [
-    isAuthModalOpen,
-    isForgotSuccessModalOpen,
-    submitting,
-    setIsAuthModalOpen,
-  ]);
+      const cartDrawerRoot = document.getElementById('cart-drawer-root');
+      if (!cartDrawerRoot) {
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.overflow = originalOverflow;
+        document.body.style.position = originalPosition;
+        document.body.style.top = originalTop;
+        document.body.style.width = originalWidth;
+        document.body.style.paddingRight = originalPaddingRight;
 
+        // استرجاع نفس موضع التمرير اللي كان المستخدم واقف عليه
+        window.scrollTo(0, scrollY);
+      }
+    };
+  }, [isAuthModalOpen]);
   if (!isAuthModalOpen) {
     return null;
   }
@@ -687,6 +695,12 @@ export const AuthModal: React.FC = () => {
     <div
       id="auth-modal-backdrop"
       dir="rtl"
+      onTouchMove={(e) => {
+        // منع سحب الخلفية باللمس لو اللمس تم على الـ Backdrop نفسه
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
+      }}
       className="
         fixed
         inset-0
@@ -702,7 +716,9 @@ export const AuthModal: React.FC = () => {
         sm:py-5
         md:px-6
         backdrop-blur-xl
+        touch-none
       "
+
     >
       {/* =====================================================
           MODAL
@@ -894,6 +910,7 @@ export const AuthModal: React.FC = () => {
             overflow-x-hidden
             overflow-y-auto
             overscroll-contain
+            touch-pan-y
             [scrollbar-width:thin]
           "
         >

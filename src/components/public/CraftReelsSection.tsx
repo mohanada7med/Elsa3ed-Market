@@ -173,9 +173,9 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* عناصر الجزء العلوي */}
               <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                <span className="bg-black/50 backdrop-blur-md text-[#d6aa72] dark:text-[#d6aa72] font-medium px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                  <MapPin className="w-3 h-3 text-[#9a6a35] dark:text-[#d6aa72]" />
-                  {reel.location || reel.governorate}
+                <span className="bg-black/50 backdrop-blur-md text-[#d6aa72] dark:text-[#d6aa72] text-[11px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/10 flex items-center gap-1">
+                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#9a6a35] dark:text-[#d6aa72] shrink-0" />
+                  <span>{reel.location || reel.governorate}</span>
                 </span>
 
                 <div className="flex items-center gap-1.5">

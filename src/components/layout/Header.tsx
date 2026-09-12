@@ -116,7 +116,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
   return (
     <div className="relative shrink-0">
-      {/* BELL */}
       <button
         id="header-notifications-btn"
         type="button"
@@ -147,7 +146,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       <AnimatePresence>
         {open && (
           <>
-            {/* MOBILE BACKDROP */}
             <motion.div
               className="fixed inset-x-0 bottom-0 top-16 sm:top-[78px] lg:top-[94px] z-[400] bg-black/30 sm:hidden"
               initial={{ opacity: 0 }}
@@ -156,7 +154,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               onClick={() => setOpen(false)}
             />
 
-            {/* NOTIFICATION PANEL */}
             <motion.div
               initial={{
                 opacity: 0,
@@ -200,7 +197,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 borderColor,
               }}
             >
-              {/* HEADER */}
               <div
                 className="flex items-center justify-between border-b px-4 py-3.5"
                 style={{
@@ -237,7 +233,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 )}
               </div>
 
-              {/* LIST */}
               <div className="max-h-[55vh] overflow-y-auto">
                 {isGuest ? (
                   <div className="px-5 py-10 text-center">
@@ -281,79 +276,72 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     </button>
                   </div>
                 ) : userNotifications.length > 0 ? (
-                  userNotifications.map(
-                    (notification) => {
-                      const isUnread = !notification.read && !notification.isRead;
-                      return (
-                        <button
-                          key={notification.id}
-                          type="button"
-                          onClick={() => handleNotificationClick(notification)}
-                          className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
+                  userNotifications.map((notification) => {
+                    const isUnread = !notification.read && !notification.isRead;
+                    return (
+                      <button
+                        key={notification.id}
+                        type="button"
+                        onClick={() => handleNotificationClick(notification)}
+                        className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
+                        style={{
+                          borderColor,
+                          backgroundColor: isUnread
+                            ? isDark
+                              ? 'rgba(154,106,53,0.08)'
+                              : 'rgba(154,106,53,0.05)'
+                            : 'transparent',
+                        }}
+                      >
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
                           style={{
-                            borderColor,
-                            backgroundColor:
-                              isUnread
-                                ? isDark
-                                  ? 'rgba(154,106,53,0.08)'
-                                  : 'rgba(154,106,53,0.05)'
-                                : 'transparent',
+                            backgroundColor: isDark
+                              ? 'rgba(154,106,53,0.16)'
+                              : 'rgba(154,106,53,0.10)',
+                            color: '#9a6a35',
                           }}
                         >
-                          {/* ICON */}
-                          <div
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                          <Bell size={16} />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-xs font-bold">
+                              {notification.title}
+                            </p>
+
+                            {isUnread && (
+                              <span
+                                className="mt-1 h-2 w-2 shrink-0 rounded-full"
+                                style={{
+                                  backgroundColor: '#9a6a35',
+                                }}
+                              />
+                            )}
+                          </div>
+
+                          <p
+                            className="mt-1 text-[11px] leading-5"
                             style={{
-                              backgroundColor:
-                                isDark
-                                  ? 'rgba(154,106,53,0.16)'
-                                  : 'rgba(154,106,53,0.10)',
-                              color: '#9a6a35',
+                              color: secondaryText,
                             }}
                           >
-                            <Bell size={16} />
-                          </div>
+                            {notification.message}
+                          </p>
 
-                          {/* TEXT */}
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-start justify-between gap-2">
-                              <p className="text-xs font-bold">
-                                {notification.title}
-                              </p>
-
-                              {isUnread && (
-                                <span
-                                  className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                                  style={{
-                                    backgroundColor:
-                                      '#9a6a35',
-                                  }}
-                                />
-                              )}
-                            </div>
-
-                            <p
-                              className="mt-1 text-[11px] leading-5"
-                              style={{
-                                color: secondaryText,
-                              }}
-                            >
-                              {notification.message}
-                            </p>
-
-                            <p
-                              className="mt-1 text-[10px]"
-                              style={{
-                                color: secondaryText,
-                              }}
-                            >
-                              {formatRelativeTime(notification.createdAt)}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    }
-                  )
+                          <p
+                            className="mt-1 text-[10px]"
+                            style={{
+                              color: secondaryText,
+                            }}
+                          >
+                            {formatRelativeTime(notification.createdAt)}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })
                 ) : (
                   <div className="px-5 py-10 text-center">
                     <Bell
@@ -382,7 +370,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 )}
               </div>
 
-              {/* FOOTER */}
               <div
                 className="border-t p-2 flex items-center gap-2"
                 style={{
@@ -451,6 +438,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
 
   /* =========================================================
      CLOSE ACCOUNT DROPDOWN (CLICK OUTSIDE)
@@ -672,14 +661,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   }, [setActivePage]);
 
   const getAccountPage = useCallback((): ActivePage => {
-    if (currentRole === 'seller' || currentUser?.role === 'seller') {
+    if (isSeller) {
       return 'seller-account';
     }
     if (currentRole === 'admin' || currentUser?.role === 'admin') {
       return 'admin-dashboard';
     }
     return 'buyer-account';
-  }, [currentRole, currentUser?.role]);
+  }, [isSeller, currentRole, currentUser?.role]);
 
   /* =========================================================
      USER
@@ -933,31 +922,33 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
                 </button>
 
-                {/* FAVORITES */}
-                <button
-                  id="nav-favorites-btn"
-                  type="button"
-                  onClick={() => navigate('favorites')}
-                  aria-label="المفضلة"
-                  className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
-                  style={{
-                    backgroundColor: hoverBg,
-                    color: mainText,
-                  }}
-                >
-                  <Heart size={18} />
-                  {favorites.length > 0 && (
-                    <span
-                      className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
-                      style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
-                      }}
-                    >
-                      {favorites.length > 99 ? '99+' : favorites.length}
-                    </span>
-                  )}
-                </button>
+                {/* FAVORITES (مخفية للبائعين) */}
+                {!isSeller && (
+                  <button
+                    id="nav-favorites-btn"
+                    type="button"
+                    onClick={() => navigate('favorites')}
+                    aria-label="المفضلة"
+                    className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
+                    style={{
+                      backgroundColor: hoverBg,
+                      color: mainText,
+                    }}
+                  >
+                    <Heart size={18} />
+                    {favorites.length > 0 && (
+                      <span
+                        className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                        style={{
+                          backgroundColor: '#9a6a35',
+                          color: '#fff',
+                        }}
+                      >
+                        {favorites.length > 99 ? '99+' : favorites.length}
+                      </span>
+                    )}
+                  </button>
+                )}
 
                 {/* CHAT */}
                 {isAuthenticated && (
@@ -1027,7 +1018,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 {/* USER */}
                 {isAuthenticated ? (
                   <div ref={dropdownRef} className="relative shrink-0 flex items-center">
-                    {/* الكبسولة الموحدة: الصورة + الاسم + الدور + السهم */}
                     <button
                       id="user-menu-btn"
                       type="button"
@@ -1051,7 +1041,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         color: mainText,
                       }}
                     >
-                      {/* الصورة مع مؤشر الحالة */}
                       <div className="relative shrink-0">
                         <img
                           src={profileImage}
@@ -1061,17 +1050,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#121210]" />
                       </div>
 
-                      {/* تفاصيل الاسم والدور */}
                       <div className="hidden sm:flex flex-col text-right leading-tight">
                         <span className="max-w-[110px] xl:max-w-[130px] truncate text-xs lg:text-sm font-black transition-colors group-hover:text-[#9a6a35]">
                           {displayName}
                         </span>
                         <span className="text-[10px] font-semibold opacity-70" style={{ color: secondaryText }}>
-                          {currentRole === 'admin' ? 'الإدارة' : currentRole === 'seller' ? 'صاحب ورشة' : 'حسابي'}
+                          {currentRole === 'admin' ? 'الإدارة' : isSeller ? 'صاحب ورشة' : 'حسابي'}
                         </span>
                       </div>
 
-                      {/* سهم الانسدال */}
                       <ChevronDown
                         size={15}
                         className={`hidden sm:block text-[#9a6a35] transition-transform duration-300 ease-out ${userDropdownOpen ? 'rotate-180' : ''
@@ -1079,11 +1066,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       />
                     </button>
 
-                    {/* القائمة المنسدلة */}
                     <AnimatePresence>
                       {userDropdownOpen && (
                         <>
-                          {/* خلفية غامقة للنقر بالخارج في الموبايل */}
                           <motion.div
                             className="fixed inset-0 z-[490] bg-black/25 backdrop-blur-[2px] sm:hidden"
                             initial={{ opacity: 0 }}
@@ -1092,7 +1077,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             onClick={() => setUserDropdownOpen(false)}
                           />
 
-                          {/* حاوية القائمة المنسدلة لأسفل دائماً */}
                           <motion.div
                             id="user-dropdown-menu"
                             role="menu"
@@ -1111,11 +1095,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               overflow-hidden rounded-[1.75rem] border shadow-2xl backdrop-blur-3xl
                             "
                           >
-                            {/* بطاقة المستخدم العلوية */}
                             <div
                               onClick={() => {
                                 setUserDropdownOpen(false);
-                                navigate('buyer-account');
+                                navigate(getAccountPage());
                               }}
                               className="group border-b p-4 cursor-pointer transition-colors hover:bg-[#9a6a35]/5"
                               style={{ borderColor }}
@@ -1139,7 +1122,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   <p className="mt-0.5 text-xs font-semibold" style={{ color: secondaryText }}>
                                     {currentRole === 'admin'
                                       ? 'إدارة وه'
-                                      : currentRole === 'seller'
+                                      : isSeller
                                         ? 'شيخ صنعة / بائع'
                                         : 'ابن البلد / زبون'}
                                   </p>
@@ -1147,13 +1130,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               </div>
                             </div>
 
-                            {/* أزرار القائمة */}
                             <div className="p-2 space-y-0.5">
+                              {/* حسابي */}
                               <button
                                 type="button"
                                 onClick={() => {
                                   setUserDropdownOpen(false);
-                                  navigate('buyer-account');
+                                  navigate(getAccountPage());
                                 }}
                                 className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
                                 style={{ color: mainText }}
@@ -1162,6 +1145,39 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>حسابي</span>
                               </button>
 
+                              {/* لوحة الورشة (للبائع) */}
+                              {isSeller && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserDropdownOpen(false);
+                                    navigate('seller-dashboard');
+                                  }}
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  style={{ color: mainText }}
+                                >
+                                  <Store size={18} className="text-[#9a6a35]" />
+                                  <span>لوحة الورشة</span>
+                                </button>
+                              )}
+
+                              {/* لوحة الإدارة (للأدمن) */}
+                              {currentRole === 'admin' && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserDropdownOpen(false);
+                                    navigate('admin-dashboard');
+                                  }}
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  style={{ color: mainText }}
+                                >
+                                  <ShieldCheck size={18} className="text-[#9a6a35]" />
+                                  <span>لوحة الإدارة</span>
+                                </button>
+                              )}
+
+                              {/* الرسائل */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1182,39 +1198,46 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 )}
                               </button>
 
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setUserDropdownOpen(false);
-                                  navigate('orders');
-                                }}
-                                className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
-                                style={{ color: mainText }}
-                              >
-                                <Package size={18} className="text-[#9a6a35]" />
-                                <span>طلباتي ومشترياتي</span>
-                              </button>
+                              {/* طلباتي ومشترياتي (مخفية للبائع) */}
+                              {!isSeller && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserDropdownOpen(false);
+                                    navigate('orders');
+                                  }}
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  style={{ color: mainText }}
+                                >
+                                  <Package size={18} className="text-[#9a6a35]" />
+                                  <span>طلباتي ومشترياتي</span>
+                                </button>
+                              )}
 
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setUserDropdownOpen(false);
-                                  navigate('favorites');
-                                }}
-                                className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
-                                style={{ color: mainText }}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <Heart size={18} className="text-[#9a6a35]" />
-                                  <span>المفضلة</span>
-                                </div>
-                                {favorites.length > 0 && (
-                                  <span className="rounded-full bg-[#9a6a35] px-2 py-0.5 text-[10px] font-bold text-white">
-                                    {favorites.length}
-                                  </span>
-                                )}
-                              </button>
+                              {/* المفضلة (مخفية للبائع) */}
+                              {!isSeller && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setUserDropdownOpen(false);
+                                    navigate('favorites');
+                                  }}
+                                  className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  style={{ color: mainText }}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <Heart size={18} className="text-[#9a6a35]" />
+                                    <span>المفضلة</span>
+                                  </div>
+                                  {favorites.length > 0 && (
+                                    <span className="rounded-full bg-[#9a6a35] px-2 py-0.5 text-[10px] font-bold text-white">
+                                      {favorites.length}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
 
+                              {/* تحدي اللهجة الصعيدية */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1227,36 +1250,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <Flame size={18} className="text-[#b45f42]" />
                                 <span>تحدي اللهجة الصعيدية</span>
                               </button>
-
-                              {currentRole === 'seller' && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setUserDropdownOpen(false);
-                                    navigate('seller-dashboard');
-                                  }}
-                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
-                                  style={{ color: mainText }}
-                                >
-                                  <Store size={18} className="text-[#9a6a35]" />
-                                  <span>لوحة الورشة</span>
-                                </button>
-                              )}
-
-                              {currentRole === 'admin' && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setUserDropdownOpen(false);
-                                    navigate('admin-dashboard');
-                                  }}
-                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
-                                  style={{ color: mainText }}
-                                >
-                                  <ShieldCheck size={18} className="text-[#9a6a35]" />
-                                  <span>لوحة الإدارة</span>
-                                </button>
-                              )}
 
                               <div className="my-1.5 border-t" style={{ borderColor }} />
 
@@ -1582,7 +1575,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         >
                           {currentRole === 'admin'
                             ? 'إدارة وه'
-                            : currentRole === 'seller'
+                            : isSeller
                               ? 'حساب الورشة / بائع'
                               : 'حساب زبون'}
                         </p>
@@ -1591,7 +1584,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                     <button
                       type="button"
-                      onClick={() => navigate('buyer-account')}
+                      onClick={() => navigate(getAccountPage())}
                       className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
                       style={{
                         backgroundColor: '#9a6a35',
@@ -1599,7 +1592,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       }}
                     >
                       <UserCircle size={17} />
-                      حسابي
+                      {isSeller ? 'لوحة الورشة' : 'حسابي'}
                     </button>
                   </div>
                 ) : (
@@ -1714,7 +1707,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       <span>شوف حكاية وه</span>
                     </button>
 
-                    {currentRole === 'seller' && (
+                    {isSeller && (
                       <button
                         type="button"
                         onClick={() => navigate('seller-dashboard')}
@@ -1738,23 +1731,39 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    <button
-                      type="button"
-                      onClick={() => navigate('favorites')}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                      style={{ color: mainText }}
-                    >
-                      <Heart size={18} />
-                      <span>المفضلة</span>
-                      {favorites.length > 0 && (
-                        <span
-                          className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                          style={{ backgroundColor: '#9a6a35', color: '#fff' }}
-                        >
-                          {favorites.length}
-                        </span>
-                      )}
-                    </button>
+                    {/* المفضلة (مخفية للبائع في الموبايل) */}
+                    {!isSeller && (
+                      <button
+                        type="button"
+                        onClick={() => navigate('favorites')}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        style={{ color: mainText }}
+                      >
+                        <Heart size={18} />
+                        <span>المفضلة</span>
+                        {favorites.length > 0 && (
+                          <span
+                            className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
+                            style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                          >
+                            {favorites.length}
+                          </span>
+                        )}
+                      </button>
+                    )}
+
+                    {/* طلباتي (مخفية للبائع في الموبايل) */}
+                    {!isSeller && (
+                      <button
+                        type="button"
+                        onClick={() => navigate('orders')}
+                        className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                        style={{ color: mainText }}
+                      >
+                        <Package size={18} />
+                        <span>طلباتي ومشترياتي</span>
+                      </button>
+                    )}
 
                     <button
                       type="button"
