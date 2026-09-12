@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { WahStory } from '../../types';
+import { updatePageSEO, generateArticleSchema } from '../../utils/seo';
 import {
   MapPin,
   Volume2,
@@ -47,6 +48,28 @@ export const StoryDetailPage: React.FC = () => {
     };
     fetchStory();
   }, [slug]);
+
+  // Schema.org Article / BlogPosting Markup
+  useEffect(() => {
+    if (!story) return;
+
+    const articleSchema = generateArticleSchema({
+      title: story.title,
+      description: story.excerpt || story.content?.slice(0, 150),
+      image: story.coverImage,
+      author: story.narrator || story.authorName || 'رواة صعيد مصر',
+      datePublished: story.createdAt,
+      url: typeof window !== 'undefined' ? window.location.href : undefined
+    });
+
+    updatePageSEO({
+      title: `${story.title} | حكايات الصعيد`,
+      description: story.excerpt || story.content?.slice(0, 150),
+      image: story.coverImage,
+      type: 'article',
+      schema: articleSchema
+    });
+  }, [story]);
 
   const handleShare = () => {
     const url = `${window.location.origin}/stories/${encodeURIComponent(slug)}`;

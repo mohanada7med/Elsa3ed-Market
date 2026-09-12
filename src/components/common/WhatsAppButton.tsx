@@ -74,7 +74,7 @@ export const WhatsAppButton: React.FC = () => {
 
   return (
     <div
-      className="fixed bottom-29 md:bottom-12 left-4 sm:left-6 z-40"
+      className="fixed bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] md:bottom-10 left-3 sm:left-6 z-40"
       dir="rtl"
     >
       {/* Chat Window */}
@@ -102,8 +102,8 @@ export const WhatsAppButton: React.FC = () => {
               bottom-full
               left-0
               mb-3
-              w-[330px]
-              sm:w-[360px]
+              w-[calc(100vw-2rem)]
+              max-w-[360px]
               bg-white/95
               dark:bg-[#151513]/95
               backdrop-blur-2xl

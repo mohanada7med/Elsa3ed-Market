@@ -99,36 +99,39 @@ export const ProductsPage: React.FC = () => {
           HEADER
       ===================================================== */}
 
-      <header
+      {/* =====================================================
+          BREADCRUMB SUB-BAR
+      ===================================================== */}
+
+      <nav
+        aria-label="مسار التصفح"
         className="
           relative
-          z-50
+          z-40
           border-b
-          border-black/[0.07]
-          bg-[#eee8dc]/80
-          backdrop-blur-2xl
-
-          dark:border-white/[0.08]
-          dark:bg-[#0b0b0a]/80
+          border-black/[0.06]
+          bg-[#eee8dc]/70
+          backdrop-blur-md
+          dark:border-white/[0.06]
+          dark:bg-[#0b0b0a]/70
         "
       >
         <div
           className="
             mx-auto
             flex
-            h-[72px]
+            h-11
+            sm:h-14
             max-w-[1700px]
             items-center
             justify-between
-            px-5
-
+            px-4
             sm:px-8
             lg:px-12
             xl:px-16
           "
         >
           {/* Home */}
-
           <button
             type="button"
             onClick={() => setActivePage('home')}
@@ -136,79 +139,49 @@ export const ProductsPage: React.FC = () => {
               group
               flex
               items-center
-              gap-3
+              gap-2
               text-xs
-              font-black
-              transition-all
+              font-bold
+              transition-colors
               hover:text-[#9a6a35]
-
               dark:hover:text-[#d6aa72]
-
               cursor-pointer
+              min-h-[38px]
             "
           >
             <span
               className="
                 flex
-                h-9
-                w-9
+                h-7
+                w-7
                 items-center
                 justify-center
                 rounded-full
                 border
                 border-black/10
-                transition-all
-
+                transition-colors
                 group-hover:bg-[#211d18]
                 group-hover:text-white
-
                 dark:border-white/10
-
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
             >
               <ArrowLeft
-                size={15}
+                size={13}
                 className="transition-transform group-hover:-translate-x-0.5"
               />
             </span>
-
-            <span className="hidden sm:block">
-              الرئيسية
-            </span>
+            <span className="text-[11px] sm:text-xs">الرئيسية</span>
           </button>
 
-          {/* Brand */}
-
-          <div
-            className="
-              absolute
-              left-1/2
-              -translate-x-1/2
-              text-center
-            "
-          >
-            <div
-              className="
-                text-[8px]
-                font-black
-                tracking-[0.45em]
-                text-[#9a6a35]
-
-                dark:text-[#d6aa72]
-              "
-            >
-              WAH
-            </div>
-
-            <div className="mt-1 text-xs font-black">
-              السوق التراثي
-            </div>
+          {/* Subtitle */}
+          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#7c7164] dark:text-[#bcae9c]">
+            <ShoppingBag size={13} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+            <span>السوق التراثي</span>
           </div>
 
           {/* Categories */}
-
           <button
             type="button"
             onClick={() => setActivePage('categories')}
@@ -216,42 +189,35 @@ export const ProductsPage: React.FC = () => {
               group
               flex
               items-center
-              gap-2
+              gap-1.5
               rounded-full
               border
               border-black/10
-              px-3
-              py-2
+              px-2.5
+              py-1
               text-[10px]
-              font-black
-              transition-all
-
+              font-bold
+              transition-colors
               hover:bg-[#211d18]
               hover:text-white
-
               dark:border-white/10
-
               dark:hover:bg-white
               dark:hover:text-black
-
-              sm:px-4
-              sm:py-2.5
+              sm:px-3.5
+              sm:py-1.5
               sm:text-xs
-
               cursor-pointer
+              min-h-[34px]
             "
           >
-            <span className="hidden sm:block">
-              اكتشف التصنيفات
-            </span>
-
+            <span>التصنيفات</span>
             <ArrowUpLeft
-              size={14}
+              size={12}
               className="transition-transform group-hover:-translate-x-0.5"
             />
           </button>
         </div>
-      </header>
+      </nav>
 
       {/* =====================================================
           INTRO / HERO
@@ -262,17 +228,17 @@ export const ProductsPage: React.FC = () => {
           className="
             mx-auto
             max-w-[1700px]
-            px-5
-            pb-12
-            pt-16
+            px-4
+            pb-8
+            pt-8
 
             sm:px-8
-            sm:pb-16
-            sm:pt-24
+            sm:pb-14
+            sm:pt-14
 
             lg:px-12
-            lg:pb-20
-            lg:pt-28
+            lg:pb-16
+            lg:pt-20
 
             xl:px-16
           "
@@ -326,16 +292,13 @@ export const ProductsPage: React.FC = () => {
               <h1
                 className="
                   max-w-6xl
-                  text-[18vw]
                   font-black
-                  leading-[0.78]
-                  tracking-[-0.1em]
-
-                  sm:text-[13vw]
-
-                  lg:text-[9rem]
-
-                  xl:text-[11rem]
+                  text-5xl
+                  sm:text-7xl
+                  lg:text-[8rem]
+                  xl:text-[9.5rem]
+                  leading-[0.92]
+                  tracking-tight
                 "
               >
                 من إيد
@@ -343,12 +306,12 @@ export const ProductsPage: React.FC = () => {
 
                 <span
                   className="
-                    mr-[8vw]
+                    mr-3
+                    sm:mr-6
+                    lg:mr-16
                     text-[#9a6a35]
 
                     dark:text-[#d6aa72]
-
-                    lg:mr-28
                   "
                 >
                   الصعيد
@@ -1202,14 +1165,14 @@ sm:leading-9
                   justify-center
                   gap-3
                   rounded-full
-                  bg-white
+                  bg-[#9a6a35]
                   px-7
                   text-xs
+                  text-white
                   font-black
-                  text-black
                   transition-all
                   hover:-translate-y-1
-                  hover:bg-[#d6aa72]
+                  hover:bg-[#83582a]
 
                   cursor-pointer
                 "
@@ -1229,7 +1192,7 @@ sm:leading-9
         </div>
       </section>
 
-      <div className="h-6 sm:h-10" />
+      <div className="h-20 sm:h-12" />
     </main>
   );
 };

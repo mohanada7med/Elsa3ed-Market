@@ -94,6 +94,13 @@ export const ProductDetailsView: React.FC = () => {
     craftsmanship: 'صناعة يدوية أصيلة',
   };
 
+  const favorite = product ? isFavorite(product.id) : false;
+
+  const productReviews = useMemo(
+    () => (reviews || []).filter((r) => r.productId === product?.id),
+    [reviews, product?.id]
+  );
+
   useEffect(() => {
     if (!product) return;
 
@@ -109,19 +116,14 @@ export const ProductDetailsView: React.FC = () => {
         images: productImages,
         price: product.price || 0,
         rating: product.rating || 5,
-        reviewCount: product.reviewCount || 0,
+        reviewCount: productReviews.length || product.reviewCount || 1,
         sellerName: product.sellerName || 'حرفي من الصعيد',
+        sellerGovernorate: product.sellerGovernorate || 'صعيد مصر',
         inStock: product.inStock !== false,
+        categoryName: product.categoryName || 'حرف ومشغولات يدوية'
       }),
     });
-  }, [product]);
-
-  const favorite = product ? isFavorite(product.id) : false;
-
-  const productReviews = useMemo(
-    () => (reviews || []).filter((r) => r.productId === product?.id),
-    [reviews, product?.id]
-  );
+  }, [product, productReviews.length]);
 
   const relatedProducts = useMemo(
     () =>
@@ -338,6 +340,8 @@ export const ProductDetailsView: React.FC = () => {
         duration-500
         dark:bg-[#0b0b0a]
         dark:text-[#f5f0e7]
+        pb-28
+        sm:pb-16
       "
     >
       {/* Background Decoration */}
@@ -2500,6 +2504,7 @@ export const ProductDetailsView: React.FC = () => {
               border-black/10
               bg-[#eee8dc]/95
               p-3
+              pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]
               shadow-[0_-10px_40px_rgba(0,0,0,0.12)]
               backdrop-blur-2xl
               dark:border-white/10

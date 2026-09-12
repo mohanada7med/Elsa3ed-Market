@@ -1216,7 +1216,8 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [activeTab, refreshReviews]);
 
-  const totalMarketplaceSales = orders.reduce((sum, o) => sum + o.total, 0);
+  const activeOrders = orders.filter((o) => o.status !== 'cancelled');
+  const totalMarketplaceSales = activeOrders.reduce((sum, o) => sum + o.total, 0);
 
   const handleApprove = async (id: string) => {
     setIsProcessing(true);
@@ -2723,7 +2724,7 @@ export const AdminDashboard: React.FC = () => {
                   <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">إجمالي مبيعات المنصة (GMV)</span>
                   <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalMarketplaceSales.toLocaleString()} ج.م</span>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                    {orders.length > 0 ? `إجمالي ${orders.length} طلب متسجل` : 'مؤشر المبيعات المباشرة'}
+                    {activeOrders.length > 0 ? `إجمالي ${activeOrders.length} طلب نشط` : 'مؤشر المبيعات المباشرة'}
                   </span>
                 </div>
 
@@ -2751,9 +2752,9 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl p-5 rounded-2xl border border-black/10 dark:border-white/10 shadow-sm text-[#211d18] dark:text-[#f5f0e7]">
                   <span className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mb-1">طلبات الشحن المتنفذة</span>
-                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length} شحنة</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{activeOrders.length} شحنة</span>
                   <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 block mt-1">
-                    {orders.length > 0
+                    {activeOrders.length > 0
                       ? `${orders.filter((o) => o.status === 'delivered').length} شحنة اتسلّمت خلاص`
                       : 'شحن مباشر من الورش'}
                   </span>
@@ -4154,7 +4155,21 @@ export const AdminDashboard: React.FC = () => {
                             <td className="py-3 px-4">
                               <select
                                 value={ord.status}
-                                onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
+                                onChange={(e) => {
+                                  const newSt = e.target.value as OrderStatus;
+                                  if (newSt === 'cancelled') {
+                                    confirmModal({
+                                      title: 'إلغاء الطلب واسترجاع المخزون',
+                                      message: `هل أنت متأكد من إلغاء الطلب #${ord.orderNumber || ord.id}؟ سيتم استرجاع رصيد القطع تلقائياً إلى مخزون الورش واستبعاد قيمة الطلب (${ord.total} ج.م) من إجمالي مبيعات المنصة.`,
+                                      confirmText: 'نعم، تأكيد الإلغاء',
+                                      cancelText: 'تراجع',
+                                      danger: true,
+                                      onConfirm: () => updateOrderStatus(ord.id, 'cancelled')
+                                    });
+                                  } else {
+                                    updateOrderStatus(ord.id, newSt);
+                                  }
+                                }}
                                 className="px-2 py-1 bg-white border border-black/10 dark:border-white/10 rounded-lg text-[11px] font-bold text-gray-700 outline-none cursor-pointer"
                               >
                                 <option value="pending">جديد (Pending)</option>

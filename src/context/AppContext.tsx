@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   ActivePage,
   AuditLog,
@@ -1033,6 +1033,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Live Chat State
   const [chatUnreadCount, setChatUnreadCount] = useState<number>(0);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const activeConversationIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    activeConversationIdRef.current = activeConversationId;
+  }, [activeConversationId]);
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState(initialNav.searchQuery || '');
@@ -1588,7 +1592,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             );
 
             // Show toast notification if user is not looking at this conversation
-            if (activeConversationId !== data.message.conversationId) {
+            if (activeConversationIdRef.current !== data.message.conversationId) {
               addToast(
                 `رسالة جديدة من ${data.message.senderName || 'الطرف الآخر'}`,
                 data.message.text?.length > 70 ? `${data.message.text.substring(0, 70)}...` : data.message.text,
@@ -1636,7 +1640,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         eventSource.close();
       }
     };
-  }, [isAuthenticated, currentUser?.id, activeConversationId, refreshChatUnreadCount, addToast]);
+  }, [isAuthenticated, currentUser?.id, refreshChatUnreadCount, addToast]);
 
   // Open Chat with Artisan Action
   const openChatWithArtisan = useCallback(async (params: {
@@ -2748,7 +2752,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         );
         setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
       }
-      addToast('تحديث حالة الطلب', `تم تغيير حالة الطلب بنجاح إلى: "${newStatus}"`, 'success');
+      if (newStatus === 'cancelled') {
+        addToast('إلغاء الطلب', 'تم إلغاء الطلب بنجاح واسترجاع كميات المخزون للورشة', 'info');
+        await Promise.allSettled([
+          refreshPublicProducts(),
+          refreshSellerProducts(),
+          refreshAdminProducts(),
+          refreshSellerInventory(),
+          refreshSellerStats(),
+          refreshOrders()
+        ]);
+      } else {
+        addToast('تحديث حالة الطلب', `تم تغيير حالة الطلب بنجاح إلى: "${newStatus}"`, 'success');
+        refreshOrders();
+      }
       refreshNotifications();
       refreshAuditLogs();
     } catch (err) {
@@ -2764,8 +2781,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         reason
       );
       setOrders((prev) => prev.map((o) => (o.id === orderId ? cancelled : o)));
-      addToast('إلغاء الطلب', 'تم إلغاء الطلب بنجاح', 'info');
-      refreshPublicProducts();
+      addToast('إلغاء الطلب', 'تم إلغاء الطلب بنجاح واسترجاع كميات المخزون', 'info');
+      await Promise.allSettled([
+        refreshPublicProducts(),
+        refreshSellerProducts(),
+        refreshAdminProducts(),
+        refreshSellerInventory(),
+        refreshSellerStats(),
+        refreshOrders()
+      ]);
     } catch (err) {
       console.error('[AppContext] Error cancelling order:', err);
     }

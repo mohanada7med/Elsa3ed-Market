@@ -440,6 +440,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const isStaff = isSeller || isAdmin; // بائع أو مسؤول إدارة
 
   /* =========================================================
      CLOSE ACCOUNT DROPDOWN (CLICK OUTSIDE)
@@ -664,11 +666,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     if (isSeller) {
       return 'seller-account';
     }
-    if (currentRole === 'admin' || currentUser?.role === 'admin') {
+    if (isAdmin) {
       return 'admin-dashboard';
     }
     return 'buyer-account';
-  }, [isSeller, currentRole, currentUser?.role]);
+  }, [isSeller, isAdmin]);
 
   /* =========================================================
      USER
@@ -759,7 +761,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 <Menu size={20} className="sm:w-[21px] sm:h-[21px]" />
               </button>
 
-              {/* MOBILE THEME TOGGLE */}
+              {/* MOBILE THEME TOGGLE (Visible on all mobile screens < lg) */}
               <button
                 id="mobile-header-theme-toggle-btn"
                 type="button"
@@ -772,17 +774,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   color: mainText,
                 }}
               >
-                {isDark ? <Sun size={19} className="text-[#d6aa72]" /> : <Moon size={19} />}
+                {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
               </button>
 
-              {/* MOBILE QUIZ BUTTON */}
+              {/* MOBILE QUIZ BUTTON (Visible on sm+; featured prominently in mobile drawer) */}
               <button
                 id="mobile-header-quiz-btn"
                 type="button"
                 onClick={() => navigate('quize')}
                 aria-label="لعبة اللهجة"
                 title="تحدي كلام الصعايدة"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
+                className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
                 style={{
                   backgroundColor: activePage === 'quize' ? '#9a6a35' : hoverBg,
                   color: activePage === 'quize' ? '#fff' : '#9a6a35',
@@ -881,7 +883,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
                   alt="وه"
                   draggable={false}
-                  className="block h-[42px] w-auto max-w-[84px] object-contain sm:h-[56px] sm:max-w-[110px] lg:h-[68px] lg:max-w-[140px]"
+                  className="block h-[38px] w-auto max-w-[76px] object-contain sm:h-[52px] sm:max-w-[105px] lg:h-[68px] lg:max-w-[140px]"
                 />
               </button>
             </div>
@@ -889,7 +891,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             {/* END ACTIONS */}
             <div
               id="header-end-actions"
-              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-38px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
             >
               <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
                 {/* SEARCH */}
@@ -922,8 +924,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
                 </button>
 
-                {/* FAVORITES (مخفية للبائعين) */}
-                {!isSeller && (
+                {/* FAVORITES (مخفية للبائع والأدمن) */}
+                {!isStaff && (
                   <button
                     id="nav-favorites-btn"
                     type="button"
@@ -989,31 +991,33 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   />
                 )}
 
-                {/* CART */}
-                <button
-                  id="nav-cart-btn"
-                  type="button"
-                  onClick={() => setIsCartDrawerOpen(true)}
-                  aria-label="السلة"
-                  className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
-                  style={{
-                    backgroundColor: hoverBg,
-                    color: mainText,
-                  }}
-                >
-                  <ShoppingBag size={18} />
-                  {cartCount > 0 && (
-                    <span
-                      className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
-                      style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
-                      }}
-                    >
-                      {cartCount > 99 ? '99+' : cartCount}
-                    </span>
-                  )}
-                </button>
+                {/* CART (مخفية للبائع والأدمن) */}
+                {!isStaff && (
+                  <button
+                    id="nav-cart-btn"
+                    type="button"
+                    onClick={() => setIsCartDrawerOpen(true)}
+                    aria-label="السلة"
+                    className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+                    style={{
+                      backgroundColor: hoverBg,
+                      color: mainText,
+                    }}
+                  >
+                    <ShoppingBag size={18} />
+                    {cartCount > 0 && (
+                      <span
+                        className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                        style={{
+                          backgroundColor: '#9a6a35',
+                          color: '#fff',
+                        }}
+                      >
+                        {cartCount > 99 ? '99+' : cartCount}
+                      </span>
+                    )}
+                  </button>
+                )}
 
                 {/* USER */}
                 {isAuthenticated ? (
@@ -1162,7 +1166,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               )}
 
                               {/* لوحة الإدارة (للأدمن) */}
-                              {currentRole === 'admin' && (
+                              {isAdmin && (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1198,8 +1202,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 )}
                               </button>
 
-                              {/* طلباتي ومشترياتي (مخفية للبائع) */}
-                              {!isSeller && (
+                              {/* طلباتي ومشترياتي (مخفية للبائع والأدمن) */}
+                              {!isStaff && (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1214,8 +1218,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 </button>
                               )}
 
-                              {/* المفضلة (مخفية للبائع) */}
-                              {!isSeller && (
+                              {/* المفضلة (مخفية للبائع والأدمن) */}
+                              {!isStaff && (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1506,7 +1510,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               style={{
                 backgroundColor: isDark ? '#0b0b0a' : '#eee8dc',
                 color: mainText,
-                paddingBottom: 'env(safe-area-inset-bottom)',
+                paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)',
               }}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -1592,7 +1596,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       }}
                     >
                       <UserCircle size={17} />
-                      {isSeller ? 'لوحة الورشة' : 'حسابي'}
+                      {isSeller ? 'لوحة الورشة' : isAdmin ? 'لوحة الإدارة' : 'حسابي'}
                     </button>
                   </div>
                 ) : (
@@ -1719,7 +1723,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    {currentRole === 'admin' && (
+                    {isAdmin && (
                       <button
                         type="button"
                         onClick={() => navigate('admin-dashboard')}
@@ -1731,8 +1735,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    {/* المفضلة (مخفية للبائع في الموبايل) */}
-                    {!isSeller && (
+                    {/* المفضلة (مخفية للبائع والأدمن) */}
+                    {!isStaff && (
                       <button
                         type="button"
                         onClick={() => navigate('favorites')}
@@ -1752,8 +1756,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    {/* طلباتي (مخفية للبائع في الموبايل) */}
-                    {!isSeller && (
+                    {/* طلباتي (مخفية للبائع والأدمن) */}
+                    {!isStaff && (
                       <button
                         type="button"
                         onClick={() => navigate('orders')}

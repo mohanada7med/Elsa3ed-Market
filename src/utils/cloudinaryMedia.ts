@@ -13,10 +13,12 @@ const posterUrlCache = new Map<string, string>();
 const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm', '.m4v', '.ogv', '.mkv', '.avi'];
 
 export interface VideoOptimizationOptions {
-  /** Target max width or height limit (e.g. 1080 for HD, 720 for mobile) */
+  /** Target max width or height limit (e.g. 720 for mobile, 1080 for desktop) */
   maxDimension?: number;
-  /** Force MP4 container if true (default: true for broad mobile/desktop compatibility) */
+  /** Force MP4 container if true (default: true for universal mobile/desktop playback) */
   forceMp4?: boolean;
+  /** Quality mode: 'auto' (default) | 'eco' (mobile bandwidth saver) */
+  qualityMode?: 'auto' | 'eco';
 }
 
 /**
@@ -37,8 +39,9 @@ export function isVideoUrl(url?: string | null): boolean {
 
 /**
  * Transforms any Cloudinary video URL into an optimized, fast-starting streamable delivery URL.
- * - Injects `f_auto,q_auto` (with optional dimension bounds like `w_1080,c_limit`).
- * - Transcodes raw QuickTime `.mov` and other phone recordings to streaming-ready `.mp4` with faststart moov atom.
+ * - Injects `f_auto,q_auto` and mobile-smart dimensions `w_720,c_limit`.
+ * - Enables `fl_faststart` so playback begins immediately without full download.
+ * - Transcodes raw QuickTime `.mov` and phone recordings to streaming-ready `.mp4`.
  * - Non-Cloudinary URLs are safely returned untouched.
  */
 export function getOptimizedVideoUrl(
@@ -49,8 +52,14 @@ export function getOptimizedVideoUrl(
   const trimmed = url.trim();
   if (!trimmed) return '';
 
+  // Adaptive mobile compression: if no dimension is specified, use 720 on mobile viewports
+  let targetDimension = options?.maxDimension;
+  if (!targetDimension && typeof window !== 'undefined' && window.innerWidth <= 768) {
+    targetDimension = 720;
+  }
+
   // Return cached result if already computed
-  const cacheKey = `${trimmed}_${options?.maxDimension || 0}_${options?.forceMp4 ?? true}`;
+  const cacheKey = `${trimmed}_${targetDimension || 0}_${options?.forceMp4 ?? true}_${options?.qualityMode || 'auto'}`;
   const cached = videoUrlCache.get(cacheKey);
   if (cached) return cached;
 
@@ -70,10 +79,20 @@ export function getOptimizedVideoUrl(
     }
 
     // Prepare transformation string
-    const parts: string[] = ['f_auto', 'q_auto'];
-    if (options?.maxDimension && options.maxDimension > 0) {
-      parts.push(`w_${options.maxDimension}`, 'c_limit');
+    const parts: string[] = ['f_auto'];
+    if (options?.qualityMode === 'eco') {
+      parts.push('q_auto:eco');
+    } else {
+      parts.push('q_auto');
     }
+
+    if (targetDimension && targetDimension > 0) {
+      parts.push(`w_${targetDimension}`, 'c_limit');
+    }
+
+    // Faststart ensures MP4 metadata (moov atom) is at front for instant start
+    parts.push('fl_faststart');
+
     const transformString = parts.join(',');
 
     // Cloudinary URL structure: https://res.cloudinary.com/<cloud_name>/video/upload/[<existing_transformations>/][v<version>/]<public_id>.<ext>
@@ -139,7 +158,7 @@ export function getOptimizedVideoPoster(
     }
   }
 
-  // If we have a Cloudinary video URL, extract the first frame (so_0) as a lightweight JPEG
+  // If we have a Cloudinary video URL, extract the first frame (so_1.0) as a lightweight JPEG
   if (videoUrl && typeof videoUrl === 'string' && videoUrl.includes('res.cloudinary.com')) {
     try {
       let derivedPoster = videoUrl.trim();
@@ -150,7 +169,7 @@ export function getOptimizedVideoPoster(
         let suffix = derivedPoster.substring(uploadIndex + '/video/upload/'.length);
 
         // Remove any existing transformations in suffix if starting with parameters
-        if (suffix.startsWith('f_auto') || suffix.startsWith('so_') || suffix.startsWith('w_')) {
+        if (suffix.startsWith('f_auto') || suffix.startsWith('so_') || suffix.startsWith('w_') || suffix.startsWith('q_')) {
           const nextSlash = suffix.indexOf('/');
           if (nextSlash !== -1) {
             suffix = suffix.substring(nextSlash + 1);
@@ -160,7 +179,7 @@ export function getOptimizedVideoPoster(
         // Change video extension (.mov, .mp4, etc.) to .jpg
         suffix = suffix.replace(/\.[a-zA-Z0-9]+$/, '.jpg');
 
-        derivedPoster = `${prefix}so_0,f_auto,q_auto,w_${width},c_limit/${suffix}`;
+        derivedPoster = `${prefix}so_1.0,f_auto,q_auto,w_${width},c_limit/${suffix}`;
         posterUrlCache.set(cacheKey, derivedPoster);
         return derivedPoster;
       }
@@ -171,4 +190,76 @@ export function getOptimizedVideoPoster(
 
   posterUrlCache.set(cacheKey, DEFAULT_FALLBACK_POSTER);
   return DEFAULT_FALLBACK_POSTER;
+}
+
+/**
+ * Captures an instant high-quality JPEG poster frame from a local video file or Blob
+ * using HTML5 Video + Canvas. Takes frame at targetTime (default: 1.0s).
+ */
+export async function captureVideoFrame(
+  videoSource: File | Blob | string,
+  targetTime = 1.0
+): Promise<{ dataUrl: string; duration: number; width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined') {
+      return reject(new Error('Window unavailable'));
+    }
+
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    video.crossOrigin = 'anonymous';
+
+    const url = typeof videoSource === 'string' ? videoSource : URL.createObjectURL(videoSource);
+    video.src = url;
+
+    const cleanup = () => {
+      if (typeof videoSource !== 'string' && url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    video.onloadedmetadata = () => {
+      // Seek to targetTime or 20% into video
+      const seekTime = Math.min(targetTime, Math.max(0.2, (video.duration || 2) * 0.2));
+      video.currentTime = seekTime;
+    };
+
+    video.onseeked = () => {
+      try {
+        const width = video.videoWidth || 720;
+        const height = video.videoHeight || 1280;
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.min(width, 720);
+        canvas.height = Math.round((canvas.width / width) * height);
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          cleanup();
+          return reject(new Error('Canvas context unavailable'));
+        }
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+        const result = {
+          dataUrl,
+          duration: video.duration || 0,
+          width,
+          height
+        };
+        cleanup();
+        resolve(result);
+      } catch (err) {
+        cleanup();
+        reject(err);
+      }
+    };
+
+    video.onerror = () => {
+      cleanup();
+      reject(new Error('Failed to load video for poster capture'));
+    };
+  });
 }

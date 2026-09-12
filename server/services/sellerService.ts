@@ -24,38 +24,35 @@ export async function getSellerDashboardStats(sellerId: string) {
     }
   }
 
-  if (!isMongo) {
-    if (products.length === 0) {
-      products = memoryDb.products.filter((p) => p.sellerId === sellerId) as ProductDocument[];
-    }
-    if (orders.length === 0) {
-      orders = memoryDb.orders.filter((o) => o.sellerIds.includes(sellerId));
-    }
+  if (products.length === 0) {
+    products = memoryDb.products.filter((p) => p.sellerId === sellerId) as ProductDocument[];
+  }
+  if (orders.length === 0) {
+    orders = memoryDb.orders.filter((o) => o.sellerIds && o.sellerIds.includes(sellerId));
   }
 
+  const activeOrders = orders.filter((o) => o.status !== 'cancelled');
   let totalSales = 0;
   let totalUnitsSold = 0;
   const productSalesMap: Record<string, { title: string; image: string; units: number; revenue: number }> = {};
 
-  for (const order of orders) {
-    if (order.status !== 'cancelled') {
-      for (const item of order.items || []) {
-        if (item.sellerId === sellerId) {
-          const revenue = (item.unitPrice || 0) * (item.quantity || 1);
-          totalSales += revenue;
-          totalUnitsSold += item.quantity || 1;
+  for (const order of activeOrders) {
+    for (const item of order.items || []) {
+      if (item.sellerId === sellerId) {
+        const revenue = (item.unitPrice || 0) * (item.quantity || 1);
+        totalSales += revenue;
+        totalUnitsSold += item.quantity || 1;
 
-          if (!productSalesMap[item.productId]) {
-            productSalesMap[item.productId] = {
-              title: item.productTitle || 'منتج',
-              image: item.productImage || '',
-              units: 0,
-              revenue: 0
-            };
-          }
-          productSalesMap[item.productId].units += item.quantity || 1;
-          productSalesMap[item.productId].revenue += revenue;
+        if (!productSalesMap[item.productId]) {
+          productSalesMap[item.productId] = {
+            title: item.productTitle || 'منتج',
+            image: item.productImage || '',
+            units: 0,
+            revenue: 0
+          };
         }
+        productSalesMap[item.productId].units += item.quantity || 1;
+        productSalesMap[item.productId].revenue += revenue;
       }
     }
   }
@@ -76,7 +73,7 @@ export async function getSellerDashboardStats(sellerId: string) {
   return {
     totalSales,
     totalUnitsSold,
-    ordersCount: orders.length,
+    ordersCount: activeOrders.length,
     productsCount: products.length,
     activeApprovedCount,
     pendingCount,
@@ -84,7 +81,12 @@ export async function getSellerDashboardStats(sellerId: string) {
     lowStockCount,
     outOfStockCount,
     topProducts,
-    recentOrders
+    recentOrders,
+    financials: {
+      totalRevenue: totalSales,
+      totalOrders: activeOrders.length,
+      unitsSold: totalUnitsSold
+    }
   };
 }
 
@@ -120,6 +122,7 @@ export async function getSellerAnalytics(sellerId: string, period: '7d' | '30d' 
 
   const cutoffTime = new Date(now.getTime() - daysToFilter * 24 * 60 * 60 * 1000).getTime();
   const filteredOrders = orders.filter((o) => new Date(o.createdAt).getTime() >= cutoffTime);
+  const activeFilteredOrders = filteredOrders.filter((o) => o.status !== 'cancelled');
 
   const dailyMap: Record<string, { date: string; sales: number; orders: number; units: number }> = {};
   let totalRevenue = 0;
@@ -164,7 +167,7 @@ export async function getSellerAnalytics(sellerId: string, period: '7d' | '30d' 
   return {
     period,
     totalRevenue,
-    totalOrders: filteredOrders.length,
+    totalOrders: activeFilteredOrders.length,
     totalUnits,
     productsCount: products.length,
     timeline

@@ -289,7 +289,7 @@ export const CartDrawer: React.FC = () => {
 
               {/* Drawer Footer & Checkout Summary */}
               {cart.length > 0 && (
-                <div className="p-4 sm:p-5 bg-white/90 dark:bg-[#151513]/95 border-t border-black/10 dark:border-white/10 space-y-3.5">
+                <div className="p-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:p-5 sm:pb-5 bg-white/90 dark:bg-[#151513]/95 border-t border-black/10 dark:border-white/10 space-y-3.5">
                   {/* Promo code form */}
                   {appliedDiscount ? (
                     <div className="flex items-center justify-between p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-xs">
@@ -314,12 +314,12 @@ export const CartDrawer: React.FC = () => {
                         onChange={(e) => setCouponInput(e.target.value)}
                         placeholder="كود الخصم (جرب SAEED100)"
                         aria-label="أدخل كود قسيمة الخصم الترويجية"
-                        className="flex-1 px-3 py-2 text-xs bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] outline-none focus:border-[#9a6a35]"
+                        className="flex-1 px-3 py-2.5 text-sm sm:text-xs bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] outline-none focus:border-[#9a6a35] min-h-[40px]"
                       />
                       <button
                         type="submit"
                         aria-label="تطبيق كود الخصم"
-                        className="px-4 py-2 bg-[#9a6a35]/10 hover:bg-[#9a6a35]/20 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold rounded-[1rem] transition-colors shrink-0 min-h-[38px] cursor-pointer"
+                        className="px-4 py-2 bg-[#9a6a35]/10 hover:bg-[#9a6a35]/20 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30 text-xs font-bold rounded-[1rem] transition-colors shrink-0 min-h-[40px] cursor-pointer"
                       >
                         تطبيق
                       </button>

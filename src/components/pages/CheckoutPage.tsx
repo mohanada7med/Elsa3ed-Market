@@ -326,7 +326,7 @@ export const CheckoutPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8"
+      className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-20 sm:pb-12 space-y-6 sm:space-y-8"
     >
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-medium">
@@ -447,7 +447,7 @@ export const CheckoutPage: React.FC = () => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="مثال: يرجى الاتصال قبل الوصول بنصف ساعة، القطعة هدية تغليف خاص..."
                   rows={2}
-                  className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-xs outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20"
+                  className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20"
                 />
               </div>
             </div>

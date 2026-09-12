@@ -646,15 +646,7 @@ export const DialectDictionaryPage: React.FC = () => {
     );
   };
 
-  const shareFacebookPost = () => {
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareUrl
-      )}&quote=${encodeURIComponent(shareText)}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
+
 
   const handleNativeShare = async () => {
     if (navigator.share) {
@@ -697,10 +689,13 @@ export const DialectDictionaryPage: React.FC = () => {
     );
   }
 
+  const isHomePage = activePage === 'home';
+  const WrapperTag = isHomePage ? 'section' : 'main';
+
   return (
-    <main
+    <WrapperTag
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7]"
+      className={`${isHomePage ? 'py-4 sm:py-8' : 'min-h-screen pb-20 lg:pb-0'} overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7]`}
     >
       {/* خلفية مخففة جداً للموبايل لتقليل إجهاد كارت الشاشة */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -712,14 +707,14 @@ export const DialectDictionaryPage: React.FC = () => {
         <div className="hidden sm:block absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-[#9a6a35]/[0.04] dark:border-[#d6aa72]/[0.03]" />
       </div>
 
-      {/* الهيدر مع تقليل البلور على الموبايل */}
-      <header className="relative z-50 border-b border-black/[0.07] bg-[#eee8dc]/95 sm:bg-[#eee8dc]/80 sm:backdrop-blur-md dark:border-white/[0.08] dark:bg-[#0b0b0a]/95 sm:dark:bg-[#0b0b0a]/80">
-        <div className="mx-auto flex h-[64px] sm:h-[72px] max-w-[1700px] items-center justify-between px-5 sm:px-8 lg:px-12 xl:px-16">
-          {activePage !== 'home' ? (
+      {/* الهيدر مع تقليل البلور على الموبايل - يظهر فقط في وضع الصفحة المستقلة */}
+      {!isHomePage && (
+        <header className="relative z-50 border-b border-black/[0.07] bg-[#eee8dc]/95 sm:bg-[#eee8dc]/80 sm:backdrop-blur-md dark:border-white/[0.08] dark:bg-[#0b0b0a]/95 sm:dark:bg-[#0b0b0a]/80">
+          <div className="mx-auto flex h-[56px] sm:h-[72px] max-w-[1700px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="group flex items-center gap-3 text-xs font-black hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer"
+              className="group flex items-center gap-2 sm:gap-3 text-xs font-black hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer min-h-[44px] min-w-[44px]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
                 <ArrowLeft
@@ -729,30 +724,28 @@ export const DialectDictionaryPage: React.FC = () => {
               </span>
               <span className="hidden sm:block">الرئيسية</span>
             </button>
-          ) : (
-            <div />
-          )}
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[8px] font-black tracking-[0.45em] text-[#9a6a35] dark:text-[#d6aa72]">
-              WAH
+            <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
+              <div className="text-[8px] font-black tracking-[0.45em] text-[#9a6a35] dark:text-[#d6aa72]">
+                WAH
+              </div>
+              <div className="mt-0.5 text-xs font-black">اختبار اللهجة</div>
             </div>
-            <div className="mt-0.5 text-xs font-black">اختبار اللهجة</div>
-          </div>
 
-          <button
-            type="button"
-            onClick={() => setActivePage('categories')}
-            className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black hover:bg-[#211d18] hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer"
-          >
-            <span className="hidden sm:block">اكتشف التصنيفات</span>
-            <ArrowUpLeft
-              size={14}
-              className="transition-transform group-hover:-translate-x-0.5"
-            />
-          </button>
-        </div>
-      </header>
+            <button
+              type="button"
+              onClick={() => setActivePage('categories')}
+              className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black hover:bg-[#211d18] hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer min-h-[40px]"
+            >
+              <span className="hidden sm:block">اكتشف التصنيفات</span>
+              <ArrowUpLeft
+                size={14}
+                className="transition-transform group-hover:-translate-x-0.5"
+              />
+            </button>
+          </div>
+        </header>
+      )}
 
       {/* 1. مرحلة العد التنازلي */}
       {countdown !== null && (
@@ -790,10 +783,10 @@ export const DialectDictionaryPage: React.FC = () => {
                   WAH / DIALECT CHALLENGE
                 </div>
 
-                <h1 className="max-w-6xl text-[16vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[13vw] lg:text-[9rem]">
+                <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   انت
                   <br />
-                  <span className="mr-[6vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-28">
+                  <span className="mr-3 sm:mr-8 lg:mr-20 text-[#9a6a35] dark:text-[#d6aa72]">
                     صعيدي؟
                   </span>
                 </h1>
@@ -1109,15 +1102,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <MessageCircle size={15} />
                     واتساب
                   </button>
-
-                  <button
-                    type="button"
-                    onClick={shareFacebookPost}
-                    className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[#1877F2] hover:bg-[#0d6efd] text-white text-xs font-black transition-colors cursor-pointer"
-                  >
-                    <Facebook size={15} />
-                    فيسبوك
-                  </button>
+                  
 
                   <button
                     type="button"
@@ -1174,17 +1159,19 @@ export const DialectDictionaryPage: React.FC = () => {
         </section>
       )}
 
-      {/* تذييل الصفحة */}
-      <footer className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-8">
-        <div className="mx-auto max-w-[1700px] px-5 py-8 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium text-black/40 dark:text-white/40">
-          <div className="flex items-center gap-2">
-            <CircleDot size={11} className="text-[#9a6a35] dark:text-[#d6aa72]" />
-            <span>وه • توثيق الحكاية واللهجة الصعيدية الأصلية</span>
+      {/* تذييل الصفحة - يظهر فقط في الصفحة المستقلة لتجنب الازدواج في الرئيسية */}
+      {!isHomePage && (
+        <footer className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-8 pb-12">
+          <div className="mx-auto max-w-[1700px] px-5 py-8 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium text-black/40 dark:text-white/40">
+            <div className="flex items-center gap-2">
+              <CircleDot size={11} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+              <span>وه • توثيق الحكاية واللهجة الصعيدية الأصلية</span>
+            </div>
+            <div>جميع الحقوق محفوظة © {new Date().getFullYear()}</div>
           </div>
-          <div>جميع الحقوق محفوظة © {new Date().getFullYear()}</div>
-        </div>
-      </footer>
-    </main>
+        </footer>
+      )}
+    </WrapperTag>
   );
 };
 

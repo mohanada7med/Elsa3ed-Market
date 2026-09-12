@@ -54,8 +54,8 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
     }
   }
 
-  // Fallback: If in dev mode or sandboxed preview where cookies might not attach, check headers
-  if (!userId) {
+  // Fallback: Only allow header-based user context in explicit dev mode if specifically enabled
+  if (!userId && process.env.NODE_ENV === 'development' && process.env.ALLOW_DEV_HEADER_AUTH === 'true') {
     const headerUserId = (req.headers['x-user-id'] || (req.headers as any)['x-dev-user-id']) as string;
     const headerRole = (req.headers['x-user-role'] || (req.headers as any)['x-dev-user-role']) as UserRole;
     if (headerUserId) {
@@ -97,7 +97,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   }
 
   // If user verified by token but DB sync is resolving, fall back safely to verified token claims
-  if (!userProfile && verified.role) {
+  if (!userProfile && token && verified?.role) {
     userProfile = {
       id: userId,
       username: verified.username || '',

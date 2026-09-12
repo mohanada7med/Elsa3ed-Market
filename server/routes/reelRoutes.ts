@@ -84,64 +84,94 @@ router.get('/', async (req, res: Response) => {
     const { sellerId, governorate, craftType, contentType, search, featuredOnly, limit = 50 } = req.query;
     const { db, isMongo } = await getDatabase();
 
+    const rawSellerId = sellerId && sellerId !== 'all' ? String(sellerId).trim() : null;
+    let sellerTargetIds: string[] = [];
+
+    if (rawSellerId) {
+      sellerTargetIds.push(rawSellerId);
+      if (isMongo && db) {
+        try {
+          const sDoc = await db.collection('sellers').findOne({
+            $or: [{ id: rawSellerId }, { userId: rawSellerId }]
+          });
+          if (sDoc) {
+            if (sDoc.id) sellerTargetIds.push(String(sDoc.id));
+            if (sDoc.userId) sellerTargetIds.push(String(sDoc.userId));
+          }
+        } catch (e) {
+          // ignore lookup error
+        }
+      } else {
+        const sDoc = memoryDb.sellers.find(
+          (s) => s.id === rawSellerId || (s as any).userId === rawSellerId
+        );
+        if (sDoc) {
+          if (sDoc.id) sellerTargetIds.push(sDoc.id);
+          if ((sDoc as any).userId) sellerTargetIds.push((sDoc as any).userId);
+        }
+      }
+      sellerTargetIds = Array.from(new Set(sellerTargetIds.filter(Boolean)));
+    }
+
     let reels: CraftReelDocument[] = [];
 
     if (isMongo && db) {
-      const query: any = {};
-      if (sellerId && sellerId !== 'all') {
-        query.sellerId = sellerId;
+      const conditions: any[] = [];
+      if (rawSellerId) {
+        conditions.push({
+          $or: [
+            { sellerId: { $in: sellerTargetIds } },
+            { userId: { $in: sellerTargetIds } }
+          ]
+        });
       }
       if (governorate && governorate !== 'all') {
-        query.governorate = governorate;
+        conditions.push({ governorate });
       }
       if (contentType && contentType !== 'all') {
-        query.$or = [
-          { contentType: contentType },
-          { craftType: contentType }
-        ];
+        conditions.push({
+          $or: [{ contentType }, { craftType: contentType }]
+        });
       } else if (craftType && craftType !== 'all') {
-        query.$or = [
-          { craftType: craftType },
-          { contentType: craftType }
-        ];
+        conditions.push({
+          $or: [{ craftType }, { contentType: craftType }]
+        });
       }
       if (featuredOnly === 'true') {
-        query.isFeatured = true;
+        conditions.push({ isFeatured: true });
       }
       if (search && typeof search === 'string' && search.trim() !== '') {
         const regex = new RegExp(search.trim(), 'i');
-        const searchConditions: any[] = [
-          { title: regex },
-          { description: regex },
-          { governorate: regex },
-          { location: regex },
-          { contentType: regex },
-          { artisanName: regex },
-          { workshopName: regex },
-          { craftType: regex },
-          { productTitle: regex },
-          { hashtags: regex }
-        ];
-        if (query.$or) {
-          query.$and = [{ $or: query.$or }, { $or: searchConditions }];
-          delete query.$or;
-        } else {
-          query.$or = searchConditions;
-        }
+        conditions.push({
+          $or: [
+            { title: regex },
+            { description: regex },
+            { governorate: regex },
+            { location: regex },
+            { contentType: regex },
+            { artisanName: regex },
+            { workshopName: regex },
+            { craftType: regex },
+            { productTitle: regex },
+            { hashtags: regex }
+          ]
+        });
       }
+
+      const finalQuery = conditions.length > 0 ? { $and: conditions } : {};
 
       reels = (await db
         .collection<CraftReelDocument>('reels')
-        .find(query)
+        .find(finalQuery)
         .sort({ isPinned: -1, createdAt: -1 })
         .limit(Number(limit) || 50)
         .toArray()) as any[];
     }
 
-    if (!reels || reels.length === 0) {
+    if (!isMongo) {
       let memoryList = [...memoryDb.reels];
-      if (sellerId && sellerId !== 'all') {
-        memoryList = memoryList.filter((r) => r.sellerId === sellerId);
+      if (rawSellerId) {
+        memoryList = memoryList.filter((r) => r.sellerId && sellerTargetIds.includes(r.sellerId));
       }
       if (governorate && governorate !== 'all') {
         memoryList = memoryList.filter((r) => r.governorate === governorate);
@@ -176,61 +206,63 @@ router.get('/', async (req, res: Response) => {
       reels = memoryList;
     }
 
-    // تضمين فيديوهات الأماكن التراثية في خلاصة الريلز الشاملة مع منع أي تكرار
-    try {
-      let placeVideosList: any[] = [];
-      if (isMongo && db) {
-        placeVideosList = await db.collection('wah_heritage_places').find({
-          $or: [
-            { videoUrl: { $exists: true, $ne: null, $nin: ['', 'null'] } },
-            { videos: { $exists: true, $not: { $size: 0 } } }
-          ]
-        }).toArray();
-      } else {
-        placeVideosList = memoryDb.heritagePlaces.filter((p) => p.videoUrl || (p.videos && p.videos.length > 0));
-      }
-
-      for (const place of placeVideosList) {
-        const vUrl = place.videoUrl || place.videos?.[0];
-        if (!vUrl || !vUrl.trim()) continue;
-
-        const cleanVUrl = vUrl.trim();
-        const normKey = cleanVUrl.split('?')[0].toLowerCase();
-        const alreadyExists = reels.some((r) => (r.videoUrl || '').split('?')[0].toLowerCase() === normKey);
-
-        if (!alreadyExists) {
-          let poster = place.coverImage || place.imageUrl || '';
-          if ((!poster || poster.endsWith('.mp4') || poster.endsWith('.mov')) && cleanVUrl.includes('/video/upload/')) {
-            poster = cleanVUrl
-              .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
-              .replace(/\.[^/.]+$/, '.jpg');
-          }
-          const placeReel: CraftReelDocument = {
-            id: `reel-place-${place.id || place.slug}`,
-            title: place.title || place.name || 'معلم أثري وتراثي',
-            contentType: 'heritage_site',
-            location: place.location || place.city || place.governorate || 'مصر',
-            artisanName: 'توثيق تراثي',
-            artisanAvatar: poster || undefined,
-            workshopName: place.title || place.name || '',
-            governorate: place.governorate || 'الصعيد',
-            craftType: 'معلم أثري وتراثي',
-            videoUrl: cleanVUrl,
-            posterUrl: poster || '',
-            duration: '0:30',
-            likesCount: place.likesCount || 15,
-            viewsCount: place.viewsCount || 120,
-            sharesCount: 6,
-            description: place.description || place.shortDescription || `جولة توثيقية في رحاب ${place.title || place.name}`,
-            hashtags: ['#تراث_الصعيد', '#معالم_مصر', `#${(place.governorate || 'مصر').replace(/\s+/g, '_')}`],
-            isFeatured: true,
-            createdAt: place.createdAt || new Date().toISOString()
-          };
-          reels.push(placeReel);
+    // تضمين فيديوهات الأماكن التراثية فقط في خلاصة الريلز الشاملة عند عدم وجود فلتر لبائع محدد
+    if (!rawSellerId) {
+      try {
+        let placeVideosList: any[] = [];
+        if (isMongo && db) {
+          placeVideosList = await db.collection('wah_heritage_places').find({
+            $or: [
+              { videoUrl: { $exists: true, $ne: null, $nin: ['', 'null'] } },
+              { videos: { $exists: true, $not: { $size: 0 } } }
+            ]
+          }).toArray();
+        } else {
+          placeVideosList = memoryDb.heritagePlaces.filter((p) => p.videoUrl || (p.videos && p.videos.length > 0));
         }
+
+        for (const place of placeVideosList) {
+          const vUrl = place.videoUrl || place.videos?.[0];
+          if (!vUrl || !vUrl.trim()) continue;
+
+          const cleanVUrl = vUrl.trim();
+          const normKey = cleanVUrl.split('?')[0].toLowerCase();
+          const alreadyExists = reels.some((r) => (r.videoUrl || '').split('?')[0].toLowerCase() === normKey);
+
+          if (!alreadyExists) {
+            let poster = place.coverImage || place.imageUrl || '';
+            if ((!poster || poster.endsWith('.mp4') || poster.endsWith('.mov')) && cleanVUrl.includes('/video/upload/')) {
+              poster = cleanVUrl
+                .replace('/video/upload/', '/video/upload/so_0,f_auto,q_auto,w_800,c_limit/')
+                .replace(/\.[^/.]+$/, '.jpg');
+            }
+            const placeReel: CraftReelDocument = {
+              id: `reel-place-${place.id || place.slug}`,
+              title: place.title || place.name || 'معلم أثري وتراثي',
+              contentType: 'heritage_site',
+              location: place.location || place.city || place.governorate || 'مصر',
+              artisanName: 'توثيق تراثي',
+              artisanAvatar: poster || undefined,
+              workshopName: place.title || place.name || '',
+              governorate: place.governorate || 'الصعيد',
+              craftType: 'معلم أثري وتراثي',
+              videoUrl: cleanVUrl,
+              posterUrl: poster || '',
+              duration: '0:30',
+              likesCount: place.likesCount || 15,
+              viewsCount: place.viewsCount || 120,
+              sharesCount: 6,
+              description: place.description || place.shortDescription || `جولة توثيقية في رحاب ${place.title || place.name}`,
+              hashtags: ['#تراث_الصعيد', '#معالم_مصر', `#${(place.governorate || 'مصر').replace(/\s+/g, '_')}`],
+              isFeatured: true,
+              createdAt: place.createdAt || new Date().toISOString()
+            };
+            reels.push(placeReel);
+          }
+        }
+      } catch (placeReelErr) {
+        Logger.warn('[Reels] Error integrating place videos:', placeReelErr);
       }
-    } catch (placeReelErr) {
-      Logger.warn('[Reels] Error integrating place videos:', placeReelErr);
     }
 
     // تنقية وفلترة الريلز لمنع أي تكرار للفيديوهات نهائياً
@@ -240,6 +272,9 @@ router.get('/', async (req, res: Response) => {
 
     for (const r of reels) {
       if (!r || !r.videoUrl || !r.videoUrl.trim()) continue;
+      if (rawSellerId && (!r.sellerId || !sellerTargetIds.includes(r.sellerId))) {
+        continue;
+      }
       const normUrl = r.videoUrl.split('?')[0].trim().toLowerCase();
       const normId = (r.id || '').trim().toLowerCase();
 

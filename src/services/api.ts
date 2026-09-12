@@ -3121,7 +3121,9 @@ export const api = {
     if (filters?.featuredOnly) params.append('featuredOnly', 'true');
 
     const queryStr = params.toString() ? `?${params.toString()}` : '';
-    const res = await fetch(`${API_BASE}/reels${queryStr}`);
+    const res = await fetch(`${API_BASE}/reels${queryStr}`, {
+      credentials: 'include'
+    });
     const json: ApiResponse<CraftReel[]> = await res.json();
     return json.data || [];
   },

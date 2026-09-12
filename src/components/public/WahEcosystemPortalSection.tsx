@@ -135,6 +135,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
         px-5
         sm:px-8
         lg:px-12
+        overflow-x-clip
       "
     >
       {/* الرأس التحريري */}
@@ -149,11 +150,11 @@ export const WahEcosystemPortalSection: React.FC = () => {
               DISCOVER / أبواب ودليل «وه»
             </div>
 
-            {/* العنوان التايبوغرافي الضخم */}
-            <h2 className="font-heritage text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
+            {/* العنوان التايبوغرافي المتجاوب */}
+            <h2 className="font-heritage text-4xl sm:text-6xl lg:text-[7rem] xl:text-[8rem] font-black leading-[1.05] tracking-tight">
               الصعيد فى مكان واحد
               <br />
-              <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+              <span className="text-[#9a6a35] dark:text-[#d6aa72]">
                 «وه»
               </span>
             </h2>
@@ -298,25 +299,21 @@ export const WahEcosystemPortalSection: React.FC = () => {
               onClick={() => setActivePage(portal.page)}
               initial={{
                 opacity: 0,
-                x: isEven ? 35 : -35,
-                y: 25,
-                scale: 0.94,
-                rotate: isEven ? -1 : 1,
+                y: 20,
+                scale: 0.97,
               }}
               whileInView={{
                 opacity: 1,
-                x: 0,
                 y: 0,
                 scale: 1,
-                rotate: 0,
               }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{
-                duration: 0.7,
+                duration: 0.5,
                 ease: [0.16, 1, 0.3, 1],
-                delay: 0.05,
+                delay: 0.04,
               }}
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.98 }}
               className="
                 group relative h-[320px] w-full rounded-[2rem] overflow-hidden
                 border border-black/10 dark:border-white/10

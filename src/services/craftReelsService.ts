@@ -131,6 +131,10 @@ export const craftReelsService = {
       );
     }
 
+    if (filters?.sellerId) {
+      return this.getReelsBySeller(filters.sellerId);
+    }
+
     return this.getReels();
   },
 
@@ -221,11 +225,15 @@ export const craftReelsService = {
    */
 
   getReelsBySeller(
-    sellerId: string
+    sellerId: string,
+    alternateId?: string
   ): CraftReel[] {
+    if (!sellerId && !alternateId) {
+      return [];
+    }
+    const targetIds = [sellerId, alternateId].filter(Boolean) as string[];
     return this.getReels().filter(
-      (reel) =>
-        reel.sellerId === sellerId
+      (reel) => reel.sellerId && targetIds.includes(reel.sellerId)
     );
   },
 

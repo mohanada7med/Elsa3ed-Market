@@ -664,12 +664,12 @@ router.get('/favorites', async (req: AuthenticatedRequest, res: Response) => {
 });
 
 // POST /api/auth/favorites/toggle
-router.post('/favorites/toggle', async (req: AuthenticatedRequest, res: Response) => {
-  const userId = req.user?.id;
+router.post('/favorites/toggle', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
   const { productId } = req.body;
 
-  if (!userId || !productId) {
-    return res.status(400).json({ success: false, error: 'معرف المستخدم ومعرف المنتج مطلوبان' });
+  if (!productId) {
+    return res.status(400).json({ success: false, error: 'معرف المنتج مطلوب' });
   }
 
   const result = await toggleFavorite(userId, productId);

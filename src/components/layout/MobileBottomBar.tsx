@@ -53,6 +53,10 @@ export const MobileBottomBar: React.FC = () => {
     (currentRole === 'seller' && activePage === 'seller-dashboard') ||
     (currentRole === 'admin' && activePage === 'admin-dashboard');
 
+  if (activePage === 'product-details' || activePage === 'checkout') {
+    return null;
+  }
+
   return (
     <div
       id="mobile-bottom-navigation"
@@ -298,15 +302,15 @@ export const MobileBottomBar: React.FC = () => {
               className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
               aria-label="المقتنيات"
             >
-              {(activePage === 'products' || activePage === 'product-details') && (
+              {activePage === 'products' && (
                 <motion.div
                   layoutId="mobileActiveTab"
                   className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' || activePage === 'product-details' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' || activePage === 'product-details' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
                 المقتنيات
               </span>
             </button>

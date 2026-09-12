@@ -129,7 +129,7 @@ export const Footer: React.FC = () => {
         text-[#f4efe6]
         transition-colors duration-500
         border-t border-[#9a6a35]/30
-        select-none pb-24 md:pb-0
+        select-none pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
       {/* خلفية جمالية متحفية فاخرة */}

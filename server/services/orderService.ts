@@ -62,8 +62,9 @@ export async function createOrder(
   // 3. Atomically verify and reduce stock for all items
   for (const item of cartSummary.items) {
     if (isMongo && db) {
+      let updateResult: any;
       try {
-        const updateResult = await db.collection('products').updateOne(
+        updateResult = await db.collection('products').updateOne(
           {
             id: item.product.id,
             stockCount: { $gte: item.quantity },
@@ -74,12 +75,17 @@ export async function createOrder(
             $set: { updatedAt: new Date().toISOString() }
           }
         );
+      } catch (e: any) {
+        console.error('[OrderService] Mongo stock reduction error:', e);
+        throw new Error(`تعذر تعديل المخزون للمنتج "${item.product.title}": ${e?.message || 'خطأ في قاعدة البيانات'}`);
+      }
 
-        if (updateResult.matchedCount === 0) {
-          throw new Error(`نفدت الكمية من المنتج "${item.product.title}" أثناء إتمام الطلب`);
-        }
+      if (!updateResult || updateResult.matchedCount === 0) {
+        throw new Error(`نفدت الكمية من المنتج "${item.product.title}" أثناء إتمام الطلب`);
+      }
 
-        // Check if stock became 0, update inStock
+      // Check if stock became 0, update inStock
+      try {
         const updatedProd = await db.collection('products').findOne({ id: item.product.id });
         if (updatedProd && updatedProd.stockCount <= 0) {
           await db.collection('products').updateOne(
@@ -88,7 +94,7 @@ export async function createOrder(
           );
         }
       } catch (e) {
-        console.error('[OrderService] Mongo stock reduction error:', e);
+        console.error('[OrderService] Mongo stock status update error:', e);
       }
     }
 
@@ -351,6 +357,75 @@ export async function getBuyerOrderById(
 }
 
 /**
+ * Restores product stock quantities and inStock status for an order
+ */
+export async function restoreOrderStock(order: OrderDocument): Promise<void> {
+  const { db, isMongo } = await getDatabase();
+
+  for (const item of order.items || []) {
+    const qty = Number(item.quantity) || 1;
+    if (isMongo && db) {
+      try {
+        await db.collection('products').updateOne(
+          { id: item.productId },
+          {
+            $inc: { stockCount: qty },
+            $set: { inStock: true, updatedAt: new Date().toISOString() }
+          }
+        );
+      } catch (e) {
+        console.error('[OrderService] Mongo restore stock error:', e);
+      }
+    }
+
+    const memProduct = memoryDb.products.find((p) => p.id === item.productId);
+    if (memProduct) {
+      memProduct.stockCount = (Number(memProduct.stockCount) || 0) + qty;
+      memProduct.inStock = true;
+    }
+  }
+}
+
+/**
+ * Depletes product stock quantities if an order is reactivated from cancelled
+ */
+export async function depleteOrderStock(order: OrderDocument): Promise<void> {
+  const { db, isMongo } = await getDatabase();
+
+  for (const item of order.items || []) {
+    const qty = Number(item.quantity) || 1;
+    if (isMongo && db) {
+      try {
+        await db.collection('products').updateOne(
+          { id: item.productId },
+          {
+            $inc: { stockCount: -qty },
+            $set: { updatedAt: new Date().toISOString() }
+          }
+        );
+        const updatedProd = await db.collection('products').findOne({ id: item.productId });
+        if (updatedProd && updatedProd.stockCount <= 0) {
+          await db.collection('products').updateOne(
+            { id: item.productId },
+            { $set: { inStock: false } }
+          );
+        }
+      } catch (e) {
+        console.error('[OrderService] Mongo deplete stock error:', e);
+      }
+    }
+
+    const memProduct = memoryDb.products.find((p) => p.id === item.productId);
+    if (memProduct) {
+      memProduct.stockCount = Math.max(0, (Number(memProduct.stockCount) || 0) - qty);
+      if (memProduct.stockCount <= 0) {
+        memProduct.inStock = false;
+      }
+    }
+  }
+}
+
+/**
  * Buyer can cancel pending order and restore stock
  */
 export async function cancelBuyerOrder(
@@ -371,27 +446,7 @@ export async function cancelBuyerOrder(
   const { db, isMongo } = await getDatabase();
 
   // Restore product stock
-  for (const item of order.items) {
-    if (isMongo && db) {
-      try {
-        await db.collection('products').updateOne(
-          { id: item.productId },
-          {
-            $inc: { stockCount: item.quantity },
-            $set: { inStock: true, updatedAt: new Date().toISOString() }
-          }
-        );
-      } catch (e) {
-        console.error('[OrderService] Mongo restore stock error:', e);
-      }
-    }
-
-    const memProduct = memoryDb.products.find((p) => p.id === item.productId);
-    if (memProduct) {
-      memProduct.stockCount += item.quantity;
-      memProduct.inStock = true;
-    }
-  }
+  await restoreOrderStock(order);
 
   // Update order status
   order.status = 'cancelled';
@@ -519,8 +574,18 @@ export async function updateSellerOrderStatus(
     throw new Error('ليس لديك صلاحية لتحديث هذا الطلب');
   }
 
+  const previousStatus = order.status;
   order.status = newStatus;
   order.updatedAt = new Date().toISOString();
+
+  // If status is changed to cancelled from non-cancelled, restore product stock
+  if (newStatus === 'cancelled' && previousStatus !== 'cancelled') {
+    await restoreOrderStock(order);
+    order.cancellationReason = note || 'تم الإلغاء بواسطة الحرفي/الورشة';
+  } else if (previousStatus === 'cancelled' && newStatus !== 'cancelled') {
+    await depleteOrderStock(order);
+    order.cancellationReason = undefined;
+  }
 
   // Mark appropriate timeline step as done
   let stepMatched = false;
@@ -554,6 +619,7 @@ export async function updateSellerOrderStatus(
         {
           $set: {
             status: order.status,
+            cancellationReason: order.cancellationReason,
             updatedAt: order.updatedAt,
             timeline: order.timeline
           }
@@ -619,9 +685,25 @@ export async function getAdminOrders(filters?: {
   let orders: OrderDocument[] = [];
   if (isMongo && db) {
     try {
+      const query: any = {};
+      if (filters?.status && filters.status !== 'all') {
+        query.status = filters.status;
+      }
+      if (filters?.governorate && filters.governorate !== 'all') {
+        query['shippingAddress.governorate'] = filters.governorate;
+      }
+      if (filters?.search && filters.search.trim()) {
+        const q = filters.search.trim();
+        query.$or = [
+          { orderNumber: { $regex: q, $options: 'i' } },
+          { buyerName: { $regex: q, $options: 'i' } },
+          { buyerPhone: { $regex: q, $options: 'i' } }
+        ];
+      }
+
       orders = (await db
         .collection('orders')
-        .find()
+        .find(query)
         .sort({ createdAt: -1 })
         .toArray()) as unknown as OrderDocument[];
     } catch (e) {
@@ -629,26 +711,23 @@ export async function getAdminOrders(filters?: {
     }
   }
 
-  if (orders.length === 0) {
+  if (orders.length === 0 && !isMongo) {
     orders = [...memoryDb.orders];
-  }
-
-  if (filters?.status && filters.status !== 'all') {
-    orders = orders.filter((o) => o.status === filters.status);
-  }
-
-  if (filters?.governorate && filters.governorate !== 'all') {
-    orders = orders.filter((o) => o.shippingAddress.governorate === filters.governorate);
-  }
-
-  if (filters?.search) {
-    const q = filters.search.toLowerCase();
-    orders = orders.filter(
-      (o) =>
-        o.orderNumber.toLowerCase().includes(q) ||
-        o.buyerName.toLowerCase().includes(q) ||
-        o.buyerPhone.includes(q)
-    );
+    if (filters?.status && filters.status !== 'all') {
+      orders = orders.filter((o) => o.status === filters.status);
+    }
+    if (filters?.governorate && filters.governorate !== 'all') {
+      orders = orders.filter((o) => o.shippingAddress?.governorate === filters.governorate);
+    }
+    if (filters?.search && filters.search.trim()) {
+      const q = filters.search.trim().toLowerCase();
+      orders = orders.filter(
+        (o) =>
+          o.orderNumber.toLowerCase().includes(q) ||
+          o.buyerName.toLowerCase().includes(q) ||
+          (o.buyerPhone && o.buyerPhone.includes(q))
+      );
+    }
   }
 
   return orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -684,7 +763,17 @@ export async function updateAdminOrderStatus(
     throw new Error('الطلب غير موجود');
   }
 
+  const previousStatus = order.status;
+
   if (newStatus) {
+    if (newStatus === 'cancelled' && previousStatus !== 'cancelled') {
+      await restoreOrderStock(order);
+      order.cancellationReason = 'تم الإلغاء بواسطة إدارة المنصة';
+    } else if (previousStatus === 'cancelled' && newStatus !== 'cancelled') {
+      await depleteOrderStock(order);
+      order.cancellationReason = undefined;
+    }
+
     order.status = newStatus;
     order.timeline = order.timeline.map((step) => {
       if (step.status === newStatus) {
@@ -715,6 +804,7 @@ export async function updateAdminOrderStatus(
         {
           $set: {
             status: order.status,
+            cancellationReason: order.cancellationReason,
             paymentStatus: order.paymentStatus,
             trackingNumber: order.trackingNumber,
             updatedAt: order.updatedAt,
@@ -754,6 +844,24 @@ export async function updateAdminOrderStatus(
       link: 'orders',
       metadata: { orderId: order.id, orderNumber: order.orderNumber, status: order.status, trackingNumber }
     });
+
+    if (order.status === 'cancelled') {
+      for (const sId of order.sellerIds || []) {
+        let sellerUserId = sId;
+        if (isMongo && db) {
+          const sDoc = await db.collection('sellers').findOne({ $or: [{ id: sId }, { userId: sId }] });
+          if (sDoc?.userId) sellerUserId = sDoc.userId;
+        }
+        await createNotification({
+          userId: sellerUserId,
+          title: `إلغاء طلب الشراء #${order.orderNumber}`,
+          message: `تم إلغاء الطلب #${order.orderNumber} بواسطة إدارة المنصة واسترجاع كميات المخزون لمنتجات ورشتك تلقائياً.`,
+          type: 'order_status',
+          link: 'seller-orders',
+          metadata: { orderId: order.id, orderNumber: order.orderNumber }
+        });
+      }
+    }
   } catch (notifErr) {
     console.error('[OrderService] Error sending admin order update notification to buyer:', notifErr);
   }

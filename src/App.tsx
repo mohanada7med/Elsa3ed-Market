@@ -11,7 +11,7 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { AuthModal } from './components/auth/AuthModal';
 import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordModal';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
-import { updatePageSEO } from './utils/seo';
+import { updatePageSEO, generateBreadcrumbSchema } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
 // Pages
@@ -182,25 +182,29 @@ const MainContent: React.FC = () => {
       case 'products':
         updatePageSEO({
           title: 'معرض المنتجات التراثية',
-          description: 'تصفح تشكيلة واسعة من روائع الحرف الصعيدية الأصيلة بأسعار الورش وضمان الجودة والشحن الآمن.'
+          description: 'تصفح تشكيلة واسعة من روائع الحرف الصعيدية الأصيلة بأسعار الورش وضمان الجودة والشحن الآمن.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المقتنيات وسوق وه' }])
         });
         break;
       case 'categories':
         updatePageSEO({
           title: 'الأقسام والحرف التراثية',
-          description: 'استكشف تصنيفات الحرف الصعيدية: الفخار والخزف، المنسوجات والكليم، المشغولات الخشبية، وخيرات الطبيعة.'
+          description: 'استكشف تصنيفات الحرف الصعيدية: الفخار والخزف، المنسوجات والكليم، المشغولات الخشبية، وخيرات الطبيعة.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الأقسام والتصنيفات' }])
         });
         break;
       case 'crafts':
         updatePageSEO({
           title: 'قصص الحرفيين وموسوعة التراث',
-          description: 'تعرف على حكايات الأسطوات وتاريخ صناعة الفخار القناوي وسجاد أخميم والفضة النوبية.'
+          description: 'تعرف على حكايات الأسطوات وتاريخ صناعة الفخار القناوي وسجاد أخميم والفضة النوبية.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'قصص الحرفيين وموسوعة التراث' }])
         });
         break;
       case 'reels':
         updatePageSEO({
           title: 'فيديوهات الحرفيين التفاعلية (وه Reels)',
-          description: 'شاهد مقاطع فيديو حية للحرفيين وهم يصنعون الفخار والكليم والنحاس واشترِ القطعة فوراً من الورشة.'
+          description: 'شاهد مقاطع فيديو حية للحرفيين وهم يصنعون الفخار والكليم والنحاس واشترِ القطعة فوراً من الورشة.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'فيديوهات الصنعة والورش' }])
         });
         break;
       case 'sellers':
@@ -255,42 +259,48 @@ const MainContent: React.FC = () => {
       case 'governorate-details':
         updatePageSEO({
           title: 'محافظات صعيد مصر | وه',
-          description: 'دليل شامل لكافة محافظات الصعيد من الفيوم حتى أسوان وحلايب وشلاتين.'
+          description: 'دليل شامل لكافة محافظات الصعيد من الفيوم حتى أسوان وحلايب وشلاتين.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'محافظات صعيد مصر' }])
         });
         break;
       case 'places':
       case 'place-details':
         updatePageSEO({
           title: 'المعالم والتراث المعماري | وه',
-          description: 'توثيق المعابد، القلاع، الأديرة، المساجد العتيقة، والبيوت التراثية بالصعيد.'
+          description: 'توثيق المعابد، القلاع، الأديرة، المساجد العتيقة، والبيوت التراثية بالصعيد.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المعالم والتراث المعماري' }])
         });
         break;
       case 'cultural-crafts':
       case 'craft-details':
         updatePageSEO({
           title: 'موسوعة الحرف والورش التراثية | وه',
-          description: 'أسرار صنائع الأجداد: الفخار، التلي، الفركة، الخزف، والألباستر.'
+          description: 'أسرار صنائع الأجداد: الفخار، التلي، الفركة، الخزف، والألباستر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'موسوعة الحرف والورش التراثية' }])
         });
         break;
       case 'stories':
       case 'story-details':
         updatePageSEO({
           title: 'وه بيحكي — حكايات ومرويات الصعيد | وه',
-          description: 'مستودع المرويات الشفاهية والسيرة الهلالية وأساطير النيل والجبل بالصعيد.'
+          description: 'مستودع المرويات الشفاهية والسيرة الهلالية وأساطير النيل والجبل بالصعيد.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'حكايات ومرويات الصعيد' }])
         });
         break;
       case 'people':
       case 'person-details':
         updatePageSEO({
           title: 'ناس الصعيد وحراس التراث | وه',
-          description: 'سير ومسيرات شيوخ الصنعة والرواة والفنانين التلقائيين في صعيد مصر.'
+          description: 'سير ومسيرات شيوخ الصنعة والرواة والفنانين التلقائيين في صعيد مصر.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'ناس الصعيد وحراس التراث' }])
         });
         break;
       case 'food':
       case 'food-details':
         updatePageSEO({
           title: 'طعم الصعيد — المطبخ التراثي | وه',
-          description: 'توثيق أكلات ومخبوزات الصعيد الأصيلة وسر الطبخ في الفرن البلدي.'
+          description: 'توثيق أكلات ومخبوزات الصعيد الأصيلة وسر الطبخ في الفرن البلدي.',
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'طعم الصعيد والمطبخ التراثي' }])
         });
         break;
       case 'events':

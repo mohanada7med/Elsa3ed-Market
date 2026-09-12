@@ -31,7 +31,7 @@ export interface PaginatedProducts {
 export async function getPublicProducts(filters?: PublicProductFilters): Promise<ProductDocument[]> {
   const page = Math.max(1, Number(filters?.page) || 1);
   const limit = Math.min(100, Math.max(1, Number(filters?.limit) || 50));
-  
+
   // Cache key based on filter values
   const filterKey = JSON.stringify({ ...filters, page, limit });
   const cacheKey = `products:public:${filterKey}`;
@@ -133,7 +133,7 @@ export async function getPublicProducts(filters?: PublicProductFilters): Promise
  */
 export async function getProductById(productId: string, user?: AuthenticatedUser): Promise<ProductDocument | null> {
   const cacheKey = `product:${productId}`;
-  
+
   // Only use public cache for unauthenticated / non-admin / non-owner lookups
   if (!user) {
     const cached = cacheService.get<ProductDocument>(cacheKey);
@@ -254,7 +254,7 @@ export async function createProduct(
     price: Number(data.price) || 100,
     originalPrice: data.originalPrice ? Number(data.originalPrice) : undefined,
     discountPercent: data.discountPercent ? Number(data.discountPercent) : undefined,
-    rating: 5.0,
+    rating: 0,
     reviewCount: 0,
     inStock: data.inStock ?? true,
     stockCount: Number(data.stockCount) || 10,
@@ -325,6 +325,32 @@ export async function createProduct(
   return newProduct;
 }
 
+/**
+ * Update product rating when a new review is added
+ */
+export async function updateProductRating(
+  productId: string,
+  newRatingAverage: number,
+  totalReviews: number
+): Promise<void> {
+  const roundedRating = Math.round(newRatingAverage * 10) / 10;
+
+  const { db, isMongo } = await getDatabase();
+  if (isMongo && db) {
+    await db.collection('products').updateOne(
+      { id: productId },
+      { $set: { rating: roundedRating, reviewCount: totalReviews } }
+    );
+  }
+
+  const memProd = memoryDb.products.find((p) => p.id === productId);
+  if (memProd) {
+    memProd.rating = roundedRating;
+    memProd.reviewCount = totalReviews;
+  }
+
+  cacheService.invalidateProducts(productId);
+}
 /**
  * Submit a draft or rejected product for review.
  */

@@ -283,7 +283,7 @@ export const GovernoratesPage: React.FC = () => {
             </div>
 
             {/* Asymmetric Masonry-style layout */}
-            <div className="grid auto-rows-[200px] grid-cols-1 gap-5 sm:grid-cols-2 sm:auto-rows-[180px] lg:grid-cols-12 lg:auto-rows-[95px]">
+            <div className="grid auto-rows-[240px] grid-cols-1 gap-5 sm:grid-cols-2 sm:auto-rows-[180px] lg:grid-cols-12 lg:auto-rows-[95px]">
               {filteredGovernorates.map((gov, index) => {
                 const region = getRegion(gov.name);
                 const layout = getPosterLayout(index);
@@ -438,7 +438,7 @@ export const GovernoratesPage: React.FC = () => {
       {/* =====================================================
           FOOTER CTA
       ====================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 py-14">
+      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 py-14 pb-24 sm:pb-14">
         <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
           <div className="relative overflow-hidden rounded-[2rem] bg-[#211d18] px-6 py-14 text-[#f5f0e7] sm:px-10 lg:px-16 shadow-xl border border-black/10 dark:border-white/10">
             <div className="absolute inset-0 opacity-10">
@@ -527,7 +527,7 @@ const getPosterLayout = (index: number): string => {
 ========================================================= */
 const LoadingWall: React.FC = () => {
   return (
-    <div className="grid auto-rows-[200px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:auto-rows-[95px]">
+    <div className="grid auto-rows-[240px] grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:auto-rows-[95px]">
       {Array.from({ length: 8 }).map((_, index) => (
         <div
           key={index}

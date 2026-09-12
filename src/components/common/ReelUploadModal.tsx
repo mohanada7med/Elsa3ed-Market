@@ -246,8 +246,12 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
       .filter((t) => t.length > 0)
       .map((t) => (t.startsWith('#') ? t : `#${t}`));
 
+    const compressedVideoUrl =
+      getOptimizedVideoUrl(videoUrl.trim(), { maxDimension: 720, forceMp4: true }) || videoUrl.trim();
+
     const effectivePoster =
       posterUrl ||
+      getOptimizedVideoPoster(compressedVideoUrl, null, 720) ||
       productImage ||
       'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
@@ -269,7 +273,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         location: location.trim() || governorate,
         contentType: contentType || 'places',
         craftType: craftType || 'الصعيد',
-        videoUrl: videoUrl.trim(),
+        videoUrl: compressedVideoUrl,
         cloudinaryPublicId: cloudinaryPublicId,
         resourceType: 'video',
         posterUrl: effectivePoster,
@@ -506,8 +510,14 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             setIsUploadingVideo(true);
                             setErrorMsg(null);
                           }}
+                          onPosterGenerated={(posterDataUrl) => {
+                            if (!posterUrl) {
+                              setPosterUrl(posterDataUrl);
+                            }
+                          }}
                           onUploadSuccess={(result) => {
-                            setVideoUrl(result.url);
+                            const optimizedUrl = getOptimizedVideoUrl(result.url, { maxDimension: 720, forceMp4: true });
+                            setVideoUrl(optimizedUrl || result.url);
                             setCloudinaryPublicId(result.cloudinaryPublicId);
                             setIsUploadingVideo(false);
                             setErrorMsg(null);
@@ -516,7 +526,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                               const secs = Math.floor(result.duration % 60);
                               setDuration(`${mins}:${secs < 10 ? '0' : ''}${secs}`);
                             }
-                            generatePosterFromVideo(result.url, result.thumbnailUrl);
+                            const cloudPoster = getOptimizedVideoPoster(result.url, result.thumbnailUrl, 720);
+                            setPosterUrl(cloudPoster);
                           }}
                           onUploadError={(err) => {
                             setIsUploadingVideo(false);
@@ -777,8 +788,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     {videoUrl ? (
                       <video
                         ref={previewVideoRef}
-                        src={getOptimizedVideoUrl(videoUrl, { maxDimension: 1080 })}
-                        poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 800)}
+                        src={getOptimizedVideoUrl(videoUrl, { maxDimension: 720, qualityMode: 'eco' })}
+                        poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 720)}
                         autoPlay
                         loop
                         muted

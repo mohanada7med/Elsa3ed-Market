@@ -178,12 +178,23 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       .map((t) => (t.startsWith('#') ? t : `#${t}`));
 
     const hasProduct = Boolean(productId && productId !== 'none');
+    // Smart compression: transform raw mobile camera URLs into optimized 720p faststart MP4
+    const compressedVideoUrl =
+      getOptimizedVideoUrl(videoUrl.trim(), { maxDimension: 720, forceMp4: true }) || videoUrl.trim();
+
+    // Auto-generate lightweight poster snapshot if not set or empty
+    const resolvedPosterUrl =
+      posterUrl.trim() ||
+      getOptimizedVideoPoster(compressedVideoUrl, null, 720) ||
+      productImage ||
+      reel.posterUrl;
+
     const updates: Partial<CraftReel> & Record<string, any> = {
       title: title.trim(),
       description: description.trim(),
-      videoUrl: videoUrl.trim(),
+      videoUrl: compressedVideoUrl,
       cloudinaryPublicId: cloudinaryPublicId || reel.cloudinaryPublicId,
-      posterUrl: posterUrl.trim() || productImage || reel.posterUrl,
+      posterUrl: resolvedPosterUrl,
       duration: duration || reel.duration,
       governorate,
       location: location.trim() || governorate,
@@ -195,7 +206,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
       productTitle: hasProduct ? (productTitle.trim() || title.trim()) : undefined,
       productPrice: hasProduct ? (Number(productPrice) || 0) : undefined,
       productOriginalPrice: hasProduct && productOriginalPrice ? Number(productOriginalPrice) : undefined,
-      productImage: hasProduct ? (productImage.trim() || posterUrl.trim() || reel.productImage) : undefined,
+      productImage: hasProduct ? (productImage.trim() || resolvedPosterUrl || reel.productImage) : undefined,
       inStock: hasProduct ? inStock : undefined
     };
 
@@ -281,8 +292,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   <>
                     <video
                       ref={videoRef}
-                      src={getOptimizedVideoUrl(videoUrl, { maxDimension: 1080 })}
-                      poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 800)}
+                      src={getOptimizedVideoUrl(videoUrl, { maxDimension: 720, qualityMode: 'eco' })}
+                      poster={getOptimizedVideoPoster(videoUrl, posterUrl || productImage, 720)}
                       loop
                       playsInline
                       preload="metadata"

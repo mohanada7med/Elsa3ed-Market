@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { HeritagePlace } from '../../types';
 import { VisitorMediaGallery } from '../common/VisitorMediaGallery';
+import { updatePageSEO, generatePlaceSchema } from '../../utils/seo';
 
 import {
   Landmark,
@@ -89,6 +90,28 @@ export const PlaceDetailPage: React.FC = () => {
       isMounted = false;
     };
   }, [slug]);
+
+  // Schema.org TouristDestination / Place Markup
+  useEffect(() => {
+    if (!place) return;
+
+    const placeSchema = generatePlaceSchema({
+      name: place.title,
+      description: place.shortDescription || place.description,
+      image: place.coverImage || place.gallery?.[0],
+      governorate: place.governorateName,
+      latitude: place.coordinates?.lat,
+      longitude: place.coordinates?.lng,
+      url: typeof window !== 'undefined' ? window.location.href : undefined
+    });
+
+    updatePageSEO({
+      title: `${place.title} | معالم الصعيد`,
+      description: place.shortDescription || place.description,
+      image: place.coverImage || place.gallery?.[0],
+      schema: placeSchema
+    });
+  }, [place]);
 
   const handleShare = async () => {
     const url = `${window.location.origin}/places/${encodeURIComponent(slug)}`;

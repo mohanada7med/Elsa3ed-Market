@@ -71,8 +71,7 @@ import {
 } from 'lucide-react';
 
 // ==========================================
-// 1. مصفوفة الـ 6 صور المعتمدة لغلاف الورشة
-// (يمكنك تغيير الروابط والعناوين بحسب رغبتك)
+// 1. مصفوفة صور غلاف الورشة المعتمدة
 // ==========================================
 interface WorkshopCoverPreset {
   id: string;
@@ -187,7 +186,7 @@ export const SellerDashboard: React.FC = () => {
   const [selectedReelPreviewId, setSelectedReelPreviewId] = useState<string | null>(null);
   const [isReelPreviewOpen, setIsReelPreviewOpen] = useState(false);
 
-  // تصنيف وتصفية صور الغلاف الـ 6 المعتمدة
+  // تصنيف وتصفية صور الغلاف المعتمدة
   const [workshopCraftFilter, setWorkshopCraftFilter] = useState<'all' | 'pottery' | 'tally' | 'weaving' | 'khous' | 'sculpture'>('all');
 
   const filteredWorkshopImages = useMemo(() => {
@@ -197,19 +196,60 @@ export const SellerDashboard: React.FC = () => {
 
   const effectiveSellerId = currentUser?.sellerId || currentUser?.id;
 
+  // احتساب التقييم الحقيقي الموثق للورشة
+  const ratingStats = useMemo(() => {
+    if (sellerStats?.rating && typeof sellerStats.rating === 'number' && sellerStats.rating > 0) {
+      return {
+        average: sellerStats.rating.toFixed(1),
+        count: sellerStats.reviewCount || 0
+      };
+    }
+
+    const totalReviews = sellerProducts.reduce((sum, p) => sum + (p.reviewCount || 0), 0);
+    const totalPoints = sellerProducts.reduce(
+      (sum, p) => sum + (p.rating || 0) * (p.reviewCount || 0),
+      0
+    );
+
+    return {
+      average: totalReviews > 0 ? (totalPoints / totalReviews).toFixed(1) : null,
+      count: totalReviews
+    };
+  }, [sellerStats, sellerProducts]);
+
+  const sellerTargetIds = useMemo(() => {
+    return Array.from(
+      new Set([currentUser?.sellerId, currentUser?.id, effectiveSellerId].filter(Boolean))
+    ) as string[];
+  }, [currentUser?.sellerId, currentUser?.id, effectiveSellerId]);
+
+  const [isLoadingReels, setIsLoadingReels] = useState(false);
+
   const refreshSellerReelsFromDb = async () => {
+    if (!effectiveSellerId && sellerTargetIds.length === 0) {
+      setReels([]);
+      return;
+    }
+    setIsLoadingReels(true);
     try {
       const allDbReels = await craftReelsService.fetchReelsFromDb({
         sellerId: effectiveSellerId
       });
-      const myReels = allDbReels.filter(
-        (r) => r.sellerId === effectiveSellerId || r.sellerId === currentUser?.sellerId || r.sellerId === currentUser?.id
+      const myReels = (allDbReels || []).filter(
+        (r) => r.sellerId && sellerTargetIds.includes(r.sellerId)
       );
-      setReels(myReels.length > 0 ? myReels : craftReelsService.getReelsBySeller(effectiveSellerId || ''));
+      setReels(myReels);
     } catch {
-      setReels(craftReelsService.getReelsBySeller(effectiveSellerId || ''));
+      const localReels = craftReelsService.getReelsBySeller(effectiveSellerId || '', currentUser?.id);
+      setReels(localReels);
+    } finally {
+      setIsLoadingReels(false);
     }
   };
+
+  const sellerReels = useMemo(() => {
+    return reels.filter((r) => r.sellerId && sellerTargetIds.includes(r.sellerId));
+  }, [reels, sellerTargetIds]);
 
   useEffect(() => {
     refreshSellerReelsFromDb();
@@ -373,6 +413,27 @@ export const SellerDashboard: React.FC = () => {
     }
   }, [sellerStatus, refreshSellerInventory, refreshStockMovements, refreshSellerStats]);
 
+  // Lock background scrolling whenever ANY modal or drawer is open
+  const isAnyModalOpen = Boolean(
+    isProductModalOpen ||
+    isStockModalOpen ||
+    isPayoutModalOpen ||
+    isMobileNavOpen ||
+    isReelUploadOpen ||
+    isSellerReelEditOpen ||
+    isReelPreviewOpen
+  );
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow || '';
+      };
+    }
+  }, [isAnyModalOpen]);
+
   const openAddProductModal = () => {
     setEditingProduct(null);
     setTitle('');
@@ -412,37 +473,81 @@ export const SellerDashboard: React.FC = () => {
     setIsProductModalOpen(true);
   };
 
-  const handleImageFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [isDragOverDropzone, setIsDragOverDropzone] = useState(false);
+
+  const processImageFiles = (files: FileList | File[]) => {
     setUploadError(null);
-    const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     const maxSizeBytes = 5 * 1024 * 1024;
 
-    if (selectedImages.length + existingImages.length + files.length > 5) {
-      setUploadError('الحد الأقصى لعدد صور المنتج هو 5 صور');
+    const currentTotal = selectedImages.length + existingImages.length;
+    if (currentTotal + files.length > 5) {
+      const err = `الحد الأقصى لعدد صور المنتج هو 5 صور (المتبقي لك: ${Math.max(0, 5 - currentTotal)} صور)`;
+      setUploadError(err);
+      addToast('تنبيه الحد الأقصى', err, 'warning');
       return;
     }
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (!allowedTypes.includes(file.type)) {
-        setUploadError(`الملف "${file.name}" غير مدعوم. الصيغ المدعومة هي JPG، PNG، WebP`);
+        const err = `الملف "${file.name}" غير مدعوم. الصيغ المدعومة هي JPG، PNG، WebP`;
+        setUploadError(err);
+        addToast('صيغة غير مدعومة', err, 'error');
         return;
       }
       if (file.size > maxSizeBytes) {
-        setUploadError(`حجم الصورة "${file.name}" يتجاوز الحد الأقصى المسموح (5 ميجابايت)`);
+        const err = `حجم الصورة "${file.name}" يتجاوز الحد الأقصى المسموح (5 ميجابايت)`;
+        setUploadError(err);
+        addToast('حجم كبير', err, 'error');
         return;
       }
 
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUri = event.target?.result as string;
-        setSelectedImages((prev) => [...prev, { file, dataUri, name: file.name }]);
+        setSelectedImages((prev) => {
+          if (prev.length + existingImages.length >= 5) return prev;
+          return [...prev, { file, dataUri, name: file.name }];
+        });
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleImageFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      processImageFiles(e.target.files);
+    }
+    e.target.value = '';
+  };
+
+  const handleDropzoneDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDropzone(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processImageFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleDropzoneDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDropzone(true);
+  };
+
+  const handleDropzoneDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOverDropzone(false);
+  };
+
+  const handleRemoveSelectedImage = (index: number) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingImage = (index: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const openStockModal = (prod: Product) => {
@@ -480,8 +585,9 @@ export const SellerDashboard: React.FC = () => {
     }
 
     if (selectedImages.length === 0 && existingImages.length === 0) {
-      setUploadError('يرجى رفع صورة واحدة على الأقل للمنتج');
-      addToast('صورة مطلوبة', 'يرجى اختيار صورة واحدة على الأقل للمنتج', 'error');
+      const errMsg = 'يرجى رفع أو اختيار صورة واحدة على الأقل للمنتج (إلزامية للحفظ)';
+      setUploadError(errMsg);
+      addToast('صورة المنتج مطلوبة', errMsg, 'error');
       return;
     }
 
@@ -706,11 +812,25 @@ export const SellerDashboard: React.FC = () => {
     );
   };
 
-  const totalRevenue = sellerStats?.financials?.totalRevenue || orders.reduce((sum, o) => sum + o.total, 0);
+  const activeOrders = orders.filter((o) => o.status !== 'cancelled');
+  const totalRevenue =
+    typeof sellerStats?.totalSales === 'number'
+      ? sellerStats.totalSales
+      : typeof sellerStats?.financials?.totalRevenue === 'number'
+        ? sellerStats.financials.totalRevenue
+        : activeOrders.reduce((sum, o) => sum + o.total, 0);
+
+  const totalOrdersCount =
+    typeof sellerStats?.ordersCount === 'number'
+      ? sellerStats.ordersCount
+      : typeof sellerStats?.financials?.totalOrders === 'number'
+        ? sellerStats.financials.totalOrders
+        : activeOrders.length;
+
   const lowStockCount = sellerProducts.filter((p) => p.stockCount > 0 && p.stockCount <= 5).length;
   const outOfStockCount = sellerProducts.filter((p) => p.stockCount === 0).length;
   const totalValuation = sellerProducts.reduce((sum, p) => sum + p.price * p.stockCount, 0);
-  const pendingOrdersCount = orders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
+  const pendingOrdersCount = activeOrders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
   const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
 
   interface SellerNavItem {
@@ -782,7 +902,7 @@ export const SellerDashboard: React.FC = () => {
         {
           id: 'orders',
           label: 'تنفيذ وتجهيز الطلبات',
-          sublabel: `${orders.length} طلب إجمالي`,
+          sublabel: `${totalOrdersCount} طلب إجمالي`,
           icon: Truck,
           badge: pendingOrdersCount > 0 ? pendingOrdersCount : undefined,
           elementId: 'seller-nav-orders-btn'
@@ -805,9 +925,9 @@ export const SellerDashboard: React.FC = () => {
         {
           id: 'reels',
           label: 'فيديوهات الصنعة (Reels)',
-          sublabel: `${reels.length} مقطع منشور`,
+          sublabel: `${sellerReels.length} مقطع منشور`,
           icon: Film,
-          badge: reels.length,
+          badge: sellerReels.length > 0 ? sellerReels.length : undefined,
           elementId: 'seller-nav-reels-btn'
         },
         {
@@ -1628,7 +1748,7 @@ export const SellerDashboard: React.FC = () => {
                   تأكيد الشحن وتحديث بوليصة التوصيل
                 </p>
                 <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                  <span className="font-bold">{orders.length} طلب إجمالي</span>
+                  <span className="font-bold">{totalOrdersCount} طلب إجمالي</span>
                   <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">متابعة ←</span>
                 </div>
               </div>
@@ -1736,7 +1856,7 @@ export const SellerDashboard: React.FC = () => {
               >
                 <div>
                   <span className="text-xs font-bold block">الطلبات</span>
-                  <span className="text-[10px] text-black/60 dark:text-white/60 block">{orders.length} طلب</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block">{totalOrdersCount} طلب</span>
                 </div>
                 <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/40 flex items-center justify-center text-blue-700 dark:text-blue-400 shrink-0">
                   <Truck className="w-4 h-4" />
@@ -1796,7 +1916,7 @@ export const SellerDashboard: React.FC = () => {
                   </div>
                   <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalRevenue.toLocaleString()} ج.م</span>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
-                    {orders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
+                    {activeOrders.length > 0 ? `${orders.filter((o) => o.status === 'delivered').length} طلب مكتمل التسليم` : 'مبيعات موثقة من الورشة'}
                   </span>
                 </div>
 
@@ -1807,8 +1927,8 @@ export const SellerDashboard: React.FC = () => {
                       <Truck className="w-4 h-4 text-[#9a6a35]" />
                     </div>
                   </div>
-                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{orders.length}</span>
-                  <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">طلبات من محافظات الجمهورية</span>
+                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">{totalOrdersCount}</span>
+                  <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">طلبات نشطة من محافظات الجمهورية</span>
                 </div>
 
                 <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
@@ -1824,15 +1944,39 @@ export const SellerDashboard: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
-                    <span>تقييم المشترين الموثق</span>
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
-                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                {/* كارت تقييم المشترين الموثق المحسوب حقيقياً وديناميكياً */}
+                <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2 font-medium">
+                      <span>تقييم المشترين الموثق</span>
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                        <Star className={`w-4 h-4 ${ratingStats.average ? 'text-amber-500 fill-amber-500' : 'text-stone-400'}`} />
+                      </div>
                     </div>
+
+                    {ratingStats.average ? (
+                      <>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">
+                            {ratingStats.average}
+                          </span>
+                          <span className="text-xs text-black/40 dark:text-white/40 font-bold">/ 5.0</span>
+                        </div>
+                        <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
+                          بناءً على {ratingStats.count.toLocaleString('ar-EG')} تقييم بمشتريات مؤكدة
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-lg font-bold text-[#211d18]/70 dark:text-[#f5f0e7]/70 block">
+                          لا توجد تقييمات بعد
+                        </span>
+                        <span className="text-[10px] text-black/40 dark:text-white/40 block mt-1">
+                          ستظهر أول التقييمات فور استلام المشترين للقطع
+                        </span>
+                      </>
+                    )}
                   </div>
-                  <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-mono">4.9 / 5.0</span>
-                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">100% تقييمات بمشتريات مؤكدة</span>
                 </div>
               </div>
 
@@ -2100,7 +2244,7 @@ export const SellerDashboard: React.FC = () => {
                               onClick={() => openStockModal(prod)}
                               className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
                             >
-                              <Sliders className="w-3.5 h-3.5" />
+                              <Boxes className="w-3.5 h-3.5" />
                               <span>تعديل الرصيد</span>
                             </button>
                           </td>
@@ -2148,7 +2292,21 @@ export const SellerDashboard: React.FC = () => {
                           <span className="text-xs text-black/60 dark:text-white/60 font-medium">تحديث الحالة:</span>
                           <select
                             value={ord.status}
-                            onChange={(e) => updateOrderStatus(ord.id, e.target.value as OrderStatus)}
+                            onChange={(e) => {
+                              const newSt = e.target.value as OrderStatus;
+                              if (newSt === 'cancelled') {
+                                confirmModal({
+                                  title: 'إلغاء الطلب واسترجاع المخزون',
+                                  message: `هل تريد بالتأكيد إلغاء الطلب #${ord.orderNumber || ord.id}؟ سيتم استرجاع كميات القطع إلى المخزون تلقائياً واستبعاد قيمة الطلب (${ord.total} ج.م) من إجمالي المبيعات المحققة والطلبات.`,
+                                  confirmText: 'نعم، قم بالإلغاء واسترجع المخزون',
+                                  cancelText: 'تراجع',
+                                  danger: true,
+                                  onConfirm: () => updateOrderStatus(ord.id, 'cancelled')
+                                });
+                              } else {
+                                updateOrderStatus(ord.id, newSt);
+                              }
+                            }}
                             className="px-3 py-1.5 bg-white/80 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#9a6a35] outline-none cursor-pointer focus:border-[#9a6a35]"
                           >
                             <option value="pending">طلب جديد (Pending)</option>
@@ -2160,6 +2318,12 @@ export const SellerDashboard: React.FC = () => {
                           </select>
                         </div>
                       </div>
+                      {ord.status === 'cancelled' && (
+                        <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-2 text-rose-700 dark:text-rose-400 text-xs font-bold">
+                          <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
+                          <span>هذا الطلب ملغي — تم استرجاع القطع للمخزون واستبعاد قيمته من إجمالي المبيعات المحققة وإجمالي الطلبات</span>
+                        </div>
+                      )}
                       <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] flex flex-wrap items-center justify-between gap-2">
                         <div>
                           <span className="font-bold">العنوان:</span> {ord.shippingAddress?.governorate} - {ord.shippingAddress?.city}
@@ -2183,7 +2347,7 @@ export const SellerDashboard: React.FC = () => {
             />
           )}
 
-          {/* TAB 6: SETTINGS (معرض الـ 6 صور هنا) */}
+          {/* TAB 6: SETTINGS */}
           {activeTab === 'settings' && (
             <div className="space-y-6">
               <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
@@ -2270,7 +2434,7 @@ export const SellerDashboard: React.FC = () => {
                       </button>
                     </div>
 
-                    {/* المعرض الـ 6 المعتمد */}
+                    {/* المعرض المعتمد */}
                     {coverPickerTab === 'presets' && (
                       <div className="space-y-4">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -2572,50 +2736,98 @@ export const SellerDashboard: React.FC = () => {
               <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2e261f] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
                   <h2 className="text-xl sm:text-3xl font-black font-serif">فيديوهات ورشة الصنعة القصيرة</h2>
-                  <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي</p>
+                  <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي لورشتك فقط</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsReelUploadOpen(true)}
-                  className="px-6 py-3.5 bg-white text-black hover:bg-[#9a6a35] hover:text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 cursor-pointer transition-all"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>رفع فيديو جديد</span>
-                </button>
+                <div className="flex items-center gap-3">
+                  <RefreshDataButton
+                    onRefresh={refreshSellerReelsFromDb}
+                    label="تحديث الفيديوهات"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsReelUploadOpen(true)}
+                    className="px-6 py-3.5 bg-white text-black hover:bg-[#9a6a35] hover:text-white text-xs font-bold rounded-2xl shadow-xl flex items-center gap-2 cursor-pointer transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>رفع فيديو جديد</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {reels.map((reel) => (
-                  <div key={reel.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg flex flex-col group backdrop-blur-xl">
-                    <div
-                      onClick={() => {
-                        setSelectedReelPreviewId(reel.id);
-                        setIsReelPreviewOpen(true);
-                      }}
-                      className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
-                    >
-                      <img src={reel.posterUrl} alt={reel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40">
-                          <Play className="w-5 h-5 fill-white mr-0.5" />
+              {isLoadingReels ? (
+                <div className="p-12 text-center text-black/60 dark:text-white/60">
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-[#9a6a35] mb-2" />
+                  <span className="text-xs font-bold">جاري جلب فيديوهات ورشتكم...</span>
+                </div>
+              ) : sellerReels.length === 0 ? (
+                <div className="bg-white/60 dark:bg-white/[0.02] rounded-3xl border border-dashed border-black/10 dark:border-white/10 p-12 text-center space-y-4">
+                  <div className="w-16 h-16 rounded-3xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto">
+                    <Film className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-black text-base text-[#211d18] dark:text-[#f5f0e7]">لا توجد مقاطع فيديو منشورة لورشتك بعد</h3>
+                  <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto">
+                    لم تقم بنشر أي مقاطع فيديو لورشتك حتى الآن. يمكنك تصوير كواليس الصنعة والحرفة ورفعها لتظهر في خلاصة ريلز المنصة.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsReelUploadOpen(true)}
+                    className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#83582c] text-white text-xs font-bold rounded-xl inline-flex items-center gap-2 cursor-pointer transition-colors shadow-xs"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>نشر أول فيديو للورشة</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {sellerReels.map((reel) => (
+                    <div key={reel.id} className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg flex flex-col group backdrop-blur-xl">
+                      <div
+                        onClick={() => {
+                          setSelectedReelPreviewId(reel.id);
+                          setIsReelPreviewOpen(true);
+                        }}
+                        className="relative aspect-9/16 bg-black overflow-hidden cursor-pointer"
+                      >
+                        <img src={reel.posterUrl} alt={reel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center text-white border border-white/40">
+                            <Play className="w-5 h-5 fill-white mr-0.5" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-3 inset-x-3 text-white text-xs font-bold truncate">
+                          {reel.title}
                         </div>
                       </div>
-                      <div className="absolute bottom-3 inset-x-3 text-white text-xs font-bold truncate">
-                        {reel.title}
+                      <div className="p-4 flex items-center justify-between gap-2 border-t border-black/5 dark:border-white/5">
+                        <span className="text-[11px] text-black/60 dark:text-white/60 font-medium truncate">
+                          {reel.viewsCount || 0} مشاهدة • {reel.likesCount || 0} إعجاب
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSellerEditingReel(reel);
+                              setIsSellerReelEditOpen(true);
+                            }}
+                            className="p-2 text-[#9a6a35] hover:bg-[#9a6a35]/10 rounded-xl transition-colors cursor-pointer"
+                            title="تعديل بيانات الفيديو"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteReel(reel.id, reel.title)}
+                            className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
+                            title="حذف الفيديو من ورشتك"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="p-4 flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteReel(reel.id, reel.title)}
-                        className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -2801,6 +3013,124 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Product Images Dropzone */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    صور المنتج التراثي * <span className="text-rose-500 font-bold">(إلزامية - صورة واحدة على الأقل)</span>
+                  </label>
+                  <span className={`text-[11px] font-bold ${existingImages.length + selectedImages.length === 0
+                      ? 'text-rose-500'
+                      : 'text-[#9a6a35] dark:text-[#d5a56d]'
+                    }`}>
+                    ({existingImages.length + selectedImages.length} من 5 صور كحد أقصى)
+                  </span>
+                </div>
+
+                {uploadError && (
+                  <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-xl text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2 animate-in fade-in">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>{uploadError}</span>
+                  </div>
+                )}
+
+                {/* Dropzone Container */}
+                {existingImages.length + selectedImages.length < 5 && (
+                  <div
+                    onDrop={handleDropzoneDrop}
+                    onDragOver={handleDropzoneDragOver}
+                    onDragLeave={handleDropzoneDragLeave}
+                    className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${isDragOverDropzone
+                        ? 'border-[#9a6a35] bg-[#9a6a35]/10 scale-[1.01]'
+                        : existingImages.length + selectedImages.length === 0
+                          ? 'border-black/20 dark:border-white/20 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02]'
+                          : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.01] dark:bg-white/[0.01]'
+                      }`}
+                  >
+                    <input
+                      id="product-images-input"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      multiple
+                      onChange={handleImageFileSelect}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="flex flex-col items-center justify-center gap-2 pointer-events-none">
+                      <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center">
+                        <Upload className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                          اسحب الصور وأفلتها هنا، أو <span className="text-[#9a6a35] underline font-black">تصفح من جهازك</span>
+                        </p>
+                        <p className="text-[11px] text-black/50 dark:text-white/50 mt-1">
+                          صيغ مدعومة: JPG، PNG، WebP (حتى 5 ميجابايت لكل صورة، 5 صور كحد أقصى)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Thumbnails Preview Grid */}
+                {(existingImages.length > 0 || selectedImages.length > 0) && (
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-2">
+                    {/* Existing Images */}
+                    {existingImages.map((url, idx) => (
+                      <div
+                        key={`existing-${idx}`}
+                        className="group relative aspect-square rounded-2xl overflow-hidden border border-black/15 dark:border-white/15 bg-black/5 shadow-xs"
+                      >
+                        <img
+                          src={url}
+                          alt={`صورة المنتج ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingImage(idx)}
+                            className="p-1.5 rounded-full bg-rose-600 text-white hover:bg-rose-700 shadow-md cursor-pointer transition-transform hover:scale-110"
+                            title="حذف الصورة"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <span className="absolute bottom-1 right-1 text-[9px] font-bold bg-black/70 text-white px-1.5 py-0.5 rounded-md backdrop-blur-xs">
+                          حالية {idx + 1}
+                        </span>
+                      </div>
+                    ))}
+
+                    {/* Newly Selected Images */}
+                    {selectedImages.map((img, idx) => (
+                      <div
+                        key={`selected-${idx}`}
+                        className="group relative aspect-square rounded-2xl overflow-hidden border-2 border-[#9a6a35] bg-black/5 shadow-xs"
+                      >
+                        <img
+                          src={img.dataUri}
+                          alt={img.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSelectedImage(idx)}
+                            className="p-1.5 rounded-full bg-rose-600 text-white hover:bg-rose-700 shadow-md cursor-pointer transition-transform hover:scale-110"
+                            title="حذف الصورة"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <span className="absolute bottom-1 right-1 text-[9px] font-bold bg-[#9a6a35] text-white px-1.5 py-0.5 rounded-md">
+                          جديدة {idx + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/10 dark:border-white/10">
                 <button
                   type="button"
@@ -2889,7 +3219,7 @@ export const SellerDashboard: React.FC = () => {
       {/* Reel Preview Modal */}
       {selectedReelPreviewId && (
         <CraftReelsModal
-          reels={reels}
+          reels={sellerReels}
           initialReelId={selectedReelPreviewId}
           isOpen={isReelPreviewOpen}
           onClose={() => {
@@ -2897,6 +3227,57 @@ export const SellerDashboard: React.FC = () => {
             setSelectedReelPreviewId(null);
           }}
         />
+      )}
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileNavOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="fixed inset-0" onClick={() => setIsMobileNavOpen(false)} />
+          <div className="relative mr-auto w-4/5 max-w-xs h-full bg-white/95 dark:bg-[#151513]/95 p-5 shadow-2xl flex flex-col gap-4 border-l border-black/10 dark:border-white/10 z-10 backdrop-blur-2xl overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-black/10 dark:border-white/10">
+              <div className="flex items-center gap-2 font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">
+                <Store className="w-4 h-4 text-[#9a6a35]" />
+                <span>أقسام لوحة الورشة</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsMobileNavOpen(false)}
+                className="p-1 rounded-lg text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-1 flex-1">
+              {allNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleSelectTab(item.id)}
+                    className={`w-full p-3 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${isActive
+                        ? 'bg-[#9a6a35] text-white shadow-xs'
+                        : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#9a6a35]'}`} />
+                      <span>{item.label}</span>
+                    </div>
+                    {item.badge !== undefined && (
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-300'
+                        }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

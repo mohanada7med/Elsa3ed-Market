@@ -6,6 +6,7 @@ import { ReelInfoSection } from './ReelInfoSection.tsx';
 import { ReelActionButtons } from './ReelActionButtons.tsx';
 import { ReelCommentsDrawer } from './ReelCommentsDrawer.tsx';
 import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../../utils/cloudinaryMedia.ts';
+import { generateVideoSchema, updatePageSEO } from '../../../utils/seo.ts';
 import {
   Play,
   Heart,
@@ -68,18 +69,54 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   const lastTapRef = useRef<number>(0);
 
   // Derive optimized streamable video URL (f_auto, q_auto, faststart MP4)
+  // On mobile screens (<=768px), enforce 720p and eco quality to save cellular bandwidth
+  const isMobileScreen = typeof window !== 'undefined' ? window.innerWidth <= 768 : false;
+
   const safeVideoUrl = useMemo(
     () =>
-      getOptimizedVideoUrl(reel.videoUrl, { maxDimension: 1080 }) ||
+      getOptimizedVideoUrl(reel.videoUrl, {
+        maxDimension: isMobileScreen ? 720 : 1080,
+        qualityMode: isMobileScreen ? 'eco' : 'auto',
+        forceMp4: true
+      }) ||
       'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4',
-    [reel.videoUrl]
+    [reel.videoUrl, isMobileScreen]
   );
 
-  // Derive instant first-frame JPEG poster (35KB vs 50MB raw video)
+  // Derive instant first-frame JPEG poster (30KB vs 50MB raw video)
   const safePosterUrl = useMemo(
-    () => getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 800),
+    () => getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 720),
     [reel.videoUrl, reel.posterUrl, reel.productImage]
   );
+
+  // Schema.org VideoObject Rich Snippet for Active Reel
+  useEffect(() => {
+    if (!isActive) return;
+
+    const parsedDuration = reel.duration
+      ? reel.duration.startsWith('PT')
+        ? reel.duration
+        : `PT${parseInt(reel.duration, 10) || 30}S`
+      : 'PT30S';
+
+    const creator = reel.artisanName || reel.workshopName || 'حرفيي وه';
+
+    const videoSchema = generateVideoSchema({
+      title: reel.title || 'فيديو ورشة وحرفة يدوية - وه صعيد مصر',
+      description: reel.description || `فيديو يوثق حرفة يدوية وتراثية في صعيد مصر بصناعة ${creator}`,
+      thumbnailUrl: safePosterUrl,
+      uploadDate: reel.createdAt || new Date().toISOString(),
+      contentUrl: safeVideoUrl,
+      duration: parsedDuration
+    });
+
+    updatePageSEO({
+      title: `${reel.title} | ريلز الحرفيين`,
+      description: reel.description || 'شاهد إبداع الحرفيين وورش العمل التراثية في صعيد مصر',
+      image: safePosterUrl,
+      schema: videoSchema
+    });
+  }, [isActive, reel.id, reel.title, reel.description, safePosterUrl, safeVideoUrl, reel.createdAt, reel.duration, reel.artisanName, reel.workshopName]);
 
   // مزامنة حالة الإعجاب
   useEffect(() => {

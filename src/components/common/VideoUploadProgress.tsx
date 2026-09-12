@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api.ts';
 import { useApp } from '../../context/AppContext.tsx';
-import { getOptimizedVideoUrl } from '../../utils/cloudinaryMedia.ts';
+import { getOptimizedVideoUrl, captureVideoFrame } from '../../utils/cloudinaryMedia.ts';
 
 export type VideoUploadState =
   | 'idle'
@@ -53,6 +53,7 @@ export interface VideoUploadProgressProps {
   onUploadCancel?: () => void;
   onVideoRemoved?: () => void;
   onUploadError?: (error: string) => void;
+  onPosterGenerated?: (posterDataUrl: string) => void;
   disabled?: boolean;
 }
 
@@ -69,6 +70,7 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
   onUploadCancel,
   onVideoRemoved,
   onUploadError,
+  onPosterGenerated,
   disabled = false
 }) => {
   const { currentUser: authUser } = useApp();
@@ -182,6 +184,18 @@ export const VideoUploadProgress: React.FC<VideoUploadProgressProps> = ({
     setTotalChunks(Math.ceil(file.size / estimatedChunkSize) || 1);
     setErrorMessage('');
     setUploadState('selected');
+
+    // Auto-capture instant local high-quality poster snapshot from video file
+    captureVideoFrame(file)
+      .then(({ dataUrl, duration }) => {
+        if (duration && !isNaN(duration)) {
+          setVideoDuration(duration);
+        }
+        onPosterGenerated?.(dataUrl);
+      })
+      .catch((err) => {
+        console.warn('Could not auto-generate local poster frame:', err);
+      });
   };
 
   const startUpload = async (fileToUpload?: File) => {
