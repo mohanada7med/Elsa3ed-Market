@@ -61,7 +61,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
         timersRef.current = [];
     }, []);
 
-    const stepDuration = initialPhase === 'loading_pillars' ? 800 : 2500;
+    const stepDuration = initialPhase === 'loading_pillars' ? 500 : 1500;
 
     const handleComplete = useCallback(() => {
         if (isExiting) return;
