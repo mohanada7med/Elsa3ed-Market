@@ -66,6 +66,7 @@ class MemoryStore {
   conversations: ConversationDocument[] = [];
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
+  reports: import('../models/types.ts').ReportTicketDocument[] = [];
 
   // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB)
   governorates: GovernorateDoc[] = [];

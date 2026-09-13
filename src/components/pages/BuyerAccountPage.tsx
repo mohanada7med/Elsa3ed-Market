@@ -17,6 +17,7 @@ import {
   Trash2,
   Loader2,
   AlertCircle,
+  AlertTriangle,
   Clock,
   CheckCircle2,
   RefreshCw,
@@ -39,7 +40,8 @@ export const BuyerAccountPage: React.FC = () => {
     applyToBecomeSeller,
     setIsAuthModalOpen,
     setAuthModalTab,
-    confirmModal
+    confirmModal,
+    openReportModal
   } = useApp();
 
   const [name, setName] = useState(currentUser.name || '');
@@ -622,6 +624,41 @@ export const BuyerAccountPage: React.FC = () => {
                 </button>
               </>
             )}
+          </div>
+
+          {/* Complaints & Support Center Card */}
+          <div className="bg-white/80 dark:bg-[#151513]/90 p-5 rounded-[2rem] border border-amber-500/20 text-xs space-y-3 shadow-lg backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 font-black text-[#9a6a35] dark:text-[#d5a56d]">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <span>مركز المساعدة والبلاغات</span>
+              </div>
+              <span className="text-[10px] text-amber-800 dark:text-amber-300 font-bold px-2 py-0.5 bg-amber-500/10 rounded-full border border-amber-500/20">
+                مباشر مع الإدارة
+              </span>
+            </div>
+            <p className="text-[11px] text-black/65 dark:text-white/65 leading-relaxed">
+              واجهتك أي مشكلة في طلب، عيب في منتج يدوي استلمته، أو مشكلة في الدفع؟ بلّغ الإدارة فوراً وهيتم متابعة طلبك هاتفياً وحله.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <button
+                type="button"
+                id="open-report-from-buyer-account-btn"
+                onClick={() => openReportModal({ initialTab: 'new' })}
+                className="flex-1 py-2.5 px-3 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>تقديم بلاغ أو شكوى</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => openReportModal({ initialTab: 'my-reports' })}
+                className="py-2.5 px-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-black/80 dark:text-white/80 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Clock className="w-3.5 h-3.5" />
+                <span>سجل بلاغاتي</span>
+              </button>
+            </div>
           </div>
 
           <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 text-xs text-black/60 dark:text-white/60 space-y-2 shadow-lg backdrop-blur-xl">

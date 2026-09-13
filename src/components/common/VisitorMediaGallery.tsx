@@ -247,7 +247,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         }
         return prev;
       });
-      addToast('تم التحديث', 'تم اعتماد الصورة كغلاف رئيسي', 'success');
+      addToast('تم التحديث', 'تم اعتماد الصورة كغلاف ', 'success');
     } catch (err: any) {
       addToast('خطأ', err?.message || 'تعذر تعيين الغلاف', 'error');
     } finally {

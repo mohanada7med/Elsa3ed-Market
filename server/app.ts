@@ -28,6 +28,7 @@ import chatRoutes from './routes/chatRoutes.ts';
 import wahContentRoutes from './routes/wahContentRoutes.ts';
 import adminMediaRoutes from './routes/adminMediaRoutes.ts';
 import sellerRequestRoutes from './routes/sellerRequestRoutes.ts';
+import reportRoutes from './routes/reportRoutes.ts';
 import notificationRoutes from './routes/notificationRoutes.ts';
 import cloudinaryRoutes from './routes/cloudinaryRoutes.ts';
 
@@ -141,6 +142,7 @@ export function createApp(): Express {
     { prefix: '/seller', router: sellerRoutes },
     { prefix: '/seller-requests', router: sellerRequestRoutes },
     { prefix: '/notifications', router: notificationRoutes },
+    { prefix: '/reports', router: reportRoutes },
     { prefix: '/admin/media', router: adminMediaRoutes },
     { prefix: '/admin', router: adminRoutes },
     { prefix: '/cloudinary', router: cloudinaryRoutes },

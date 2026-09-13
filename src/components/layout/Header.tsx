@@ -26,6 +26,7 @@ import {
   UserPlus,
   Flame,
   Film,
+  AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -430,6 +431,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     theme,
     toggleTheme,
     chatUnreadCount,
+    openReportModal,
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -583,8 +585,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         },
         {
           id: 'admin-reports',
-          label: 'التقارير',
-          icon: Sparkles,
+          label: 'البلاغات والشكاوى',
+          icon: AlertTriangle,
         },
         {
           id: 'admin-audit-logs',
@@ -1253,6 +1255,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               >
                                 <Flame size={18} className="text-[#b45f42]" />
                                 <span>تحدي اللهجة الصعيدية</span>
+                              </button>
+
+                              {/* تقديم بلاغ أو شكوى */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setUserDropdownOpen(false);
+                                  openReportModal();
+                                }}
+                                className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-400"
+                                style={{ color: mainText }}
+                              >
+                                <AlertTriangle size={18} className="text-amber-600" />
+                                <span>تقديم بلاغ أو شكوى</span>
                               </button>
 
                               <div className="my-1.5 border-t" style={{ borderColor }} />

@@ -11,7 +11,9 @@ import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
 import { AdminMediaLibraryPage } from './AdminMediaLibraryPage.tsx';
+import { AdminReportsManager } from './AdminReportsManager.tsx';
 import {
+  AlertTriangle,
   ShieldAlert,
   TrendingUp,
   Package,
@@ -149,8 +151,10 @@ export const AdminDashboard: React.FC = () => {
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'notifications' | 'media-library'
+    'overview' | 'approvals' | 'categories' | 'craft-stories' | 'craft-reels' | 'reviews' | 'sellers' | 'payouts' | 'orders' | 'coupons' | 'audit' | 'users' | 'password-resets' | 'payment-settings' | 'notifications' | 'media-library' | 'reports'
   >('overview');
+
+  const [pendingReportsCount, setPendingReportsCount] = useState(0);
 
   // Reels Management State for Admin (Full Database & Cloud Control)
   const [adminReels, setAdminReels] = useState<CraftReel[]>([]);
@@ -216,6 +220,7 @@ export const AdminDashboard: React.FC = () => {
     else if (activePage === 'admin-discounts') setActiveTab('coupons');
     else if (activePage === 'admin-audit-logs') setActiveTab('audit');
     else if (activePage === 'admin-media') setActiveTab('media-library');
+    else if (activePage === 'admin-reports') setActiveTab('reports');
     else if (activePage === 'admin-dashboard') setActiveTab('overview');
   }, [activePage]);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -1626,6 +1631,15 @@ export const AdminDashboard: React.FC = () => {
           elementId: 'admin-tab-users'
         },
         {
+          id: 'reports' as const,
+          label: 'البلاغات والشكاوى والدعم',
+          sublabel: pendingReportsCount > 0 ? `${pendingReportsCount} بلاغ جديد يحتاج الرد` : 'متابعة شكاوى البائع والمشتري',
+          icon: AlertTriangle,
+          badge: pendingReportsCount > 0 ? pendingReportsCount : undefined,
+          badgeType: 'danger' as const,
+          elementId: 'admin-tab-reports'
+        },
+        {
           id: 'password-resets' as const,
           label: 'طلبات استعادة كلمة المرور',
           sublabel: 'مراجعة طلبات إعادة تعيين المرور',
@@ -1643,6 +1657,7 @@ export const AdminDashboard: React.FC = () => {
     { id: 'approvals' as const, label: 'فحص المنتجات', icon: Package, badge: pendingProducts.length },
     { id: 'sellers' as const, label: 'الورش', icon: Store, badge: pendingSellersCount },
     { id: 'orders' as const, label: 'الشحنات', icon: Truck },
+    { id: 'reports' as const, label: 'البلاغات والشكاوى', icon: AlertTriangle, badge: pendingReportsCount > 0 ? pendingReportsCount : undefined },
     { id: 'craft-reels' as const, label: 'الريلز', icon: Film },
     { id: 'media-library' as const, label: 'الوسائط', icon: ImageIcon },
     { id: 'users' as const, label: 'المستخدمين', icon: Users },
@@ -2659,6 +2674,34 @@ export const AdminDashboard: React.FC = () => {
                 <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
                   <span className="font-bold">إعدادات الدفع</span>
                   <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">ضبط ←</span>
+                </div>
+              </div>
+
+              {/* Bento Card 8: Complaints and Reports */}
+              <div
+                onClick={() => handleSelectTab('reports')}
+                className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'reports'
+                  ? 'bg-[#9a6a35] text-white border-[#9a6a35] ring-2 ring-[#9a6a35]/30'
+                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
+                  }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  {pendingReportsCount > 0 && (
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-500 text-white animate-pulse">
+                      {pendingReportsCount} جديد
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-black text-sm mt-3">البلاغات والشكاوى</h4>
+                <p className={`text-xs mt-1 ${activeTab === 'reports' ? 'text-white/80' : 'text-black/60 dark:text-white/60'}`}>
+                  شكاوى المشترين وبلاغات الورش وحلها
+                </p>
+                <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
+                  <span className="font-bold">خدمة العملاء والورش</span>
+                  <span className="text-[11px] text-[#9a6a35] dark:text-[#d5a56d] font-bold">متابعة ←</span>
                 </div>
               </div>
             </div>
@@ -5122,6 +5165,11 @@ export const AdminDashboard: React.FC = () => {
                 else if (tab === 'password-resets') handleSelectTab('password-resets');
               }}
             />
+          )}
+
+          {/* TAB 13: REPORTS & SUPPORT (إدارة البلاغات والشكاوى) */}
+          {activeTab === 'reports' && (
+            <AdminReportsManager onTicketCountChange={setPendingReportsCount} />
           )}
         </main>
       </div>

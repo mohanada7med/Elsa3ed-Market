@@ -29,7 +29,11 @@ import {
   GovernorateDashboardStats,
   BulkActionPayload,
   RelationshipPayload,
-  MediaItem
+  MediaItem,
+  ReportTicket,
+  ReportStatus,
+  ReportPriority,
+  ReportCategory
 } from '../types.ts';
 
 
@@ -3753,6 +3757,75 @@ export const api = {
     return json.readCount || 0;
   },
 
+  // Reports and Complaints System (نظام البلاغات والشكاوى)
+  async submitReportTicket(data: any, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string; data: ReportTicket }> {
+    const res = await fetch(`${API_BASE}/reports`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل إرسال البلاغ');
+    return json;
+  },
+
+  async getMyReports(user?: { id?: string; phone?: string; role?: string }): Promise<ReportTicket[]> {
+    const query = user?.phone ? `?phone=${encodeURIComponent(user.phone)}` : '';
+    const res = await fetch(`${API_BASE}/reports/my${query}`, {
+      method: 'GET',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل جلب البلاغات');
+    return json.data || [];
+  },
+
+  async getAdminReports(
+    user?: { id?: string; role?: string },
+    filter?: { status?: string; category?: string; role?: string; q?: string }
+  ): Promise<ReportTicket[]> {
+    const params = new URLSearchParams();
+    if (filter?.status && filter.status !== 'all') params.append('status', filter.status);
+    if (filter?.category && filter.category !== 'all') params.append('category', filter.category);
+    if (filter?.role && filter.role !== 'all') params.append('role', filter.role);
+    if (filter?.q) params.append('q', filter.q);
+    params.append('userRole', user?.role || 'admin');
+
+    const res = await fetch(`${API_BASE}/reports/admin?${params.toString()}`, {
+      method: 'GET',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'تعذر جلب بلاغات الإدارة');
+    return json.data || [];
+  },
+
+  async updateAdminReport(
+    id: string,
+    data: { status?: ReportStatus; adminResponse?: string; internalNotes?: string },
+    user?: { id?: string; role?: string }
+  ): Promise<{ success: boolean; message: string; data: ReportTicket }> {
+    const res = await fetch(`${API_BASE}/reports/admin/${id}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ ...data, userRole: user?.role || 'admin' })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث البلاغ');
+    return json;
+  },
+
+  async deleteAdminReport(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message?: string }> {
+    const res = await fetch(`${API_BASE}/reports/admin/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ userRole: user?.role || 'admin' })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل حذف البلاغ');
+    return json;
+  },
+
   ...adminMediaApi
 };
 
@@ -4610,6 +4683,75 @@ export const wahApi = {
     return json;
   },
 
-  // 20. Central Admin Media Management
+  // 20. Reports and Complaints System (نظام البلاغات والشكاوى)
+  async submitReportTicket(data: any, user?: { id?: string; role?: string }): Promise<{ success: boolean; message: string; data: ReportTicket }> {
+    const res = await fetch(`${API_BASE}/reports`, {
+      method: 'POST',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل إرسال البلاغ');
+    return json;
+  },
+
+  async getMyReports(user?: { id?: string; phone?: string; role?: string }): Promise<ReportTicket[]> {
+    const query = user?.phone ? `?phone=${encodeURIComponent(user.phone)}` : '';
+    const res = await fetch(`${API_BASE}/reports/my${query}`, {
+      method: 'GET',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل جلب البلاغات');
+    return json.data || [];
+  },
+
+  async getAdminReports(
+    user?: { id?: string; role?: string },
+    filter?: { status?: string; category?: string; role?: string; q?: string }
+  ): Promise<ReportTicket[]> {
+    const params = new URLSearchParams();
+    if (filter?.status && filter.status !== 'all') params.append('status', filter.status);
+    if (filter?.category && filter.category !== 'all') params.append('category', filter.category);
+    if (filter?.role && filter.role !== 'all') params.append('role', filter.role);
+    if (filter?.q) params.append('q', filter.q);
+    params.append('userRole', user?.role || 'admin');
+
+    const res = await fetch(`${API_BASE}/reports/admin?${params.toString()}`, {
+      method: 'GET',
+      headers: getAuthHeaders(user)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'تعذر جلب بلاغات الإدارة');
+    return json.data || [];
+  },
+
+  async updateAdminReport(
+    id: string,
+    data: { status?: ReportStatus; adminResponse?: string; internalNotes?: string },
+    user?: { id?: string; role?: string }
+  ): Promise<{ success: boolean; message: string; data: ReportTicket }> {
+    const res = await fetch(`${API_BASE}/reports/admin/${id}`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ ...data, userRole: user?.role || 'admin' })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل تحديث البلاغ');
+    return json;
+  },
+
+  async deleteAdminReport(id: string, user?: { id?: string; role?: string }): Promise<{ success: boolean; message?: string }> {
+    const res = await fetch(`${API_BASE}/reports/admin/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ userRole: user?.role || 'admin' })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'فشل حذف البلاغ');
+    return json;
+  },
+
+  // 21. Central Admin Media Management
   ...adminMediaApi
 };

@@ -139,10 +139,11 @@ export const SellerDashboard: React.FC = () => {
     refreshSellerStats,
     updateSellerProfile,
     chatUnreadCount,
-    confirmModal
+    confirmModal,
+    openReportModal
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports'>('overview');
 
   // Multi-Layout Modes for Artisan Seller Dashboard
   type SellerLayoutMode = 'sidebar' | 'compact-rail' | 'full-hub' | 'bento';
@@ -834,7 +835,7 @@ export const SellerDashboard: React.FC = () => {
   const pendingProductsCount = sellerProducts.filter((p) => p.approvalStatus === 'pending').length;
 
   interface SellerNavItem {
-    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings';
+    id: 'overview' | 'products' | 'inventory' | 'orders' | 'messages' | 'payouts' | 'reels' | 'notifications' | 'settings' | 'reports';
     label: string;
     sublabel?: string;
     icon: React.ComponentType<{ className?: string }>;
@@ -936,6 +937,13 @@ export const SellerDashboard: React.FC = () => {
           sublabel: 'إشعارات الإدارة والطلبات',
           icon: Bell,
           elementId: 'seller-nav-notifications-btn'
+        },
+        {
+          id: 'reports',
+          label: 'الدعم وبلاغات الإدارة',
+          sublabel: 'تقديم ومتابعة الشكاوى والبلاغات',
+          icon: AlertTriangle,
+          elementId: 'seller-nav-reports-btn'
         },
         {
           id: 'settings',
@@ -2324,12 +2332,29 @@ export const SellerDashboard: React.FC = () => {
                           <span>هذا الطلب ملغي — تم استرجاع القطع للمخزون واستبعاد قيمته من إجمالي المبيعات المحققة وإجمالي الطلبات</span>
                         </div>
                       )}
-                      <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-black/5 dark:border-white/5">
                         <div>
                           <span className="font-bold">العنوان:</span> {ord.shippingAddress?.governorate} - {ord.shippingAddress?.city}
                         </div>
-                        <div className="font-bold font-mono text-[#9a6a35]">
-                          إجمالي الفاتورة: {ord.total} ج.م
+                        <div className="flex items-center gap-3">
+                          <span className="font-bold font-mono text-[#9a6a35]">
+                            إجمالي الفاتورة: {ord.total} ج.م
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openReportModal({
+                                category: 'buyer_dispute',
+                                orderId: ord.id,
+                                orderNumber: ord.orderNumber,
+                                initialSubject: `إبلاغ بخصوص الطلب #${ord.orderNumber || ord.id}`
+                              })
+                            }
+                            className="px-2.5 py-1 text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                          >
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>إبلاغ الإدارة عن مشكلة</span>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -2850,6 +2875,140 @@ export const SellerDashboard: React.FC = () => {
                 else if (tab === 'settings') setActiveTab('settings');
               }}
             />
+          )}
+
+          {/* TAB: REPORTS & SUPPORT */}
+          {activeTab === 'reports' && (
+            <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-black text-xl text-[#211d18] dark:text-[#f5f0e7] font-serif">
+                      مركز الدعم وبلاغات الإدارة للورش الحرفية
+                    </h3>
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20">
+                      مباشر مع مسؤولي وه
+                    </span>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
+                    إذا واجهتك أي مشكلة في مستحقاتك، طلبياتك، نزاع مع مشتري، أو اعتماد منتجاتك، أرسل بلاغك للإدارة فوراً.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openReportModal({ initialTab: 'my-reports' })}
+                    className="px-4 py-2.5 bg-black/5 dark:bg-white/10 hover:bg-black/10 text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>متابعة بلاغاتي وردود الإدارة</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openReportModal({ initialTab: 'new' })}
+                    className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#7e5527] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>تقديم بلاغ جديد</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Topic Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div
+                  onClick={() =>
+                    openReportModal({
+                      category: 'payout_issue',
+                      initialTab: 'new',
+                      initialSubject: 'استفسار أو مشكلة في تحويل الأرباح والمستحقات'
+                    })
+                  }
+                  className="p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] hover:border-[#9a6a35] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    مشكلة في تحويل الأرباح
+                  </h4>
+                  <p className="text-[11px] text-black/55 dark:text-white/55 leading-relaxed">
+                    طلب سحب رصيد معلق، خطأ في رقم محفظة فودافون كاش أو الحساب البنكي.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() =>
+                    openReportModal({
+                      category: 'buyer_dispute',
+                      initialTab: 'new',
+                      initialSubject: 'نزاع أو مشكلة تسليم مع مشتري'
+                    })
+                  }
+                  className="p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] hover:border-[#9a6a35] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-700 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    نزاع أو مشكلة مع مشتري
+                  </h4>
+                  <p className="text-[11px] text-black/55 dark:text-white/55 leading-relaxed">
+                    مشتري رفض الاستلام بدون مبرر، تعذر الوصول لعنوان التسليم، أو خلاف على قطعة.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() =>
+                    openReportModal({
+                      category: 'product_approval',
+                      initialTab: 'new',
+                      initialSubject: 'استفسار بخصوص مراجعة واعتماد المنتجات'
+                    })
+                  }
+                  className="p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] hover:border-[#9a6a35] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-700 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    اعتماد ومراجعة المنتجات
+                  </h4>
+                  <p className="text-[11px] text-black/55 dark:text-white/55 leading-relaxed">
+                    طلب إعادة فحص منتج معلق أو مرفوض، أو استفسار عن تصنيف الحرفة التراثية.
+                  </p>
+                </div>
+
+                <div
+                  onClick={() =>
+                    openReportModal({
+                      category: 'technical_bug',
+                      initialTab: 'new',
+                      initialSubject: 'عطل فني في لوحة تحكم الورشة'
+                    })
+                  }
+                  className="p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] hover:border-[#9a6a35] transition-all cursor-pointer space-y-2 group shadow-xs"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-700 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Settings className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    عطل فني أو استفسار عام
+                  </h4>
+                  <p className="text-[11px] text-black/55 dark:text-white/55 leading-relaxed">
+                    خطأ في تحديث المخزون، مشكلة في رفع الصور، أو اقتراح لتطوير المنصة.
+                  </p>
+                </div>
+              </div>
+
+              {/* Guarantees Box */}
+              <div className="p-4 bg-[#9a6a35]/10 border border-[#9a6a35]/20 rounded-2xl flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-[#9a6a35] dark:text-[#d5a56d] shrink-0 mt-0.5" />
+                <div className="text-xs text-[#211d18] dark:text-[#f5f0e7] leading-relaxed">
+                  <strong>التزام إدارة منصة وه نحو شيوخ الصنعة والورش:</strong> يتم استلام جميع البلاغات في لوحة إدارة المنصة والتعامل معها بحيادية تامة. في حال وجود أي نزاع، نضمن فحص الطلب بدقة وحماية حقوق الورشة والمشتري على حد سواء.
+                </div>
+              </div>
+            </div>
           )}
         </main>
       </div>

@@ -1043,6 +1043,57 @@ export interface RelationshipPayload {
   action: 'link' | 'unlink';
 }
 
+/* =========================================================
+   REPORT & COMPLAINT SYSTEM (نظام البلاغات والشكاوى)
+   ========================================================= */
+
+export type ReportStatus = 'pending' | 'in_progress' | 'resolved' | 'rejected';
+export type ReportPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type ReportCategory =
+  | 'order_issue'
+  | 'product_issue'
+  | 'seller_complaint'
+  | 'buyer_complaint'
+  | 'buyer_dispute'
+  | 'product_approval'
+  | 'payment_issue'
+  | 'payout_issue'
+  | 'technical_issue'
+  | 'technical_bug'
+  | 'craft_content'
+  | 'other';
+
+export interface ReportTicketDocument {
+  _id?: string;
+  id: string;
+  ticketNumber: string;
+  userId: string;
+  userName: string;
+  userEmail?: string;
+  userPhone: string;
+  userRole: 'buyer' | 'seller' | 'admin' | 'guest';
+  userGovernorate?: string;
+  category: ReportCategory;
+  priority: ReportPriority;
+  subject: string;
+  description: string;
+  relatedOrderId?: string;
+  relatedOrderNumber?: string;
+  relatedProductId?: string;
+  relatedProductName?: string;
+  relatedSellerId?: string;
+  relatedSellerName?: string;
+  attachments?: string[];
+  status: ReportStatus;
+  adminResponse?: string;
+  adminRespondedAt?: string;
+  adminRespondedBy?: string;
+  internalNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
 
 
 

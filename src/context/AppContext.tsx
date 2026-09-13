@@ -17,7 +17,10 @@ import {
   UserRole,
   AuthState,
   ThemeMode,
-  WahEcosystemStats
+  WahEcosystemStats,
+  ReportTicket,
+  ReportCategory,
+  ReportPriority
 } from '../types.ts';
 import { api, wahApi } from '../services/api.ts';
 import { notificationService, AppNotification, normalizeNotification } from '../services/notificationService.ts';
@@ -30,6 +33,27 @@ export interface ToastNotification {
   message: string;
   type: 'success' | 'info' | 'warning' | 'error';
   timestamp: string;
+}
+
+export interface ReportModalOptions {
+  isOpen: boolean;
+  category?: ReportCategory;
+  priority?: ReportPriority;
+  orderId?: string;
+  orderNumber?: string;
+  relatedOrderId?: string;
+  relatedOrderNumber?: string;
+  productId?: string;
+  productName?: string;
+  relatedProductId?: string;
+  relatedProductName?: string;
+  sellerId?: string;
+  sellerName?: string;
+  relatedSellerId?: string;
+  relatedSellerName?: string;
+  initialSubject?: string;
+  initialDescription?: string;
+  initialTab?: 'new' | 'history' | 'my-reports';
 }
 
 export interface ConfirmModalOptions {
@@ -293,6 +317,11 @@ interface AppContextType {
   confirmModalState: ConfirmModalOptions | null;
   confirmModal: (options: ConfirmModalOptions) => void;
   closeConfirmModal: () => void;
+
+  // Report and Complaint System Modal
+  reportModalState: ReportModalOptions | null;
+  openReportModal: (options?: Partial<ReportModalOptions>) => void;
+  closeReportModal: () => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -1076,6 +1105,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const closeConfirmModal = useCallback(() => {
     setConfirmModalState(null);
+  }, []);
+
+  // Global Report / Issue Modal State
+  const [reportModalState, setReportModalState] = useState<ReportModalOptions | null>(null);
+
+  const openReportModal = useCallback((options?: Partial<ReportModalOptions>) => {
+    setReportModalState({
+      isOpen: true,
+      category: options?.category,
+      priority: options?.priority,
+      relatedOrderId: options?.relatedOrderId || options?.orderId,
+      relatedOrderNumber: options?.relatedOrderNumber || options?.orderNumber,
+      relatedProductId: options?.relatedProductId || options?.productId,
+      relatedProductName: options?.relatedProductName || options?.productName,
+      relatedSellerId: options?.relatedSellerId || options?.sellerId,
+      relatedSellerName: options?.relatedSellerName || options?.sellerName,
+      orderId: options?.orderId || options?.relatedOrderId,
+      orderNumber: options?.orderNumber || options?.relatedOrderNumber,
+      productId: options?.productId || options?.relatedProductId,
+      productName: options?.productName || options?.relatedProductName,
+      sellerId: options?.sellerId || options?.relatedSellerId,
+      sellerName: options?.sellerName || options?.relatedSellerName,
+      initialSubject: options?.initialSubject,
+      initialDescription: options?.initialDescription,
+      initialTab: options?.initialTab || 'new'
+    });
+  }, []);
+
+  const closeReportModal = useCallback(() => {
+    setReportModalState(null);
   }, []);
 
   // Browser Push & Native Notification State
@@ -3159,7 +3218,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         confirmModalState,
         confirmModal,
-        closeConfirmModal
+        closeConfirmModal,
+
+        reportModalState,
+        openReportModal,
+        closeReportModal
       }}
     >
       {children}

@@ -9,7 +9,8 @@ import {
   RefreshCw,
   ShoppingBag,
   XCircle,
-  MessageSquare
+  MessageSquare,
+  AlertTriangle
 } from 'lucide-react';
 
 const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
@@ -21,7 +22,7 @@ const STATUS_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
 ];
 
 export const OrdersTrackingPage: React.FC = () => {
-  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage, confirmModal } = useApp();
+  const { orders, cancelOrder, refreshOrders, setActivePage, addToast, selectedOrderId, openChatWithArtisan, navigateToOrder, activePage, confirmModal, openReportModal } = useApp();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
@@ -397,6 +398,24 @@ export const OrdersTrackingPage: React.FC = () => {
                   >
                     <MessageSquare className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
                     <span>محادثة الحرفي بخصوص هذا الطلب</span>
+                  </button>
+
+                  {/* Report Issue to Admin Button */}
+                  <button
+                    type="button"
+                    id="report-order-issue-btn"
+                    onClick={() =>
+                      openReportModal({
+                        category: 'order_issue',
+                        orderId: currentSelected.id,
+                        orderNumber: currentSelected.orderNumber,
+                        initialSubject: `مشكلة في الطلب #${currentSelected.orderNumber || currentSelected.id}`
+                      })
+                    }
+                    className="px-4 py-2.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 text-xs font-bold rounded-xl border border-amber-500/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>إبلاغ الإدارة عن مشكلة بالطلب</span>
                   </button>
 
                   {/* Cancel Order Action for Eligible States */}
