@@ -2595,7 +2595,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       type="text"
                       value={visitDuration}
                       onChange={(e) => setVisitDuration(e.target.value)}
-                      placeholder="مثال: من ساعتين إلى 3 ساعات"
+                      placeholder="مثال: من ساعتين لتلات ساعات"
                       className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                     />
                   </div>
@@ -2603,13 +2603,13 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
                 <div>
                   <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
-                    توضيح وملاحظة رسمية عن حالة الزيارة وطبيعة الموقع:
+                    توضيح وملاحظة رسمية عن حالة الزيارة وطبيعة الموقع (بالعامية):
                   </label>
                   <textarea
                     rows={2}
                     value={visitStatusNote}
                     onChange={(e) => setVisitStatusNote(e.target.value)}
-                    placeholder="اكتب التوضيح الرسمي الدقيق إذا كان الموقع مغلقاً أو معلماً عاماً أو تحت الترميم منعاً لأي اختلاق معلومات..."
+                    placeholder="اكتب التوضيح بالعامية (زي: المكان مفتوح كل يوم بتذاكر الآثار، أو مقفول للترميم، أو محتاج عربية دفع رباعي)..."
                     className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl p-3 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35] resize-none"
                   />
                 </div>
@@ -2621,7 +2621,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       type="text"
                       value={openingHours}
                       onChange={(e) => setOpeningHours(e.target.value)}
-                      placeholder="مثال: يومياً من 8:00 ص إلى 5:00 م"
+                      placeholder="مثال: كل يوم من 8:00 الصبح لحد 5:00 المغرب"
                       className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                     />
                   </div>
@@ -2631,7 +2631,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       type="text"
                       value={bestTimeToVisit}
                       onChange={(e) => setBestTimeToVisit(e.target.value)}
-                      placeholder="مثال: من أكتوبر إلى أبريل صباحاً"
+                      placeholder="مثال: من أكتوبر لأبريل الصبح بدري"
                       className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                     />
                   </div>
@@ -2641,7 +2641,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       type="text"
                       value={entryFee}
                       onChange={(e) => setEntryFee(e.target.value)}
-                      placeholder="مثال: 60 ج.م للمصريين / 240 ج.م للأجانب"
+                      placeholder="مثال: تذاكر الآثار: 40 جنيه للمصريين / 20 جنيه للطلبة (بالفيزا)"
                       className="w-full bg-white dark:bg-[#151513] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                     />
                   </div>
@@ -2752,7 +2752,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                           updated[idx].name = e.target.value;
                           setVisitorServices(updated);
                         }}
-                        placeholder="اسم الخدمة (مثل: مرشد معتمد، كافتيريا)"
+                        placeholder="اسم الخدمة (زي: شباك تذاكر بالفيزا، عربيات جولف كار، كافتيريا)"
                         className="text-xs rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                       />
                       <input
@@ -2763,7 +2763,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                           updated[idx].description = e.target.value;
                           setVisitorServices(updated);
                         }}
-                        placeholder="وصف وتفاصيل توفر الخدمة"
+                        placeholder="وصف الخدمة بالعامية (زي: استراحة مظللة بتقدم مشروبات ساقعة وكراسي مريحة)"
                         className="text-xs rounded-lg px-2.5 py-1.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
                       />
                     </div>

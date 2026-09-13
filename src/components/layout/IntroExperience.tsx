@@ -224,6 +224,7 @@ export const IntroExperience: React.FC = () => {
           >
             <video
               ref={videoRef}
+              src={optimizedVideoUrl}
               className="w-full h-full object-contain"
               autoPlay
               loop
@@ -244,9 +245,7 @@ export const IntroExperience: React.FC = () => {
                   v.play().catch(() => { });
                 }
               }}
-            >
-              <source src={optimizedVideoUrl} type="video/mp4" />
-            </video>
+            />
 
             {/* أيقونة تشغيل سينمائية عند التوقف */}
             <AnimatePresence>

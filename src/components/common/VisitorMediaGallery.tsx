@@ -88,9 +88,24 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
   const targetEntityKey = entityId || entitySlug || '';
 
+  // Helper to ensure cover image is always in the gallery list
+  const ensureCoverInGallery = useCallback((gal: string[], cov?: string) => {
+    const list = (Array.isArray(gal) ? gal : []).filter(Boolean);
+    if (cov && cov.trim()) {
+      const cleanCov = cov.trim();
+      const hasCover = list.some(
+        (img) => img === cleanCov || img.split('?')[0] === cleanCov.split('?')[0]
+      );
+      if (!hasCover) {
+        return [cleanCov, ...list];
+      }
+    }
+    return list;
+  }, []);
+
   // States
   const [localGallery, setLocalGallery] = useState<string[]>(() =>
-    Array.isArray(gallery) ? gallery.filter(Boolean) : []
+    ensureCoverInGallery(gallery, coverImage)
   );
   const [localCover, setLocalCover] = useState<string | undefined>(coverImage);
   const [localVideoUrl, setLocalVideoUrl] = useState<string | null | undefined>(videoUrl);
@@ -120,8 +135,10 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
 
   // Sync
   useEffect(() => {
-    if (Array.isArray(gallery)) setLocalGallery(gallery.filter(Boolean));
-  }, [gallery]);
+    if (Array.isArray(gallery)) {
+      setLocalGallery(ensureCoverInGallery(gallery, coverImage));
+    }
+  }, [gallery, coverImage, ensureCoverInGallery]);
 
   useEffect(() => {
     setLocalCover(coverImage);
@@ -219,6 +236,17 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       const newCover = res?.coverImage || url;
       setLocalCover(newCover);
       onCoverChange?.(newCover);
+      setLocalGallery((prev) => {
+        const exists = prev.some(
+          (img) => img === newCover || img.split('?')[0] === newCover.split('?')[0]
+        );
+        if (!exists) {
+          const updated = [newCover, ...prev];
+          onGalleryChange?.(updated);
+          return updated;
+        }
+        return prev;
+      });
       addToast('تم التحديث', 'تم اعتماد الصورة كغلاف رئيسي', 'success');
     } catch (err: any) {
       addToast('خطأ', err?.message || 'تعذر تعيين الغلاف', 'error');
@@ -542,6 +570,13 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                       playsInline
                       preload="metadata"
                       poster={getOptimizedVideoPoster(selectedVideo, localCover, 800)}
+                      onError={(e) => {
+                        const v = e.currentTarget;
+                        if (v.src !== selectedVideo) {
+                          v.src = selectedVideo;
+                          v.load();
+                        }
+                      }}
                       className="h-full w-full object-contain"
                     />
                   )}

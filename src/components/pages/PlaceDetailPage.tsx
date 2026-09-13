@@ -243,10 +243,25 @@ export const PlaceDetailPage: React.FC = () => {
     place.shortDescription ||
     place.description;
 
-  const gallery =
+  const rawGallery =
     place.gallery && place.gallery.length > 0
       ? place.gallery
       : place.galleryImages || [];
+
+  // ضمان إدراج صورة الغلاف دائماً ضمن معرض الصور في حال لم تكن مضافة مسبقاً
+  const gallery = (() => {
+    const list = Array.isArray(rawGallery) ? [...rawGallery.filter(Boolean)] : [];
+    if (place.coverImage && place.coverImage.trim()) {
+      const cover = place.coverImage.trim();
+      const exists = list.some(
+        (url) => url === cover || url.split('?')[0] === cover.split('?')[0]
+      );
+      if (!exists) {
+        list.unshift(cover);
+      }
+    }
+    return list;
+  })();
 
   return (
     <div
@@ -842,14 +857,19 @@ export const PlaceDetailPage: React.FC = () => {
                   );
                 }}
                 onCoverChange={(newCover) => {
-                  setPlace((prev) =>
-                    prev
-                      ? {
-                        ...prev,
-                        coverImage: newCover,
-                      }
-                      : null
-                  );
+                  setPlace((prev) => {
+                    if (!prev) return null;
+                    const prevGallery = Array.isArray(prev.gallery) ? prev.gallery : [];
+                    const updatedGallery = prevGallery.includes(newCover)
+                      ? prevGallery
+                      : [newCover, ...prevGallery];
+                    return {
+                      ...prev,
+                      coverImage: newCover,
+                      gallery: updatedGallery,
+                      galleryImages: updatedGallery,
+                    };
+                  });
                 }}
                 onVideoChange={(newVideo, updatedVideos) => {
                   setPlace((prev) =>
@@ -943,16 +963,18 @@ export const PlaceDetailPage: React.FC = () => {
                     <p className="text-sm sm:text-base font-bold leading-relaxed mb-2 break-words">
                       {place.visitInfo.visitStatusNote || (
                         place.visitInfo.visitStatus === 'closed_to_public'
-                          ? 'الموقع مغلق حالياً أمام زيارات الجمهور العام بقرار رسمي.'
+                          ? 'المكان مقفول دلوقتي قدام الزيارات العادية بقرار رسمي ومتاح فقط لمهمات الأبحاث المصرح ليها.'
                           : place.visitInfo.visitStatus === 'closed_for_restoration'
-                            ? 'الموقع مغلق حالياً من الداخل للترميم والتأهيل كمتحف.'
+                            ? 'المكان مقفول من جوه عشان أعمال التجهيز والترميم كمتحف، بس تقدر تتفرج وتتصور من بره براحتك.'
                             : place.visitInfo.visitStatus === 'public_landmark'
-                              ? 'المعلم عبارة عن ميدان عام في الفضاء المفتوح بدون تذاكر أو بوابات مغلقة.'
-                              : 'الموقع صرح نشط يتطلب إذناً وتنسيقاً مسبقاً.'
+                              ? 'المعلم عبارة عن ميدان وممشى عام في الهوا الطلق من غير تذاكر ولا بوابات مقفولة.'
+                              : place.visitInfo.visitStatus === 'requires_safari_permit'
+                                ? 'المحمية محتاجة عربية دفع رباعي مجهزة ومعاك دليل سفاري مرخص مع سداد رسوم المحمية.'
+                                : 'المكان صرح شغال ومحتاج إذن أو تنسيق مسبق قبل ما تروح.'
                       )}
                     </p>
                     <p className="text-xs opacity-75 leading-normal">
-                      تلتزم منصة «وه» بالأمانة التوثيقية الدقيقة؛ نوثق الحقائق الواقعية استناداً إلى القرارات الرسمية دون اختلاق مواعيد أو تذاكر وهمية للأماكن غير المتاحة للزيارة السياحية.
+                      إحنا في «وه» حريصين نوثق كل حاجة بأمانة ودقة؛ بنقولك على الوضع الحقيقي بناءً على القرارات الرسمية عشان مشوارك يكون مظبوط ومن غير مفاجآت.
                     </p>
                   </div>
                 </div>
@@ -1020,8 +1042,8 @@ export const PlaceDetailPage: React.FC = () => {
                     </div>
                     <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
                       {place.visitInfo.reservationRequired
-                        ? 'يلزم الحجز المسبق أو التنسيق المسبق قبل الزيارة'
-                        : 'متاح للزيارة المباشرة وقطع التذاكر من الموقع'}
+                        ? 'لازم حجز أو تصريح مسبق قبل ما تروح الزيارة'
+                        : 'تقدر تروح علطول وتقطع تذكرتك أو تدخل مباشرة من هناك من غير حجز مسبق'}
                     </p>
                   </div>
                 )}

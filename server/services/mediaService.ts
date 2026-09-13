@@ -1424,7 +1424,8 @@ export async function manageEntityGallery(options: {
     const cleanUrl = imageUrl.trim();
     if (isMongo && db) {
       await db.collection(collectionName).updateOne(filter, {
-        $set: { coverImage: cleanUrl, imageUrl: cleanUrl, updatedAt: new Date().toISOString() }
+        $set: { coverImage: cleanUrl, imageUrl: cleanUrl, updatedAt: new Date().toISOString() },
+        $addToSet: { gallery: cleanUrl, galleryImages: cleanUrl } as any
       });
 
       // Update primary state in wah_media
@@ -1448,6 +1449,10 @@ export async function manageEntityGallery(options: {
     if (memEntity) {
       memEntity.coverImage = cleanUrl;
       memEntity.imageUrl = cleanUrl;
+      if (!memEntity.gallery) memEntity.gallery = [];
+      if (!memEntity.gallery.includes(cleanUrl)) memEntity.gallery.unshift(cleanUrl);
+      if (!memEntity.galleryImages) memEntity.galleryImages = [];
+      if (!memEntity.galleryImages.includes(cleanUrl)) memEntity.galleryImages.unshift(cleanUrl);
     }
 
     memoryDb.media.forEach((m) => {
@@ -1456,11 +1461,13 @@ export async function manageEntityGallery(options: {
       }
     });
 
+    const updatedGallery = Array.from(new Set([cleanUrl, ...currentGallery]));
+
     return {
       success: true,
       message: 'تم تعيين الصورة كغلاف رئيسي بنجاح',
       coverImage: cleanUrl,
-      gallery: currentGallery
+      gallery: updatedGallery
     };
   }
 

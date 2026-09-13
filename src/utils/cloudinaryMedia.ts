@@ -78,7 +78,8 @@ export function getOptimizedVideoUrl(
       result = result.replace(/\.[a-zA-Z0-9]+$/, '.mp4');
     }
 
-    // Prepare transformation string
+    // Prepare transformation string (f_auto, q_auto with responsive dimensions)
+    // Note: fl_faststart is intentionally excluded as it triggers 'Invalid flag in transformation: faststart' on this Cloudinary configuration
     const parts: string[] = ['f_auto'];
     if (options?.qualityMode === 'eco') {
       parts.push('q_auto:eco');
@@ -90,19 +91,20 @@ export function getOptimizedVideoUrl(
       parts.push(`w_${targetDimension}`, 'c_limit');
     }
 
-    // Faststart ensures MP4 metadata (moov atom) is at front for instant start
-    parts.push('fl_faststart');
-
     const transformString = parts.join(',');
 
     // Cloudinary URL structure: https://res.cloudinary.com/<cloud_name>/video/upload/[<existing_transformations>/][v<version>/]<public_id>.<ext>
     const uploadIndex = result.indexOf('/video/upload/');
     if (uploadIndex !== -1) {
       const prefix = result.substring(0, uploadIndex + '/video/upload/'.length);
-      const suffix = result.substring(uploadIndex + '/video/upload/'.length);
+      let suffix = result.substring(uploadIndex + '/video/upload/'.length);
+
+      // Strip any invalid or legacy fl_faststart flags
+      suffix = suffix.replace(/,?fl_faststart,?/g, '').replace(/\/+/g, '/');
 
       // Check if already transformed with f_auto or q_auto
       if (suffix.startsWith('f_auto') || suffix.includes('/f_auto') || suffix.includes('q_auto')) {
+        result = `${prefix}${suffix}`;
         videoUrlCache.set(cacheKey, result);
         return result;
       }

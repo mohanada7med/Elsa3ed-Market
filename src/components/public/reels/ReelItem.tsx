@@ -79,9 +79,17 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         qualityMode: isMobileScreen ? 'eco' : 'auto',
         forceMp4: true
       }) ||
+      reel.videoUrl ||
       'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-potter-shaping-a-clay-vase-41717-large.mp4',
     [reel.videoUrl, isMobileScreen]
   );
+
+  const [currentVideoSrc, setCurrentVideoSrc] = useState(safeVideoUrl);
+
+  useEffect(() => {
+    setCurrentVideoSrc(safeVideoUrl);
+    setHasVideoError(false);
+  }, [safeVideoUrl]);
 
   // Derive instant first-frame JPEG poster (30KB vs 50MB raw video)
   const safePosterUrl = useMemo(
@@ -179,7 +187,25 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         progressBarRef.current.style.width = '0%';
       }
     }
-  }, [isActive, isMuted, safeVideoUrl]);
+  }, [isActive, isMuted, currentVideoSrc]);
+
+  const handleVideoError = () => {
+    // Fallback: If optimized transformation failed, immediately attempt raw original URL
+    if (reel.videoUrl && currentVideoSrc !== reel.videoUrl) {
+      setCurrentVideoSrc(reel.videoUrl);
+      setIsVideoLoading(true);
+      setHasVideoError(false);
+      if (videoRef.current) {
+        videoRef.current.load();
+        if (isActive) {
+          videoRef.current.play().catch(() => {});
+        }
+      }
+    } else {
+      setIsVideoLoading(false);
+      setHasVideoError(true);
+    }
+  };
 
   const handleTogglePlay = () => {
     if (!videoRef.current) return;
@@ -344,7 +370,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
         <video
           ref={videoRef}
-          src={safeVideoUrl}
+          src={currentVideoSrc}
           poster={safePosterUrl}
           preload={isActive ? 'metadata' : 'none'}
           playsInline
@@ -357,10 +383,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             setIsVideoLoading(false);
             setIsPlaying(true);
           }}
-          onError={() => {
-            setIsVideoLoading(false);
-            setHasVideoError(true);
-          }}
+          onError={handleVideoError}
           onTimeUpdate={handleTimeUpdate}
           className="w-full h-full object-cover"
         />
@@ -379,6 +402,11 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                setHasVideoError(false);
+                setIsVideoLoading(true);
+                if (reel.videoUrl && currentVideoSrc !== reel.videoUrl) {
+                  setCurrentVideoSrc(reel.videoUrl);
+                }
                 if (videoRef.current) {
                   videoRef.current.load();
                   videoRef.current.play().catch(() => { });
@@ -392,10 +420,10 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           </div>
         )}
 
-        {showPlayIcon && !isPlaying && (
+        {(!isPlaying || showPlayIcon) && !isVideoLoading && !hasVideoError && (
           <div className="absolute inset-0 flex items-center justify-center z-15 pointer-events-none">
-            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
-              <Play className="w-8 h-8 fill-white mr-1" />
+            <div className="w-16 h-16 rounded-full bg-black/55 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-2xl transition-transform hover:scale-105">
+              <Play className="w-8 h-8 fill-white ml-1" />
             </div>
           </div>
         )}

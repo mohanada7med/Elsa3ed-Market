@@ -796,6 +796,13 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         playsInline
                         preload="metadata"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const v = e.currentTarget;
+                          if (v.src !== videoUrl) {
+                            v.src = videoUrl;
+                            v.load();
+                          }
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-gray-400 bg-gray-900">

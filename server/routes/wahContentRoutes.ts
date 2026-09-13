@@ -717,6 +717,21 @@ router.delete('/villages/:id', requireAdmin, async (req: AuthenticatedRequest, r
 // 3. HERITAGE PLACES (المعالم والمزارات التراثية)
 // ==========================================
 
+function normalizePlaceMedia<T extends { coverImage?: string; imageUrl?: string; gallery?: string[]; galleryImages?: string[] }>(place: T | null): T | null {
+  if (!place) return null;
+  const cover = place.coverImage?.trim() || place.imageUrl?.trim();
+  if (cover) {
+    const gallery = Array.isArray(place.gallery) ? [...place.gallery] : [];
+    const exists = gallery.some((img: string) => img === cover || img.split('?')[0] === cover.split('?')[0]);
+    if (!exists) {
+      gallery.unshift(cover);
+      place.gallery = gallery;
+      place.galleryImages = gallery;
+    }
+  }
+  return place;
+}
+
 router.get('/places', async (req: Request, res: Response) => {
   try {
     const { governorate, category, search, status } = req.query;
@@ -738,7 +753,8 @@ router.get('/places', async (req: Request, res: Response) => {
       if (search && typeof search === 'string') {
         query.title = { $regex: search, $options: 'i' };
       }
-      const places = await db.collection<HeritagePlaceDoc>('wah_heritage_places').find(query).toArray();
+      const rawPlaces = await db.collection<HeritagePlaceDoc>('wah_heritage_places').find(query).toArray();
+      const places = rawPlaces.map((p) => normalizePlaceMedia(p));
       const responseData = { success: true, count: places.length, data: places };
       setWahCache(cacheKey, responseData, 300);
       return res.json(responseData);
@@ -748,7 +764,8 @@ router.get('/places', async (req: Request, res: Response) => {
     if (governorate) list = list.filter((p) => p.governorateName === governorate || p.governorateId === governorate);
     if (category) list = list.filter((p) => p.category === category);
     if (status) list = list.filter((p) => p.status === status);
-    const responseData = { success: true, count: list.length, data: list };
+    const places = list.map((p) => normalizePlaceMedia(p));
+    const responseData = { success: true, count: places.length, data: places };
     setWahCache(cacheKey, responseData, 300);
     return res.json(responseData);
   } catch (err: any) {
@@ -781,6 +798,7 @@ router.get('/places/:slugOrId', async (req: Request, res: Response) => {
     }
 
     if (!place) return res.status(404).json({ success: false, error: 'المعلم التراثي غير موجود' });
+    place = normalizePlaceMedia(place);
     const responseData = { success: true, data: place };
     setWahCache(cacheKey, responseData, 300);
     return res.json(responseData);
@@ -828,6 +846,9 @@ router.post('/places', requireAdmin, async (req: AuthenticatedRequest, res: Resp
     }
     if (!item.visitDuration) item.visitDuration = '';
 
+    // Normalize cover image to also be present in gallery
+    normalizePlaceMedia(item);
+
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       await db.collection('wah_heritage_places').updateOne({ id: item.id }, { $set: item }, { upsert: true });
@@ -861,6 +882,7 @@ router.put('/places/:id', requireAdmin, async (req: AuthenticatedRequest, res: R
     const { id } = req.params;
     const updateData = { ...req.body, updatedAt: new Date().toISOString() };
     delete updateData._id;
+    normalizePlaceMedia(updateData);
 
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {

@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import WahIntro from '../src/components/WahIntro';
 
 const App = dynamic(() => import('../src/App'), {
+  ssr: false,
+});
+
+const WahIntro = dynamic(() => import('../src/components/WahIntro'), {
   ssr: false,
 });
 
@@ -16,30 +19,26 @@ export default function ClientApp() {
   const [introPhase, setIntroPhase] = useState<'idle' | 'loading_pillars'>('idle');
 
   useEffect(() => {
-    setMounted(true);
-
     try {
-      const hasVisited = sessionStorage.getItem(SESSION_KEY);
-      if (hasVisited === 'true') {
-        // لو عمل Refresh: يدخل على التحميل المباشر
+      if (sessionStorage.getItem(SESSION_KEY) === 'true') {
         setIntroPhase('loading_pillars');
-      } else {
-        // أول دخول للتبويب: التجربة الكاملة بالزرار والصوت
-        setIntroPhase('idle');
       }
     } catch {
-      setIntroPhase('idle');
+      // ignore
     }
+    setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
-      {/* الـ App بدون أي wrapper أو transform عشان الـ fixed elements (Bottom Bar) ترجع مكانها الطبيعي فوراً */}
+      {/* تطبيق وه الأساسي يُحمَّل في الخلفية فوراً دون تأخير */}
       <App />
 
-      {/* الـ Intro تظهر كـ Overlay فوق الموقع */}
+      {/* شاشة البداية وه كطبقة علوية سلسة وسريعة */}
       {showIntro && (
         <WahIntro
           initialPhase={introPhase}

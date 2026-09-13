@@ -300,6 +300,13 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       className="w-full h-full object-cover"
                       onPlay={() => setIsPlaying(true)}
                       onPause={() => setIsPlaying(false)}
+                      onError={(e) => {
+                        const v = e.currentTarget;
+                        if (v.src !== videoUrl) {
+                          v.src = videoUrl;
+                          v.load();
+                        }
+                      }}
                     />
                     <button
                       type="button"
