@@ -116,7 +116,6 @@ export const CraftReelsSection: React.FC = () => {
                   وه
                 </span>
               </h1>
-
               {/* الشرح والمؤشر */}
               <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
                 <div className="hidden sm:block">
