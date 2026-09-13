@@ -83,7 +83,7 @@ export const FeaturedSellers: React.FC = () => {
             className="overflow-hidden cursor-pointer group bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col rounded-[1.5rem] transition-all"
           >
             {/* Cover Image */}
-            <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-white/5">
+            <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-#FFF6EB/5">
               <img
                 src={seller.coverImage}
                 alt={seller.brandName}
@@ -117,7 +117,7 @@ export const FeaturedSellers: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl text-xs font-black text-[#211d18] dark:text-[#f5f0e7]">
+                  <div className="flex items-center gap-1 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl text-xs font-black text-[#211d18] dark:text-[#f5f0e7]">
                     <Star className="w-3.5 h-3.5  text-[#d6aa72]" />
                     <span>{seller.rating}</span>
                     <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">

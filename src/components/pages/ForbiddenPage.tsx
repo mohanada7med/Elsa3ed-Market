@@ -15,14 +15,14 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
   const defaultTitle = isShoppingRoute && currentRole === 'seller'
     ? 'سلة المشتريات مش متاحة لحسابات البائعين'
     : isShoppingRoute && currentRole === 'admin'
-    ? 'سلة المشتريات مش متاحة لحسابات الإدارة'
-    : title || 'الصفحة دي مقفولة عليك';
+      ? 'سلة المشتريات مش متاحة لحسابات الإدارة'
+      : title || 'الصفحة دي مقفولة عليك';
 
   const defaultMessage = isShoppingRoute && currentRole === 'seller'
     ? 'سلة المشتريات والشوبينج معمولة للمشترين بس. تقدر تدير منتجاتك ومخزونك ومبيعاتك من لوحة تحكم ورشتك.'
     : isShoppingRoute && currentRole === 'admin'
-    ? 'سلة الشراء مخصصة للزبائن والمشترين بس. تقدر تتابع الشغل والعمليات من لوحة الإدارة.'
-    : message || 'القسم ده محتاج صلاحيات تانية عشان تدخله.';
+      ? 'سلة الشراء مخصصة للزبائن والمشترين بس. تقدر تتابع الشغل والعمليات من لوحة الإدارة.'
+      : message || 'القسم ده محتاج صلاحيات تانية عشان تدخله.';
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-5 sm:px-8 py-16" dir="rtl">
@@ -49,7 +49,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-seller-dashboard-btn"
               onClick={() => setActivePage('seller-dashboard')}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Store className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الورشة</span>
@@ -59,7 +59,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-admin-dashboard-btn"
               onClick={() => setActivePage('admin-dashboard')}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Shield className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الإدارة</span>
@@ -69,7 +69,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-login-btn"
               onClick={() => setIsAuthModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <LogIn className="w-4 h-4" aria-hidden="true" />
               <span>ادخل بحساب مشتري</span>
@@ -80,7 +80,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
             type="button"
             id="forbidden-home-btn"
             onClick={() => setActivePage('home')}
-            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors text-sm cursor-pointer border border-black/10 dark:border-white/10"
+            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors text-sm cursor-pointer border border-black/10 dark:border-white/10"
           >
             <Home className="w-4 h-4" aria-hidden="true" />
             <span>ارجع للرئيسية</span>

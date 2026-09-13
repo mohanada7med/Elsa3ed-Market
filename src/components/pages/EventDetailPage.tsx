@@ -254,7 +254,7 @@ export const EventDetailPage: React.FC = () => {
               bg-white/60
 
               dark:border-white/10
-              dark:bg-white/[0.03]
+              dark:bg-#FFF6EB/[0.03]
             "
           >
             <Compass
@@ -303,7 +303,7 @@ export const EventDetailPage: React.FC = () => {
               transition
               hover:-translate-y-0.5
 
-              dark:bg-white
+              dark:bg-#FFF6EB
               dark:text-black
 
               cursor-pointer
@@ -437,7 +437,7 @@ export const EventDetailPage: React.FC = () => {
                 group-hover:text-white
 
                 dark:border-white/10
-                dark:bg-white/[0.035]
+                dark:bg-#FFF6EB/[0.035]
 
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
@@ -1363,7 +1363,7 @@ export const EventDetailPage: React.FC = () => {
   rounded-full
   bg-[#211d18]
   text-white
-  dark:bg-white
+  dark:bg-#FFF6EB
   dark:text-[#211d18]
   transition-all
   duration-300
@@ -1521,7 +1521,7 @@ export const EventDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('events')}
-                  className="mt-6 inline-flex items-center gap-3 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] px-5 py-3.5 text-[10px] font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"
+                  className="mt-6 inline-flex items-center gap-3 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-[#211d18] px-5 py-3.5 text-[10px] font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"
                 >
                   كل الفعاليات
                   <ArrowLeft size={14} />

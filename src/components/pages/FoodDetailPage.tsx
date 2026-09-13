@@ -80,7 +80,7 @@ export const FoodDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('food')}
-            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
+            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             الرجوع لكل أكلات الصعيد
           </button>
@@ -192,7 +192,7 @@ export const FoodDetailPage: React.FC = () => {
                 {food.ingredients?.map((ing, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-xs font-semibold flex items-center gap-2.5 text-[#211d18] dark:text-[#f5f0e7]"
+                    className="p-3 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/5 dark:border-white/5 text-xs font-semibold flex items-center gap-2.5 text-[#211d18] dark:text-[#f5f0e7]"
                   >
                     <span className="w-2 h-2 rounded-full bg-[#9a6a35]" />
                     <span>{ing}</span>
@@ -212,7 +212,7 @@ export const FoodDetailPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigateToGovernorate(food.governorateId || 'qena')}
-                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <span>دليل محافظة {food.governorateName}</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

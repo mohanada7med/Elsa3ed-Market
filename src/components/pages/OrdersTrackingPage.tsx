@@ -154,7 +154,7 @@ export const OrdersTrackingPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="px-7 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all hover:scale-[1.02]"
+            className="px-7 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all hover:scale-[1.02]"
           >
             استكشف سوق وه
           </button>
@@ -179,30 +179,28 @@ export const OrdersTrackingPage: React.FC = () => {
                       setSelectedOrder(ord);
                       navigateToOrder(ord.id);
                     }}
-                    className={`p-4 rounded-[1.5rem] border cursor-pointer transition-all duration-200 ${
-                      isSelected
+                    className={`p-4 rounded-[1.5rem] border cursor-pointer transition-all duration-200 ${isSelected
                         ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]'
                         : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10 hover:border-[#9a6a35]/50'
-                    } ${isCancelled ? 'opacity-75' : ''}`}
+                      } ${isCancelled ? 'opacity-75' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-mono font-bold text-xs text-[#9a6a35] dark:text-[#d5a56d]">
                         {ord.orderNumber || ord.id}
                       </span>
                       <span
-                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                          ord.status === 'delivered'
+                        className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${ord.status === 'delivered'
                             ? 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20'
                             : ord.status === 'shipped'
-                            ? 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20'
-                            : ord.status === 'processing'
-                            ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
-                            : ord.status === 'confirmed'
-                            ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30'
-                            : ord.status === 'cancelled'
-                            ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300 border border-rose-500/20'
-                            : 'bg-black/5 text-[#211d18] dark:bg-white/10 dark:text-[#f5f0e7]'
-                        }`}
+                              ? 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20'
+                              : ord.status === 'processing'
+                                ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
+                                : ord.status === 'confirmed'
+                                  ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30'
+                                  : ord.status === 'cancelled'
+                                    ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300 border border-rose-500/20'
+                                    : 'bg-black/5 text-[#211d18] dark:bg-#FFF6EB/10 dark:text-[#f5f0e7]'
+                          }`}
                       >
                         {ord.status === 'cancelled'
                           ? 'ملغي'
@@ -285,24 +283,22 @@ export const OrdersTrackingPage: React.FC = () => {
                         return (
                           <div key={step.status} className="relative flex items-start gap-3">
                             <div
-                              className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 -mr-6.5 ${
-                                isPastOrCurrent
+                              className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 -mr-6.5 ${isPastOrCurrent
                                   ? 'bg-[#9a6a35] text-white ring-4 ring-[#9a6a35]/20'
-                                  : 'bg-black/10 dark:bg-white/10 text-stone-400'
-                              }`}
+                                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-stone-400'
+                                }`}
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
                             </div>
 
                             <div className="flex-1">
                               <h5
-                                className={`text-xs font-bold ${
-                                  isCurrent
+                                className={`text-xs font-bold ${isCurrent
                                     ? 'text-[#9a6a35] dark:text-[#d5a56d]'
                                     : isPastOrCurrent
-                                    ? 'text-[#211d18] dark:text-[#f5f0e7]'
-                                    : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
-                                }`}
+                                      ? 'text-[#211d18] dark:text-[#f5f0e7]'
+                                      : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
+                                  }`}
                               >
                                 {step.label}
                               </h5>
@@ -316,7 +312,7 @@ export const OrdersTrackingPage: React.FC = () => {
                 )}
 
                 {/* Shipping Destination Box */}
-                <div className="bg-black/5 dark:bg-white/5 p-4 rounded-[1.5rem] border border-black/10 dark:border-white/10 text-xs text-[#211d18] dark:text-[#f5f0e7] space-y-2">
+                <div className="bg-black/5 dark:bg-#FFF6EB/5 p-4 rounded-[1.5rem] border border-black/10 dark:border-white/10 text-xs text-[#211d18] dark:text-[#f5f0e7] space-y-2">
                   <div className="flex items-center gap-2 font-bold text-[#211d18] dark:text-[#f5f0e7]">
                     <MapPin className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
                     <span>

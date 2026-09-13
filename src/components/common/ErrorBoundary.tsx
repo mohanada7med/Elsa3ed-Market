@@ -61,7 +61,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 id="error-reload-btn"
                 type="button"
                 onClick={this.handleReload}
-                className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>إعادة تحميل الصفحة</span>
@@ -71,7 +71,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 id="error-home-btn"
                 type="button"
                 onClick={this.handleGoHome}
-                className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-5 py-3 rounded-xl font-black transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-5 py-3 rounded-xl font-black transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
               >
                 <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>العودة للرئيسية</span>

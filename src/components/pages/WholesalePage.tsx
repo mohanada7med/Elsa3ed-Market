@@ -198,7 +198,7 @@ export const WholesalePage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tier 1 */}
           <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg space-y-4 relative">
-            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
+            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الأولى: كميات صغيرة
             </div>
             <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">من 5 إلى 15 قطعة</h3>
@@ -253,7 +253,7 @@ export const WholesalePage: React.FC = () => {
 
           {/* Tier 3 */}
           <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl p-6 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg space-y-4">
-            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
+            <div className="inline-block px-3 py-1 rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold border border-black/5 dark:border-white/5">
               الشريحة الكبرى: توريدات وتصدير
             </div>
             <h3 className="text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">أكثر من 50 قطعة</h3>
@@ -297,7 +297,7 @@ export const WholesalePage: React.FC = () => {
             </p>
 
             {/* Direct Contact Card */}
-            <div className="p-5 bg-black/5 dark:bg-white/5 rounded-[1.5rem] border border-black/10 dark:border-white/10 space-y-3">
+            <div className="p-5 bg-black/5 dark:bg-#FFF6EB/5 rounded-[1.5rem] border border-black/10 dark:border-white/10 space-y-3">
               <p className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d]">أو تواصل معنا مباشرة:</p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
@@ -334,7 +334,7 @@ export const WholesalePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl transition-colors cursor-pointer"
+                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl transition-colors cursor-pointer"
                 >
                   إرسال طلب إضافي
                 </button>
@@ -352,7 +352,7 @@ export const WholesalePage: React.FC = () => {
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="مثال: فندق قصر النيل، بازار الأقصر..."
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                     />
                   </div>
 
@@ -366,7 +366,7 @@ export const WholesalePage: React.FC = () => {
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
                       placeholder="الاسم الثلاثي"
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                     />
                   </div>
                 </div>
@@ -382,7 +382,7 @@ export const WholesalePage: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="01XXXXXXXXX"
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 font-mono"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 font-mono"
                     />
                   </div>
 
@@ -393,7 +393,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={businessType}
                       onChange={(e) => setBusinessType(e.target.value)}
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       {businessTypes.map((b) => (
                         <option key={b.id} value={b.id}>
@@ -412,7 +412,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={governorate}
                       onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       <option value="القاهرة">القاهرة</option>
                       <option value="الجيزة">الجيزة</option>
@@ -437,7 +437,7 @@ export const WholesalePage: React.FC = () => {
                     <select
                       value={estimatedQuantity}
                       onChange={(e) => setEstimatedQuantity(e.target.value)}
-                      className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
+                      className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20 cursor-pointer"
                     >
                       <option value="5-15 قطعة (شريحة أولى)">5 - 15 قطعة (خصم 15%)</option>
                       <option value="16-50 قطعة (شريحة ثانية)">16 - 50 قطعة (خصم 25%)</option>
@@ -460,11 +460,10 @@ export const WholesalePage: React.FC = () => {
                           key={cat}
                           type="button"
                           onClick={() => toggleCategory(cat)}
-                          className={`text-xs px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${
-                            isSelected
+                          className={`text-xs px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${isSelected
                               ? 'bg-[#9a6a35] text-white border-[#9a6a35] font-bold shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
-                          }`}
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
+                            }`}
                         >
                           {isSelected && '✓ '}
                           {cat}
@@ -483,14 +482,14 @@ export const WholesalePage: React.FC = () => {
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="اكتب أي متطلبات خاصة بالقطع أو تفضيلات الألوان..."
-                    className="w-full text-xs bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
+                    className="w-full text-xs bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] px-4 py-3 rounded-[1rem] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-2 focus:ring-[#9a6a35]/20"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 px-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[50px]"
+                  className="w-full py-4 px-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[50px]"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'جاري التجهيز...' : 'إرسال طلب عرض السعر ومتابعته عبر واتساب'}</span>

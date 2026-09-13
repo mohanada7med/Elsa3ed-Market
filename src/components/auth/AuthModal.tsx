@@ -628,7 +628,7 @@ export const AuthModal: React.FC = () => {
     focus:ring-4
     focus:ring-[#9a6a35]/10
     dark:border-white/10
-    dark:bg-white/5
+    dark:bg-#FFF6EB/5
     dark:text-[#f5f0e7]
     dark:placeholder:text-white/30
     dark:focus:border-[#9a6a35]
@@ -668,7 +668,7 @@ export const AuthModal: React.FC = () => {
     rounded-2xl
     bg-[#211d18]
     text-white
-    dark:bg-white
+    dark:bg-#FFF6EB
     dark:text-black
     px-4
     sm:px-5
@@ -829,7 +829,7 @@ export const AuthModal: React.FC = () => {
               hover:bg-[#9a6a35]
               hover:text-white
               dark:border-white/10
-              dark:bg-white/5
+              dark:bg-#FFF6EB/5
               dark:text-[#f5f0e7]
               dark:hover:border-[#9a6a35]
               dark:hover:bg-[#9a6a35]
@@ -1042,7 +1042,7 @@ export const AuthModal: React.FC = () => {
                     p-4
                     sm:p-5
                     dark:border-white/10
-                    dark:bg-white/5
+                    dark:bg-#FFF6EB/5
                     backdrop-blur-xl
                   "
                 >
@@ -1173,7 +1173,7 @@ export const AuthModal: React.FC = () => {
                     bg-white/50
                     p-1
                     dark:border-white/10
-                    dark:bg-white/5
+                    dark:bg-#FFF6EB/5
                     backdrop-blur-xl
                   "
                 >
@@ -1202,7 +1202,7 @@ export const AuthModal: React.FC = () => {
                         ? `
                               bg-[#211d18]
                               text-white
-                              dark:bg-white
+                              dark:bg-#FFF6EB
                               dark:text-black
                               shadow-md
                             `
@@ -1244,7 +1244,7 @@ export const AuthModal: React.FC = () => {
                         ? `
                               bg-[#211d18]
                               text-white
-                              dark:bg-white
+                              dark:bg-#FFF6EB
                               dark:text-black
                               shadow-md
                             `
@@ -1545,7 +1545,7 @@ export const AuthModal: React.FC = () => {
                                     border-black/10
                                     dark:border-white/10
                                     bg-white/60
-                                    dark:bg-white/5
+                                    dark:bg-#FFF6EB/5
                                     text-black/70
                                     dark:text-white/70
                                     hover:border-[#9a6a35]/40
@@ -1598,7 +1598,7 @@ export const AuthModal: React.FC = () => {
                                     border-[#211d18]
                                     dark:border-white
                                     bg-[#211d18]/10
-                                    dark:bg-white/10
+                                    dark:bg-#FFF6EB/10
                                     text-[#211d18]
                                     dark:text-white
                                     shadow-sm
@@ -1607,7 +1607,7 @@ export const AuthModal: React.FC = () => {
                                     border-black/10
                                     dark:border-white/10
                                     bg-white/60
-                                    dark:bg-white/5
+                                    dark:bg-#FFF6EB/5
                                     text-black/70
                                     dark:text-white/70
                                     hover:border-black/30
@@ -1616,7 +1616,7 @@ export const AuthModal: React.FC = () => {
                           `}
                         >
                           {roleType === 'seller' && (
-                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black">
+                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black">
                               <Check size={13} />
                             </span>
                           )}
@@ -1649,7 +1649,7 @@ export const AuthModal: React.FC = () => {
                         p-3
                         sm:p-4
                         dark:border-white/10
-                        dark:bg-white/5
+                        dark:bg-#FFF6EB/5
                         backdrop-blur-xl
                       "
                     >
@@ -1672,7 +1672,7 @@ export const AuthModal: React.FC = () => {
                           overflow-hidden
                           rounded-2xl
                           bg-black/5
-                          dark:bg-white/5
+                          dark:bg-#FFF6EB/5
                           cursor-pointer
                         "
                         aria-label="اختيار صورة الحساب"
@@ -2233,4 +2233,4 @@ export function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
   );
 }
 
-export default AuthModal;
+export default AuthModal;

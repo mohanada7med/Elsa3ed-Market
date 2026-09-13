@@ -234,7 +234,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="اكتب 6 خانات على الأقل"
-                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
+                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
                     required
                     autoComplete="new-password"
                   />
@@ -261,7 +261,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="أعد كتابة كلمة السر الجديدة"
-                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
+                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
                     required
                     autoComplete="new-password"
                   />
@@ -277,7 +277,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               </div>
 
               {/* Requirements Hint */}
-              <div className="rounded-xl bg-black/5 dark:bg-white/5 p-3 text-[11px] sm:text-xs text-black/60 dark:text-white/60 space-y-1.5">
+              <div className="rounded-xl bg-black/5 dark:bg-#FFF6EB/5 p-3 text-[11px] sm:text-xs text-black/60 dark:text-white/60 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={14} className={password.length >= 6 ? 'text-emerald-500' : 'text-black/30 dark:text-white/30'} />
                   <span className={password.length >= 6 ? 'text-emerald-700 dark:text-emerald-400 font-semibold' : ''}>

@@ -44,7 +44,7 @@ export default function ErrorPage({
           <Link
             id="app-error-home-btn"
             href="/"
-            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-5 py-2.5 rounded-xl font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-5 py-2.5 rounded-xl font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
           >
             <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>العودة للرئيسية</span>

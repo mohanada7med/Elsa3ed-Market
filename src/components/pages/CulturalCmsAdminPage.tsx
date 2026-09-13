@@ -270,7 +270,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               setAuthModalTab('login');
               setIsAuthModalOpen(true);
             }}
-            className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+            className="w-full py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
           >
             تسجيل الدخول الإداري
           </button>
@@ -388,14 +388,14 @@ export const CulturalCmsAdminPage: React.FC = () => {
     }
     if (status === 'archived') {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-white/5 dark:text-white/60 border border-black/10 dark:border-white/10">
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-#FFF6EB/5 dark:text-white/60 border border-black/10 dark:border-white/10">
           <Archive className="w-3 h-3" />
           <span>مؤرشف</span>
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-white/5 dark:text-white/60 border border-black/10 dark:border-white/10">
+      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-black/5 text-black/60 dark:bg-#FFF6EB/5 dark:text-white/60 border border-black/10 dark:border-white/10">
         <span>مسودة</span>
       </span>
     );
@@ -427,7 +427,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
       {!selectedGovId && (
         <div className="space-y-8 animate-fadeIn">
           {/* Header banner */}
-          <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-black/10 dark:border-white/10 backdrop-blur-xl">
+          <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-black/10 dark:border-white/10 backdrop-blur-xl">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] uppercase tracking-wider">
                 <Landmark className="w-4 h-4" />
@@ -449,7 +449,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   setEditingItem(null);
                   setIsEditModalOpen(true);
                 }}
-                className="flex items-center gap-2 px-5 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-5 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>توثيق محافظة جديدة</span>
@@ -457,7 +457,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('admin-dashboard')}
-                className="flex items-center gap-2 px-4 py-3 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 rounded-xl text-xs font-bold transition-all cursor-pointer border border-black/10 dark:border-white/10"
+                className="flex items-center gap-2 px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10 rounded-xl text-xs font-bold transition-all cursor-pointer border border-black/10 dark:border-white/10"
               >
                 <span>لوحة المتجر</span>
               </button>
@@ -473,7 +473,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 value={globalGovSearch}
                 onChange={(e) => setGlobalGovSearch(e.target.value)}
                 placeholder="ابحث عن محافظة، معلم، حرفة..."
-                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs rounded-xl pr-10 pl-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
 
@@ -482,7 +482,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <select
                 value={govStatusFilter}
                 onChange={(e) => setGovStatusFilter(e.target.value)}
-                className="bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none font-bold cursor-pointer"
+                className="bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none font-bold cursor-pointer"
               >
                 <option value="all">كافة المحافظات ({governorates.length})</option>
                 <option value="approved">معتمدة ومنشورة</option>
@@ -493,7 +493,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <button
                 type="button"
                 onClick={loadGovernorates}
-                className="p-2.5 bg-black/[0.035] dark:bg-white/[0.04] hover:bg-black/10 rounded-xl border border-black/10 dark:border-white/10 text-xs text-black/70 dark:text-white/70 cursor-pointer"
+                className="p-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] hover:bg-black/10 rounded-xl border border-black/10 dark:border-white/10 text-xs text-black/70 dark:text-white/70 cursor-pointer"
                 title="تحديث البيانات"
               >
                 <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -554,7 +554,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                           {gov.famousFor.slice(0, 3).map((feat, idx) => (
                             <span
                               key={idx}
-                              className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10"
+                              className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10"
                             >
                               {feat}
                             </span>
@@ -574,7 +574,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedGovId(gov.id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       <span>دخول لوحة إدارة {gov.name}</span>
                       <ChevronLeft className="w-4 h-4" />
@@ -626,7 +626,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <select
                   value={selectedGovId}
                   onChange={(e) => setSelectedGovId(e.target.value)}
-                  className="bg-black/[0.035] dark:bg-white/[0.04] text-xs font-bold rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
+                  className="bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs font-bold rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
                 >
                   {governorates.map((g) => (
                     <option key={g.id} value={g.id}>
@@ -639,7 +639,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsActionCenterOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة محتوى سريع</span>
@@ -749,11 +749,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setSelectedIds([]);
                     setInternalSearch('');
                   }}
-                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                  className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${isActive
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                       : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span>{tab.label}</span>
@@ -764,7 +763,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
           {/* Bulk Actions Floating Bar (Active when items are selected) */}
           {selectedIds.length > 0 && (
-            <div className="bg-[#211d18] text-white dark:bg-white dark:text-black p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
+            <div className="bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <CheckSquare className="w-4 h-4 text-[#9a6a35]" />
                 <span>تم تحديد {selectedIds.length} عنصر</span>
@@ -824,7 +823,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   value={internalSearch}
                   onChange={(e) => setInternalSearch(e.target.value)}
                   placeholder={`البحث داخل محتوى ${activeGov.name}...`}
-                  className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl pr-10 pl-4 py-2 border border-black/10 dark:border-white/10 outline-none"
+                  className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs rounded-xl pr-10 pl-4 py-2 border border-black/10 dark:border-white/10 outline-none"
                 />
               </div>
 
@@ -842,7 +841,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setEditingItem(null);
                     setIsEditModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>إضافة عنصر في هذا القسم</span>
@@ -868,7 +867,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setEditingItem(activeGov);
                     setIsEditModalOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Edit className="w-4 h-4" />
                   <span>تحرير الحقول</span>
@@ -879,38 +878,38 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <div className="space-y-3">
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الاسم بالعربية:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl font-bold">{activeGov.name}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl font-bold">{activeGov.name}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">اللقب الشعبي والتاريخي:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl">{activeGov.nickname || 'غير محدد'}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">العاصمة الإقليمية:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl font-bold">{activeGov.capitalCity || activeGov.name}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الإقليم الجغرافي:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl">{activeGov.region || 'صعيد مصر'}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">الموقع النيلي:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl">{activeGov.nileSegment || 'مجرى النيل الخالد'}</div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">المقدمة والنبذة الموجزة:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl leading-relaxed">{activeGov.shortIntro}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">العمق التاريخي والتراثي:</span>
-                    <div className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl leading-relaxed">{activeGov.history}</div>
+                    <div className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl leading-relaxed">{activeGov.history}</div>
                   </div>
                   <div>
                     <span className="font-bold text-black/50 dark:text-white/50 block mb-1">أبرز ما تشتهر به المحافظة:</span>
-                    <div className="flex flex-wrap gap-1.5 p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl">
+                    <div className="flex flex-wrap gap-1.5 p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl">
                       {activeGov.famousFor?.map((f, i) => (
                         <span key={i} className="px-2 py-0.5 bg-white dark:bg-[#151513] rounded-md font-bold text-[#9a6a35]">
                           {f}
@@ -942,7 +941,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                    className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة مدينة</span>
@@ -954,7 +953,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {cities.map((city) => (
-                      <div key={city.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                      <div key={city.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-sm">{city.name}</h4>
                           <button
@@ -986,7 +985,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                    className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة قرية</span>
@@ -998,7 +997,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {villages.map((v) => (
-                      <div key={v.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                      <div key={v.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-sm">{v.name}</h4>
                           <button
@@ -1067,9 +1066,8 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       return (
                         <div
                           key={place.id}
-                          className={`bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border transition-all p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between ${
-                            isChecked ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/20' : 'border-black/10 dark:border-white/10'
-                          }`}
+                          className={`bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border transition-all p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between ${isChecked ? 'border-[#9a6a35] ring-2 ring-[#9a6a35]/20' : 'border-black/10 dark:border-white/10'
+                            }`}
                         >
                           <div>
                             <div className="flex items-start justify-between gap-2 mb-3">
@@ -1100,7 +1098,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                             </p>
                             <div className="flex flex-wrap gap-1.5 mb-2">
                               {place.locationName && (
-                                <span className="text-[10px] text-black/60 dark:text-white/60 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-md flex items-center gap-1">
+                                <span className="text-[10px] text-black/60 dark:text-white/60 bg-black/5 dark:bg-#FFF6EB/5 px-2 py-0.5 rounded-md flex items-center gap-1">
                                   <MapPin className="w-2.5 h-2.5 text-[#9a6a35]" />
                                   <span>{place.locationName}</span>
                                 </span>
@@ -1423,7 +1421,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                    className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة موسم</span>
@@ -1435,7 +1433,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {seasons.map((s) => (
-                      <div key={s.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                      <div key={s.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
                             {s.startPeriod} - {s.endPeriod}
@@ -1470,7 +1468,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                    className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 rounded-xl text-xs font-bold text-[#9a6a35] flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>إضافة فعالية</span>
@@ -1482,7 +1480,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {events.map((ev) => (
-                      <div key={ev.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-2">
+                      <div key={ev.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] text-[#9a6a35] font-bold">{ev.eventDate}</span>
                           <button
@@ -1524,7 +1522,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {products.map((prod) => (
-                      <div key={prod.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 flex items-center gap-3">
+                      <div key={prod.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 flex items-center gap-3">
                         <img
                           src={prod.images?.[0] || 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200'}
                           alt={prod.title}
@@ -1571,7 +1569,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               {/* Coordinates list */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
                 {places.map((p) => (
-                  <div key={p.id} className="p-3 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl text-xs space-y-1 border border-black/10 dark:border-white/10">
+                  <div key={p.id} className="p-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl text-xs space-y-1 border border-black/10 dark:border-white/10">
                     <div className="font-bold truncate">{p.title}</div>
                     <div className="text-[10px] text-black/50 dark:text-white/50">
                       إحداثيات: {p.coordinates ? `${p.coordinates.lat}, ${p.coordinates.lng}` : 'غير مدخلة'}
@@ -1656,7 +1654,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       setEditingItem(null);
                       setIsEditModalOpen(true);
                     }}
-                    className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
+                    className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] flex flex-col items-center justify-center text-center gap-2 transition-all cursor-pointer group"
                   >
                     <Icon className={`w-6 h-6 ${act.color} group-hover:scale-110 transition-transform`} />
                     <span className="text-xs font-bold leading-tight">{act.label}</span>
@@ -1813,7 +1811,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Link Craft <-> Artisan */}
-        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-4">
+        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
             <Hammer className="w-4 h-4 text-orange-500" />
             <span>ربط حرفة أصيلة بشيخ صنعة / حرفي</span>
@@ -1854,7 +1852,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
               type="button"
               disabled={isLinking || crafts.length === 0 || people.length === 0}
               onClick={handleLinkCraftArtisan}
-              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1862,7 +1860,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
         </div>
 
         {/* Link Story <-> Place */}
-        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 space-y-4">
+        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 space-y-4">
           <h4 className="text-sm font-bold flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-emerald-500" />
             <span>ربط قصة في "وه بيحكي" بمعلم تراثي</span>
@@ -1903,7 +1901,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
               type="button"
               disabled={isLinking || stories.length === 0 || places.length === 0}
               onClick={handleLinkStoryPlace}
-              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -1987,7 +1985,7 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
           {pendingItems.map((item) => (
             <div
               key={item.id}
-              className="p-4 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
+              className="p-4 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
@@ -2174,14 +2172,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               visitStatus === 'closed_to_public'
                 ? 'مغلق حالياً أمام الجمهور العام'
                 : visitStatus === 'closed_for_restoration'
-                ? 'مغلق للزيارة من الداخل (قيد الترميم والتحويل إلى متحف)'
-                : visitStatus === 'public_landmark'
-                ? 'ميدان ومعلم عام في الفضاء المفتوح'
-                : visitStatus === 'active_institution'
-                ? 'صرح تعليمي أزهري عامل ومسجد جامع'
-                : visitStatus === 'requires_safari_permit'
-                ? 'محمية صحراوية (سفاري بدليل وتصريح بيئي)'
-                : 'مفتوح ومتاح للزيارة الرسمية',
+                  ? 'مغلق للزيارة من الداخل (قيد الترميم والتحويل إلى متحف)'
+                  : visitStatus === 'public_landmark'
+                    ? 'ميدان ومعلم عام في الفضاء المفتوح'
+                    : visitStatus === 'active_institution'
+                      ? 'صرح تعليمي أزهري عامل ومسجد جامع'
+                      : visitStatus === 'requires_safari_permit'
+                        ? 'محمية صحراوية (سفاري بدليل وتصريح بيئي)'
+                        : 'مفتوح ومتاح للزيارة الرسمية',
             visitStatusNote: visitStatusNote.trim(),
             openingHours: openingHours.trim(),
             bestTimeToVisit: bestTimeToVisit.trim(),
@@ -2372,7 +2370,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: الدير المحرق، فن التلي، العيش الشمسي..."
-              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold focus:border-[#9a6a35]"
+              className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold focus:border-[#9a6a35]"
             />
           </div>
 
@@ -2383,7 +2381,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 value={selectedGovName}
                 onChange={(e) => setSelectedGovName(e.target.value)}
                 disabled={!!lockedGovernorate && !editingItem}
-                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold disabled:opacity-75 cursor-pointer"
+                className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold disabled:opacity-75 cursor-pointer"
               >
                 {governorates.map((g) => (
                   <option key={g.id} value={g.name}>
@@ -2400,7 +2398,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="مثال: معبد فرعوني، دير، نسيج حرير..."
-                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
           </div>
@@ -2420,7 +2418,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           {/* Video and Gallery uploaders for places, crafts, and stories */}
           {(entityType === 'place' || entityType === 'craft' || entityType === 'story') && (
             <div className="space-y-4 pt-2 border-t border-black/10 dark:border-white/10">
-              <div className="bg-black/[0.02] dark:bg-white/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
+              <div className="bg-black/[0.02] dark:bg-#FFF6EB/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-[#9a6a35] flex items-center gap-1.5">
                     <Video className="w-4 h-4" />
@@ -2452,14 +2450,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                     entityType === 'craft'
                       ? 'فيديو الحرفة التوثيقي'
                       : entityType === 'story'
-                      ? 'فيديو القصة التوثيقي'
-                      : 'فيديو المعلم أو الموقع التوثيقي'
+                        ? 'فيديو القصة التوثيقي'
+                        : 'فيديو المعلم أو الموقع التوثيقي'
                   }
                   helperText="ارفع فيديو ليظهر في مشغل الفيديو ومعرض المكان أو الحرفة للزوار"
                 />
               </div>
 
-              <div className="bg-black/[0.02] dark:bg-white/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
+              <div className="bg-black/[0.02] dark:bg-#FFF6EB/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-[#9a6a35] flex items-center gap-1.5">
                     <ImageIcon className="w-4 h-4" />
@@ -2501,7 +2499,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 value={lat}
                 onChange={(e) => setLat(e.target.value)}
                 placeholder="27.1809"
-                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
             <div>
@@ -2512,7 +2510,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 value={lng}
                 onChange={(e) => setLng(e.target.value)}
                 placeholder="31.1837"
-                className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+                className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
               />
             </div>
           </div>
@@ -2535,7 +2533,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               value={shortDesc}
               onChange={(e) => setShortDesc(e.target.value)}
               placeholder="اكتب نبذة سريعة بالعامية المصرية البسيطة تجذب القارئ وتعرفه بالمكان أو الحكاية..."
-              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+              className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
 
@@ -2546,7 +2544,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               value={fullContent}
               onChange={(e) => setFullContent(e.target.value)}
               placeholder="اكتب الحكاية والتفاصيل بالعامية المصرية الطبيعية بدون مبالغة، زي ما أهل البلد بيحكوها..."
-              className="w-full bg-black/[0.035] dark:bg-white/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
+              className="w-full bg-black/[0.035] dark:bg-#FFF6EB/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-[#9a6a35]"
             />
           </div>
 
@@ -2917,7 +2915,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           )}
 
           {/* Verification and Sources Panel */}
-          <div className="bg-black/[0.035] dark:bg-white/[0.04] p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+          <div className="bg-black/[0.035] dark:bg-#FFF6EB/[0.04] p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
             <span className="text-xs font-black text-[#9a6a35] block">توثيق المصدر وحالة النشر (وفق معايير وه)</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -2967,7 +2965,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ في MongoDB'}</span>

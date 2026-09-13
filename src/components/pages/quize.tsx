@@ -920,7 +920,7 @@ export const DialectDictionaryPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-black/5 dark:bg-white/10">
+          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-black/5 dark:bg-#FFF6EB/10">
             <div
               className={`h-full transition-all duration-300 ${timeLeft <= 15 ? 'bg-rose-500' : 'bg-[#9a6a35] dark:bg-[#d6aa72]'
                 }`}
@@ -1102,7 +1102,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <MessageCircle size={15} />
                     واتساب
                   </button>
-                  
+
 
                   <button
                     type="button"
@@ -1138,7 +1138,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={startQuiz}
-                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#211d18] px-6 text-xs font-black text-white hover:bg-[#9a6a35] dark:bg-white dark:text-black dark:hover:bg-[#d6aa72] transition-colors cursor-pointer"
+                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#211d18] px-6 text-xs font-black text-white hover:bg-[#9a6a35] dark:bg-#FFF6EB dark:text-black dark:hover:bg-[#d6aa72] transition-colors cursor-pointer"
                 >
                   <RefreshCw size={14} />
                   جولة جديدة بأسئلة مختلفة

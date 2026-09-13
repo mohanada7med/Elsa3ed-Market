@@ -36,7 +36,7 @@ export const WAHInput = React.forwardRef<HTMLInputElement, WAHInputProps>(
             ref={ref}
             id={inputId}
             className={`w-full min-h-[44px] rounded-xl text-sm font-medium transition-all duration-200 outline-none ${renderedIcon ? 'pr-10 pl-3.5' : 'px-3.5'
-              } py-2.5 bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:placeholder:text-white/40 border ${error
+              } py-2.5 bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:placeholder:text-white/40 border ${error
                 ? 'border-rose-500 dark:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
                 : 'border-black/10 dark:border-white/10 focus:border-[#9a6a35] dark:focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 focus:bg-white dark:focus:bg-[#151513]'
               } ${className}`}
@@ -84,9 +84,9 @@ export const WAHTextarea = React.forwardRef<HTMLTextAreaElement, WAHTextareaProp
         <textarea
           ref={ref}
           id={textareaId}
-          className={`w-full min-h-[100px] rounded-xl text-sm font-medium p-3.5 transition-all duration-200 outline-none bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:placeholder:text-white/40 border ${error
-              ? 'border-rose-500 dark:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
-              : 'border-black/10 dark:border-white/10 focus:border-[#9a6a35] dark:focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 focus:bg-white dark:focus:bg-[#151513]'
+          className={`w-full min-h-[100px] rounded-xl text-sm font-medium p-3.5 transition-all duration-200 outline-none bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/40 dark:placeholder:text-white/40 border ${error
+            ? 'border-rose-500 dark:border-rose-500 focus:ring-2 focus:ring-rose-500/20'
+            : 'border-black/10 dark:border-white/10 focus:border-[#9a6a35] dark:focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 focus:bg-white dark:focus:bg-[#151513]'
             } ${className}`}
           {...props}
         />

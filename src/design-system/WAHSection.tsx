@@ -40,11 +40,10 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
   return (
     <section
       id={id}
-      className={`relative py-12 sm:py-16 lg:py-20 overflow-hidden ${
-        bgSurface
-          ? 'bg-black/5 dark:bg-white/5 border-y border-black/10 dark:border-white/10'
+      className={`relative py-12 sm:py-16 lg:py-20 overflow-hidden ${bgSurface
+          ? 'bg-black/5 dark:bg-#FFF6EB/5 border-y border-black/10 dark:border-white/10'
           : ''
-      } ${className}`}
+        } ${className}`}
     >
       {pattern && (
         <WAHPattern

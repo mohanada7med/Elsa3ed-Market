@@ -1006,7 +1006,7 @@ export const SellerDashboard: React.FC = () => {
         <div className="max-w-4xl mx-auto space-y-6">
           {sellerStatus === 'pending' && (
             <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
-              <div className="rounded-t-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
+              <div className="rounded-t-[2rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
                 <div className="absolute top-0 left-0 w-48 h-48 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
                 <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 border border-[#9a6a35]/30 flex items-center justify-center text-[#9a6a35] shrink-0 shadow-inner">
@@ -1027,7 +1027,7 @@ export const SellerDashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-6 sm:p-8 bg-black/[0.02] dark:bg-white/[0.02] border-b border-black/10 dark:border-white/10">
+              <div className="p-6 sm:p-8 bg-black/[0.02] dark:bg-#FFF6EB/[0.02] border-b border-black/10 dark:border-white/10">
                 <h2 className="text-xs font-bold text-black/60 dark:text-white/60 uppercase tracking-wider mb-4">
                   مراحل اعتماد وتوثيق الورشة
                 </h2>
@@ -1052,8 +1052,8 @@ export const SellerDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3.5 bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 rounded-2xl opacity-60">
-                    <div className="w-7 h-7 rounded-full bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60 flex items-center justify-center shrink-0 text-xs font-bold">
+                  <div className="flex items-start gap-3 p-3.5 bg-black/[0.02] dark:bg-#FFF6EB/[0.02] border border-black/10 dark:border-white/10 rounded-2xl opacity-60">
+                    <div className="w-7 h-7 rounded-full bg-black/10 dark:bg-#FFF6EB/10 text-black/60 dark:text-white/60 flex items-center justify-center shrink-0 text-xs font-bold">
                       3
                     </div>
                     <div>
@@ -1065,7 +1065,7 @@ export const SellerDashboard: React.FC = () => {
               </div>
 
               <div className="p-6 sm:p-8 space-y-6">
-                <div className="bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-5">
+                <div className="bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-5">
                   <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                     <Store className="w-4 h-4 text-[#9a6a35]" />
                     <span>بيانات الورشة المسجلة لدينا:</span>
@@ -1103,7 +1103,7 @@ export const SellerDashboard: React.FC = () => {
                     id="refresh-seller-status-btn"
                     onClick={fetchSellerReviewStatus}
                     disabled={isCheckingStatus}
-                    className="w-full sm:w-auto px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full sm:w-auto px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <RefreshCw className={`w-4 h-4 ${isCheckingStatus ? 'animate-spin' : ''}`} />
                     <span>{isCheckingStatus ? 'جاري التحقق...' : 'تحديث حالة الطلب الآن'}</span>
@@ -1156,7 +1156,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={fetchSellerReviewStatus}
-                    className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>إعادة التحقق من الحالة</span>
@@ -1208,7 +1208,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={fetchSellerReviewStatus}
-                    className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>إعادة التحقق من الحالة</span>
@@ -1359,7 +1359,7 @@ export const SellerDashboard: React.FC = () => {
               type="button"
               id="seller-add-product-btn"
               onClick={openAddProductModal}
-              className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
+              className="px-4 py-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>إضافة منتج جديد</span>
@@ -1373,7 +1373,7 @@ export const SellerDashboard: React.FC = () => {
         {/* LAYOUT 1: SIDEBAR */}
         {layoutMode === 'sidebar' && (
           <aside className="w-full lg:w-72 xl:w-80 shrink-0 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-4 space-y-4 shadow-xl sticky lg:top-4 z-20">
-            <div className="flex lg:hidden items-center justify-between p-2 bg-black/5 dark:bg-white/5 rounded-xl">
+            <div className="flex lg:hidden items-center justify-between p-2 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <Store className="w-4 h-4 text-[#9a6a35]" />
                 <span>{currentActiveItem?.label || 'لوحة الورشة'}</span>
@@ -1395,7 +1395,7 @@ export const SellerDashboard: React.FC = () => {
                 value={navSearchQuery}
                 onChange={(e) => setNavSearchQuery(e.target.value)}
                 placeholder="بحث في أدوات الورشة..."
-                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
               />
               {navSearchQuery && (
                 <button
@@ -1468,7 +1468,7 @@ export const SellerDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={openAddProductModal}
-                className="w-full py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+                className="w-full py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة قطعة جديدة</span>
@@ -1512,7 +1512,7 @@ export const SellerDashboard: React.FC = () => {
                       )}
                     </button>
 
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-2 bg-[#211d18] dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold whitespace-nowrap shadow-xl opacity-0 translate-x-2 group-hover/rail:opacity-100 group-hover/rail:translate-x-0 transition-all pointer-events-none z-50 flex items-center gap-2">
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-2 bg-[#211d18] dark:bg-#FFF6EB text-white dark:text-black rounded-xl text-xs font-bold whitespace-nowrap shadow-xl opacity-0 translate-x-2 group-hover/rail:opacity-100 group-hover/rail:translate-x-0 transition-all pointer-events-none z-50 flex items-center gap-2">
                       <span>{item.label}</span>
                       {item.badge !== undefined && (
                         <span className="bg-[#9a6a35] text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
@@ -1531,7 +1531,7 @@ export const SellerDashboard: React.FC = () => {
             <button
               type="button"
               onClick={() => handleLayoutChange('sidebar')}
-              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-[#9a6a35]/15 text-black/60 dark:text-white/60 hover:text-[#9a6a35] flex items-center justify-center text-xs transition-colors cursor-pointer"
+              className="w-10 h-10 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 hover:bg-[#9a6a35]/15 text-black/60 dark:text-white/60 hover:text-[#9a6a35] flex items-center justify-center text-xs transition-colors cursor-pointer"
               title="توسيع إلى شريط جانبي كامل"
             >
               <PanelLeft className="w-4 h-4" />
@@ -1565,7 +1565,7 @@ export const SellerDashboard: React.FC = () => {
                   value={navSearchQuery}
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder="بحث سريع في كل أدوات الورشة..."
-                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
                 />
                 {navSearchQuery && (
                   <button
@@ -1585,7 +1585,7 @@ export const SellerDashboard: React.FC = () => {
                 onClick={() => setActiveHubSection('all')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeHubSection === 'all'
                   ? 'bg-[#9a6a35] text-white shadow-xs'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                  : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
                   }`}
               >
                 جميع الأدوات ({allNavItems.length})
@@ -1599,11 +1599,11 @@ export const SellerDashboard: React.FC = () => {
                     onClick={() => setActiveHubSection(sec.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${isSelected
                       ? 'bg-[#9a6a35] text-white shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
                       }`}
                   >
                     <span>{sec.title}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-#FFF6EB/10'}`}>
                       {sec.items.length}
                     </span>
                   </button>
@@ -1671,7 +1671,7 @@ export const SellerDashboard: React.FC = () => {
                 </span>
               </div>
               {currentActiveItem && (
-                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
+                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-#FFF6EB/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
                   <span className="text-black/50 dark:text-white/50">القسم المعروض بالأسفل:</span>
                   <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem.label}</span>
                 </div>
@@ -1816,7 +1816,7 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-primary-add-card"
                 onClick={openAddProductModal}
-                className="p-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-2xl shadow-sm transition-all text-right flex items-center justify-between group cursor-pointer"
+                className="p-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-2xl shadow-sm transition-all text-right flex items-center justify-between group cursor-pointer"
               >
                 <div>
                   <span className="text-xs font-bold block">إضافة منتج</span>
@@ -1994,7 +1994,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveTab('inventory')}
-                    className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
+                    className="px-4 py-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
                   >
                     تحديث الجرد والمخزون
                   </button>
@@ -2023,7 +2023,7 @@ export const SellerDashboard: React.FC = () => {
                     type="button"
                     id="seller-tab-add-product"
                     onClick={openAddProductModal}
-                    className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
+                    className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     <span>إضافة قطعة جديدة</span>
@@ -2033,14 +2033,14 @@ export const SellerDashboard: React.FC = () => {
 
               <div className="space-y-4">
                 {sellerProducts.length === 0 ? (
-                  <div className="text-center py-12 border border-dashed border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] rounded-[1.5rem]">
+                  <div className="text-center py-12 border border-dashed border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-#FFF6EB/[0.02] rounded-[1.5rem]">
                     <Package className="w-10 h-10 text-black/40 dark:text-white/40 mx-auto mb-2 opacity-60" />
                     <p className="text-sm font-bold text-[#211d18] dark:text-[#f5f0e7]">لا توجد منتجات مسجلة حتى الآن</p>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-1">ابدأ بإضافة أول قطعة تراثية من ورشتك</p>
                     <button
                       type="button"
                       onClick={openAddProductModal}
-                      className="mt-4 px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
+                      className="mt-4 px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
                     >
                       إضافة منتج الآن
                     </button>
@@ -2053,7 +2053,7 @@ export const SellerDashboard: React.FC = () => {
                         ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/30'
                         : prod.approvalStatus === 'pending'
                           ? 'bg-amber-500/10 dark:bg-amber-500/15 border-amber-500/30'
-                          : 'bg-white/60 dark:bg-white/[0.03] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
+                          : 'bg-white/60 dark:bg-#FFF6EB/[0.03] border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40'
                         }`}
                     >
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -2081,7 +2081,7 @@ export const SellerDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => openStockModal(prod)}
-                            className="px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
+                            className="px-3 py-1.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-bold flex items-center gap-1.5 border border-black/10 dark:border-white/10 cursor-pointer transition-colors"
                           >
                             <Boxes className="w-3.5 h-3.5 text-[#9a6a35]" />
                             <span>تعديل المخزون ({prod.stockCount})</span>
@@ -2101,7 +2101,7 @@ export const SellerDashboard: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => openEditProductModal(prod)}
-                            className="p-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 transition-colors cursor-pointer"
+                            className="p-2 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 transition-colors cursor-pointer"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -2242,7 +2242,7 @@ export const SellerDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => openStockModal(prod)}
-                              className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
+                              className="px-4 py-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
                             >
                               <Boxes className="w-3.5 h-3.5" />
                               <span>تعديل الرصيد</span>
@@ -2273,12 +2273,12 @@ export const SellerDashboard: React.FC = () => {
 
               <div className="space-y-4">
                 {orders.length === 0 ? (
-                  <div className="p-8 text-center text-xs text-black/50 dark:text-white/50 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
+                  <div className="p-8 text-center text-xs text-black/50 dark:text-white/50 bg-black/[0.02] dark:bg-#FFF6EB/[0.02] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
                     لا توجد طلبات جديدة موجهة لمنتجاتك حالياً.
                   </div>
                 ) : (
                   orders.map((ord) => (
-                    <div key={ord.id} className="p-5 bg-white/60 dark:bg-white/[0.03] rounded-2xl border border-black/10 dark:border-white/10 space-y-3 shadow-xs">
+                    <div key={ord.id} className="p-5 bg-white/60 dark:bg-#FFF6EB/[0.03] rounded-2xl border border-black/10 dark:border-white/10 space-y-3 shadow-xs">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-3">
                         <div>
                           <span className="font-mono font-bold text-xs text-[#9a6a35] block">
@@ -2307,7 +2307,7 @@ export const SellerDashboard: React.FC = () => {
                                 updateOrderStatus(ord.id, newSt);
                               }
                             }}
-                            className="px-3 py-1.5 bg-white/80 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#9a6a35] outline-none cursor-pointer focus:border-[#9a6a35]"
+                            className="px-3 py-1.5 bg-white/80 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-[#9a6a35] outline-none cursor-pointer focus:border-[#9a6a35]"
                           >
                             <option value="pending">طلب جديد (Pending)</option>
                             <option value="confirmed">تأكيد الورشة (Confirmed)</option>
@@ -2396,12 +2396,12 @@ export const SellerDashboard: React.FC = () => {
                     </div>
 
                     {/* أزرار التبديل */}
-                    <div className="flex items-center gap-2 p-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl">
+                    <div className="flex items-center gap-2 p-1 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-2xl">
                       <button
                         type="button"
                         onClick={() => setCoverPickerTab('presets')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'presets'
-                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
@@ -2413,7 +2413,7 @@ export const SellerDashboard: React.FC = () => {
                         type="button"
                         onClick={() => setCoverPickerTab('upload')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'upload'
-                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
@@ -2425,7 +2425,7 @@ export const SellerDashboard: React.FC = () => {
                         type="button"
                         onClick={() => setCoverPickerTab('url')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'url'
-                          ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                          ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
                           }`}
                       >
@@ -2450,7 +2450,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('all')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'all'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             كل الورش ({STATIC_WORKSHOP_COVERS.length})
@@ -2460,7 +2460,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('pottery')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'pottery'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             الفخار والخزف
@@ -2470,7 +2470,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('tally')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'tally'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             التلي والفضة
@@ -2480,7 +2480,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('weaving')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'weaving'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             النول والكليم
@@ -2490,7 +2490,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('khous')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'khous'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             الخوص والنخيل
@@ -2500,7 +2500,7 @@ export const SellerDashboard: React.FC = () => {
                             onClick={() => setWorkshopCraftFilter('sculpture')}
                             className={`px-3 py-1.5 rounded-xl text-[11px] font-bold shrink-0 transition-all cursor-pointer ${workshopCraftFilter === 'sculpture'
                               ? 'bg-[#9a6a35] text-white shadow-xs'
-                              : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70'
+                              : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70'
                               }`}
                           >
                             الألاباستر والنحت
@@ -2521,7 +2521,7 @@ export const SellerDashboard: React.FC = () => {
                                   : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35]/60 hover:shadow-xs'
                                   }`}
                               >
-                                <div className="h-28 w-full relative overflow-hidden bg-black/10 dark:bg-white/10">
+                                <div className="h-28 w-full relative overflow-hidden bg-black/10 dark:bg-#FFF6EB/10">
                                   <img
                                     src={preset.url}
                                     alt={preset.title}
@@ -2553,7 +2553,7 @@ export const SellerDashboard: React.FC = () => {
                       <div className="space-y-4">
                         <label
                           htmlFor="seller-cover-upload-input"
-                          className="border-2 border-dashed rounded-3xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02]"
+                          className="border-2 border-dashed rounded-3xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-#FFF6EB/[0.02]"
                         >
                           <input
                             id="seller-cover-upload-input"
@@ -2584,11 +2584,11 @@ export const SellerDashboard: React.FC = () => {
                             value={customCoverUrl}
                             onChange={(e) => setCustomCoverUrl(e.target.value)}
                             placeholder="https://example.com/workshop-cover.jpg"
-                            className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] dir-ltr text-left"
+                            className="flex-1 p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] dir-ltr text-left"
                           />
                           <button
                             type="submit"
-                            className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                            className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl transition-colors cursor-pointer"
                           >
                             تطبيق
                           </button>
@@ -2609,7 +2609,7 @@ export const SellerDashboard: React.FC = () => {
                           required
                           value={brandName}
                           onChange={(e) => setBrandName(e.target.value)}
-                          className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
 
@@ -2621,7 +2621,7 @@ export const SellerDashboard: React.FC = () => {
                           <select
                             value={sellerGovernorate}
                             onChange={(e) => setSellerGovernorate(e.target.value as Governorate)}
-                            className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                            className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
                           >
                             <option value="قنا">قنا</option>
                             <option value="سوهاج">سوهاج</option>
@@ -2642,7 +2642,7 @@ export const SellerDashboard: React.FC = () => {
                             type="text"
                             value={sellerSpecialty}
                             onChange={(e) => setSellerSpecialty(e.target.value)}
-                            className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                            className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                           />
                         </div>
                       </div>
@@ -2655,14 +2655,14 @@ export const SellerDashboard: React.FC = () => {
                           rows={3}
                           value={sellerBio}
                           onChange={(e) => setSellerBio(e.target.value)}
-                          className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
 
                       <button
                         type="submit"
                         disabled={isSavingProfile}
-                        className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
+                        className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
                       >
                         {isSavingProfile ? (
                           <>
@@ -2692,7 +2692,7 @@ export const SellerDashboard: React.FC = () => {
                       </div>
 
                       <div className="bg-white/90 dark:bg-[#151513] rounded-3xl border border-black/10 dark:border-white/10 overflow-hidden shadow-lg group transition-all text-[#211d18] dark:text-[#f5f0e7]">
-                        <div className="h-44 relative overflow-hidden bg-black/10 dark:bg-white/10">
+                        <div className="h-44 relative overflow-hidden bg-black/10 dark:bg-#FFF6EB/10">
                           <img
                             src={sellerCoverImage}
                             alt={brandName}
@@ -2760,7 +2760,7 @@ export const SellerDashboard: React.FC = () => {
                   <span className="text-xs font-bold">جاري جلب فيديوهات ورشتكم...</span>
                 </div>
               ) : sellerReels.length === 0 ? (
-                <div className="bg-white/60 dark:bg-white/[0.02] rounded-3xl border border-dashed border-black/10 dark:border-white/10 p-12 text-center space-y-4">
+                <div className="bg-white/60 dark:bg-#FFF6EB/[0.02] rounded-3xl border border-dashed border-black/10 dark:border-white/10 p-12 text-center space-y-4">
                   <div className="w-16 h-16 rounded-3xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto">
                     <Film className="w-8 h-8" />
                   </div>
@@ -2877,7 +2877,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setNewStockValue((prev) => Math.max(0, prev - 1))}
-                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
+                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
                   >
                     -
                   </button>
@@ -2887,12 +2887,12 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={newStockValue}
                     onChange={(e) => setNewStockValue(Number(e.target.value))}
-                    className="flex-1 p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 text-center font-bold font-mono outline-none focus:border-[#9a6a35]"
+                    className="flex-1 p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-center font-bold font-mono outline-none focus:border-[#9a6a35]"
                   />
                   <button
                     type="button"
                     onClick={() => setNewStockValue((prev) => prev + 1)}
-                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
+                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 text-lg font-bold border border-black/10 dark:border-white/10 cursor-pointer"
                   >
                     +
                   </button>
@@ -2909,7 +2909,7 @@ export const SellerDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingStock}
-                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl cursor-pointer"
                 >
                   {isUpdatingStock ? 'جاري التحديث...' : 'حفظ الرصيد الجديد'}
                 </button>
@@ -2944,7 +2944,7 @@ export const SellerDashboard: React.FC = () => {
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -2954,7 +2954,7 @@ export const SellerDashboard: React.FC = () => {
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                    className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -2968,7 +2968,7 @@ export const SellerDashboard: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
+                    className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] cursor-pointer"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -2988,7 +2988,7 @@ export const SellerDashboard: React.FC = () => {
                     min={1}
                     value={price}
                     onChange={(e) => setPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
@@ -2998,7 +2998,7 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={originalPrice}
                     onChange={(e) => setOriginalPrice(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
@@ -3008,7 +3008,7 @@ export const SellerDashboard: React.FC = () => {
                     min={0}
                     value={stockCount}
                     onChange={(e) => setStockCount(Number(e.target.value))}
-                    className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -3020,8 +3020,8 @@ export const SellerDashboard: React.FC = () => {
                     صور المنتج التراثي * <span className="text-rose-500 font-bold">(إلزامية - صورة واحدة على الأقل)</span>
                   </label>
                   <span className={`text-[11px] font-bold ${existingImages.length + selectedImages.length === 0
-                      ? 'text-rose-500'
-                      : 'text-[#9a6a35] dark:text-[#d5a56d]'
+                    ? 'text-rose-500'
+                    : 'text-[#9a6a35] dark:text-[#d5a56d]'
                     }`}>
                     ({existingImages.length + selectedImages.length} من 5 صور كحد أقصى)
                   </span>
@@ -3041,10 +3041,10 @@ export const SellerDashboard: React.FC = () => {
                     onDragOver={handleDropzoneDragOver}
                     onDragLeave={handleDropzoneDragLeave}
                     className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all ${isDragOverDropzone
-                        ? 'border-[#9a6a35] bg-[#9a6a35]/10 scale-[1.01]'
-                        : existingImages.length + selectedImages.length === 0
-                          ? 'border-black/20 dark:border-white/20 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-white/[0.02]'
-                          : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.01] dark:bg-white/[0.01]'
+                      ? 'border-[#9a6a35] bg-[#9a6a35]/10 scale-[1.01]'
+                      : existingImages.length + selectedImages.length === 0
+                        ? 'border-black/20 dark:border-white/20 hover:border-[#9a6a35] bg-black/[0.02] dark:bg-#FFF6EB/[0.02]'
+                        : 'border-black/10 dark:border-white/10 hover:border-[#9a6a35] bg-black/[0.01] dark:bg-#FFF6EB/[0.01]'
                       }`}
                   >
                     <input
@@ -3142,7 +3142,7 @@ export const SellerDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingImages}
-                  className="px-7 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-2xl shadow-md cursor-pointer"
+                  className="px-7 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-2xl shadow-md cursor-pointer"
                 >
                   {isSubmitting ? 'جاري الحفظ...' : editingProduct ? 'حفظ التعديلات' : 'إرسال للمراجعة'}
                 </button>
@@ -3166,7 +3166,7 @@ export const SellerDashboard: React.FC = () => {
                   min={100}
                   value={payoutAmount}
                   onChange={(e) => setPayoutAmount(Number(e.target.value))}
-                  className="w-full p-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
               <div className="flex items-center justify-end gap-2 pt-2">
@@ -3179,7 +3179,7 @@ export const SellerDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer"
+                  className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md cursor-pointer"
                 >
                   تأكيد التحويل
                 </button>
@@ -3258,8 +3258,8 @@ export const SellerDashboard: React.FC = () => {
                     type="button"
                     onClick={() => handleSelectTab(item.id)}
                     className={`w-full p-3 rounded-xl flex items-center justify-between text-right text-xs font-bold transition-all cursor-pointer ${isActive
-                        ? 'bg-[#9a6a35] text-white shadow-xs'
-                        : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      : 'text-[#211d18] dark:text-[#f5f0e7] hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
                       }`}
                   >
                     <div className="flex items-center gap-2.5">

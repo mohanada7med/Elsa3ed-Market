@@ -205,7 +205,7 @@ export const GovernoratesPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="دوّر على محافظة أو مكان..."
-                className="h-11 w-full rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 pr-11 pl-10 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] outline-none transition placeholder:text-[#211d18]/40 dark:placeholder:text-[#f5f0e7]/40 focus:border-[#9a6a35]"
+                className="h-11 w-full rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 pr-11 pl-10 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] outline-none transition placeholder:text-[#211d18]/40 dark:placeholder:text-[#f5f0e7]/40 focus:border-[#9a6a35]"
               />
 
               {searchQuery && (
@@ -235,8 +235,8 @@ export const GovernoratesPage: React.FC = () => {
                     type="button"
                     onClick={() => setRegionFilter(item.value)}
                     className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black transition-all cursor-pointer ${active
-                        ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-sm'
-                        : 'bg-black/5 dark:bg-white/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:bg-[#9a6a35] hover:text-white'
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-sm'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:bg-[#9a6a35] hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -309,8 +309,8 @@ export const GovernoratesPage: React.FC = () => {
                     {/* Overlay */}
                     <div
                       className={`absolute inset-0 transition-all duration-500 ${isHovered
-                          ? 'bg-gradient-to-t from-black/95 via-black/45 to-black/20'
-                          : 'bg-gradient-to-t from-black/90 via-black/35 to-black/10'
+                        ? 'bg-gradient-to-t from-black/95 via-black/45 to-black/20'
+                        : 'bg-gradient-to-t from-black/90 via-black/35 to-black/10'
                         }`}
                     />
 
@@ -422,7 +422,7 @@ export const GovernoratesPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => navigateToGovernorate(filteredGovernorates[0].slug)}
-                      className="group mt-8 flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
+                      className="group mt-8 flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
                     >
                       <span>ادخل المحافظة</span>
                       <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
@@ -438,7 +438,7 @@ export const GovernoratesPage: React.FC = () => {
       {/* =====================================================
           FOOTER CTA
       ====================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 py-14 pb-24 sm:pb-14">
+      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 py-14 pb-24 sm:pb-14">
         <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
           <div className="relative overflow-hidden rounded-[2rem] bg-[#211d18] px-6 py-14 text-[#f5f0e7] sm:px-10 lg:px-16 shadow-xl border border-black/10 dark:border-white/10">
             <div className="absolute inset-0 opacity-10">
@@ -472,7 +472,7 @@ export const GovernoratesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('map')}
-                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
+                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-[#211d18] hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
                 <Compass className="h-4 w-4" />
                 <span>افتح الخريطة</span>
                 <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
@@ -531,7 +531,7 @@ const LoadingWall: React.FC = () => {
       {Array.from({ length: 8 }).map((_, index) => (
         <div
           key={index}
-          className={`animate-pulse rounded-[2rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 ${getPosterLayout(index)}`}
+          className={`animate-pulse rounded-[2rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 ${getPosterLayout(index)}`}
         />
       ))}
     </div>
@@ -561,7 +561,7 @@ const EmptyState: React.FC<{
       <button
         type="button"
         onClick={onReset}
-        className="mt-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg"
+        className="mt-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg"
       >
         شوف كل المحافظات
       </button>

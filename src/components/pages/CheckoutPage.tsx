@@ -105,7 +105,7 @@ export const CheckoutPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="w-full py-4 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all duration-300 hover:scale-[1.01]"
+            className="w-full py-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all duration-300 hover:scale-[1.01]"
           >
             اتفرج على سوق وه دلوقتي
           </button>
@@ -201,13 +201,13 @@ export const CheckoutPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleCopy(paymentConfig.instaPayAccount, 'instapay-success')}
-                  className="px-3 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-sky-500/20 text-sky-800 dark:text-sky-300 border border-sky-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 bg-black/5 dark:bg-#FFF6EB/10 hover:bg-sky-500/20 text-sky-800 dark:text-sky-300 border border-sky-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedKey === 'instapay-success' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'instapay-success' ? 'تم النسخ' : 'نسخ المعرف'}</span>
                 </button>
               </div>
-              <div className="bg-black/5 dark:bg-white/5 p-3 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-between">
+              <div className="bg-black/5 dark:bg-#FFF6EB/5 p-3 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-between">
                 <span className="text-[#211d18]/70 dark:text-[#f5f0e7]/70">معرف الدفع (IPA):</span>
                 <strong className="font-mono text-sm text-sky-800 dark:text-sky-300 select-all" dir="ltr">
                   {paymentConfig.instaPayAccount}
@@ -229,13 +229,13 @@ export const CheckoutPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleCopy(paymentConfig.vodafoneCashNumber, 'vodafone-success')}
-                  className="px-3 py-1.5 bg-black/5 dark:bg-white/10 hover:bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-1.5 bg-black/5 dark:bg-#FFF6EB/10 hover:bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   {copiedKey === 'vodafone-success' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedKey === 'vodafone-success' ? 'تم النسخ' : 'نسخ الرقم'}</span>
                 </button>
               </div>
-              <div className="bg-black/5 dark:bg-white/5 p-3 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-between">
+              <div className="bg-black/5 dark:bg-#FFF6EB/5 p-3 rounded-xl border border-black/5 dark:border-white/5 flex items-center justify-between">
                 <span className="text-[#211d18]/70 dark:text-[#f5f0e7]/70">رقم المحفظة المعتمد:</span>
                 <strong className="font-mono text-sm text-rose-800 dark:text-rose-300 select-all" dir="ltr">
                   {paymentConfig.vodafoneCashNumber}
@@ -260,7 +260,7 @@ export const CheckoutPage: React.FC = () => {
           )}
 
           {/* Order Summary Details */}
-          <div className="bg-black/5 dark:bg-white/5 p-5 sm:p-6 rounded-[1.5rem] border border-black/10 dark:border-white/10 text-right space-y-3">
+          <div className="bg-black/5 dark:bg-#FFF6EB/5 p-5 sm:p-6 rounded-[1.5rem] border border-black/10 dark:border-white/10 text-right space-y-3">
             <h4 className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7] border-b border-black/10 dark:border-white/10 pb-2">
               ملخص الشحنة والمنتجات:
             </h4>
@@ -303,7 +303,7 @@ export const CheckoutPage: React.FC = () => {
               type="button"
               id="order-track-btn"
               onClick={() => setActivePage('orders')}
-              className="px-6 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg transition-all hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
             >
               <Truck className="w-4 h-4" />
               <span>تتبع مسار الشحنة الآن</span>
@@ -313,7 +313,7 @@ export const CheckoutPage: React.FC = () => {
               type="button"
               id="continue-shopping-btn"
               onClick={() => setActivePage('products')}
-              className="px-6 py-3.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-[1.25rem] transition-colors cursor-pointer"
+              className="px-6 py-3.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-[1.25rem] transition-colors cursor-pointer"
             >
               ارجع للسوق
             </button>
@@ -374,7 +374,7 @@ export const CheckoutPage: React.FC = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله الهاشمي"
-                    className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
+                    className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
                   />
                 </div>
 
@@ -386,7 +386,7 @@ export const CheckoutPage: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="010XXXXXXXX"
-                    className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
+                    className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
                   />
                 </div>
               </div>
@@ -397,7 +397,7 @@ export const CheckoutPage: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px] cursor-pointer"
+                    className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px] cursor-pointer"
                   >
                     <option value="القاهرة">القاهرة</option>
                     <option value="الجيزة">الجيزة</option>
@@ -423,7 +423,7 @@ export const CheckoutPage: React.FC = () => {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="مثال: المعادي / نجع حمادي / أخميم"
-                    className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
+                    className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
                   />
                 </div>
               </div>
@@ -436,7 +436,7 @@ export const CheckoutPage: React.FC = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="شارع النصر، عمارة 15، الدور الثالث، شقة 7"
-                  className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
+                  className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20 min-h-[44px]"
                 />
               </div>
 
@@ -447,7 +447,7 @@ export const CheckoutPage: React.FC = () => {
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="مثال: يرجى الاتصال قبل الوصول بنصف ساعة، القطعة هدية تغليف خاص..."
                   rows={2}
-                  className="w-full px-4 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20"
+                  className="w-full px-4 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] text-sm outline-none focus:border-[#9a6a35] focus:ring-2 focus:ring-[#9a6a35]/20"
                 />
               </div>
             </div>
@@ -468,8 +468,8 @@ export const CheckoutPage: React.FC = () => {
                 {/* 1. InstaPay */}
                 <label
                   className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${paymentMethod === 'instapay'
-                      ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
-                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+                    ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
+                    : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -497,7 +497,7 @@ export const CheckoutPage: React.FC = () => {
 
                   {/* Expanded details when InstaPay selected */}
                   {paymentMethod === 'instapay' && (
-                    <div className="p-4 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-xs space-y-3 animate-fadeIn">
+                    <div className="p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 text-xs space-y-3 animate-fadeIn">
                       <div className="flex items-center justify-between bg-sky-500/10 p-3 rounded-lg border border-sky-500/20">
                         <div>
                           <span className="text-[10px] text-sky-800 dark:text-sky-300 block font-medium">معرف إنستاباي الرسمي للمنصة:</span>
@@ -532,7 +532,7 @@ export const CheckoutPage: React.FC = () => {
                           value={paymentReference}
                           onChange={(e) => setPaymentReference(e.target.value)}
                           placeholder="مثال: name@instapay أو الرقم المرجعي للعملية"
-                          className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-lg text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-lg text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
                     </div>
@@ -542,8 +542,8 @@ export const CheckoutPage: React.FC = () => {
                 {/* 2. Vodafone Cash */}
                 <label
                   className={`p-4 rounded-[1.5rem] border flex flex-col gap-3 cursor-pointer transition-all duration-300 ${paymentMethod === 'vodafone_cash'
-                      ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
-                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+                    ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
+                    : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -571,7 +571,7 @@ export const CheckoutPage: React.FC = () => {
 
                   {/* Expanded details when Vodafone Cash selected */}
                   {paymentMethod === 'vodafone_cash' && (
-                    <div className="p-4 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-xs space-y-3 animate-fadeIn">
+                    <div className="p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 text-xs space-y-3 animate-fadeIn">
                       <div className="flex items-center justify-between bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
                         <div>
                           <span className="text-[10px] text-rose-800 dark:text-rose-300 block font-medium">رقم محفظة فودافون كاش للمنصة:</span>
@@ -606,7 +606,7 @@ export const CheckoutPage: React.FC = () => {
                           value={paymentReference}
                           onChange={(e) => setPaymentReference(e.target.value)}
                           placeholder="مثال: 010XXXXXXXX أو كود العملية"
-                          className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-lg text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full px-3.5 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-lg text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
                     </div>
@@ -616,8 +616,8 @@ export const CheckoutPage: React.FC = () => {
                 {/* 3. Cash on Delivery */}
                 <label
                   className={`p-4 rounded-[1.5rem] border flex flex-col gap-2 cursor-pointer transition-all duration-300 ${paymentMethod === 'cod'
-                      ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
-                      : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10'
+                    ? 'border-[#9a6a35] bg-[#9a6a35]/10 ring-2 ring-[#9a6a35]/40'
+                    : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10'
                     }`}
                 >
                   <div className="flex items-center justify-between">
@@ -644,7 +644,7 @@ export const CheckoutPage: React.FC = () => {
                   </div>
 
                   {paymentMethod === 'cod' && (
-                    <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70 space-y-1 animate-fadeIn">
+                    <div className="p-3 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70 space-y-1 animate-fadeIn">
                       <p className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 font-semibold text-[11px]">
                         <Info className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>سيتم تسليم الشحنة لمندوب التوصيل وتحصيل المبلغ الإجمالي ({cartTotal} ج.م) نقداً عند باب بيتك.</span>
@@ -655,7 +655,7 @@ export const CheckoutPage: React.FC = () => {
               </div>
 
               {/* Payment Assurance Note */}
-              <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
+              <div className="p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <span>كل المدفوعات والتحويلات بنراجعها بدقة عشان نضمن حقك وحق أهالينا الحرفيين في الصعيد.</span>
               </div>
@@ -665,7 +665,7 @@ export const CheckoutPage: React.FC = () => {
               type="submit"
               id="place-order-submit-btn"
               disabled={isSubmitting}
-              className={`w-full py-4 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[50px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+              className={`w-full py-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.01] cursor-pointer min-h-[50px] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
             >
               {isSubmitting ? (
@@ -741,7 +741,7 @@ export const CheckoutPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
+            <div className="p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18]/70 dark:text-[#f5f0e7]/70 flex items-start gap-2.5">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>ضمان أصالة الصنعة وتبديل ببلاش لو حصل أي كسر وقت الشحن.</span>
             </div>

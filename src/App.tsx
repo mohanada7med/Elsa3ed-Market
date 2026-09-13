@@ -417,14 +417,14 @@ const MainContent: React.FC = () => {
                           setAuthModalTab('login');
                           setIsAuthModalOpen(true);
                         }}
-                        className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+                        className="w-full py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
                       >
                         تسجيل الدخول للمتابعة
                       </button>
                       <button
                         type="button"
                         onClick={() => setActivePage('products')}
-                        className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
+                        className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
                       >
                         متابعة التسوق أولاً
                       </button>
@@ -500,7 +500,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الآن
                     </button>
@@ -538,7 +538,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                      className="px-5 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
                     >
                       العودة للرئيسية
                     </button>
@@ -569,7 +569,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                      className="px-5 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
                     >
                       تصفح السوق
                     </button>
@@ -591,7 +591,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل دخول البائع
                     </button>
@@ -605,7 +605,7 @@ const MainContent: React.FC = () => {
                           setIsAuthModalOpen(true);
                         }
                       }}
-                      className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                      className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
                     >
                       تقديم طلب انضمام ورشة جديدة
                     </button>
@@ -634,7 +634,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الإداري
                     </button>

@@ -81,7 +81,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('cultural-crafts')}
-            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
+            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             الرجوع لكل الحرف
           </button>
@@ -186,7 +186,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
                   {(craft.stages || craft.manufacturingStages || []).map((stage, idx) => (
                     <div
                       key={idx}
-                      className="p-4 sm:p-5 rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-start gap-4"
+                      className="p-4 sm:p-5 rounded-[1.25rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 flex items-start gap-4"
                     >
                       <span className="w-8 h-8 rounded-xl bg-[#9a6a35] text-white font-bold flex items-center justify-center shrink-0 text-sm">
                         {stage.stepNumber || idx + 1}
@@ -251,7 +251,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
                     <div
                       key={prod.id}
                       onClick={() => navigateToProduct(prod.id)}
-                      className="group p-3 rounded-[1.25rem] bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#9a6a35] cursor-pointer transition-all"
+                      className="group p-3 rounded-[1.25rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 hover:border-[#9a6a35] cursor-pointer transition-all"
                     >
                       <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-black/10">
                         <img
@@ -318,7 +318,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigateToGovernorate(craft.governorateId || craft.governorates?.[0] || 'qena')}
-                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <span>دليل محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

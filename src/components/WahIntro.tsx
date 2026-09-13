@@ -195,7 +195,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     e.stopPropagation();
                     handleSkip();
                 }}
-                className={`absolute top-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#7a6448] dark:text-[#b89b7b] bg-black/5 dark:bg-white/10 hover:bg-[#9a6a35]/15 dark:hover:bg-white/20 transition-all duration-200 transform-gpu active:scale-95 ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-90 hover:opacity-100'
+                className={`absolute top-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#7a6448] dark:text-[#b89b7b] bg-black/5 dark:bg-#FFF6EB/10 hover:bg-[#9a6a35]/15 dark:hover:bg-white/20 transition-all duration-200 transform-gpu active:scale-95 ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-90 hover:opacity-100'
                     }`}
             >
                 <span>تخطي</span>
@@ -244,7 +244,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         }}
                         disabled={phase !== 'idle'}
                         aria-label="شعار وه"
-                        className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/95 dark:bg-white/10 backdrop-blur-md shadow-lg transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
+                        className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/95 dark:bg-#FFF6EB/10 backdrop-blur-md shadow-lg transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                             ? 'h-36 w-36 cursor-pointer hover:scale-105 active:scale-95'
                             : phase === 'welcoming'
                                 ? 'h-28 w-28 cursor-default shadow-md'
@@ -356,7 +356,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                         ? 'w-7 bg-[#9a6a35]'
                                         : pillarIndex > idx
                                             ? 'w-2 bg-[#9a6a35]/60'
-                                            : 'w-1.5 bg-black/15 dark:bg-white/20'
+                                            : 'w-1.5 bg-black/15 dark:bg-#FFF6EB/20'
                                         }`}
                                 />
                             ))}

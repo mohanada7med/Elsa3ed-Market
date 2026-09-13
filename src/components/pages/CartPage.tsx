@@ -161,7 +161,7 @@ export const CartPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-lg mx-auto text-center py-12 sm:py-16 px-5 sm:px-6 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl my-6 sm:my-8 space-y-5 backdrop-blur-xl"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/5 dark:bg-white/5 text-[#9a6a35] flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-[#9a6a35] flex items-center justify-center mx-auto shadow-inner">
               <ShoppingBag className="w-10 h-10 sm:w-12 sm:h-12 opacity-80" />
             </div>
 
@@ -182,7 +182,7 @@ export const CartPage: React.FC = () => {
                   setActivePage('products');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>اتفرج على منتجات سوق وه</span>
@@ -276,7 +276,7 @@ export const CartPage: React.FC = () => {
                           </div>
 
                           {/* Quantity Stepper */}
-                          <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/[0.035] dark:bg-white/[0.04] overflow-hidden shadow-2xs">
+                          <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] overflow-hidden shadow-2xs">
                             <button
                               type="button"
                               id={`cart-page-qty-minus-${prodId}`}
@@ -367,12 +367,12 @@ export const CartPage: React.FC = () => {
                           if (couponError) setCouponError('');
                         }}
                         placeholder="أدخل كود الخصم (مثال: SAEED100)"
-                        className="flex-1 px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm placeholder:text-black/30 dark:placeholder:text-white/30 focus:border-[#9a6a35] outline-none"
+                        className="flex-1 px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm placeholder:text-black/30 dark:placeholder:text-white/30 focus:border-[#9a6a35] outline-none"
                       />
                       <button
                         type="submit"
                         disabled={isApplyingCoupon || !couponInput.trim()}
-                        className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d]"
+                        className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d]"
                       >
                         {isApplyingCoupon ? 'جاري الفحص...' : 'تطبيق'}
                       </button>
@@ -435,7 +435,7 @@ export const CartPage: React.FC = () => {
                   type="button"
                   id="cart-checkout-btn"
                   onClick={handleCheckout}
-                  className="w-full py-3.5 sm:py-4 px-6 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                  className="w-full py-3.5 sm:py-4 px-6 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
                 >
                   <span>كمّل واطلب وادفع دلوقتي</span>
                   <ArrowLeft className="w-4 h-4" />

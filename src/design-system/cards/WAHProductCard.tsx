@@ -46,7 +46,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
       className={`group relative flex flex-col bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${shapeClass}`}
     >
       {/* Product Image Stage */}
-      <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-white/5">
+      <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-#FFF6EB/5">
         <img
           src={primaryImage}
           alt={product.title}
@@ -81,11 +81,10 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
                 e.stopPropagation();
                 toggleFavorite(product.id);
               }}
-              className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer ${
-                favorite
+              className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer ${favorite
                   ? 'bg-rose-500 text-white'
                   : 'bg-white/90 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-white/10 text-stone-700 dark:text-stone-300 hover:text-rose-500 border border-black/10 dark:border-white/10'
-              }`}
+                }`}
               title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
               aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
             >
@@ -195,7 +194,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
                 addToCart(product, 1);
               }}
               disabled={!product.inStock}
-              className="p-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title={`إضافة ${product.title} إلى السلة`}
               aria-label={`إضافة ${product.title} إلى السلة`}
             >

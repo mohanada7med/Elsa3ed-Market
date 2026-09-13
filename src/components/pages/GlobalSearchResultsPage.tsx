@@ -178,11 +178,10 @@ export const GlobalSearchResultsPage: React.FC = () => {
           <div className="flex items-center justify-center gap-2 flex-wrap mb-10">
             <button
               onClick={() => setActiveTypeFilter('all')}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                activeTypeFilter === 'all'
-                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTypeFilter === 'all'
+                  ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                   : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
-              }`}
+                }`}
             >
               الكل ({results.length})
             </button>
@@ -192,11 +191,10 @@ export const GlobalSearchResultsPage: React.FC = () => {
                 <button
                   key={type}
                   onClick={() => setActiveTypeFilter(type)}
-                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                    activeTypeFilter === type
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTypeFilter === type
                       ? 'bg-[#9a6a35] text-white shadow-md'
                       : 'bg-white/75 dark:bg-[#151513]/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
-                  }`}
+                    }`}
                 >
                   {sample?.typeLabel || type} ({typesCount[type]})
                 </button>

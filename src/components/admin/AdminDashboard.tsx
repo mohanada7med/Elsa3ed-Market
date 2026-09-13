@@ -1935,7 +1935,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
           <div className="w-full max-w-sm h-full bg-[#fdfbf7] dark:bg-[#141311] text-[#211d18] dark:text-[#f5f0e7] shadow-2xl flex flex-col border-r border-[#3d3328]/15 dark:border-white/10 animate-in slide-in-from-right duration-250">
             {/* Drawer Header */}
-            <div className="p-4 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+            <div className="p-4 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-#FFF6EB/[0.02]">
               <div>
                 <h3 className="font-heritage text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
                   أقسام لوحة الإدارة
@@ -1945,7 +1945,7 @@ export const AdminDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsMobileNavOpen(false)}
-                className="w-8 h-8 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 text-gray-500 flex items-center justify-center cursor-pointer transition-colors"
+                className="w-8 h-8 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 text-gray-500 flex items-center justify-center cursor-pointer transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1960,7 +1960,7 @@ export const AdminDashboard: React.FC = () => {
                   value={navSearchQuery}
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder="ابحث في أقسام الإدارة..."
-                  className="w-full pr-9 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                  className="w-full pr-9 pl-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
                 />
               </div>
             </div>
@@ -2059,7 +2059,7 @@ export const AdminDashboard: React.FC = () => {
                 value={navSearchQuery}
                 onChange={(e) => setNavSearchQuery(e.target.value)}
                 placeholder="بحث في أدوات الإدارة..."
-                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] transition-all"
+                className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] transition-all"
               />
               {navSearchQuery && (
                 <button
@@ -2124,7 +2124,7 @@ export const AdminDashboard: React.FC = () => {
                             }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#9a6a35] dark:text-[#d5a56d]'
                               }`}>
                               <Icon className="w-4 h-4" />
                             </div>
@@ -2164,7 +2164,7 @@ export const AdminDashboard: React.FC = () => {
               type="button"
               onClick={() => handleLayoutChange('sidebar')}
               title="توسيع إلى الشريط الجانبي الكامل"
-              className="w-11 h-11 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center transition-all cursor-pointer group relative"
+              className="w-11 h-11 rounded-2xl bg-black/5 dark:bg-#FFF6EB/5 hover:bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center transition-all cursor-pointer group relative"
             >
               <PanelLeft className="w-5 h-5" />
               <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity bg-neutral-900 dark:bg-neutral-800 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-xl whitespace-nowrap shadow-xl border border-white/10">
@@ -2172,13 +2172,13 @@ export const AdminDashboard: React.FC = () => {
               </div>
             </button>
 
-            <div className="w-8 h-[1px] bg-black/10 dark:bg-white/10 my-1" />
+            <div className="w-8 h-[1px] bg-black/10 dark:bg-#FFF6EB/10 my-1" />
 
             {/* Categorized Icons in Rail */}
             <div className="space-y-4 w-full flex flex-col items-center">
               {filteredSections.map((section, sIdx) => (
                 <div key={section.id} className="w-full flex flex-col items-center space-y-1.5">
-                  {sIdx > 0 && <div className="w-6 h-[1px] bg-black/10 dark:bg-white/10 my-1" />}
+                  {sIdx > 0 && <div className="w-6 h-[1px] bg-black/10 dark:bg-#FFF6EB/10 my-1" />}
 
                   {section.items.map((item) => {
                     const isActive = activeTab === item.id;
@@ -2271,7 +2271,7 @@ export const AdminDashboard: React.FC = () => {
                   value={navSearchQuery}
                   onChange={(e) => setNavSearchQuery(e.target.value)}
                   placeholder="بحث سريع في كل الأدوات..."
-                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
+                  className="w-full pr-8 pl-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7]"
                 />
                 {navSearchQuery && (
                   <button
@@ -2292,7 +2292,7 @@ export const AdminDashboard: React.FC = () => {
                 onClick={() => setActiveHubSection('all')}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeHubSection === 'all'
                   ? 'bg-[#9a6a35] text-white shadow-xs'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                  : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
                   }`}
               >
                 جميع الأدوات ({allNavItems.length})
@@ -2306,11 +2306,11 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setActiveHubSection(sec.id)}
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer flex items-center gap-1.5 ${isSelected
                       ? 'bg-[#9a6a35] text-white shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]'
                       }`}
                   >
                     <span>{sec.title}</span>
-                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-white/10'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? 'bg-white/20' : 'bg-black/10 dark:bg-#FFF6EB/10'}`}>
                       {sec.items.length}
                     </span>
                   </button>
@@ -2368,7 +2368,7 @@ export const AdminDashboard: React.FC = () => {
                     <div className="flex items-start gap-3 min-w-0">
                       <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${isActive
                         ? 'bg-white/20 text-white'
-                        : 'bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d]'
+                        : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#9a6a35] dark:text-[#d5a56d]'
                         }`}>
                         <Icon className="w-5 h-5" />
                       </div>
@@ -2400,7 +2400,7 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Currently Active Pane Indicator */}
             {currentActiveItem && (
-              <div className="flex items-center justify-between px-4 py-2.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
                 <div className="flex items-center gap-2 text-black/70 dark:text-white/70">
                   <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">القسم المعروض بالأسفل:</span>
                   <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{currentActiveItem.label}</span>
@@ -2443,7 +2443,7 @@ export const AdminDashboard: React.FC = () => {
 
               {/* Active Tab Anchor in Bento */}
               {currentActiveItem && (
-                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
+                <div className="flex items-center gap-2 text-xs bg-black/5 dark:bg-#FFF6EB/5 px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10">
                   <span className="text-black/50 dark:text-white/50">الأداة النشطة:</span>
                   <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem.label}</span>
                 </div>
@@ -2540,7 +2540,7 @@ export const AdminDashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Truck className="w-5 h-5" />
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60'
                     }`}>
                     {orders.length} طلب
                   </span>
@@ -2567,7 +2567,7 @@ export const AdminDashboard: React.FC = () => {
                   <div className="w-10 h-10 rounded-2xl bg-purple-100 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Film className="w-5 h-5" />
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'craft-reels' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
+                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${activeTab === 'craft-reels' ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60'
                     }`}>
                     {adminReels.length} فيديو
                   </span>
@@ -2664,7 +2664,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Bento Context Bar */}
-            <div className="flex items-center justify-between p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
+            <div className="flex items-center justify-between p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs">
               <div className="flex items-center gap-2">
                 <span className="text-black/60 dark:text-white/60">أداة الإدارة المعروضة بالأسفل:</span>
                 <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">{currentActiveItem?.label}</span>
@@ -2775,7 +2775,7 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 {pendingProducts.length === 0 ? (
-                  <div className="text-center py-8 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
+                  <div className="text-center py-8 bg-black/5 dark:bg-#FFF6EB/5 dark:bg-[#201A16] rounded-2xl border border-dashed border-black/10 dark:border-white/10">
                     <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
                     <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش طلبات معلقة دلوقتي - كل المنتجات اتراجعت تمام</p>
                   </div>
@@ -2859,11 +2859,11 @@ export const AdminDashboard: React.FC = () => {
                     <span>إضافة منتج كمسؤول</span>
                   </button>
 
-                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-#FFF6EB/5 dark:bg-[#26201B] p-1 rounded-xl overflow-x-auto no-scrollbar max-w-full">
                     <button
                       type="button"
                       onClick={() => setStatusFilter('all')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#211d18] text-white dark:bg-white dark:text-black' : 'text-black/60 dark:text-white/60'
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black' : 'text-black/60 dark:text-white/60'
                         }`}
                     >
                       الكل ({adminProducts.length})
@@ -2907,14 +2907,14 @@ export const AdminDashboard: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="دور باسم المنتج، الورشة، أو المحافظة..."
-                  className="w-full pr-10 pl-4 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
+                  className="w-full pr-10 pl-4 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] placeholder:text-[#9C8E80] dark:placeholder:text-[#8A7D71] rounded-xl text-xs outline-none focus:border-[#9a6a35] dark:focus:border-[#9a6a35]"
                 />
               </div>
 
               {/* Products List */}
               <div className="space-y-4">
                 {filteredProducts.length === 0 ? (
-                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 dark:bg-[#201A16] border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                  <div className="text-center py-12 bg-black/5 dark:bg-#FFF6EB/5 dark:bg-[#201A16] border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
                     <Package className="w-8 h-8 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mx-auto mb-2 opacity-50" />
                     <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش منتجات متطابقة مع البحث دلوقتي</p>
                   </div>
@@ -2926,7 +2926,7 @@ export const AdminDashboard: React.FC = () => {
                         ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800/60'
                         : prod.approvalStatus === 'rejected'
                           ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/60'
-                          : 'bg-black/5 dark:bg-white/5 dark:bg-[#1E1916] border-black/10 dark:border-white/10'
+                          : 'bg-black/5 dark:bg-#FFF6EB/5 dark:bg-[#1E1916] border-black/10 dark:border-white/10'
                         }`}
                     >
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -2959,7 +2959,7 @@ export const AdminDashboard: React.FC = () => {
                             type="button"
                             id={`admin-edit-prod-${prod.id}`}
                             onClick={() => openAdminEditProductModal(prod)}
-                            className="px-3.5 py-2 bg-black/5 dark:bg-white/5 dark:bg-[#26201B] hover:bg-black/5 dark:bg-white/5 dark:hover:bg-[#322923] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                            className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 dark:bg-[#26201B] hover:bg-black/5 dark:bg-#FFF6EB/5 dark:hover:bg-[#322923] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
                             title="تعديل بيانات المنتج كمسؤول"
                           >
                             <Edit2 className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
@@ -3059,7 +3059,7 @@ export const AdminDashboard: React.FC = () => {
                 {categories.map((cat) => (
                   <div
                     key={cat.id}
-                    className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3 flex flex-col justify-between"
+                    className="p-5 rounded-2xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 space-y-3 flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
@@ -3141,7 +3141,7 @@ export const AdminDashboard: React.FC = () => {
                     type="button"
                     id="admin-add-craft-story-btn"
                     onClick={openAddCraftStoryModal}
-                    className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                    className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     <span>إضافة حكاية صنعة جديدة</span>
@@ -3155,7 +3155,7 @@ export const AdminDashboard: React.FC = () => {
                   <span>بنحمّل حكايات الصنعة من قاعدة البيانات...</span>
                 </div>
               ) : craftStories.length === 0 ? (
-                <div className="p-8 text-center bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-3">
+                <div className="p-8 text-center bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 space-y-3">
                   <Sparkles className="w-8 h-8 text-amber-500 mx-auto" />
                   <p className="text-sm font-bold text-gray-700">مفيش حكايات صنعة متسجلة دلوقتي في قاعدة البيانات</p>
                   <button
@@ -3208,7 +3208,7 @@ export const AdminDashboard: React.FC = () => {
                           </div>
                         </div>
 
-                        <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-black/5 dark:bg-white/5 p-2.5 rounded-xl border border-[#ebdccd]">
+                        <p className="text-xs text-gray-600 line-clamp-3 leading-relaxed bg-black/5 dark:bg-#FFF6EB/5 p-2.5 rounded-xl border border-[#ebdccd]">
                           {story.description}
                         </p>
 
@@ -3236,7 +3236,7 @@ export const AdminDashboard: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="px-5 py-3 bg-black/5 dark:bg-white/5 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
+                      <div className="px-5 py-3 bg-black/5 dark:bg-#FFF6EB/5 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
                         <button
                           type="button"
                           onClick={() => handleToggleCraftStoryActive(story)}
@@ -3370,7 +3370,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setAdminReelGovFilter('all')}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === 'all'
                       ? 'bg-[#9a6a35] text-white shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-#FFF6EB/5'
                       }`}
                   >
                     كل المحافظات ({adminReels.length})
@@ -3385,7 +3385,7 @@ export const AdminDashboard: React.FC = () => {
                         onClick={() => setAdminReelGovFilter(gov)}
                         className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${adminReelGovFilter === gov
                           ? 'bg-[#9a6a35] text-white shadow-md'
-                          : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
+                          : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-#FFF6EB/5'
                           }`}
                       >
                         {gov} ({count})
@@ -3402,7 +3402,7 @@ export const AdminDashboard: React.FC = () => {
                     value={adminReelSearchTerm}
                     onChange={(e) => setAdminReelSearchTerm(e.target.value)}
                     placeholder="دور بالعنوان، المكان، التصنيف..."
-                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
+                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
                   />
                   {adminReelSearchTerm && (
                     <button
@@ -3508,7 +3508,7 @@ export const AdminDashboard: React.FC = () => {
                         </div>
 
                         {/* Bottom Metadata & Actions */}
-                        <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-white/5/40">
+                        <div className="p-4 space-y-3 flex-1 flex flex-col justify-between bg-black/5 dark:bg-#FFF6EB/5/40">
                           {/* Linked Product (Optional) */}
                           {reel.productId && reel.productTitle ? (
                             <div className="p-2.5 bg-white dark:bg-[#1c1c19] rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between gap-2 shadow-2xs">
@@ -3525,7 +3525,7 @@ export const AdminDashboard: React.FC = () => {
                               </div>
                             </div>
                           ) : (
-                            <div className="p-2 bg-black/5 dark:bg-white/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
+                            <div className="p-2 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-dashed border-black/10 dark:border-white/10 text-center">
                               <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
                                 محتوى توثيقي / من غير منتج مرتبط
                               </span>
@@ -3569,7 +3569,7 @@ export const AdminDashboard: React.FC = () => {
                                 setAdminEditingReel(reel);
                                 setIsAdminReelEditOpen(true);
                               }}
-                              className="p-2 text-gray-600 hover:text-[#9a6a35] dark:text-[#d5a56d] hover:bg-black/5 dark:bg-white/5 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
+                              className="p-2 text-gray-600 hover:text-[#9a6a35] dark:text-[#d5a56d] hover:bg-black/5 dark:bg-#FFF6EB/5 rounded-xl transition-colors cursor-pointer border border-black/10 dark:border-white/10"
                               title="تعديل الفيديو والمنتج والورشة بالكامل"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -3619,7 +3619,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="space-y-3">
                 {reviews.length === 0 ? (
-                  <div className="text-center py-12 bg-black/5 dark:bg-white/5 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
+                  <div className="text-center py-12 bg-black/5 dark:bg-#FFF6EB/5 border border-dashed border-black/10 dark:border-white/10 rounded-2xl">
                     <MessageSquare className="w-8 h-8 text-black/60 dark:text-white/60 mx-auto mb-2 opacity-50" />
                     <p className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">مفيش تقييمات متسجلة لحد دلوقتي</p>
                   </div>
@@ -3627,7 +3627,7 @@ export const AdminDashboard: React.FC = () => {
                   reviews.map((rev) => (
                     <div
                       key={rev.id}
-                      className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      className="p-4 rounded-2xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4"
                     >
                       <div className="space-y-1.5 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
@@ -3741,7 +3741,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setSellerStatusFilter('all')}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${sellerStatusFilter === 'all'
                       ? 'bg-[#9a6a35] text-white shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-white/5'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 hover:bg-black/5 dark:bg-#FFF6EB/5'
                       }`}
                   >
                     الكل ({sellers.length})
@@ -3808,7 +3808,7 @@ export const AdminDashboard: React.FC = () => {
                     value={sellerSearchTerm}
                     onChange={(e) => setSellerSearchTerm(e.target.value)}
                     placeholder="دور بالاسم، الورشة، المحافظة..."
-                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
+                    className="w-full pl-8 pr-9 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] transition-colors"
                   />
                   {sellerSearchTerm && (
                     <button
@@ -3876,7 +3876,7 @@ export const AdminDashboard: React.FC = () => {
                               </span>
                             )}
 
-                            <span className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 text-[10px] font-semibold px-2 py-0.5 rounded-md">
+                            <span className="bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 text-[10px] font-semibold px-2 py-0.5 rounded-md">
                               محافظة {s.governorate}
                             </span>
                           </div>
@@ -3911,7 +3911,7 @@ export const AdminDashboard: React.FC = () => {
                           type="button"
                           id={`admin-view-seller-${s.id}`}
                           onClick={() => openEditSellerModal(s)}
-                          className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                           title="معاينة تفاصيل طلب الورشة وتعديل الغلاف"
                         >
                           <Eye className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
@@ -4054,7 +4054,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setOrderPaymentFilter(tab.id as any)}
                     className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${orderPaymentFilter === tab.id
                       ? 'bg-[#9a6a35] text-white'
-                      : 'bg-black/5 dark:bg-white/5 text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-gray-700 hover:bg-[#f0e4d7] border border-[#dfcebe]'
                       }`}
                   >
                     {tab.label}
@@ -4064,7 +4064,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
                 <table className="w-full text-xs text-right">
-                  <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
+                  <thead className="bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
                     <tr>
                       <th className="py-3 px-4 font-bold">رقم الأوردر</th>
                       <th className="py-3 px-4 font-bold">المشتري</th>
@@ -4089,7 +4089,7 @@ export const AdminDashboard: React.FC = () => {
                       .map((ord) => {
                         const isPendingVerification = ord.paymentStatus === 'payment_pending_verification';
                         return (
-                          <tr key={ord.id} className={`hover:bg-black/5 dark:bg-white/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
+                          <tr key={ord.id} className={`hover:bg-black/5 dark:bg-#FFF6EB/5 ${isPendingVerification ? 'bg-amber-50/40' : ''}`}>
                             <td className="py-3 px-4 font-mono font-bold text-[#9a6a35] dark:text-[#d5a56d]">
                               #{ord.orderNumber || ord.id}
                             </td>
@@ -4121,7 +4121,7 @@ export const AdminDashboard: React.FC = () => {
                             </td>
                             <td className="py-3 px-4">
                               {ord.paymentReference ? (
-                                <div className="bg-black/5 dark:bg-white/5 p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
+                                <div className="bg-black/5 dark:bg-#FFF6EB/5 p-1.5 rounded border border-[#dfcebe] text-[11px] font-mono text-gray-800">
                                   <span className="text-[10px] text-gray-500 block">رقم التحويل / الحساب:</span>
                                   {ord.paymentReference}
                                 </div>
@@ -4377,7 +4377,7 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSavingPaymentSettings}
-                  className="px-8 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
+                  className="px-8 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer flex items-center gap-2"
                 >
                   {isSavingPaymentSettings ? (
                     <span>بنحفظ الإعدادات...</span>
@@ -4423,7 +4423,7 @@ export const AdminDashboard: React.FC = () => {
                         value={newCode}
                         onChange={(e) => setNewCode(e.target.value)}
                         placeholder="مثال: UPPEREGYPT25"
-                        className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono uppercase outline-none focus:border-[#9a6a35]"
+                        className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono uppercase outline-none focus:border-[#9a6a35]"
                       />
                     </div>
 
@@ -4437,7 +4437,7 @@ export const AdminDashboard: React.FC = () => {
                           max={90}
                           value={newDiscount}
                           onChange={(e) => setNewDiscount(Number(e.target.value))}
-                          className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
 
@@ -4449,7 +4449,7 @@ export const AdminDashboard: React.FC = () => {
                           min={0}
                           value={newMinOrder}
                           onChange={(e) => setNewMinOrder(Number(e.target.value))}
-                          className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                          className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                         />
                       </div>
                     </div>
@@ -4470,7 +4470,7 @@ export const AdminDashboard: React.FC = () => {
 
                     <div className="space-y-3">
                       {coupons.map((c, i) => (
-                        <div key={i} className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between">
+                        <div key={i} className="p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 flex items-center justify-between">
                           <div>
                             <span className="font-mono font-black text-sm text-[#9a6a35] dark:text-[#d5a56d] block">{c.code}</span>
                             <span className="text-xs text-black/60 dark:text-white/60">
@@ -4550,7 +4550,7 @@ export const AdminDashboard: React.FC = () => {
 
               <div className="wah-table-container overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
                 <table className="w-full text-xs text-right">
-                  <thead className="bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
+                  <thead className="bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 border-b border-black/10 dark:border-white/10">
                     <tr>
                       <th className="py-3 px-4 font-bold">الوقت والتاريخ</th>
                       <th className="py-3 px-4 font-bold">المستخدم والدور</th>
@@ -4563,7 +4563,7 @@ export const AdminDashboard: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-black/10 dark:divide-white/10">
                     {auditLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-black/5 dark:bg-white/5">
+                      <tr key={log.id} className="hover:bg-black/5 dark:bg-#FFF6EB/5">
                         <td className="py-3 px-4 font-mono text-black/60 dark:text-white/60 whitespace-nowrap">{log.timestamp}</td>
                         <td className="py-3 px-4 font-bold text-[#211d18] dark:text-[#f5f0e7]">
                           {log.userName}
@@ -4663,7 +4663,7 @@ export const AdminDashboard: React.FC = () => {
                     value={userSearchTerm}
                     onChange={(e) => setUserSearchTerm(e.target.value)}
                     placeholder="دور بالاسم، اسم المستخدم، الإيميل، أو الموبايل..."
-                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -4674,7 +4674,7 @@ export const AdminDashboard: React.FC = () => {
                   />
 
                   {/* Role filter */}
-                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                     <Filter className="w-3.5 h-3.5 text-black/60 dark:text-white/60" />
                     <select
                       id="admin-users-role-filter"
@@ -4690,7 +4690,7 @@ export const AdminDashboard: React.FC = () => {
                   </div>
 
                   {/* Status filter */}
-                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                     <select
                       id="admin-users-status-filter"
                       value={userStatusFilter}
@@ -4704,7 +4704,7 @@ export const AdminDashboard: React.FC = () => {
                   </div>
 
                   {/* Governorate filter */}
-                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                     <select
                       id="admin-users-gov-filter"
                       value={userGovernorateFilter}
@@ -4733,7 +4733,7 @@ export const AdminDashboard: React.FC = () => {
                     id="admin-users-refresh-btn"
                     onClick={fetchAdminUsers}
                     disabled={isLoadingUsers}
-                    className="p-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="p-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                     title="تحديث البيانات"
                   >
                     <RefreshCw className={`w-3.5 h-3.5 ${isLoadingUsers ? 'animate-spin' : ''}`} />
@@ -4757,7 +4757,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
                 <div className="wah-table-container overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
+                    <thead className="bg-black/5 dark:bg-#FFF6EB/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
                       <tr>
                         <th className="py-3.5 px-4 font-bold">المستخدم</th>
                         <th className="py-3.5 px-4 font-bold">الدور</th>
@@ -4787,7 +4787,7 @@ export const AdminDashboard: React.FC = () => {
                           const isCurrentAdmin = currentUser.id === u.id;
                           const isSuspended = u.status === 'suspended' || u.status === 'blocked';
                           return (
-                            <tr key={u.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
+                            <tr key={u.id} className="hover:bg-black/5 dark:bg-#FFF6EB/5/60 transition-colors">
                               <td className="py-3 px-4">
                                 <div className="flex items-center gap-3">
                                   <div className="relative shrink-0">
@@ -4853,7 +4853,7 @@ export const AdminDashboard: React.FC = () => {
                                     id={`view-user-${u.id}`}
                                     onClick={() => openUserDetails(u.id)}
                                     title="تفاصيل الحساب"
-                                    className="p-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                    className="p-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
                                   >
                                     <Eye className="w-3.5 h-3.5 text-gray-600" />
                                     <span className="hidden xl:inline">تفاصيل</span>
@@ -4961,7 +4961,7 @@ export const AdminDashboard: React.FC = () => {
                     <span>طلبات مستنية: {passwordResets.filter((r) => r.status === 'pending').length}</span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
+                  <div className="flex items-center gap-1.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl px-2 py-1">
                     <Filter className="w-3.5 h-3.5 text-gray-400" />
                     <select
                       id="admin-password-resets-filter"
@@ -4989,7 +4989,7 @@ export const AdminDashboard: React.FC = () => {
               <div className="bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-2xl border border-black/10 dark:border-white/10 shadow-sm overflow-hidden text-[#211d18] dark:text-[#f5f0e7]">
                 <div className="wah-table-container overflow-x-auto">
                   <table className="w-full text-right text-xs">
-                    <thead className="bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
+                    <thead className="bg-black/5 dark:bg-#FFF6EB/5 border-b border-black/10 dark:border-white/10 text-black/60 dark:text-white/60">
                       <tr>
                         <th className="py-3.5 px-4 font-bold">اسم المستخدم</th>
                         <th className="py-3.5 px-4 font-bold">رقم الموبايل</th>
@@ -5019,7 +5019,7 @@ export const AdminDashboard: React.FC = () => {
                           const isPending = r.status === 'pending';
                           const isCompleted = r.status === 'completed';
                           return (
-                            <tr key={r.id} className="hover:bg-black/5 dark:bg-white/5/60 transition-colors">
+                            <tr key={r.id} className="hover:bg-black/5 dark:bg-#FFF6EB/5/60 transition-colors">
                               <td className="py-3 px-4">
                                 <div>
                                   <span className="font-bold text-[#211d18] dark:text-[#f5f0e7] block">
@@ -5222,7 +5222,7 @@ export const AdminDashboard: React.FC = () => {
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
                     placeholder="مثال: فخار وخزف قنا"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5233,7 +5233,7 @@ export const AdminDashboard: React.FC = () => {
                     value={categoryNameEn}
                     onChange={(e) => setCategoryNameEn(e.target.value)}
                     placeholder="e.g. Pottery & Ceramics"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5245,7 +5245,7 @@ export const AdminDashboard: React.FC = () => {
                     type="text"
                     value={categoryIcon}
                     onChange={(e) => setCategoryIcon(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-center text-lg outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-center text-lg outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5256,7 +5256,7 @@ export const AdminDashboard: React.FC = () => {
                     value={categorySlug}
                     onChange={(e) => setCategorySlug(e.target.value)}
                     placeholder="cat-pottery"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs font-mono outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5278,7 +5278,7 @@ export const AdminDashboard: React.FC = () => {
                   value={categoryDesc}
                   onChange={(e) => setCategoryDesc(e.target.value)}
                   placeholder="احكي عن أصل الصنعة وتاريخها في الصعيد..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -5332,7 +5332,7 @@ export const AdminDashboard: React.FC = () => {
                   value={craftTitle}
                   onChange={(e) => setCraftTitle(e.target.value)}
                   placeholder="مثال: فخار قنا وأسيوط (طين النيل العذب)"
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -5343,7 +5343,7 @@ export const AdminDashboard: React.FC = () => {
                   value={craftSubtitle}
                   onChange={(e) => setCraftSubtitle(e.target.value)}
                   placeholder="مثال: سر البرودة والنكهة الخالدة من زمان"
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -5356,7 +5356,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftGovernorate}
                     onChange={(e) => setCraftGovernorate(e.target.value)}
                     placeholder="مثال: قنا"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5367,7 +5367,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftCity}
                     onChange={(e) => setCraftCity(e.target.value)}
                     placeholder="مثال: نقادة أو أخميم"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5378,7 +5378,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftVillage}
                     onChange={(e) => setCraftVillage(e.target.value)}
                     placeholder="مثال: قرية الجرنة أو طوخ"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5391,7 +5391,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftHistoryAge}
                     onChange={(e) => setCraftHistoryAge(e.target.value)}
                     placeholder="مثال: أكتر من 5000 سنة"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5400,7 +5400,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={craftVerificationStatus}
                     onChange={(e) => setCraftVerificationStatus(e.target.value as any)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     <option value="verified">متوثقة ومعتمدة</option>
                     <option value="pending_review">تحت المراجعة</option>
@@ -5415,7 +5415,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={craftCategoryId}
                     onChange={(e) => setCraftCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -5432,7 +5432,7 @@ export const AdminDashboard: React.FC = () => {
                     min="1"
                     value={craftDisplayOrder}
                     onChange={(e) => setCraftDisplayOrder(Number(e.target.value) || 1)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5456,7 +5456,7 @@ export const AdminDashboard: React.FC = () => {
                   value={craftDescription}
                   onChange={(e) => setCraftDescription(e.target.value)}
                   placeholder="احكي بالتفصيل حكاية الصنعة وسر توارثها بين الأجيال في الصعيد..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -5470,7 +5470,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftMaterialsText}
                     onChange={(e) => setCraftMaterialsText(e.target.value)}
                     placeholder="طمي النيل العذب&#10;رمال الصحراء الشرقية&#10;سعف النخيل"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5483,7 +5483,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftTechniquesText}
                     onChange={(e) => setCraftTechniquesText(e.target.value)}
                     placeholder="التشكيل على الدولاب الخشبي&#10;التجفيف الشمسي البطيء&#10;الحرق في أفران بلدي"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5497,7 +5497,7 @@ export const AdminDashboard: React.FC = () => {
                   value={craftKeyFeaturesText}
                   onChange={(e) => setCraftKeyFeaturesText(e.target.value)}
                   placeholder="تبريد طبيعي فوري عبر مسام الفخار&#10;صناعة يدوية 100%&#10;آمن وصحي وخالٍ من الرصاص"
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                 />
               </div>
 
@@ -5511,7 +5511,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftSourcesText}
                     onChange={(e) => setCraftSourcesText(e.target.value)}
                     placeholder="أطلس المأثورات الشعبية المصرية | https://...&#10;سجلات حصر التراث"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -5524,7 +5524,7 @@ export const AdminDashboard: React.FC = () => {
                     value={craftCoordinatesText}
                     onChange={(e) => setCraftCoordinatesText(e.target.value)}
                     placeholder="مثال: 26.155, 32.716"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -5554,7 +5554,7 @@ export const AdminDashboard: React.FC = () => {
                   type="submit"
                   id="submit-craft-story-btn"
                   disabled={isSubmittingCraftStory}
-                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 transition-all cursor-pointer"
+                  className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md disabled:opacity-50 transition-all cursor-pointer"
                 >
                   {isSubmittingCraftStory ? 'بنحفظ...' : 'حفظ الحكاية'}
                 </button>
@@ -5595,7 +5595,7 @@ export const AdminDashboard: React.FC = () => {
                   value={rejectionReasonInput}
                   onChange={(e) => setRejectionReasonInput(e.target.value)}
                   placeholder="مثال: محتاجين تفاصيل أوضح عن نوع الطمي وطريقة الشغل اليدوي..."
-                  className="w-full p-3 bg-black/5 dark:bg-white/5 border border-rose-200 rounded-xl text-xs outline-none focus:border-rose-500"
+                  className="w-full p-3 bg-black/5 dark:bg-#FFF6EB/5 border border-rose-200 rounded-xl text-xs outline-none focus:border-rose-500"
                 />
               </div>
 
@@ -5669,7 +5669,7 @@ export const AdminDashboard: React.FC = () => {
                       ? 'مثال: المشغولات مش تابعة للحرف التراثية الصعيدية المعتمدة في وه...'
                       : 'مثال: في شكاوى متكررة من المشترين عن مطابقة المنتج للمواصفات...'
                   }
-                  className={`w-full p-3 bg-black/5 dark:bg-white/5 border rounded-xl text-xs outline-none ${selectedSellerForAction.action === 'reject'
+                  className={`w-full p-3 bg-black/5 dark:bg-#FFF6EB/5 border rounded-xl text-xs outline-none ${selectedSellerForAction.action === 'reject'
                     ? 'border-rose-200 focus:border-rose-500'
                     : 'border-orange-200 focus:border-orange-500'
                     }`}
@@ -5723,7 +5723,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
+            <div className="flex items-center gap-4 p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10">
               <div className="relative shrink-0">
                 <img
                   src={selectedUserForDetails.profileImage?.secureUrl || selectedUserForDetails.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg'}
@@ -5875,7 +5875,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
@@ -5885,7 +5885,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editUsername}
                     onChange={(e) => setEditUsername(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -5899,7 +5899,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -5909,7 +5909,7 @@ export const AdminDashboard: React.FC = () => {
                     type="email"
                     value={editEmail}
                     onChange={(e) => setEditEmail(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -5922,7 +5922,7 @@ export const AdminDashboard: React.FC = () => {
                     value={editRole}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditRole(e.target.value as any)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="buyer">مشتري</option>
                     <option value="seller">ورشة وصنايعي</option>
@@ -5935,7 +5935,7 @@ export const AdminDashboard: React.FC = () => {
                     value={editStatus}
                     disabled={currentUser.id === selectedUserForEdit.id}
                     onChange={(e) => setEditStatus(e.target.value as any)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="active">شغال (نشط)</option>
                     <option value="suspended">متوقف مؤقتاً</option>
@@ -5946,7 +5946,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={editGovernorate}
                     onChange={(e) => setEditGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -6042,7 +6042,7 @@ export const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-xs">
+            <div className="p-3 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 text-xs">
               <span className="text-gray-500 block mb-0.5">الحساب المطلوب:</span>
               <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">{selectedUserForResetPassword.name}</span>
               <span className="text-gray-500 font-mono text-[11px] block">@{selectedUserForResetPassword.username}</span>
@@ -6057,7 +6057,7 @@ export const AdminDashboard: React.FC = () => {
                   value={newPasswordInput}
                   onChange={(e) => setNewPasswordInput(e.target.value)}
                   placeholder="اكتب الباسورد الجديد هنا..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                  className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                   dir="ltr"
                 />
               </div>
@@ -6135,7 +6135,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('buyer')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'buyer'
                       ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     مشتري موثق
@@ -6145,7 +6145,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('seller')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'seller'
                       ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     ورشة وصنايعي
@@ -6155,7 +6155,7 @@ export const AdminDashboard: React.FC = () => {
                     onClick={() => setNewUserRole('admin')}
                     className={`py-2 px-3 rounded-xl font-bold border transition-all text-center cursor-pointer ${newUserRole === 'admin'
                       ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 border-black/10 dark:border-white/10'
                       }`}
                   >
                     مسؤول منصة
@@ -6172,7 +6172,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserName}
                     onChange={(e) => setNewUserName(e.target.value)}
                     placeholder="مثال: أحمد عبد الله"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
@@ -6183,7 +6183,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserUsername}
                     onChange={(e) => setNewUserUsername(e.target.value)}
                     placeholder="ahmed_abdallah"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6198,7 +6198,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserPhone}
                     onChange={(e) => setNewUserPhone(e.target.value)}
                     placeholder="01012345678"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6209,7 +6209,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserEmail}
                     onChange={(e) => setNewUserEmail(e.target.value)}
                     placeholder="user@example.com"
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6224,7 +6224,7 @@ export const AdminDashboard: React.FC = () => {
                     value={newUserPassword}
                     onChange={(e) => setNewUserPassword(e.target.value)}
                     placeholder="مش أقل من 6 حروف أو أرقام..."
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   />
                 </div>
                 <div>
@@ -6232,7 +6232,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={newUserGovernorate}
                     onChange={(e) => setNewUserGovernorate(e.target.value)}
-                    className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
+                    className="w-full p-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35]"
                   >
                     <option value="قنا">قنا</option>
                     <option value="سوهاج">سوهاج</option>
@@ -6401,7 +6401,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Target User Info */}
-            <div className="p-3 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs space-y-1">
+            <div className="p-3 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 text-xs space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-gray-500">اسم المستخدم:</span>
                 <span className="font-bold font-mono text-[#211d18] dark:text-[#f5f0e7]">@{selectedResetForAction.username}</span>
@@ -6448,7 +6448,7 @@ export const AdminDashboard: React.FC = () => {
                     value={tempPasswordInput}
                     onChange={(e) => setTempPasswordInput(e.target.value)}
                     placeholder="اكتب أو ولّد الباسورد المؤقت"
-                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full pl-3 pr-10 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                   <Lock className="w-4 h-4 text-gray-400 absolute right-3 top-3" />
@@ -6516,7 +6516,7 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             {/* User & Password Box */}
-            <div className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs">
+            <div className="p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs">
               <div className="flex items-center justify-between border-b border-gray-200 pb-2">
                 <span className="text-gray-500">اسم المستخدم:</span>
                 <span className="font-bold font-mono text-base text-[#211d18] dark:text-[#f5f0e7]">@{completedTempPasswordInfo.username}</span>
@@ -6568,7 +6568,7 @@ export const AdminDashboard: React.FC = () => {
                 type="button"
                 id="close-temp-password-modal-btn"
                 onClick={() => setCompletedTempPasswordInfo(null)}
-                className="w-full py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>نسخت الباسورد خلاص - اقفل الشاشة</span>
               </button>
@@ -6603,7 +6603,7 @@ export const AdminDashboard: React.FC = () => {
 
             <form onSubmit={handleSaveAdminSellerProfile} className="space-y-4">
               {/* Cover Image Customizer Section */}
-              <div className="space-y-3 p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10">
+              <div className="space-y-3 p-4 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-[#9a6a35] dark:text-[#d5a56d]" />
@@ -6734,7 +6734,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={sellerEditBrandName}
                     onChange={(e) => setSellerEditBrandName(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -6745,7 +6745,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={sellerEditName}
                     onChange={(e) => setSellerEditName(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -6754,7 +6754,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={sellerEditGovernorate}
                     onChange={(e) => setSellerEditGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر', 'الفيوم'].map((gov) => (
                       <option key={gov} value={gov}>
@@ -6771,7 +6771,7 @@ export const AdminDashboard: React.FC = () => {
                     value={sellerEditSpecialty}
                     onChange={(e) => setSellerEditSpecialty(e.target.value)}
                     placeholder="مثال: فخار وخزف طمي نيل، تلي أسيوطي..."
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -6781,7 +6781,7 @@ export const AdminDashboard: React.FC = () => {
                     type="text"
                     value={sellerEditPhone}
                     onChange={(e) => setSellerEditPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6792,7 +6792,7 @@ export const AdminDashboard: React.FC = () => {
                     type="email"
                     value={sellerEditEmail}
                     onChange={(e) => setSellerEditEmail(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6802,7 +6802,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={sellerEditStatus}
                     onChange={(e) => setSellerEditStatus(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
                   >
                     <option value="approved">معتمد ومفعل</option>
                     <option value="pending">تحت المراجعة</option>
@@ -6817,7 +6817,7 @@ export const AdminDashboard: React.FC = () => {
                     type="url"
                     value={sellerEditAvatar}
                     onChange={(e) => setSellerEditAvatar(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-mono text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6831,12 +6831,12 @@ export const AdminDashboard: React.FC = () => {
                   value={sellerEditBio}
                   onChange={(e) => setSellerEditBio(e.target.value)}
                   placeholder="اكتب نبذة عن تاريخ الورشة والتقنيات التراثية المستخدمة..."
-                  className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
               {/* Payout Details */}
-              <div className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 space-y-2">
+              <div className="p-3 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 space-y-2">
                 <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] block">بيانات تحويل المستحقات والأرباح:</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -6949,7 +6949,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodTitle}
                     onChange={(e) => setProdTitle(e.target.value)}
                     placeholder="مثال: قلة قناوية فخار مسامي أصيل"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -6960,7 +6960,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodTitleEn}
                     onChange={(e) => setProdTitleEn(e.target.value)}
                     placeholder="Authentic Qena Clay Pot"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-left"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-left"
                     dir="ltr"
                   />
                 </div>
@@ -6974,7 +6974,7 @@ export const AdminDashboard: React.FC = () => {
                       const cat = categories.find((c) => c.id === e.target.value);
                       if (cat) setProdCategoryName(cat.name);
                     }}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -6989,7 +6989,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={prodSellerId}
                     onChange={(e) => setProdSellerId(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {sellers.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -7007,7 +7007,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={prodPrice}
                     onChange={(e) => setProdPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] font-bold"
                   />
                 </div>
 
@@ -7019,7 +7019,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodOriginalPrice || ''}
                     onChange={(e) => setProdOriginalPrice(e.target.value ? Number(e.target.value) : undefined)}
                     placeholder="سيبه فاضي لو مفيش خصم"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -7031,7 +7031,7 @@ export const AdminDashboard: React.FC = () => {
                     required
                     value={prodStockCount}
                     onChange={(e) => setProdStockCount(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -7040,7 +7040,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={prodOriginGovernorate}
                     onChange={(e) => setProdOriginGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   >
                     {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
                       <option key={gov} value={gov}>
@@ -7071,7 +7071,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodMaterial}
                     onChange={(e) => setProdMaterial(e.target.value)}
                     placeholder="مثال: طمي نيل طبيعي، صوف غنم يدوي..."
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -7082,7 +7082,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodCraftsmanship}
                     onChange={(e) => setProdCraftsmanship(e.target.value)}
                     placeholder="مثال: تشكيل يدوي على الدولاب وحرق أفران حطب"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -7093,7 +7093,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodDimensions}
                     onChange={(e) => setProdDimensions(e.target.value)}
                     placeholder="مثال: 30 × 20 سم"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
 
@@ -7104,7 +7104,7 @@ export const AdminDashboard: React.FC = () => {
                     value={prodWeight}
                     onChange={(e) => setProdWeight(e.target.value)}
                     placeholder="مثال: 1.2 كجم"
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                    className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
                   />
                 </div>
               </div>
@@ -7117,12 +7117,12 @@ export const AdminDashboard: React.FC = () => {
                   value={prodDescription}
                   onChange={(e) => setProdDescription(e.target.value)}
                   placeholder="اكتب وصفاً دقيقاً للمنتج وأصالته واستخداماته..."
-                  className="w-full px-3 py-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full px-3 py-2 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
               {/* Status and Flags */}
-              <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+              <div className="p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">حالة الاعتماد والنشر:</label>
                   <select

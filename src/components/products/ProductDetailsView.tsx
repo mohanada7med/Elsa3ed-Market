@@ -313,7 +313,7 @@ export const ProductDetailsView: React.FC = () => {
               transition
               hover:-translate-y-0.5
               hover:bg-[#9a6a35]
-              dark:bg-white
+              dark:bg-#FFF6EB
               dark:text-black
               dark:hover:bg-[#d5a56d]
               cursor-pointer
@@ -1056,7 +1056,7 @@ export const ProductDetailsView: React.FC = () => {
                 border-black/10
                 bg-black/10
                 dark:border-white/10
-                dark:bg-white/10
+                dark:bg-#FFF6EB/10
               "
             >
               <div
@@ -1245,7 +1245,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.025]
                         p-1
                         dark:border-white/10
-                        dark:bg-white/[0.025]
+                        dark:bg-#FFF6EB/[0.025]
                       "
                     >
                       <button
@@ -1333,7 +1333,7 @@ export const ProductDetailsView: React.FC = () => {
                         hover:bg-[#9a6a35]
                         disabled:cursor-not-allowed
                         disabled:opacity-40
-                        dark:bg-white
+                        dark:bg-#FFF6EB
                         dark:text-black
                         dark:hover:bg-[#d5a56d]
                         cursor-pointer
@@ -1561,7 +1561,7 @@ export const ProductDetailsView: React.FC = () => {
                     bg-black/[0.025]
                     p-3
                     dark:border-white/10
-                    dark:bg-white/[0.025]
+                    dark:bg-#FFF6EB/[0.025]
                   "
                 >
                   <Truck
@@ -1582,7 +1582,7 @@ export const ProductDetailsView: React.FC = () => {
                     bg-black/[0.025]
                     p-3
                     dark:border-white/10
-                    dark:bg-white/[0.025]
+                    dark:bg-#FFF6EB/[0.025]
                   "
                 >
                   <ShieldCheck
@@ -1838,7 +1838,7 @@ export const ProductDetailsView: React.FC = () => {
                               font-bold
                               text-black/50
                               dark:border-white/10
-                              dark:bg-white/[0.025]
+                              dark:bg-#FFF6EB/[0.025]
                               dark:text-white/45
                             "
                           >
@@ -2132,7 +2132,7 @@ export const ProductDetailsView: React.FC = () => {
                             bg-black/[0.02]
                             p-5
                             dark:border-white/10
-                            dark:bg-white/[0.02]
+                            dark:bg-#FFF6EB/[0.02]
                           "
                         >
                           <div className="flex items-center justify-between gap-4">
@@ -2204,7 +2204,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-white/60
                         p-6
                         dark:border-white/10
-                        dark:bg-white/[0.02]
+                        dark:bg-#FFF6EB/[0.02]
                       "
                     >
                       <h4 className="text-sm font-black">
@@ -2257,7 +2257,7 @@ export const ProductDetailsView: React.FC = () => {
                           transition
                           focus:border-[#9a6a35]
                           dark:border-white/10
-                          dark:bg-white/[0.025]
+                          dark:bg-#FFF6EB/[0.025]
                         "
                       />
 
@@ -2277,7 +2277,7 @@ export const ProductDetailsView: React.FC = () => {
                           text-white
                           transition
                           hover:bg-[#9a6a35]
-                          dark:bg-white
+                          dark:bg-#FFF6EB
                           dark:text-black
                           dark:hover:bg-[#d5a56d]
                           cursor-pointer
@@ -2322,7 +2322,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.02]
                         p-6
                         dark:border-white/10
-                        dark:bg-white/[0.02]
+                        dark:bg-#FFF6EB/[0.02]
                       "
                     >
                       <Package
@@ -2349,7 +2349,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.02]
                         p-6
                         dark:border-white/10
-                        dark:bg-white/[0.02]
+                        dark:bg-#FFF6EB/[0.02]
                       "
                     >
                       <Truck
@@ -2474,7 +2474,7 @@ export const ProductDetailsView: React.FC = () => {
                 text-xs
                 font-bold
                 dark:border-white/10
-                dark:bg-white/[0.025]
+                dark:bg-#FFF6EB/[0.025]
                 sm:hidden
                 cursor-pointer
               "
@@ -2533,7 +2533,7 @@ export const ProductDetailsView: React.FC = () => {
                   border-black/10
                   bg-black/[0.03]
                   dark:border-white/10
-                  dark:bg-white/[0.03]
+                  dark:bg-#FFF6EB/[0.03]
                 "
               >
                 <button
@@ -2602,7 +2602,7 @@ export const ProductDetailsView: React.FC = () => {
                   text-xs
                   font-black
                   text-white
-                  dark:bg-white
+                  dark:bg-#FFF6EB
                   dark:text-black
                   cursor-pointer
                 "

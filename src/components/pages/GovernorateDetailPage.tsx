@@ -367,7 +367,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 <div className="mt-9 flex flex-wrap gap-3">
                   <button
                     onClick={() => scrollToSection('places')}
-                    className="group inline-flex items-center gap-2 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] px-6 py-3.5 text-sm font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"                  >
+                    className="group inline-flex items-center gap-2 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-[#211d18] px-6 py-3.5 text-sm font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"                  >
                     اكتشف المعالم
                     <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
                   </button>
@@ -609,14 +609,14 @@ export const GovernorateDetailPage: React.FC = () => {
                       {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
                         <span
                           className={`rounded-full px-3 py-1 text-[10px] font-black shadow-lg ${place.visitInfo.visitStatus === 'closed_to_public'
-                              ? 'bg-red-600/90 text-white border border-red-400/40'
-                              : place.visitInfo.visitStatus === 'closed_for_restoration'
-                                ? 'bg-amber-600/90 text-white border border-amber-400/40'
-                                : place.visitInfo.visitStatus === 'public_landmark'
-                                  ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
-                                  : place.visitInfo.visitStatus === 'active_institution'
-                                    ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
-                                    : 'bg-orange-600/90 text-white border border-orange-400/40'
+                            ? 'bg-red-600/90 text-white border border-red-400/40'
+                            : place.visitInfo.visitStatus === 'closed_for_restoration'
+                              ? 'bg-amber-600/90 text-white border border-amber-400/40'
+                              : place.visitInfo.visitStatus === 'public_landmark'
+                                ? 'bg-emerald-600/90 text-white border border-emerald-400/40'
+                                : place.visitInfo.visitStatus === 'active_institution'
+                                  ? 'bg-indigo-600/90 text-white border border-indigo-400/40'
+                                  : 'bg-orange-600/90 text-white border border-orange-400/40'
                             }`}
                         >
                           {place.visitInfo.visitStatus === 'closed_to_public' && ' مغلق أمام الجمهور'}

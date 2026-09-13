@@ -134,7 +134,7 @@ export const CraftsPage: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="دوّر في أطلس الحرف بالاسم، المادة، القرية أو المحافظة..."
-              className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-[1rem] text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] placeholder-[#211d18]/40 dark:placeholder-[#f5f0e7]/40 focus:outline-none focus:border-[#9a6a35] transition-colors"
+              className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-[1rem] text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] placeholder-[#211d18]/40 dark:placeholder-[#f5f0e7]/40 focus:outline-none focus:border-[#9a6a35] transition-colors"
             />
             {searchQuery && (
               <button
@@ -148,7 +148,7 @@ export const CraftsPage: React.FC = () => {
           </div>
 
           {/* Results count badge */}
-          <div className="text-xs font-bold text-[#211d18]/80 dark:text-[#f5f0e7]/80 px-4 py-2.5 bg-black/5 dark:bg-white/5 rounded-[1rem] border border-black/10 dark:border-white/10 shrink-0 self-start md:self-auto flex items-center gap-1.5">
+          <div className="text-xs font-bold text-[#211d18]/80 dark:text-[#f5f0e7]/80 px-4 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-[1rem] border border-black/10 dark:border-white/10 shrink-0 self-start md:self-auto flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-[#9a6a35] dark:text-[#d5a56d]" />
             <span>
               {isLoading
@@ -167,8 +167,8 @@ export const CraftsPage: React.FC = () => {
               type="button"
               onClick={() => setSelectedGov(gov)}
               className={`px-3.5 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${selectedGov === gov
-                  ? 'bg-[#9a6a35] text-white shadow-sm'
-                  : 'bg-black/5 dark:bg-white/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                ? 'bg-[#9a6a35] text-white shadow-sm'
+                : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/80 dark:text-[#f5f0e7]/80 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
                 }`}
             >
               {gov}
@@ -186,14 +186,14 @@ export const CraftsPage: React.FC = () => {
               className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-10 animate-pulse space-y-6"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div className="lg:col-span-5 h-64 bg-black/5 dark:bg-white/5 rounded-2xl" />
+                <div className="lg:col-span-5 h-64 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl" />
                 <div className="lg:col-span-7 space-y-4">
-                  <div className="h-6 w-32 bg-black/5 dark:bg-white/5 rounded-lg" />
-                  <div className="h-8 w-3/4 bg-black/5 dark:bg-white/5 rounded-lg" />
-                  <div className="h-20 w-full bg-black/5 dark:bg-white/5 rounded-lg" />
+                  <div className="h-6 w-32 bg-black/5 dark:bg-#FFF6EB/5 rounded-lg" />
+                  <div className="h-8 w-3/4 bg-black/5 dark:bg-#FFF6EB/5 rounded-lg" />
+                  <div className="h-20 w-full bg-black/5 dark:bg-#FFF6EB/5 rounded-lg" />
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="h-10 bg-black/5 dark:bg-white/5 rounded-xl" />
-                    <div className="h-10 bg-black/5 dark:bg-white/5 rounded-xl" />
+                    <div className="h-10 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl" />
+                    <div className="h-10 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl" />
                   </div>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export const CraftsPage: React.FC = () => {
                 setSelectedGov('الكل');
                 setSearchQuery('');
               }}
-              className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold rounded-xl border border-black/10 dark:border-white/10 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] text-xs font-bold rounded-xl border border-black/10 dark:border-white/10 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5 text-[#9a6a35]" />
               <span>فضّي الفلاتر</span>
@@ -254,7 +254,7 @@ export const CraftsPage: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                   {/* Visual Side */}
                   <div className={`lg:col-span-5 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-4/3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+                    <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-4/3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10">
                       {story.image ? (
                         <img
                           src={story.image}
@@ -265,7 +265,7 @@ export const CraftsPage: React.FC = () => {
                           }}
                         />
                       ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-white/5 text-[#9a6a35] dark:text-[#d5a56d] p-6 text-center">
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-black/5 dark:bg-#FFF6EB/5 text-[#9a6a35] dark:text-[#d5a56d] p-6 text-center">
                           <BookOpen className="w-12 h-12 opacity-60 mb-2" />
                           <span className="text-xs font-bold">{story.title}</span>
                           <span className="text-[10px] text-[#211d18]/50 dark:text-[#f5f0e7]/50 mt-1">{story.governorate}</span>
@@ -295,13 +295,13 @@ export const CraftsPage: React.FC = () => {
                       </span>
 
                       {story.city && (
-                        <span className="px-2.5 py-1 bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-semibold rounded-lg border border-black/10 dark:border-white/10">
+                        <span className="px-2.5 py-1 bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-semibold rounded-lg border border-black/10 dark:border-white/10">
                           {story.city}
                         </span>
                       )}
 
                       {story.village && (
-                        <span className="px-2.5 py-1 bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-semibold rounded-lg border border-black/10 dark:border-white/10">
+                        <span className="px-2.5 py-1 bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] text-xs font-semibold rounded-lg border border-black/10 dark:border-white/10">
                           قرية {story.village}
                         </span>
                       )}
@@ -342,7 +342,7 @@ export const CraftsPage: React.FC = () => {
                           {story.materials.map((mat, mIdx) => (
                             <span
                               key={mIdx}
-                              className="px-2.5 py-1 bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] text-[11px] font-medium rounded-lg border border-black/10 dark:border-white/10"
+                              className="px-2.5 py-1 bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] text-[11px] font-medium rounded-lg border border-black/10 dark:border-white/10"
                             >
                               {mat}
                             </span>
@@ -359,7 +359,7 @@ export const CraftsPage: React.FC = () => {
                           {stepsOrTechniques.map((step, sIdx) => (
                             <div
                               key={sIdx}
-                              className="p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18] dark:text-[#f5f0e7] flex items-start gap-2"
+                              className="p-3 bg-black/5 dark:bg-#FFF6EB/5 rounded-xl border border-black/10 dark:border-white/10 text-[11px] text-[#211d18] dark:text-[#f5f0e7] flex items-start gap-2"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                               <span className="leading-snug">{step}</span>
@@ -406,7 +406,7 @@ export const CraftsPage: React.FC = () => {
                           }
                           setActivePage('products');
                         }}
-                        className="w-full sm:w-auto px-6 py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
+                        className="w-full sm:w-auto px-6 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-[1.25rem] shadow-lg inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
                       >
                         <span>شوف منتجات وقطع {story.title.split('(')[0]}</span>
                         <ArrowLeft className="w-3.5 h-3.5" />

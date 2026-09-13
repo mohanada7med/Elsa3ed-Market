@@ -35,7 +35,7 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
     ochre:
       'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30',
     stone:
-      'bg-black/5 dark:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10',
+      'bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10',
     success:
       'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25',
     outline:

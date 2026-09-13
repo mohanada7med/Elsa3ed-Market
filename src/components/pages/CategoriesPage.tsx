@@ -50,7 +50,7 @@ export const CategoriesPage: React.FC = () => {
         </nav>
 
         {/* زر التبديل بين الأنماط */}
-        <div className="inline-flex items-center bg-black/5 dark:bg-white/5 p-1 rounded-2xl border border-black/10 dark:border-white/10 self-start sm:self-auto">
+        <div className="inline-flex items-center bg-black/5 dark:bg-#FFF6EB/5 p-1 rounded-2xl border border-black/10 dark:border-white/10 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setViewMode('interactive')}
@@ -117,7 +117,7 @@ export const CategoriesPage: React.FC = () => {
                       }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]' : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]' : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
                         }`}>
                         0{idx + 1}
                       </span>
@@ -139,7 +139,7 @@ export const CategoriesPage: React.FC = () => {
 
                     <div className="flex items-center gap-3">
                       {cat.featuredGovernorate && (
-                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
                           {cat.featuredGovernorate}
                         </span>
                       )}
@@ -208,7 +208,7 @@ export const CategoriesPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => navigateToCategory(selectedCategory.id)}
-                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                       >
                         <span>شوف شغل وحرفيين {selectedCategory.name}</span>
                         <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
@@ -249,7 +249,7 @@ export const CategoriesPage: React.FC = () => {
                       <span
                         className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
                           ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
-                          : 'bg-black/5 dark:bg-white/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                          : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
                           }`}
                       >
                         0{idx + 1}
@@ -266,7 +266,7 @@ export const CategoriesPage: React.FC = () => {
 
                     <div className="flex items-center gap-2">
                       {cat.featuredGovernorate && (
-                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
                           {cat.featuredGovernorate}
                         </span>
                       )}
@@ -344,7 +344,7 @@ export const CategoriesPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => navigateToCategory(cat.id)}
-                            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
+                            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
                           >
                             <span>شوف كل منتجات {cat.name}</span>
                             <ArrowUpLeft className="w-4 h-4" />

@@ -80,7 +80,7 @@ export const PersonDetailPage: React.FC = () => {
           <p className="text-sm text-black/60 dark:text-white/60 mb-6">لم نتمكن من العثور على بيانات هذا الشخص</p>
           <button
             onClick={() => setActivePage('people')}
-            className="px-6 py-3 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black font-bold text-xs cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs cursor-pointer"
           >
             العودة لكافة ناس الصعيد
           </button>
@@ -131,7 +131,7 @@ export const PersonDetailPage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -207,7 +207,7 @@ export const PersonDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigateToGovernorate(person.governorateId || 'qena')}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-black/5 dark:bg-white/5 px-3.5 py-1 text-xs font-bold text-black/70 dark:text-white/70 hover:bg-[#9a6a35] hover:text-white transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-black/5 dark:bg-#FFF6EB/5 px-3.5 py-1 text-xs font-bold text-black/70 dark:text-white/70 hover:bg-[#9a6a35] hover:text-white transition-colors cursor-pointer"
                   >
                     <MapPin size={13} className="text-[#9a6a35]" />
                     <span>محافظة {person.governorateName}</span>
@@ -312,7 +312,7 @@ export const PersonDetailPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('people')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#211d18] text-white dark:bg-white dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-md cursor-pointer w-fit"                >
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-md cursor-pointer w-fit"                >
                   <span>تصفح كافة ناس الصعيد</span>
                   <ArrowLeft size={15} />
                 </button>

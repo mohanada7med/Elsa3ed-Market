@@ -426,7 +426,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               <button
                 type="button"
                 onClick={sendTestBrowserNotification}
-                className="px-4 py-2.5 bg-white/80 dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 text-[#9a6a35] border border-[#9a6a35]/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 bg-white/80 dark:bg-#FFF6EB/5 hover:bg-black/5 dark:hover:bg-white/10 text-[#9a6a35] border border-[#9a6a35]/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>تجربة إشعار ورنة تجريبية</span>
@@ -440,7 +440,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   await requestBrowserNotificationPermission();
                   setIsRequestingPermission(false);
                 }}
-                className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
+                className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
               >
                 <Radio className="w-4 h-4 animate-pulse" />
                 <span>{isRequestingPermission ? 'جارٍ طلب الإذن من المتصفح...' : 'السماح بالإشعارات الفورية'}</span>
@@ -460,14 +460,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.soundEnabled
               ? 'bg-[#9a6a35]/10 border-[#9a6a35]/30'
-              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.soundEnabled
                   ? 'bg-[#9a6a35] text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 {browserNotificationSettings.soundEnabled ? (
@@ -486,7 +486,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.soundEnabled ? 'bg-[#9a6a35]' : 'bg-black/20 dark:bg-white/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.soundEnabled ? 'bg-[#9a6a35]' : 'bg-black/20 dark:bg-#FFF6EB/20'
                 }`}
             >
               <div
@@ -505,14 +505,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyOrders
               ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50'
-              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyOrders
                   ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <Package className="w-4 h-4" />
@@ -527,7 +527,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-white/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
                 }`}
             >
               <div
@@ -546,14 +546,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyMessages
               ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50'
-              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyMessages
                   ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <MessageSquare className="w-4 h-4" />
@@ -568,7 +568,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-white/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
                 }`}
             >
               <div
@@ -587,14 +587,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyStock
               ? 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/50'
-              : 'bg-white/40 dark:bg-white/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyStock
                   ? 'bg-purple-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-white/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <AlertTriangle className="w-4 h-4" />
@@ -609,7 +609,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-white/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
                 }`}
             >
               <div
@@ -623,13 +623,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 
       {/* Admin View Mode Switcher: Inbox vs Sent Broadcasts (Admin Only) */}
       {viewMode === 'admin' && (
-        <div className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 w-fit">
+        <div className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 w-fit">
           <button
             type="button"
             id="admin-notifs-inbox-tab"
             onClick={() => setAdminSubTab('inbox')}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'inbox'
-              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -650,13 +650,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               fetchBroadcastHistory();
             }}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'broadcasts'
-              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <History className="w-4 h-4" />
             <span>سجل التنبيهات والإعلانات المرسلة (MongoDB)</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold">
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-#FFF6EB/10 font-bold">
               {broadcastHistory.length}
             </span>
           </button>
@@ -681,7 +681,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 type="button"
                 onClick={fetchBroadcastHistory}
                 disabled={isLoadingHistory}
-                className="px-4 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
+                className="px-4 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
               >
                 <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-[#9a6a35]' : ''}`} />
                 <span>تحديث السجل</span>
@@ -864,8 +864,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('all')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'all'
-                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   كافة الإشعارات ({notifications.length})
@@ -875,7 +875,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   onClick={() => setFilterRead('unread')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'unread'
                     ? 'bg-[#9a6a35] text-white shadow-md'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   غير المقروءة ({unreadCount})
@@ -884,8 +884,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('read')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'read'
-                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   المقروءة ({notifications.length - unreadCount})
@@ -900,7 +900,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="ابحث في نص الإشعار..."
-                    className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
                   />
                   <Bell className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2" />
                 </div>
@@ -928,7 +928,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 type="button"
                 onClick={() => setFilterType('all')}
                 className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'all'
-                  ? 'bg-[#211d18] dark:bg-white text-white dark:text-[#211d18] font-black'
+                  ? 'bg-[#211d18] dark:bg-#FFF6EB text-white dark:text-[#211d18] font-black'
                   : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
               >
@@ -1051,7 +1051,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         <button
                           type="button"
                           onClick={() => handleMarkAsRead(notif.id)}
-                          className="px-3.5 py-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                          className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
                           title="تعليم كمقروء"
                         >
                           <Check className="w-3.5 h-3.5" />
@@ -1076,7 +1076,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                               });
                             }
                           }}
-                          className="px-4 py-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="px-4 py-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                         >
                           <span>الانتقال والتفاصيل</span>
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -1097,7 +1097,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             ) : (
               <div className="p-12 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center mx-auto text-[#9a6a35]/40">
+                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-#FFF6EB/5 flex items-center justify-center mx-auto text-[#9a6a35]/40">
                   <Bell className="w-8 h-8" />
                 </div>
                 <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
@@ -1181,8 +1181,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'all'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Users className="w-4 h-4" />
@@ -1196,8 +1196,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       if (availableUsers.length === 0) fetchUsers();
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'user'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <User className="w-4 h-4" />
@@ -1212,8 +1212,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'buyers'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Package className="w-4 h-4" />
@@ -1228,8 +1228,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'sellers'
-                      ? 'bg-[#211d18] text-white dark:bg-white dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-white/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Sparkles className="w-4 h-4" />
@@ -1240,7 +1240,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 
               {/* Specific User Search & Selector (When Target = user) */}
               {broadcastTargetType === 'user' && (
-                <div className="p-3.5 bg-black/5 dark:bg-white/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+                <div className="p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
                   <div className="flex items-center justify-between">
                     <label className="font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-[#9a6a35]" />
@@ -1343,7 +1343,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                                     {u.id || u._id} • {u.email || u.phone || 'بدون بريد'}
                                   </span>
                                 </div>
-                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70">
+                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/5 dark:bg-#FFF6EB/10 text-black/70 dark:text-white/70">
                                   {u.role === 'seller' ? 'حرفي' : u.role === 'admin' ? 'مدير' : 'مشتري'}
                                 </span>
                               </button>
@@ -1390,7 +1390,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   onChange={(e) => setBroadcastTitle(e.target.value)}
                   placeholder="مثال: تحديث أوقات تسليم طلبات الأعياد، إشعار سحب مستحقات..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 font-medium"
+                  className="w-full p-3 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 font-medium"
                 />
               </div>
 
@@ -1411,7 +1411,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   rows={4}
                   placeholder="اكتب التوجيهات أو الإعلان الرسمي بشكل واضح..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 leading-relaxed font-medium"
+                  className="w-full p-3 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 leading-relaxed font-medium"
                 />
               </div>
 
@@ -1463,7 +1463,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   <button
                     type="submit"
                     disabled={isSendingBroadcast || !broadcastTitle.trim() || !broadcastMessage.trim()}
-                    className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
                   >
                     {isSendingBroadcast ? (
                       <>

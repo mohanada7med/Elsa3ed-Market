@@ -323,7 +323,7 @@ export const UpperEgyptMapPage: React.FC = () => {
         dir="rtl"
         className="min-h-screen w-full flex flex-col items-center justify-center bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] gap-4"
       >
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 shadow-xl">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-#FFF6EB/5 shadow-xl">
           <img src={LOGO_URL} alt="وه" className="h-10 w-10 object-contain" />
         </div>
         <div className="flex items-center gap-2 text-sm font-bold text-[#9a6a35]">
@@ -354,7 +354,7 @@ export const UpperEgyptMapPage: React.FC = () => {
             onClick={() => setActivePage('home')}
             className="group flex items-center gap-3 text-sm font-bold transition-all hover:text-[#9a6a35] cursor-pointer"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-all group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:bg-white/5 dark:group-hover:bg-white dark:group-hover:text-black">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/60 transition-all group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:bg-#FFF6EB/5 dark:group-hover:bg-white dark:group-hover:text-black">
               <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-1" />
             </span>
             <span className="hidden sm:block">الرئيسية</span>
@@ -365,12 +365,12 @@ export const UpperEgyptMapPage: React.FC = () => {
             <div className="mt-1 text-sm font-black">رحلة الصعيد</div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1 rounded-xl sm:rounded-2xl border border-black/10 bg-white/50 p-1 backdrop-blur-xl dark:border-white/10 dark:bg-white/[0.05] shadow-lg">
+          <div className="flex shrink-0 items-center gap-1 rounded-xl sm:rounded-2xl border border-black/10 bg-white/50 p-1 backdrop-blur-xl dark:border-white/10 dark:bg-#FFF6EB/[0.05] shadow-lg">
             <button
               type="button"
               onClick={() => setDisplayMode('voyage')}
               className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'voyage'
-                ? 'bg-[#211d18] text-white shadow-lg dark:bg-white dark:text-black'
+                ? 'bg-[#211d18] text-white shadow-lg dark:bg-#FFF6EB dark:text-black'
                 : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
             >
@@ -382,7 +382,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               type="button"
               onClick={() => setDisplayMode('grid')}
               className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'grid'
-                ? 'bg-[#211d18] text-white shadow-lg dark:bg-white dark:text-black'
+                ? 'bg-[#211d18] text-white shadow-lg dark:bg-#FFF6EB dark:text-black'
                 : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
             >
@@ -397,7 +397,7 @@ export const UpperEgyptMapPage: React.FC = () => {
       <div className="sticky top-0 z-40 w-full border-b border-black/10 dark:border-white/10 bg-[#eee8dc]/90 dark:bg-[#0b0b0a]/90 backdrop-blur-2xl">
         <div className="mx-auto max-w-[1600px] px-3 sm:px-5 md:px-7 lg:px-10 xl:px-12">
           <div className="relative overflow-x-auto no-scrollbar py-3">
-            <div className="absolute right-7 left-7 top-[31px] h-px bg-black/10 dark:bg-white/10" />
+            <div className="absolute right-7 left-7 top-[31px] h-px bg-black/10 dark:bg-#FFF6EB/10" />
 
             <div className="relative z-10 flex min-w-max items-start justify-between gap-2">
               {governorates.map((gov, index) => {
@@ -412,7 +412,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                     <span
                       className={`relative flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border text-[9px] sm:text-[10px] font-black transition-all duration-300 ${active
                         ? 'border-[#9a6a35] bg-[#9a6a35] text-white shadow-[0_0_0_5px_rgba(154,106,53,.15)] scale-110'
-                        : 'border-black/15 dark:border-white/15 bg-white/80 dark:bg-white/5 text-black/70 dark:text-white/70 group-hover:border-[#9a6a35]'
+                        : 'border-black/15 dark:border-white/15 bg-white/80 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 group-hover:border-[#9a6a35]'
                         }`}
                     >
                       {String(index + 1).padStart(2, '0')}
@@ -450,7 +450,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-6 backdrop-blur-xl shadow-lg">
+              <div className="rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-#FFF6EB/[0.03] p-6 backdrop-blur-xl shadow-lg">
                 <p className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">صعيد مصر</p>
                 <div className="mt-2 flex items-end gap-3">
                   <span className="text-5xl sm:text-6xl font-black leading-none">
@@ -470,7 +470,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="قلّب على بلد، معلم، صنعة يدوية..."
-                    className="h-12 w-full rounded-2xl border border-transparent bg-black/[0.035] pr-11 pl-10 text-sm font-medium outline-none transition-all placeholder:text-black/35 focus:border-[#9a6a35]/40 focus:bg-transparent dark:bg-white/[0.04] dark:placeholder:text-white/30 dark:focus:bg-white/[0.06]"
+                    className="h-12 w-full rounded-2xl border border-transparent bg-black/[0.035] pr-11 pl-10 text-sm font-medium outline-none transition-all placeholder:text-black/35 focus:border-[#9a6a35]/40 focus:bg-transparent dark:bg-#FFF6EB/[0.04] dark:placeholder:text-white/30 dark:focus:bg-white/[0.06]"
                   />
                   {searchQuery && (
                     <button
@@ -491,7 +491,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                         onClick={() => setSelectedRegionFilter(region)}
                         className={`shrink-0 rounded-xl px-4 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
                           ? 'bg-[#9a6a35] text-white shadow-md'
-                          : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                          : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
                           }`}
                       >
                         {region}
@@ -578,7 +578,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   onClick={previousGovernorate}
-                  className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 px-4 py-2.5 text-xs font-bold shadow-md backdrop-blur-xl hover:border-[#9a6a35] cursor-pointer"
+                  className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-#FFF6EB/5 px-4 py-2.5 text-xs font-bold shadow-md backdrop-blur-xl hover:border-[#9a6a35] cursor-pointer"
                 >
                   <ChevronRight size={16} />
                   <span>المحطة اللي قبلها</span>
@@ -586,7 +586,7 @@ export const UpperEgyptMapPage: React.FC = () => {
 
                 <button
                   onClick={nextGovernorate}
-                  className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-white text-white dark:text-black px-4 py-2.5 text-xs font-bold shadow-md hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer"
+                  className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-#FFF6EB text-white dark:text-black px-4 py-2.5 text-xs font-bold shadow-md hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer"
                 >
                   <span>المحطة اللي بعدها</span>
                   <ChevronLeft size={16} />
@@ -681,7 +681,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 return (
                   <div
                     key={stat.label}
-                    className="flex items-center gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/[0.04] p-5 backdrop-blur-xl shadow-lg"
+                    className="flex items-center gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-#FFF6EB/[0.04] p-5 backdrop-blur-xl shadow-lg"
                   >
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35]">
                       <Icon size={22} />
@@ -721,7 +721,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 {selectedGov?.slug && (
                   <button
                     onClick={() => navigateToGovernorate(selectedGov.slug)}
-                    className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-white text-white dark:text-black px-5 py-3 text-xs font-bold shadow-lg hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                    className="flex items-center gap-2 rounded-xl bg-[#211d18] dark:bg-#FFF6EB text-white dark:text-black px-5 py-3 text-xs font-bold shadow-lg hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
                   >
                     <span>افتح ملف المحافظة كامل</span>
                     <ArrowLeft size={16} />
@@ -740,7 +740,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${active
                         ? 'bg-[#9a6a35] text-white shadow-md'
-                        : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                        : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
                         }`}
                     >
                       <Icon size={16} />
@@ -804,7 +804,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                         {crafts.map((craft) => (
                           <div
                             key={craft.id}
-                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-5 shadow-md"
+                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-#FFF6EB/[0.03] p-5 shadow-md"
                           >
                             <img
                               src={getHighQualityImage(craft.coverImage, 400)}
@@ -838,7 +838,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                           return (
                             <div
                               key={product.id}
-                              className="group rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] overflow-hidden p-4 flex flex-col justify-between shadow-md"
+                              className="group rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-#FFF6EB/[0.03] overflow-hidden p-4 flex flex-col justify-between shadow-md"
                             >
                               <div className="space-y-3">
                                 <div className="aspect-square overflow-hidden rounded-2xl bg-[#dfd6c5]/50 dark:bg-[#1a1917]">
@@ -855,7 +855,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                                 onClick={() => handleAddProduct(product)}
                                 className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-white transition-colors cursor-pointer ${added
                                   ? 'bg-emerald-600'
-                                  : 'bg-[#211d18] dark:bg-white dark:text-black hover:bg-[#9a6a35]'
+                                  : 'bg-[#211d18] dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35]'
                                   }`}
                               >
                                 {added ? <Check size={14} /> : <ShoppingBag size={14} />}
@@ -880,7 +880,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                         {foods.map((food: any, idx: number) => (
                           <div
                             key={food.id || idx}
-                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/[0.03] p-5 shadow-md"
+                            className="flex gap-4 rounded-3xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-#FFF6EB/[0.03] p-5 shadow-md"
                           >
                             {food.coverImage ? (
                               <img
@@ -927,11 +927,11 @@ export const UpperEgyptMapPage: React.FC = () => {
       {/* الفوتر */}
       <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
-          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-white/5">
+          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 dark:border-white/10 bg-white/50 dark:bg-#FFF6EB/5">
             <img src={LOGO_URL} alt="وه" className="h-6 w-6 object-contain opacity-80" />
           </div>
-          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
         </div>
         <p className="text-[10px] font-black tracking-[0.2em] text-black/50 dark:text-white/50">
           وَه · حكايات الصعيد من المكان للإنسان

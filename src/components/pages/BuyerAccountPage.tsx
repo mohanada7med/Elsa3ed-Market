@@ -296,7 +296,7 @@ export const BuyerAccountPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
             {/* User Avatar with Cloudinary Integration */}
             <div className="relative group shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
                 {isUploadingImage || isRemovingImage ? (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
                     <Loader2 className="w-6 h-6 animate-spin mb-1" />
@@ -321,7 +321,7 @@ export const BuyerAccountPage: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage || isRemovingImage}
                 title="تغيير الصورة"
-                className="absolute -bottom-1 -left-1 p-2 bg-[#211d18] hover:bg-[#9a6a35] text-white dark:bg-white dark:text-black dark:hover:bg-[#d5a56d] rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
+                className="absolute -bottom-1 -left-1 p-2 bg-[#211d18] hover:bg-[#9a6a35] text-white dark:bg-#FFF6EB dark:text-black dark:hover:bg-[#d5a56d] rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -356,7 +356,7 @@ export const BuyerAccountPage: React.FC = () => {
                   id="change-profile-image-btn"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploadingImage || isRemovingImage}
-                  className="px-3 py-1.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-1.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
                 >
                   <Upload className="w-3.5 h-3.5 text-[#9a6a35]" />
                   <span>{isUploadingImage ? 'جاري الرفع...' : 'تغيير الصورة'}</span>
@@ -391,7 +391,7 @@ export const BuyerAccountPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('orders')}
-              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
+              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
             >
               <div className="flex items-center justify-center gap-1 text-[#9a6a35] font-bold text-base">
                 <Package className="w-4 h-4" />
@@ -403,7 +403,7 @@ export const BuyerAccountPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('favorites')}
-              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
+              className="p-3 rounded-2xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] transition-all text-center cursor-pointer backdrop-blur-xl"
             >
               <div className="flex items-center justify-center gap-1 text-rose-600 dark:text-rose-400 font-bold text-base">
                 <Heart className="w-4 h-4 fill-rose-600 dark:fill-rose-400" />
@@ -433,7 +433,7 @@ export const BuyerAccountPage: React.FC = () => {
                   readOnly
                   disabled
                   value={currentUser.username || 'غير محدد'}
-                  className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none text-black/50 dark:text-white/50 min-h-[44px] cursor-not-allowed font-medium"
+                  className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none text-black/50 dark:text-white/50 min-h-[44px] cursor-not-allowed font-medium"
                 />
                 <User className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
               </div>
@@ -451,7 +451,7 @@ export const BuyerAccountPage: React.FC = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
                   <User className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
@@ -467,7 +467,7 @@ export const BuyerAccountPage: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@example.com (اختياري)"
-                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
                   <Mail className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
@@ -483,7 +483,7 @@ export const BuyerAccountPage: React.FC = () => {
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
+                    className="w-full pl-3 pr-10 py-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px]"
                   />
                   <Phone className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-3.5" />
                 </div>
@@ -495,7 +495,7 @@ export const BuyerAccountPage: React.FC = () => {
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-3 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px] cursor-pointer"
+                    className="w-full px-3.5 py-3 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-sm outline-none focus:border-[#9a6a35] min-h-[44px] cursor-pointer"
                   >
                     <option value="القاهرة" className="dark:bg-[#151513]">القاهرة</option>
                     <option value="الجيزة" className="dark:bg-[#151513]">الجيزة</option>
@@ -515,7 +515,7 @@ export const BuyerAccountPage: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>حفظ التعديلات</span>
@@ -571,7 +571,7 @@ export const BuyerAccountPage: React.FC = () => {
                   id="refresh-seller-status-btn"
                   onClick={handleRefreshStatus}
                   disabled={isCheckingStatus}
-                  className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                  className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
                   <span>{isCheckingStatus ? 'بنراجع...' : 'حدّث حالة الطلب'}</span>
@@ -660,7 +660,7 @@ export const BuyerAccountPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsApplyModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center text-black/60 dark:text-white/60 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 flex items-center justify-center text-black/60 dark:text-white/60 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -677,7 +677,7 @@ export const BuyerAccountPage: React.FC = () => {
                   value={workshopName}
                   onChange={(e) => setWorkshopName(e.target.value)}
                   placeholder="مثال: ورشة الفخار الأصيل، نول أخميم اليدوي..."
-                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
+                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
                 />
               </div>
 
@@ -692,7 +692,7 @@ export const BuyerAccountPage: React.FC = () => {
                     value={specialty}
                     onChange={(e) => setSpecialty(e.target.value)}
                     placeholder="مثال: فخار وخزف، تلي وتطريز، سجاد صوف..."
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
                   />
                 </div>
 
@@ -701,7 +701,7 @@ export const BuyerAccountPage: React.FC = () => {
                   <select
                     value={applyGovernorate}
                     onChange={(e) => setApplyGovernorate(e.target.value as Governorate)}
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px] cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px] cursor-pointer"
                   >
                     <option value="قنا" className="dark:bg-[#151513]">قنا</option>
                     <option value="سوهاج" className="dark:bg-[#151513]">سوهاج</option>
@@ -726,7 +726,7 @@ export const BuyerAccountPage: React.FC = () => {
                     value={applyPhone}
                     onChange={(e) => setApplyPhone(e.target.value)}
                     placeholder="010XXXXXXXX"
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
                   />
                 </div>
 
@@ -739,7 +739,7 @@ export const BuyerAccountPage: React.FC = () => {
                     value={applyEmail}
                     onChange={(e) => setApplyEmail(e.target.value)}
                     placeholder="workshop@example.com"
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
                   />
                 </div>
               </div>
@@ -751,7 +751,7 @@ export const BuyerAccountPage: React.FC = () => {
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="اكتب نبذة مختصرة تصف منتجات ورشتكم التراثية..."
-                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
@@ -762,7 +762,7 @@ export const BuyerAccountPage: React.FC = () => {
                   value={story}
                   onChange={(e) => setStory(e.target.value)}
                   placeholder="كيف بدأت الصنعة؟ كم جيلاً توارث هذه الحرفة؟..."
-                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
                 />
               </div>
 
@@ -772,7 +772,7 @@ export const BuyerAccountPage: React.FC = () => {
                   <select
                     value={payoutMethod}
                     onChange={(e) => setPayoutMethod(e.target.value as any)}
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px] cursor-pointer"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px] cursor-pointer"
                   >
                     <option value="vodafone_cash" className="dark:bg-[#151513]">محفظة فودافون كاش / كاش المحمول</option>
                     <option value="instapay" className="dark:bg-[#151513]">شبكة المدفوعات اللحظية InstaPay</option>
@@ -786,7 +786,7 @@ export const BuyerAccountPage: React.FC = () => {
                     value={payoutAccount}
                     onChange={(e) => setPayoutAccount(e.target.value)}
                     placeholder="رقم الموبايل أو IPA"
-                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
+                    className="w-full px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] min-h-[42px]"
                   />
                 </div>
               </div>

@@ -51,9 +51,9 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
   // Variant classes mapped to unified Wah design tokens
   const variantClasses: Record<ButtonVariant, string> = {
     primary:
-      'bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-sm hover:shadow-md border border-transparent active:scale-[0.98]',
+      'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-sm hover:shadow-md border border-transparent active:scale-[0.98]',
     secondary:
-      'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/15 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 active:scale-[0.98]',
+      'bg-black/5 hover:bg-black/10 dark:bg-#FFF6EB/10 dark:hover:bg-white/15 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 active:scale-[0.98]',
     outline:
       'bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] border border-black/15 dark:border-white/15 hover:border-[#9a6a35] hover:text-[#9a6a35] dark:hover:border-[#9a6a35] dark:hover:text-[#9a6a35] active:scale-[0.98]',
     ghost:

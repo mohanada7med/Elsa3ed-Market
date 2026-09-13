@@ -91,7 +91,7 @@ export const PeoplePage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -189,7 +189,7 @@ export const PeoplePage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-#FFF6EB/[0.035]
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
@@ -280,7 +280,7 @@ export const PeoplePage: React.FC = () => {
                   placeholder:text-black/35
                   focus:border-[#9a6a35]/40
                   focus:bg-transparent
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -318,7 +318,7 @@ export const PeoplePage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -348,7 +348,7 @@ export const PeoplePage: React.FC = () => {
                 bg-[#211d18]
                 px-5
                 text-white
-                dark:bg-white
+                dark:bg-#FFF6EB
                 dark:text-black
               "
             >
@@ -399,7 +399,7 @@ export const PeoplePage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-white/5"
+                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-#FFF6EB/5"
               />
             ))}
           </div>
@@ -447,7 +447,7 @@ export const PeoplePage: React.FC = () => {
                   bg-[#211d18]
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-white
+                  dark:bg-#FFF6EB
                   dark:text-black
                   cursor-pointer
                 "
@@ -503,7 +503,7 @@ export const PeoplePage: React.FC = () => {
 
                       <div className="flex flex-col items-end gap-1.5">
                         {person.governorateName && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-black/5 dark:bg-white/5 px-3 py-1 text-[10px] font-bold text-black/70 dark:text-white/70">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-black/5 dark:bg-#FFF6EB/5 px-3 py-1 text-[10px] font-bold text-black/70 dark:text-white/70">
                             <MapPin size={11} className="text-[#9a6a35]" />
                             {person.governorateName}
                           </span>
@@ -536,7 +536,7 @@ export const PeoplePage: React.FC = () => {
                     <span className="text-black/50 dark:text-white/50 group-hover:text-[#9a6a35] transition-colors">
                       السيرة الكاملة والمقتنيات
                     </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
                       <ArrowUpLeft size={16} />
                     </span>
                   </div>

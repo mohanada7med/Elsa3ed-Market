@@ -174,7 +174,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             <button
               onClick={() => loadMedia()}
               disabled={isLoading}
-              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl hover:bg-black/10 dark:bg-white/10 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
+              className="min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl hover:bg-black/10 dark:bg-#FFF6EB/10 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all disabled:opacity-50"
               title="تحديث القائمة"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -183,7 +183,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
             <button
               onClick={() => setIsUploadModalOpen(true)}
-              className="min-h-[44px] px-4 py-2 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all"
+              className="min-h-[44px] px-4 py-2 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-sm transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>رفع وسائط جديدة</span>
@@ -287,7 +287,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
             </p>
           </div>
         ) : mediaList.length === 0 ? (
-          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 p-8">
+          <div className="py-20 text-center rounded-2xl border-2 border-dashed border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 p-8">
             <ImageIcon className="w-12 h-12 text-black/50 dark:text-white/50 mx-auto mb-3 opacity-60" />
             <h3 className="text-base font-bold text-[#211d18] dark:text-[#f5f0e7] mb-1">
               لا توجد وسائط مسجلة في هذا التصنيف
@@ -362,7 +362,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
 
                       {/* Public ID */}
                       {item.publicId && (
-                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+                        <div className="mt-2 flex items-center justify-between gap-1 p-1.5 rounded-lg bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10">
                           <span className="text-[10px] font-mono text-black/60 dark:text-white/60 truncate ltr" dir="ltr">
                             {item.publicId}
                           </span>
@@ -466,7 +466,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 <select
                   value={uploadEntityType}
                   onChange={(e) => setUploadEntityType(e.target.value)}
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 text-xs sm:text-sm"
                 >
                   {ENTITY_TYPE_OPTIONS.filter((o) => o.value !== 'all').map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -485,7 +485,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   value={uploadEntitySlug}
                   onChange={(e) => setUploadEntitySlug(e.target.value)}
                   placeholder="مثال: meidum-pyramid أو fayesh"
-                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-xs sm:text-sm"
+                  className="w-full min-h-[44px] px-3.5 py-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 text-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -606,7 +606,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                   setDeleteError(null);
                 }}
                 disabled={Boolean(deletingItemId)}
-                className="px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-xs font-bold text-black/60 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-[#2D241E] transition-colors cursor-pointer"
               >
                 إلغاء
               </button>

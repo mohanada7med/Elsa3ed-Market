@@ -785,7 +785,7 @@ const ProductCard: React.FC<{
             h-px
             bg-black/[0.07]
 
-            dark:bg-white/[0.07]
+            dark:bg-#FFF6EB/[0.07]
           "
           />
 
@@ -895,7 +895,7 @@ const ProductCard: React.FC<{
               disabled:cursor-not-allowed
               disabled:opacity-40
 
-              dark:bg-white
+              dark:bg-#FFF6EB
               dark:text-black
 
               dark:hover:bg-[#d6aa72]
@@ -1427,7 +1427,7 @@ const QuickView: React.FC<{
 
                 hover:bg-[#9a6a35]
 
-                dark:bg-white
+                dark:bg-#FFF6EB
                 dark:text-black
 
                 dark:hover:bg-[#d6aa72]
@@ -1679,7 +1679,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           text-center
 
           dark:border-white/10
-          dark:bg-white/[0.015]
+          dark:bg-#FFF6EB/[0.015]
         "
       >
         <div
@@ -1750,7 +1750,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           text-center
 
           dark:border-white/10
-          dark:bg-white/[0.015]
+          dark:bg-#FFF6EB/[0.015]
         "
       >
         <div
@@ -1835,7 +1835,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
               bg-[#211d18]
               text-white
 
-              dark:bg-white
+              dark:bg-#FFF6EB
               dark:text-black
             "
           >

@@ -150,7 +150,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           onClick={() => onNavigate(place.slug)}
           className="group block w-full overflow-hidden rounded-[30px] text-right cursor-pointer"
         >
-          <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-white/5 shadow-md">
+          <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-#FFF6EB/5 shadow-md">
             <img
               src={image}
               alt={place.title}
@@ -172,14 +172,14 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
               {place.visitInfo?.visitStatus && place.visitInfo.visitStatus !== 'open' && (
                 <span
                   className={`rounded-full px-2.5 py-1 text-[9px] font-black shadow-md ${place.visitInfo.visitStatus === 'closed_to_public'
-                      ? 'bg-red-600 text-white'
-                      : place.visitInfo.visitStatus === 'closed_for_restoration'
-                        ? 'bg-amber-600 text-white'
-                        : place.visitInfo.visitStatus === 'public_landmark'
-                          ? 'bg-emerald-600 text-white'
-                          : place.visitInfo.visitStatus === 'active_institution'
-                            ? 'bg-indigo-600 text-white'
-                            : 'bg-orange-600 text-white'
+                    ? 'bg-red-600 text-white'
+                    : place.visitInfo.visitStatus === 'closed_for_restoration'
+                      ? 'bg-amber-600 text-white'
+                      : place.visitInfo.visitStatus === 'public_landmark'
+                        ? 'bg-emerald-600 text-white'
+                        : place.visitInfo.visitStatus === 'active_institution'
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-orange-600 text-white'
                     }`}
                 >
                   {place.visitInfo.visitStatus === 'closed_to_public' && 'مقفول للجمهور'}
@@ -430,7 +430,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -524,7 +524,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-#FFF6EB/[0.035]
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
@@ -613,7 +613,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   placeholder:text-black/35
                   focus:border-[#9a6a35]/40
                   focus:bg-transparent
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -651,7 +651,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -689,7 +689,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -719,7 +719,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 bg-[#211d18]
                 px-5
                 text-white
-                dark:bg-white
+                dark:bg-#FFF6EB
                 dark:text-black
               "
             >
@@ -763,7 +763,7 @@ export const PlacesHeritagePage: React.FC = () => {
 
           {isLoading ? (
             <div className="relative">
-              <div className="absolute bottom-0 right-1/2 top-0 hidden w-px bg-black/10 dark:bg-white/10 md:block" />
+              <div className="absolute bottom-0 right-1/2 top-0 hidden w-px bg-black/10 dark:bg-#FFF6EB/10 md:block" />
 
               {Array.from({ length: 4 }).map((_, index) => (
                 <div
@@ -776,12 +776,12 @@ export const PlacesHeritagePage: React.FC = () => {
                     ${index % 2 === 0 ? '' : 'md:[&>div:first-child]:order-2'}
                   `}
                 >
-                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-white/5" />
+                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-#FFF6EB/5" />
 
                   <div className="space-y-4 py-6">
-                    <div className="h-3 w-20 animate-pulse rounded-full bg-black/5 dark:bg-white/5" />
-                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-black/5 dark:bg-white/5" />
-                    <div className="h-4 w-full animate-pulse rounded-full bg-black/5 dark:bg-white/5" />
+                    <div className="h-3 w-20 animate-pulse rounded-full bg-black/5 dark:bg-#FFF6EB/5" />
+                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-black/5 dark:bg-#FFF6EB/5" />
+                    <div className="h-4 w-full animate-pulse rounded-full bg-black/5 dark:bg-#FFF6EB/5" />
                   </div>
                 </div>
               ))}
@@ -835,7 +835,7 @@ export const PlacesHeritagePage: React.FC = () => {
                       text-xs font-bold text-white
                       shadow-lg transition-all
                       hover:bg-[#9a6a35]
-                      dark:bg-white dark:text-black
+                      dark:bg-#FFF6EB dark:text-black
                       dark:hover:bg-[#9a6a35] dark:hover:text-white
                       cursor-pointer
                     "
@@ -910,11 +910,11 @@ export const PlacesHeritagePage: React.FC = () => {
       {/* FOOTER */}
       <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
-          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
           <span className="text-[10px] font-bold tracking-[0.2em] text-black/50 dark:text-white/50">
             وه — حكاية الصعيد في إيدك
           </span>
-          <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
         </div>
         <p className="text-[9px] font-black uppercase tracking-[0.25em] text-black/40 dark:text-white/40">
           WAH / 2026

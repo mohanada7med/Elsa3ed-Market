@@ -323,7 +323,7 @@ export const CraftReelsPage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -420,7 +420,7 @@ export const CraftReelsPage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-#FFF6EB/[0.035]
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
@@ -481,7 +481,7 @@ export const CraftReelsPage: React.FC = () => {
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
                     ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
-                    : 'bg-black/10 dark:bg-white/10 group-hover:bg-[#9a6a35]/40'
+                    : 'bg-black/10 dark:bg-#FFF6EB/10 group-hover:bg-[#9a6a35]/40'
                     }`}
                 >
                   <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
@@ -552,7 +552,7 @@ export const CraftReelsPage: React.FC = () => {
                   placeholder:text-black/35
                   focus:border-[#9a6a35]/40
                   focus:bg-transparent
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -591,7 +591,7 @@ export const CraftReelsPage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -606,12 +606,12 @@ export const CraftReelsPage: React.FC = () => {
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center p-1 bg-black/[0.035] dark:bg-white/[0.04] rounded-xl shrink-0">
+            <div className="flex items-center p-1 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl shrink-0">
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'grid'
-                  ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+                  ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
                   : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                   }`}
               >
@@ -642,7 +642,7 @@ export const CraftReelsPage: React.FC = () => {
                 onClick={() => setSelectedContentType(cat.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${selectedContentType === cat.id
                   ? 'bg-[#9a6a35] text-white shadow-md'
-                  : 'bg-black/[0.04] dark:bg-white/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
+                  : 'bg-black/[0.04] dark:bg-#FFF6EB/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
                   }`}
               >
                 {cat.label}
@@ -810,7 +810,7 @@ export const CraftReelsPage: React.FC = () => {
                     setSelectedContentType('all');
                     setSearchQuery('');
                   }}
-                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs font-bold rounded-xl cursor-pointer"
                 >
                   إعادة تعيين الفلاتر
                 </button>
@@ -949,7 +949,7 @@ export const CraftReelsPage: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-white dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <LogIn className="w-4 h-4" />
                       <span>تسجيل الدخول كبائع</span>
@@ -961,7 +961,7 @@ export const CraftReelsPage: React.FC = () => {
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 px-4 bg-black/5 dark:bg-white/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
+                      className="w-full py-3 px-4 bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
                     >
                       <span>إنشاء حساب جديد</span>
                     </button>
@@ -974,7 +974,7 @@ export const CraftReelsPage: React.FC = () => {
                         setPermissionAlert((prev) => ({ ...prev, isOpen: false }));
                         setActivePage('sellers');
                       }}
-                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-white dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Store className="w-4 h-4" />
                       <span>التقديم لفتح ورشة بائع</span>
@@ -982,7 +982,7 @@ export const CraftReelsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                      className="w-full py-3 px-4 bg-black/5 dark:bg-white/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
+                      className="w-full py-3 px-4 bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
                     >
                       <span>إلغاء</span>
                     </button>

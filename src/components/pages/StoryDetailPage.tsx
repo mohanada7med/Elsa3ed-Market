@@ -112,7 +112,7 @@ export const StoryDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('stories')}
-            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
+            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             العودة لكافة الحكايات
           </button>
@@ -162,7 +162,7 @@ export const StoryDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigateToGovernorate(story.governorateId || 'qena')}
-              className="px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#9a6a35] dark:hover:text-[#d5a56d] text-xs font-semibold flex items-center gap-1 transition-colors border border-black/5 dark:border-white/5 cursor-pointer"
+              className="px-3 py-1 rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#9a6a35] dark:hover:text-[#d5a56d] text-xs font-semibold flex items-center gap-1 transition-colors border border-black/5 dark:border-white/5 cursor-pointer"
             >
               <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
               <span>محافظة {story.governorateName}</span>
@@ -198,7 +198,7 @@ export const StoryDetailPage: React.FC = () => {
 
           {/* Cultural Moral Quote */}
           {story.culturalSignificance && (
-            <div className="mt-8 p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 relative">
+            <div className="mt-8 p-6 rounded-2xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 relative">
               <Quote className="w-8 h-8 text-[#9a6a35]/30 absolute top-4 left-4" />
               <h4 className="text-sm font-bold font-serif text-[#9a6a35] dark:text-[#d5a56d] mb-2">
                 الأصل الثقافي والعبرة المتوارثة:
@@ -215,7 +215,7 @@ export const StoryDetailPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('stories')}
-            className="px-8 py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
+            className="px-8 py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs shadow-lg transition-all cursor-pointer hover:scale-[1.02]"
           >
             تصفح المزيد من حكايات وه بيحكي
           </button>

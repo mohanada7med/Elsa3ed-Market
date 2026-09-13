@@ -21,10 +21,10 @@ export interface GovernorateExplorerItem {
   name: Governorate;
   slug: string;
   region:
-    | 'شمال الصعيد'
-    | 'وسط الصعيد'
-    | 'جنوب الصعيد'
-    | 'الواحات والصحراء';
+  | 'شمال الصعيد'
+  | 'وسط الصعيد'
+  | 'جنوب الصعيد'
+  | 'الواحات والصحراء';
   capitalCity: string;
   famousCraft: string;
   famousItem: string;
@@ -284,7 +284,7 @@ export const GovernorateExplorer: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.35 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#9a6a35] text-xs font-bold backdrop-blur-md shadow-sm mb-4"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#9a6a35] text-xs font-bold backdrop-blur-md shadow-sm mb-4"
         >
           <Sparkles className="w-4 h-4 text-[#9a6a35]" />
           من الفيوم إلى أسوان
@@ -345,7 +345,7 @@ export const GovernorateExplorer: React.FC = () => {
               placeholder:text-black/35
               focus:border-[#9a6a35]/40
               focus:bg-transparent
-              dark:bg-white/[0.04]
+              dark:bg-#FFF6EB/[0.04]
               dark:placeholder:text-white/30
               dark:focus:bg-white/[0.06]
             "
@@ -365,8 +365,8 @@ export const GovernorateExplorer: React.FC = () => {
                   shrink-0 px-4 h-12 rounded-xl text-xs font-bold
                   transition-all duration-200 cursor-pointer
                   ${active
-                    ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
                   }
                 `}
               >
@@ -418,7 +418,7 @@ export const GovernorateExplorer: React.FC = () => {
                   shadow-lg
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-#FFF6EB/[0.035]
                   cursor-pointer
                   transition-all
                   duration-500
@@ -429,7 +429,7 @@ export const GovernorateExplorer: React.FC = () => {
               >
                 {/* Image Frame */}
                 <div>
-                  <div className="relative h-[220px] overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-white/5">
+                  <div className="relative h-[220px] overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-#FFF6EB/5">
                     <img
                       src={gov.coverImage}
                       alt={`محافظة ${gov.name}`}
@@ -504,7 +504,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(gov)}
-                    className="h-11 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer"
+                    className="h-11 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer"
                   >
                     استكشف
                     <ArrowUpLeft className="w-4 h-4" />
@@ -514,7 +514,7 @@ export const GovernorateExplorer: React.FC = () => {
                     type="button"
                     onClick={() => handleShop(gov.name)}
                     title={`تسوق من ${gov.name}`}
-                    className="w-11 h-11 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/5 text-black dark:text-white flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#9a6a35] transition-all cursor-pointer"
+                    className="w-11 h-11 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-#FFF6EB/5 text-black dark:text-white flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#9a6a35] transition-all cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4" />
                   </button>
@@ -543,7 +543,7 @@ export const GovernorateExplorer: React.FC = () => {
               setSearchQuery('');
               setSelectedRegion('all');
             }}
-            className="mt-5 px-6 h-11 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black font-bold text-xs hover:bg-[#9a6a35] transition-colors cursor-pointer"
+            className="mt-5 px-6 h-11 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs hover:bg-[#9a6a35] transition-colors cursor-pointer"
           >
             عرض كل المحافظات
           </button>
@@ -552,11 +552,11 @@ export const GovernorateExplorer: React.FC = () => {
 
       {/* Footer Accent */}
       <div className="relative z-10 flex items-center justify-center gap-4 mt-12">
-        <span className="w-12 h-px bg-black/10 dark:bg-white/10" />
+        <span className="w-12 h-px bg-black/10 dark:bg-#FFF6EB/10" />
         <span className="text-xs font-bold text-black/50 dark:text-white/50">
           الصعيد حكاية بتتوارث
         </span>
-        <span className="w-12 h-px bg-black/10 dark:bg-white/10" />
+        <span className="w-12 h-px bg-black/10 dark:bg-#FFF6EB/10" />
       </div>
 
       {/* ================= PREVIEW ================= */}
@@ -621,7 +621,7 @@ export const GovernorateExplorer: React.FC = () => {
 
               {/* Modal Content */}
               <div className="p-6 sm:p-8 space-y-6">
-                <div className="rounded-2xl bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 p-5">
+                <div className="rounded-2xl bg-black/[0.03] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 p-5">
                   <div className="flex gap-3">
                     <div className="w-10 h-10 shrink-0 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
                       <Landmark className="w-5 h-5 text-[#9a6a35]" />
@@ -672,7 +672,7 @@ export const GovernorateExplorer: React.FC = () => {
                   {previewGov.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold"
+                      className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-xs font-bold"
                     >
                       {tag}
                     </span>
@@ -684,7 +684,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(previewGov)}
-                    className="h-12 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer text-xs"
+                    className="h-12 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer text-xs"
                   >
                     اكتشف المحافظة
                     <ArrowUpLeft className="w-5 h-5" />
@@ -693,7 +693,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleShop(previewGov.name)}
-                    className="h-12 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 font-bold flex items-center justify-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer text-xs"
+                    className="h-12 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-bold flex items-center justify-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer text-xs"
                   >
                     <ShoppingBag className="w-5 h-5 text-[#9a6a35]" />
                     تسوق من المحافظة

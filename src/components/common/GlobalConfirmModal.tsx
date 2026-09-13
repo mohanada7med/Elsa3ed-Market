@@ -55,11 +55,10 @@ export const GlobalConfirmModal: React.FC = () => {
         <div className="flex items-start justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-4">
           <div className="flex items-center gap-3">
             <div
-              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${
-                danger
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${danger
                   ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
                   : 'bg-[#9a6a35]/10 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/20'
-              }`}
+                }`}
             >
               {danger ? <Trash2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
             </div>
@@ -85,7 +84,7 @@ export const GlobalConfirmModal: React.FC = () => {
         </div>
 
         {/* Message body */}
-        <div className="p-3.5 bg-black/[0.02] dark:bg-white/[0.03] rounded-2xl border border-black/5 dark:border-white/5">
+        <div className="p-3.5 bg-black/[0.02] dark:bg-#FFF6EB/[0.03] rounded-2xl border border-black/5 dark:border-white/5">
           <p className="text-xs sm:text-sm text-black/80 dark:text-white/80 leading-relaxed font-medium whitespace-pre-line">
             {message}
           </p>
@@ -108,11 +107,10 @@ export const GlobalConfirmModal: React.FC = () => {
             disabled={isLoading}
             onClick={handleConfirm}
             id="confirm-modal-submit-btn"
-            className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${
-              danger
+            className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer ${danger
                 ? 'bg-rose-600 hover:bg-rose-700 text-white'
                 : 'bg-[#9a6a35] hover:bg-[#855928] text-white'
-            } disabled:opacity-60`}
+              } disabled:opacity-60`}
           >
             {isLoading ? (
               <>

@@ -162,7 +162,7 @@ export const CartDrawer: React.FC = () => {
                         setActivePage('products');
                       }}
                       aria-label="اتفرج على كل منتجات سوق الصعيد دلوقتي"
-                      className="mt-6 px-6 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+                      className="mt-6 px-6 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer"
                     >
                       اتفرج على سوق الصعيد دلوقتي
                     </button>
@@ -245,7 +245,7 @@ export const CartDrawer: React.FC = () => {
                             </div>
 
                             {/* Quantity Stepper */}
-                            <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-white/5 overflow-hidden">
+                            <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 overflow-hidden">
                               <button
                                 type="button"
                                 id={`qty-minus-${prodId}`}
@@ -314,7 +314,7 @@ export const CartDrawer: React.FC = () => {
                         onChange={(e) => setCouponInput(e.target.value)}
                         placeholder="كود الخصم (جرب SAEED100)"
                         aria-label="أدخل كود قسيمة الخصم الترويجية"
-                        className="flex-1 px-3 py-2.5 text-sm sm:text-xs bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] outline-none focus:border-[#9a6a35] min-h-[40px]"
+                        className="flex-1 px-3 py-2.5 text-sm sm:text-xs bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-[1rem] outline-none focus:border-[#9a6a35] min-h-[40px]"
                       />
                       <button
                         type="submit"
@@ -359,7 +359,7 @@ export const CartDrawer: React.FC = () => {
                       id="cart-checkout-btn"
                       onClick={proceedToCheckout}
                       aria-label={`كمّل واطلب دلوقتي، الحساب كله ${cartTotal} جنيه`}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
+                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm rounded-[1.25rem] shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[48px] cursor-pointer"
                     >
                       <span>كمّل واطلب دلوقتي</span>
                       <ArrowLeft className="w-4 h-4" />
@@ -372,7 +372,7 @@ export const CartDrawer: React.FC = () => {
                         setIsCartDrawerOpen(false);
                         setActivePage('cart');
                       }}
-                      className="w-full py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-[1.25rem] transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
+                      className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs rounded-[1.25rem] transition-colors flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px]"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
                       <span>شوف السلة بالتفصيل</span>

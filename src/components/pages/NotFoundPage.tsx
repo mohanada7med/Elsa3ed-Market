@@ -29,7 +29,7 @@ export const NotFoundPage: React.FC = () => {
             id="not-found-home-btn"
             type="button"
             onClick={() => setActivePage('home')}
-            className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg cursor-pointer text-sm"
+            className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg cursor-pointer text-sm"
           >
             <Home className="w-5 h-5" aria-hidden="true" />
             <span>ارجع للرئيسية</span>
@@ -39,7 +39,7 @@ export const NotFoundPage: React.FC = () => {
             id="not-found-products-btn"
             type="button"
             onClick={() => setActivePage('products')}
-            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer text-sm"
+            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer text-sm"
           >
             <ShoppingBag className="w-5 h-5" aria-hidden="true" />
             <span>تصفح منتجات سوق وه</span>

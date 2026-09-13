@@ -64,7 +64,7 @@ export const SellersDirectoryPage: React.FC = () => {
       </nav>
 
       {/* Header */}
-      <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-white dark:text-black p-6 sm:p-10 shadow-xl relative overflow-hidden border border-black/10 dark:border-white/10 backdrop-blur-xl">
+      <div className="rounded-[2rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black p-6 sm:p-10 shadow-xl relative overflow-hidden border border-black/10 dark:border-white/10 backdrop-blur-xl">
         <div className="relative z-10 max-w-2xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 dark:bg-black/10 text-[#d5a56d] dark:text-[#9a6a35] text-xs font-bold backdrop-blur-xs">
             <Store className="w-3.5 h-3.5" />
@@ -102,7 +102,7 @@ export const SellersDirectoryPage: React.FC = () => {
             type="button"
             onClick={() => setSelectedGov(gov)}
             className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 min-h-[40px] cursor-pointer ${selectedGov === gov
-              ? 'bg-[#211d18] text-white dark:bg-white dark:text-black shadow-md'
+              ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
               : 'bg-white/75 dark:bg-[#151513]/90 text-black/75 dark:text-white/75 hover:bg-black/5 dark:hover:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xl'
               }`}
           >
@@ -124,7 +124,7 @@ export const SellersDirectoryPage: React.FC = () => {
           <button
             type="button"
             onClick={() => { setSelectedGov('all'); setSearch(''); }}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
           >
             <span>إعادة ضبط البحث</span>
           </button>
@@ -139,7 +139,7 @@ export const SellersDirectoryPage: React.FC = () => {
               className="group relative overflow-hidden rounded-[2rem] bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 cursor-pointer transition-all duration-500 hover:-translate-y-1.5 hover:border-[#9a6a35] hover:shadow-[0_20px_50px_rgba(154,106,53,0.12)] flex flex-col justify-between backdrop-blur-xl shadow-lg"
             >
               {/* Cover Banner */}
-              <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-white/5">
+              <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-#FFF6EB/5">
                 <img
                   src={seller.coverImage}
                   alt={seller.brandName}
@@ -171,7 +171,7 @@ export const SellersDirectoryPage: React.FC = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-2.5 py-1 rounded-xl text-xs font-bold backdrop-blur-md">
+                    <div className="flex items-center gap-1 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-2.5 py-1 rounded-xl text-xs font-bold backdrop-blur-md">
                       <Star className="w-3.5 h-3.5  text-[#d6aa72]" />
                       <span>{seller.rating}</span>
                       <span className="text-[10px] text-black/40 dark:text-white/40 font-normal">({seller.salesCount} مبيعة)</span>

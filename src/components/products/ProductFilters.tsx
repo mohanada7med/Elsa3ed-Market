@@ -60,7 +60,7 @@ export const ProductFilters: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-          className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px] transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px] transition-colors cursor-pointer"
         >
           <Filter className="w-4 h-4" />
           <span>{isMobileExpanded ? 'إخفاء الفلاتر' : 'فلترة وترتيب المعروضات'}</span>
@@ -125,8 +125,8 @@ export const ProductFilters: React.FC = () => {
                   id={`filter-gov-${gov}`}
                   onClick={() => setSelectedGovernorateFilter(gov)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${isSelected
-                      ? 'bg-[#9a6a35] text-white shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
                     }`}
                 >
                   {gov === 'all' ? 'كل محافظات الصعيد' : gov}
@@ -148,8 +148,8 @@ export const ProductFilters: React.FC = () => {
               id="filter-cat-all"
               onClick={() => setSelectedCategoryFilter('all')}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${selectedCategoryFilter === 'all'
-                  ? 'bg-[#9a6a35] text-white shadow-xs'
-                  : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                ? 'bg-[#9a6a35] text-white shadow-xs'
+                : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
                 }`}
             >
               كل التصنيفات
@@ -163,8 +163,8 @@ export const ProductFilters: React.FC = () => {
                   id={`filter-cat-${cat.id}`}
                   onClick={() => setSelectedCategoryFilter(cat.id)}
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer min-h-[36px] ${isSelected
-                      ? 'bg-[#9a6a35] text-white shadow-xs'
-                      : 'bg-black/5 dark:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
+                    ? 'bg-[#9a6a35] text-white shadow-xs'
+                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18] dark:text-[#f5f0e7] hover:bg-black/10 dark:hover:bg-white/10 border border-black/10 dark:border-white/10'
                     }`}
                 >
                   {cat.name}
@@ -177,7 +177,7 @@ export const ProductFilters: React.FC = () => {
         {/* Toggles & Sorting */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-black/10 dark:border-white/10">
           {/* Handmade Only Toggle */}
-          <label className="flex items-center gap-2.5 cursor-pointer bg-black/5 dark:bg-white/5 p-3 rounded-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35] dark:hover:border-[#9a6a35] transition-colors min-h-[44px]">
+          <label className="flex items-center gap-2.5 cursor-pointer bg-black/5 dark:bg-#FFF6EB/5 p-3 rounded-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35] dark:hover:border-[#9a6a35] transition-colors min-h-[44px]">
             <input
               type="checkbox"
               checked={selectedHandmadeOnly}
@@ -191,7 +191,7 @@ export const ProductFilters: React.FC = () => {
           </label>
 
           {/* Sort Select */}
-          <div className="flex items-center gap-2 bg-black/5 dark:bg-white/5 px-3.5 py-1 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px]">
+          <div className="flex items-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 px-3.5 py-1 rounded-xl border border-black/10 dark:border-white/10 min-h-[44px]">
             <ArrowUpDown className="w-4 h-4 text-black/50 dark:text-white/50 shrink-0" />
             <select
               id="sort-select"

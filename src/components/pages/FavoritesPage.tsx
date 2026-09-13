@@ -71,7 +71,7 @@ export const FavoritesPage: React.FC = () => {
               type="button"
               id="fav-browse-more-btn"
               onClick={() => setActivePage('products')}
-              className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+              className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
             >
               شوف باقي المنتجات
             </button>
@@ -91,7 +91,7 @@ export const FavoritesPage: React.FC = () => {
               type="button"
               id="fav-empty-explore-btn"
               onClick={() => setActivePage('products')}
-              className="px-6 py-3 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+              className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold rounded-xl shadow-md transition-colors cursor-pointer"
             >
               استكشف سوق وه دلوقتي
             </button>

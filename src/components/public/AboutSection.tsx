@@ -229,7 +229,7 @@ export const AboutSection: React.FC = () => {
                       border-black/[0.08]
                       dark:border-white/[0.08]
                       bg-white/45
-                      dark:bg-white/[0.035]
+                      dark:bg-#FFF6EB/[0.035]
                       px-3
                       py-3
                       backdrop-blur-md
@@ -301,7 +301,7 @@ export const AboutSection: React.FC = () => {
                   px-5
                   rounded-xl
                   bg-[#211d18]
-                  dark:bg-white
+                  dark:bg-#FFF6EB
                   text-white
                   dark:text-black
                   text-[11px]
@@ -384,7 +384,7 @@ export const AboutSection: React.FC = () => {
                   border-black/10
                   dark:border-white/10
                   bg-white/45
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   text-[#211d18]
                   dark:text-white
                   text-[11px]

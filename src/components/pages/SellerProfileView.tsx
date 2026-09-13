@@ -37,7 +37,7 @@ export const SellerProfileView: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('sellers')}
-            className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-[1.25rem] text-xs font-black transition-colors cursor-pointer"
+            className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] rounded-[1.25rem] text-xs font-black transition-colors cursor-pointer"
           >
             شوف باقي شيوخ الصنعة
           </button>
@@ -98,7 +98,7 @@ export const SellerProfileView: React.FC = () => {
       {/* Workshop Header & Profile Banner */}
       <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg">
         {/* Cover Banner */}
-        <div className="relative h-48 sm:h-64 w-full bg-black/5 dark:bg-white/5">
+        <div className="relative h-48 sm:h-64 w-full bg-black/5 dark:bg-#FFF6EB/5">
           <img src={seller.coverImage} alt={seller.brandName} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
 
@@ -149,7 +149,7 @@ export const SellerProfileView: React.FC = () => {
 
             {/* Performance metrics */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
-              <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
+              <div className="bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
                 <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
                   <Star className="w-3.5 h-3.5 " />
                   <span>{seller.rating}</span>
@@ -157,12 +157,12 @@ export const SellerProfileView: React.FC = () => {
                 <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 block mt-0.5">تقييم المتسوقين</span>
               </div>
 
-              <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
+              <div className="bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
                 <span className="font-black text-xs sm:text-sm text-[#9a6a35] dark:text-[#d5a56d] block">{seller.salesCount}+</span>
                 <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 block mt-0.5">قطعة تم شحنها</span>
               </div>
 
-              <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
+              <div className="bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
                 <span className="font-bold text-xs sm:text-sm text-[#211d18] dark:text-[#f5f0e7] block">{seller.productsCount}</span>
                 <span className="text-[10px] text-[#211d18]/60 dark:text-[#f5f0e7]/60 block mt-0.5">منتجات معروضة</span>
               </div>
@@ -182,7 +182,7 @@ export const SellerProfileView: React.FC = () => {
             </div>
 
             {/* Contact / Workshop Info */}
-            <div className="lg:col-span-4 bg-black/5 dark:bg-white/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70">
+            <div className="lg:col-span-4 bg-black/5 dark:bg-#FFF6EB/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs text-[#211d18]/70 dark:text-[#f5f0e7]/70">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
                 <span>عضو معتمد في منصة وه منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>

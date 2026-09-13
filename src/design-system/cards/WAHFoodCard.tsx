@@ -35,7 +35,7 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
       onClick={onClick}
       className="group relative flex flex-col rounded-[1.5rem] bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/5 dark:bg-white/5">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/5 dark:bg-#FFF6EB/5">
         <img
           src={image}
           alt={title}

@@ -71,7 +71,7 @@ export const NotificationsPage: React.FC = () => {
               type="button"
               id="notifications-back-market-btn"
               onClick={() => setActivePage('products' as any)}
-              className="px-4 py-2.5 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
             >
               <span>تصفح السوق</span>
               <ArrowRight className="w-3.5 h-3.5 rotate-180" />
@@ -99,7 +99,7 @@ export const NotificationsPage: React.FC = () => {
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="w-full py-3.5 bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
                 <span>تسجيل الدخول الآن</span>
@@ -111,7 +111,7 @@ export const NotificationsPage: React.FC = () => {
                   setAuthModalTab('register');
                   setIsAuthModalOpen(true);
                 }}
-                className="w-full py-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
               >
                 إنشاء حساب جديد
               </button>

@@ -93,7 +93,7 @@ export const EventsPage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -285,7 +285,7 @@ export const EventsPage: React.FC = () => {
                   placeholder:text-black/35
                   focus:border-[#9a6a35]/40
                   focus:bg-transparent
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -324,7 +324,7 @@ export const EventsPage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -362,7 +362,7 @@ export const EventsPage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -392,7 +392,7 @@ export const EventsPage: React.FC = () => {
                 bg-[#211d18]
                 px-5
                 text-white
-                dark:bg-white
+                dark:bg-#FFF6EB
                 dark:text-black
               "
             >
@@ -445,7 +445,7 @@ export const EventsPage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-white/5"
+                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-#FFF6EB/5"
               />
             ))}
           </div>
@@ -497,7 +497,7 @@ export const EventsPage: React.FC = () => {
                   bg-[#211d18]
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-white
+                  dark:bg-#FFF6EB
                   dark:text-black
                   cursor-pointer
                 "
@@ -623,7 +623,7 @@ export const EventsPage: React.FC = () => {
                     <span className="text-black/50 dark:text-white/50 group-hover:text-[#9a6a35] transition-colors">
                       استكشاف تفاصيل الموسم
                     </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
                       <ArrowUpLeft size={16} />
                     </span>
                   </div>
@@ -646,7 +646,7 @@ export const EventsPage: React.FC = () => {
               bg-[#211d18]
               px-6 py-14
               text-white
-              dark:bg-white
+              dark:bg-#FFF6EB
               dark:text-black
               sm:px-12 sm:py-20
               lg:px-20

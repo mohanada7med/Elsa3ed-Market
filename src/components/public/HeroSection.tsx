@@ -124,7 +124,7 @@ export const HeroSection: React.FC = () => {
             <span className="text-[10px] font-bold tracking-[0.12em] text-[#9a6a35] dark:text-[#f0d5ad]">
               أسيوط · قلب الصعيد
             </span>
-            <span className="h-px w-10 bg-black/20 dark:bg-white/30" />
+            <span className="h-px w-10 bg-black/20 dark:bg-#FFF6EB/30" />
           </motion.div>
 
           {/* Badge */}
@@ -172,7 +172,7 @@ export const HeroSection: React.FC = () => {
             className="max-w-2xl text-[14px] font-medium leading-8 text-black/80 dark:text-white/80 sm:text-base"
           >
             أول مكان يجمع حلاوة الصعيد كلها من{' '}
-            <span className="font-bold text-[#9a6a35]">
+            <span className="font-bold text-[#9a6a35] dark:text-[#f0d5ad]">
               سوق وه لشغل اليد والخير الأصلي، ريلز وه من إيد ولاد البلد، وحكاوي وأماكن وه اللي ملهاش مثيل
             </span>
           </motion.p>
@@ -203,7 +203,7 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('reels')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-[#211d18] hover:bg-black text-white px-5 text-sm font-bold shadow-lg shadow-black/10 dark:bg-white dark:text-black dark:hover:bg-[#d5a56d] transition-all sm:min-w-[160px]"
+              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-[#211d18] hover:bg-black text-white px-5 text-sm font-bold shadow-lg shadow-black/10 dark:bg-#FFF6EB dark:text-black dark:hover:bg-[#d5a56d] transition-all sm:min-w-[160px]"
             >
               <Film className="h-5 w-5 text-[#d6aa72] dark:text-[#9a6a35]" />
               <span>فيديوهات وه</span>
@@ -215,7 +215,7 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('places')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-[#9a6a35]/30 bg-white/85 px-5 text-sm font-bold text-[#2b241c] backdrop-blur-md transition-all hover:border-[#9a6a35] hover:bg-white hover:shadow-md hover:shadow-[#9a6a35]/15 dark:border-white/20 dark:bg-white/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[175px]"
+              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-[#9a6a35]/30 bg-white/85 px-5 text-sm font-bold text-[#2b241c] backdrop-blur-md transition-all hover:border-[#9a6a35] hover:bg-white hover:shadow-md hover:shadow-[#9a6a35]/15 dark:border-white/20 dark:bg-#FFF6EB/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[175px]"
             >
               <Landmark className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
               <span>أماكن ومعالم وه</span>
@@ -227,7 +227,7 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('map')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-black/15 bg-white/70 px-5 text-sm font-bold text-[#211d18] backdrop-blur-md transition-all hover:border-[#9a6a35]/50 hover:bg-white hover:shadow-sm dark:border-white/20 dark:bg-white/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[155px]"
+              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-black/15 bg-white/70 px-5 text-sm font-bold text-[#211d18] backdrop-blur-md transition-all hover:border-[#9a6a35]/50 hover:bg-white hover:shadow-sm dark:border-white/20 dark:bg-#FFF6EB/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[155px]"
             >
               <Ship className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
               <span>خريطة الصعيد</span>

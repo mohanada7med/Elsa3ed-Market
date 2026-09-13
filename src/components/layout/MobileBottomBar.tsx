@@ -134,7 +134,7 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('seller-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
                 <Store className="w-5 h-5 text-[#9a6a35]" />
               </div>
               <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الورشة</span>
@@ -230,7 +230,7 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('admin-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
                 <ShieldAlert className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <span className="text-[9px] font-black mt-0.5 text-purple-600 dark:text-purple-400">الإدارة</span>
@@ -322,7 +322,7 @@ export const MobileBottomBar: React.FC = () => {
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
               aria-label="لفة في الصعيد"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
                 <MapPin className="w-5 h-5 text-[#9a6a35]" />
               </div>
               <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الصعيد</span>

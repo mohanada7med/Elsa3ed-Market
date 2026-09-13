@@ -142,7 +142,7 @@ export const StoriesPage: React.FC = () => {
                 group-hover:bg-[#211d18]
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-white/5
+                dark:bg-#FFF6EB/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -238,7 +238,7 @@ export const StoriesPage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-white/[0.035]
+                  dark:bg-#FFF6EB/[0.035]
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
@@ -329,7 +329,7 @@ export const StoriesPage: React.FC = () => {
                   placeholder:text-black/35
                   focus:border-[#9a6a35]/40
                   focus:bg-transparent
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -367,7 +367,7 @@ export const StoriesPage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -405,7 +405,7 @@ export const StoriesPage: React.FC = () => {
                   outline-none
                   transition-all
                   focus:border-[#9a6a35]/40
-                  dark:bg-white/[0.04]
+                  dark:bg-#FFF6EB/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -435,7 +435,7 @@ export const StoriesPage: React.FC = () => {
                 bg-[#211d18]
                 px-5
                 text-white
-                dark:bg-white
+                dark:bg-#FFF6EB
                 dark:text-black
               "
             >
@@ -483,7 +483,7 @@ export const StoriesPage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-white/5"
+                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-#FFF6EB/5"
               />
             ))}
           </div>
@@ -528,7 +528,7 @@ export const StoriesPage: React.FC = () => {
                   bg-[#211d18]
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-white
+                  dark:bg-#FFF6EB
                   dark:text-black
                   cursor-pointer
                 "
