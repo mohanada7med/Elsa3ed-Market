@@ -154,7 +154,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               بوابات
               <br />
-              <span className="mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
+              <span className="ps-3 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                 وه
               </span>
             </h1>
