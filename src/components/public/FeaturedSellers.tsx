@@ -33,7 +33,6 @@ export const FeaturedSellers: React.FC = () => {
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أهل
               <br />
-              <br />
               <span className="inline-block ms-4 sm:ms-8 lg:ms-12 text-primary dark:text-primary-hover">
                 الصنعة!
               </span>

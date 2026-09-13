@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { useApp } from '../../context/AppContext';
 import { HeroSection } from '../public/HeroSection';
 import { WahEcosystemPortalSection } from '../public/WahEcosystemPortalSection';
-import { CraftReelsSection } from '../public/CraftReelsSection';
 import { ProductGrid } from '../products/ProductGrid';
 import { ArrowLeft, ShoppingBasket } from 'lucide-react';
-// استيراد مباشر لصفحة/مكون القاموس وتحدي اللهجة الصعيدية بالكامل
-import { DialectDictionaryPage } from './quize';
-import { FeaturedSellers } from '../public/FeaturedSellers';
-import { AboutSection } from '../public/AboutSection';
+
+// تحميل المكونات الكبيرة عند الحاجة لمنع تجميد الصفحة
+const CraftReelsSection = lazy(() =>
+  import('../public/CraftReelsSection').then(m => ({ default: m.CraftReelsSection }))
+);
+const DialectDictionaryPage = lazy(() =>
+  import('./quize').then(m => ({ default: m.DialectDictionaryPage }))
+);
+const FeaturedSellers = lazy(() =>
+  import('../public/FeaturedSellers').then(m => ({ default: m.FeaturedSellers }))
+);
+const AboutSection = lazy(() =>
+  import('../public/AboutSection').then(m => ({ default: m.AboutSection }))
+);
 
 export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
@@ -28,22 +37,20 @@ export const HomePage: React.FC = () => {
         dark:text-cream
       "
     >
-      <div className="relative z-10 space-y-6 [&_section]:bg-transparent">
-        {/* 1. Hero Section */}
+      <div className="relative z-10 space-y-12 [&_section]:bg-transparent">
+        {/* 1. Hero Section (تحميل فوري مباشر) */}
         <HeroSection />
 
-        {/* 2. Ecosystem Portals */}
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_400px]">
-          <WahEcosystemPortalSection />
-        </div>
+        {/* 2. Ecosystem Portals (تحميل فوري بدون حجب) */}
+        <WahEcosystemPortalSection />
 
-        {/* 3. Craft Reels */}
-        <div className="relative">
+        {/* 3. Craft Reels (تحميل خلفي سلس) */}
+        <Suspense fallback={<div className="h-96 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
           <CraftReelsSection />
-        </div>
+        </Suspense>
 
         {/* 4. Products Section - سوق وه */}
-        <section className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 [content-visibility:auto] [contain-intrinsic-size:1px_600px] text-espresso dark:text-cream select-none">
+        <section className="py-8 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 text-espresso dark:text-cream select-none">
           <div className="relative z-10 mb-12 sm:mb-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <div>
@@ -57,7 +64,7 @@ export const HomePage: React.FC = () => {
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   سوق
                   <br />
-                  <span className="ps-12 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
+                  <span className="inline-block mr-[2ch] sm:mr-[2.3ch] lg:mr-[2.6ch] text-primary dark:text-primary-hover">
                     وه
                   </span>
                 </h1>
@@ -93,19 +100,19 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* 5. Dialect Dictionary & Quiz Page */}
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
           <DialectDictionaryPage />
-        </div>
+        </Suspense>
 
         {/* 6. Featured Sellers */}
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
           <FeaturedSellers />
-        </div>
+        </Suspense>
 
         {/* 7. About Section */}
-        <div className="[content-visibility:auto] [contain-intrinsic-size:1px_300px]">
+        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
           <AboutSection />
-        </div>
+        </Suspense>
       </div>
     </div>
   );

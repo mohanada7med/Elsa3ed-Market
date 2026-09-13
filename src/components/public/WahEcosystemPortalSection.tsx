@@ -149,16 +149,15 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </span>
               DISCOVER / أبواب ودليل «وه»
             </div>
-
+<br />
             {/* العنوان التايبوغرافي المتجاوب */}
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
-              بوابات
+              أبواب
               <br />
-              <span className="ps-15 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
+              <span className="inline-block mr-[2.2ch] sm:mr-[2.5ch] lg:mr-[2.8ch] text-primary dark:text-primary-hover">
                 وه
               </span>
             </h1>
-
             {/* الشرح والمؤشر الجانبي */}
             <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
               <div className="hidden sm:block">
