@@ -276,21 +276,21 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       case 'product_rejected':
         return <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />;
       case 'product_pending_review':
-        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-[#d6aa72]" />;
+        return <Sparkles className="w-5 h-5 text-amber-600 dark:text-primary-hover" />;
       case 'low_stock':
-        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-[#d6aa72]" />;
+        return <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-primary-hover" />;
       case 'payout_requested':
       case 'payout_approved':
       case 'payout_paid':
         return <Wallet className="w-5 h-5 text-purple-600 dark:text-purple-400" />;
       case 'new_review':
-        return <Star className="w-5 h-5 text-[#d6aa72] " />;
+        return <Star className="w-5 h-5 text-primary-hover " />;
       case 'new_seller_registered':
         return <UserPlus className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />;
       case 'password_reset_requested':
-        return <KeyRound className="w-5 h-5 text-[#9a6a35]" />;
+        return <KeyRound className="w-5 h-5 text-primary" />;
       default:
-        return <Bell className="w-5 h-5 text-[#9a6a35]" />;
+        return <Bell className="w-5 h-5 text-primary" />;
     }
   };
 
@@ -330,12 +330,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
     <div className="space-y-6 animate-in fade-in" dir="rtl">
       {/* Header Banner */}
       <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2d251e] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-2xl border border-black/10 dark:border-white/10">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#9a6a35]/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#d5a56d] text-xs font-bold border border-white/15">
-              <Bell className="w-4 h-4 text-[#9a6a35]" />
+              <Bell className="w-4 h-4 text-primary" />
               <span>
                 {viewMode === 'admin'
                   ? 'مركز إشعارات الإدارة العامة والرقابة'
@@ -378,7 +378,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 type="button"
                 id="admin-broadcast-btn"
                 onClick={() => setShowBroadcastModal(true)}
-                className="px-5 py-2.5 bg-[#9a6a35] hover:bg-[#83592c] text-white text-xs font-black rounded-xl shadow-lg flex items-center gap-2 transition-all cursor-pointer"
+                className="px-5 py-2.5 bg-primary hover:bg-[#83592c] text-white text-xs font-black rounded-xl shadow-lg flex items-center gap-2 transition-all cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>إرسال تنبيه أو إعلان عام</span>
@@ -389,15 +389,15 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       </div>
 
       {/* Web Push & Instant Sound Alerts Configuration Bar */}
-      <div className="bg-white/75 dark:bg-[#151513]/90 p-5 sm:p-6 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+      <div className="bg-white/75 dark:bg-espresso-900/90 p-5 sm:p-6 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-5 border-b border-black/10 dark:border-white/10">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center shrink-0 border border-[#9a6a35]/20">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
               <BellRing className="w-6 h-6" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7]">
+                <h3 className="text-base sm:text-lg font-black text-espresso dark:text-cream">
                   إشعارات المتصفح الفورية والتنبيهات الصوتية (Web Push)
                 </h3>
                 <span
@@ -426,7 +426,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               <button
                 type="button"
                 onClick={sendTestBrowserNotification}
-                className="px-4 py-2.5 bg-white/80 dark:bg-#FFF6EB/5 hover:bg-black/5 dark:hover:bg-white/10 text-[#9a6a35] border border-[#9a6a35]/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-4 py-2.5 bg-white/80 dark:bg-cream/5 hover:bg-black/5 dark:hover:bg-white/10 text-primary border border-primary/30 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-xs"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>تجربة إشعار ورنة تجريبية</span>
@@ -440,7 +440,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   await requestBrowserNotificationPermission();
                   setIsRequestingPermission(false);
                 }}
-                className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
+                className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
               >
                 <Radio className="w-4 h-4 animate-pulse" />
                 <span>{isRequestingPermission ? 'جارٍ طلب الإذن من المتصفح...' : 'السماح بالإشعارات الفورية'}</span>
@@ -459,15 +459,15 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               })
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.soundEnabled
-              ? 'bg-[#9a6a35]/10 border-[#9a6a35]/30'
-              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
+              ? 'bg-primary/10 border-primary/30'
+              : 'bg-white/40 dark:bg-cream/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.soundEnabled
-                  ? 'bg-[#9a6a35] text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'bg-black/10 dark:bg-cream/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 {browserNotificationSettings.soundEnabled ? (
@@ -477,7 +477,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 )}
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-black text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                <span className="text-xs font-black text-espresso dark:text-cream block truncate">
                   التنبيه الصوتي (Ringtone)
                 </span>
                 <span className="text-[10px] text-black/50 dark:text-white/50 block truncate font-medium">
@@ -486,7 +486,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.soundEnabled ? 'bg-[#9a6a35]' : 'bg-black/20 dark:bg-#FFF6EB/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.soundEnabled ? 'bg-primary' : 'bg-black/20 dark:bg-cream/20'
                 }`}
             >
               <div
@@ -505,20 +505,20 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyOrders
               ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900/50'
-              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-cream/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyOrders
                   ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-cream/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <Package className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-black text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                <span className="text-xs font-black text-espresso dark:text-cream block truncate">
                   تنبيهات طلبات الشراء
                 </span>
                 <span className="text-[10px] text-black/50 dark:text-white/50 block truncate font-medium">
@@ -527,7 +527,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyOrders ? 'bg-emerald-600' : 'bg-black/20 dark:bg-cream/20'
                 }`}
             >
               <div
@@ -546,20 +546,20 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyMessages
               ? 'bg-blue-50/50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/50'
-              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-cream/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyMessages
                   ? 'bg-blue-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-cream/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-black text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                <span className="text-xs font-black text-espresso dark:text-cream block truncate">
                   رسائل المحادثة الفورية
                 </span>
                 <span className="text-[10px] text-black/50 dark:text-white/50 block truncate font-medium">
@@ -568,7 +568,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyMessages ? 'bg-blue-600' : 'bg-black/20 dark:bg-cream/20'
                 }`}
             >
               <div
@@ -587,20 +587,20 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             }
             className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${browserNotificationSettings.notifyStock
               ? 'bg-purple-50/50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-900/50'
-              : 'bg-white/40 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10'
+              : 'bg-white/40 dark:bg-cream/5 border-black/10 dark:border-white/10'
               }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <div
                 className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${browserNotificationSettings.notifyStock
                   ? 'bg-purple-600 text-white shadow-xs'
-                  : 'bg-black/10 dark:bg-#FFF6EB/10 text-black/40 dark:text-white/40'
+                  : 'bg-black/10 dark:bg-cream/10 text-black/40 dark:text-white/40'
                   }`}
               >
                 <AlertTriangle className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <span className="text-xs font-black text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                <span className="text-xs font-black text-espresso dark:text-cream block truncate">
                   تنبيهات المخزون
                 </span>
                 <span className="text-[10px] text-black/50 dark:text-white/50 block truncate font-medium">
@@ -609,7 +609,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             </div>
             <div
-              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-#FFF6EB/20'
+              className={`w-10 h-6 rounded-full transition-colors relative p-0.5 ${browserNotificationSettings.notifyStock ? 'bg-purple-600' : 'bg-black/20 dark:bg-cream/20'
                 }`}
             >
               <div
@@ -623,20 +623,20 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 
       {/* Admin View Mode Switcher: Inbox vs Sent Broadcasts (Admin Only) */}
       {viewMode === 'admin' && (
-        <div className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 w-fit">
+        <div className="flex items-center gap-2 p-1.5 bg-black/5 dark:bg-cream/5 rounded-2xl border border-black/10 dark:border-white/10 w-fit">
           <button
             type="button"
             id="admin-notifs-inbox-tab"
             onClick={() => setAdminSubTab('inbox')}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'inbox'
-              ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+              ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Bell className="w-4 h-4" />
             <span>الإشعارات الواردة</span>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#9a6a35] text-white font-bold">
+              <span className="px-2 py-0.5 rounded-full text-[10px] bg-primary text-white font-bold">
                 {unreadCount}
               </span>
             )}
@@ -650,13 +650,13 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               fetchBroadcastHistory();
             }}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'broadcasts'
-              ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+              ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <History className="w-4 h-4" />
             <span>سجل التنبيهات والإعلانات المرسلة (MongoDB)</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-#FFF6EB/10 font-bold">
+            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-cream/10 font-bold">
               {broadcastHistory.length}
             </span>
           </button>
@@ -666,10 +666,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       {/* Admin Broadcasts History View */}
       {viewMode === 'admin' && adminSubTab === 'broadcasts' ? (
         <div className="space-y-4">
-          <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2">
-                <History className="w-5 h-5 text-[#9a6a35]" />
+              <h3 className="text-base font-black text-espresso dark:text-cream flex items-center gap-2">
+                <History className="w-5 h-5 text-primary" />
                 <span>سجل الإعلانات والتنبيهات الموجهة (من قاعدة البيانات MongoDB)</span>
               </h3>
               <p className="text-xs text-black/60 dark:text-white/60 mt-1 font-medium">
@@ -681,15 +681,15 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 type="button"
                 onClick={fetchBroadcastHistory}
                 disabled={isLoadingHistory}
-                className="px-4 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
+                className="px-4 py-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-black/10 dark:border-white/10 cursor-pointer"
               >
-                <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-[#9a6a35]' : ''}`} />
+                <RotateCcw className={`w-3.5 h-3.5 ${isLoadingHistory ? 'animate-spin text-primary' : ''}`} />
                 <span>تحديث السجل</span>
               </button>
               <button
                 type="button"
                 onClick={() => setShowBroadcastModal(true)}
-                className="px-5 py-2 bg-[#9a6a35] hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 cursor-pointer transition-all"
+                className="px-5 py-2 bg-primary hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-md flex items-center gap-2 cursor-pointer transition-all"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>إرسال تنبيه جديد</span>
@@ -698,8 +698,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           </div>
 
           {isLoadingHistory ? (
-            <div className="p-12 text-center bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10">
-              <Loader2 className="w-8 h-8 animate-spin text-[#9a6a35] mx-auto mb-2" />
+            <div className="p-12 text-center bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
               <p className="text-xs font-bold text-black/60 dark:text-white/60">جارٍ تحميل سجل الإعلانات من قاعدة البيانات...</p>
             </div>
           ) : broadcastHistory.length > 0 ? (
@@ -730,14 +730,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 return (
                   <div
                     key={bc.id || bc._id}
-                    className="p-5 bg-white/80 dark:bg-[#151513]/90 rounded-2xl border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-sm space-y-3 transition-all hover:border-[#9a6a35]/30"
+                    className="p-5 bg-white/80 dark:bg-espresso-900/90 rounded-2xl border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-sm space-y-3 transition-all hover:border-primary/30"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-black/5 dark:border-white/5 pb-3">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${targetBadgeColor}`}>
                           {targetLabel}
                         </span>
-                        <h4 className="text-sm font-black text-[#211d18] dark:text-[#f5f0e7]">
+                        <h4 className="text-sm font-black text-espresso dark:text-cream">
                           {bc.title}
                         </h4>
                       </div>
@@ -754,7 +754,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-black/60 dark:text-white/60 font-medium">
                       <div className="flex items-center gap-4 flex-wrap">
                         <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-[#9a6a35]" />
+                          <Users className="w-3.5 h-3.5 text-primary" />
                           <span>عدد المستلمين الفعلي: <strong>{recipientsCount}</strong></span>
                         </span>
                         <span className="flex items-center gap-1.5">
@@ -777,11 +777,11 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               })}
             </div>
           ) : (
-            <div className="p-12 text-center bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto">
+            <div className="p-12 text-center bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
                 <History className="w-8 h-8" />
               </div>
-              <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <h4 className="text-base font-black text-espresso dark:text-cream">
                 لم يتم إرسال أي إعلانات أو تنبيهات عامة بعد
               </h4>
               <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto font-medium">
@@ -790,7 +790,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               <button
                 type="button"
                 onClick={() => setShowBroadcastModal(true)}
-                className="px-6 py-2.5 bg-[#9a6a35] hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-lg inline-flex items-center gap-2 cursor-pointer transition-all"
+                className="px-6 py-2.5 bg-primary hover:bg-[#83592c] text-white rounded-xl text-xs font-black shadow-lg inline-flex items-center gap-2 cursor-pointer transition-all"
               >
                 <Send className="w-4 h-4" />
                 <span>إرسال أول تنبيه الآن</span>
@@ -802,12 +802,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
         <>
           {/* KPI Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إجمالي الإشعارات المسجلة</span>
-                <Bell className="w-4 h-4 text-[#9a6a35]" />
+                <Bell className="w-4 h-4 text-primary" />
               </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-2xl font-black text-espresso dark:text-cream">
                 {notifications.length} إشعار
               </span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
@@ -815,12 +815,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </span>
             </div>
 
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>الإشعارات غير المقروءة</span>
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-2xl font-black text-espresso dark:text-cream">
                 {unreadCount} جديد
               </span>
               <span className="text-[10px] text-black/50 dark:text-white/50 block mt-1 font-medium">
@@ -828,12 +828,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </span>
             </div>
 
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إشعارات الطلبات والمبيعات</span>
                 <Package className="w-4 h-4 text-emerald-600" />
               </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-2xl font-black text-espresso dark:text-cream">
                 {notifications.filter((n) => n.type === 'new_order').length}
               </span>
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block mt-1">
@@ -841,12 +841,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </span>
             </div>
 
-            <div className="bg-white/75 dark:bg-[#151513]/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[1.5rem] border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg">
               <div className="flex items-center justify-between text-xs text-black/60 dark:text-white/60 mb-2">
                 <span>إشعارات الماليات والتسويات</span>
                 <Wallet className="w-4 h-4 text-purple-600" />
               </div>
-              <span className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <span className="text-2xl font-black text-espresso dark:text-cream">
                 {notifications.filter((n) => n.type.startsWith('payout')).length}
               </span>
               <span className="text-[10px] text-purple-700 dark:text-purple-400 font-bold block mt-1">
@@ -856,7 +856,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           </div>
 
           {/* Filter and Search Bar */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 backdrop-blur-xl shadow-lg space-y-4">
+          <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 backdrop-blur-xl shadow-lg space-y-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               {/* Read / Unread Filter */}
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
@@ -864,8 +864,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('all')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'all'
-                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   كافة الإشعارات ({notifications.length})
@@ -874,8 +874,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('unread')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'unread'
-                    ? 'bg-[#9a6a35] text-white shadow-md'
-                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   غير المقروءة ({unreadCount})
@@ -884,8 +884,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('read')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'read'
-                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
                   المقروءة ({notifications.length - unreadCount})
@@ -900,7 +900,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="ابحث في نص الإشعار..."
-                    className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-[#211d18] dark:text-[#f5f0e7] outline-none focus:border-[#9a6a35]"
+                    className="w-full pl-4 pr-10 py-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
                   />
                   <Bell className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-3.5 top-1/2 -translate-y-1/2" />
                 </div>
@@ -928,7 +928,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                 type="button"
                 onClick={() => setFilterType('all')}
                 className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer ${filterType === 'all'
-                  ? 'bg-[#211d18] dark:bg-#FFF6EB text-white dark:text-[#211d18] font-black'
+                  ? 'bg-espresso dark:bg-cream text-white dark:text-espresso font-black'
                   : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
               >
@@ -988,7 +988,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
           </div>
 
           {/* Notifications List Content */}
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden backdrop-blur-xl shadow-lg">
+          <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden backdrop-blur-xl shadow-lg">
             {filteredNotifications.length > 0 ? (
               <div className="divide-y divide-black/5 dark:divide-white/5">
                 {filteredNotifications.map((notif) => (
@@ -996,7 +996,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                     key={notif.id}
                     className={`p-5 sm:p-6 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 group ${notif.read
                       ? 'bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
-                      : 'bg-[#9a6a35]/5 hover:bg-[#9a6a35]/10'
+                      : 'bg-primary/5 hover:bg-primary/10'
                       }`}
                   >
                     {/* Left (RTL Right): Icon & Details */}
@@ -1009,14 +1009,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         <div className="flex items-center gap-2 flex-wrap">
                           <h4
                             className={`text-sm sm:text-base font-black ${notif.read
-                              ? 'text-[#211d18] dark:text-[#f5f0e7]'
-                              : 'text-[#9a6a35]'
+                              ? 'text-espresso dark:text-cream'
+                              : 'text-primary'
                               }`}
                           >
                             {notif.title}
                           </h4>
                           {!notif.read && (
-                            <span className="px-2 py-0.5 bg-[#9a6a35] text-white text-[10px] font-black rounded-full">
+                            <span className="px-2 py-0.5 bg-primary text-white text-[10px] font-black rounded-full">
                               جديد
                             </span>
                           )}
@@ -1051,7 +1051,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         <button
                           type="button"
                           onClick={() => handleMarkAsRead(notif.id)}
-                          className="px-3.5 py-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
+                          className="px-3.5 py-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 text-black/70 dark:text-white/70 text-xs font-black rounded-xl transition-colors flex items-center gap-1 cursor-pointer"
                           title="تعليم كمقروء"
                         >
                           <Check className="w-3.5 h-3.5" />
@@ -1076,7 +1076,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                               });
                             }
                           }}
-                          className="px-4 py-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="px-4 py-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                         >
                           <span>الانتقال والتفاصيل</span>
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -1097,10 +1097,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               </div>
             ) : (
               <div className="p-12 text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-#FFF6EB/5 flex items-center justify-center mx-auto text-[#9a6a35]/40">
+                <div className="w-16 h-16 rounded-full bg-black/5 dark:bg-cream/5 flex items-center justify-center mx-auto text-primary/40">
                   <Bell className="w-8 h-8" />
                 </div>
-                <h4 className="text-base font-black text-[#211d18] dark:text-[#f5f0e7]">
+                <h4 className="text-base font-black text-espresso dark:text-cream">
                   لا توجد إشعارات مطابقة للبحث أو التصفية الحالية
                 </h4>
                 <p className="text-xs text-black/60 dark:text-white/60 max-w-md mx-auto font-medium">
@@ -1115,14 +1115,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       {/* Broadcast Announcement & Targeted Notifications Modal (Admin Only) */}
       {showBroadcastModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xl animate-in fade-in overflow-y-auto">
-          <div className="bg-white/95 dark:bg-[#151513]/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 backdrop-blur-2xl my-8">
+          <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] border border-black/10 dark:border-white/10 max-w-xl w-full p-6 sm:p-8 shadow-2xl space-y-5 backdrop-blur-2xl my-8">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
-              <div className="flex items-center gap-2.5 text-[#9a6a35]">
-                <div className="w-10 h-10 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
+              <div className="flex items-center gap-2.5 text-primary">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                   <Send className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-[#211d18] dark:text-[#f5f0e7]">
+                  <h3 className="text-base sm:text-lg font-black text-espresso dark:text-cream">
                     إرسال إشعار وتنبيه رسمي من الإدارة
                   </h3>
                   <span className="text-[11px] text-black/50 dark:text-white/50 block font-medium">
@@ -1169,7 +1169,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             <form onSubmit={handleSendBroadcast} className="space-y-4 text-xs">
               {/* Target Type Selector */}
               <div className="space-y-2">
-                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                <label className="font-black text-espresso dark:text-cream block">
                   الفئة المستهدفة بالتنبيه *
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1181,8 +1181,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'all'
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Users className="w-4 h-4" />
@@ -1196,8 +1196,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       if (availableUsers.length === 0) fetchUsers();
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'user'
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <User className="w-4 h-4" />
@@ -1212,8 +1212,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'buyers'
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Package className="w-4 h-4" />
@@ -1228,8 +1228,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'sellers'
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black border-transparent shadow-md'
-                      : 'bg-black/5 dark:bg-#FFF6EB/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
                     <Sparkles className="w-4 h-4" />
@@ -1240,10 +1240,10 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
 
               {/* Specific User Search & Selector (When Target = user) */}
               {broadcastTargetType === 'user' && (
-                <div className="p-3.5 bg-black/5 dark:bg-#FFF6EB/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
+                <div className="p-3.5 bg-black/5 dark:bg-cream/5 rounded-2xl border border-black/10 dark:border-white/10 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="font-black text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <label className="font-black text-espresso dark:text-cream flex items-center gap-1.5">
+                      <User className="w-3.5 h-3.5 text-primary" />
                       <span>اختيار المستخدم المستهدف (من قاعدة البيانات) *</span>
                     </label>
                     {selectedTargetUserId && (
@@ -1257,11 +1257,11 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   {selectedTargetUserId ? (
                     <div className="p-3 bg-white dark:bg-[#1c1b18] rounded-xl border border-emerald-500/30 flex items-center justify-between gap-3 shadow-xs">
                       <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-[#9a6a35]/15 text-[#9a6a35] flex items-center justify-center font-black text-xs shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-black text-xs shrink-0">
                           {(selectedTargetUser?.name || selectedTargetUser?.fullName || 'U').charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <span className="font-black text-xs text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                          <span className="font-black text-xs text-espresso dark:text-cream block truncate">
                             {selectedTargetUser?.name || selectedTargetUser?.fullName || 'مستخدم المنصة'}
                           </span>
                           <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
@@ -1270,7 +1270,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#9a6a35]/10 text-[#9a6a35]">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary">
                           {selectedTargetUser?.role === 'seller' ? 'حرفي' : selectedTargetUser?.role === 'admin' ? 'مدير' : 'مشتري'}
                         </span>
                         <button
@@ -1295,7 +1295,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                           value={userSearchQuery}
                           onChange={(e) => setUserSearchQuery(e.target.value)}
                           placeholder="ابحث بالاسم، البريد الإلكتروني، أو أدخل المعرف (User ID)..."
-                          className="w-full pr-9 pl-3 py-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35"
+                          className="w-full pr-9 pl-3 py-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35"
                         />
                         <Search className="w-4 h-4 text-black/40 dark:text-white/40 absolute right-3 top-2.5 pointer-events-none" />
                       </div>
@@ -1336,14 +1336,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                                 className="w-full text-right p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg flex items-center justify-between gap-2 cursor-pointer transition-colors"
                               >
                                 <div className="min-w-0">
-                                  <span className="font-bold text-xs text-[#211d18] dark:text-[#f5f0e7] block truncate">
+                                  <span className="font-bold text-xs text-espresso dark:text-cream block truncate">
                                     {u.name || u.fullName || 'مستخدم'}
                                   </span>
                                   <span className="text-[10px] text-black/50 dark:text-white/50 block font-mono truncate">
                                     {u.id || u._id} • {u.email || u.phone || 'بدون بريد'}
                                   </span>
                                 </div>
-                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/5 dark:bg-#FFF6EB/10 text-black/70 dark:text-white/70">
+                                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold bg-black/5 dark:bg-cream/10 text-black/70 dark:text-white/70">
                                   {u.role === 'seller' ? 'حرفي' : u.role === 'admin' ? 'مدير' : 'مشتري'}
                                 </span>
                               </button>
@@ -1365,7 +1365,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                             setSelectedTargetUser(null);
                           }}
                           placeholder="أو اكتب معرف المستخدم مباشرة (User ID)"
-                          className="flex-1 p-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none font-mono text-[11px] text-[#211d18] dark:text-[#f5f0e7]"
+                          className="flex-1 p-2 bg-white dark:bg-[#1a1916] border border-black/10 dark:border-white/10 rounded-xl outline-none font-mono text-[11px] text-espresso dark:text-cream"
                         />
                       </div>
                     </div>
@@ -1376,7 +1376,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               {/* Title */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                  <label className="font-black text-espresso dark:text-cream block">
                     عنوان الإشعار والتنبيه *
                   </label>
                   <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
@@ -1390,14 +1390,14 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   onChange={(e) => setBroadcastTitle(e.target.value)}
                   placeholder="مثال: تحديث أوقات تسليم طلبات الأعياد، إشعار سحب مستحقات..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 font-medium"
+                  className="w-full p-3 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 font-medium"
                 />
               </div>
 
               {/* Message */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                  <label className="font-black text-espresso dark:text-cream block">
                     نص الرسالة والتنبيه المفصل *
                   </label>
                   <span className="text-[10px] text-black/40 dark:text-white/40 font-mono">
@@ -1411,19 +1411,19 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   rows={4}
                   placeholder="اكتب التوجيهات أو الإعلان الرسمي بشكل واضح..."
                   required
-                  className="w-full p-3 bg-white/60 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] placeholder:text-black/35 dark:placeholder:text-white/35 leading-relaxed font-medium"
+                  className="w-full p-3 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-espresso dark:text-cream placeholder:text-black/35 dark:placeholder:text-white/35 leading-relaxed font-medium"
                 />
               </div>
 
               {/* Destination Page on Click */}
               <div className="space-y-1.5">
-                <label className="font-black text-[#211d18] dark:text-[#f5f0e7] block">
+                <label className="font-black text-espresso dark:text-cream block">
                   وجهة الانتقال عند النقر على الإشعار
                 </label>
                 <select
                   value={broadcastActionPage}
                   onChange={(e) => setBroadcastActionPage(e.target.value)}
-                  className="w-full p-3 bg-white/60 dark:bg-[#151513] border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-[#9a6a35] text-[#211d18] dark:text-[#f5f0e7] font-bold text-xs cursor-pointer"
+                  className="w-full p-3 bg-white/60 dark:bg-espresso-900 border border-black/10 dark:border-white/10 rounded-xl outline-none focus:border-primary text-espresso dark:text-cream font-bold text-xs cursor-pointer"
                 >
                   <option value="notifications">مركز الإشعارات (الافتراضي)</option>
                   <option value="products">سوق وَه للحرف والمنتجات</option>
@@ -1463,11 +1463,11 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   <button
                     type="submit"
                     disabled={isSendingBroadcast || !broadcastTitle.trim() || !broadcastMessage.trim()}
-                    className="px-6 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
                   >
                     {isSendingBroadcast ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin text-[#9a6a35]" />
+                        <Loader2 className="w-4 h-4 animate-spin text-primary" />
                         <span>جارٍ الحفظ والبث...</span>
                       </>
                     ) : (

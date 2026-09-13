@@ -41,7 +41,7 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
     <section
       id={id}
       className={`relative py-12 sm:py-16 lg:py-20 overflow-hidden ${bgSurface
-          ? 'bg-black/5 dark:bg-#FFF6EB/5 border-y border-black/10 dark:border-white/10'
+          ? 'bg-black/5 dark:bg-cream/5 border-y border-black/10 dark:border-white/10'
           : ''
         } ${className}`}
     >
@@ -60,13 +60,13 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
           >
             <div className="space-y-2 max-w-2xl text-right">
               {badgeContent && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/15 border border-[#9a6a35]/30 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary dark:text-primary-hover text-xs font-bold">
                   {renderedBadgeIcon}
                   <span>{badgeContent}</span>
                 </div>
               )}
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-espresso dark:text-cream font-serif tracking-tight leading-snug">
                 {title}
               </h2>
 

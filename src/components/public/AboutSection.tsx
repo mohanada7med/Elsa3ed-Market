@@ -46,12 +46,12 @@ export const AboutSection: React.FC = () => {
         overflow-hidden
         py-12
         sm:py-14
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors
         duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
         border-t
         border-black/10
         dark:border-white/10
@@ -67,7 +67,7 @@ export const AboutSection: React.FC = () => {
             w-[420px]
             h-[420px]
             rounded-full
-            bg-[#9a6a35]/[0.07]
+            bg-primary/[0.07]
             blur-[100px]
           "
         />
@@ -136,14 +136,14 @@ export const AboutSection: React.FC = () => {
                 text-[10px]
                 font-black
                 tracking-[0.18em]
-                text-[#9a6a35]
+                text-primary
               "
             >
               <span
                 className="
                   w-7
                   h-px
-                  bg-[#9a6a35]
+                  bg-primary
                 "
               />
 
@@ -163,7 +163,7 @@ export const AboutSection: React.FC = () => {
               "
             >
               الصعيد
-              <span className="text-[#9a6a35]">
+              <span className="text-primary">
                 {' '}مش مجرد مكان.
               </span>
               <br />
@@ -229,13 +229,13 @@ export const AboutSection: React.FC = () => {
                       border-black/[0.08]
                       dark:border-white/[0.08]
                       bg-white/45
-                      dark:bg-#FFF6EB/[0.035]
+                      dark:bg-cream/[0.035]
                       px-3
                       py-3
                       backdrop-blur-md
                       transition-all
                       duration-300
-                      hover:border-[#9a6a35]/35
+                      hover:border-primary/35
                       hover:bg-white/70
                       dark:hover:bg-white/[0.07]
                     "
@@ -244,7 +244,7 @@ export const AboutSection: React.FC = () => {
                       className="
                         w-4
                         h-4
-                        text-[#9a6a35]
+                        text-primary
                         mb-2
                         transition-transform
                         duration-300
@@ -300,8 +300,8 @@ export const AboutSection: React.FC = () => {
                   min-h-[44px]
                   px-5
                   rounded-xl
-                  bg-[#211d18]
-                  dark:bg-#FFF6EB
+                  bg-espresso
+                  dark:bg-cream
                   text-white
                   dark:text-black
                   text-[11px]
@@ -313,8 +313,8 @@ export const AboutSection: React.FC = () => {
                   shadow-lg
                   shadow-black/10
                   transition-all
-                  hover:bg-[#9a6a35]
-                  dark:hover:bg-[#d5a56d]
+                  hover:bg-primary
+                  dark:hover:bg-primary-hover
                   cursor-pointer
                 "
               >
@@ -347,9 +347,9 @@ export const AboutSection: React.FC = () => {
                   px-5
                   rounded-xl
                   border
-                  border-[#9a6a35]/25
-                  bg-[#9a6a35]/[0.07]
-                  text-[#9a6a35]
+                  border-primary/25
+                  bg-primary/[0.07]
+                  text-primary
                   text-[11px]
                   font-black
                   flex
@@ -357,7 +357,7 @@ export const AboutSection: React.FC = () => {
                   justify-center
                   gap-2
                   transition-all
-                  hover:bg-[#9a6a35]
+                  hover:bg-primary
                   hover:text-white
                   cursor-pointer
                 "
@@ -384,8 +384,8 @@ export const AboutSection: React.FC = () => {
                   border-black/10
                   dark:border-white/10
                   bg-white/45
-                  dark:bg-#FFF6EB/[0.04]
-                  text-[#211d18]
+                  dark:bg-cream/[0.04]
+                  text-espresso
                   dark:text-white
                   text-[11px]
                   font-black
@@ -403,7 +403,7 @@ export const AboutSection: React.FC = () => {
                   className="
                     w-4
                     h-4
-                    text-[#9a6a35]
+                    text-primary
                   "
                 />
 

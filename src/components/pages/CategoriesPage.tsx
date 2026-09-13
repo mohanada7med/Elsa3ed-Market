@@ -31,32 +31,32 @@ export const CategoriesPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8 sm:space-y-10"
+      className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8 sm:space-y-10"
     >
       {/* مسار الصفحة وأزرار التبديل */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5">
-        <nav className="flex items-center gap-2 text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-medium">
+        <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
           <button
             type="button"
             onClick={() => setActivePage('home')}
-            className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+            className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
           >
             الرئيسية
           </button>
           <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-          <span className="text-[#211d18] dark:text-[#f5f0e7] font-bold">
+          <span className="text-espresso dark:text-cream font-bold">
             أطلس حرف وفنون الصعيد
           </span>
         </nav>
 
         {/* زر التبديل بين الأنماط */}
-        <div className="inline-flex items-center bg-black/5 dark:bg-#FFF6EB/5 p-1 rounded-2xl border border-black/10 dark:border-white/10 self-start sm:self-auto">
+        <div className="inline-flex items-center bg-black/5 dark:bg-cream/5 p-1 rounded-2xl border border-black/10 dark:border-white/10 self-start sm:self-auto">
           <button
             type="button"
             onClick={() => setViewMode('interactive')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'interactive'
-              ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
-              : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
+              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover shadow-sm'
+              : 'text-espresso/70 dark:text-cream/70 hover:text-espresso dark:hover:text-cream'
               }`}
           >
             <Rows3 className="w-4 h-4" />
@@ -67,8 +67,8 @@ export const CategoriesPage: React.FC = () => {
             type="button"
             onClick={() => setViewMode('grid')}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${viewMode === 'grid'
-              ? 'bg-white dark:bg-[#151513] text-[#9a6a35] dark:text-[#d5a56d] shadow-sm'
-              : 'text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7]'
+              ? 'bg-white dark:bg-espresso-900 text-primary dark:text-primary-hover shadow-sm'
+              : 'text-espresso/70 dark:text-cream/70 hover:text-espresso dark:hover:text-cream'
               }`}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -78,17 +78,17 @@ export const CategoriesPage: React.FC = () => {
       </div>
 
       {/* الرأس التحريري الفاخر */}
-      <div className="relative rounded-[2rem] p-6 sm:p-12 bg-[#211d18] text-[#f5f0e7] overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
-        <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#9a6a35]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-[2rem] p-6 sm:p-12 bg-espresso text-cream overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#9a6a35]/20 border border-[#9a6a35]/30 text-[#d5a56d] text-xs font-bold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[#d5a56d] text-xs font-bold">
             <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
             <span>حرف وفنون صعيد مصر</span>
           </div>
           <h1 className="text-2xl sm:text-5xl font-black font-serif leading-tight">
             أصل الصعيد.. بخامته وبلده
           </h1>
-          <p className="text-xs sm:text-sm text-[#f5f0e7]/80 leading-relaxed max-w-2xl font-light">
+          <p className="text-xs sm:text-sm text-cream/80 leading-relaxed max-w-2xl font-light">
             اتفرّج على صَنعة الصعيد على أصولها، من طمي النيل لخيوط الفضة وخوص النخل. نقّي الصنعة عشان تشوف بلدها وإزاي بتتعمل، وتشوف أحلى شغل طالع بإيدين ناسها.
           </p>
         </div>
@@ -112,12 +112,12 @@ export const CategoriesPage: React.FC = () => {
                     onMouseEnter={() => setSelectedCatId(cat.id)}
                     onClick={() => navigateToCategory(cat.id)}
                     className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 cursor-pointer flex items-center justify-between ${isSelected
-                      ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] dark:border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/30'
-                      : 'bg-white/50 dark:bg-[#151513]/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
+                      ? 'bg-white/95 dark:bg-espresso-900/95 border-primary dark:border-primary shadow-lg ring-1 ring-primary/30'
+                      : 'bg-white/50 dark:bg-espresso-900/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
                       }`}
                   >
                     <div className="flex items-center gap-4">
-                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]' : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg ${isSelected ? 'bg-primary/15 text-primary dark:text-primary-hover' : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                         }`}>
                         0{idx + 1}
                       </span>
@@ -125,13 +125,13 @@ export const CategoriesPage: React.FC = () => {
                       <div>
                         <h3
                           className={`text-lg font-black font-serif transition-colors ${isSelected
-                            ? 'text-[#9a6a35] dark:text-[#d5a56d]'
-                            : 'text-[#211d18] dark:text-[#f5f0e7]'
+                            ? 'text-primary dark:text-primary-hover'
+                            : 'text-espresso dark:text-cream'
                             }`}
                         >
                           {cat.name}
                         </h3>
-                        <span className="text-[11px] text-[#211d18]/50 dark:text-[#f5f0e7]/50 uppercase tracking-wider block font-medium">
+                        <span className="text-[11px] text-espresso/50 dark:text-cream/50 uppercase tracking-wider block font-medium">
                           {cat.nameEn || 'Handcrafted Heritage'}
                         </span>
                       </div>
@@ -139,14 +139,14 @@ export const CategoriesPage: React.FC = () => {
 
                     <div className="flex items-center gap-3">
                       {cat.featuredGovernorate && (
-                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-cream/10 text-espresso/80 dark:text-cream/80 font-bold border border-black/5 dark:border-white/5">
                           {cat.featuredGovernorate}
                         </span>
                       )}
                       <ArrowUpLeft
                         className={`w-4 h-4 transition-transform duration-300 ${isSelected
-                          ? 'text-[#9a6a35] dark:text-[#d5a56d] -translate-x-1 -translate-y-1'
-                          : 'text-[#211d18]/30 dark:text-[#f5f0e7]/30 group-hover:opacity-100'
+                          ? 'text-primary dark:text-primary-hover -translate-x-1 -translate-y-1'
+                          : 'text-espresso/30 dark:text-cream/30 group-hover:opacity-100'
                           }`}
                       />
                     </div>
@@ -177,7 +177,7 @@ export const CategoriesPage: React.FC = () => {
                   <div className="relative z-10 flex items-center justify-between pointer-events-none">
                     {selectedCategory.featuredGovernorate && (
                       <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-[#d5a56d] text-xs font-bold">
-                        <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <MapPin className="w-3.5 h-3.5 text-primary" />
                         <span>محافظة {selectedCategory.featuredGovernorate}</span>
                       </span>
                     )}
@@ -208,7 +208,7 @@ export const CategoriesPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => navigateToCategory(selectedCategory.id)}
-                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                       >
                         <span>شوف شغل وحرفيين {selectedCategory.name}</span>
                         <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
@@ -229,13 +229,13 @@ export const CategoriesPage: React.FC = () => {
                 <div
                   key={cat.id}
                   className={`relative rounded-[1.5rem] border overflow-hidden transition-all duration-300 ${isOpen
-                    ? 'bg-white/95 dark:bg-[#151513]/95 border-[#9a6a35] shadow-lg ring-1 ring-[#9a6a35]/20'
-                    : 'bg-white/75 dark:bg-[#151513]/90 border-black/10 dark:border-white/10'
+                    ? 'bg-white/95 dark:bg-espresso-900/95 border-primary shadow-lg ring-1 ring-primary/20'
+                    : 'bg-white/75 dark:bg-espresso-900/90 border-black/10 dark:border-white/10'
                     }`}
                 >
                   {/* شريط الإضاءة النحاسي الجانبي للتمييز الاحترافي */}
                   {isOpen && (
-                    <span className="absolute top-0 right-0 w-1.5 inset-y-0 bg-[#9a6a35]" />
+                    <span className="absolute top-0 right-0 w-1.5 inset-y-0 bg-primary" />
                   )}
 
                   {/* شريط العنوان: النقر عليه يفتح أو يغلق تفاصيل الخيار */}
@@ -248,17 +248,17 @@ export const CategoriesPage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span
                         className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg transition-colors ${isOpen
-                          ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
-                          : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/60 dark:text-[#f5f0e7]/60'
+                          ? 'bg-primary/15 text-primary dark:text-primary-hover'
+                          : 'bg-black/5 dark:bg-cream/5 text-espresso/60 dark:text-cream/60'
                           }`}
                       >
                         0{idx + 1}
                       </span>
                       <div>
-                        <h3 className="text-base font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
+                        <h3 className="text-base font-black font-serif text-espresso dark:text-cream">
                           {cat.name}
                         </h3>
-                        <span className="text-[10px] text-[#211d18]/50 dark:text-[#f5f0e7]/50 uppercase tracking-wider block">
+                        <span className="text-[10px] text-espresso/50 dark:text-cream/50 uppercase tracking-wider block">
                           {cat.nameEn}
                         </span>
                       </div>
@@ -266,14 +266,14 @@ export const CategoriesPage: React.FC = () => {
 
                     <div className="flex items-center gap-2">
                       {cat.featuredGovernorate && (
-                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18]/80 dark:text-[#f5f0e7]/80 font-bold border border-black/5 dark:border-white/5">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-black/5 dark:bg-cream/10 text-espresso/80 dark:text-cream/80 font-bold border border-black/5 dark:border-white/5">
                           {cat.featuredGovernorate}
                         </span>
                       )}
                       <div
                         className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isOpen
-                          ? 'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
-                          : 'text-[#211d18]/40 dark:text-[#f5f0e7]/40'
+                          ? 'bg-primary/15 text-primary dark:text-primary-hover'
+                          : 'text-espresso/40 dark:text-cream/40'
                           }`}
                       >
                         <ChevronDown
@@ -311,7 +311,7 @@ export const CategoriesPage: React.FC = () => {
 
                             {cat.featuredGovernorate && (
                               <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md border border-white/20 text-[#d5a56d] text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
-                                <MapPin className="w-3 h-3 text-[#9a6a35]" />
+                                <MapPin className="w-3 h-3 text-primary" />
                                 <span>{cat.featuredGovernorate}</span>
                               </div>
                             )}
@@ -322,19 +322,19 @@ export const CategoriesPage: React.FC = () => {
                                 <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
                                 <span>دوس على الصورة عشان تشوف المنتجات</span>
                               </span>
-                              <div className="w-8 h-8 rounded-full bg-[#9a6a35] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                 <ArrowUpLeft className="w-4 h-4" />
                               </div>
                             </div>
                           </div>
 
-                          <p className="text-xs text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed font-normal">
+                          <p className="text-xs text-espresso/80 dark:text-cream/80 leading-relaxed font-normal">
                             {cat.description}
                           </p>
 
                           {cat.heritageNote && (
-                            <div className="p-3.5 rounded-xl bg-[#9a6a35]/10 border border-[#9a6a35]/20 flex items-start gap-2.5 text-xs text-[#9a6a35] dark:text-[#d5a56d]">
-                              <Sparkles className="w-4 h-4 text-[#9a6a35] shrink-0 mt-0.5" />
+                            <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 flex items-start gap-2.5 text-xs text-primary dark:text-primary-hover">
+                              <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                               <span className="text-[11px] leading-relaxed italic font-light">
                                 {cat.heritageNote}
                               </span>
@@ -344,7 +344,7 @@ export const CategoriesPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => navigateToCategory(cat.id)}
-                            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
+                            className="w-full py-3.5 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
                           >
                             <span>شوف كل منتجات {cat.name}</span>
                             <ArrowUpLeft className="w-4 h-4" />
@@ -384,7 +384,7 @@ export const CategoriesPage: React.FC = () => {
                   0{idx + 1}
                 </span>
                 {cat.featuredGovernorate && (
-                  <span className="text-xs bg-[#9a6a35] text-white px-3 py-1 rounded-full font-bold shadow-xs">
+                  <span className="text-xs bg-primary text-white px-3 py-1 rounded-full font-bold shadow-xs">
                     {cat.featuredGovernorate}
                   </span>
                 )}

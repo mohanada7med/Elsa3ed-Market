@@ -275,7 +275,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
   return (
     <div className="space-y-6" dir="rtl">
       {/* Header Banner */}
-      <div className="bg-white/80 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
+      <div className="bg-white/80 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2.5">
@@ -283,7 +283,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif">
+                <h2 className="text-xl sm:text-2xl font-black text-espresso dark:text-cream font-serif">
                   إدارة البلاغات والشكاوى والدعم الفني
                 </h2>
                 <p className="text-xs text-black/60 dark:text-white/60 font-medium">
@@ -347,7 +347,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white/80 dark:bg-[#151513]/90 rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm backdrop-blur-xl space-y-3">
+      <div className="bg-white/80 dark:bg-espresso-900/90 rounded-2xl border border-black/10 dark:border-white/10 p-4 shadow-sm backdrop-blur-xl space-y-3">
         <div className="flex flex-col md:flex-row items-center gap-3">
           {/* Search Input */}
           <div className="relative flex-1 w-full">
@@ -357,7 +357,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="ابحث برقم التذكرة، اسم الشاكي، رقم الهاتف، أو رقم الطلب..."
-              className="w-full pr-9 pl-4 py-2 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+              className="w-full pr-9 pl-4 py-2 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
             />
           </div>
 
@@ -375,7 +375,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 onClick={() => setRoleFilter(rf.id as any)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
                   roleFilter === rf.id
-                    ? 'bg-[#9a6a35] text-white'
+                    ? 'bg-primary text-white'
                     : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70'
                 }`}
               >
@@ -404,7 +404,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
               onClick={() => setStatusFilter(st.id as any)}
               className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
                 statusFilter === st.id
-                  ? 'border-[#9a6a35] bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d]'
+                  ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover'
                   : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
             >
@@ -417,14 +417,14 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
       {/* Reports List */}
       <div className="space-y-4">
         {isLoading ? (
-          <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 space-y-2 bg-white/60 dark:bg-[#151513]/60 rounded-3xl border border-black/10 dark:border-white/10">
-            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-[#9a6a35]" />
+          <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 space-y-2 bg-white/60 dark:bg-espresso-900/60 rounded-3xl border border-black/10 dark:border-white/10">
+            <RefreshCw className="w-8 h-8 animate-spin mx-auto text-primary" />
             <p>جاري تحميل البلاغات من الخادم...</p>
           </div>
         ) : filteredReports.length === 0 ? (
-          <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 space-y-3 bg-white/60 dark:bg-[#151513]/60 rounded-3xl border border-dashed border-black/10 dark:border-white/10">
+          <div className="p-12 text-center text-xs text-black/50 dark:text-white/50 space-y-3 bg-white/60 dark:bg-espresso-900/60 rounded-3xl border border-dashed border-black/10 dark:border-white/10">
             <ShieldCheck className="w-12 h-12 mx-auto text-black/30 dark:text-white/30" />
-            <h4 className="font-bold text-sm text-[#211d18] dark:text-[#f5f0e7]">
+            <h4 className="font-bold text-sm text-espresso dark:text-cream">
               لا توجد بلاغات تطابق شروط البحث أو التصفية
             </h4>
             <p className="text-[11px] text-black/50 dark:text-white/50 max-w-sm mx-auto">
@@ -437,7 +437,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             return (
               <div
                 key={ticket.id}
-                className={`p-5 rounded-3xl border transition-all bg-white/80 dark:bg-[#151513]/90 shadow-sm backdrop-blur-xl space-y-4 ${
+                className={`p-5 rounded-3xl border transition-all bg-white/80 dark:bg-espresso-900/90 shadow-sm backdrop-blur-xl space-y-4 ${
                   ticket.status === 'pending'
                     ? 'border-amber-500/40 dark:border-amber-500/30 ring-1 ring-amber-500/20'
                     : 'border-black/10 dark:border-white/10'
@@ -446,7 +446,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Top Row: Meta Info & Status Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-[#9a6a35] dark:text-[#d5a56d]">
+                    <span className="font-mono font-black text-xs bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-lg text-primary dark:text-primary-hover">
                       #{ticket.ticketNumber}
                     </span>
 
@@ -481,7 +481,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 {/* Submitter Details Banner */}
                 <div className="p-3 bg-black/[0.02] dark:bg-white/[0.02] rounded-2xl border border-black/5 dark:border-white/5 flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2 font-bold">
-                    <User className="w-3.5 h-3.5 text-[#9a6a35]" />
+                    <User className="w-3.5 h-3.5 text-primary" />
                     <span>الشاكي: <strong>{ticket.userName}</strong></span>
                     {ticket.userGovernorate && (
                       <span className="text-[11px] text-black/50 dark:text-white/50 font-normal">
@@ -493,7 +493,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   <div className="flex flex-wrap items-center gap-3">
                     <a
                       href={`tel:${ticket.userPhone}`}
-                      className="text-[#9a6a35] dark:text-[#d5a56d] font-mono font-bold flex items-center gap-1 hover:underline"
+                      className="text-primary dark:text-primary-hover font-mono font-bold flex items-center gap-1 hover:underline"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>{ticket.userPhone}</span>
@@ -511,7 +511,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
 
                     {ticket.relatedOrderNumber && (
                       <div className="flex items-center gap-1 text-[11px] font-bold text-black/70 dark:text-white/70 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded-md">
-                        <Package className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <Package className="w-3.5 h-3.5 text-primary" />
                         <span>رقم الطلب: {ticket.relatedOrderNumber}</span>
                       </div>
                     )}
@@ -520,7 +520,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
 
                 {/* Subject & Description */}
                 <div className="space-y-1.5 text-right">
-                  <h3 className="text-sm font-black text-[#211d18] dark:text-[#f5f0e7]">
+                  <h3 className="text-sm font-black text-espresso dark:text-cream">
                     {ticket.subject}
                   </h3>
                   <p className="text-xs text-black/75 dark:text-white/75 leading-relaxed whitespace-pre-line bg-black/[0.015] dark:bg-white/[0.015] p-3 rounded-2xl border border-black/5 dark:border-white/5">
@@ -538,7 +538,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                         href={att}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-[11px] font-bold text-[#9a6a35] hover:underline flex items-center gap-1 bg-[#9a6a35]/10 px-2 py-1 rounded-lg"
+                        className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg"
                       >
                         <ExternalLink className="w-3 h-3" />
                         <span>معاينة الرابط المرفق #{i + 1}</span>
@@ -580,7 +580,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                     <button
                       type="button"
                       onClick={() => openActionModal(ticket)}
-                      className="px-4 py-2 bg-[#9a6a35] hover:bg-[#7e5527] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+                      className="px-4 py-2 bg-primary hover:bg-[#7e5527] text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>{ticket.adminResponse ? 'تعديل الرد والملاحظات' : 'الرد وحل البلاغ'}</span>
@@ -630,7 +630,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" dir="rtl">
           <div
-            className="w-full max-w-xl bg-white dark:bg-[#151513] rounded-3xl border border-black/10 dark:border-white/10 shadow-2xl p-6 space-y-5 max-h-[92vh] overflow-y-auto no-scrollbar"
+            className="w-full max-w-xl bg-white dark:bg-espresso-900 rounded-3xl border border-black/10 dark:border-white/10 shadow-2xl p-6 space-y-5 max-h-[92vh] overflow-y-auto no-scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
@@ -639,7 +639,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[#211d18] dark:text-[#f5f0e7]">
+                  <h3 className="font-bold text-base text-espresso dark:text-cream">
                     الرد على التذكرة #{selectedTicket.ticketNumber}
                   </h3>
                   <p className="text-xs text-black/60 dark:text-white/60">
@@ -663,7 +663,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 <select
                   value={replyStatus}
                   onChange={(e) => setReplyStatus(e.target.value as ReportStatus)}
-                  className="w-full px-3 py-2 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold outline-none focus:border-[#9a6a35] cursor-pointer"
+                  className="w-full px-3 py-2 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold outline-none focus:border-primary cursor-pointer"
                 >
                   <option value="pending">جديد (بانتظار المراجعة)</option>
                   <option value="in_progress">قيد المتابعة والحل</option>
@@ -682,7 +682,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="اكتب ردك الواضح على المشكلة، والحلول التي تم اتخاذها، أو توجيهات التواصل..."
-                  className="w-full p-3 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full p-3 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary resize-none"
                 />
               </div>
 
@@ -696,7 +696,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                   value={internalNotes}
                   onChange={(e) => setInternalNotes(e.target.value)}
                   placeholder="ملاحظات داخلية لفريق العمل، تفاصيل التواصل الهاتفي، أو إجراءات البنك..."
-                  className="w-full p-3 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] resize-none"
+                  className="w-full p-3 bg-black/[0.03] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary resize-none"
                 />
               </div>
 
@@ -712,7 +712,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-6 py-2.5 bg-[#9a6a35] hover:bg-[#7e5527] disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
+                  className="px-6 py-2.5 bg-primary hover:bg-[#7e5527] disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
                 >
                   {isSaving ? (
                     <>

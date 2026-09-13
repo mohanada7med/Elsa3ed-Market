@@ -296,7 +296,7 @@ export const ReportIssueModal: React.FC = () => {
             <div>
               <h2 className="text-lg sm:text-xl font-black text-black dark:text-white flex items-center gap-2">
                 <span>مركز البلاغات والدعم الفني</span>
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#9a6a35]/10 text-[#9a6a35] dark:text-[#d5a56d]">
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover">
                   إدارة منصة وه
                 </span>
               </h2>
@@ -323,7 +323,7 @@ export const ReportIssueModal: React.FC = () => {
             onClick={() => setActiveTab('new')}
             className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 flex items-center gap-2 ${
               activeTab === 'new'
-                ? 'border-[#9a6a35] text-[#9a6a35] dark:text-[#d5a56d]'
+                ? 'border-primary text-primary dark:text-primary-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
             }`}
           >
@@ -336,7 +336,7 @@ export const ReportIssueModal: React.FC = () => {
             onClick={() => setActiveTab('history')}
             className={`pb-3 px-4 font-bold text-sm transition-all border-b-2 flex items-center gap-2 ${
               activeTab === 'history'
-                ? 'border-[#9a6a35] text-[#9a6a35] dark:text-[#d5a56d]'
+                ? 'border-primary text-primary dark:text-primary-hover'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
             }`}
           >
@@ -395,14 +395,14 @@ export const ReportIssueModal: React.FC = () => {
                         onClick={() => setCategory(opt.id)}
                         className={`text-right p-3 rounded-2xl border transition-all flex items-start gap-3 ${
                           isSelected
-                            ? 'border-[#9a6a35] bg-[#9a6a35]/10 text-black dark:text-white shadow-sm ring-1 ring-[#9a6a35]'
+                            ? 'border-primary bg-primary/10 text-black dark:text-white shadow-sm ring-1 ring-primary'
                             : 'border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 bg-white/60 dark:bg-[#1c1c1a]/60 text-black/80 dark:text-white/80'
                         }`}
                       >
                         <div
                           className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center transition-colors ${
                             isSelected
-                              ? 'bg-[#9a6a35] text-white'
+                              ? 'bg-primary text-white'
                               : 'bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60'
                           }`}
                         >
@@ -437,7 +437,7 @@ export const ReportIssueModal: React.FC = () => {
                       onClick={() => setPriority(p.id as ReportPriority)}
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                         priority === p.id
-                          ? 'bg-[#9a6a35] text-white border-[#9a6a35] shadow-sm'
+                          ? 'bg-primary text-white border-primary shadow-sm'
                           : 'bg-white/60 dark:bg-[#1c1c1a]/60 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
                       }`}
                     >
@@ -457,7 +457,7 @@ export const ReportIssueModal: React.FC = () => {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="مثال: تأخير استلام الشحنة، أو تلف منتج الفخار أثناء النقل"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-1 focus:ring-[#9a6a35]"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   required
                 />
               </div>
@@ -472,7 +472,7 @@ export const ReportIssueModal: React.FC = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="اشرح المشكلة بالتفصيل، وما حدث معك بالظبط، وأي معلومات تساعد فريق الإدارة على التدخل السريع وحل المشكلة..."
-                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none focus:ring-1 focus:ring-[#9a6a35] resize-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-sm bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none"
                   required
                 />
               </div>
@@ -489,7 +489,7 @@ export const ReportIssueModal: React.FC = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="اسمك"
-                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none"
+                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none"
                       required
                     />
                     <User className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-2.5 top-1/2 -translate-y-1/2" />
@@ -507,7 +507,7 @@ export const ReportIssueModal: React.FC = () => {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="01XXXXXXXXX"
-                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs text-right bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none"
+                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs text-right bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none"
                       required
                     />
                     <Phone className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-2.5 top-1/2 -translate-y-1/2" />
@@ -524,7 +524,7 @@ export const ReportIssueModal: React.FC = () => {
                       value={governorate}
                       onChange={(e) => setGovernorate(e.target.value)}
                       placeholder="مثال: سوهاج، قنا"
-                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-[#9a6a35] focus:outline-none"
+                      className="w-full pl-3 pr-8 py-2 rounded-xl text-xs bg-white dark:bg-[#1c1c1a] border border-black/10 dark:border-white/10 focus:border-primary focus:outline-none"
                     />
                     <MapPin className="w-3.5 h-3.5 text-black/40 dark:text-white/40 absolute right-2.5 top-1/2 -translate-y-1/2" />
                   </div>
@@ -545,7 +545,7 @@ export const ReportIssueModal: React.FC = () => {
                   id="submit-report-btn"
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl text-xs font-black bg-[#9a6a35] hover:bg-[#855b2d] text-white shadow-lg shadow-[#9a6a35]/20 flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl text-xs font-black bg-primary hover:bg-[#855b2d] text-white shadow-lg shadow-[#9a6a35]/20 flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -597,7 +597,7 @@ export const ReportIssueModal: React.FC = () => {
                   </p>
                   <button
                     onClick={() => setActiveTab('new')}
-                    className="px-4 py-2 rounded-xl text-xs font-black bg-[#9a6a35] text-white hover:bg-[#855b2d]"
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-primary text-white hover:bg-[#855b2d]"
                   >
                     تقديم بلاغ الآن
                   </button>
@@ -613,7 +613,7 @@ export const ReportIssueModal: React.FC = () => {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/5 dark:border-white/5 pb-2.5">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono font-black text-[#9a6a35] dark:text-[#d5a56d] bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
+                            <span className="text-xs font-mono font-black text-primary dark:text-primary-hover bg-black/5 dark:bg-white/10 px-2 py-0.5 rounded-md">
                               #{ticket.ticketNumber}
                             </span>
                             {getStatusBadge(ticket.status)}

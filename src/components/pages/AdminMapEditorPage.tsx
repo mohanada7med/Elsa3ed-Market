@@ -157,25 +157,25 @@ export const AdminMapEditorPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7] font-sans pb-16">
+    <div className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream font-sans pb-16">
       {/* Top Header */}
       <header className="border-b border-black/10 dark:border-white/10 dark:border-[#2C2420] bg-white/80 dark:bg-[#1A1614]/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-2 text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#9C8F82]">
             <button
               onClick={() => setActivePage('admin-dashboard')}
-              className="hover:text-[#9a6a35] transition-colors cursor-pointer"
+              className="hover:text-primary transition-colors cursor-pointer"
             >
               لوحة الإدارة
             </button>
             <span>/</span>
-            <span className="text-[#9a6a35] font-bold">محرر وضبط إحداثيات الخريطة (GIS)</span>
+            <span className="text-primary font-bold">محرر وضبط إحداثيات الخريطة (GIS)</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setActivePage('map')}
-              className="flex items-center gap-1.5 text-xs font-bold text-white bg-[#9a6a35] hover:bg-[#7d5427] px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 text-xs font-bold text-white bg-primary hover:bg-primary-hover px-3.5 py-2 rounded-xl transition-all cursor-pointer shadow-xs"
             >
               <MapIcon className="w-3.5 h-3.5" />
               <span>معاينة الخريطة التفاعلية</span>
@@ -190,7 +190,7 @@ export const AdminMapEditorPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 dark:border-[#2C2420] pb-6 mb-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 text-xs font-bold mb-2">
-              <Compass className="w-3.5 h-3.5 text-[#9a6a35]" />
+              <Compass className="w-3.5 h-3.5 text-primary" />
               <span>نظام إدارة الإحداثيات الجغرافية لموسوعة صعيد مصر</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black font-serif text-[#241E1A] dark:text-[#FAF6F2]">
@@ -204,7 +204,7 @@ export const AdminMapEditorPage: React.FC = () => {
           {/* KPI Counters */}
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-2xl bg-white dark:bg-[#1A1614] border border-black/10 dark:border-white/10 dark:border-[#2C2420] text-center min-w-[80px]">
-              <span className="text-lg font-black text-[#9a6a35] block">
+              <span className="text-lg font-black text-primary block">
                 {mapPayload?.governorates.length || 0}
               </span>
               <span className="text-[10px] text-black/60 dark:text-white/60 dark:text-[#9C8F82] font-semibold">محافظات</span>
@@ -234,7 +234,7 @@ export const AdminMapEditorPage: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ابحث بالاسم أو المحافظة..."
-              className="w-full pr-10 pl-4 py-2 text-xs rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 focus:outline-none focus:border-[#9a6a35]"
+              className="w-full pr-10 pl-4 py-2 text-xs rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -243,7 +243,7 @@ export const AdminMapEditorPage: React.FC = () => {
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="text-xs p-2 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-semibold"
+              className="text-xs p-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-semibold"
             >
               <option value="all">كل الأنواع</option>
               <option value="governorate">المحافظات</option>
@@ -259,7 +259,7 @@ export const AdminMapEditorPage: React.FC = () => {
             <select
               value={selectedGov}
               onChange={(e) => setSelectedGov(e.target.value)}
-              className="text-xs p-2 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-semibold"
+              className="text-xs p-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-semibold"
             >
               <option value="all">كل المحافظات</option>
               {mapPayload?.governorates.map((g) => (
@@ -271,7 +271,7 @@ export const AdminMapEditorPage: React.FC = () => {
 
             <button
               onClick={loadData}
-              className="p-2 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 hover:text-[#9a6a35] transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 hover:text-primary transition-colors cursor-pointer"
               title="تحديث البيانات"
             >
               <RefreshCw className="w-4 h-4" />
@@ -285,7 +285,7 @@ export const AdminMapEditorPage: React.FC = () => {
           <div className="block md:hidden divide-y divide-[#F0EAE1] dark:divide-[#2C2420]">
             {isLoading ? (
               <div className="p-8 text-center text-black/60 dark:text-white/60">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35]" />
+                <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
                 <span className="text-xs">جاري تحميل بيانات المواقع من قاعدة البيانات...</span>
               </div>
             ) : filteredItems.length === 0 ? (
@@ -304,7 +304,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           className="w-11 h-11 rounded-xl object-cover bg-gray-200 shrink-0"
                         />
                       ) : (
-                        <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 flex items-center justify-center text-[#9a6a35] shrink-0 border border-black/10 dark:border-white/10">
+                        <div className="w-11 h-11 rounded-xl bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary shrink-0 border border-black/10 dark:border-white/10">
                           <MapPin className="w-5 h-5" />
                         </div>
                       )}
@@ -313,7 +313,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           {item.name}
                         </h4>
                         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                          <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 border border-black/10 dark:border-white/10 font-semibold text-[10px]">
+                          <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 border border-black/10 dark:border-white/10 font-semibold text-[10px]">
                             {item.typeLabel}
                           </span>
                           <span className="text-xs text-black/60 dark:text-white/60 font-medium">
@@ -332,10 +332,10 @@ export const AdminMapEditorPage: React.FC = () => {
 
                   <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#F5EFE6] dark:border-[#26201B]">
                     <div className="font-mono text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 flex items-center gap-2">
-                      <span className="bg-black/5 dark:bg-#FFF6EB/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
+                      <span className="bg-black/5 dark:bg-cream/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
                         {item.lat.toFixed(4)}° N
                       </span>
-                      <span className="bg-black/5 dark:bg-#FFF6EB/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
+                      <span className="bg-black/5 dark:bg-cream/5 px-2 py-1 rounded-lg border border-black/10 dark:border-white/10">
                         {item.lng.toFixed(4)}° E
                       </span>
                     </div>
@@ -343,7 +343,7 @@ export const AdminMapEditorPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditingItem({ ...item })}
-                      className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-[#9a6a35]/10 hover:bg-[#9a6a35] text-[#9a6a35] hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                      className="min-h-[40px] px-3.5 py-1.5 rounded-xl bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1.5 shrink-0"
                     >
                       <Edit3 className="w-4 h-4" />
                       <span>تعديل</span>
@@ -357,7 +357,7 @@ export const AdminMapEditorPage: React.FC = () => {
           {/* Desktop Table (>= md) */}
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-right text-xs">
-              <thead className="bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 dark:text-[#9C8F82] border-b border-black/10 dark:border-white/10 dark:border-[#2C2420] font-bold">
+              <thead className="bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 dark:text-[#9C8F82] border-b border-black/10 dark:border-white/10 dark:border-[#2C2420] font-bold">
                 <tr>
                   <th className="p-3.5">الاسم والوصف</th>
                   <th className="p-3.5">النوع</th>
@@ -372,7 +372,7 @@ export const AdminMapEditorPage: React.FC = () => {
                 {isLoading ? (
                   <tr>
                     <td colSpan={7} className="p-8 text-center text-black/60 dark:text-white/60">
-                      <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-[#9a6a35]" />
+                      <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-primary" />
                       <span>جاري تحميل بيانات المواقع من قاعدة البيانات...</span>
                     </td>
                   </tr>
@@ -386,7 +386,7 @@ export const AdminMapEditorPage: React.FC = () => {
                   filteredItems.map((item) => (
                     <tr
                       key={`${item.type}-${item.id}`}
-                      className="hover:bg-black/5 dark:bg-#FFF6EB/5/60 dark:hover:bg-[#26201B]/60 transition-colors"
+                      className="hover:bg-black/5 dark:bg-cream/5/60 dark:hover:bg-[#26201B]/60 transition-colors"
                     >
                       <td className="p-3.5 font-bold flex items-center gap-2.5">
                         {item.coverImage ? (
@@ -396,14 +396,14 @@ export const AdminMapEditorPage: React.FC = () => {
                             className="w-8 h-8 rounded-lg object-cover bg-gray-200"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-#FFF6EB/5 flex items-center justify-center text-[#9a6a35]">
+                          <div className="w-8 h-8 rounded-lg bg-black/5 dark:bg-cream/5 flex items-center justify-center text-primary">
                             <MapPin className="w-4 h-4" />
                           </div>
                         )}
                         <span className="truncate max-w-[200px]">{item.name}</span>
                       </td>
                       <td className="p-3.5">
-                        <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-#FFF6EB/5 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 border border-black/10 dark:border-white/10 font-semibold">
+                        <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-cream/5 text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 border border-black/10 dark:border-white/10 font-semibold">
                           {item.typeLabel}
                         </span>
                       </td>
@@ -431,7 +431,7 @@ export const AdminMapEditorPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setEditingItem({ ...item })}
-                          className="px-3 py-1.5 rounded-lg bg-[#9a6a35]/10 hover:bg-[#9a6a35] text-[#9a6a35] hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-white font-bold text-xs transition-colors cursor-pointer inline-flex items-center gap-1"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           <span>تعديل</span>
@@ -483,7 +483,7 @@ export const AdminMapEditorPage: React.FC = () => {
                             prev ? { ...prev, lat: city.lat, lng: city.lng } : null
                           )
                         }
-                        className="text-[10px] px-2 py-1 rounded-md bg-black/5 dark:bg-#FFF6EB/5 text-[#4A3F35] dark:text-[#DDD2C6] border border-black/10 dark:border-white/10 hover:border-[#9a6a35] font-semibold transition-colors"
+                        className="text-[10px] px-2 py-1 rounded-md bg-black/5 dark:bg-cream/5 text-[#4A3F35] dark:text-[#DDD2C6] border border-black/10 dark:border-white/10 hover:border-primary font-semibold transition-colors"
                       >
                         {city.name}
                       </button>
@@ -507,7 +507,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           prev ? { ...prev, lat: parseFloat(e.target.value) || 0 } : null
                         )
                       }
-                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-[#9a6a35]"
+                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-primary"
                     />
                     <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">
                       النطاق للصعيد: 22.0° إلى 29.8°
@@ -528,7 +528,7 @@ export const AdminMapEditorPage: React.FC = () => {
                           prev ? { ...prev, lng: parseFloat(e.target.value) || 0 } : null
                         )
                       }
-                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-[#9a6a35]"
+                      className="w-full p-2.5 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-mono text-xs focus:outline-none focus:border-primary"
                     />
                     <span className="text-[10px] text-black/60 dark:text-white/60 block mt-1">
                       النطاق للصعيد: 27.2° إلى 33.8°
@@ -562,7 +562,7 @@ export const AdminMapEditorPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="flex-1 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer shadow-md"
+                    className="flex-1 py-2.5 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer shadow-md"
                   >
                     {isSaving ? (
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -574,7 +574,7 @@ export const AdminMapEditorPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setEditingItem(null)}
-                    className="py-2.5 px-4 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 text-xs font-bold text-black/60 dark:text-white/60 hover:text-[#241E1A] transition-colors cursor-pointer"
+                    className="py-2.5 px-4 rounded-xl bg-black/5 dark:bg-cream/5 text-xs font-bold text-black/60 dark:text-white/60 hover:text-[#241E1A] transition-colors cursor-pointer"
                   >
                     إلغاء
                   </button>

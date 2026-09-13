@@ -86,11 +86,11 @@ export const CartPage: React.FC = () => {
         min-h-[90vh]
         pt-32 sm:pt-40
         pb-28 sm:pb-20
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
         max-w-[1600px]
         mx-auto
         px-4 sm:px-8
@@ -104,7 +104,7 @@ export const CartPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('home')}
-            className="hover:text-[#9a6a35] transition-colors cursor-pointer"
+            className="hover:text-primary transition-colors cursor-pointer"
           >
             الرئيسية
           </button>
@@ -112,7 +112,7 @@ export const CartPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="hover:text-[#9a6a35] transition-colors cursor-pointer"
+            className="hover:text-primary transition-colors cursor-pointer"
           >
             معرض المنتجات
           </button>
@@ -123,7 +123,7 @@ export const CartPage: React.FC = () => {
         {/* Page Title */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-black/10 dark:border-white/10 mb-6 sm:mb-8">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner shrink-0">
               <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -138,7 +138,7 @@ export const CartPage: React.FC = () => {
 
           {cart.length > 0 && (
             <div className="flex items-center justify-between sm:justify-start gap-3">
-              <span className="px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-[#d5a56d] text-xs font-bold border border-amber-300 dark:border-amber-700">
+              <span className="px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-primary-hover text-xs font-bold border border-amber-300 dark:border-amber-700">
                 {cartCount} {cartCount === 1 ? 'قطعة' : 'قطع مختارة'}
               </span>
               <button
@@ -159,9 +159,9 @@ export const CartPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-lg mx-auto text-center py-12 sm:py-16 px-5 sm:px-6 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl my-6 sm:my-8 space-y-5 backdrop-blur-xl"
+            className="max-w-lg mx-auto text-center py-12 sm:py-16 px-5 sm:px-6 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl my-6 sm:my-8 space-y-5 backdrop-blur-xl"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-[#9a6a35] flex items-center justify-center mx-auto shadow-inner">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/5 dark:bg-cream/5 text-primary flex items-center justify-center mx-auto shadow-inner">
               <ShoppingBag className="w-10 h-10 sm:w-12 sm:h-12 opacity-80" />
             </div>
 
@@ -182,7 +182,7 @@ export const CartPage: React.FC = () => {
                   setActivePage('products');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                className="w-full sm:w-auto px-8 py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>اتفرج على منتجات سوق وه</span>
@@ -216,7 +216,7 @@ export const CartPage: React.FC = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       id={`cart-page-item-${prodId}`}
-                      className="p-4 sm:p-5 bg-white/75 dark:bg-[#151513]/90 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 relative"
+                      className="p-4 sm:p-5 bg-white/75 dark:bg-espresso-900/90 rounded-2xl border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 relative"
                     >
                       {/* Product Image */}
                       <img
@@ -231,7 +231,7 @@ export const CartPage: React.FC = () => {
                         <div className="flex items-start justify-between gap-2">
                           <h3
                             onClick={() => navigateToProduct(prodId)}
-                            className="text-sm sm:text-base font-bold hover:text-[#9a6a35] cursor-pointer line-clamp-2 leading-snug"
+                            className="text-sm sm:text-base font-bold hover:text-primary cursor-pointer line-clamp-2 leading-snug"
                           >
                             {title}
                           </h3>
@@ -252,12 +252,12 @@ export const CartPage: React.FC = () => {
                         {/* Workshop & Governorate Badges */}
                         <div className="flex flex-wrap items-center gap-2 text-xs text-black/60 dark:text-white/60">
                           <span className="flex items-center gap-1">
-                            <Store className="w-3.5 h-3.5 text-[#9a6a35]" />
+                            <Store className="w-3.5 h-3.5 text-primary" />
                             <span>{sellerName}</span>
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded-md font-semibold text-[11px] border border-amber-200 dark:border-amber-800">
-                            <MapPin className="w-3 h-3 text-[#9a6a35]" />
+                            <MapPin className="w-3 h-3 text-primary" />
                             <span>محافظة {sellerGov}</span>
                           </span>
                         </div>
@@ -265,7 +265,7 @@ export const CartPage: React.FC = () => {
                         {/* Price, Stepper & Subtotal Row */}
                         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                           <div className="flex items-baseline gap-1.5">
-                            <span className="text-base sm:text-lg font-black text-[#9a6a35]">
+                            <span className="text-base sm:text-lg font-black text-primary">
                               {subtotal} ج.م
                             </span>
                             {qty > 1 && (
@@ -276,7 +276,7 @@ export const CartPage: React.FC = () => {
                           </div>
 
                           {/* Quantity Stepper */}
-                          <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/[0.035] dark:bg-#FFF6EB/[0.04] overflow-hidden shadow-2xs">
+                          <div className="flex items-center border border-black/10 dark:border-white/10 rounded-xl bg-black/[0.035] dark:bg-cream/[0.04] overflow-hidden shadow-2xs">
                             <button
                               type="button"
                               id={`cart-page-qty-minus-${prodId}`}
@@ -303,7 +303,7 @@ export const CartPage: React.FC = () => {
                         </div>
 
                         {stockCount < 5 && stockCount > 0 && (
-                          <p className="text-[11px] font-semibold text-amber-700 dark:text-[#d6aa72]">
+                          <p className="text-[11px] font-semibold text-amber-700 dark:text-primary-hover">
                             متبقي في الورشة {stockCount} قطع فقط
                           </p>
                         )}
@@ -322,7 +322,7 @@ export const CartPage: React.FC = () => {
                     setActivePage('products');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#9a6a35] hover:underline cursor-pointer"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-primary hover:underline cursor-pointer"
                 >
                   <ArrowRight className="w-4 h-4" />
                   <span>متابعة التسوق واستكشاف المزيد من القطع التراثية</span>
@@ -332,7 +332,7 @@ export const CartPage: React.FC = () => {
 
             {/* Order Summary Sidebar (4 cols) */}
             <div className="lg:col-span-4 space-y-5 pb-12 sm:pb-0">
-              <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-lg backdrop-blur-xl space-y-5 sticky top-28">
+              <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-lg backdrop-blur-xl space-y-5 sticky top-28">
                 <h2 className="text-base sm:text-lg font-black pb-3 border-b border-black/10 dark:border-white/10 font-serif">
                   ملخص الطلب والفاتورة
                 </h2>
@@ -367,12 +367,12 @@ export const CartPage: React.FC = () => {
                           if (couponError) setCouponError('');
                         }}
                         placeholder="أدخل كود الخصم (مثال: SAEED100)"
-                        className="flex-1 px-3.5 py-2.5 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm placeholder:text-black/30 dark:placeholder:text-white/30 focus:border-[#9a6a35] outline-none"
+                        className="flex-1 px-3.5 py-2.5 bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 rounded-xl text-xs sm:text-sm placeholder:text-black/30 dark:placeholder:text-white/30 focus:border-primary outline-none"
                       />
                       <button
                         type="submit"
                         disabled={isApplyingCoupon || !couponInput.trim()}
-                        className="px-4 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d]"
+                        className="px-4 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-primary dark:hover:bg-primary-hover"
                       >
                         {isApplyingCoupon ? 'جاري الفحص...' : 'تطبيق'}
                       </button>
@@ -395,7 +395,7 @@ export const CartPage: React.FC = () => {
 
                   <div className="flex justify-between text-black/60 dark:text-white/60">
                     <span className="flex items-center gap-1">
-                      <Truck className="w-3.5 h-3.5 text-[#9a6a35]" />
+                      <Truck className="w-3.5 h-3.5 text-primary" />
                       <span>مصاريف الشحن لحد باب بيتك</span>
                     </span>
                     <span className="font-bold">
@@ -415,7 +415,7 @@ export const CartPage: React.FC = () => {
                   )}
 
                   {cartSubtotal < 1000 && (
-                    <p className="text-[11px] text-[#9a6a35] bg-[#9a6a35]/10 p-2.5 rounded-xl leading-relaxed">
+                    <p className="text-[11px] text-primary bg-primary/10 p-2.5 rounded-xl leading-relaxed">
                       💡 زود حاجات بـ <strong>{1000 - cartSubtotal} ج.م</strong> عشان تاخد <strong>شحن ببلاش</strong> لكل المحافظات!
                     </p>
                   )}
@@ -424,7 +424,7 @@ export const CartPage: React.FC = () => {
                     <span className="text-sm sm:text-base font-black">
                       الإجمالي النهائي:
                     </span>
-                    <span className="text-xl sm:text-2xl font-black text-[#9a6a35]">
+                    <span className="text-xl sm:text-2xl font-black text-primary">
                       {cartTotal} ج.م
                     </span>
                   </div>
@@ -435,7 +435,7 @@ export const CartPage: React.FC = () => {
                   type="button"
                   id="cart-checkout-btn"
                   onClick={handleCheckout}
-                  className="w-full py-3.5 sm:py-4 px-6 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                  className="w-full py-3.5 sm:py-4 px-6 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
                 >
                   <span>كمّل واطلب وادفع دلوقتي</span>
                   <ArrowLeft className="w-4 h-4" />

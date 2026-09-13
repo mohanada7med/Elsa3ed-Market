@@ -21,11 +21,11 @@ export const HomePage: React.FC = () => {
         min-h-screen
         w-full
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       <div className="relative z-10 space-y-6 [&_section]:bg-transparent">
@@ -43,13 +43,13 @@ export const HomePage: React.FC = () => {
         </div>
 
         {/* 4. Products Section - سوق وه */}
-        <section className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 [content-visibility:auto] [contain-intrinsic-size:1px_600px] text-[#211d18] dark:text-[#f5f0e7] select-none">
+        <section className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 [content-visibility:auto] [contain-intrinsic-size:1px_600px] text-espresso dark:text-cream select-none">
           <div className="relative z-10 mb-12 sm:mb-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <div>
-                <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                    <ShoppingBasket size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+                <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+                    <ShoppingBasket size={14} className="text-primary dark:text-primary-hover" />
                   </span>
                   BEST SELLERS / الأكتر طلبًا وإقبالًا
                 </div>
@@ -57,7 +57,7 @@ export const HomePage: React.FC = () => {
                 <h2 className="text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
                   سوق
                   <br />
-                  <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+                  <span className="mr-[4vw] text-primary dark:text-primary-hover lg:mr-16">
                     وه
                   </span>
                 </h2>
@@ -67,7 +67,7 @@ export const HomePage: React.FC = () => {
                     <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
                       منتجات وه
                     </div>
-                    <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+                    <div className="mt-3 h-px w-10 bg-primary dark:bg-[#d6aa72]" />
                   </div>
 
                   <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
@@ -80,7 +80,7 @@ export const HomePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('products')}
-                  className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-[#9a6a35] dark:bg-zinc-800 dark:hover:bg-[#9a6a35] px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-primary dark:bg-zinc-800 dark:hover:bg-primary px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
                 >
                   <span>شوف كل المنتجات</span>
                   <ArrowLeft className="w-4 h-4" />

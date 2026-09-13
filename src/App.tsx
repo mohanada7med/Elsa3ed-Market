@@ -148,8 +148,8 @@ const OrdersTrackingPage = React.lazy(() =>
 
 const LazySectionFallback: React.FC = () => (
   <div className="min-h-[380px] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
-    <div className="w-10 h-10 border-3 border-[#9a6a35]/20 border-t-[#9a6a35] rounded-full animate-spin mb-3" />
-    <p className="text-xs font-bold text-[#9a6a35]">وَه | جاري فتح الصفحة...</p>
+    <div className="w-10 h-10 border-3 border-primary/20 border-t-[#9a6a35] rounded-full animate-spin mb-3" />
+    <p className="text-xs font-bold text-primary">وَه | جاري فتح الصفحة...</p>
   </div>
 );
 
@@ -359,7 +359,7 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col justify-between bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] transition-colors duration-500">
+    <main className="min-h-screen flex flex-col justify-between bg-cream dark:bg-espresso-900 text-espresso dark:text-cream transition-colors duration-500">
       <div>
         <Header />
 
@@ -403,8 +403,8 @@ const MainContent: React.FC = () => {
                 ) : isAuthenticated ? (
                   <CheckoutPage />
                 ) : (
-                  <div className="max-w-md mx-auto my-16 p-8 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/10 text-[#9a6a35] flex items-center justify-center mx-auto text-2xl">
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl">
                       🔒
                     </div>
                     <h2 className="text-xl font-bold font-serif">تسجيل الدخول لإتمام الطلب</h2>
@@ -418,14 +418,14 @@ const MainContent: React.FC = () => {
                           setAuthModalTab('login');
                           setIsAuthModalOpen(true);
                         }}
-                        className="w-full py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+                        className="w-full py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
                       >
                         تسجيل الدخول للمتابعة
                       </button>
                       <button
                         type="button"
                         onClick={() => setActivePage('products')}
-                        className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
+                        className="w-full py-2.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 text-black/70 dark:text-white/70 font-bold rounded-xl text-xs transition-all cursor-pointer border border-black/10 dark:border-white/10"
                       >
                         متابعة التسوق أولاً
                       </button>
@@ -461,7 +461,7 @@ const MainContent: React.FC = () => {
                   <ChatView isSellerMode={currentRole === 'seller'} />
                 ) : (
                   <div className="max-w-md mx-auto my-16 p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-[#d6aa72] flex items-center justify-center mx-auto text-2xl">
+                    <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary-hover flex items-center justify-center mx-auto text-2xl">
                       💬
                     </div>
                     <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">المحادثة المباشرة مع الحرفيين</h2>
@@ -487,11 +487,11 @@ const MainContent: React.FC = () => {
                 isAuthenticated ? (
                   <BuyerAccountPage />
                 ) : (
-                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
                       👤
                     </div>
-                    <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">إعدادات الحساب الشخصي</h2>
+                    <h2 className="text-xl font-bold text-espresso dark:text-cream">إعدادات الحساب الشخصي</h2>
                     <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
                       يرجى تسجيل الدخول للوصول إلى بياناتك الشخصية وعناوين الشحن المحفوظة.
                     </p>
@@ -501,7 +501,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الآن
                     </button>
@@ -515,14 +515,14 @@ const MainContent: React.FC = () => {
                   <SellerDashboard />
                 </React.Suspense>
               ) : isAuthenticated && currentUser?.sellerStatus === 'pending' ? (
-                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-[#d6aa72] flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
+                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-amber-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-amber-500/20">
                     ⏳
                   </div>
                   <span className="inline-block px-3 py-1 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full text-xs font-bold">
                     طلبك قيد المراجعة والاعتماد
                   </span>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                  <h2 className="text-xl font-bold text-espresso dark:text-cream">
                     طلب انضمام ورشتك قيد الفحص الإداري
                   </h2>
                   <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
@@ -532,28 +532,28 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                      className="px-5 py-3 bg-primary hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
                     >
                       متابعة حالة الطلب في حسابي
                     </button>
                     <button
                       type="button"
                       onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                      className="px-5 py-3 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
                     >
                       العودة للرئيسية
                     </button>
                   </div>
                 </div>
               ) : isAuthenticated && currentUser?.sellerStatus === 'rejected' ? (
-                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
+                <div className="max-w-lg mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-rose-500/20 shadow-xl text-center space-y-4" dir="rtl">
                   <div className="w-16 h-16 rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/20">
                     ⚠️
                   </div>
                   <span className="inline-block px-3 py-1 bg-rose-500/10 text-rose-700 dark:text-rose-300 rounded-full text-xs font-bold">
                     تم رفض طلب الاعتماد
                   </span>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                  <h2 className="text-xl font-bold text-espresso dark:text-cream">
                     لم يتم قبول طلب الانضمام كبائع
                   </h2>
                   <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
@@ -563,25 +563,25 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-[#9a6a35] hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                      className="px-5 py-3 bg-primary hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
                     >
                       تعديل وإعادة تقديم الطلب
                     </button>
                     <button
                       type="button"
                       onClick={() => setActivePage('home')}
-                      className="px-5 py-3 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                      className="px-5 py-3 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
                     >
                       تصفح السوق
                     </button>
                   </div>
                 </div>
               ) : (
-                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
-                  <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4" dir="rtl">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
                     🏺
                   </div>
-                  <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">لوحة تحكم ورش الصعيد</h2>
+                  <h2 className="text-xl font-bold text-espresso dark:text-cream">لوحة تحكم ورش الصعيد</h2>
                   <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
                     هذه اللوحة مخصصة لحسابات شيوخ الصنعة وأصحاب الورش المعتمدة. يرجى تسجيل الدخول بحساب ورشتك أو تقديم طلب انضمام كبائع.
                   </p>
@@ -592,7 +592,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل دخول البائع
                     </button>
@@ -606,7 +606,7 @@ const MainContent: React.FC = () => {
                           setIsAuthModalOpen(true);
                         }
                       }}
-                      className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                      className="w-full py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
                     >
                       تقديم طلب انضمام ورشة جديدة
                     </button>
@@ -621,11 +621,11 @@ const MainContent: React.FC = () => {
                     <AdminDashboard />
                   </React.Suspense>
                 ) : (
-                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+                  <div className="max-w-md mx-auto my-16 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
+                    <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
                       🛡️
                     </div>
-                    <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">منطقة الإدارة العليا</h2>
+                    <h2 className="text-xl font-bold text-espresso dark:text-cream">منطقة الإدارة العليا</h2>
                     <p className="text-sm text-black/60 dark:text-white/60 leading-relaxed">
                       هذه اللوحة مخصصة لمديري منصة وه فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
                     </p>
@@ -635,7 +635,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الإداري
                     </button>

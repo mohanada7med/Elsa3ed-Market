@@ -27,8 +27,8 @@ export const WAHCard: React.FC<WAHCardProps> = ({
   return (
     <motion.div
       whileHover={hoverable ? { y: -4, transition: { duration: 0.22, ease: 'easeOut' } } : undefined}
-      className={`relative bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] shadow-lg ${
-        hoverable ? 'hover:border-[#9a6a35]/40 dark:hover:border-[#9a6a35]/50 hover:shadow-xl' : ''
+      className={`relative bg-white/85 dark:bg-espresso/85 backdrop-blur-xl border border-primary/30 dark:border-primary/40 text-espresso dark:text-cream shadow-md ${
+        hoverable ? 'hover:border-primary/60 dark:hover:border-primary/70 hover:shadow-xl' : ''
       } transition-all duration-250 overflow-hidden ${shapeClass} ${className}`}
       {...props}
     >

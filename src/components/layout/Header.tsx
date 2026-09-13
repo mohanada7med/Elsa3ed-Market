@@ -384,7 +384,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     setOpen(false);
                     setActivePage('notifications');
                   }}
-                  className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-[#9a6a35] text-white hover:bg-[#744e26]"
+                  className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-primary text-white hover:bg-[#744e26]"
                 >
                   شوف كل الإشعارات
                 </button>
@@ -719,7 +719,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 color: secondaryText,
               }}
             >
-              <Sparkles size={13} className="text-[#9a6a35]" />
+              <Sparkles size={13} className="text-primary" />
               <span>من قلب الصعيد... حكاية بتبدأ</span>
             </div>
 
@@ -776,7 +776,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   color: mainText,
                 }}
               >
-                {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
+                {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
               </button>
 
               {/* MOBILE QUIZ BUTTON (Visible on sm+; featured prominently in mobile drawer) */}
@@ -794,11 +794,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               >
                 <Flame
                   size={18}
-                  className={activePage === 'quize' ? 'text-white' : 'text-[#9a6a35] dark:text-[#d6aa72]'}
+                  className={activePage === 'quize' ? 'text-white' : 'text-primary dark:text-primary-hover'}
                 />
                 <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d6aa72] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#9a6a35]"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
                 </span>
               </button>
 
@@ -854,7 +854,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     color: activePage === 'quize' ? '#9a6a35' : mainText,
                   }}
                 >
-                  <Flame size={15} className="text-[#9a6a35]" color="currentColor" />
+                  <Flame size={15} className="text-primary" color="currentColor" />
                   انت صعيدى؟
                   <span
                     className="rounded-full px-2 py-0.5 text-[9px] font-black"
@@ -923,7 +923,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     color: mainText,
                   }}
                 >
-                  {isDark ? <Sun size={18} className="text-[#d6aa72]" /> : <Moon size={18} />}
+                  {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
                 </button>
 
                 {/* FAVORITES (مخفية للبائع والأدمن) */}
@@ -1051,13 +1051,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <img
                           src={profileImage}
                           alt={displayName}
-                          className="h-8.5 w-8.5 sm:h-9 sm:w-9 lg:h-9.5 lg:w-9.5 rounded-full object-cover ring-2 ring-[#9a6a35]/40 transition-transform duration-300 group-hover:scale-105"
+                          className="h-8.5 w-8.5 sm:h-9 sm:w-9 lg:h-9.5 lg:w-9.5 rounded-full object-cover ring-2 ring-primary/40 transition-transform duration-300 group-hover:scale-105"
                         />
                         <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#121210]" />
                       </div>
 
                       <div className="hidden sm:flex flex-col text-right leading-tight">
-                        <span className="max-w-[110px] xl:max-w-[130px] truncate text-xs lg:text-sm font-black transition-colors group-hover:text-[#9a6a35]">
+                        <span className="max-w-[110px] xl:max-w-[130px] truncate text-xs lg:text-sm font-black transition-colors group-hover:text-primary">
                           {displayName}
                         </span>
                         <span className="text-[10px] font-semibold opacity-70" style={{ color: secondaryText }}>
@@ -1067,7 +1067,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                       <ChevronDown
                         size={15}
-                        className={`hidden sm:block text-[#9a6a35] transition-transform duration-300 ease-out ${userDropdownOpen ? 'rotate-180' : ''
+                        className={`hidden sm:block text-primary transition-transform duration-300 ease-out ${userDropdownOpen ? 'rotate-180' : ''
                           }`}
                       />
                     </button>
@@ -1106,7 +1106,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 setUserDropdownOpen(false);
                                 navigate(getAccountPage());
                               }}
-                              className="group border-b p-4 cursor-pointer transition-colors hover:bg-[#9a6a35]/5"
+                              className="group border-b p-4 cursor-pointer transition-colors hover:bg-primary/5"
                               style={{ borderColor }}
                             >
                               <div className="flex items-center gap-3.5">
@@ -1114,16 +1114,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   <img
                                     src={profileImage}
                                     alt={displayName}
-                                    className="h-11 w-11 rounded-full object-cover ring-2 ring-[#9a6a35]/30 shadow-sm transition-transform group-hover:scale-105"
+                                    className="h-11 w-11 rounded-full object-cover ring-2 ring-primary/30 shadow-sm transition-transform group-hover:scale-105"
                                   />
                                   <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#151513]" />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <div className="flex items-center justify-between">
-                                    <p className="truncate text-sm font-black transition-colors group-hover:text-[#9a6a35]">
+                                    <p className="truncate text-sm font-black transition-colors group-hover:text-primary">
                                       {displayName}
                                     </p>
-                                    <ArrowLeft size={13} className="text-[#9a6a35] opacity-0 transition-opacity group-hover:opacity-100" />
+                                    <ArrowLeft size={13} className="text-primary opacity-0 transition-opacity group-hover:opacity-100" />
                                   </div>
                                   <p className="mt-0.5 text-xs font-semibold" style={{ color: secondaryText }}>
                                     {currentRole === 'admin'
@@ -1144,10 +1144,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   setUserDropdownOpen(false);
                                   navigate(getAccountPage());
                                 }}
-                                className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                 style={{ color: mainText }}
                               >
-                                <UserCircle size={18} className="text-[#9a6a35]" />
+                                <UserCircle size={18} className="text-primary" />
                                 <span>حسابي</span>
                               </button>
 
@@ -1159,10 +1159,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     setUserDropdownOpen(false);
                                     navigate('seller-dashboard');
                                   }}
-                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                   style={{ color: mainText }}
                                 >
-                                  <Store size={18} className="text-[#9a6a35]" />
+                                  <Store size={18} className="text-primary" />
                                   <span>لوحة الورشة</span>
                                 </button>
                               )}
@@ -1175,10 +1175,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     setUserDropdownOpen(false);
                                     navigate('admin-dashboard');
                                   }}
-                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                   style={{ color: mainText }}
                                 >
-                                  <ShieldCheck size={18} className="text-[#9a6a35]" />
+                                  <ShieldCheck size={18} className="text-primary" />
                                   <span>لوحة الإدارة</span>
                                 </button>
                               )}
@@ -1190,15 +1190,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   setUserDropdownOpen(false);
                                   navigate('messages');
                                 }}
-                                className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                 style={{ color: mainText }}
                               >
                                 <div className="flex items-center gap-3">
-                                  <MessageCircle size={18} className="text-[#9a6a35]" />
+                                  <MessageCircle size={18} className="text-primary" />
                                   <span>الرسائل</span>
                                 </div>
                                 {chatUnreadCount > 0 && (
-                                  <span className="rounded-full bg-[#9a6a35] px-2 py-0.5 text-[10px] font-bold text-white">
+                                  <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white">
                                     {chatUnreadCount}
                                   </span>
                                 )}
@@ -1212,10 +1212,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     setUserDropdownOpen(false);
                                     navigate('orders');
                                   }}
-                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                   style={{ color: mainText }}
                                 >
-                                  <Package size={18} className="text-[#9a6a35]" />
+                                  <Package size={18} className="text-primary" />
                                   <span>طلباتي ومشترياتي</span>
                                 </button>
                               )}
@@ -1228,15 +1228,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     setUserDropdownOpen(false);
                                     navigate('favorites');
                                   }}
-                                  className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-[#9a6a35]/10 hover:text-[#9a6a35]"
+                                  className="flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-bold cursor-pointer transition-colors hover:bg-primary/10 hover:text-primary"
                                   style={{ color: mainText }}
                                 >
                                   <div className="flex items-center gap-3">
-                                    <Heart size={18} className="text-[#9a6a35]" />
+                                    <Heart size={18} className="text-primary" />
                                     <span>المفضلة</span>
                                   </div>
                                   {favorites.length > 0 && (
-                                    <span className="rounded-full bg-[#9a6a35] px-2 py-0.5 text-[10px] font-bold text-white">
+                                    <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white">
                                       {favorites.length}
                                     </span>
                                   )}
@@ -1491,7 +1491,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setActivePage('products');
                         setSearchOverlayOpen(false);
                       }}
-                      className="rounded-full border px-3.5 py-2 text-xs font-bold sm:text-sm cursor-pointer hover:border-[#9a6a35] transition-colors"
+                      className="rounded-full border px-3.5 py-2 text-xs font-bold sm:text-sm cursor-pointer hover:border-primary transition-colors"
                       style={{
                         color: mainText,
                         borderColor,
@@ -1656,13 +1656,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#9a6a35]/10 dark:bg-[#d6aa72]/15 flex items-center justify-center text-[#9a6a35] dark:text-[#d6aa72]">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#d6aa72]/15 flex items-center justify-center text-primary dark:text-primary-hover">
                       <Flame size={20} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-[#9a6a35] dark:text-[#d6aa72]">فاهم كلام الصعايدة؟</span>
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-[#9a6a35] text-white">تحدي</span>
+                        <span className="text-sm font-black text-primary dark:text-primary-hover">فاهم كلام الصعايدة؟</span>
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-primary text-white">تحدي</span>
                       </div>
                       <p className="text-[11px] text-[#76675b] dark:text-[#b3a59a] mt-0.5">اختبر نفسك في 10 أسئلة صعيدية</p>
                     </div>

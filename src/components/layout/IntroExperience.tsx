@@ -162,7 +162,7 @@ export const IntroExperience: React.FC = () => {
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[999] flex items-center justify-center bg-[#070605]/95 backdrop-blur-2xl p-2 sm:p-6 select-none overflow-y-auto"
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#9a6a35]/12 blur-[150px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-primary/12 blur-[150px] pointer-events-none rounded-full" />
 
         <motion.div
           ref={containerRef}
@@ -176,7 +176,7 @@ export const IntroExperience: React.FC = () => {
             relative w-full overflow-hidden bg-black text-white transition-all duration-300 flex flex-col justify-between
             ${isFullscreen
               ? 'h-full w-full rounded-none border-none'
-              : 'max-w-5xl rounded-3xl sm:rounded-[2.5rem] border border-[#9a6a35]/35 shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_50px_rgba(154,106,53,0.2)]'
+              : 'max-w-5xl rounded-3xl sm:rounded-[2.5rem] border border-primary/35 shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_50px_rgba(154,106,53,0.2)]'
             }
           `}
         >
@@ -190,13 +190,13 @@ export const IntroExperience: React.FC = () => {
               ${controlsVisible || !isPlaying || isFullscreen ? 'opacity-100' : 'opacity-0'}
             `}
           >
-            <div className="pointer-events-auto flex items-center gap-2.5 bg-black/60 backdrop-blur-xl px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-[#9a6a35]/30">
+            <div className="pointer-events-auto flex items-center gap-2.5 bg-black/60 backdrop-blur-xl px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-primary/30">
               <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#9a6a35] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#9a6a35]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#d6aa72]" />
-              <span className="text-[11px] sm:text-xs font-black tracking-wide text-[#f5f0e7]">
+              <Clapperboard className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-hover" />
+              <span className="text-[11px] sm:text-xs font-black tracking-wide text-cream">
                 الصعيد بيحكى / وثائقي حي
               </span>
             </div>
@@ -206,8 +206,8 @@ export const IntroExperience: React.FC = () => {
               onClick={handleClose}
               className="
                 pointer-events-auto w-9 h-9 sm:w-11 sm:h-11 rounded-full
-                bg-black/60 hover:bg-[#9a6a35] backdrop-blur-xl
-                border border-white/10 hover:border-[#9a6a35]
+                bg-black/60 hover:bg-primary backdrop-blur-xl
+                border border-white/10 hover:border-primary
                 text-white flex items-center justify-center
                 transition-all duration-200 active:scale-95 cursor-pointer
               "
@@ -254,7 +254,7 @@ export const IntroExperience: React.FC = () => {
                   initial={{ opacity: 0, scale: 0.65 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.65 }}
-                  className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#9a6a35]/90 text-white flex items-center justify-center shadow-[0_0_40px_rgba(154,106,53,0.6)] backdrop-blur-md pointer-events-none"
+                  className="absolute w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-[0_0_40px_rgba(154,106,53,0.6)] backdrop-blur-md pointer-events-none"
                 >
                   <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-current ml-1" />
                 </motion.div>
@@ -280,7 +280,7 @@ export const IntroExperience: React.FC = () => {
               className="relative w-full h-2.5 sm:h-2 bg-white/20 hover:h-3 rounded-full cursor-pointer transition-all duration-200 flex items-center"
             >
               <div
-                className="h-full rounded-full bg-[#9a6a35] relative transition-all"
+                className="h-full rounded-full bg-primary relative transition-all"
                 style={{ width: `${progress}%` }}
               >
                 <span className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-[0_0_10px_#9a6a35]" />
@@ -293,7 +293,7 @@ export const IntroExperience: React.FC = () => {
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-[#9a6a35] flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
                   title={isPlaying ? 'إيقاف مؤقت' : 'تشغيل'}
                 >
                   {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
@@ -302,10 +302,10 @@ export const IntroExperience: React.FC = () => {
                 <button
                   type="button"
                   onClick={toggleMute}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-[#9a6a35] flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
                   title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
                 >
-                  {isMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-[#d6aa72]" />}
+                  {isMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-primary-hover" />}
                 </button>
 
                 <button
@@ -318,13 +318,13 @@ export const IntroExperience: React.FC = () => {
                       triggerControls();
                     }
                   }}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-[#9a6a35] hidden sm:flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-primary hidden sm:flex items-center justify-center transition-all cursor-pointer text-white active:scale-95"
                   title="إعادة من الأول"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
 
-                <span dir="ltr" className="text-[11px] sm:text-xs font-mono text-[#d6aa72] font-semibold ms-1 sm:ms-2">
+                <span dir="ltr" className="text-[11px] sm:text-xs font-mono text-primary-hover font-semibold ms-1 sm:ms-2">
                   {formatTime(currentTime)} / {formatTime(duration)}
                 </span>
               </div>
@@ -333,7 +333,7 @@ export const IntroExperience: React.FC = () => {
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-[#9a6a35] flex items-center justify-center transition-all cursor-pointer text-white active:scale-95 border border-white/10"
+                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-all cursor-pointer text-white active:scale-95 border border-white/10"
                   title={isFullscreen ? 'الخروج من الشاشة الكاملة' : 'تكبير الشاشة بالعرض'}
                 >
                   {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
@@ -347,7 +347,7 @@ export const IntroExperience: React.FC = () => {
                   }}
                   className="
                     px-4 sm:px-6 py-2 sm:py-2.5 rounded-full
-                    bg-[#9a6a35] hover:bg-[#83582a]
+                    bg-primary hover:bg-[#83582a]
                     text-white text-xs sm:text-sm font-bold
                     shadow-[0_4px_20px_rgba(154,106,53,0.4)]
                     flex items-center gap-1.5 sm:gap-2

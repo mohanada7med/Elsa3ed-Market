@@ -78,13 +78,13 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
     ? 'px-2.5 py-1.5 text-[11px] gap-1.5'
     : 'px-3.5 py-2 text-xs gap-2';
 
-  let variantClasses = 'bg-white/80 dark:bg-[#151513]/90 hover:bg-[#9a6a35]/10 dark:hover:bg-[#9a6a35]/20 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 shadow-xs backdrop-blur-md';
+  let variantClasses = 'bg-white/80 dark:bg-espresso-900/90 hover:bg-primary/10 dark:hover:bg-primary/20 text-espresso dark:text-cream border border-black/10 dark:border-white/10 shadow-xs backdrop-blur-md';
   if (variant === 'outline') {
-    variantClasses = 'bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10';
+    variantClasses = 'bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-espresso dark:text-cream border border-black/10 dark:border-white/10';
   } else if (variant === 'subtle') {
-    variantClasses = 'bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-black/70 dark:text-white/70 hover:text-[#211d18] dark:hover:text-[#f5f0e7] border border-black/5 dark:border-white/5';
+    variantClasses = 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-black/70 dark:text-white/70 hover:text-espresso dark:hover:text-cream border border-black/5 dark:border-white/5';
   } else if (variant === 'compact') {
-    variantClasses = 'bg-white/80 dark:bg-[#151513]/90 hover:bg-[#9a6a35]/10 dark:hover:bg-[#9a6a35]/20 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 p-2 shadow-xs';
+    variantClasses = 'bg-white/80 dark:bg-espresso-900/90 hover:bg-primary/10 dark:hover:bg-primary/20 text-espresso dark:text-cream border border-black/10 dark:border-white/10 p-2 shadow-xs';
   }
 
   return (
@@ -100,7 +100,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
       >
         <RefreshCw
           className={`shrink-0 transition-transform duration-500 ${size === 'sm' ? 'w-3.5 h-3.5' : 'w-4 h-4'
-            } ${isBusy ? 'animate-spin text-[#9a6a35]' : 'text-black/50 dark:text-white/50 group-hover:text-[#211d18] dark:group-hover:text-white'}`}
+            } ${isBusy ? 'animate-spin text-primary' : 'text-black/50 dark:text-white/50 group-hover:text-espresso dark:group-hover:text-white'}`}
         />
         <span className="hidden sm:inline whitespace-nowrap">
           {isBusy ? loadingLabel : label}
@@ -112,7 +112,7 @@ export const RefreshDataButton: React.FC<RefreshDataButtonProps> = ({
 
       {showLastUpdated && currentLastUpdated && (
         <span
-          className="hidden md:inline-flex items-center text-[11px] text-black/60 dark:text-white/60 font-medium bg-black/5 dark:bg-#FFF6EB/5 px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 whitespace-nowrap"
+          className="hidden md:inline-flex items-center text-[11px] text-black/60 dark:text-white/60 font-medium bg-black/5 dark:bg-cream/5 px-2.5 py-1 rounded-lg border border-black/10 dark:border-white/10 whitespace-nowrap"
           title="توقيت آخر جلب للبيانات"
         >
           آخر تحديث: {currentLastUpdated}

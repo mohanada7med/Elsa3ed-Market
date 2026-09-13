@@ -106,7 +106,7 @@ export const GovernoratesPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7]"
+      className="min-h-screen overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream"
     >
       {/* =====================================================
           HERO / EXHIBITION COVER
@@ -124,16 +124,16 @@ export const GovernoratesPage: React.FC = () => {
         <div className="relative mx-auto max-w-[1600px] px-5 pb-14 pt-7 sm:px-8 sm:pb-20 lg:px-12 lg:pb-24">
           {/* Top line */}
           <div className="flex items-center justify-between gap-4">
-            <nav className="flex items-center gap-2 text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 font-medium">
+            <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
               <button
                 type="button"
                 onClick={() => setActivePage('home')}
-                className="hover:text-[#9a6a35] dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+                className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
               >
                 الرئيسية
               </button>
               <span>/</span>
-              <span className="font-bold text-[#9a6a35] dark:text-[#d5a56d]">
+              <span className="font-bold text-primary dark:text-primary-hover">
                 محافظات الصعيد
               </span>
             </nav>
@@ -141,7 +141,7 @@ export const GovernoratesPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('map')}
-              className="group flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-[#151513]/70 px-4 py-2 text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] backdrop-blur-md transition hover:bg-[#9a6a35] hover:text-white dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer"
+              className="group flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-espresso-900/70 px-4 py-2 text-xs font-black text-primary dark:text-primary-hover backdrop-blur-md transition hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white cursor-pointer"
             >
               <Compass className="h-4 w-4" />
               <span className="hidden sm:block">
@@ -152,22 +152,22 @@ export const GovernoratesPage: React.FC = () => {
 
           {/* Hero */}
           <div className="mx-auto mt-16 max-w-5xl text-center lg:mt-24">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#9a6a35]/20 bg-[#9a6a35]/10 px-4 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-black text-primary dark:text-primary-hover backdrop-blur">
               <Landmark className="h-3.5 w-3.5" />
               <span>دليل محافظات صعيد مصر</span>
             </div>
 
             <h1 className="mt-7 text-6xl font-black font-serif leading-[0.95] tracking-[-0.05em] sm:text-8xl lg:text-[110px]">
               <span className="block">الصعيد</span>
-              <span className="mt-2 block text-[#9a6a35] dark:text-[#d5a56d]">
+              <span className="mt-2 block text-primary dark:text-primary-hover">
                 مش محافظة.
               </span>
-              <span className="mt-2 block text-[#211d18]/40 dark:text-[#f5f0e7]/30">
+              <span className="mt-2 block text-espresso/40 dark:text-cream/30">
                 دي حكايات.
               </span>
             </h1>
 
-            <p className="mx-auto mt-8 max-w-2xl text-sm leading-8 text-[#211d18]/70 dark:text-[#f5f0e7]/70 sm:text-base font-light">
+            <p className="mx-auto mt-8 max-w-2xl text-sm leading-8 text-espresso/70 dark:text-cream/70 sm:text-base font-light">
               دليل لمحافظات الصعيد؛ هتكتشف فيه أماكنها، ناسها،
               صنايعها، أكلها، وحكاياتها اللي بتتنقل من جيل لجيل.
             </p>
@@ -194,25 +194,25 @@ export const GovernoratesPage: React.FC = () => {
       {/* =====================================================
           FILTER DESK
       ====================================================== */}
-      <section className="sticky top-0 z-30 border-b border-black/10 dark:border-white/10 bg-[#eee8dc]/90 dark:bg-[#0b0b0a]/90 backdrop-blur-2xl">
+      <section className="sticky top-0 z-30 border-b border-black/10 dark:border-white/10 bg-cream/90 dark:bg-espresso-900/90 backdrop-blur-2xl">
         <div className="mx-auto max-w-[1600px] px-5 py-3.5 sm:px-8 lg:px-12">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             {/* Search */}
             <div className="relative w-full lg:max-w-[380px]">
-              <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#211d18]/50 dark:text-[#f5f0e7]/50" />
+              <Search className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-espresso/50 dark:text-cream/50" />
 
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="دوّر على محافظة أو مكان..."
-                className="h-11 w-full rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 pr-11 pl-10 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] outline-none transition placeholder:text-[#211d18]/40 dark:placeholder:text-[#f5f0e7]/40 focus:border-[#9a6a35]"
+                className="h-11 w-full rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 pr-11 pl-10 text-xs font-bold text-espresso dark:text-cream outline-none transition placeholder:text-espresso/40 dark:placeholder:text-cream/40 focus:border-primary"
               />
 
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[#211d18]/50 dark:text-[#f5f0e7]/50 hover:text-[#9a6a35] cursor-pointer"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-espresso/50 dark:text-cream/50 hover:text-primary cursor-pointer"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -235,8 +235,8 @@ export const GovernoratesPage: React.FC = () => {
                     type="button"
                     onClick={() => setRegionFilter(item.value)}
                     className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-black transition-all cursor-pointer ${active
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-sm'
-                      : 'bg-black/5 dark:bg-#FFF6EB/5 text-[#211d18]/70 dark:text-[#f5f0e7]/70 hover:bg-[#9a6a35] hover:text-white'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-sm'
+                      : 'bg-black/5 dark:bg-cream/5 text-espresso/70 dark:text-cream/70 hover:bg-primary hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -246,8 +246,8 @@ export const GovernoratesPage: React.FC = () => {
             </div>
 
             {/* Count */}
-            <div className="hidden shrink-0 items-center gap-1.5 text-xs font-black text-[#211d18]/60 dark:text-[#f5f0e7]/60 lg:flex">
-              <span className="text-[#9a6a35] dark:text-[#d5a56d]">
+            <div className="hidden shrink-0 items-center gap-1.5 text-xs font-black text-espresso/60 dark:text-cream/60 lg:flex">
+              <span className="text-primary dark:text-primary-hover">
                 {filteredGovernorates.length}
               </span>
               <span>محافظات طالعة معاك</span>
@@ -268,7 +268,7 @@ export const GovernoratesPage: React.FC = () => {
           <>
             <div className="mb-10 flex items-end justify-between">
               <div>
-                <p className="text-[10px] font-black tracking-[0.2em] text-[#9a6a35] dark:text-[#d5a56d]">
+                <p className="text-[10px] font-black tracking-[0.2em] text-primary dark:text-primary-hover">
                   EXHIBITION / 01
                 </p>
                 <h2 className="mt-2 text-3xl font-black font-serif sm:text-5xl">
@@ -276,7 +276,7 @@ export const GovernoratesPage: React.FC = () => {
                 </h2>
               </div>
 
-              <div className="hidden items-center gap-2 text-xs font-bold text-[#211d18]/50 dark:text-[#f5f0e7]/50 sm:flex">
+              <div className="hidden items-center gap-2 text-xs font-bold text-espresso/50 dark:text-cream/50 sm:flex">
                 <span>انزل وتفرج</span>
                 <ChevronDown className="h-3.5 w-3.5" />
               </div>
@@ -369,7 +369,7 @@ export const GovernoratesPage: React.FC = () => {
 
                     {/* Active bottom glow strip */}
                     <div
-                      className={`absolute bottom-0 right-0 h-1.5 bg-[#9a6a35] transition-all duration-500 ${isHovered ? 'left-0' : 'left-full'
+                      className={`absolute bottom-0 right-0 h-1.5 bg-primary transition-all duration-500 ${isHovered ? 'left-0' : 'left-full'
                         }`}
                     />
                   </button>
@@ -381,7 +381,7 @@ export const GovernoratesPage: React.FC = () => {
                 FEATURE STRIP
             ================================================== */}
             {filteredGovernorates.length > 0 && (
-              <section className="mt-16 overflow-hidden rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl shadow-xl">
+              <section className="mt-16 overflow-hidden rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl shadow-xl">
                 <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
                   <div className="relative min-h-[360px] overflow-hidden bg-stone-900">
                     <img
@@ -406,14 +406,14 @@ export const GovernoratesPage: React.FC = () => {
 
                   <div className="relative flex flex-col justify-between p-7 sm:p-10">
                     <div>
-                      <Sparkles className="h-8 w-8 text-[#9a6a35] dark:text-[#d5a56d]" />
-                      <h3 className="mt-5 text-2xl font-black font-serif leading-tight sm:text-3xl text-[#211d18] dark:text-[#f5f0e7]">
+                      <Sparkles className="h-8 w-8 text-primary dark:text-primary-hover" />
+                      <h3 className="mt-5 text-2xl font-black font-serif leading-tight sm:text-3xl text-espresso dark:text-cream">
                         كل محافظة باب..
                         <br />
                         وإنت لسه بتفتحه.
                       </h3>
 
-                      <p className="mt-4 text-xs sm:text-sm leading-relaxed text-[#211d18]/70 dark:text-[#f5f0e7]/70">
+                      <p className="mt-4 text-xs sm:text-sm leading-relaxed text-espresso/70 dark:text-cream/70">
                         ادخل جوه المحافظة وشوف معالمها، صنايعها،
                         حكاياتها، ناسها، أكلها وسوقها.
                       </p>
@@ -422,7 +422,7 @@ export const GovernoratesPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => navigateToGovernorate(filteredGovernorates[0].slug)}
-                      className="group mt-8 flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
+                      className="group mt-8 flex w-fit items-center gap-3 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg hover:scale-[1.02]"
                     >
                       <span>ادخل المحافظة</span>
                       <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
@@ -438,9 +438,9 @@ export const GovernoratesPage: React.FC = () => {
       {/* =====================================================
           FOOTER CTA
       ====================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 py-14 pb-24 sm:pb-14">
+      <section className="border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 py-14 pb-24 sm:pb-14">
         <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
-          <div className="relative overflow-hidden rounded-[2rem] bg-[#211d18] px-6 py-14 text-[#f5f0e7] sm:px-10 lg:px-16 shadow-xl border border-black/10 dark:border-white/10">
+          <div className="relative overflow-hidden rounded-[2rem] bg-espresso px-6 py-14 text-cream sm:px-10 lg:px-16 shadow-xl border border-black/10 dark:border-white/10">
             <div className="absolute inset-0 opacity-10">
               <NubianGeometricPattern
                 variant="tapestry"
@@ -464,7 +464,7 @@ export const GovernoratesPage: React.FC = () => {
                   </span>
                 </h2>
 
-                <p className="mt-4 max-w-xl text-xs sm:text-sm leading-relaxed text-[#f5f0e7]/70">
+                <p className="mt-4 max-w-xl text-xs sm:text-sm leading-relaxed text-cream/70">
                   افتح أي محافظة وشوف إيه اللي مستخبي جوه تفاصيلها وصنايعها الأصيلة.
                 </p>
               </div>
@@ -472,7 +472,7 @@ export const GovernoratesPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('map')}
-                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-[#211d18] hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
+                className="group flex w-fit items-center gap-3 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-espresso hover:bg-primary dark:hover:bg-primary dark:hover:text-white px-7 py-4 text-xs font-black transition-all duration-300 cursor-pointer shadow-lg hover:scale-[1.02]"              >
                 <Compass className="h-4 w-4" />
                 <span>افتح الخريطة</span>
                 <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-1" />
@@ -494,10 +494,10 @@ const Stat: React.FC<{
 }> = ({ number, label }) => {
   return (
     <div className="border-l border-black/10 dark:border-white/10 px-5 py-6 first:border-l-0 sm:px-8 text-center sm:text-right">
-      <div className="text-3xl font-black font-mono tracking-tight sm:text-4xl text-[#211d18] dark:text-[#f5f0e7]">
+      <div className="text-3xl font-black font-mono tracking-tight sm:text-4xl text-espresso dark:text-cream">
         {number}
       </div>
-      <div className="mt-1 text-[11px] font-bold text-[#211d18]/60 dark:text-[#f5f0e7]/60">
+      <div className="mt-1 text-[11px] font-bold text-espresso/60 dark:text-cream/60">
         {label}
       </div>
     </div>
@@ -531,7 +531,7 @@ const LoadingWall: React.FC = () => {
       {Array.from({ length: 8 }).map((_, index) => (
         <div
           key={index}
-          className={`animate-pulse rounded-[2rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 ${getPosterLayout(index)}`}
+          className={`animate-pulse rounded-[2rem] bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 ${getPosterLayout(index)}`}
         />
       ))}
     </div>
@@ -545,23 +545,23 @@ const EmptyState: React.FC<{
   onReset: () => void;
 }> = ({ onReset }) => {
   return (
-    <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-dashed border-black/15 dark:border-white/15 bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl px-6 text-center shadow-lg">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#9a6a35]/10">
-        <Search className="h-8 w-8 text-[#9a6a35]" />
+    <div className="flex min-h-[420px] flex-col items-center justify-center rounded-[2rem] border border-dashed border-black/15 dark:border-white/15 bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl px-6 text-center shadow-lg">
+      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+        <Search className="h-8 w-8 text-primary" />
       </div>
 
-      <h3 className="mt-6 text-2xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
+      <h3 className="mt-6 text-2xl font-black font-serif text-espresso dark:text-cream">
         مفيش محافظة بالشكل ده
       </h3>
 
-      <p className="mt-2 max-w-sm text-xs sm:text-sm leading-relaxed text-[#211d18]/70 dark:text-[#f5f0e7]/70">
+      <p className="mt-2 max-w-sm text-xs sm:text-sm leading-relaxed text-espresso/70 dark:text-cream/70">
         جرّب تغيّر كلمة البحث أو ارجع وشوف كل محافظات الصعيد.
       </p>
 
       <button
         type="button"
         onClick={onReset}
-        className="mt-6 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg"
+        className="mt-6 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-7 py-3.5 text-xs font-black transition cursor-pointer shadow-lg"
       >
         شوف كل المحافظات
       </button>

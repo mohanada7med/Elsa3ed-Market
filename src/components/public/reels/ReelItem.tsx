@@ -323,7 +323,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               {reelIndex + 1} / {totalReels}
             </span>
           )}
-          <span className="hidden xs:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35]/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm border border-amber-500/30">
+          <span className="hidden xs:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/90 backdrop-blur-md text-[11px] font-bold text-white shadow-sm border border-amber-500/30">
             <Sparkles className="w-3 h-3 text-[#d5a56d]" />
             <span>ريلز الصعيد</span>
           </span>
@@ -336,7 +336,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white transition-all cursor-pointer active:scale-90"
             title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-[#d6aa72]" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-primary-hover" /> : <Volume2 className="w-4 h-4" />}
           </button>
 
           {showCloseButton && onClose && (
@@ -396,7 +396,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
         {hasVideoError && (
           <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-6 text-center z-20 space-y-4">
-            <AlertTriangle className="w-12 h-12 text-[#d6aa72]" />
+            <AlertTriangle className="w-12 h-12 text-primary-hover" />
             <p className="text-sm font-medium text-white">تعذر تحميل مقطع الفيديو</p>
             <button
               type="button"
@@ -412,7 +412,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
                   videoRef.current.play().catch(() => { });
                 }
               }}
-              className="px-4 py-2 bg-[#9a6a35] hover:bg-amber-700 text-white text-xs font-bold rounded-xl flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              className="px-4 py-2 bg-primary hover:bg-amber-700 text-white text-xs font-bold rounded-xl flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
             >
               <RotateCcw className="w-4 h-4" />
               <span>إعادة التشغيل</span>

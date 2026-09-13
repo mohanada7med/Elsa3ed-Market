@@ -421,7 +421,7 @@ const ProductCard: React.FC<{
                 py-1.5
                 text-[9px]
                 font-black
-                text-[#211d18]
+                text-espresso
                 shadow-lg
               "
               >
@@ -474,7 +474,7 @@ const ProductCard: React.FC<{
             justify-center
             rounded-full
             bg-white/90
-            text-[#211d18]
+            text-espresso
             shadow-lg
             backdrop-blur-md
             transition-all
@@ -536,7 +536,7 @@ const ProductCard: React.FC<{
             py-2.5
             text-[9px]
             font-black
-            text-[#211d18]
+            text-espresso
             opacity-0
             shadow-lg
             backdrop-blur-md
@@ -624,9 +624,9 @@ const ProductCard: React.FC<{
                 gap-1.5
                 text-[9px]
                 font-black
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
               >
                 <Tag
@@ -655,9 +655,9 @@ const ProductCard: React.FC<{
                   size={12}
                   fill="currentColor"
                   className="
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
                 />
 
@@ -728,9 +728,9 @@ const ProductCard: React.FC<{
                     size={12}
                     className="
                     shrink-0
-                    text-[#9a6a35]
+                    text-primary
 
-                    dark:text-[#d6aa72]
+                    dark:text-primary-hover
                   "
                   />
 
@@ -742,9 +742,9 @@ const ProductCard: React.FC<{
                     size={12}
                     className="
                     shrink-0
-                    text-[#9a6a35]
+                    text-primary
 
-                    dark:text-[#d6aa72]
+                    dark:text-primary-hover
                   "
                   />
                 </div>
@@ -785,7 +785,7 @@ const ProductCard: React.FC<{
             h-px
             bg-black/[0.07]
 
-            dark:bg-#FFF6EB/[0.07]
+            dark:bg-cream/[0.07]
           "
           />
 
@@ -826,9 +826,9 @@ const ProductCard: React.FC<{
                   text-2xl
                   font-black
                   tracking-[-0.05em]
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
                 >
                   {formatPrice(price)}
@@ -885,17 +885,17 @@ const ProductCard: React.FC<{
               items-center
               justify-center
               rounded-2xl
-              bg-[#211d18]
+              bg-espresso
               text-white
               transition-all
 
               hover:scale-105
-              hover:bg-[#9a6a35]
+              hover:bg-primary
 
               disabled:cursor-not-allowed
               disabled:opacity-40
 
-              dark:bg-#FFF6EB
+              dark:bg-cream
               dark:text-black
 
               dark:hover:bg-[#d6aa72]
@@ -1077,7 +1077,7 @@ const QuickView: React.FC<{
           overflow-y-auto
           rounded-[2rem]
           bg-[#f8f3ea]
-          text-[#211d18]
+          text-espresso
           shadow-2xl
 
           dark:bg-[#11110f]
@@ -1226,9 +1226,9 @@ const QuickView: React.FC<{
                   text-[9px]
                   font-black
                   tracking-[0.18em]
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
                 >
                   <Tag size={12} />
@@ -1273,9 +1273,9 @@ const QuickView: React.FC<{
                   className="
                   text-3xl
                   font-black
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
                 >
                   {formatPrice(price)}
@@ -1419,15 +1419,15 @@ const QuickView: React.FC<{
                 justify-center
                 gap-3
                 rounded-2xl
-                bg-[#211d18]
+                bg-espresso
                 text-xs
                 font-black
                 text-white
                 transition
 
-                hover:bg-[#9a6a35]
+                hover:bg-primary
 
-                dark:bg-#FFF6EB
+                dark:bg-cream
                 dark:text-black
 
                 dark:hover:bg-[#d6aa72]
@@ -1679,7 +1679,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           text-center
 
           dark:border-white/10
-          dark:bg-#FFF6EB/[0.015]
+          dark:bg-cream/[0.015]
         "
       >
         <div
@@ -1690,11 +1690,11 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             items-center
             justify-center
             rounded-2xl
-            bg-[#9a6a35]/10
-            text-[#9a6a35]
+            bg-primary/10
+            text-primary
 
             dark:bg-[#d6aa72]/10
-            dark:text-[#d6aa72]
+            dark:text-primary-hover
           "
         >
           <Package size={25} />
@@ -1750,7 +1750,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           text-center
 
           dark:border-white/10
-          dark:bg-#FFF6EB/[0.015]
+          dark:bg-cream/[0.015]
         "
       >
         <div
@@ -1761,11 +1761,11 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             items-center
             justify-center
             rounded-2xl
-            bg-[#9a6a35]/10
-            text-[#9a6a35]
+            bg-primary/10
+            text-primary
 
             dark:bg-[#d6aa72]/10
-            dark:text-[#d6aa72]
+            dark:text-primary-hover
           "
         >
           <Search size={24} />
@@ -1832,10 +1832,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
               items-center
               justify-center
               rounded-xl
-              bg-[#211d18]
+              bg-espresso
               text-white
 
-              dark:bg-#FFF6EB
+              dark:bg-cream
               dark:text-black
             "
           >
@@ -1878,9 +1878,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           <Sparkles
             size={12}
             className="
-              text-[#9a6a35]
+              text-primary
 
-              dark:text-[#d6aa72]
+              dark:text-primary-hover
             "
           />
 

@@ -20,12 +20,12 @@ export const HeroSection: React.FC = () => {
       dir="rtl"
       className="
         relative
-        min-h-[680px]
+        min-h-170
         overflow-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#090909]
+        dark:bg-espresso-950
         dark:text-white
       "
     >
@@ -38,7 +38,7 @@ export const HeroSection: React.FC = () => {
         aria-hidden="true"
       >
         <img
-          src="https://res.cloudinary.com/kuana1nl/image/upload/v1788832698/WAH/heritage-places/alexan-pasha-palace/dclassic-2026-08-21-02083951477127237e_1788832673058_bzeh.jpg"
+          src="https://res.cloudinary.com/kuana1nl/image/upload/v1789326122/WAH/heritage-places/alexan-pasha-palace/img_2824_1789326122576_jjul.jpg"
           alt=""
           className="h-full w-full object-cover object-center opacity-80 dark:opacity-40 filter brightness-110"
         />
@@ -46,19 +46,19 @@ export const HeroSection: React.FC = () => {
 
       {/* Layer 1: Soft solid color wash */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[#eee8dc]/65 dark:bg-black/45"
+        className="pointer-events-none absolute inset-0 bg-cream/65 dark:bg-black/45"
         aria-hidden="true"
       />
 
       {/* Layer 2: Editorial directional gradient */}
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-l from-[#eee8dc]/95 via-[#eee8dc]/75 to-[#eee8dc]/30 dark:from-black/[0.96] dark:via-black/[0.72] dark:to-black/[0.18]"
+        className="pointer-events-none absolute inset-0 bg-linear-to-l from-cream/95 via-cream/75 to-cream/30 dark:from-black/96 dark:via-black/72 dark:to-black/18"
         aria-hidden="true"
       />
 
       {/* Layer 3: Vertical grounding gradient */}
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-[#eee8dc] via-[#eee8dc]/40 to-transparent dark:from-black/[0.92] dark:via-black/40 dark:to-transparent"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[45%] bg-linear-to-t from-cream via-cream/40 to-transparent dark:from-black/92 dark:via-black/40 dark:to-transparent"
         aria-hidden="true"
       />
 
@@ -111,7 +111,7 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 mx-auto flex min-h-[680px] max-w-[1500px] items-center px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
+      <div className="relative z-10 mx-auto flex min-h-170 max-w-375 items-center px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
         <div className="w-full max-w-3xl">
           {/* Location pill */}
           <motion.div
@@ -120,11 +120,11 @@ export const HeroSection: React.FC = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-5 flex items-center gap-2"
           >
-            <MapPin className="h-3.5 w-3.5 text-[#9a6a35]" />
-            <span className="text-[10px] font-bold tracking-[0.12em] text-[#9a6a35] dark:text-[#f0d5ad]">
+            <MapPin className="h-3.5 w-3.5 text-primary" />
+            <span className="text-[10px] font-bold tracking-[0.12em] text-primary dark:text-[#f0d5ad]">
               أسيوط · قلب الصعيد
             </span>
-            <span className="h-px w-10 bg-black/20 dark:bg-#FFF6EB/30" />
+            <span className="h-px w-10 bg-black/20 dark:bg-cream/30" />
           </motion.div>
 
           {/* Badge */}
@@ -137,7 +137,7 @@ export const HeroSection: React.FC = () => {
             <WAHBadge
               variant="terracotta"
               size="md"
-              icon={<Sparkles className="h-3.5 w-3.5 text-[#9a6a35]" />}
+              icon={<Sparkles className="h-3.5 w-3.5 text-primary" />}
             >
               «كل الصعيد في حتة واحدة: شغل يدوي أصيل · فيديوهات · وحكاوي زمان»
             </WAHBadge>
@@ -152,17 +152,17 @@ export const HeroSection: React.FC = () => {
               duration: 0.7,
               ease: [0.33, 1, 0.68, 1],
             }}
-            className="max-w-4xl font-heritage text-[4rem] font-black leading-[0.9] tracking-[-0.055em] text-[#211d18] drop-shadow-sm dark:text-white dark:drop-shadow-2xl sm:text-[6rem] lg:text-[7.5rem] xl:text-[8.5rem]"
+            className="max-w-4xl font-heritage text-[4rem] font-black leading-[0.9] tracking-[-0.055em] text-espresso drop-shadow-sm dark:text-white dark:drop-shadow-2xl sm:text-[6rem] lg:text-[7.5rem] xl:text-[8.5rem]"
           >
             الصعيد
-            <span className="text-[#9a6a35]"> بيحكي </span>
+            <span className="text-primary"> بيحكي </span>
           </motion.h1>
 
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 85, opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="my-7 h-[2px] bg-[#9a6a35]"
+            className="my-7 h-0.5 bg-primary"
           />
 
           <motion.p
@@ -172,7 +172,7 @@ export const HeroSection: React.FC = () => {
             className="max-w-2xl text-[14px] font-medium leading-8 text-black/80 dark:text-white/80 sm:text-base"
           >
             أول مكان يجمع حلاوة الصعيد كلها من{' '}
-            <span className="font-bold text-[#9a6a35] dark:text-[#f0d5ad]">
+            <span className="font-bold text-primary dark:text-[#f0d5ad]">
               سوق وه لشغل اليد والخير الأصلي، ريلز وه من إيد ولاد البلد، وحكاوي وأماكن وه اللي ملهاش مثيل
             </span>
           </motion.p>
@@ -188,7 +188,7 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('products')}
-              className="group flex min-h-[52px] items-center justify-center gap-3 rounded-2xl bg-[#9a6a35] hover:bg-[#805423] text-white px-6 text-sm font-black shadow-xl shadow-[#9a6a35]/25 transition-all sm:min-w-[210px]"
+              className="group flex min-h-13 items-center justify-center gap-3 rounded-2xl bg-primary hover:bg-[#805423] text-white px-6 text-sm font-black shadow-xl shadow-caramel/25 transition-all sm:min-w-52.5"
             >
               <ShoppingBag className="h-5 w-5 transition-transform group-hover:scale-110" />
               <span>خش على سوق وه</span>
@@ -203,9 +203,9 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('reels')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl bg-[#211d18] hover:bg-black text-white px-5 text-sm font-bold shadow-lg shadow-black/10 dark:bg-#FFF6EB dark:text-black dark:hover:bg-[#d5a56d] transition-all sm:min-w-[160px]"
+              className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl bg-espresso hover:bg-black text-cream px-5 text-sm font-bold shadow-lg shadow-black/10 dark:bg-cream dark:text-espresso dark:hover:bg-sand transition-all sm:min-w-40"
             >
-              <Film className="h-5 w-5 text-[#d6aa72] dark:text-[#9a6a35]" />
+              <Film className="h-5 w-5 text-primary-hover dark:text-primary" />
               <span>فيديوهات وه</span>
               <ArrowLeft className="h-4 w-4 opacity-60 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
@@ -215,9 +215,9 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('places')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-[#9a6a35]/30 bg-white/85 px-5 text-sm font-bold text-[#2b241c] backdrop-blur-md transition-all hover:border-[#9a6a35] hover:bg-white hover:shadow-md hover:shadow-[#9a6a35]/15 dark:border-white/20 dark:bg-#FFF6EB/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[175px]"
+              className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-white/85 px-5 text-sm font-bold text-espresso backdrop-blur-md transition-all hover:border-primary hover:bg-white hover:shadow-md hover:shadow-caramel/15 dark:border-primary/40 dark:bg-cream dark:text-espresso dark:hover:bg-sand sm:min-w-43.75"
             >
-              <Landmark className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
+              <Landmark className="h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />
               <span>أماكن ومعالم وه</span>
               <ArrowLeft className="h-4 w-4 opacity-50 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
@@ -227,9 +227,9 @@ export const HeroSection: React.FC = () => {
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => setActivePage('map')}
-              className="group flex min-h-[52px] items-center justify-center gap-2.5 rounded-2xl border border-black/15 bg-white/70 px-5 text-sm font-bold text-[#211d18] backdrop-blur-md transition-all hover:border-[#9a6a35]/50 hover:bg-white hover:shadow-sm dark:border-white/20 dark:bg-#FFF6EB/[0.08] dark:text-white dark:hover:border-white/40 dark:hover:bg-white/[0.15] sm:min-w-[155px]"
+              className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-white/70 px-5 text-sm font-bold text-espresso backdrop-blur-md transition-all hover:border-primary hover:bg-white hover:shadow-sm dark:border-primary/40 dark:bg-espresso/70 dark:text-cream dark:hover:border-primary/60 dark:hover:bg-espresso sm:min-w-38.75"
             >
-              <Ship className="h-5 w-5 text-[#9a6a35] transition-transform duration-300 group-hover:scale-110" />
+              <Ship className="h-5 w-5 text-primary transition-transform duration-300 group-hover:scale-110" />
               <span>خريطة الصعيد</span>
               <ArrowLeft className="h-4 w-4 opacity-50 transition-transform duration-300 group-hover:-translate-x-1 group-hover:opacity-100" />
             </motion.button>
@@ -239,22 +239,22 @@ export const HeroSection: React.FC = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.75, duration: 0.5 }}
-            className="mt-6 flex flex-wrap items-center gap-3 sm:gap-5 pt-4 border-t border-black/10 dark:border-white/10 text-xs font-bold text-[#211d18]/80 dark:text-white/80"
+            className="mt-6 flex flex-wrap items-center gap-3 sm:gap-5 pt-4 border-t border-black/10 dark:border-white/10 text-xs font-bold text-espresso/80 dark:text-white/80"
           >
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-primary">
                 <ShoppingBag className="h-3.5 w-3.5" />
               </span>
               <span>سوق متكامل: نقي براحتك، ادفع بأمان، وحاجتك هتوصل لحد باب دارك</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-primary">
                 <Film className="h-3.5 w-3.5" />
               </span>
               <span>فيديوهات من جوّه الورش وسكك الصعيد على أصلها</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#9a6a35]/15 text-[#9a6a35]">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/15 text-primary">
                 <Landmark className="h-3.5 w-3.5" />
               </span>
               <span>حكاوي وبيوت وأثر صعيدي تعيش معاه</span>
@@ -268,7 +268,7 @@ export const HeroSection: React.FC = () => {
             className="mt-9 grid max-w-xl grid-cols-3 gap-2 border-t border-black/15 pt-5 dark:border-white/15"
           >
             <div className="text-right">
-              <span className="block text-xl font-black text-[#9a6a35] sm:text-2xl">
+              <span className="block text-xl font-black text-primary sm:text-2xl">
                 {wahStats?.governoratesCount}
               </span>
               <span className="text-[10px] font-medium text-black/70 dark:text-white/55 sm:text-xs">
@@ -276,7 +276,7 @@ export const HeroSection: React.FC = () => {
               </span>
             </div>
             <div className="border-r border-black/15 pr-3 text-right dark:border-white/10 sm:pr-5">
-              <span className="block text-xl font-black text-[#9a6a35] sm:text-2xl">
+              <span className="block text-xl font-black text-primary sm:text-2xl">
                 {wahStats?.placesCount}+
               </span>
               <span className="text-[10px] font-medium text-black/70 dark:text-white/55 sm:text-xs">
@@ -284,7 +284,7 @@ export const HeroSection: React.FC = () => {
               </span>
             </div>
             <div className="border-r border-black/15 pr-3 text-right dark:border-white/10 sm:pr-5">
-              <span className="block text-xl font-black text-[#9a6a35] sm:text-2xl">
+              <span className="block text-xl font-black text-primary sm:text-2xl">
                 {wahStats?.craftsCount}
               </span>
               <span className="text-[10px] font-medium text-black/70 dark:text-white/55 sm:text-xs">
@@ -296,7 +296,7 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Subtle bottom accent line */}
-      <div className="absolute bottom-0 left-0 right-0 z-20 h-1 bg-[#9a6a35]" />
+      <div className="absolute bottom-0 left-0 right-0 z-20 h-1 bg-primary" />
     </section>
   );
 };

@@ -113,17 +113,17 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] transition-colors">
+    <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-cream dark:bg-espresso-900 text-espresso dark:text-cream transition-colors">
       <div className="w-full max-w-md">
         {/* Card Container */}
         <div className="relative rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#1c1813]/90 backdrop-blur-xl shadow-xl overflow-hidden p-6 sm:p-8">
 
           {/* Brand header */}
           <div className="text-center mb-8">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 text-[#9a6a35] flex items-center justify-center mb-4 shadow-inner">
+            <div className="mx-auto w-14 h-14 rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary flex items-center justify-center mb-4 shadow-inner">
               <KeyRound size={28} />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#211d18] dark:text-[#f5f0e7]">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-espresso dark:text-cream">
               إعادة تعيين كلمة السر
             </h1>
             <p className="mt-2 text-xs sm:text-sm text-black/60 dark:text-white/60 font-medium">
@@ -134,7 +134,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Loading state */}
           {isCheckingToken && (
             <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
-              <Loader2 size={36} className="animate-spin text-[#9a6a35]" />
+              <Loader2 size={36} className="animate-spin text-primary" />
               <p className="text-sm font-medium text-black/60 dark:text-white/60">
                 جاري التحقق من أمان وصلاحية الرابط...
               </p>
@@ -159,7 +159,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               <button
                 type="button"
                 onClick={handleOpenLogin}
-                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-[#9a6a35] hover:bg-[#855928] text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all"
+                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#855928] text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all"
               >
                 <span>تسجيل الدخول الآن</span>
                 <ArrowLeft size={18} />
@@ -170,12 +170,12 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
           {/* Invalid / Expired / Missing Token state */}
           {!isCheckingToken && !isSuccess && tokenStatus !== 'valid' && (
             <div className="space-y-6 text-center py-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-[#d6aa72] flex items-center justify-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-amber-500/10 text-amber-600 dark:text-primary-hover flex items-center justify-center">
                 <AlertCircle size={36} />
               </div>
 
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                <h2 className="text-lg sm:text-xl font-bold text-espresso dark:text-cream">
                   {tokenStatus === 'expired'
                     ? 'انتهت صلاحية الرابط'
                     : tokenStatus === 'missing'
@@ -194,7 +194,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                 <button
                   type="button"
                   onClick={handleRequestNewLink}
-                  className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 rounded-2xl bg-[#9a6a35] hover:bg-[#855928] text-white font-bold shadow-md shadow-[#9a6a35]/20 transition-all"
+                  className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 rounded-2xl bg-primary hover:bg-[#855928] text-white font-bold shadow-md shadow-[#9a6a35]/20 transition-all"
                 >
                   <span>طلب رابط جديد</span>
                   <ArrowLeft size={18} />
@@ -234,7 +234,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="اكتب 6 خانات على الأقل"
-                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
+                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-primary focus:outline-none text-sm transition-all"
                     required
                     autoComplete="new-password"
                   />
@@ -261,7 +261,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="أعد كتابة كلمة السر الجديدة"
-                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-#FFF6EB/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-[#9a6a35] focus:outline-none text-sm transition-all"
+                    className="w-full min-h-[50px] pr-11 pl-11 rounded-2xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 focus:bg-white dark:focus:bg-[#14120e] focus:border-primary focus:outline-none text-sm transition-all"
                     required
                     autoComplete="new-password"
                   />
@@ -277,7 +277,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               </div>
 
               {/* Requirements Hint */}
-              <div className="rounded-xl bg-black/5 dark:bg-#FFF6EB/5 p-3 text-[11px] sm:text-xs text-black/60 dark:text-white/60 space-y-1.5">
+              <div className="rounded-xl bg-black/5 dark:bg-cream/5 p-3 text-[11px] sm:text-xs text-black/60 dark:text-white/60 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={14} className={password.length >= 6 ? 'text-emerald-500' : 'text-black/30 dark:text-white/30'} />
                   <span className={password.length >= 6 ? 'text-emerald-700 dark:text-emerald-400 font-semibold' : ''}>
@@ -296,7 +296,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-[#9a6a35] hover:bg-[#855928] disabled:opacity-60 text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all mt-6 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#855928] disabled:opacity-60 text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all mt-6 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -316,7 +316,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                 <button
                   type="button"
                   onClick={handleOpenLogin}
-                  className="text-xs sm:text-sm font-semibold text-[#9a6a35] hover:underline"
+                  className="text-xs sm:text-sm font-semibold text-primary hover:underline"
                 >
                   تذكرت كلمة السر؟ تسجيل الدخول
                 </button>

@@ -294,10 +294,10 @@ export const CraftReelsPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        bg-cream
+        text-espresso
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* NAVBAR */}
@@ -309,7 +309,7 @@ export const CraftReelsPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
               cursor-pointer
             "
           >
@@ -320,10 +320,10 @@ export const CraftReelsPage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -337,7 +337,7 @@ export const CraftReelsPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
             <div className="mt-1 text-sm font-black">وه Stories</div>
@@ -353,7 +353,7 @@ export const CraftReelsPage: React.FC = () => {
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -376,8 +376,8 @@ export const CraftReelsPage: React.FC = () => {
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-[#9a6a35]" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
+                <Sparkles size={16} className="text-primary" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
                   UPPER EGYPT STORIES
                 </span>
               </div>
@@ -396,13 +396,13 @@ export const CraftReelsPage: React.FC = () => {
               >
                 شوف
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">
+                <span className="mr-[8vw] text-primary lg:mr-28">
                   الصعيد
                 </span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
+                <div className="mt-2 h-16 w-px bg-primary" />
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-black/60 dark:text-white/60 sm:text-xl">
                   من لَفّة الأسواق وأسرار الحرف لمعالم تفتح النفس.. عيش حكاية الصعيد الحقيقية زي ما عمرك ما شفتها قبل كده.
                 </p>
@@ -420,17 +420,17 @@ export const CraftReelsPage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-#FFF6EB/[0.035]
+                  dark:bg-cream/[0.035]
                 "
               >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
                       UPPER EGYPT STORIES
                     </span>
-                    <Film size={18} className="text-[#9a6a35]" />
+                    <Film size={18} className="text-primary" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
@@ -454,7 +454,7 @@ export const CraftReelsPage: React.FC = () => {
                   </div>
 
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
                     <span className="text-xs font-bold">
                       من قلب الصعيد وتراثه الحي
                     </span>
@@ -480,8 +480,8 @@ export const CraftReelsPage: React.FC = () => {
               >
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
-                    ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-[#9a6a35]/40 scale-105'
-                    : 'bg-black/10 dark:bg-#FFF6EB/10 group-hover:bg-[#9a6a35]/40'
+                    ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-primary/40 scale-105'
+                    : 'bg-black/10 dark:bg-cream/10 group-hover:bg-primary/40'
                     }`}
                 >
                   <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
@@ -494,7 +494,7 @@ export const CraftReelsPage: React.FC = () => {
                   </div>
                 </div>
                 <span
-                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${isSelected ? 'text-[#9a6a35]' : 'text-black dark:text-white'
+                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${isSelected ? 'text-primary' : 'text-black dark:text-white'
                     }`}
                 >
                   {gov.label}
@@ -519,7 +519,7 @@ export const CraftReelsPage: React.FC = () => {
             shadow-[0_20px_70px_rgba(0,0,0,0.08)]
             backdrop-blur-2xl
             dark:border-white/10
-            dark:bg-[#151513]/90
+            dark:bg-espresso-900/90
             dark:shadow-black/30
           "
         >
@@ -550,9 +550,9 @@ export const CraftReelsPage: React.FC = () => {
                   outline-none
                   transition-all
                   placeholder:text-black/35
-                  focus:border-[#9a6a35]/40
+                  focus:border-primary/40
                   focus:bg-transparent
-                  dark:bg-#FFF6EB/[0.04]
+                  dark:bg-cream/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -590,8 +590,8 @@ export const CraftReelsPage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -606,12 +606,12 @@ export const CraftReelsPage: React.FC = () => {
             </div>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center p-1 bg-black/[0.035] dark:bg-#FFF6EB/[0.04] rounded-xl shrink-0">
+            <div className="flex items-center p-1 bg-black/[0.035] dark:bg-cream/[0.04] rounded-xl shrink-0">
               <button
                 type="button"
                 onClick={() => setViewMode('grid')}
                 className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'grid'
-                  ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
+                  ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
                   : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                   }`}
               >
@@ -623,7 +623,7 @@ export const CraftReelsPage: React.FC = () => {
                 type="button"
                 onClick={() => setViewMode('feed')}
                 className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'feed'
-                  ? 'bg-[#9a6a35] text-white shadow-md'
+                  ? 'bg-primary text-white shadow-md'
                   : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
                   }`}
               >
@@ -641,8 +641,8 @@ export const CraftReelsPage: React.FC = () => {
                 type="button"
                 onClick={() => setSelectedContentType(cat.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${selectedContentType === cat.id
-                  ? 'bg-[#9a6a35] text-white shadow-md'
-                  : 'bg-black/[0.04] dark:bg-#FFF6EB/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-black/[0.04] dark:bg-cream/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
                   }`}
               >
                 {cat.label}
@@ -656,7 +656,7 @@ export const CraftReelsPage: React.FC = () => {
       <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
         {isLoading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-4 text-center">
-            <Loader2 className="w-10 h-10 animate-spin text-[#9a6a35]" />
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
             <p className="text-sm font-bold text-black/60 dark:text-white/60">
               جارٍ تحميل حكايات الصعيد الأصيلة...
             </p>
@@ -736,7 +736,7 @@ export const CraftReelsPage: React.FC = () => {
                               <Trash2 className="w-3 h-3" />
                             </button>
                           )}
-                          <div className="flex items-center gap-1 bg-[#9a6a35]/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                          <div className="flex items-center gap-1 bg-primary/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
                             <Flame className="w-3 h-3 text-amber-300" />
                             <span>{reel.likesCount}</span>
                           </div>
@@ -756,7 +756,7 @@ export const CraftReelsPage: React.FC = () => {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {displayLoc && (
                             <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/10">
-                              <MapPin size={10} className="text-[#9a6a35]" />
+                              <MapPin size={10} className="text-primary" />
                               <span>{displayLoc}</span>
                             </span>
                           )}
@@ -782,7 +782,7 @@ export const CraftReelsPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={(e) => handleQuickAdd(e, reel)}
-                              className="p-1.5 bg-[#9a6a35] hover:bg-[#744e26] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
+                              className="p-1.5 bg-primary hover:bg-[#744e26] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
                               title="شراء فوري للمنتج"
                             >
                               <ShoppingBag className="w-3.5 h-3.5" />
@@ -795,7 +795,7 @@ export const CraftReelsPage: React.FC = () => {
                 })}
               </div>
             ) : (
-              <div className="bg-white/80 dark:bg-[#151513]/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
+              <div className="bg-white/80 dark:bg-espresso-900/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
                 <Film className="w-12 h-12 text-black/30 dark:text-white/30 mx-auto" />
                 <h3 className="text-lg font-black">
                   لا توجد حكايات مطابقة للبحث
@@ -810,7 +810,7 @@ export const CraftReelsPage: React.FC = () => {
                     setSelectedContentType('all');
                     setSearchQuery('');
                   }}
-                  className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black text-xs font-bold rounded-xl cursor-pointer"
                 >
                   إعادة تعيين الفلاتر
                 </button>
@@ -827,7 +827,7 @@ export const CraftReelsPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -915,10 +915,10 @@ export const CraftReelsPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-md bg-white dark:bg-[#151513] rounded-[2rem] p-6 shadow-2xl border border-black/10 dark:border-white/10 space-y-5 text-right backdrop-blur-2xl"
+              className="w-full max-w-md bg-white dark:bg-espresso-900 rounded-[2rem] p-6 shadow-2xl border border-black/10 dark:border-white/10 space-y-5 text-right backdrop-blur-2xl"
             >
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 border border-[#9a6a35]/30 flex items-center justify-center text-[#9a6a35]">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
                   <Lock className="w-6 h-6" />
                 </div>
                 <button
@@ -949,7 +949,7 @@ export const CraftReelsPage: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <LogIn className="w-4 h-4" />
                       <span>تسجيل الدخول كبائع</span>
@@ -961,7 +961,7 @@ export const CraftReelsPage: React.FC = () => {
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 px-4 bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
+                      className="w-full py-3 px-4 bg-black/5 dark:bg-cream/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
                     >
                       <span>إنشاء حساب جديد</span>
                     </button>
@@ -974,7 +974,7 @@ export const CraftReelsPage: React.FC = () => {
                         setPermissionAlert((prev) => ({ ...prev, isOpen: false }));
                         setActivePage('sellers');
                       }}
-                      className="w-full py-3 px-4 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Store className="w-4 h-4" />
                       <span>التقديم لفتح ورشة بائع</span>
@@ -982,7 +982,7 @@ export const CraftReelsPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                      className="w-full py-3 px-4 bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
+                      className="w-full py-3 px-4 bg-black/5 dark:bg-cream/5 text-black dark:text-white hover:bg-black/10 text-xs sm:text-sm font-bold rounded-xl cursor-pointer"
                     >
                       <span>إلغاء</span>
                     </button>

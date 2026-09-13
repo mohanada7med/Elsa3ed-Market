@@ -158,19 +158,19 @@ export const PlaceDetailPage: React.FC = () => {
         dir="rtl"
         className="
           min-h-screen
-          bg-[#eee8dc]
-          text-[#211d18]
-          dark:bg-[#0b0b0a]
-          dark:text-[#f5f0e7]
+          bg-cream
+          text-espresso
+          dark:bg-espresso-900
+          dark:text-cream
           flex items-center justify-center
           px-5
         "
       >
         <div className="text-center">
           <div className="relative w-16 h-16 mx-auto mb-5">
-            <div className="absolute inset-0 rounded-full border border-[#9a6a35]/20" />
-            <div className="absolute inset-1 rounded-full border-2 border-[#9a6a35] border-t-transparent animate-spin" />
-            <Landmark className="absolute inset-0 m-auto w-5 h-5 text-[#9a6a35]" />
+            <div className="absolute inset-0 rounded-full border border-primary/20" />
+            <div className="absolute inset-1 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            <Landmark className="absolute inset-0 m-auto w-5 h-5 text-primary" />
           </div>
 
           <p className="text-sm font-bold text-black/60 dark:text-white/60">
@@ -187,10 +187,10 @@ export const PlaceDetailPage: React.FC = () => {
         dir="rtl"
         className="
           min-h-screen
-          bg-[#eee8dc]
-          text-[#211d18]
-          dark:bg-[#0b0b0a]
-          dark:text-[#f5f0e7]
+          bg-cream
+          text-espresso
+          dark:bg-espresso-900
+          dark:text-cream
           flex items-center justify-center
           px-5
         "
@@ -200,11 +200,11 @@ export const PlaceDetailPage: React.FC = () => {
             className="
               w-20 h-20 mx-auto mb-6
               rounded-full
-              border border-[#9a6a35]/20
+              border border-primary/20
               flex items-center justify-center
             "
           >
-            <Landmark className="w-8 h-8 text-[#9a6a35]" />
+            <Landmark className="w-8 h-8 text-primary" />
           </div>
 
           <h2 className="text-2xl sm:text-3xl font-black mb-3">
@@ -222,7 +222,7 @@ export const PlaceDetailPage: React.FC = () => {
               inline-flex items-center justify-center gap-2
               px-6 py-3
               rounded-full
-              bg-[#211d18] text-white
+              bg-espresso text-white
               dark:bg-white dark:text-black
               font-bold text-xs
               transition-all
@@ -268,12 +268,12 @@ export const PlaceDetailPage: React.FC = () => {
       dir="rtl"
       className="
         min-h-screen
-        bg-[#eee8dc]
-        text-[#211d18]
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        bg-cream
+        text-espresso
+        dark:bg-espresso-900
+        dark:text-cream
         overflow-x-hidden
-        selection:bg-[#9a6a35]/20
+        selection:bg-primary/20
       "
     >
       {/* =========================================================
@@ -287,7 +287,7 @@ export const PlaceDetailPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
               cursor-pointer
             "
           >
@@ -298,7 +298,7 @@ export const PlaceDetailPage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
                 dark:bg-white/5
@@ -315,7 +315,7 @@ export const PlaceDetailPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH ARCHIVE
             </div>
             <div className="mt-1 text-sm font-black">تفاصيل المعلم</div>
@@ -330,7 +330,7 @@ export const PlaceDetailPage: React.FC = () => {
                 className="
                   h-10 px-4
                   rounded-full
-                  bg-[#9a6a35]
+                  bg-primary
                   hover:bg-[#83572c]
                   text-white
                   text-xs
@@ -460,7 +460,7 @@ export const PlaceDetailPage: React.FC = () => {
                       px-3.5 sm:px-4
                       py-1.5 sm:py-2
                       rounded-full
-                      bg-[#9a6a35]
+                      bg-primary
                       text-white
                       text-[10px] sm:text-xs
                       font-black
@@ -620,7 +620,7 @@ export const PlaceDetailPage: React.FC = () => {
           <div className={`grid grid-cols-2 ${place.visitDuration ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
             <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
               <div className="flex items-start gap-3">
-                <Landmark className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
+                <Landmark className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <div>
                   <span className="block text-[9px] tracking-widest font-black text-black/40 dark:text-white/40 mb-1">
                     CATEGORY
@@ -634,7 +634,7 @@ export const PlaceDetailPage: React.FC = () => {
 
             <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
               <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
+                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <div>
                   <span className="block text-[9px] tracking-widest font-black text-black/40 dark:text-white/40 mb-1">
                     GOVERNORATE
@@ -648,7 +648,7 @@ export const PlaceDetailPage: React.FC = () => {
 
             <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
               <div className="flex items-start gap-3">
-                <Calendar className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
+                <Calendar className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <div>
                   <span className="block text-[9px] tracking-widest font-black text-black/40 dark:text-white/40 mb-1">
                     HISTORICAL ERA
@@ -663,7 +663,7 @@ export const PlaceDetailPage: React.FC = () => {
             {place.visitDuration && (
               <div className="py-6 sm:py-8 px-3 sm:px-6 border-l border-black/10 dark:border-white/10">
                 <div className="flex items-start gap-3">
-                  <Hourglass className="w-4 h-4 text-[#9a6a35] mt-0.5 shrink-0" />
+                  <Hourglass className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <div>
                     <span className="block text-[9px] tracking-widest font-black text-black/40 dark:text-white/40 mb-1 uppercase">
                       DURATION
@@ -687,20 +687,20 @@ export const PlaceDetailPage: React.FC = () => {
                 group py-6 sm:py-8 px-3 sm:px-6
                 flex items-center justify-between gap-2
                 text-right
-                hover:bg-[#9a6a35] hover:text-white
+                hover:bg-primary hover:text-white
                 transition-colors
                 cursor-pointer
               "
             >
               <div>
-                <span className="block text-[9px] tracking-widest font-black text-[#9a6a35] group-hover:text-white/70 mb-1 transition-colors">
+                <span className="block text-[9px] tracking-widest font-black text-primary group-hover:text-white/70 mb-1 transition-colors">
                   EXPLORE
                 </span>
                 <span className="text-xs sm:text-sm font-black break-words">
                   استكشف المحافظة
                 </span>
               </div>
-              <ArrowLeft className="w-4 h-4 shrink-0 text-[#9a6a35] group-hover:text-white group-hover:-translate-x-1 transition-all" />
+              <ArrowLeft className="w-4 h-4 shrink-0 text-primary group-hover:text-white group-hover:-translate-x-1 transition-all" />
             </button>
           </div>
         </div>
@@ -716,15 +716,15 @@ export const PlaceDetailPage: React.FC = () => {
             <div className="lg:col-span-4">
               <div className="lg:sticky lg:top-8">
                 <div className="flex items-center gap-3 mb-5">
-                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                     01 / THE STORY
                   </span>
-                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                  <span className="w-10 h-px bg-primary/40" />
                 </div>
 
                 <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
                   حكاية <br />
-                  <span className="text-[#9a6a35]">المكان</span>
+                  <span className="text-primary">المكان</span>
                 </h2>
 
                 <p className="mt-5 text-sm leading-7 text-black/6oid dark:text-white/60 max-w-sm">
@@ -743,8 +743,8 @@ export const PlaceDetailPage: React.FC = () => {
                   </div>
 
                   {place.significance && place.significance.trim() !== '' && place.significance !== place.description && (
-                    <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-[#9a6a35]/10 border border-[#9a6a35]/20">
-                      <div className="flex items-center gap-2 mb-3 text-[#9a6a35] font-black text-xs sm:text-sm">
+                    <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-primary/10 border border-primary/20">
+                      <div className="flex items-center gap-2 mb-3 text-primary font-black text-xs sm:text-sm">
                         <Sparkles className="w-4 h-4" />
                         <span>القيمة والأهمية التاريخية</span>
                       </div>
@@ -766,13 +766,13 @@ export const PlaceDetailPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                    <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                       02 / DETAILS
                     </span>
-                    <span className="w-10 h-px bg-[#9a6a35]/40" />
+                    <span className="w-10 h-px bg-primary/40" />
                   </div>
                   <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                    تفاصيل تستحق <span className="text-[#9a6a35]">التأمل</span>
+                    تفاصيل تستحق <span className="text-primary">التأمل</span>
                   </h2>
                 </div>
               </div>
@@ -783,7 +783,7 @@ export const PlaceDetailPage: React.FC = () => {
                     key={index}
                     className="group py-6 sm:py-8 border-t border-black/10 dark:border-white/10 flex items-start gap-4 sm:gap-5"
                   >
-                    <span className="font-serif text-2xl sm:text-3xl font-black text-[#9a6a35]/40 group-hover:text-[#9a6a35] transition-colors">
+                    <span className="font-serif text-2xl sm:text-3xl font-black text-primary/40 group-hover:text-primary transition-colors">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <p className="text-sm sm:text-base font-bold leading-7 break-words flex-1">
@@ -803,13 +803,13 @@ export const PlaceDetailPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                   03 / VISUAL ARCHIVE
                 </span>
-                <span className="w-10 h-px bg-[#9a6a35]/40" />
+                <span className="w-10 h-px bg-primary/40" />
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                ذاكرة <span className="text-[#9a6a35]">بصرية</span>
+                ذاكرة <span className="text-primary">بصرية</span>
               </h2>
             </div>
           </div>
@@ -817,13 +817,13 @@ export const PlaceDetailPage: React.FC = () => {
           <div className="relative group p-4 sm:p-6 lg:p-8 rounded-[3rem] bg-gradient-to-b from-black/[0.04] via-black/[0.01] to-transparent dark:from-white/[0.04] dark:via-white/[0.01] dark:to-transparent border border-black/10 dark:border-white/10 backdrop-blur-2xl">
 
             {/* إضاءة خلفية سينمائية تفاعلية */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[#9a6a35]/10 rounded-full blur-[120px] pointer-events-none group-hover:bg-[#9a6a35]/20 transition-all duration-700" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-primary/10 rounded-full blur-[120px] pointer-events-none group-hover:bg-primary/20 transition-all duration-700" />
 
             {/* شريط علوي بتصميم فني فاخر */}
             <div className="relative z-10 flex items-center justify-between mb-6 px-2">
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-[#9a6a35]" />
-                <span className="text-[11px] font-black tracking-[0.3em] text-[#9a6a35] uppercase">
+                <span className="w-2 h-2 rounded-full bg-primary" />
+                <span className="text-[11px] font-black tracking-[0.3em] text-primary uppercase">
                   Cinematic Archive
                 </span>
               </div>
@@ -892,13 +892,13 @@ export const PlaceDetailPage: React.FC = () => {
             <div className="lg:col-span-5">
               <div className="lg:sticky lg:top-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                     04 / VISITOR GUIDE
                   </span>
-                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                  <span className="w-10 h-px bg-primary/40" />
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                  دليل ومواعيد <span className="text-[#9a6a35]">الزيارة</span>
+                  دليل ومواعيد <span className="text-primary">الزيارة</span>
                 </h2>
                 <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
                   كل ما تحتاجه لتخطيط زيارتك من مواعيد وساعات الفتح ورسوم الدخول وأفضل الأوقات.
@@ -918,19 +918,19 @@ export const PlaceDetailPage: React.FC = () => {
                         ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-100'
                         : place.visitInfo.visitStatus === 'active_institution'
                           ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-950 dark:text-indigo-100'
-                          : 'bg-[#9a6a35]/10 border-[#9a6a35]/30 text-amber-950 dark:text-amber-100'
+                          : 'bg-primary/10 border-primary/30 text-amber-950 dark:text-amber-100'
                     }`}
                 >
                   <div
                     className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${place.visitInfo.visitStatus === 'closed_to_public'
                       ? 'bg-red-500/20 text-red-600 dark:text-red-400'
                       : place.visitInfo.visitStatus === 'closed_for_restoration'
-                        ? 'bg-amber-500/20 text-amber-600 dark:text-[#d6aa72]'
+                        ? 'bg-amber-500/20 text-amber-600 dark:text-primary-hover'
                         : place.visitInfo.visitStatus === 'public_landmark'
                           ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
                           : place.visitInfo.visitStatus === 'active_institution'
                             ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
-                            : 'bg-[#9a6a35]/20 text-[#9a6a35]'
+                            : 'bg-primary/20 text-primary'
                       }`}
                   >
                     {place.visitInfo.visitStatus === 'closed_to_public' && (
@@ -984,7 +984,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Opening Hours */}
                 {place.visitInfo?.openingHours && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Clock className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">مواعيد وساعات الفتح</span>
                     </div>
@@ -997,7 +997,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Visit Duration */}
                 {place.visitDuration && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Hourglass className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">المدة المقترحة للتجربة</span>
                     </div>
@@ -1010,7 +1010,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Best Time to Visit */}
                 {place.visitInfo?.bestTimeToVisit && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Compass className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">أفضل وقت وموسم للزيارة</span>
                     </div>
@@ -1023,7 +1023,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Entry Fee */}
                 {place.visitInfo?.entryFee && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Ticket className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">رسوم وتذاكر الدخول</span>
                     </div>
@@ -1036,7 +1036,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Reservation Status */}
                 {place.visitInfo && place.visitInfo.reservationRequired !== undefined && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <CheckCircle2 className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">حالة الحجز المسبق</span>
                     </div>
@@ -1051,7 +1051,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* General Location description */}
                 {place.locationDescription && (
                   <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10 sm:col-span-2">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <MapPin className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">الموقع والوصف الجغرافي</span>
                     </div>
@@ -1066,10 +1066,10 @@ export const PlaceDetailPage: React.FC = () => {
               {place.visitorTips && (
                 <div className="mt-4 p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                    <Info className="w-5 h-5 text-amber-600 dark:text-[#d6aa72]" />
+                    <Info className="w-5 h-5 text-amber-600 dark:text-primary-hover" />
                   </div>
                   <div>
-                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-[#d6aa72] mb-1">
+                    <span className="block text-[10px] font-black tracking-widest text-amber-600 dark:text-primary-hover mb-1">
                       نصيحة ذهبية للزائر
                     </span>
                     <p className="text-sm leading-relaxed text-black/80 dark:text-white/80 break-words">
@@ -1089,13 +1089,13 @@ export const PlaceDetailPage: React.FC = () => {
               <div className="lg:col-span-5">
                 <div className="lg:sticky lg:top-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                    <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                       05 / ACCESS & DIRECTIONS
                     </span>
-                    <span className="w-10 h-px bg-[#9a6a35]/40" />
+                    <span className="w-10 h-px bg-primary/40" />
                   </div>
                   <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                    العنوان <span className="text-[#9a6a35]">وكيفية الوصول</span>
+                    العنوان <span className="text-primary">وكيفية الوصول</span>
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
                     تفاصيل مسارات الطرق والمواصلات العامة والخاصة للوصول إلى المعلم بسهولة.
@@ -1107,7 +1107,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Structured Address */}
                 {(place.address?.village || place.address?.city || place.address?.governorate) && (
                   <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-3 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-3 text-primary">
                       <Building2 className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">العنوان التفصيلي</span>
                     </div>
@@ -1123,7 +1123,7 @@ export const PlaceDetailPage: React.FC = () => {
                         </span>
                       )}
                       {place.address.governorate && (
-                        <span className="px-3 py-1.5 rounded-lg bg-[#9a6a35]/15 text-[#9a6a35] border border-[#9a6a35]/20">
+                        <span className="px-3 py-1.5 rounded-lg bg-primary/15 text-primary border border-primary/20">
                           محافظة: {place.address.governorate}
                         </span>
                       )}
@@ -1134,7 +1134,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Route description */}
                 {place.access?.description && (
                   <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Navigation className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">وصف المسار والطريق</span>
                     </div>
@@ -1147,7 +1147,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Transportation options */}
                 {place.access?.transportation && (
                   <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/10 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
+                    <div className="flex items-center gap-3 mb-2 text-primary">
                       <Bus className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">وسائل المواصلات المتاحة</span>
                     </div>
@@ -1159,9 +1159,9 @@ export const PlaceDetailPage: React.FC = () => {
 
                 {/* Google Maps link if coordinates */}
                 {place.coordinates?.lat && place.coordinates?.lng && (
-                  <div className="p-6 rounded-2xl bg-[#9a6a35]/10 border border-[#9a6a35]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="p-6 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-2 text-[#9a6a35] font-black text-xs mb-1">
+                      <div className="flex items-center gap-2 text-primary font-black text-xs mb-1">
                         <MapPin className="w-4 h-4" />
                         <span>الإحداثيات الجغرافية الموثقة</span>
                       </div>
@@ -1173,7 +1173,7 @@ export const PlaceDetailPage: React.FC = () => {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#9a6a35] text-white hover:bg-[#85592a] text-xs font-black transition-colors shrink-0"
+                      className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white hover:bg-[#85592a] text-xs font-black transition-colors shrink-0"
                     >
                       <span>الملاحة على خرائط جوجل</span>
                       <ExternalLink className="w-3.5 h-3.5" />
@@ -1191,13 +1191,13 @@ export const PlaceDetailPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                     06 / VISITOR SERVICES
                   </span>
-                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                  <span className="w-10 h-px bg-primary/40" />
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                  خدمات ومرافق <span className="text-[#9a6a35]">الزوار</span>
+                  خدمات ومرافق <span className="text-primary">الزوار</span>
                 </h2>
               </div>
             </div>
@@ -1210,7 +1210,7 @@ export const PlaceDetailPage: React.FC = () => {
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#9a6a35]/15 flex items-center justify-center text-[#9a6a35]">
+                      <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
                         <Users className="w-4 h-4" />
                       </div>
                       <h3 className="font-bold text-base text-black/90 dark:text-white/90">
@@ -1233,13 +1233,13 @@ export const PlaceDetailPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+                  <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                     07 / HERITAGE EVENTS
                   </span>
-                  <span className="w-10 h-px bg-[#9a6a35]/40" />
+                  <span className="w-10 h-px bg-primary/40" />
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
-                  فعاليات ومناسبات <span className="text-[#9a6a35]">المعلم</span>
+                  فعاليات ومناسبات <span className="text-primary">المعلم</span>
                 </h2>
               </div>
             </div>
@@ -1253,13 +1253,13 @@ export const PlaceDetailPage: React.FC = () => {
                   <div>
                     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                       <div className="flex items-center gap-2">
-                        <PartyPopper className="w-5 h-5 text-[#9a6a35]" />
+                        <PartyPopper className="w-5 h-5 text-primary" />
                         <h3 className="font-bold text-lg text-black/90 dark:text-white/90">
                           {event.name}
                         </h3>
                       </div>
                       {event.frequency && (
-                        <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-[#9a6a35]/15 text-[#9a6a35]">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-primary/15 text-primary">
                           {event.frequency}
                         </span>
                       )}
@@ -1273,13 +1273,13 @@ export const PlaceDetailPage: React.FC = () => {
                   <div className="pt-4 border-t border-black/10 dark:border-white/10 flex flex-wrap gap-4 text-xs font-bold text-black/60 dark:text-white/60">
                     {event.date && (
                       <div className="flex items-center gap-1.5">
-                        <CalendarDays className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <CalendarDays className="w-3.5 h-3.5 text-primary" />
                         <span>{event.date}</span>
                       </div>
                     )}
                     {event.duration && (
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-[#9a6a35]" />
+                        <Clock className="w-3.5 h-3.5 text-primary" />
                         <span>{event.duration}</span>
                       </div>
                     )}
@@ -1294,13 +1294,13 @@ export const PlaceDetailPage: React.FC = () => {
         {place.relatedCrafts && place.relatedCrafts.length > 0 && (
           <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
+              <span className="text-[10px] font-black tracking-[0.28em] text-primary">
                 08 / LIVING HERITAGE
               </span>
-              <span className="w-10 h-px bg-[#9a6a35]/40" />
+              <span className="w-10 h-px bg-primary/40" />
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
-              حرف تراثية <span className="text-[#9a6a35]">مرتبطة بالمكان</span>
+              حرف تراثية <span className="text-primary">مرتبطة بالمكان</span>
             </h2>
             <div className="flex flex-wrap gap-3">
               {place.relatedCrafts.map((craft, idx) => (
@@ -1308,7 +1308,7 @@ export const PlaceDetailPage: React.FC = () => {
                   key={idx}
                   className="px-4 py-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 flex items-center gap-2.5 text-sm font-bold"
                 >
-                  <Hammer className="w-4 h-4 text-[#9a6a35]" />
+                  <Hammer className="w-4 h-4 text-primary" />
                   <span>{craft}</span>
                 </div>
               ))}
@@ -1349,7 +1349,7 @@ export const PlaceDetailPage: React.FC = () => {
                   href={place.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#9a6a35] hover:underline shrink-0"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline shrink-0"
                 >
                   <span>زيارة المصدر المرجعي</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -1369,7 +1369,7 @@ export const PlaceDetailPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -1406,7 +1406,7 @@ export const PlaceDetailPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('places')}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#211d18] text-white dark:bg-white dark:text-[#211d18] px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer w-fit shadow-md"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-espresso text-white dark:bg-white dark:text-espresso px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-primary dark:hover:bg-primary dark:hover:text-white cursor-pointer w-fit shadow-md"
                 >
                   <span>استكشف باقي المعالم</span>
                   <ArrowLeft size={15} />

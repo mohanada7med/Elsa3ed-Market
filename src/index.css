@@ -1,8 +1,22 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  /* Brand Primitive Colors */
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-light: var(--secondary-light);
+  --color-caramel: #9a6a35;
+  --color-sand: #FFEDD8;
+  --color-cream: #FFF6EB;
+  --color-espresso: #2b241c;
+
   /* Semantic Global Theme Tokens */
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
@@ -19,11 +33,10 @@
   --color-border: var(--border);
   --color-border-subtle: var(--border-subtle);
   --color-border-strong: var(--border-strong);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-active: var(--primary-active);
-  --color-secondary: var(--secondary);
-  --color-secondary-hover: var(--secondary-hover);
+  --color-border-hover: var(--border-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
@@ -54,37 +67,43 @@
   --color-wah-border: var(--wah-border);
   --color-wah-border-hover: var(--wah-border-hover);
   --color-wah-border-strong: var(--wah-border-strong);
-  --color-wah-success: var(--wah-success);
-  --color-wah-warning: var(--wah-warning);
-  --color-wah-error: var(--wah-error);
-  --color-wah-info: var(--wah-info);
+  --color-wah-success: var(--success);
+  --color-wah-warning: var(--warning);
+  --color-wah-error: var(--error);
+  --color-wah-info: var(--info);
 }
 
 :root {
-  /* Core Semantic Tokens (Light Mode - Unified Wah Theme) */
-  --background: #eee8dc;
-  --background-secondary: #e4ddd1;
-  --background-tertiary: #dad2c4;
-  --surface: rgba(255, 255, 255, 0.75);
-  --surface-hover: rgba(255, 255, 255, 0.85);
-  --surface-active: rgba(255, 255, 255, 0.95);
-  --surface-subtle: rgba(0, 0, 0, 0.035);
-  --surface-muted: rgba(0, 0, 0, 0.06);
-  --foreground: #211d18;
-  --foreground-secondary: #4a4137;
-  --foreground-muted: #6e6255;
-  --foreground-disabled: #9e9183;
-  --border: rgba(0, 0, 0, 0.1);
-  --border-subtle: rgba(0, 0, 0, 0.06);
-  --border-hover: rgba(154, 106, 53, 0.4);
-  --border-strong: rgba(0, 0, 0, 0.2);
+  /* =========================================================================
+     LIGHT MODE DESIGN SYSTEM
+     - Base Background: #FFF6EB (Clean Cream / Warm Off-white)
+     - Cards & Surfaces: Glassmorphic white (rgba(255, 255, 255, 0.85) backdrop-blur) or #FFF6EB
+     - Text / Foreground: #2b241c (Deep Espresso / Charcoal Brown) with opacity tiers
+     - Borders & Accents: Borders in #9a6a35/30, badges/subtle buttons in #FFEDD8
+     ========================================================================= */
+  --background: #FFF6EB;
+  --background-secondary: #F7EFE4;
+  --background-tertiary: #EEDEC8;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-hover: rgba(255, 255, 255, 0.95);
+  --surface-active: #ffffff;
+  --surface-subtle: rgba(43, 36, 28, 0.04);
+  --surface-muted: rgba(43, 36, 28, 0.08);
+  --foreground: #2b241c;
+  --foreground-secondary: rgba(43, 36, 28, 0.75);
+  --foreground-muted: rgba(43, 36, 28, 0.55);
+  --foreground-disabled: rgba(43, 36, 28, 0.35);
+  --border: rgba(154, 106, 53, 0.30);
+  --border-subtle: rgba(43, 36, 28, 0.08);
+  --border-hover: rgba(154, 106, 53, 0.45);
+  --border-strong: rgba(154, 106, 53, 0.40);
   --primary: #9a6a35;
   --primary-hover: #7d5427;
   --primary-active: #623f1a;
   --primary-light: rgba(154, 106, 53, 0.12);
-  --secondary: #211d18;
-  --secondary-hover: #362f27;
-  --secondary-light: rgba(33, 29, 24, 0.08);
+  --secondary: #FFEDD8;
+  --secondary-hover: #FAE1C3;
+  --secondary-light: rgba(255, 237, 216, 0.50);
   --accent: #9a6a35;
   --accent-hover: #7d5427;
   --accent-light: rgba(154, 106, 53, 0.12);
@@ -92,15 +111,15 @@
   --warning: #C4751B;
   --error: #B9382B;
   --info: #29658A;
-  --input-background: rgba(0, 0, 0, 0.035);
-  --input-border: rgba(0, 0, 0, 0.1);
+  --input-background: rgba(255, 255, 255, 0.90);
+  --input-border: rgba(154, 106, 53, 0.25);
   --input-border-focus: #9a6a35;
-  --input-placeholder: rgba(33, 29, 24, 0.4);
-  --card-background: rgba(255, 255, 255, 0.75);
-  --card-border: rgba(0, 0, 0, 0.1);
-  --card-border-hover: rgba(154, 106, 53, 0.4);
-  --overlay: rgba(33, 29, 24, 0.6);
-  --shadow: rgba(154, 106, 53, 0.1);
+  --input-placeholder: rgba(43, 36, 28, 0.40);
+  --card-background: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(154, 106, 53, 0.30);
+  --card-border-hover: rgba(154, 106, 53, 0.45);
+  --overlay: rgba(43, 36, 28, 0.60);
+  --shadow: rgba(154, 106, 53, 0.10);
 
   /* WAH Aliases */
   --wah-primary: var(--primary);
@@ -130,46 +149,52 @@
 
 .dark,
 [data-theme="dark"] {
-  /* Core Semantic Tokens (Dark Mode - Unified Wah Theme) */
-  --background: #0b0b0a;
-  --background-secondary: #121210;
-  --background-tertiary: #1a1a17;
-  --surface: rgba(21, 21, 19, 0.9);
-  --surface-hover: rgba(30, 30, 27, 0.95);
-  --surface-active: rgba(40, 40, 36, 0.95);
-  --surface-subtle: rgba(255, 255, 255, 0.04);
-  --surface-muted: rgba(255, 255, 255, 0.07);
-  --foreground: #f5f0e7;
-  --foreground-secondary: #ded6c8;
-  --foreground-muted: #aba191;
-  --foreground-disabled: #786f62;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(154, 106, 53, 0.5);
-  --border-strong: rgba(255, 255, 255, 0.2);
+  /* =========================================================================
+     DARK MODE DESIGN SYSTEM
+     - Base Background: #1e1914 (Deep warm tone derived from #2b241c)
+     - Cards & Surfaces: Elevated espresso layers (rgba(43, 36, 28, 0.85)) or #FFF6EB inverted cards
+     - Text / Foreground: Legible warm tones using #FFF6EB and #FFEDD8
+     - Borders & Accents: #9a6a35/40 borders with #FFEDD8 hover accents
+     ========================================================================= */
+  --background: #1e1914;
+  --background-secondary: #251f19;
+  --background-tertiary: #2b241c;
+  --surface: rgba(43, 36, 28, 0.85);
+  --surface-hover: rgba(56, 47, 37, 0.95);
+  --surface-active: #3a3127;
+  --surface-subtle: rgba(255, 246, 235, 0.05);
+  --surface-muted: rgba(255, 246, 235, 0.08);
+  --foreground: #FFF6EB;
+  --foreground-secondary: #FFEDD8;
+  --foreground-muted: rgba(255, 237, 216, 0.65);
+  --foreground-disabled: rgba(255, 237, 216, 0.40);
+  --border: rgba(154, 106, 53, 0.40);
+  --border-subtle: rgba(255, 246, 235, 0.10);
+  --border-hover: rgba(154, 106, 53, 0.60);
+  --border-strong: rgba(154, 106, 53, 0.50);
   --primary: #9a6a35;
   --primary-hover: #b88248;
   --primary-active: #cca36e;
-  --primary-light: rgba(154, 106, 53, 0.18);
-  --secondary: #f5f0e7;
+  --primary-light: rgba(154, 106, 53, 0.25);
+  --secondary: #FFEDD8;
   --secondary-hover: #ffffff;
-  --secondary-light: rgba(245, 240, 231, 0.1);
+  --secondary-light: rgba(255, 237, 216, 0.15);
   --accent: #9a6a35;
   --accent-hover: #b88248;
-  --accent-light: rgba(154, 106, 53, 0.18);
+  --accent-light: rgba(154, 106, 53, 0.25);
   --success: #489E6E;
   --warning: #E09228;
   --error: #E05344;
   --info: #4A97C9;
-  --input-background: rgba(255, 255, 255, 0.04);
-  --input-border: rgba(255, 255, 255, 0.1);
+  --input-background: rgba(43, 36, 28, 0.60);
+  --input-border: rgba(154, 106, 53, 0.40);
   --input-border-focus: #9a6a35;
-  --input-placeholder: rgba(245, 240, 231, 0.35);
-  --card-background: rgba(21, 21, 19, 0.9);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --card-border-hover: rgba(154, 106, 53, 0.5);
+  --input-placeholder: rgba(255, 237, 216, 0.40);
+  --card-background: rgba(43, 36, 28, 0.85);
+  --card-border: rgba(154, 106, 53, 0.40);
+  --card-border-hover: rgba(154, 106, 53, 0.60);
   --overlay: rgba(0, 0, 0, 0.75);
-  --shadow: rgba(0, 0, 0, 0.6);
+  --shadow: rgba(0, 0, 0, 0.60);
 
   /* WAH Aliases for Dark Mode */
   --wah-primary: var(--primary);

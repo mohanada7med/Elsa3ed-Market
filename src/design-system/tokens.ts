@@ -6,57 +6,59 @@
 export const WAH_TOKENS = {
   colors: {
     light: {
-      // Core Brand & Heritage
-      primary: '#9a6a35', // Heritage terracotta & burnt wood
+      // Core Brand & Palette
+      primary: '#9a6a35', // Warm Caramel (Brand Accent)
       primaryHover: '#7d5427',
       primaryActive: '#623f1a',
-      primaryLight: '#f6ede3',
-      secondary: '#211d18', // Deep Basalt
-      secondaryHover: '#362f27',
-      secondaryLight: 'rgba(33, 29, 24, 0.08)',
-      accent: '#9a6a35', // Brand Accent
+      primaryLight: 'rgba(154, 106, 53, 0.12)',
+      secondary: '#FFEDD8', // Soft Warm Sand / Muted Peach
+      secondaryHover: '#FAE1C3',
+      secondaryLight: 'rgba(255, 237, 216, 0.50)',
+      cream: '#FFF6EB', // Clean Cream / Warm Off-white
+      espresso: '#2b241c', // Deep Espresso / Charcoal Brown
+      accent: '#9a6a35',
       accentHover: '#7d5427',
       accentLight: 'rgba(154, 106, 53, 0.12)',
 
       // Semantic Backgrounds & Surfaces
-      background: '#eee8dc', // Warm earthy clay and sand
-      backgroundSecondary: '#e4ddd1',
-      backgroundTertiary: '#dad2c4',
-      surface: 'rgba(255, 255, 255, 0.75)', // Glassmorphic surface
-      surfaceHover: 'rgba(255, 255, 255, 0.85)',
-      surfaceActive: 'rgba(255, 255, 255, 0.95)',
-      surfaceSubtle: 'rgba(0, 0, 0, 0.035)',
-      surfaceMuted: 'rgba(0, 0, 0, 0.06)',
+      background: '#FFF6EB', // Clean Cream Base Background
+      backgroundSecondary: '#F7EFE4',
+      backgroundTertiary: '#EEDEC8',
+      surface: 'rgba(255, 255, 255, 0.85)', // Glassmorphic white surface
+      surfaceHover: 'rgba(255, 255, 255, 0.95)',
+      surfaceActive: '#ffffff',
+      surfaceSubtle: 'rgba(43, 36, 28, 0.04)',
+      surfaceMuted: 'rgba(43, 36, 28, 0.08)',
 
-      // Semantic Foregrounds / Typography
-      foreground: '#211d18', // Deep dark primary text
-      foregroundSecondary: '#4a4137',
-      foregroundMuted: '#6e6255',
-      foregroundDisabled: '#9e9183',
+      // Semantic Foregrounds / Typography (High contrast & readability)
+      foreground: '#2b241c', // Deep Espresso primary text
+      foregroundSecondary: 'rgba(43, 36, 28, 0.75)',
+      foregroundMuted: 'rgba(43, 36, 28, 0.55)',
+      foregroundDisabled: 'rgba(43, 36, 28, 0.35)',
 
       // Legacy Aliases
-      text: '#211d18',
-      textMuted: '#6e6255',
-      textSubtle: '#9e9183',
+      text: '#2b241c',
+      textMuted: 'rgba(43, 36, 28, 0.55)',
+      textSubtle: 'rgba(43, 36, 28, 0.35)',
 
       // Semantic Borders
-      border: 'rgba(0, 0, 0, 0.1)',
-      borderSubtle: 'rgba(0, 0, 0, 0.06)',
-      borderHover: 'rgba(154, 106, 53, 0.4)',
-      borderStrong: 'rgba(0, 0, 0, 0.2)',
+      border: 'rgba(154, 106, 53, 0.30)', // #9a6a35/30 border
+      borderSubtle: 'rgba(43, 36, 28, 0.08)',
+      borderHover: 'rgba(154, 106, 53, 0.45)',
+      borderStrong: 'rgba(154, 106, 53, 0.40)',
 
       // Forms & Inputs
-      inputBackground: 'rgba(0, 0, 0, 0.035)',
-      inputBorder: 'rgba(0, 0, 0, 0.1)',
-      inputPlaceholder: 'rgba(33, 29, 24, 0.4)',
+      inputBackground: 'rgba(255, 255, 255, 0.90)',
+      inputBorder: 'rgba(154, 106, 53, 0.25)',
+      inputPlaceholder: 'rgba(43, 36, 28, 0.40)',
 
       // Cards
-      cardBackground: 'rgba(255, 255, 255, 0.75)',
-      cardBorder: 'rgba(0, 0, 0, 0.1)',
+      cardBackground: 'rgba(255, 255, 255, 0.85)',
+      cardBorder: 'rgba(154, 106, 53, 0.30)',
 
       // Overlays & Shadows
-      overlay: 'rgba(33, 29, 24, 0.6)',
-      shadow: 'rgba(154, 106, 53, 0.1)',
+      overlay: 'rgba(43, 36, 28, 0.60)',
+      shadow: 'rgba(154, 106, 53, 0.10)',
 
       // Status Colors (WCAG AA Compliant)
       success: '#286644', // Fertile Nile Agriculture Green
@@ -65,57 +67,59 @@ export const WAH_TOKENS = {
       info: '#29658A', // Nile Sky Blue
     },
     dark: {
-      // Core Brand & Heritage
-      primary: '#9a6a35', // Heritage terracotta & burnt wood
-      primaryHover: '#d5a56d',
-      primaryActive: '#e6b983',
-      primaryLight: 'rgba(154, 106, 53, 0.2)',
-      secondary: '#f5f0e7',
-      secondaryHover: '#ded6c8',
-      secondaryLight: 'rgba(245, 240, 231, 0.1)',
+      // Core Brand & Palette
+      primary: '#9a6a35', // Warm Caramel
+      primaryHover: '#b88248',
+      primaryActive: '#cca36e',
+      primaryLight: 'rgba(154, 106, 53, 0.25)',
+      secondary: '#FFEDD8', // Soft Warm Sand
+      secondaryHover: '#ffffff',
+      secondaryLight: 'rgba(255, 237, 216, 0.15)',
+      cream: '#FFF6EB',
+      espresso: '#2b241c',
       accent: '#9a6a35',
-      accentHover: '#d5a56d',
-      accentLight: 'rgba(154, 106, 53, 0.2)',
+      accentHover: '#b88248',
+      accentLight: 'rgba(154, 106, 53, 0.25)',
 
       // Semantic Backgrounds & Surfaces
-      background: '#0b0b0a', // Deep elegant dark background
-      backgroundSecondary: '#121210',
-      backgroundTertiary: '#1a1a17',
-      surface: 'rgba(21, 21, 19, 0.9)', // Glassmorphic dark card
-      surfaceHover: 'rgba(30, 30, 27, 0.95)',
-      surfaceActive: 'rgba(40, 40, 36, 0.95)',
-      surfaceSubtle: 'rgba(255, 255, 255, 0.04)',
-      surfaceMuted: 'rgba(255, 255, 255, 0.07)',
+      background: '#1e1914', // Deep warm tone derived from #2b241c
+      backgroundSecondary: '#251f19',
+      backgroundTertiary: '#2b241c',
+      surface: 'rgba(43, 36, 28, 0.85)', // Elevated espresso layers
+      surfaceHover: 'rgba(56, 47, 37, 0.95)',
+      surfaceActive: '#3a3127',
+      surfaceSubtle: 'rgba(255, 246, 235, 0.05)',
+      surfaceMuted: 'rgba(255, 246, 235, 0.08)',
 
-      // Semantic Foregrounds / Typography
-      foreground: '#f5f0e7', // Soft eye-friendly light text
-      foregroundSecondary: '#ded6c8',
-      foregroundMuted: '#aba191',
-      foregroundDisabled: '#786f62',
+      // Semantic Foregrounds / Typography (Legible warm tones)
+      foreground: '#FFF6EB', // Clean Cream text
+      foregroundSecondary: '#FFEDD8', // Soft Warm Sand secondary text
+      foregroundMuted: 'rgba(255, 237, 216, 0.65)',
+      foregroundDisabled: 'rgba(255, 237, 216, 0.40)',
 
       // Legacy Aliases
-      text: '#f5f0e7',
-      textMuted: '#aba191',
-      textSubtle: '#786f62',
+      text: '#FFF6EB',
+      textMuted: 'rgba(255, 237, 216, 0.65)',
+      textSubtle: 'rgba(255, 237, 216, 0.40)',
 
       // Semantic Borders
-      border: 'rgba(255, 255, 255, 0.1)',
-      borderSubtle: 'rgba(255, 255, 255, 0.06)',
-      borderHover: 'rgba(154, 106, 53, 0.5)',
-      borderStrong: 'rgba(255, 255, 255, 0.2)',
+      border: 'rgba(154, 106, 53, 0.40)', // #9a6a35/40 border
+      borderSubtle: 'rgba(255, 246, 235, 0.10)',
+      borderHover: 'rgba(154, 106, 53, 0.60)',
+      borderStrong: 'rgba(154, 106, 53, 0.50)',
 
       // Forms & Inputs
-      inputBackground: 'rgba(255, 255, 255, 0.04)',
-      inputBorder: 'rgba(255, 255, 255, 0.1)',
-      inputPlaceholder: '#aba191',
+      inputBackground: 'rgba(43, 36, 28, 0.60)',
+      inputBorder: 'rgba(154, 106, 53, 0.40)',
+      inputPlaceholder: 'rgba(255, 237, 216, 0.40)',
 
       // Cards
-      cardBackground: 'rgba(21, 21, 19, 0.9)',
-      cardBorder: 'rgba(255, 255, 255, 0.1)',
+      cardBackground: 'rgba(43, 36, 28, 0.85)',
+      cardBorder: 'rgba(154, 106, 53, 0.40)',
 
       // Overlays & Shadows
       overlay: 'rgba(0, 0, 0, 0.75)',
-      shadow: 'rgba(0, 0, 0, 0.6)',
+      shadow: 'rgba(0, 0, 0, 0.60)',
 
       // Status Colors (WCAG AA Compliant on Dark)
       success: '#489E6E',

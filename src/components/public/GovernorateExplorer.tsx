@@ -260,12 +260,12 @@ export const GovernorateExplorer: React.FC = () => {
         px-5
         sm:px-8
         lg:px-12
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors
         duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* Decorative Pattern */}
@@ -284,9 +284,9 @@ export const GovernorateExplorer: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.35 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#9a6a35] text-xs font-bold backdrop-blur-md shadow-sm mb-4"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/70 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-primary text-xs font-bold backdrop-blur-md shadow-sm mb-4"
         >
-          <Sparkles className="w-4 h-4 text-[#9a6a35]" />
+          <Sparkles className="w-4 h-4 text-primary" />
           من الفيوم إلى أسوان
         </motion.div>
 
@@ -321,7 +321,7 @@ export const GovernorateExplorer: React.FC = () => {
           shadow-[0_20px_70px_rgba(0,0,0,0.08)]
           backdrop-blur-2xl
           dark:border-white/10
-          dark:bg-[#151513]/90
+          dark:bg-espresso-900/90
           dark:shadow-black/30
           flex flex-col lg:flex-row gap-3 items-center
         "
@@ -343,9 +343,9 @@ export const GovernorateExplorer: React.FC = () => {
               outline-none
               transition-all
               placeholder:text-black/35
-              focus:border-[#9a6a35]/40
+              focus:border-primary/40
               focus:bg-transparent
-              dark:bg-#FFF6EB/[0.04]
+              dark:bg-cream/[0.04]
               dark:placeholder:text-white/30
               dark:focus:bg-white/[0.06]
             "
@@ -365,8 +365,8 @@ export const GovernorateExplorer: React.FC = () => {
                   shrink-0 px-4 h-12 rounded-xl text-xs font-bold
                   transition-all duration-200 cursor-pointer
                   ${active
-                    ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-md'
-                    : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
+                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
                   }
                 `}
               >
@@ -418,18 +418,18 @@ export const GovernorateExplorer: React.FC = () => {
                   shadow-lg
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-#FFF6EB/[0.035]
+                  dark:bg-cream/[0.035]
                   cursor-pointer
                   transition-all
                   duration-500
-                  hover:border-[#9a6a35]
+                  hover:border-primary
                   hover:shadow-[0_20px_50px_rgba(154,106,53,0.12)]
                   flex flex-col justify-between
                 "
               >
                 {/* Image Frame */}
                 <div>
-                  <div className="relative h-[220px] overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-#FFF6EB/5">
+                  <div className="relative h-[220px] overflow-hidden rounded-[1.5rem] bg-black/5 dark:bg-cream/5">
                     <img
                       src={gov.coverImage}
                       alt={`محافظة ${gov.name}`}
@@ -441,7 +441,7 @@ export const GovernorateExplorer: React.FC = () => {
 
                     <div className="absolute top-4 right-4 z-20">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-black/40 backdrop-blur-xl border border-white/20 text-white text-[10px] font-bold shadow-sm">
-                        <MapPin className="w-3 h-3 text-[#9a6a35]" />
+                        <MapPin className="w-3 h-3 text-primary" />
                         {gov.region}
                       </span>
                     </div>
@@ -459,8 +459,8 @@ export const GovernorateExplorer: React.FC = () => {
                   {/* Body */}
                   <div className="p-5">
                     <div className="flex items-start gap-2 mb-3">
-                      <div className="mt-0.5 w-7 h-7 shrink-0 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
-                        <Landmark className="w-3.5 h-3.5 text-[#9a6a35]" />
+                      <div className="mt-0.5 w-7 h-7 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Landmark className="w-3.5 h-3.5 text-primary" />
                       </div>
                       <p className="text-sm font-bold leading-6 line-clamp-1">
                         {gov.famousCraft}
@@ -473,7 +473,7 @@ export const GovernorateExplorer: React.FC = () => {
 
                     <div className="flex items-center divide-x divide-x-reverse divide-black/10 dark:divide-white/10 border-y border-black/10 dark:border-white/10 mt-5 py-3">
                       <div className="flex-1 flex items-center justify-center gap-2">
-                        <Users className="w-4 h-4 text-[#9a6a35]" />
+                        <Users className="w-4 h-4 text-primary" />
                         <div className="leading-tight">
                           <div className="text-sm font-bold">
                             {sellersCount}
@@ -485,7 +485,7 @@ export const GovernorateExplorer: React.FC = () => {
                       </div>
 
                       <div className="flex-1 flex items-center justify-center gap-2">
-                        <Package className="w-4 h-4 text-[#9a6a35]" />
+                        <Package className="w-4 h-4 text-primary" />
                         <div className="leading-tight">
                           <div className="text-sm font-bold">
                             {productsCount}
@@ -504,7 +504,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(gov)}
-                    className="h-11 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer"
+                    className="h-11 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer"
                   >
                     استكشف
                     <ArrowUpLeft className="w-4 h-4" />
@@ -514,7 +514,7 @@ export const GovernorateExplorer: React.FC = () => {
                     type="button"
                     onClick={() => handleShop(gov.name)}
                     title={`تسوق من ${gov.name}`}
-                    className="w-11 h-11 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-#FFF6EB/5 text-black dark:text-white flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 hover:text-[#9a6a35] transition-all cursor-pointer"
+                    className="w-11 h-11 rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-cream/5 text-black dark:text-white flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 hover:text-primary transition-all cursor-pointer"
                   >
                     <ShoppingBag className="w-4 h-4" />
                   </button>
@@ -524,9 +524,9 @@ export const GovernorateExplorer: React.FC = () => {
           })}
         </div>
       ) : (
-        <div className="relative z-10 bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-12 text-center shadow-lg backdrop-blur-xl">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-[#9a6a35]/10 flex items-center justify-center">
-            <Search className="w-7 h-7 text-[#9a6a35]" />
+        <div className="relative z-10 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-12 text-center shadow-lg backdrop-blur-xl">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <Search className="w-7 h-7 text-primary" />
           </div>
 
           <h3 className="mt-5 text-xl font-bold">
@@ -543,7 +543,7 @@ export const GovernorateExplorer: React.FC = () => {
               setSearchQuery('');
               setSelectedRegion('all');
             }}
-            className="mt-5 px-6 h-11 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs hover:bg-[#9a6a35] transition-colors cursor-pointer"
+            className="mt-5 px-6 h-11 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs hover:bg-primary transition-colors cursor-pointer"
           >
             عرض كل المحافظات
           </button>
@@ -552,11 +552,11 @@ export const GovernorateExplorer: React.FC = () => {
 
       {/* Footer Accent */}
       <div className="relative z-10 flex items-center justify-center gap-4 mt-12">
-        <span className="w-12 h-px bg-black/10 dark:bg-#FFF6EB/10" />
+        <span className="w-12 h-px bg-black/10 dark:bg-cream/10" />
         <span className="text-xs font-bold text-black/50 dark:text-white/50">
           الصعيد حكاية بتتوارث
         </span>
-        <span className="w-12 h-px bg-black/10 dark:bg-#FFF6EB/10" />
+        <span className="w-12 h-px bg-black/10 dark:bg-cream/10" />
       </div>
 
       {/* ================= PREVIEW ================= */}
@@ -589,7 +589,7 @@ export const GovernorateExplorer: React.FC = () => {
                 duration: 0.25,
               }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#151513] border border-black/10 dark:border-white/10 rounded-[2rem] shadow-2xl backdrop-blur-2xl"
+              className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-espresso-900 border border-black/10 dark:border-white/10 rounded-[2rem] shadow-2xl backdrop-blur-2xl"
             >
               {/* Modal Header */}
               <div className="relative h-[280px] sm:h-[350px]">
@@ -621,10 +621,10 @@ export const GovernorateExplorer: React.FC = () => {
 
               {/* Modal Content */}
               <div className="p-6 sm:p-8 space-y-6">
-                <div className="rounded-2xl bg-black/[0.03] dark:bg-#FFF6EB/[0.04] border border-black/10 dark:border-white/10 p-5">
+                <div className="rounded-2xl bg-black/[0.03] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 p-5">
                   <div className="flex gap-3">
-                    <div className="w-10 h-10 shrink-0 rounded-xl bg-[#9a6a35]/10 flex items-center justify-center">
-                      <Landmark className="w-5 h-5 text-[#9a6a35]" />
+                    <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Landmark className="w-5 h-5 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-bold mb-1">
@@ -639,7 +639,7 @@ export const GovernorateExplorer: React.FC = () => {
 
                 {/* Proverb */}
                 <div>
-                  <span className="text-xs font-bold text-[#9a6a35]">
+                  <span className="text-xs font-bold text-primary">
                     من كلام أهلها
                   </span>
                   <p className="mt-2 text-xl font-bold leading-9 font-serif">
@@ -672,7 +672,7 @@ export const GovernorateExplorer: React.FC = () => {
                   {previewGov.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-xs font-bold"
+                      className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-xs font-bold"
                     >
                       {tag}
                     </span>
@@ -684,7 +684,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(previewGov)}
-                    className="h-12 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] transition-all cursor-pointer text-xs"
+                    className="h-12 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer text-xs"
                   >
                     اكتشف المحافظة
                     <ArrowUpLeft className="w-5 h-5" />
@@ -693,9 +693,9 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleShop(previewGov.name)}
-                    className="h-12 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 font-bold flex items-center justify-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer text-xs"
+                    className="h-12 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 font-bold flex items-center justify-center gap-2 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer text-xs"
                   >
-                    <ShoppingBag className="w-5 h-5 text-[#9a6a35]" />
+                    <ShoppingBag className="w-5 h-5 text-primary" />
                     تسوق من المحافظة
                   </button>
                 </div>

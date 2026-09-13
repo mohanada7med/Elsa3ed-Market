@@ -119,7 +119,7 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
         aria-label={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
       >
         {isMuted ? (
-          <VolumeX className="w-5 h-5 text-[#d6aa72]" />
+          <VolumeX className="w-5 h-5 text-primary-hover" />
         ) : (
           <Volume2 className="w-5 h-5 text-emerald-400" />
         )}

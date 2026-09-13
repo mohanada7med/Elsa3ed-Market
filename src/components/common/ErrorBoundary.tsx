@@ -40,15 +40,15 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div
-          className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] flex items-center justify-center p-4 transition-colors"
+          className="min-h-screen bg-cream dark:bg-espresso-900 text-espresso dark:text-cream flex items-center justify-center p-4 transition-colors"
           dir="rtl"
         >
-          <div className="max-w-md w-full bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-8 text-center">
-            <div className="w-16 h-16 bg-[#9a6a35]/10 text-[#9a6a35] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-[#9a6a35]/20">
+          <div className="max-w-md w-full bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-black/10 dark:border-white/10 p-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
               <AlertTriangle className="w-8 h-8" aria-hidden="true" />
             </div>
 
-            <h1 className="text-2xl font-black text-[#211d18] dark:text-[#f5f0e7] mb-2 font-serif">
+            <h1 className="text-2xl font-black text-espresso dark:text-cream mb-2 font-serif">
               عذراً، حدث خطأ غير متوقع
             </h1>
 
@@ -61,7 +61,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 id="error-reload-btn"
                 type="button"
                 onClick={this.handleReload}
-                className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>إعادة تحميل الصفحة</span>
@@ -71,7 +71,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 id="error-home-btn"
                 type="button"
                 onClick={this.handleGoHome}
-                className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-5 py-3 rounded-xl font-black transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream px-5 py-3 rounded-xl font-black transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
               >
                 <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>العودة للرئيسية</span>

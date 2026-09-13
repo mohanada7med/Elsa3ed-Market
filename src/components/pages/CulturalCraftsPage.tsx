@@ -131,11 +131,11 @@ export const CulturalCraftsPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* =====================================================
@@ -149,7 +149,7 @@ export const CulturalCraftsPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
             "
           >
             <span
@@ -159,10 +159,10 @@ export const CulturalCraftsPage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -177,7 +177,7 @@ export const CulturalCraftsPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
 
@@ -193,7 +193,7 @@ export const CulturalCraftsPage: React.FC = () => {
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -218,9 +218,9 @@ export const CulturalCraftsPage: React.FC = () => {
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-[#9a6a35]" />
+                <Sparkles size={16} className="text-primary" />
 
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
                   Upper Egypt / Heritage Atlas
                 </span>
               </div>
@@ -239,13 +239,13 @@ export const CulturalCraftsPage: React.FC = () => {
               >
                 إيد
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">بتحكي</span>
+                <span className="mr-[8vw] text-primary lg:mr-28">بتحكي</span>
               </h1>
               <br />
               <br />
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
+                <div className="mt-2 h-16 w-px bg-primary" />
 
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
                   اكتشف الحرف اللي عاشت سنين في بيوت وورش صعيد مصر، واتعرف على
@@ -265,10 +265,10 @@ export const CulturalCraftsPage: React.FC = () => {
                   p-7
                   backdrop-blur-xl
                   dark:border-white/10
-                  dark:bg-#FFF6EB/[0.035]
+                  dark:bg-cream/[0.035]
                 "
               >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
@@ -276,7 +276,7 @@ export const CulturalCraftsPage: React.FC = () => {
                       COLLECTION
                     </span>
 
-                    <Hammer size={18} className="text-[#9a6a35]" />
+                    <Hammer size={18} className="text-primary" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
@@ -302,7 +302,7 @@ export const CulturalCraftsPage: React.FC = () => {
                   </div>
 
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
 
                     <span className="text-xs font-bold">
                       خريطة حية للصنعة في الصعيد
@@ -328,7 +328,7 @@ export const CulturalCraftsPage: React.FC = () => {
             shadow-[0_20px_70px_rgba(0,0,0,0.08)]
             backdrop-blur-2xl
             dark:border-white/10
-            dark:bg-[#151513]/90
+            dark:bg-espresso-900/90
             dark:shadow-black/30
           "
         >
@@ -359,9 +359,9 @@ export const CulturalCraftsPage: React.FC = () => {
                   outline-none
                   transition-all
                   placeholder:text-black/35
-                  focus:border-[#9a6a35]/40
+                  focus:border-primary/40
                   focus:bg-transparent
-                  dark:bg-#FFF6EB/[0.04]
+                  dark:bg-cream/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -398,8 +398,8 @@ export const CulturalCraftsPage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                 "
               >
@@ -436,8 +436,8 @@ export const CulturalCraftsPage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                 "
               >
@@ -464,10 +464,10 @@ export const CulturalCraftsPage: React.FC = () => {
               className="
                 flex items-center justify-between
                 rounded-xl
-                bg-[#211d18]
+                bg-espresso
                 px-5
                 text-white
-                dark:bg-#FFF6EB
+                dark:bg-cream
                 dark:text-black
               "
             >
@@ -498,7 +498,7 @@ export const CulturalCraftsPage: React.FC = () => {
       <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
+            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary">
               DISCOVER
             </div>
 
@@ -522,7 +522,7 @@ export const CulturalCraftsPage: React.FC = () => {
                   overflow-hidden
                   rounded-[1.5rem]
                   bg-black/5
-                  dark:bg-#FFF6EB/5
+                  dark:bg-cream/5
                   ${index === 0 || index === 5 ? 'sm:row-span-2' : ''}
                 `}
               >
@@ -573,10 +573,10 @@ export const CulturalCraftsPage: React.FC = () => {
                 className="
                   mt-6
                   rounded-full
-                  bg-[#211d18]
+                  bg-espresso
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-#FFF6EB
+                  dark:bg-cream
                   dark:text-black
                   cursor-pointer
                 "
@@ -813,7 +813,7 @@ export const CulturalCraftsPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
               sm:px-12 sm:py-20

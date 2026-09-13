@@ -29,11 +29,11 @@ export const FavoritesPage: React.FC = () => {
         min-h-screen
         w-full
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-8 sm:py-10 pt-28 sm:pt-36 pb-24 sm:pb-20 space-y-6 sm:space-y-8">
@@ -43,12 +43,12 @@ export const FavoritesPage: React.FC = () => {
             type="button"
             id="fav-breadcrumb-home"
             onClick={() => setActivePage('home')}
-            className="hover:text-[#9a6a35] transition-colors cursor-pointer"
+            className="hover:text-primary transition-colors cursor-pointer"
           >
             الرئيسية
           </button>
           <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-          <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">القطع اللي عجبتك</span>
+          <span className="font-bold text-espresso dark:text-cream">القطع اللي عجبتك</span>
         </nav>
 
         {/* Header */}
@@ -71,7 +71,7 @@ export const FavoritesPage: React.FC = () => {
               type="button"
               id="fav-browse-more-btn"
               onClick={() => setActivePage('products')}
-              className="px-5 py-2.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
+              className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-xs transition-colors self-start sm:self-auto cursor-pointer"
             >
               شوف باقي المنتجات
             </button>
@@ -79,7 +79,7 @@ export const FavoritesPage: React.FC = () => {
         </div>
 
         {favoriteProducts.length === 0 ? (
-          <div className="bg-white/75 dark:bg-[#151513]/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-12 sm:p-16 text-center space-y-4 shadow-lg backdrop-blur-xl max-w-xl mx-auto my-8">
+          <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-12 sm:p-16 text-center space-y-4 shadow-lg backdrop-blur-xl max-w-xl mx-auto my-8">
             <div className="w-20 h-20 rounded-full bg-rose-50 dark:bg-rose-950/30 text-rose-500 dark:text-rose-400 flex items-center justify-center mx-auto shadow-inner">
               <Heart className="w-10 h-10" />
             </div>
@@ -91,7 +91,7 @@ export const FavoritesPage: React.FC = () => {
               type="button"
               id="fav-empty-explore-btn"
               onClick={() => setActivePage('products')}
-              className="px-6 py-3 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs sm:text-sm font-bold rounded-xl shadow-md transition-colors cursor-pointer"
+              className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs sm:text-sm font-bold rounded-xl shadow-md transition-colors cursor-pointer"
             >
               استكشف سوق وه دلوقتي
             </button>

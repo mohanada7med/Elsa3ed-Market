@@ -124,7 +124,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
       <div
         className={`
           absolute right-[7px] top-8 z-10 flex h-6 w-6 items-center justify-center rounded-full
-          border-4 border-[#eee8dc] bg-[#9a6a35] dark:border-[#0b0b0a] md:right-1/2 md:-mr-3
+          border-4 border-[#eee8dc] bg-primary dark:border-[#0b0b0a] md:right-1/2 md:-mr-3
           transition-all duration-700 delay-300
           ${isInView ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
         `}
@@ -150,7 +150,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           onClick={() => onNavigate(place.slug)}
           className="group block w-full overflow-hidden rounded-[30px] text-right cursor-pointer"
         >
-          <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-#FFF6EB/5 shadow-md">
+          <div className="relative aspect-[1.25] overflow-hidden rounded-[30px] bg-black/5 dark:bg-cream/5 shadow-md">
             <img
               src={image}
               alt={place.title}
@@ -196,7 +196,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
                 {String(index + 1).padStart(2, '0')}
               </span>
 
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-colors duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
                 <ArrowLeft className="h-4 w-4" />
               </span>
             </div>
@@ -219,15 +219,15 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
         `}
       >
         <div className="mb-4 flex items-center gap-3">
-          <span className="text-[10px] font-black tracking-[0.25em] text-[#9a6a35]">
+          <span className="text-[10px] font-black tracking-[0.25em] text-primary">
             {String(index + 1).padStart(2, '0')}
           </span>
 
-          <span className="h-px w-8 bg-[#9a6a35]/40" />
+          <span className="h-px w-8 bg-primary/40" />
 
           {place.governorateName && (
             <span className="flex items-center gap-1.5 text-[10px] font-bold text-black/60 dark:text-white/60">
-              <MapPin className="h-3 w-3 text-[#9a6a35]" />
+              <MapPin className="h-3 w-3 text-primary" />
               {place.governorateName}
             </span>
           )}
@@ -238,12 +238,12 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           onClick={() => onNavigate(place.slug)}
           className="group text-right cursor-pointer"
         >
-          <h3 className="text-3xl font-black leading-tight tracking-tight transition-colors group-hover:text-[#9a6a35] sm:text-4xl">
+          <h3 className="text-3xl font-black leading-tight tracking-tight transition-colors group-hover:text-primary sm:text-4xl">
             {place.title}
           </h3>
 
           {place.historicalEra && (
-            <p className="mt-3 text-xs font-bold text-[#9a6a35]">
+            <p className="mt-3 text-xs font-bold text-primary">
               {place.historicalEra}
             </p>
           )}
@@ -260,14 +260,14 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           onClick={() => onNavigate(place.slug)}
           className="
             mt-7 flex w-fit items-center gap-3 text-xs font-black
-            transition-colors hover:text-[#9a6a35] cursor-pointer
+            transition-colors hover:text-primary cursor-pointer
           "
         >
           اعرف الحكاية
           <span
             className="
               flex h-8 w-8 items-center justify-center rounded-full
-              border border-black/10 transition-colors hover:border-[#9a6a35]
+              border border-black/10 transition-colors hover:border-primary
               dark:border-white/10
             "
           >
@@ -400,11 +400,11 @@ export const PlacesHeritagePage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* NAVBAR */}
@@ -416,7 +416,7 @@ export const PlacesHeritagePage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
               cursor-pointer
             "
           >
@@ -427,10 +427,10 @@ export const PlacesHeritagePage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -444,7 +444,7 @@ export const PlacesHeritagePage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
             <div className="mt-1 text-sm font-black">أماكن التراث</div>
@@ -459,7 +459,7 @@ export const PlacesHeritagePage: React.FC = () => {
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -482,8 +482,8 @@ export const PlacesHeritagePage: React.FC = () => {
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-[#9a6a35]" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
+                <Sparkles size={16} className="text-primary" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
                   Digital Heritage Archive / Places
                 </span>
               </div>
@@ -502,11 +502,11 @@ export const PlacesHeritagePage: React.FC = () => {
               >
                 أماكن
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">بتحكي</span>
+                <span className="mr-[8vw] text-primary lg:mr-28">بتحكي</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
+                <div className="mt-2 h-16 w-px bg-primary" />
                 <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
                   أماكن الصعيد ليها هيبة وحكاية؛ من المعابد والآثار العتيقة، للأديرة والمساجد، والقرى اللي عايشة على شط النيل.
                 </p>
@@ -523,18 +523,18 @@ export const PlacesHeritagePage: React.FC = () => {
                   bg-white/50
                   p-7
                   backdrop-blur-xl
-                  dark:border-white/10
-                  dark:bg-#FFF6EB/[0.035]
+                  dark:border-primary/30
+                  dark:bg-cream/[0.035]
                 "
               >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
                       ARCHIVE STATS
                     </span>
-                    <Landmark size={18} className="text-[#9a6a35]" />
+                    <Landmark size={18} className="text-primary" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
@@ -558,7 +558,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   </div>
 
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
                     <span className="text-xs font-bold">
                       توثيق بصري لمعالم الصعيد
                     </span>
@@ -581,7 +581,7 @@ export const PlacesHeritagePage: React.FC = () => {
             shadow-[0_20px_70px_rgba(0,0,0,0.08)]
             backdrop-blur-2xl
             dark:border-white/10
-            dark:bg-[#151513]/90
+            dark:bg-espresso-900/90
             dark:shadow-black/30
           "
         >
@@ -611,9 +611,9 @@ export const PlacesHeritagePage: React.FC = () => {
                   outline-none
                   transition-all
                   placeholder:text-black/35
-                  focus:border-[#9a6a35]/40
+                  focus:border-primary/40
                   focus:bg-transparent
-                  dark:bg-#FFF6EB/[0.04]
+                  dark:bg-cream/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -650,8 +650,8 @@ export const PlacesHeritagePage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -688,8 +688,8 @@ export const PlacesHeritagePage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
@@ -716,10 +716,10 @@ export const PlacesHeritagePage: React.FC = () => {
               className="
                 flex items-center justify-between
                 rounded-xl
-                bg-[#211d18]
+                bg-espresso
                 px-5
                 text-white
-                dark:bg-#FFF6EB
+                dark:bg-cream
                 dark:text-black
               "
             >
@@ -748,7 +748,7 @@ export const PlacesHeritagePage: React.FC = () => {
         <div className="mx-auto max-w-[1200px]">
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-[#9a6a35]">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.3em] text-primary">
                 THE ARCHIVE
               </p>
               <h2 className="text-3xl font-black sm:text-5xl">
@@ -763,7 +763,7 @@ export const PlacesHeritagePage: React.FC = () => {
 
           {isLoading ? (
             <div className="relative">
-              <div className="absolute bottom-0 right-1/2 top-0 hidden w-px bg-black/10 dark:bg-#FFF6EB/10 md:block" />
+              <div className="absolute bottom-0 right-1/2 top-0 hidden w-px bg-black/10 dark:bg-cream/10 md:block" />
 
               {Array.from({ length: 4 }).map((_, index) => (
                 <div
@@ -776,20 +776,20 @@ export const PlacesHeritagePage: React.FC = () => {
                     ${index % 2 === 0 ? '' : 'md:[&>div:first-child]:order-2'}
                   `}
                 >
-                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-#FFF6EB/5" />
+                  <div className="aspect-[1.35] animate-pulse rounded-[30px] bg-black/5 dark:bg-cream/5" />
 
                   <div className="space-y-4 py-6">
-                    <div className="h-3 w-20 animate-pulse rounded-full bg-black/5 dark:bg-#FFF6EB/5" />
-                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-black/5 dark:bg-#FFF6EB/5" />
-                    <div className="h-4 w-full animate-pulse rounded-full bg-black/5 dark:bg-#FFF6EB/5" />
+                    <div className="h-3 w-20 animate-pulse rounded-full bg-black/5 dark:bg-cream/5" />
+                    <div className="h-8 w-3/4 animate-pulse rounded-lg bg-black/5 dark:bg-cream/5" />
+                    <div className="h-4 w-full animate-pulse rounded-full bg-black/5 dark:bg-cream/5" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredPlaces.length === 0 ? (
-            <div className="rounded-[32px] border border-black/10 bg-white/70 p-5 dark:border-white/10 dark:bg-[#151513]">
+            <div className="rounded-[32px] border border-black/10 bg-white/70 p-5 dark:border-white/10 dark:bg-espresso-900">
               <WAHEmptyState
-                icon={<Landmark className="h-9 w-9 text-[#9a6a35]" />}
+                icon={<Landmark className="h-9 w-9 text-primary" />}
                 title="ملقيناش المكان ده"
                 description="جرب كلمة بحث تانية أو غير الفلاتر."
                 actionLabel="فضّي الفلاتر"
@@ -831,12 +831,12 @@ export const PlacesHeritagePage: React.FC = () => {
                     onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
                     className="
                       inline-flex items-center gap-2
-                      rounded-full bg-[#211d18] px-8 py-3.5
+                      rounded-full bg-espresso px-8 py-3.5
                       text-xs font-bold text-white
                       shadow-lg transition-all
-                      hover:bg-[#9a6a35]
-                      dark:bg-#FFF6EB dark:text-black
-                      dark:hover:bg-[#9a6a35] dark:hover:text-white
+                      hover:bg-primary
+                      dark:bg-cream dark:text-black
+                      dark:hover:bg-primary dark:hover:text-white
                       cursor-pointer
                     "
                   >
@@ -859,7 +859,7 @@ export const PlacesHeritagePage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -910,11 +910,11 @@ export const PlacesHeritagePage: React.FC = () => {
       {/* FOOTER */}
       <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 mb-4">
-          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
+          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
           <span className="text-[10px] font-bold tracking-[0.2em] text-black/50 dark:text-white/50">
             وه — حكاية الصعيد في إيدك
           </span>
-          <span className="h-px flex-1 bg-black/10 dark:bg-#FFF6EB/10" />
+          <span className="h-px flex-1 bg-black/10 dark:bg-cream/10" />
         </div>
         <p className="text-[9px] font-black uppercase tracking-[0.25em] text-black/40 dark:text-white/40">
           WAH / 2026

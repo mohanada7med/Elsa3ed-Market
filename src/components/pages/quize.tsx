@@ -678,9 +678,9 @@ export const DialectDictionaryPage: React.FC = () => {
 
   if (!questions.length) {
     return (
-      <div className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center">
+      <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#9a6a35]/20 border-t-[#9a6a35] dark:border-[#d6aa72]/20 dark:border-t-[#d6aa72] rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-[#9a6a35] dark:border-[#d6aa72]/20 dark:border-t-[#d6aa72] rounded-full animate-spin mx-auto mb-4" />
           <p className="text-black/55 dark:text-white/55 font-bold text-sm">
             بنجهزلك الاختبار...
           </p>
@@ -695,7 +695,7 @@ export const DialectDictionaryPage: React.FC = () => {
   return (
     <WrapperTag
       dir="rtl"
-      className={`${isHomePage ? 'py-4 sm:py-8' : 'min-h-screen pb-20 lg:pb-0'} overflow-x-hidden bg-[#eee8dc] text-[#211d18] dark:bg-[#0b0b0a] dark:text-[#f5f0e7]`}
+      className={`${isHomePage ? 'py-4 sm:py-8' : 'min-h-screen pb-20 lg:pb-0'} overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream`}
     >
       {/* خلفية مخففة جداً للموبايل لتقليل إجهاد كارت الشاشة */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -703,20 +703,20 @@ export const DialectDictionaryPage: React.FC = () => {
           <NubianGeometricPattern opacity={0.03} />
         </div>
         {/* إخفاء الحلقات الضخمة في الشاشات الصغيرة */}
-        <div className="hidden sm:block absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-[#9a6a35]/[0.05] dark:border-[#d6aa72]/[0.04]" />
-        <div className="hidden sm:block absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-[#9a6a35]/[0.04] dark:border-[#d6aa72]/[0.03]" />
+        <div className="hidden sm:block absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.05] dark:border-[#d6aa72]/[0.04]" />
+        <div className="hidden sm:block absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.04] dark:border-[#d6aa72]/[0.03]" />
       </div>
 
       {/* الهيدر مع تقليل البلور على الموبايل - يظهر فقط في وضع الصفحة المستقلة */}
       {!isHomePage && (
-        <header className="relative z-50 border-b border-black/[0.07] bg-[#eee8dc]/95 sm:bg-[#eee8dc]/80 sm:backdrop-blur-md dark:border-white/[0.08] dark:bg-[#0b0b0a]/95 sm:dark:bg-[#0b0b0a]/80">
+        <header className="relative z-50 border-b border-black/[0.07] bg-cream/95 sm:bg-cream/80 sm:backdrop-blur-md dark:border-white/[0.08] dark:bg-espresso-900/95 sm:dark:bg-espresso-900/80">
           <div className="mx-auto flex h-[56px] sm:h-[72px] max-w-[1700px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="group flex items-center gap-2 sm:gap-3 text-xs font-black hover:text-[#9a6a35] dark:hover:text-[#d6aa72] cursor-pointer min-h-[44px] min-w-[44px]"
+              className="group flex items-center gap-2 sm:gap-3 text-xs font-black hover:text-primary dark:hover:text-primary-hover cursor-pointer min-h-[44px] min-w-[44px]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 group-hover:bg-[#211d18] group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 group-hover:bg-espresso group-hover:text-white dark:border-white/10 dark:group-hover:bg-white dark:group-hover:text-black">
                 <ArrowLeft
                   size={15}
                   className="transition-transform group-hover:-translate-x-0.5"
@@ -726,7 +726,7 @@ export const DialectDictionaryPage: React.FC = () => {
             </button>
 
             <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none">
-              <div className="text-[8px] font-black tracking-[0.45em] text-[#9a6a35] dark:text-[#d6aa72]">
+              <div className="text-[8px] font-black tracking-[0.45em] text-primary dark:text-primary-hover">
                 WAH
               </div>
               <div className="mt-0.5 text-xs font-black">اختبار اللهجة</div>
@@ -735,7 +735,7 @@ export const DialectDictionaryPage: React.FC = () => {
             <button
               type="button"
               onClick={() => setActivePage('categories')}
-              className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black hover:bg-[#211d18] hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer min-h-[40px]"
+              className="group flex items-center gap-2 rounded-full border border-black/10 px-3 py-2 text-[10px] font-black hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-4 sm:py-2.5 sm:text-xs cursor-pointer min-h-[40px]"
             >
               <span className="hidden sm:block">اكتشف التصنيفات</span>
               <ArrowUpLeft
@@ -751,14 +751,14 @@ export const DialectDictionaryPage: React.FC = () => {
       {countdown !== null && (
         <section className="relative z-10 flex min-h-[calc(100vh-72px)] items-center justify-center px-5 py-12">
           <div className="relative text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#121210] text-[9px] font-black tracking-[0.25em] text-[#9a6a35] dark:text-[#d6aa72] mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#121210] text-[9px] font-black tracking-[0.25em] text-primary dark:text-primary-hover mb-6">
               <Zap size={14} />
               PREPARE FOR THE QUIZ
             </div>
 
             <div
               key={countdown}
-              className="text-[8rem] sm:text-[13rem] leading-none font-black text-[#9a6a35] dark:text-[#d6aa72] select-none"
+              className="text-[8rem] sm:text-[13rem] leading-none font-black text-primary dark:text-primary-hover select-none"
             >
               {countdown}
             </div>
@@ -776,9 +776,9 @@ export const DialectDictionaryPage: React.FC = () => {
           <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 xl:px-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>
-                <div className="mb-6 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                    <Target size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+                <div className="mb-6 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+                    <Target size={14} className="text-primary dark:text-primary-hover" />
                   </span>
                   WAH / DIALECT CHALLENGE
                 </div>
@@ -786,7 +786,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   انت
                   <br />
-                  <span className="mr-3 sm:mr-8 lg:mr-20 text-[#9a6a35] dark:text-[#d6aa72]">
+                  <span className="mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                     صعيدي؟
                   </span>
                 </h1>
@@ -796,7 +796,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <div className="text-[9px] font-black tracking-[0.2em] text-black/35 dark:text-white/30">
                       اختبار اللهجة
                     </div>
-                    <div className="mt-3 h-px w-12 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+                    <div className="mt-3 h-px w-12 bg-primary dark:bg-[#d6aa72]" />
                   </div>
 
                   <p className="max-w-2xl text-sm font-medium leading-7 text-black/60 dark:text-white/60 sm:text-base sm:leading-8">
@@ -817,7 +817,7 @@ export const DialectDictionaryPage: React.FC = () => {
                       </div>
                       <Flame
                         size={18}
-                        className="text-[#9a6a35] dark:text-[#d6aa72]"
+                        className="text-primary dark:text-primary-hover"
                       />
                     </div>
 
@@ -853,7 +853,7 @@ export const DialectDictionaryPage: React.FC = () => {
                     <div className="mt-6 flex items-center gap-2 border-t border-black/10 pt-4 dark:border-white/10">
                       <CircleDot
                         size={12}
-                        className="text-[#9a6a35] dark:text-[#d6aa72]"
+                        className="text-primary dark:text-primary-hover"
                       />
                       <span className="text-[10px] font-bold">
                         أصالة • حكاية • لهجة
@@ -867,10 +867,10 @@ export const DialectDictionaryPage: React.FC = () => {
 
           {/* زر بدء اللعبة */}
           <section className="relative z-30 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pb-12">
-            <div className="relative overflow-hidden rounded-3xl bg-[#211d18] px-6 py-8 text-white sm:px-10 sm:py-12">
+            <div className="relative overflow-hidden rounded-3xl bg-espresso px-6 py-8 text-white sm:px-10 sm:py-12">
               <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-[#d6aa72]">
+                  <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-primary-hover">
                     READY TO START?
                   </div>
                   <h2 className="text-2xl sm:text-4xl font-black">
@@ -884,7 +884,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={beginGame}
-                  className="inline-flex items-center justify-center gap-2 text-sm font-bold text-white bg-[#9a6a35] hover:bg-[#744e26] dark:hover:bg-amber-600 px-7 py-3.5 rounded-xl border border-white/10 transition-colors shadow-sm self-start lg:self-auto cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 text-sm font-bold text-white bg-primary hover:bg-[#744e26] dark:hover:bg-amber-600 px-7 py-3.5 rounded-xl border border-white/10 transition-colors shadow-sm self-start lg:self-auto cursor-pointer"
                 >
                   ابدأ التحدي الآن
                 </button>
@@ -899,7 +899,7 @@ export const DialectDictionaryPage: React.FC = () => {
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-20 sm:px-8 sm:pt-10">
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs font-black">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#9a6a35]/10 text-[#9a6a35] dark:bg-[#d6aa72]/15 dark:text-[#d6aa72]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-[#d6aa72]/15 dark:text-primary-hover">
                 <Flame size={15} />
               </span>
               سؤال {currentIndex + 1} من {questions.length}
@@ -908,21 +908,21 @@ export const DialectDictionaryPage: React.FC = () => {
             <div
               className={`flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-black ${timeLeft <= 15
                 ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30'
-                : 'bg-[#e8e0d2] text-[#211d18] dark:bg-[#121210] dark:text-[#f4eee5] border border-black/5 dark:border-white/10'
+                : 'bg-[#e8e0d2] text-espresso dark:bg-[#121210] dark:text-[#f4eee5] border border-black/5 dark:border-white/10'
                 }`}
             >
               <Clock size={14} />
               <span>{formatTime(timeLeft)}</span>
             </div>
 
-            <div className="rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10 border border-[#9a6a35]/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
+            <div className="rounded-full bg-primary/10 dark:bg-[#d6aa72]/10 border border-primary/20 dark:border-[#d6aa72]/20 px-3 py-1.5 text-xs font-black text-primary dark:text-primary-hover">
               النقاط: {score}
             </div>
           </div>
 
-          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-black/5 dark:bg-#FFF6EB/10">
+          <div className="mb-6 h-1 w-full overflow-hidden rounded-full bg-black/5 dark:bg-cream/10">
             <div
-              className={`h-full transition-all duration-300 ${timeLeft <= 15 ? 'bg-rose-500' : 'bg-[#9a6a35] dark:bg-[#d6aa72]'
+              className={`h-full transition-all duration-300 ${timeLeft <= 15 ? 'bg-rose-500' : 'bg-primary dark:bg-[#d6aa72]'
                 }`}
               style={{ width: `${(timeLeft / TOTAL_QUIZ_TIME) * 100}%` }}
             />
@@ -932,7 +932,7 @@ export const DialectDictionaryPage: React.FC = () => {
             key={currentQuestion.id}
             className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-5 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8"
           >
-            <div className="mb-4 inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] text-[#9a6a35] dark:text-[#d6aa72]">
+            <div className="mb-4 inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.2em] text-primary dark:text-primary-hover">
               <ScrollText size={12} />
               QUESTION ARCHIVE
             </div>
@@ -947,7 +947,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 const isCorrect = option === currentQuestion.correctAnswer;
 
                 let cardClass =
-                  'border-black/[0.08] bg-white dark:border-white/[0.08] dark:bg-[#181715] text-[#211d18] dark:text-[#f4eee5]';
+                  'border-black/[0.08] bg-white dark:border-white/[0.08] dark:bg-[#181715] text-espresso dark:text-[#f4eee5]';
 
                 if (selectedAnswer) {
                   if (isCorrect) {
@@ -975,7 +975,7 @@ export const DialectDictionaryPage: React.FC = () => {
                         ? 'bg-emerald-500 text-white'
                         : selectedAnswer && isSelected
                           ? 'bg-rose-500 text-white'
-                          : 'border border-black/10 bg-[#f7f5f0] dark:border-white/10 dark:bg-[#201e1b] text-[#9a6a35] dark:text-[#d6aa72]'
+                          : 'border border-black/10 bg-[#f7f5f0] dark:border-white/10 dark:bg-[#201e1b] text-primary dark:text-primary-hover'
                         }`}
                     >
                       {selectedAnswer && isCorrect ? (
@@ -1029,7 +1029,7 @@ export const DialectDictionaryPage: React.FC = () => {
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-16 sm:px-8 sm:pt-10">
           <div className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 sm:p-10 text-center dark:border-white/[0.08] dark:bg-[#121210]">
             <div className="max-w-xl mx-auto">
-              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-[#9a6a35] dark:text-[#d6aa72]">
+              <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-primary dark:text-primary-hover">
                 <Trophy size={14} />
                 {result.badge}
               </div>
@@ -1045,7 +1045,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="text-[9px] font-black tracking-[0.25em] text-black/40 dark:text-white/40 mb-1">
                   YOUR FINAL SCORE
                 </div>
-                <div className="text-6xl sm:text-8xl font-black text-[#9a6a35] dark:text-[#d6aa72] tracking-tight">
+                <div className="text-6xl sm:text-8xl font-black text-primary dark:text-primary-hover tracking-tight">
                   {score}
                   <span className="text-xl sm:text-3xl text-black/40 dark:text-white/40 font-bold">
                     /10
@@ -1065,7 +1065,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <div className="mb-6 inline-flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-4 py-2.5">
                   <Gem
                     size={16}
-                    className="text-[#9a6a35] dark:text-[#d6aa72]"
+                    className="text-primary dark:text-primary-hover"
                   />
                   <span className="text-xs font-black">
                     صعيدي أباً عن جد.. ودانك واعية للكلام وعارف أصل الحكاية.
@@ -1074,9 +1074,9 @@ export const DialectDictionaryPage: React.FC = () => {
               )}
 
               {/* بطاقة المشاركة */}
-              <div className="rounded-2xl bg-[#211d18] p-5 sm:p-6 text-white text-right relative overflow-hidden mb-6">
+              <div className="rounded-2xl bg-espresso p-5 sm:p-6 text-white text-right relative overflow-hidden mb-6">
                 <div className="flex items-center justify-between mb-3 border-b border-white/10 pb-3">
-                  <div className="text-[8px] font-black tracking-[0.2em] text-[#d6aa72]">
+                  <div className="text-[8px] font-black tracking-[0.2em] text-primary-hover">
                     WAH ARCHIVE CERTIFICATE
                   </div>
                   <div className="text-xs font-bold text-white/50">
@@ -1085,7 +1085,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 </div>
 
                 <div className="py-2 text-center">
-                  <div className="text-3xl sm:text-4xl font-black text-[#d6aa72] mb-1">
+                  <div className="text-3xl sm:text-4xl font-black text-primary-hover mb-1">
                     {score} / 10
                   </div>
                   <div className="text-sm font-bold text-white/90">
@@ -1138,7 +1138,7 @@ export const DialectDictionaryPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={startQuiz}
-                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-[#211d18] px-6 text-xs font-black text-white hover:bg-[#9a6a35] dark:bg-#FFF6EB dark:text-black dark:hover:bg-[#d6aa72] transition-colors cursor-pointer"
+                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-xl bg-espresso px-6 text-xs font-black text-white hover:bg-primary dark:bg-cream dark:text-black dark:hover:bg-[#d6aa72] transition-colors cursor-pointer"
                 >
                   <RefreshCw size={14} />
                   جولة جديدة بأسئلة مختلفة
@@ -1164,7 +1164,7 @@ export const DialectDictionaryPage: React.FC = () => {
         <footer className="relative z-10 border-t border-black/[0.07] dark:border-white/[0.08] mt-8 pb-12">
           <div className="mx-auto max-w-[1700px] px-5 py-8 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-medium text-black/40 dark:text-white/40">
             <div className="flex items-center gap-2">
-              <CircleDot size={11} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+              <CircleDot size={11} className="text-primary dark:text-primary-hover" />
               <span>وه • توثيق الحكاية واللهجة الصعيدية الأصلية</span>
             </div>
             <div>جميع الحقوق محفوظة © {new Date().getFullYear()}</div>

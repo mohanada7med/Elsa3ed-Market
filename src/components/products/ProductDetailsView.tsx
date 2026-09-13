@@ -208,8 +208,8 @@ export const ProductDetailsView: React.FC = () => {
           flex
           items-center
           justify-center
-          bg-[#eee8dc]
-          dark:bg-[#0b0b0a]
+          bg-cream
+          dark:bg-espresso-900
           px-5
         "
       >
@@ -223,7 +223,7 @@ export const ProductDetailsView: React.FC = () => {
               animate-spin
               rounded-full
               border-4
-              border-[#9a6a35]/20
+              border-primary/20
               border-t-[#9a6a35]
               dark:border-[#d5a56d]/20
               dark:border-t-[#d5a56d]
@@ -247,8 +247,8 @@ export const ProductDetailsView: React.FC = () => {
           flex
           items-center
           justify-center
-          bg-[#eee8dc]
-          dark:bg-[#0b0b0a]
+          bg-cream
+          dark:bg-espresso-900
           px-5
         "
       >
@@ -265,7 +265,7 @@ export const ProductDetailsView: React.FC = () => {
             shadow-xl
             backdrop-blur-xl
             dark:border-white/10
-            dark:bg-[#151513]/80
+            dark:bg-espresso-900/80
           "
         >
           <div
@@ -278,10 +278,10 @@ export const ProductDetailsView: React.FC = () => {
               items-center
               justify-center
               rounded-2xl
-              bg-[#9a6a35]/10
-              text-[#9a6a35]
+              bg-primary/10
+              text-primary
               dark:bg-[#d5a56d]/10
-              dark:text-[#d5a56d]
+              dark:text-primary-hover
             "
           >
             <Package size={28} />
@@ -304,7 +304,7 @@ export const ProductDetailsView: React.FC = () => {
               items-center
               gap-2
               rounded-full
-              bg-[#211d18]
+              bg-espresso
               px-6
               py-3
               text-sm
@@ -312,10 +312,10 @@ export const ProductDetailsView: React.FC = () => {
               text-white
               transition
               hover:-translate-y-0.5
-              hover:bg-[#9a6a35]
-              dark:bg-#FFF6EB
+              hover:bg-primary
+              dark:bg-cream
               dark:text-black
-              dark:hover:bg-[#d5a56d]
+              dark:hover:bg-primary-hover
               cursor-pointer
             "
           >
@@ -334,12 +334,12 @@ export const ProductDetailsView: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors
         duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
         pb-28
         sm:pb-16
       "
@@ -355,7 +355,7 @@ export const ProductDetailsView: React.FC = () => {
             w-[500px]
             rounded-full
             border
-            border-[#9a6a35]/10
+            border-primary/10
             dark:border-[#d5a56d]/10
           "
         />
@@ -369,7 +369,7 @@ export const ProductDetailsView: React.FC = () => {
             w-[600px]
             rounded-full
             border
-            border-[#9a6a35]/5
+            border-primary/5
             dark:border-[#d5a56d]/5
           "
         />
@@ -418,7 +418,7 @@ export const ProductDetailsView: React.FC = () => {
               className="
                 shrink-0
                 transition
-                hover:text-[#9a6a35]
+                hover:text-primary
                 dark:hover:text-[#d5a56d]
                 cursor-pointer
               "
@@ -437,7 +437,7 @@ export const ProductDetailsView: React.FC = () => {
               className="
                 shrink-0
                 transition
-                hover:text-[#9a6a35]
+                hover:text-primary
                 dark:hover:text-[#d5a56d]
                 cursor-pointer
               "
@@ -453,8 +453,8 @@ export const ProductDetailsView: React.FC = () => {
             <span
               className="
                 shrink-0
-                text-[#9a6a35]
-                dark:text-[#d5a56d]
+                text-primary
+                dark:text-primary-hover
               "
             >
               {product.categoryName}
@@ -508,7 +508,7 @@ export const ProductDetailsView: React.FC = () => {
               border-black/10
               bg-[#ddd4c5]
               dark:border-white/10
-              dark:bg-[#151513]
+              dark:bg-espresso-900
               lg:min-h-[760px]
             "
           >
@@ -824,8 +824,8 @@ export const ProductDetailsView: React.FC = () => {
                   text-[9px]
                   font-black
                   tracking-[0.2em]
-                  text-[#9a6a35]
-                  dark:text-[#d5a56d]
+                  text-primary
+                  dark:text-primary-hover
                 "
               >
                 <Sparkles size={13} />
@@ -920,10 +920,10 @@ export const ProductDetailsView: React.FC = () => {
                     items-center
                     justify-center
                     rounded-2xl
-                    bg-[#9a6a35]/10
-                    text-[#9a6a35]
+                    bg-primary/10
+                    text-primary
                     dark:bg-[#d5a56d]/10
-                    dark:text-[#d5a56d]
+                    dark:text-primary-hover
                   "
                 >
                   <Store size={19} />
@@ -962,7 +962,7 @@ export const ProductDetailsView: React.FC = () => {
               >
                 <MapPin
                   size={15}
-                  className="text-[#9a6a35] dark:text-[#d5a56d]"
+                  className="text-primary dark:text-primary-hover"
                 />
 
                 محافظة {product.sellerGovernorate}
@@ -979,7 +979,7 @@ export const ProductDetailsView: React.FC = () => {
                   font-bold
                   text-black/35
                   transition
-                  hover:text-[#9a6a35]
+                  hover:text-primary
                   dark:text-white/30
                   dark:hover:text-[#d5a56d]
                   cursor-pointer
@@ -1012,7 +1012,7 @@ export const ProductDetailsView: React.FC = () => {
                     size={16}
                     className={
                       star <= Math.floor(product.rating)
-                        ? ' text-[#d6aa72]'
+                        ? ' text-primary-hover'
                         : 'text-black/15 dark:text-white/15'
                     }
                   />
@@ -1056,7 +1056,7 @@ export const ProductDetailsView: React.FC = () => {
                 border-black/10
                 bg-black/10
                 dark:border-white/10
-                dark:bg-#FFF6EB/10
+                dark:bg-cream/10
               "
             >
               <div
@@ -1147,8 +1147,8 @@ export const ProductDetailsView: React.FC = () => {
                         text-4xl
                         font-black
                         tracking-[-0.06em]
-                        text-[#9a6a35]
-                        dark:text-[#d5a56d]
+                        text-primary
+                        dark:text-primary-hover
                       "
                     >
                       {product.price}
@@ -1245,7 +1245,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.025]
                         p-1
                         dark:border-white/10
-                        dark:bg-#FFF6EB/[0.025]
+                        dark:bg-cream/[0.025]
                       "
                     >
                       <button
@@ -1322,7 +1322,7 @@ export const ProductDetailsView: React.FC = () => {
                         justify-center
                         gap-2
                         rounded-2xl
-                        bg-[#211d18]
+                        bg-espresso
                         px-4
                         text-xs
                         font-black
@@ -1330,12 +1330,12 @@ export const ProductDetailsView: React.FC = () => {
                         shadow-lg
                         transition
                         hover:-translate-y-0.5
-                        hover:bg-[#9a6a35]
+                        hover:bg-primary
                         disabled:cursor-not-allowed
                         disabled:opacity-40
-                        dark:bg-#FFF6EB
+                        dark:bg-cream
                         dark:text-black
-                        dark:hover:bg-[#d5a56d]
+                        dark:hover:bg-primary-hover
                         cursor-pointer
                       "
                     >
@@ -1374,18 +1374,18 @@ export const ProductDetailsView: React.FC = () => {
                       gap-2
                       rounded-2xl
                       border
-                      border-[#9a6a35]/20
-                      bg-[#9a6a35]/5
+                      border-primary/20
+                      bg-primary/5
                       px-4
                       text-xs
                       font-bold
                       text-[#7b542b]
                       transition
-                      hover:bg-[#9a6a35]/10
+                      hover:bg-primary/10
                       dark:border-[#d5a56d]/20
                       dark:bg-[#d5a56d]/5
-                      dark:text-[#d5a56d]
-                      dark:hover:bg-[#d5a56d]/10
+                      dark:text-primary-hover
+                      dark:hover:bg-primary-hover/10
                       cursor-pointer
                     "
                   >
@@ -1403,7 +1403,7 @@ export const ProductDetailsView: React.FC = () => {
                     p-4
                   "
                 >
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-[#d5a56d]">
+                  <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-primary-hover">
                     <Store size={16} />
                     أنت مسجل كبائع وحرفي
                   </div>
@@ -1455,7 +1455,7 @@ export const ProductDetailsView: React.FC = () => {
                         text-amber-800
                         hover:bg-amber-50
                         dark:bg-[#1a1512]
-                        dark:text-[#d5a56d]
+                        dark:text-primary-hover
                         cursor-pointer
                       "
                     >
@@ -1561,12 +1561,12 @@ export const ProductDetailsView: React.FC = () => {
                     bg-black/[0.025]
                     p-3
                     dark:border-white/10
-                    dark:bg-#FFF6EB/[0.025]
+                    dark:bg-cream/[0.025]
                   "
                 >
                   <Truck
                     size={16}
-                    className="text-[#9a6a35] dark:text-[#d5a56d]"
+                    className="text-primary dark:text-primary-hover"
                   />
 
                   <div className="mt-2 text-[9px] font-bold text-black/50 dark:text-white/40">
@@ -1582,12 +1582,12 @@ export const ProductDetailsView: React.FC = () => {
                     bg-black/[0.025]
                     p-3
                     dark:border-white/10
-                    dark:bg-#FFF6EB/[0.025]
+                    dark:bg-cream/[0.025]
                   "
                 >
                   <ShieldCheck
                     size={16}
-                    className="text-[#9a6a35] dark:text-[#d5a56d]"
+                    className="text-primary dark:text-primary-hover"
                   />
 
                   <div className="mt-2 text-[9px] font-bold text-black/50 dark:text-white/40">
@@ -1609,8 +1609,8 @@ export const ProductDetailsView: React.FC = () => {
             overflow-hidden
             rounded-[2rem]
             border
-            border-[#9a6a35]/20
-            bg-[#211d18]
+            border-primary/20
+            bg-espresso
             text-white
             dark:border-[#d5a56d]/20
           "
@@ -1755,7 +1755,7 @@ export const ProductDetailsView: React.FC = () => {
                     cursor-pointer
                     sm:px-7
                     ${activeTab === key
-                      ? 'border-b-2 border-[#9a6a35] text-[#9a6a35] dark:border-[#d5a56d] dark:text-[#d5a56d]'
+                      ? 'border-b-2 border-primary text-primary dark:border-[#d5a56d] dark:text-primary-hover'
                       : 'text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white'
                     }
                   `}
@@ -1780,8 +1780,8 @@ export const ProductDetailsView: React.FC = () => {
                         text-[9px]
                         font-black
                         tracking-[0.2em]
-                        text-[#9a6a35]
-                        dark:text-[#d5a56d]
+                        text-primary
+                        dark:text-primary-hover
                       "
                     >
                       <Sparkles size={14} />
@@ -1838,7 +1838,7 @@ export const ProductDetailsView: React.FC = () => {
                               font-bold
                               text-black/50
                               dark:border-white/10
-                              dark:bg-#FFF6EB/[0.025]
+                              dark:bg-cream/[0.025]
                               dark:text-white/45
                             "
                           >
@@ -1852,7 +1852,7 @@ export const ProductDetailsView: React.FC = () => {
                   <div
                     className="
                       rounded-3xl
-                      bg-[#211d18]
+                      bg-espresso
                       p-6
                       text-white
                       dark:bg-[#0d0d0c]
@@ -1911,8 +1911,8 @@ export const ProductDetailsView: React.FC = () => {
                         text-[9px]
                         font-black
                         tracking-[0.2em]
-                        text-[#9a6a35]
-                        dark:text-[#d5a56d]
+                        text-primary
+                        dark:text-primary-hover
                       "
                     >
                       PRODUCT SPECIFICATION
@@ -2009,10 +2009,10 @@ export const ProductDetailsView: React.FC = () => {
                               items-center
                               justify-center
                               rounded-xl
-                              bg-[#9a6a35]/10
-                              text-[#9a6a35]
+                              bg-primary/10
+                              text-primary
                               dark:bg-[#d5a56d]/10
-                              dark:text-[#d5a56d]
+                              dark:text-primary-hover
                             "
                           >
                             {icon}
@@ -2044,7 +2044,7 @@ export const ProductDetailsView: React.FC = () => {
                     className="
                       h-fit
                       rounded-3xl
-                      bg-[#211d18]
+                      bg-espresso
                       p-7
                       text-white
                       dark:bg-[#0d0d0c]
@@ -2071,7 +2071,7 @@ export const ProductDetailsView: React.FC = () => {
                                     Math.floor(
                                       product.rating
                                     )
-                                    ? ' text-[#d6aa72]'
+                                    ? ' text-primary-hover'
                                     : 'text-white/15'
                                 }
                               />
@@ -2112,8 +2112,8 @@ export const ProductDetailsView: React.FC = () => {
                           size={25}
                           className="
                             mx-auto
-                            text-[#9a6a35]
-                            dark:text-[#d5a56d]
+                            text-primary
+                            dark:text-primary-hover
                           "
                         />
 
@@ -2132,7 +2132,7 @@ export const ProductDetailsView: React.FC = () => {
                             bg-black/[0.02]
                             p-5
                             dark:border-white/10
-                            dark:bg-#FFF6EB/[0.02]
+                            dark:bg-cream/[0.02]
                           "
                         >
                           <div className="flex items-center justify-between gap-4">
@@ -2145,7 +2145,7 @@ export const ProductDetailsView: React.FC = () => {
                                   items-center
                                   justify-center
                                   rounded-full
-                                  bg-[#9a6a35]
+                                  bg-primary
                                   text-sm
                                   font-black
                                   text-white
@@ -2176,7 +2176,7 @@ export const ProductDetailsView: React.FC = () => {
                                 <Star
                                   key={index}
                                   size={12}
-                                  className=" text-[#d6aa72]"
+                                  className=" text-primary-hover"
                                 />
                               ))}
                             </div>
@@ -2204,7 +2204,7 @@ export const ProductDetailsView: React.FC = () => {
                         bg-white/60
                         p-6
                         dark:border-white/10
-                        dark:bg-#FFF6EB/[0.02]
+                        dark:bg-cream/[0.02]
                       "
                     >
                       <h4 className="text-sm font-black">
@@ -2226,7 +2226,7 @@ export const ProductDetailsView: React.FC = () => {
                                 size={20}
                                 className={
                                   star <= newRating
-                                    ? ' text-[#d6aa72]'
+                                    ? ' text-primary-hover'
                                     : 'text-black/15 dark:text-white/15'
                                 }
                               />
@@ -2255,9 +2255,9 @@ export const ProductDetailsView: React.FC = () => {
                           text-xs
                           outline-none
                           transition
-                          focus:border-[#9a6a35]
+                          focus:border-primary
                           dark:border-white/10
-                          dark:bg-#FFF6EB/[0.025]
+                          dark:bg-cream/[0.025]
                         "
                       />
 
@@ -2269,17 +2269,17 @@ export const ProductDetailsView: React.FC = () => {
                           items-center
                           gap-2
                           rounded-xl
-                          bg-[#211d18]
+                          bg-espresso
                           px-5
                           py-3
                           text-xs
                           font-bold
                           text-white
                           transition
-                          hover:bg-[#9a6a35]
-                          dark:bg-#FFF6EB
+                          hover:bg-primary
+                          dark:bg-cream
                           dark:text-black
-                          dark:hover:bg-[#d5a56d]
+                          dark:hover:bg-primary-hover
                           cursor-pointer
                         "
                       >
@@ -2301,8 +2301,8 @@ export const ProductDetailsView: React.FC = () => {
                         text-[9px]
                         font-black
                         tracking-[0.2em]
-                        text-[#9a6a35]
-                        dark:text-[#d5a56d]
+                        text-primary
+                        dark:text-primary-hover
                       "
                     >
                       DELIVERY & PACKAGING
@@ -2322,12 +2322,12 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.02]
                         p-6
                         dark:border-white/10
-                        dark:bg-#FFF6EB/[0.02]
+                        dark:bg-cream/[0.02]
                       "
                     >
                       <Package
                         size={22}
-                        className="text-[#9a6a35] dark:text-[#d5a56d]"
+                        className="text-primary dark:text-primary-hover"
                       />
 
                       <h4 className="mt-4 text-sm font-black">
@@ -2349,12 +2349,12 @@ export const ProductDetailsView: React.FC = () => {
                         bg-black/[0.02]
                         p-6
                         dark:border-white/10
-                        dark:bg-#FFF6EB/[0.02]
+                        dark:bg-cream/[0.02]
                       "
                     >
                       <Truck
                         size={22}
-                        className="text-[#9a6a35] dark:text-[#d5a56d]"
+                        className="text-primary dark:text-primary-hover"
                       />
 
                       <h4 className="mt-4 text-sm font-black">
@@ -2406,8 +2406,8 @@ export const ProductDetailsView: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.2em]
-                    text-[#9a6a35]
-                    dark:text-[#d5a56d]
+                    text-primary
+                    dark:text-primary-hover
                   "
                 >
                   YOU MAY ALSO LIKE
@@ -2427,9 +2427,9 @@ export const ProductDetailsView: React.FC = () => {
                   gap-2
                   text-xs
                   font-bold
-                  text-[#9a6a35]
+                  text-primary
                   hover:underline
-                  dark:text-[#d5a56d]
+                  dark:text-primary-hover
                   sm:flex
                   cursor-pointer
                 "
@@ -2474,7 +2474,7 @@ export const ProductDetailsView: React.FC = () => {
                 text-xs
                 font-bold
                 dark:border-white/10
-                dark:bg-#FFF6EB/[0.025]
+                dark:bg-cream/[0.025]
                 sm:hidden
                 cursor-pointer
               "
@@ -2502,13 +2502,13 @@ export const ProductDetailsView: React.FC = () => {
               z-50
               border-t
               border-black/10
-              bg-[#eee8dc]/95
+              bg-cream/95
               p-3
               pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]
               shadow-[0_-10px_40px_rgba(0,0,0,0.12)]
               backdrop-blur-2xl
               dark:border-white/10
-              dark:bg-[#0b0b0a]/95
+              dark:bg-espresso-900/95
               sm:hidden
             "
           >
@@ -2518,7 +2518,7 @@ export const ProductDetailsView: React.FC = () => {
                   الإجمالي
                 </div>
 
-                <div className="text-base font-black text-[#9a6a35] dark:text-[#d5a56d]">
+                <div className="text-base font-black text-primary dark:text-primary-hover">
                   {totalPrice} ج.م
                 </div>
               </div>
@@ -2533,7 +2533,7 @@ export const ProductDetailsView: React.FC = () => {
                   border-black/10
                   bg-black/[0.03]
                   dark:border-white/10
-                  dark:bg-#FFF6EB/[0.03]
+                  dark:bg-cream/[0.03]
                 "
               >
                 <button
@@ -2597,12 +2597,12 @@ export const ProductDetailsView: React.FC = () => {
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[#211d18]
+                  bg-espresso
                   px-3
                   text-xs
                   font-black
                   text-white
-                  dark:bg-#FFF6EB
+                  dark:bg-cream
                   dark:text-black
                   cursor-pointer
                 "

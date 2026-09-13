@@ -63,9 +63,9 @@ export const PersonDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#9a6a35] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-sm font-bold text-black/60 dark:text-white/60">جاري تحميل ملف السيرة والمسيرة...</p>
         </div>
       </div>
@@ -74,13 +74,13 @@ export const PersonDetailPage: React.FC = () => {
 
   if (!person) {
     return (
-      <div className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-center">
         <div>
           <h2 className="text-2xl font-black mb-2">الملف غير موجود</h2>
           <p className="text-sm text-black/60 dark:text-white/60 mb-6">لم نتمكن من العثور على بيانات هذا الشخص</p>
           <button
             onClick={() => setActivePage('people')}
-            className="px-6 py-3 rounded-xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black font-bold text-xs cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs cursor-pointer"
           >
             العودة لكافة ناس الصعيد
           </button>
@@ -99,11 +99,11 @@ export const PersonDetailPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* =====================================================
@@ -117,7 +117,7 @@ export const PersonDetailPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
               cursor-pointer
             "
           >
@@ -128,10 +128,10 @@ export const PersonDetailPage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -145,7 +145,7 @@ export const PersonDetailPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
             <div className="mt-1 text-sm font-black">شيخ الصنعة</div>
@@ -161,7 +161,7 @@ export const PersonDetailPage: React.FC = () => {
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -207,15 +207,15 @@ export const PersonDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigateToGovernorate(person.governorateId || 'qena')}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-black/5 dark:bg-#FFF6EB/5 px-3.5 py-1 text-xs font-bold text-black/70 dark:text-white/70 hover:bg-[#9a6a35] hover:text-white transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-black/5 dark:bg-cream/5 px-3.5 py-1 text-xs font-bold text-black/70 dark:text-white/70 hover:bg-primary hover:text-white transition-colors cursor-pointer"
                   >
-                    <MapPin size={13} className="text-[#9a6a35]" />
+                    <MapPin size={13} className="text-primary" />
                     <span>محافظة {person.governorateName}</span>
                   </button>
                 )}
 
                 {person.yearsOfExperience && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#9a6a35]/10 px-3.5 py-1 text-xs font-bold text-[#9a6a35]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
                     <Award size={13} />
                     <span>خبرة {person.yearsOfExperience} عاماً</span>
                   </span>
@@ -249,11 +249,11 @@ export const PersonDetailPage: React.FC = () => {
               shadow-lg
               backdrop-blur-xl
               dark:border-white/10
-              dark:bg-[#151513]/90
+              dark:bg-espresso-900/90
             "
           >
-            <Quote size={36} className="text-[#9a6a35]/30 mb-4" />
-            <span className="text-[10px] font-bold tracking-[0.3em] text-[#9a6a35] block mb-2">
+            <Quote size={36} className="text-primary/30 mb-4" />
+            <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2">
               MASTER'S WISDOM
             </span>
             <h2 className="text-2xl sm:text-3xl font-black font-serif mb-4">
@@ -275,7 +275,7 @@ export const PersonDetailPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -312,7 +312,7 @@ export const PersonDetailPage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('people')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-md cursor-pointer w-fit"                >
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-espresso text-white dark:bg-cream dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-primary dark:hover:bg-primary-hover shadow-md cursor-pointer w-fit"                >
                   <span>تصفح كافة ناس الصعيد</span>
                   <ArrowLeft size={15} />
                 </button>

@@ -618,22 +618,22 @@ export const AuthModal: React.FC = () => {
     text-[15px]
     sm:text-[16px]
     font-medium
-    text-[#211d18]
+    text-espresso
     outline-none
     transition-all
     duration-200
     placeholder:text-black/35
-    focus:border-[#9a6a35]
+    focus:border-primary
     focus:bg-white
     focus:ring-4
-    focus:ring-[#9a6a35]/10
+    focus:ring-primary/10
     dark:border-white/10
-    dark:bg-#FFF6EB/5
-    dark:text-[#f5f0e7]
+    dark:bg-cream/5
+    dark:text-cream
     dark:placeholder:text-white/30
-    dark:focus:border-[#9a6a35]
+    dark:focus:border-primary
     dark:focus:bg-[#151513]
-    dark:focus:ring-[#9a6a35]/10
+    dark:focus:ring-primary/10
   `;
 
   const labelClass = `
@@ -642,8 +642,8 @@ export const AuthModal: React.FC = () => {
     text-[13px]
     sm:text-[14px]
     font-black
-    text-[#211d18]
-    dark:text-[#f5f0e7]
+    text-espresso
+    dark:text-cream
   `;
 
   const iconClass = `
@@ -666,9 +666,9 @@ export const AuthModal: React.FC = () => {
     justify-center
     gap-2
     rounded-2xl
-    bg-[#211d18]
+    bg-espresso
     text-white
-    dark:bg-#FFF6EB
+    dark:bg-cream
     dark:text-black
     px-4
     sm:px-5
@@ -678,8 +678,8 @@ export const AuthModal: React.FC = () => {
     shadow-lg
     transition-all
     duration-200
-    hover:bg-[#9a6a35]
-    dark:hover:bg-[#d5a56d]
+    hover:bg-primary
+    dark:hover:bg-primary-hover
     active:scale-[0.99]
     disabled:cursor-not-allowed
     disabled:opacity-60
@@ -738,10 +738,10 @@ export const AuthModal: React.FC = () => {
           rounded-[2rem]
           border
           border-black/10
-          bg-[#eee8dc]
+          bg-cream
           shadow-2xl
           dark:border-white/10
-          dark:bg-[#151513]
+          dark:bg-espresso-900
           backdrop-blur-2xl
         "
       >
@@ -779,7 +779,7 @@ export const AuthModal: React.FC = () => {
               w-48
               rounded-full
               border
-              border-[#9a6a35]/15
+              border-primary/15
             "
           />
 
@@ -793,7 +793,7 @@ export const AuthModal: React.FC = () => {
               w-32
               rounded-full
               border
-              border-[#9a6a35]/15
+              border-primary/15
             "
           />
 
@@ -822,17 +822,17 @@ export const AuthModal: React.FC = () => {
               border
               border-black/10
               bg-white/80
-              text-[#211d18]
+              text-espresso
               backdrop-blur-sm
               transition-all
-              hover:border-[#9a6a35]
-              hover:bg-[#9a6a35]
+              hover:border-primary
+              hover:bg-primary
               hover:text-white
               dark:border-white/10
-              dark:bg-#FFF6EB/5
-              dark:text-[#f5f0e7]
-              dark:hover:border-[#9a6a35]
-              dark:hover:bg-[#9a6a35]
+              dark:bg-cream/5
+              dark:text-cream
+              dark:hover:border-primary
+              dark:hover:bg-primary
               dark:hover:text-white
               cursor-pointer
             "
@@ -854,7 +854,7 @@ export const AuthModal: React.FC = () => {
                 justify-center
                 overflow-hidden
                 rounded-2xl
-                bg-[#9a6a35]
+                bg-primary
                 text-white
                 shadow-md
               "
@@ -878,20 +878,20 @@ export const AuthModal: React.FC = () => {
                   sm:text-[10px]
                   font-black
                   tracking-[0.25em]
-                  text-[#9a6a35]
+                  text-primary
                 "
               >
                 WAH
               </p>
 
-              <p className="mt-0.5 truncate text-[14px] sm:text-[16px] font-black text-[#211d18] dark:text-[#f5f0e7]">
+              <p className="mt-0.5 truncate text-[14px] sm:text-[16px] font-black text-espresso dark:text-cream">
                 من هنا تبدأ الحكاية
               </p>
             </div>
           </div>
 
           <div className="relative z-10 mt-3 flex items-center gap-2 sm:mt-4 sm:gap-3">
-            <span className="h-px w-6 sm:w-8 bg-[#9a6a35]" />
+            <span className="h-px w-6 sm:w-8 bg-primary" />
 
             <span className="text-[11px] sm:text-[12px] font-bold text-black/60 dark:text-white/60">
               حكايات الصعيد أقرب ليك
@@ -935,10 +935,10 @@ export const AuthModal: React.FC = () => {
               <div className="mb-2 flex items-center gap-2">
                 <Sparkles
                   size={15}
-                  className="shrink-0 text-[#9a6a35]"
+                  className="shrink-0 text-primary"
                 />
 
-                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.1em] text-[#9a6a35]">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.1em] text-primary">
                   {forgotPassword
                     ? 'ACCOUNT RECOVERY'
                     : authModalTab === 'login'
@@ -953,8 +953,8 @@ export const AuthModal: React.FC = () => {
                   leading-tight
                   font-black
                   tracking-tight
-                  text-[#211d18]
-                  dark:text-[#f5f0e7]
+                  text-espresso
+                  dark:text-cream
                   sm:text-[28px]
                   md:text-[30px]
                 "
@@ -1042,7 +1042,7 @@ export const AuthModal: React.FC = () => {
                     p-4
                     sm:p-5
                     dark:border-white/10
-                    dark:bg-#FFF6EB/5
+                    dark:bg-cream/5
                     backdrop-blur-xl
                   "
                 >
@@ -1058,15 +1058,15 @@ export const AuthModal: React.FC = () => {
                         items-center
                         justify-center
                         rounded-2xl
-                        bg-[#9a6a35]/10
-                        text-[#9a6a35]
+                        bg-primary/10
+                        text-primary
                       "
                     >
                       <KeyRound size={20} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[14px] sm:text-[15px] font-black text-[#211d18] dark:text-[#f5f0e7]">
+                      <p className="text-[14px] sm:text-[15px] font-black text-espresso dark:text-cream">
                         نسيت كلمة السر؟
                       </p>
 
@@ -1147,8 +1147,8 @@ export const AuthModal: React.FC = () => {
                     text-black/60
                     dark:text-white/60
                     transition-colors
-                    hover:text-[#9a6a35]
-                    dark:hover:text-[#9a6a35]
+                    hover:text-primary
+                    dark:hover:text-primary
                     cursor-pointer
                   "
                 >
@@ -1173,7 +1173,7 @@ export const AuthModal: React.FC = () => {
                     bg-white/50
                     p-1
                     dark:border-white/10
-                    dark:bg-#FFF6EB/5
+                    dark:bg-cream/5
                     backdrop-blur-xl
                   "
                 >
@@ -1200,17 +1200,17 @@ export const AuthModal: React.FC = () => {
                       cursor-pointer
                       ${authModalTab === 'login'
                         ? `
-                              bg-[#211d18]
+                              bg-espresso
                               text-white
-                              dark:bg-#FFF6EB
+                              dark:bg-cream
                               dark:text-black
                               shadow-md
                             `
                         : `
                               text-black/60
-                              hover:text-[#9a6a35]
+                              hover:text-primary
                               dark:text-white/60
-                              dark:hover:text-[#9a6a35]
+                              dark:hover:text-primary
                             `
                       }
                     `}
@@ -1242,17 +1242,17 @@ export const AuthModal: React.FC = () => {
                       cursor-pointer
                       ${authModalTab === 'register'
                         ? `
-                              bg-[#211d18]
+                              bg-espresso
                               text-white
-                              dark:bg-#FFF6EB
+                              dark:bg-cream
                               dark:text-black
                               shadow-md
                             `
                         : `
                               text-black/60
-                              hover:text-[#9a6a35]
+                              hover:text-primary
                               dark:text-white/60
-                              dark:hover:text-[#9a6a35]
+                              dark:hover:text-primary
                             `
                       }
                     `}
@@ -1278,7 +1278,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -1315,8 +1315,8 @@ export const AuthModal: React.FC = () => {
                           gap-2
                           rounded-2xl
                           border
-                          border-[#9a6a35]/20
-                          bg-[#9a6a35]/10
+                          border-primary/20
+                          bg-primary/10
                           px-3.5
                           py-2.5
                           sm:py-3
@@ -1324,18 +1324,18 @@ export const AuthModal: React.FC = () => {
                           leading-5
                           sm:text-[12px]
                           sm:leading-6
-                          text-[#211d18]
-                          dark:text-[#f5f0e7]
+                          text-espresso
+                          dark:text-cream
                         "
                       >
                         <Info
                           size={15}
-                          className="mt-0.5 shrink-0 text-[#9a6a35]"
+                          className="mt-0.5 shrink-0 text-primary"
                         />
 
                         <span className="min-w-0">
                           اكتب نفس اسم المستخدم اللي عملت بيه الحساب.
-                          <strong className="mr-1 text-[#9a6a35]">
+                          <strong className="mr-1 text-primary">
                             ينفع يكون بالعربي.
                           </strong>
                         </span>
@@ -1349,7 +1349,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         كلمة السر
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -1402,10 +1402,10 @@ export const AuthModal: React.FC = () => {
                             text-black/50
                             transition-all
                             hover:bg-black/5
-                            hover:text-[#9a6a35]
+                            hover:text-primary
                             dark:text-white/50
                             dark:hover:bg-white/5
-                            dark:hover:text-[#9a6a35]
+                            dark:hover:text-primary
                             cursor-pointer
                           "
                           aria-label={
@@ -1435,7 +1435,7 @@ export const AuthModal: React.FC = () => {
                           text-[12px]
                           sm:text-[13px]
                           font-bold
-                          text-[#9a6a35]
+                          text-primary
                           transition-colors
                           hover:underline
                           cursor-pointer
@@ -1483,7 +1483,7 @@ export const AuthModal: React.FC = () => {
                           className="
                             mr-1.5
                             font-black
-                            text-[#9a6a35]
+                            text-primary
                             hover:underline
                             cursor-pointer
                           "
@@ -1536,25 +1536,25 @@ export const AuthModal: React.FC = () => {
                             cursor-pointer
                             ${roleType === 'buyer'
                               ? `
-                                    border-[#9a6a35]
-                                    bg-[#9a6a35]/10
-                                    text-[#9a6a35]
+                                    border-primary
+                                    bg-primary/10
+                                    text-primary
                                     shadow-sm
                                   `
                               : `
                                     border-black/10
                                     dark:border-white/10
                                     bg-white/60
-                                    dark:bg-#FFF6EB/5
+                                    dark:bg-cream/5
                                     text-black/70
                                     dark:text-white/70
-                                    hover:border-[#9a6a35]/40
+                                    hover:border-primary/40
                                   `
                             }
                           `}
                         >
                           {roleType === 'buyer' && (
-                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#9a6a35] text-white">
+                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-primary text-white">
                               <Check size={13} />
                             </span>
                           )}
@@ -1595,11 +1595,11 @@ export const AuthModal: React.FC = () => {
                             cursor-pointer
                             ${roleType === 'seller'
                               ? `
-                                    border-[#211d18]
+                                    border-espresso
                                     dark:border-white
-                                    bg-[#211d18]/10
-                                    dark:bg-#FFF6EB/10
-                                    text-[#211d18]
+                                    bg-espresso/10
+                                    dark:bg-cream/10
+                                    text-espresso
                                     dark:text-white
                                     shadow-sm
                                   `
@@ -1607,7 +1607,7 @@ export const AuthModal: React.FC = () => {
                                     border-black/10
                                     dark:border-white/10
                                     bg-white/60
-                                    dark:bg-#FFF6EB/5
+                                    dark:bg-cream/5
                                     text-black/70
                                     dark:text-white/70
                                     hover:border-black/30
@@ -1616,7 +1616,7 @@ export const AuthModal: React.FC = () => {
                           `}
                         >
                           {roleType === 'seller' && (
-                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black">
+                            <span className="absolute left-2.5 top-2.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-espresso text-white dark:bg-cream dark:text-black">
                               <Check size={13} />
                             </span>
                           )}
@@ -1649,7 +1649,7 @@ export const AuthModal: React.FC = () => {
                         p-3
                         sm:p-4
                         dark:border-white/10
-                        dark:bg-#FFF6EB/5
+                        dark:bg-cream/5
                         backdrop-blur-xl
                       "
                     >
@@ -1672,7 +1672,7 @@ export const AuthModal: React.FC = () => {
                           overflow-hidden
                           rounded-2xl
                           bg-black/5
-                          dark:bg-#FFF6EB/5
+                          dark:bg-cream/5
                           cursor-pointer
                         "
                         aria-label="اختيار صورة الحساب"
@@ -1704,7 +1704,7 @@ export const AuthModal: React.FC = () => {
                             flex
                             items-center
                             justify-center
-                            bg-[#9a6a35]/90
+                            bg-primary/90
                             text-white
                             opacity-0
                             transition-opacity
@@ -1728,7 +1728,7 @@ export const AuthModal: React.FC = () => {
                       />
 
                       <div className="min-w-0">
-                        <p className="text-[13px] sm:text-[14px] font-black text-[#211d18] dark:text-[#f5f0e7]">
+                        <p className="text-[13px] sm:text-[14px] font-black text-espresso dark:text-cream">
                           صورة الحساب
                         </p>
 
@@ -1746,7 +1746,7 @@ export const AuthModal: React.FC = () => {
                             text-[11px]
                             sm:text-[12px]
                             font-black
-                            text-[#9a6a35]
+                            text-primary
                             hover:underline
                             cursor-pointer
                           "
@@ -1763,7 +1763,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         اسم المستخدم
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -1796,23 +1796,23 @@ export const AuthModal: React.FC = () => {
                           mt-2
                           rounded-2xl
                           border
-                          border-[#9a6a35]/20
-                          bg-[#9a6a35]/10
+                          border-primary/20
+                          bg-primary/10
                           px-3.5
                           py-2.5
                           sm:py-3
-                          dark:border-[#9a6a35]/30
+                          dark:border-primary/30
                         "
                       >
                         <div className="flex min-w-0 items-start gap-2">
                           <Info
                             size={16}
-                            className="mt-0.5 shrink-0 text-[#9a6a35]"
+                            className="mt-0.5 shrink-0 text-primary"
                           />
 
-                          <div className="min-w-0 text-[11px] leading-5 text-[#211d18] dark:text-[#f5f0e7] sm:text-[12px] font-medium">
+                          <div className="min-w-0 text-[11px] leading-5 text-espresso dark:text-cream sm:text-[12px] font-medium">
                             <p>
-                              <strong className="text-[#9a6a35]">
+                              <strong className="text-primary">
                                 مهم:
                               </strong>{' '}
                               ده اسمك في وه والاسم اللي هتستخدمه لتسجيل الدخول بعد كده.
@@ -1833,7 +1833,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         الاسم بالكامل
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -1868,7 +1868,7 @@ export const AuthModal: React.FC = () => {
                           className={labelClass}
                         >
                           اسم الورشة أو المشروع
-                          <span className="mr-1 text-[#9a6a35]">
+                          <span className="mr-1 text-primary">
                             *
                           </span>
                         </label>
@@ -1903,7 +1903,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         رقم الموبايل
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -2059,7 +2059,7 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         كلمة السر
-                        <span className="mr-1 text-[#9a6a35]">
+                        <span className="mr-1 text-primary">
                           *
                         </span>
                       </label>
@@ -2112,10 +2112,10 @@ export const AuthModal: React.FC = () => {
                             text-black/50
                             transition-all
                             hover:bg-black/5
-                            hover:text-[#9a6a35]
+                            hover:text-primary
                             dark:text-white/50
                             dark:hover:bg-white/5
-                            dark:hover:text-[#9a6a35]
+                            dark:hover:text-primary
                             cursor-pointer
                           "
                           aria-label={
@@ -2179,7 +2179,7 @@ export const AuthModal: React.FC = () => {
                     >
                       <ShieldCheck
                         size={15}
-                        className="shrink-0 text-[#9a6a35]"
+                        className="shrink-0 text-primary"
                       />
 
                       <span>

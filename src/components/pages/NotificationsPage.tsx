@@ -24,11 +24,11 @@ export const NotificationsPage: React.FC = () => {
         min-h-screen
         w-full
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-8 sm:py-10 pt-28 sm:pt-36 pb-24 sm:pb-20 space-y-6 sm:space-y-8">
@@ -38,27 +38,27 @@ export const NotificationsPage: React.FC = () => {
             type="button"
             id="notifications-breadcrumb-home"
             onClick={() => setActivePage('home')}
-            className="hover:text-[#9a6a35] transition-colors cursor-pointer flex items-center gap-1"
+            className="hover:text-primary transition-colors cursor-pointer flex items-center gap-1"
           >
             <span>الرئيسية</span>
           </button>
           <ChevronRight className="w-3.5 h-3.5 rotate-180 text-black/30 dark:text-white/30" />
-          <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">مركز الإشعارات والتنبيهات</span>
+          <span className="font-bold text-espresso dark:text-cream">مركز الإشعارات والتنبيهات</span>
         </nav>
 
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-5 sm:pb-6">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] mb-1">
+            <div className="flex items-center gap-2 text-xs font-bold text-primary dark:text-primary-hover mb-1">
               <Bell className="w-4 h-4" />
               <span>نظام التنبيهات المباشر</span>
               {unreadNotificationsCount > 0 && !isGuest && (
-                <span className="px-2 py-0.5 rounded-full bg-[#9a6a35] text-white text-[10px] font-black">
+                <span className="px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-black">
                   {unreadNotificationsCount} غير مقروء
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#211d18] dark:text-[#f5f0e7] font-serif">
+            <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream font-serif">
               مركز الإشعارات والتنبيهات
             </h1>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-1 max-w-2xl">
@@ -71,7 +71,7 @@ export const NotificationsPage: React.FC = () => {
               type="button"
               id="notifications-back-market-btn"
               onClick={() => setActivePage('products' as any)}
-              className="px-4 py-2.5 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream border border-black/10 dark:border-white/10 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5"
             >
               <span>تصفح السوق</span>
               <ArrowRight className="w-3.5 h-3.5 rotate-180" />
@@ -81,11 +81,11 @@ export const NotificationsPage: React.FC = () => {
 
         {/* Guest prompt if not logged in */}
         {isGuest ? (
-          <div className="max-w-md mx-auto my-12 p-8 bg-white/80 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] flex items-center justify-center mx-auto text-2xl border border-[#9a6a35]/20">
+          <div className="max-w-md mx-auto my-12 p-8 bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl text-center space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mx-auto text-2xl border border-primary/20">
               🔔
             </div>
-            <h2 className="text-xl font-bold text-[#211d18] dark:text-[#f5f0e7]">
+            <h2 className="text-xl font-bold text-espresso dark:text-cream">
               سجل دخولك لعرض إشعاراتك
             </h2>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 leading-relaxed">
@@ -99,7 +99,7 @@ export const NotificationsPage: React.FC = () => {
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="w-full py-3.5 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
                 <span>تسجيل الدخول الآن</span>
@@ -111,7 +111,7 @@ export const NotificationsPage: React.FC = () => {
                   setAuthModalTab('register');
                   setIsAuthModalOpen(true);
                 }}
-                className="w-full py-2.5 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 text-[#211d18] dark:text-[#f5f0e7] font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
+                className="w-full py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 transition-all cursor-pointer"
               >
                 إنشاء حساب جديد
               </button>

@@ -127,9 +127,9 @@ export const WahEcosystemPortalSection: React.FC = () => {
       className="
         py-16
         bg-transparent
-        text-[#211d18]
+        text-espresso
         transition-colors duration-500
-        dark:text-[#f5f0e7]
+        dark:text-cream
         max-w-[1600px]
         mx-auto
         px-5
@@ -139,13 +139,13 @@ export const WahEcosystemPortalSection: React.FC = () => {
       "
     >
       {/* الرأس التحريري */}
-      <div className="relative z-10 mb-12 sm:mb-16 text-[#211d18] dark:text-[#f5f0e7] select-none">
+      <div className="relative z-10 mb-12 sm:mb-16 text-espresso dark:text-cream select-none">
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                <Compass size={14} className="animate-spin-slow text-[#9a6a35] dark:text-[#d6aa72]" />
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+                <Compass size={14} className="animate-spin-slow text-primary dark:text-primary-hover" />
               </span>
               DISCOVER / أبواب ودليل «وه»
             </div>
@@ -154,7 +154,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
             <h2 className="font-heritage text-4xl sm:text-6xl lg:text-[7rem] xl:text-[8rem] font-black leading-[1.05] tracking-tight">
               الصعيد فى مكان واحد
               <br />
-              <span className="text-[#9a6a35] dark:text-[#d6aa72]">
+              <span className="text-primary dark:text-primary-hover">
                 «وه»
               </span>
             </h2>
@@ -165,14 +165,14 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
                   هتلاقى ايه
                 </div>
-                <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+                <div className="mt-3 h-px w-10 bg-primary dark:bg-[#d6aa72]" />
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
                 كل خير وأصالة الصعيد — متجمعين في مكان واحد.
                 منصة بتفتحلك الباب على:
                 <br />
-                <strong className="text-[#9a6a35] dark:text-[#d6aa72]">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}
+                <strong className="text-primary dark:text-primary-hover">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}
                 وفيديوهات وتجارب حقيقيه من صناع المحتوى، وتوثيق تفاعلي لكل شبر وسر في الصعيد.
               </p>
             </div>
@@ -231,7 +231,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   {portal.title}
                 </h3>
 
-                <div className="w-2 h-2 rounded-full bg-[#9a6a35]/60" />
+                <div className="w-2 h-2 rounded-full bg-primary/60" />
               </div>
 
               {/* الحالة المفتوحة */}
@@ -250,19 +250,19 @@ export const WahEcosystemPortalSection: React.FC = () => {
                           0{idx + 1}
                         </span>
 
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35] text-white text-xs font-bold backdrop-blur-md shadow-md">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold backdrop-blur-md shadow-md">
                           <Sparkles className="w-3.5 h-3.5" />
                           <span>{portal.badge}</span>
                         </span>
                       </div>
 
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-[#9a6a35] transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-primary transition-colors">
                         <ArrowUpLeft className="w-5 h-5" />
                       </div>
                     </div>
 
                     <div className="max-w-xl text-right">
-                      <span className="text-xs uppercase tracking-widest text-[#9a6a35] font-bold block mb-1">
+                      <span className="text-xs uppercase tracking-widest text-primary font-bold block mb-1">
                         {portal.nameEn}
                       </span>
 
@@ -344,12 +344,12 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   <span className="font-mono text-xs font-black tracking-wider text-[#d5a56d] bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/15">
                     0{idx + 1}
                   </span>
-                  <span className="text-[11px] font-bold bg-[#9a6a35] text-white px-3 py-1 rounded-full shadow-md backdrop-blur-md">
+                  <span className="text-[11px] font-bold bg-primary text-white px-3 py-1 rounded-full shadow-md backdrop-blur-md">
                     {portal.badge}
                   </span>
                 </div>
 
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white transition-all group-hover:bg-[#9a6a35] group-active:scale-90">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white transition-all group-hover:bg-primary group-active:scale-90">
                   <ArrowUpLeft className="h-4 w-4" />
                 </div>
               </div>
@@ -372,7 +372,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   <span className="text-[11px] text-[#d5a56d]/90 font-medium italic truncate max-w-[85%]">
                     {portal.tagline}
                   </span>
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#9a6a35]" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                 </div>
               </div>
             </motion.div>

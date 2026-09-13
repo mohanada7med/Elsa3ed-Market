@@ -128,14 +128,14 @@ export const Footer: React.FC = () => {
         bg-[#090807]
         text-[#f4efe6]
         transition-colors duration-500
-        border-t border-[#9a6a35]/30
+        border-t border-primary/30
         select-none pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
       {/* خلفية جمالية متحفية فاخرة */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-[#9a6a35]/10 blur-[150px]" />
-        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-[#9a6a35]/15 blur-[140px]" />
+        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[150px]" />
+        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/15 blur-[140px]" />
 
         <div className="absolute inset-0 opacity-[0.025]">
           <WAHPattern
@@ -167,7 +167,7 @@ export const Footer: React.FC = () => {
                 type="button"
                 id="footer-workshop-register-btn"
                 onClick={handleWorkshopRegister}
-                className="px-7 py-4 rounded-2xl bg-[#9a6a35] text-white hover:bg-[#83582a] text-xs sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#d6aa72]/30 active:scale-95"
+                className="px-7 py-4 rounded-2xl bg-primary text-white hover:bg-[#83582a] text-xs sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#d6aa72]/30 active:scale-95"
               >
                 <span>سجّل ورشتك معانا</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -176,9 +176,9 @@ export const Footer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowIntroVideo(true)}
-                className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-[#9a6a35]/30 hover:border-[#9a6a35] hover:bg-[#9a6a35]/15 text-xs sm:text-sm font-bold text-white hover:text-[#d6aa72] transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
+                className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-xs sm:text-sm font-bold text-white hover:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
               >
-                <Film className="w-4 h-4 text-[#d6aa72]" />
+                <Film className="w-4 h-4 text-primary-hover" />
                 <span>اتفرج على فيلم وه</span>
               </button>
             </div>
@@ -201,16 +201,16 @@ export const Footer: React.FC = () => {
               منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-white/60">
-              <span className="flex items-center gap-1.5"><Compass className="w-4 h-4 text-[#d6aa72]" /> من الفيوم لأسوان</span>
+              <span className="flex items-center gap-1.5"><Compass className="w-4 h-4 text-primary-hover" /> من الفيوم لأسوان</span>
               <span>•</span>
-              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-[#d6aa72]" /> توثيق معتمد 100%</span>
+              <span className="flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-primary-hover" /> توثيق معتمد 100%</span>
             </div>
           </div>
 
           {/* 2. خريطة بوابات المنصة */}
           <div className="lg:col-span-5 space-y-4">
-            <h4 className="text-xs font-extrabold tracking-wider text-[#d6aa72] uppercase font-heritage pb-2 border-b border-white/10 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#9a6a35]" />
+            <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage pb-2 border-b border-white/10 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
               <span>أبواب ودليل منصة وه</span>
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
@@ -219,9 +219,9 @@ export const Footer: React.FC = () => {
                   key={portal.page}
                   type="button"
                   onClick={() => setActivePage(portal.page as any)}
-                  className="group flex items-center gap-2 text-xs text-white/75 hover:text-[#9a6a35] transition-colors duration-200 cursor-pointer text-right py-1"
+                  className="group flex items-center gap-2 text-xs text-white/75 hover:text-primary transition-colors duration-200 cursor-pointer text-right py-1"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5 text-[#9a6a35] shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
+                  <ChevronLeft className="w-3.5 h-3.5 text-primary shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
                   <span className="truncate">{portal.label}</span>
                 </button>
               ))}
@@ -233,7 +233,7 @@ export const Footer: React.FC = () => {
 
             {/* خدمات المقتني */}
             <div className="space-y-3">
-              <h4 className="text-xs font-extrabold tracking-wider text-[#d6aa72] uppercase font-heritage pb-2 border-b border-white/10">
+              <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage pb-2 border-b border-white/10">
                 خدماتك وحسابك
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -242,7 +242,7 @@ export const Footer: React.FC = () => {
                     key={service.page}
                     type="button"
                     onClick={() => setActivePage(service.page as any)}
-                    className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-[#9a6a35] text-xs text-white/80 hover:bg-[#9a6a35] hover:text-white font-bold transition-all duration-200 cursor-pointer active:scale-95"
+                    className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/10 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer active:scale-95"
                   >
                     {service.label}
                   </button>
@@ -250,7 +250,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowIntroVideo(true)}
-                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-[#9a6a35]/30 hover:border-[#9a6a35] text-xs text-[#d6aa72] hover:bg-[#9a6a35] hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-primary-hover hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
                   <Film className="w-3.5 h-3.5" />
                   <span>فيلم وه التوثيقي</span>
@@ -260,7 +260,7 @@ export const Footer: React.FC = () => {
 
             {/* نشرة بريد الجنوب */}
             <div className="space-y-3 pt-2">
-              <h4 className="text-xs font-extrabold tracking-wider text-[#d6aa72] uppercase font-heritage">
+              <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage">
                 جوابات وحكاوي الجنوب
               </h4>
               <p className="text-xs text-white/70">
@@ -278,7 +278,7 @@ export const Footer: React.FC = () => {
                     w-full h-12 pr-4 pl-12 rounded-xl
                     bg-white/[0.05] border border-white/15
                     text-xs text-white placeholder:text-white/40
-                    focus:outline-none focus:border-[#9a6a35] transition-colors
+                    focus:outline-none focus:border-primary transition-colors
                   "
                 />
                 <button
@@ -286,7 +286,7 @@ export const Footer: React.FC = () => {
                   aria-label="الاشتراك في النشرة"
                   className="
                     absolute left-1.5 top-1.5 w-9 h-9
-                    rounded-lg bg-[#9a6a35] text-white hover:bg-[#83582a]
+                    rounded-lg bg-primary text-white hover:bg-[#83582a]
                     flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md font-bold active:scale-95
                   "
                 >
@@ -310,11 +310,11 @@ export const Footer: React.FC = () => {
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-right">
           <p className="text-xs text-white/60 font-medium tracking-wide">
             كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
-            <span className="text-[#d6aa72] hover:text-[#9a6a35] font-bold cursor-pointer transition-colors duration-200">
+            <span className="text-primary-hover hover:text-primary font-bold cursor-pointer transition-colors duration-200">
               مهند أحمد
             </span>{' '}
             &nbsp;|&nbsp; منصة{' '}
-            <span className="font-heritage font-bold text-white hover:text-[#9a6a35] transition-colors duration-200 cursor-pointer">
+            <span className="font-heritage font-bold text-white hover:text-primary transition-colors duration-200 cursor-pointer">
               «وه — WAH»
             </span>
           </p>
@@ -322,7 +322,7 @@ export const Footer: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-2">
             <span className="text-xs text-white/50 ml-1 font-medium hidden sm:inline">طرق الدفع المتاحة:</span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <Wallet className="w-3.5 h-3.5 text-[#d6aa72]" />
+              <Wallet className="w-3.5 h-3.5 text-primary-hover" />
               إنستاباي والمحافظ الإلكترونية
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
@@ -330,7 +330,7 @@ export const Footer: React.FC = () => {
               البطاقات البنكية وميزة
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <Store className="w-3.5 h-3.5 text-[#d6aa72]" />
+              <Store className="w-3.5 h-3.5 text-primary-hover" />
               الدفع عند الاستلام
             </span>
           </div>
@@ -339,10 +339,10 @@ export const Footer: React.FC = () => {
             type="button"
             onClick={scrollToTop}
             aria-label="العودة لأعلى الصفحة"
-            className="group flex items-center gap-2 text-xs text-white/70 hover:text-[#9a6a35] transition-colors duration-200 cursor-pointer font-bold"
+            className="group flex items-center gap-2 text-xs text-white/70 hover:text-primary transition-colors duration-200 cursor-pointer font-bold"
           >
             <span>اطلع فوق</span>
-            <div className="w-9 h-9 rounded-xl border border-white/15 bg-white/[0.04] flex items-center justify-center group-hover:bg-[#9a6a35] group-hover:text-white group-hover:border-[#9a6a35] transition-all duration-200">
+            <div className="w-9 h-9 rounded-xl border border-white/15 bg-white/[0.04] flex items-center justify-center group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-200">
               <ArrowUp className="w-4 h-4" />
             </div>
           </button>

@@ -60,17 +60,17 @@ export const EventsPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* =====================================================
           NAVBAR
       ===================================================== */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/70 dark:bg-[#151513]/90">
+      <header className="relative z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/70 dark:bg-espresso-900/90">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             type="button"
@@ -79,7 +79,7 @@ export const EventsPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-[#9a6a35]
+              hover:text-primary
               cursor-pointer
             "
           >
@@ -90,10 +90,10 @@ export const EventsPage: React.FC = () => {
                 border border-black/10
                 bg-white/60
                 transition-all
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
               "
@@ -107,7 +107,7 @@ export const EventsPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-[#9a6a35]">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
             <div className="mt-1 text-sm font-black font-serif">فعاليات الصعيد</div>
@@ -123,7 +123,7 @@ export const EventsPage: React.FC = () => {
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -148,8 +148,8 @@ export const EventsPage: React.FC = () => {
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-[#9a6a35]" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#9a6a35]">
+                <Sparkles size={16} className="text-primary" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
                   Upper Egypt Seasons / Festivals
                 </span>
               </div>
@@ -169,11 +169,11 @@ export const EventsPage: React.FC = () => {
               >
                 مواسم
                 <br />
-                <span className="mr-[8vw] text-[#9a6a35] lg:mr-28">البهجة</span>
+                <span className="mr-[8vw] text-primary lg:mr-28">البهجة</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-[#9a6a35]" />
+                <div className="mt-2 h-16 w-px bg-primary" />
                 <p className="text-sm leading-8 text-black/65 dark:text-white/65 sm:text-base">
                   أجواء الفرحة في الصعيد؛ من ليالي الموالد ولمة الحبايب، لمواسم كسر القصب وعصر العسل، وحلقات التحطيب وتعامد شمس أبو سمبل.
                 </p>
@@ -192,18 +192,18 @@ export const EventsPage: React.FC = () => {
                   shadow-lg
                   backdrop-blur-2xl
                   dark:border-white/10
-                  dark:bg-[#151513]/90
+                  dark:bg-espresso-900/90
                   dark:shadow-black/30
                 "
               >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-[#9a6a35]/20" />
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
                     <span className="text-[10px] font-bold tracking-[0.25em] text-black/45 dark:text-white/45">
                       FESTIVALS CALENDAR
                     </span>
-                    <Calendar size={18} className="text-[#9a6a35]" />
+                    <Calendar size={18} className="text-primary" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
@@ -227,7 +227,7 @@ export const EventsPage: React.FC = () => {
                   </div>
 
                   <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-[#9a6a35]" />
+                    <div className="h-2 w-2 rounded-full bg-primary" />
                     <span className="text-xs font-bold">
                       دليل مواسم وأفراح الصعيد
                     </span>
@@ -252,7 +252,7 @@ export const EventsPage: React.FC = () => {
             shadow-[0_20px_70px_rgba(0,0,0,0.08)]
             backdrop-blur-2xl
             dark:border-white/10
-            dark:bg-[#151513]/90
+            dark:bg-espresso-900/90
             dark:shadow-black/30
           "
         >
@@ -283,9 +283,9 @@ export const EventsPage: React.FC = () => {
                   outline-none
                   transition-all
                   placeholder:text-black/35
-                  focus:border-[#9a6a35]/40
+                  focus:border-primary/40
                   focus:bg-transparent
-                  dark:bg-#FFF6EB/[0.04]
+                  dark:bg-cream/[0.04]
                   dark:placeholder:text-white/30
                   dark:focus:bg-white/[0.06]
                 "
@@ -323,15 +323,15 @@ export const EventsPage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
               >
-                <option value="all" className="dark:bg-[#151513]">كافة الفعاليات</option>
+                <option value="all" className="dark:bg-espresso-900">كافة الفعاليات</option>
                 {categories.map((cat) => (
-                  <option key={cat} value={cat} className="dark:bg-[#151513]">
+                  <option key={cat} value={cat} className="dark:bg-espresso-900">
                     {cat}
                   </option>
                 ))}
@@ -361,15 +361,15 @@ export const EventsPage: React.FC = () => {
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-[#9a6a35]/40
-                  dark:bg-#FFF6EB/[0.04]
+                  focus:border-primary/40
+                  dark:bg-cream/[0.04]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
               >
-                <option value="all" className="dark:bg-[#151513]">كل المحافظات</option>
+                <option value="all" className="dark:bg-espresso-900">كل المحافظات</option>
                 {governorates.map((gov) => (
-                  <option key={gov} value={gov} className="dark:bg-[#151513]">
+                  <option key={gov} value={gov} className="dark:bg-espresso-900">
                     {gov}
                   </option>
                 ))}
@@ -389,10 +389,10 @@ export const EventsPage: React.FC = () => {
               className="
                 flex items-center justify-between
                 rounded-xl
-                bg-[#211d18]
+                bg-espresso
                 px-5
                 text-white
-                dark:bg-#FFF6EB
+                dark:bg-cream
                 dark:text-black
               "
             >
@@ -427,7 +427,7 @@ export const EventsPage: React.FC = () => {
       <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
+            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary">
               UPPER EGYPT SEASONS
             </div>
             <h2 className="text-3xl font-black sm:text-4xl font-serif">مواسم الصعيد الاحتفالية</h2>
@@ -445,7 +445,7 @@ export const EventsPage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-#FFF6EB/5"
+                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-cream/5"
               />
             ))}
           </div>
@@ -462,7 +462,7 @@ export const EventsPage: React.FC = () => {
               border-black/15
               text-center
               dark:border-white/15
-              bg-white/50 dark:bg-[#151513]/50
+              bg-white/50 dark:bg-espresso-900/50
               backdrop-blur-xl
             "
           >
@@ -494,10 +494,10 @@ export const EventsPage: React.FC = () => {
                 className="
                   mt-6
                   rounded-full
-                  bg-[#211d18]
+                  bg-espresso
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-#FFF6EB
+                  dark:bg-cream
                   dark:text-black
                   cursor-pointer
                 "
@@ -534,10 +534,10 @@ export const EventsPage: React.FC = () => {
                     backdrop-blur-xl
                     transition-all duration-500
                     hover:-translate-y-1.5
-                    hover:border-[#9a6a35]
+                    hover:border-primary
                     hover:shadow-[0_20px_50px_rgba(154,106,53,0.12)]
                     dark:border-white/10
-                    dark:bg-[#151513]/90
+                    dark:bg-espresso-900/90
                     cursor-pointer
                   "
                 >
@@ -594,7 +594,7 @@ export const EventsPage: React.FC = () => {
                               backdrop-blur-md
                             "
                           >
-                            <MapPin size={11} className="text-[#9a6a35]" />
+                            <MapPin size={11} className="text-primary" />
                             {event.governorateName}
                           </span>
                         )}
@@ -602,13 +602,13 @@ export const EventsPage: React.FC = () => {
                     </div>
 
                     {/* Metadata (Date / Season) */}
-                    <div className="mb-2.5 flex items-center gap-2 text-xs font-semibold text-[#9a6a35]">
+                    <div className="mb-2.5 flex items-center gap-2 text-xs font-semibold text-primary">
                       <Clock size={14} />
                       <span>{seasonText}</span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-2xl font-black mb-3 transition-colors group-hover:text-[#9a6a35] font-serif">
+                    <h3 className="text-2xl font-black mb-3 transition-colors group-hover:text-primary font-serif">
                       {event.title}
                     </h3>
 
@@ -620,10 +620,10 @@ export const EventsPage: React.FC = () => {
 
                   {/* Footer Action */}
                   <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
-                    <span className="text-black/50 dark:text-white/50 group-hover:text-[#9a6a35] transition-colors">
+                    <span className="text-black/50 dark:text-white/50 group-hover:text-primary transition-colors">
                       استكشاف تفاصيل الموسم
                     </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-#FFF6EB/5 text-black dark:text-white transition-all duration-300 group-hover:bg-[#9a6a35] group-hover:text-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
                       <ArrowUpLeft size={16} />
                     </span>
                   </div>
@@ -643,10 +643,10 @@ export const EventsPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-[#211d18]
+              bg-espresso
               px-6 py-14
               text-white
-              dark:bg-#FFF6EB
+              dark:bg-cream
               dark:text-black
               sm:px-12 sm:py-20
               lg:px-20
@@ -658,7 +658,7 @@ export const EventsPage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#9a6a35]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-primary">
                   SEASONS & FESTIVALS
                 </div>
                 <h2
@@ -674,7 +674,7 @@ export const EventsPage: React.FC = () => {
                 >
                   مواسم بتتجدد...
                   <br />
-                  <span className="text-[#9a6a35]">وفرحة بتجمع القلوب.</span>
+                  <span className="text-primary">وفرحة بتجمع القلوب.</span>
                 </h2>
               </div>
 

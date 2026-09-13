@@ -13,11 +13,11 @@ export const FeaturedCategories: React.FC = () => {
       dir="rtl"
       className="
         py-16
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors duration-500
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
         max-w-[1600px]
         mx-auto
         px-5
@@ -28,7 +28,7 @@ export const FeaturedCategories: React.FC = () => {
       {/* الرأس التحريري الفاخر */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 pb-6 border-b border-black/10 dark:border-white/10">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold text-[#9a6a35] tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 text-xs font-bold text-primary tracking-wider mb-2">
             <Compass className="w-4 h-4 animate-spin-slow" />
             <span>صنايع وحرف بلادنا</span>
           </div>
@@ -40,7 +40,7 @@ export const FeaturedCategories: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('categories')}
-          className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#9a6a35] hover:text-[#744e26] transition-colors py-2 px-4 rounded-xl hover:bg-[#9a6a35]/5 self-start sm:self-auto cursor-pointer"
+          className="group inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-primary hover:text-[#744e26] transition-colors py-2 px-4 rounded-xl hover:bg-primary/5 self-start sm:self-auto cursor-pointer"
         >
           <span>شوف كل الحرف</span>
           <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
@@ -100,7 +100,7 @@ export const FeaturedCategories: React.FC = () => {
                   {cat.name}
                 </h3>
 
-                <div className="w-2 h-2 rounded-full bg-[#9a6a35]/60" />
+                <div className="w-2 h-2 rounded-full bg-primary/60" />
               </div>
 
               {/* الحالة المفتوحة (Expanded State): عرض كامل البيانات والتفاصيل */}
@@ -120,21 +120,21 @@ export const FeaturedCategories: React.FC = () => {
                           0{idx + 1}
                         </span>
                         {cat.featuredGovernorate && (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9a6a35] text-white text-xs font-bold backdrop-blur-md">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold backdrop-blur-md">
                             <MapPin className="w-3.5 h-3.5" />
                             <span>{cat.featuredGovernorate}</span>
                           </span>
                         )}
                       </div>
 
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-[#9a6a35] transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-primary transition-colors">
                         <ArrowUpLeft className="w-5 h-5" />
                       </div>
                     </div>
 
                     {/* الجزء السفلي: النصوص والوصف والنفحة التراثية */}
                     <div className="max-w-xl text-right">
-                      <span className="text-xs uppercase tracking-widest text-[#9a6a35] font-bold block mb-1">
+                      <span className="text-xs uppercase tracking-widest text-primary font-bold block mb-1">
                         {cat.nameEn || 'Upper Egypt Craft'}
                       </span>
 
@@ -148,7 +148,7 @@ export const FeaturedCategories: React.FC = () => {
 
                       {cat.heritageNote && (
                         <div className="pt-3 border-t border-white/20 inline-flex items-center gap-2 text-xs text-[#d5a56d]/90">
-                          <Sparkles className="w-3.5 h-3.5 text-[#d6aa72] shrink-0" />
+                          <Sparkles className="w-3.5 h-3.5 text-primary-hover shrink-0" />
                           <span className="italic">{cat.heritageNote}</span>
                         </div>
                       )}
@@ -184,7 +184,7 @@ export const FeaturedCategories: React.FC = () => {
                 0{idx + 1}
               </span>
               {cat.featuredGovernorate && (
-                <span className="text-[10px] bg-[#9a6a35] text-white px-2.5 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-primary text-white px-2.5 py-0.5 rounded-full font-bold">
                   {cat.featuredGovernorate}
                 </span>
               )}

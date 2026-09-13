@@ -183,7 +183,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
         <main
             dir="rtl"
             onClick={phase === 'loading_pillars' ? handleSkip : undefined}
-            className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] select-none transform-gpu transition-[opacity,transform] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting
+            className={`fixed inset-0 z-[99999] flex min-h-screen items-center justify-center overflow-hidden bg-[#f8f4ec] dark:bg-espresso-900 text-espresso dark:text-cream select-none transform-gpu transition-[opacity,transform] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting
                 ? 'opacity-0 scale-[0.98] pointer-events-none'
                 : 'opacity-100 scale-100'
                 } ${phase === 'loading_pillars' ? 'cursor-pointer' : ''}`}
@@ -195,7 +195,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     e.stopPropagation();
                     handleSkip();
                 }}
-                className={`absolute top-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#7a6448] dark:text-[#b89b7b] bg-black/5 dark:bg-#FFF6EB/10 hover:bg-[#9a6a35]/15 dark:hover:bg-white/20 transition-all duration-200 transform-gpu active:scale-95 ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-90 hover:opacity-100'
+                className={`absolute top-5 left-5 z-40 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#7a6448] dark:text-[#b89b7b] bg-black/5 dark:bg-cream/10 hover:bg-primary/15 dark:hover:bg-white/20 transition-all duration-200 transform-gpu active:scale-95 ${isExiting ? 'opacity-0 pointer-events-none' : 'opacity-90 hover:opacity-100'
                     }`}
             >
                 <span>تخطي</span>
@@ -218,9 +218,9 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         : 'opacity-0 -translate-y-3 pointer-events-none'
                         }`}
                 >
-                    <span className="h-px w-8 bg-[#9a6a35]/40" />
+                    <span className="h-px w-8 bg-primary/40" />
                     الصعيد
-                    <span className="h-px w-8 bg-[#9a6a35]/40" />
+                    <span className="h-px w-8 bg-primary/40" />
                 </div>
 
                 {/* مركز اللوجو التفاعلي المتحول بسلاسة */}
@@ -244,7 +244,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         }}
                         disabled={phase !== 'idle'}
                         aria-label="شعار وه"
-                        className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/95 dark:bg-#FFF6EB/10 backdrop-blur-md shadow-lg transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
+                        className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/95 dark:bg-cream/10 backdrop-blur-md shadow-lg transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                             ? 'h-36 w-36 cursor-pointer hover:scale-105 active:scale-95'
                             : phase === 'welcoming'
                                 ? 'h-28 w-28 cursor-default shadow-md'
@@ -279,7 +279,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             }`}
                     >
                         <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl whitespace-nowrap">
-                            دوس على <span className="text-[#9a6a35]">اللوجو</span>
+                            دوس على <span className="text-primary">اللوجو</span>
                         </p>
                         <p className="mt-1 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988] whitespace-nowrap">
                             وخلي الحكاية تبدأ
@@ -294,15 +294,15 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             }`}
                     >
                         <div className="mb-2 flex items-center justify-center gap-2">
-                            <span className="h-px w-8 bg-[#9a6a35]/40" />
+                            <span className="h-px w-8 bg-primary/40" />
                             <span className="h-1.5 w-1.5 rounded-full bg-[#c28b4d]" />
-                            <span className="h-px w-8 bg-[#9a6a35]/40" />
+                            <span className="h-px w-8 bg-primary/40" />
                         </div>
 
                         <h1 className="text-3xl font-black text-[#3d3328] dark:text-[#ede4d8] sm:text-4xl whitespace-nowrap">
                             نورت بيتك
                         </h1>
-                        <h2 className="mt-0.5 text-2xl font-black text-[#9a6a35] sm:text-3xl whitespace-nowrap">
+                        <h2 className="mt-0.5 text-2xl font-black text-primary sm:text-3xl whitespace-nowrap">
                             ومطرحك
                         </h2>
                         <p className="mt-2 text-xs font-medium text-[#806f5b]/80 dark:text-[#a89988] whitespace-nowrap">
@@ -331,7 +331,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                             }`}
                                     >
                                         {/* شارة العنوان */}
-                                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#9a6a35]/12 text-[#805423] dark:text-[#d5a56d] border border-[#9a6a35]/20 text-xs font-bold mb-2 shadow-sm whitespace-nowrap">
+                                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/12 text-[#805423] dark:text-primary-hover border border-primary/20 text-xs font-bold mb-2 shadow-sm whitespace-nowrap">
                                             <Icon className="w-3.5 h-3.5 shrink-0" />
                                             <span className="whitespace-nowrap">{pillar.title}</span>
                                         </div>
@@ -353,10 +353,10 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                 <span
                                     key={idx}
                                     className={`h-1.5 rounded-full transform-gpu transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${pillarIndex === idx
-                                        ? 'w-7 bg-[#9a6a35]'
+                                        ? 'w-7 bg-primary'
                                         : pillarIndex > idx
-                                            ? 'w-2 bg-[#9a6a35]/60'
-                                            : 'w-1.5 bg-black/15 dark:bg-#FFF6EB/20'
+                                            ? 'w-2 bg-primary/60'
+                                            : 'w-1.5 bg-black/15 dark:bg-cream/20'
                                         }`}
                                 />
                             ))}
@@ -364,7 +364,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
 
                         {/* تلميح النقر للدخول السريع */}
                         <div className="mt-3 flex items-center gap-1 text-[11px] font-medium text-[#806f5b]/60 dark:text-[#a89988]/60">
-                            <Zap className="w-3 h-3 text-[#9a6a35]" />
+                            <Zap className="w-3 h-3 text-primary" />
                             <span>انقر في أي مكان للدخول المباشر</span>
                         </div>
                     </div>

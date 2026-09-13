@@ -58,10 +58,10 @@ export const FoodDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-[#211d18] dark:text-[#f5f0e7]"
+        className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-espresso dark:text-cream"
       >
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-[#9a6a35] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm font-bold">جاري تحميل أسرار المطبخ الصعيدي...</p>
         </div>
       </div>
@@ -72,15 +72,15 @@ export const FoodDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-center text-[#211d18] dark:text-[#f5f0e7]"
+        className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-center text-espresso dark:text-cream"
       >
-        <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
+        <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
           <h2 className="text-2xl font-black font-serif">الأكلة مش موجودة</h2>
-          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">ملقناش بيانات للأكلة دي حالياً</p>
+          <p className="text-sm text-espresso/70 dark:text-cream/70">ملقناش بيانات للأكلة دي حالياً</p>
           <button
             type="button"
             onClick={() => setActivePage('food')}
-            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
+            className="w-full py-3.5 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             الرجوع لكل أكلات الصعيد
           </button>
@@ -92,7 +92,7 @@ export const FoodDetailPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] pb-16"
+      className="min-h-screen bg-cream dark:bg-espresso-900 text-espresso dark:text-cream pb-16"
     >
       {/* Hero Header */}
       <div className="relative h-[340px] sm:h-[460px] w-full bg-stone-950 overflow-hidden">
@@ -118,7 +118,7 @@ export const FoodDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigateToGovernorate(food.governorateId || 'qena')}
-              className="px-4 py-2 rounded-full bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md"
+              className="px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md"
             >
               <MapPin className="w-3.5 h-3.5" />
               <span>محافظة {food.governorateName}</span>
@@ -138,7 +138,7 @@ export const FoodDetailPage: React.FC = () => {
 
         {/* Title Content */}
         <div className="absolute bottom-6 sm:bottom-10 right-0 left-0 px-5 sm:px-8 max-w-[1600px] mx-auto">
-          <span className="px-3.5 py-1 rounded-full bg-[#9a6a35] text-white text-xs font-bold inline-block mb-3 shadow-md">
+          <span className="px-3.5 py-1 rounded-full bg-primary text-white text-xs font-bold inline-block mb-3 shadow-md">
             {food.category || food.occasionOrTradition || 'أكلات وتراث الصعيد'}
           </span>
 
@@ -158,23 +158,23 @@ export const FoodDetailPage: React.FC = () => {
           {/* Main Info */}
           <div className="lg:col-span-8 space-y-8">
             {/* Story & Cultural Context */}
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
-              <h2 className="text-xl sm:text-2xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-4">
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+              <h2 className="text-xl sm:text-2xl font-black font-serif text-espresso dark:text-cream mb-4">
                 قصة وتاريخ {food.title || food.name} في بيوت الصعيد
               </h2>
-              <div className="text-sm sm:text-base text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed space-y-4 whitespace-pre-line font-serif">
+              <div className="text-sm sm:text-base text-espresso/80 dark:text-cream/80 leading-relaxed space-y-4 whitespace-pre-line font-serif">
                 {food.originStory || food.story || food.description}
               </div>
             </div>
 
             {/* Preparation Details */}
             {(food.preparationMethod || food.preparation) && (
-              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
-                <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-4 flex items-center gap-2">
-                  <Flame className="w-5 h-5 text-[#9a6a35]" />
+              <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+                <h3 className="text-lg sm:text-xl font-black font-serif text-espresso dark:text-cream mb-4 flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-primary" />
                   <span>سر الصنعة وطريقة الإعداد التراثية</span>
                 </h3>
-                <div className="text-sm sm:text-base text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed whitespace-pre-line">
+                <div className="text-sm sm:text-base text-espresso/80 dark:text-cream/80 leading-relaxed whitespace-pre-line">
                   {food.preparationMethod || food.preparation}
                 </div>
               </div>
@@ -183,18 +183,18 @@ export const FoodDetailPage: React.FC = () => {
 
           {/* Sidebar Ingredients */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
-              <h3 className="text-base font-bold mb-4 text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-2 font-serif">
-                <Utensils className="w-4 h-4 text-[#9a6a35]" />
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-bold mb-4 text-espresso dark:text-cream flex items-center gap-2 font-serif">
+                <Utensils className="w-4 h-4 text-primary" />
                 <span>المكونات الأصلية:</span>
               </h3>
               <div className="space-y-2.5">
                 {food.ingredients?.map((ing, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl bg-black/5 dark:bg-#FFF6EB/5 border border-black/5 dark:border-white/5 text-xs font-semibold flex items-center gap-2.5 text-[#211d18] dark:text-[#f5f0e7]"
+                    className="p-3 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/5 dark:border-white/5 text-xs font-semibold flex items-center gap-2.5 text-espresso dark:text-cream"
                   >
-                    <span className="w-2 h-2 rounded-full bg-[#9a6a35]" />
+                    <span className="w-2 h-2 rounded-full bg-primary" />
                     <span>{ing}</span>
                   </div>
                 ))}
@@ -202,17 +202,17 @@ export const FoodDetailPage: React.FC = () => {
             </div>
 
             {/* Governorate Link */}
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
-              <h3 className="text-base font-bold mb-2 text-[#211d18] dark:text-[#f5f0e7] font-serif">
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-bold mb-2 text-espresso dark:text-cream font-serif">
                 أصل الأكلة
               </h3>
-              <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 mb-4">
+              <p className="text-xs text-espresso/60 dark:text-cream/60 mb-4">
                 محافظة {food.governorateName} معروفة بالأكلة دي وليها سرها في تحضيرها ولمستها الخاصة.
               </p>
               <button
                 type="button"
                 onClick={() => navigateToGovernorate(food.governorateId || 'qena')}
-                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                className="w-full py-3 px-4 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <span>دليل محافظة {food.governorateName}</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

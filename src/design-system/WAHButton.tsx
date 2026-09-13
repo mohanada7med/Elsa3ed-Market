@@ -48,22 +48,22 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
     ? 'rounded-tl-2xl rounded-br-2xl rounded-tr-md rounded-bl-md'
     : 'rounded-[1.25rem]';
 
-  // Variant classes mapped to unified Wah design tokens
+  // Variant classes mapped to standardized design tokens
   const variantClasses: Record<ButtonVariant, string> = {
     primary:
-      'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] shadow-sm hover:shadow-md border border-transparent active:scale-[0.98]',
+      'bg-espresso text-cream hover:bg-primary dark:bg-cream dark:text-espresso dark:hover:bg-sand shadow-sm hover:shadow-md border border-transparent active:scale-[0.98]',
     secondary:
-      'bg-black/5 hover:bg-black/10 dark:bg-#FFF6EB/10 dark:hover:bg-white/15 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 active:scale-[0.98]',
+      'bg-sand text-espresso hover:bg-[#FAE1C3] border border-primary/30 dark:bg-espresso dark:text-sand dark:border-primary/40 dark:hover:bg-[#382f25] active:scale-[0.98]',
     outline:
-      'bg-transparent hover:bg-black/5 dark:hover:bg-white/5 text-[#211d18] dark:text-[#f5f0e7] border border-black/15 dark:border-white/15 hover:border-[#9a6a35] hover:text-[#9a6a35] dark:hover:border-[#9a6a35] dark:hover:text-[#9a6a35] active:scale-[0.98]',
+      'bg-transparent hover:bg-sand/40 dark:hover:bg-espresso/80 text-espresso dark:text-cream border border-primary/30 dark:border-primary/40 hover:border-primary dark:hover:border-sand active:scale-[0.98]',
     ghost:
-      'bg-transparent hover:bg-black/5 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] hover:text-[#9a6a35] dark:hover:text-[#9a6a35] active:scale-[0.98]',
+      'bg-transparent hover:bg-sand/50 dark:hover:bg-espresso/80 text-espresso dark:text-cream hover:text-primary dark:hover:text-sand active:scale-[0.98]',
     destructive:
       'bg-[#B9382B]/10 hover:bg-[#B9382B]/20 text-[#B9382B] border border-[#B9382B]/30 active:scale-[0.98]',
     cta:
-      'bg-[#9a6a35] hover:bg-[#7d5427] dark:hover:bg-[#b88248] text-white shadow-md hover:shadow-lg active:scale-[0.98]',
+      'bg-primary hover:bg-primary-hover dark:hover:bg-primary-hover text-white shadow-md hover:shadow-lg active:scale-[0.98]',
     icon:
-      'bg-white/75 dark:bg-[#151513]/90 hover:bg-white dark:hover:bg-[#20201d] text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10 hover:border-[#9a6a35]'
+      'bg-white/85 dark:bg-espresso/90 hover:bg-white dark:hover:bg-[#382f25] text-espresso dark:text-cream border border-primary/30 dark:border-primary/40 hover:border-primary'
   };
 
   const renderedIcon = renderIcon(icon, 'w-4 h-4 shrink-0');
@@ -72,7 +72,7 @@ export const WAHButton: React.FC<WAHButtonProps> = ({
     <motion.button
       whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9a6a35] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#151513] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
+      className={`inline-flex items-center justify-center font-bold font-sans transition-all duration-200 cursor-pointer select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#151513] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none ${sizeClasses[size]} ${shapeClass} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {loading ? (

@@ -15,16 +15,16 @@ export const FeaturedSellers: React.FC = () => {
     <section
       id="featured-sellers-section"
       dir="rtl"
-      className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 text-[#211d18] dark:text-[#f5f0e7] select-none"
+      className="py-16 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 text-espresso dark:text-cream select-none"
     >
       {/* Header Section بالتصميم التايبوغرافي المتناسق */}
       <div className="relative z-10 mb-12 sm:mb-16">
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                <Sparkles size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+                <Sparkles size={14} className="text-primary dark:text-primary-hover" />
               </span>
               MASTERS / شيوخ الصنعة وحرفيين الصعيد
             </div>
@@ -33,7 +33,7 @@ export const FeaturedSellers: React.FC = () => {
             <h2 className="font-heritage text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
               أهل
               <br />
-              <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+              <span className="mr-[4vw] text-primary dark:text-primary-hover lg:mr-16">
                 الصنعة!
               </span>
             </h2>
@@ -44,7 +44,7 @@ export const FeaturedSellers: React.FC = () => {
                 <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
                   فنانين وه
                 </div>
-                <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+                <div className="mt-3 h-px w-10 bg-primary dark:bg-[#d6aa72]" />
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
@@ -59,7 +59,7 @@ export const FeaturedSellers: React.FC = () => {
               type="button"
               id="view-all-sellers-btn"
               onClick={() => setActivePage('sellers')}
-              className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-[#9a6a35] dark:bg-zinc-800 dark:hover:bg-[#9a6a35] px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-primary dark:bg-zinc-800 dark:hover:bg-primary px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
             >
               <span>شوف كل الورش والحرفيين</span>
               <ArrowLeft className="w-4 h-4" />
@@ -80,10 +80,10 @@ export const FeaturedSellers: React.FC = () => {
             transition={{ duration: 0.35, delay: (idx % 3) * 0.08 }}
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
             onClick={() => navigateToSeller(seller.id)}
-            className="overflow-hidden cursor-pointer group bg-white/75 dark:bg-[#151513]/90 border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col rounded-[1.5rem] transition-all"
+            className="overflow-hidden cursor-pointer group bg-white/75 dark:bg-espresso-900/90 border border-black/10 dark:border-white/10 backdrop-blur-xl shadow-lg flex flex-col rounded-[1.5rem] transition-all"
           >
             {/* Cover Image */}
-            <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-#FFF6EB/5">
+            <div className="relative h-36 w-full overflow-hidden bg-black/5 dark:bg-cream/5">
               <img
                 src={seller.coverImage}
                 alt={seller.brandName}
@@ -117,8 +117,8 @@ export const FeaturedSellers: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1 bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl text-xs font-black text-[#211d18] dark:text-[#f5f0e7]">
-                    <Star className="w-3.5 h-3.5  text-[#d6aa72]" />
+                  <div className="flex items-center gap-1 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3 py-1 rounded-xl text-xs font-black text-espresso dark:text-cream">
+                    <Star className="w-3.5 h-3.5  text-primary-hover" />
                     <span>{seller.rating}</span>
                     <span className="text-[10px] text-black/50 dark:text-white/50 font-medium">
                       ({seller.salesCount} طلب متسلم)
@@ -127,7 +127,7 @@ export const FeaturedSellers: React.FC = () => {
                 </div>
 
                 {/* Seller Brand & Name */}
-                <h3 className="font-black text-[#211d18] dark:text-[#f5f0e7] text-base group-hover:text-[#9a6a35] transition-colors leading-tight">
+                <h3 className="font-black text-espresso dark:text-cream text-base group-hover:text-primary transition-colors leading-tight">
                   {seller.brandName}
                 </h3>
                 <p className="text-xs text-black/60 dark:text-white/60 font-medium mt-0.5">
@@ -141,7 +141,7 @@ export const FeaturedSellers: React.FC = () => {
 
               {/* Footer info */}
               <div className="mt-4 pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs">
-                <span className="text-[#9a6a35] font-black bg-[#9a6a35]/10 px-2.5 py-1 rounded-lg text-[11px]">
+                <span className="text-primary font-black bg-primary/10 px-2.5 py-1 rounded-lg text-[11px]">
                   {seller.specialty}
                 </span>
                 <span className="text-black/50 dark:text-white/50 font-medium text-[11px]">

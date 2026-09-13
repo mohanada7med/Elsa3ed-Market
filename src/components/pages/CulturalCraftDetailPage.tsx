@@ -59,10 +59,10 @@ export const CulturalCraftDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-[#211d18] dark:text-[#f5f0e7]"
+        className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-espresso dark:text-cream"
       >
         <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-[#9a6a35] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm font-bold">جاري تحميل أسرار الصنعة...</p>
         </div>
       </div>
@@ -73,15 +73,15 @@ export const CulturalCraftDetailPage: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] flex items-center justify-center p-6 text-center text-[#211d18] dark:text-[#f5f0e7]"
+        className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-center text-espresso dark:text-cream"
       >
-        <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
+        <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 max-w-md w-full shadow-lg space-y-4">
           <h2 className="text-2xl font-black font-serif">الحرفة مش موجودة</h2>
-          <p className="text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70">ملقناش بيانات للحرفة دي حالياً</p>
+          <p className="text-sm text-espresso/70 dark:text-cream/70">ملقناش بيانات للحرفة دي حالياً</p>
           <button
             type="button"
             onClick={() => setActivePage('cultural-crafts')}
-            className="w-full py-3.5 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs transition-colors cursor-pointer shadow-md"
+            className="w-full py-3.5 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs transition-colors cursor-pointer shadow-md"
           >
             الرجوع لكل الحرف
           </button>
@@ -93,7 +93,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] pb-16"
+      className="min-h-screen bg-cream dark:bg-espresso-900 text-espresso dark:text-cream pb-16"
     >
       {/* Hero Header */}
       <div className="relative h-[340px] sm:h-[460px] w-full bg-stone-950 overflow-hidden">
@@ -119,7 +119,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigateToGovernorate(craft.governorateId || craft.governorates?.[0] || 'qena')}
-              className="px-4 py-2 rounded-full bg-[#9a6a35] hover:bg-[#7d5427] text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md"
+              className="px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md"
             >
               <MapPin className="w-3.5 h-3.5" />
               <span>محافظة {craft.governorateName || (craft.governorates && craft.governorates.length > 0 ? craft.governorates.join('، ') : 'الصعيد')}</span>
@@ -140,7 +140,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
         {/* Title Content */}
         <div className="absolute bottom-6 sm:bottom-10 right-0 left-0 px-5 sm:px-8 max-w-[1600px] mx-auto">
           <div className="flex items-center gap-2 flex-wrap mb-3">
-            <span className="px-3.5 py-1 rounded-full bg-[#9a6a35] text-white text-xs font-bold shadow-md">
+            <span className="px-3.5 py-1 rounded-full bg-primary text-white text-xs font-bold shadow-md">
               {craft.category}
             </span>
             {craft.preservationStatus && (
@@ -167,35 +167,35 @@ export const CulturalCraftDetailPage: React.FC = () => {
           {/* Main Info */}
           <div className="lg:col-span-8 space-y-8">
             {/* History Section */}
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
-              <h2 className="text-xl sm:text-2xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-4">
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+              <h2 className="text-xl sm:text-2xl font-black font-serif text-espresso dark:text-cream mb-4">
                 أصل وتاريخ الصنعة
               </h2>
-              <div className="text-sm sm:text-base text-[#211d18]/80 dark:text-[#f5f0e7]/80 leading-relaxed space-y-4 whitespace-pre-line font-serif">
+              <div className="text-sm sm:text-base text-espresso/80 dark:text-cream/80 leading-relaxed space-y-4 whitespace-pre-line font-serif">
                 {craft.history || craft.shortDescription}
               </div>
             </div>
 
             {/* Stages of Crafting */}
             {((craft.stages && craft.stages.length > 0) || (craft.manufacturingStages && craft.manufacturingStages.length > 0)) && (
-              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
-                <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-6">
+              <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+                <h3 className="text-lg sm:text-xl font-black font-serif text-espresso dark:text-cream mb-6">
                   مراحل الصنعة خطوة بخطوة
                 </h3>
                 <div className="space-y-4">
                   {(craft.stages || craft.manufacturingStages || []).map((stage, idx) => (
                     <div
                       key={idx}
-                      className="p-4 sm:p-5 rounded-[1.25rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 flex items-start gap-4"
+                      className="p-4 sm:p-5 rounded-[1.25rem] bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 flex items-start gap-4"
                     >
-                      <span className="w-8 h-8 rounded-xl bg-[#9a6a35] text-white font-bold flex items-center justify-center shrink-0 text-sm">
+                      <span className="w-8 h-8 rounded-xl bg-primary text-white font-bold flex items-center justify-center shrink-0 text-sm">
                         {stage.stepNumber || idx + 1}
                       </span>
                       <div>
-                        <h4 className="text-sm sm:text-base font-black font-serif text-[#211d18] dark:text-[#f5f0e7] mb-1">
+                        <h4 className="text-sm sm:text-base font-black font-serif text-espresso dark:text-cream mb-1">
                           {stage.title}
                         </h4>
-                        <p className="text-xs sm:text-sm text-[#211d18]/70 dark:text-[#f5f0e7]/70 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-espresso/70 dark:text-cream/70 leading-relaxed">
                           {stage.description}
                         </p>
                       </div>
@@ -229,18 +229,18 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
             {/* Available Products in Marketplace */}
             {craft.relatedProducts && craft.relatedProducts.length > 0 && (
-              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
+              <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 border border-black/10 dark:border-white/10 shadow-lg">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h3 className="text-lg sm:text-xl font-black font-serif text-[#211d18] dark:text-[#f5f0e7]">
+                    <h3 className="text-lg sm:text-xl font-black font-serif text-espresso dark:text-cream">
                       منتجات أصيلة من هذه الحرفة بسوق وه
                     </h3>
-                    <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60">صُنعت بأيدي شيوخ الصنعة في {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</p>
+                    <p className="text-xs text-espresso/60 dark:text-cream/60">صُنعت بأيدي شيوخ الصنعة في {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setActivePage('products')}
-                    className="text-xs font-bold text-[#9a6a35] dark:text-[#d5a56d] hover:underline cursor-pointer"
+                    className="text-xs font-bold text-primary dark:text-primary-hover hover:underline cursor-pointer"
                   >
                     السوق بالكامل ←
                   </button>
@@ -251,7 +251,7 @@ export const CulturalCraftDetailPage: React.FC = () => {
                     <div
                       key={prod.id}
                       onClick={() => navigateToProduct(prod.id)}
-                      className="group p-3 rounded-[1.25rem] bg-black/5 dark:bg-#FFF6EB/5 border border-black/10 dark:border-white/10 hover:border-[#9a6a35] cursor-pointer transition-all"
+                      className="group p-3 rounded-[1.25rem] bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 hover:border-primary cursor-pointer transition-all"
                     >
                       <div className="aspect-square rounded-xl overflow-hidden mb-2 bg-black/10">
                         <img
@@ -260,10 +260,10 @@ export const CulturalCraftDetailPage: React.FC = () => {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                       </div>
-                      <h4 className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] truncate group-hover:text-[#9a6a35]">
+                      <h4 className="text-xs font-bold text-espresso dark:text-cream truncate group-hover:text-primary">
                         {prod.title}
                       </h4>
-                      <p className="text-xs font-black text-[#9a6a35] dark:text-[#d5a56d] mt-1">{prod.price} ج.م</p>
+                      <p className="text-xs font-black text-primary dark:text-primary-hover mt-1">{prod.price} ج.م</p>
                     </div>
                   ))}
                 </div>
@@ -274,15 +274,15 @@ export const CulturalCraftDetailPage: React.FC = () => {
           {/* Sidebar */}
           <div className="lg:col-span-4 space-y-6">
             {/* Raw Materials */}
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
-              <h3 className="text-base font-black font-serif mb-3 text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-black font-serif mb-3 text-espresso dark:text-cream">
                 الخامات والمصادر الطبيعية:
               </h3>
               <div className="flex flex-wrap gap-2">
                 {craft.materials?.map((item, idx) => (
                   <span
                     key={idx}
-                    className="px-3 py-1.5 rounded-xl bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] text-xs font-bold border border-[#9a6a35]/25"
+                    className="px-3 py-1.5 rounded-xl bg-primary/15 text-primary dark:text-primary-hover text-xs font-bold border border-primary/25"
                   >
                     {item}
                   </span>
@@ -292,14 +292,14 @@ export const CulturalCraftDetailPage: React.FC = () => {
 
             {/* Tools Used */}
             {((craft.toolsUsed && craft.toolsUsed.length > 0) || (craft.tools && craft.tools.length > 0)) && (
-              <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
-                <h3 className="text-base font-black font-serif mb-3 text-[#211d18] dark:text-[#f5f0e7]">
+              <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+                <h3 className="text-base font-black font-serif mb-3 text-espresso dark:text-cream">
                   أدوات الصنعة التقليدية:
                 </h3>
                 <div className="space-y-2">
                   {(craft.toolsUsed || craft.tools || []).map((tool, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-[#211d18]/80 dark:text-[#f5f0e7]/80">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#9a6a35]" />
+                    <div key={idx} className="flex items-center gap-2 text-xs font-medium text-espresso/80 dark:text-cream/80">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                       <span>{tool}</span>
                     </div>
                   ))}
@@ -308,17 +308,17 @@ export const CulturalCraftDetailPage: React.FC = () => {
             )}
 
             {/* Explore Governorate CTA */}
-            <div className="bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
-              <h3 className="text-base font-black font-serif mb-2 text-[#211d18] dark:text-[#f5f0e7]">
+            <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-6 border border-black/10 dark:border-white/10 shadow-lg">
+              <h3 className="text-base font-black font-serif mb-2 text-espresso dark:text-cream">
                 معقل الصنعة
               </h3>
-              <p className="text-xs text-[#211d18]/60 dark:text-[#f5f0e7]/60 mb-4">
+              <p className="text-xs text-espresso/60 dark:text-cream/60 mb-4">
                 ورش الصنعة دي موجودة وشغالة في قرى ومراكز محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}.
               </p>
               <button
                 type="button"
                 onClick={() => navigateToGovernorate(craft.governorateId || craft.governorates?.[0] || 'qena')}
-                className="w-full py-3 px-4 rounded-[1.25rem] bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                className="w-full py-3 px-4 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
               >
                 <span>دليل محافظة {craft.governorateName || craft.governorates?.[0] || 'الصعيد'}</span>
                 <ArrowLeft className="w-3.5 h-3.5" />

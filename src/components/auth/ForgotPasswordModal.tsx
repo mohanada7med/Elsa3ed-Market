@@ -32,7 +32,7 @@ export default function ForgotPasswordModal({
 
   return (
     <div
-      className="fixed inset-0 z-[170] flex items-center justify-center p-4 bg-[#211d18]/70 backdrop-blur-md animate-fadeIn"
+      className="fixed inset-0 z-[170] flex items-center justify-center p-4 bg-espresso/70 backdrop-blur-md animate-fadeIn"
       dir="rtl"
       role="dialog"
       aria-modal="true"
@@ -61,7 +61,7 @@ export default function ForgotPasswordModal({
         <div
           className="
             relative
-            bg-[#9a6a35]
+            bg-primary
             px-6
             pt-8
             pb-7
@@ -138,7 +138,7 @@ export default function ForgotPasswordModal({
             "
           >
             <svg
-              className="w-8 h-8 text-[#9a6a35]"
+              className="w-8 h-8 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -171,7 +171,7 @@ export default function ForgotPasswordModal({
               m-0
               text-[24px]
               font-black
-              text-[#211d18]
+              text-espresso
               text-center
               leading-[1.6]
             "
@@ -203,7 +203,7 @@ export default function ForgotPasswordModal({
                 rounded-[14px]
                 border
                 border-black/[0.06]
-                bg-[#eee8dc]
+                bg-cream
                 px-4
                 py-3
               "
@@ -218,7 +218,7 @@ export default function ForgotPasswordModal({
                   m-0
                   text-sm
                   font-bold
-                  text-[#9a6a35]
+                  text-primary
                   text-center
                   break-all
                 "
@@ -239,7 +239,7 @@ export default function ForgotPasswordModal({
               gap-3
               rounded-[14px]
               border
-              border-[#9a6a35]/15
+              border-primary/15
               bg-[#f6ede3]
               px-4
               py-4
@@ -251,7 +251,7 @@ export default function ForgotPasswordModal({
                 w-9
                 h-9
                 rounded-full
-                bg-[#9a6a35]
+                bg-primary
                 flex
                 items-center
                 justify-center
@@ -294,7 +294,7 @@ export default function ForgotPasswordModal({
               rounded-[14px]
               border
               border-black/[0.06]
-              bg-[#eee8dc]
+              bg-cream
               p-4
             "
           >
@@ -312,7 +312,7 @@ export default function ForgotPasswordModal({
                 "
               >
                 <svg
-                  className="w-5 h-5 text-[#9a6a35]"
+                  className="w-5 h-5 text-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -333,7 +333,7 @@ export default function ForgotPasswordModal({
                     mb-1
                     text-sm
                     font-extrabold
-                    text-[#211d18]
+                    text-espresso
                   "
                 >
                   مش لاقي الرسالة؟
@@ -348,7 +348,7 @@ export default function ForgotPasswordModal({
                   "
                 >
                   بص في مجلد
-                  <strong className="text-[#9a6a35]">
+                  <strong className="text-primary">
                     {' '}Spam / Junk{' '}
                   </strong>
                   كمان، ساعات الرسائل الجديدة بتروح هناك
@@ -370,8 +370,8 @@ export default function ForgotPasswordModal({
               items-center
               justify-center
               gap-2
-              bg-[#9a6a35]
-              hover:bg-[#7d5427]
+              bg-primary
+              hover:bg-primary-hover
               active:bg-[#623f1a]
               text-white
               font-extrabold

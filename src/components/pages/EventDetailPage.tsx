@@ -165,10 +165,10 @@ export const EventDetailPage: React.FC = () => {
           min-h-screen
           items-center
           justify-center
-          bg-[#eee8dc]
-          text-[#211d18]
-          dark:bg-[#0b0b0a]
-          dark:text-[#f5f0e7]
+          bg-cream
+          text-espresso
+          dark:bg-espresso-900
+          dark:text-cream
         "
       >
         <div className="px-6 text-center">
@@ -183,8 +183,8 @@ export const EventDetailPage: React.FC = () => {
               justify-center
               rounded-full
               border
-              border-[#9a6a35]/20
-              bg-[#9a6a35]/5
+              border-primary/20
+              bg-primary/5
 
               dark:border-[#d6aa72]/20
               dark:bg-[#d6aa72]/5
@@ -194,9 +194,9 @@ export const EventDetailPage: React.FC = () => {
               size={26}
               className="
                 animate-pulse
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             />
           </div>
@@ -230,12 +230,12 @@ export const EventDetailPage: React.FC = () => {
           min-h-screen
           items-center
           justify-center
-          bg-[#eee8dc]
+          bg-cream
           px-5
-          text-[#211d18]
+          text-espresso
 
-          dark:bg-[#0b0b0a]
-          dark:text-[#f5f0e7]
+          dark:bg-espresso-900
+          dark:text-cream
         "
       >
         <div className="max-w-md text-center">
@@ -254,15 +254,15 @@ export const EventDetailPage: React.FC = () => {
               bg-white/60
 
               dark:border-white/10
-              dark:bg-#FFF6EB/[0.03]
+              dark:bg-cream/[0.03]
             "
           >
             <Compass
               size={26}
               className="
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             />
           </div>
@@ -303,7 +303,7 @@ export const EventDetailPage: React.FC = () => {
               transition
               hover:-translate-y-0.5
 
-              dark:bg-#FFF6EB
+              dark:bg-cream
               dark:text-black
 
               cursor-pointer
@@ -323,13 +323,13 @@ export const EventDetailPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors
         duration-500
 
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* =====================================================
@@ -346,7 +346,7 @@ export const EventDetailPage: React.FC = () => {
             w-[700px]
             rounded-full
             border
-            border-[#9a6a35]/[0.06]
+            border-primary/[0.06]
 
             dark:border-[#d6aa72]/[0.07]
           "
@@ -361,7 +361,7 @@ export const EventDetailPage: React.FC = () => {
             w-[550px]
             rounded-full
             border
-            border-[#9a6a35]/[0.05]
+            border-primary/[0.05]
 
             dark:border-[#d6aa72]/[0.06]
           "
@@ -379,11 +379,11 @@ export const EventDetailPage: React.FC = () => {
           z-[100]
           border-b
           border-black/[0.07]
-          bg-[#eee8dc]/85
+          bg-cream/85
           backdrop-blur-2xl
 
           dark:border-white/[0.08]
-          dark:bg-[#0b0b0a]/85
+          dark:bg-espresso-900/85
         "
       >
         <div
@@ -412,9 +412,9 @@ export const EventDetailPage: React.FC = () => {
               text-xs
               font-bold
               transition
-              hover:text-[#9a6a35]
+              hover:text-primary
 
-              dark:hover:text-[#d6aa72]
+              dark:hover:text-primary-hover
 
               cursor-pointer
             "
@@ -432,12 +432,12 @@ export const EventDetailPage: React.FC = () => {
                 bg-white/50
                 transition-all
 
-                group-hover:border-[#9a6a35]/30
+                group-hover:border-primary/30
                 group-hover:bg-[#201c17]
                 group-hover:text-white
 
                 dark:border-white/10
-                dark:bg-#FFF6EB/[0.035]
+                dark:bg-cream/[0.035]
 
                 dark:group-hover:bg-white
                 dark:group-hover:text-black
@@ -472,9 +472,9 @@ export const EventDetailPage: React.FC = () => {
                 text-[9px]
                 font-black
                 tracking-[0.5em]
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             >
               WAH
@@ -502,7 +502,7 @@ export const EventDetailPage: React.FC = () => {
               font-bold
               transition-all
 
-              hover:border-[#9a6a35]/30
+              hover:border-primary/30
               hover:bg-[#201c17]
               hover:text-white
 
@@ -848,11 +848,11 @@ export const EventDetailPage: React.FC = () => {
                   items-center
                   justify-center
                   rounded-xl
-                  bg-[#9a6a35]/10
-                  text-[#9a6a35]
+                  bg-primary/10
+                  text-primary
 
                   dark:bg-[#d6aa72]/10
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
               >
                 <Clock3 size={18} />
@@ -905,11 +905,11 @@ export const EventDetailPage: React.FC = () => {
                   items-center
                   justify-center
                   rounded-xl
-                  bg-[#9a6a35]/10
-                  text-[#9a6a35]
+                  bg-primary/10
+                  text-primary
 
                   dark:bg-[#d6aa72]/10
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
               >
                 <MapPin size={18} />
@@ -956,11 +956,11 @@ export const EventDetailPage: React.FC = () => {
                   items-center
                   justify-center
                   rounded-xl
-                  bg-[#9a6a35]/10
-                  text-[#9a6a35]
+                  bg-primary/10
+                  text-primary
 
                   dark:bg-[#d6aa72]/10
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
               >
                 <Users size={18} />
@@ -1035,9 +1035,9 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.25em]
-                    text-[#9a6a35]
+                    text-primary
 
-                    dark:text-[#d6aa72]
+                    dark:text-primary-hover
                   "
                 >
                   <Feather size={12} />
@@ -1048,7 +1048,7 @@ export const EventDetailPage: React.FC = () => {
                   className="
                     h-px
                     w-12
-                    bg-[#9a6a35]
+                    bg-primary
 
                     dark:bg-[#d6aa72]
                   "
@@ -1167,8 +1167,8 @@ export const EventDetailPage: React.FC = () => {
               overflow-hidden
               rounded-[2rem]
               border
-              border-[#9a6a35]/15
-              bg-[#9a6a35]/[0.045]
+              border-primary/15
+              bg-primary/[0.045]
               px-7
               py-12
               text-center
@@ -1189,7 +1189,7 @@ export const EventDetailPage: React.FC = () => {
                 w-48
                 rounded-full
                 border
-                border-[#9a6a35]/10
+                border-primary/10
 
                 dark:border-[#d6aa72]/10
               "
@@ -1204,7 +1204,7 @@ export const EventDetailPage: React.FC = () => {
                 w-56
                 rounded-full
                 border
-                border-[#9a6a35]/10
+                border-primary/10
 
                 dark:border-[#d6aa72]/10
               "
@@ -1216,9 +1216,9 @@ export const EventDetailPage: React.FC = () => {
                 relative
                 mx-auto
                 mb-5
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             />
 
@@ -1318,7 +1318,7 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.25em]
-                    text-[#d6aa72]
+                    text-primary-hover
                   "
                 >
                   EXPLORE THE REGION
@@ -1361,16 +1361,16 @@ export const EventDetailPage: React.FC = () => {
   items-center
   justify-center
   rounded-full
-  bg-[#211d18]
+  bg-espresso
   text-white
-  dark:bg-#FFF6EB
-  dark:text-[#211d18]
+  dark:bg-cream
+  dark:text-espresso
   transition-all
   duration-300
   group-hover:-translate-x-1
   group-hover:scale-105
-  group-hover:bg-[#9a6a35]
-  dark:group-hover:bg-[#9a6a35]
+  group-hover:bg-primary
+  dark:group-hover:bg-primary
   dark:group-hover:text-white
   cursor-pointer
   shadow-md
@@ -1476,7 +1476,7 @@ export const EventDetailPage: React.FC = () => {
                     text-[9px]
                     font-black
                     tracking-[0.3em]
-                    text-[#d6aa72]
+                    text-primary-hover
                   "
                 >
                   <Sparkles size={12} />
@@ -1521,7 +1521,7 @@ export const EventDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('events')}
-                  className="mt-6 inline-flex items-center gap-3 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-[#211d18] px-5 py-3.5 text-[10px] font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#9a6a35] dark:hover:bg-[#9a6a35] dark:hover:text-white cursor-pointer shadow-md"
+                  className="mt-6 inline-flex items-center gap-3 rounded-full bg-espresso text-white dark:bg-cream dark:text-espresso px-5 py-3.5 text-[10px] font-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary dark:hover:bg-primary dark:hover:text-white cursor-pointer shadow-md"
                 >
                   كل الفعاليات
                   <ArrowLeft size={14} />

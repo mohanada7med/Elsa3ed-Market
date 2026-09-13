@@ -292,7 +292,7 @@ export const ReelCommentsDrawer: React.FC<
                     className="
                     h-4
                     w-4
-                    text-[#d6aa72]
+                    text-primary-hover
                   "
                   />
 
@@ -561,7 +561,7 @@ export const ReelCommentsDrawer: React.FC<
                   items-center
                   justify-center
                   rounded-xl
-                  bg-[#9a6a35]
+                  bg-primary
                   text-white
                   transition-all
                   hover:bg-[#83592c]

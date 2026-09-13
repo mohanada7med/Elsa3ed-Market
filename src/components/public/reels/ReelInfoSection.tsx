@@ -64,7 +64,7 @@ export const ReelInfoSection: React.FC<ReelInfoSectionProps> = ({
         )}
 
         {categoryLabel && (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#9a6a35]/80 backdrop-blur-md text-white text-[10px] font-extrabold shadow-md shrink-0">
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary/80 backdrop-blur-md text-white text-[10px] font-extrabold shadow-md shrink-0">
             <Compass className="w-2.5 h-2.5 text-[#d5a56d]" />
             <span>{categoryLabel}</span>
           </span>

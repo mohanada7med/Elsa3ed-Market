@@ -51,7 +51,7 @@ export const WhatsAppButton: React.FC = () => {
     },
     {
       icon: (
-        <Sparkles className="w-4 h-4 text-amber-600 dark:text-[#d6aa72]" />
+        <Sparkles className="w-4 h-4 text-amber-600 dark:text-primary-hover" />
       ),
       title: 'طلب تفصيل أو نقش مخصص على الحرف',
       text: 'السلام عليكم، أريد طلب قطعة يدوية مخصصة ونقش اسم/شعار خاص.',
@@ -105,7 +105,7 @@ export const WhatsAppButton: React.FC = () => {
               w-[calc(100vw-2rem)]
               max-w-[360px]
               bg-white/95
-              dark:bg-[#151513]/95
+              dark:bg-espresso-900/95
               backdrop-blur-2xl
               rounded-[2rem]
               shadow-2xl
@@ -117,7 +117,7 @@ export const WhatsAppButton: React.FC = () => {
             "
           >
             {/* Header */}
-            <div className="bg-[#9a6a35] text-white p-4 flex items-center justify-between">
+            <div className="bg-primary text-white p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center p-1 border border-white/20">
@@ -128,7 +128,7 @@ export const WhatsAppButton: React.FC = () => {
                     />
                   </div>
 
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-amber-300 border-2 border-[#9a6a35] rounded-full" />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-amber-300 border-2 border-primary rounded-full" />
                 </div>
 
                 <div>
@@ -155,7 +155,7 @@ export const WhatsAppButton: React.FC = () => {
             {/* Chat Body */}
             <div className="p-4 bg-[#E5DDD5]/30 dark:bg-[#14100E] space-y-3 max-h-[300px] overflow-y-auto">
               <div className="bg-white dark:bg-[#221C18] p-3 rounded-2xl rounded-tr-none shadow-2xs border border-gray-100 dark:border-[#332A24] text-xs text-gray-800 dark:text-[#DDD2C7] leading-relaxed">
-                <p className="font-bold text-[#9a6a35] dark:text-[#FF855D] mb-1">
+                <p className="font-bold text-primary dark:text-[#FF855D] mb-1">
                   مرحباً بك في وه! 🏺✨
                 </p>
 
@@ -212,7 +212,7 @@ export const WhatsAppButton: React.FC = () => {
             </div>
 
             {/* Custom Input */}
-            <div className="p-3 bg-white/95 dark:bg-[#151513]/95 border-t border-black/10 dark:border-white/10 flex items-center gap-2">
+            <div className="p-3 bg-white/95 dark:bg-espresso-900/95 border-t border-black/10 dark:border-white/10 flex items-center gap-2">
               <input
                 type="text"
                 value={userMsg}
@@ -237,7 +237,7 @@ export const WhatsAppButton: React.FC = () => {
                   border
                   border-gray-200
                   dark:border-[#3A3028]
-                  focus:border-[#9a6a35]
+                  focus:border-primary
                   focus:outline-none
                 "
               />
@@ -247,8 +247,8 @@ export const WhatsAppButton: React.FC = () => {
                 onClick={() => handleSendMessage()}
                 className="
                   p-2.5
-                  bg-[#9a6a35]
-                  hover:bg-[#7d5427]
+                  bg-primary
+                  hover:bg-primary-hover
                   text-white
                   rounded-xl
                   shadow-xs
@@ -280,8 +280,8 @@ export const WhatsAppButton: React.FC = () => {
             w-14
             h-14
             rounded-full
-            bg-[#9a6a35]
-            hover:bg-[#9a6a35]
+            bg-primary
+            hover:bg-primary
             text-white
             shadow-xl
             hover:shadow-2xl
@@ -296,7 +296,7 @@ export const WhatsAppButton: React.FC = () => {
           "
         >
           {/* Animated Pulse */}
-          <span className="absolute inset-0 rounded-full bg-[#9a6a35] opacity-30 animate-ping pointer-events-none" />
+          <span className="absolute inset-0 rounded-full bg-primary opacity-30 animate-ping pointer-events-none" />
 
           <MessageCircle className="w-7 h-7 fill-white text-[#e97248]" />
 
@@ -309,7 +309,7 @@ export const WhatsAppButton: React.FC = () => {
         {/* Hover Tooltip */}
         {!isOpen && (
           <div className="hidden sm:block absolute bottom-full left-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            <div className="bg-[#9a6a35] text-white text-xs font-bold py-1.5 px-3 rounded-xl shadow-lg flex items-center gap-1.5">
+            <div className="bg-primary text-white text-xs font-bold py-1.5 px-3 rounded-xl shadow-lg flex items-center gap-1.5">
               <span>تواصل واتساب</span>
             </div>
           </div>

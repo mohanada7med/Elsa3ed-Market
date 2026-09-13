@@ -92,7 +92,7 @@ export const CraftReelsSection: React.FC = () => {
   return (
     <section
       dir="rtl"
-      className="pt-16 pb-32 sm:pb-36 bg-transparent text-[#211d18] dark:text-[#f5f0e7] relative select-none"
+      className="pt-16 pb-32 sm:pb-36 bg-transparent text-espresso dark:text-cream relative select-none"
       style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom, 0px))' }}
     >
       <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
@@ -101,9 +101,9 @@ export const CraftReelsSection: React.FC = () => {
           <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
             <div>
               {/* الشارة العلوية */}
-              <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-[#9a6a35] dark:text-[#d6aa72]">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#9a6a35]/10 dark:bg-[#d6aa72]/10">
-                  <Clapperboard size={14} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+              <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+                  <Clapperboard size={14} className="text-primary dark:text-primary-hover" />
                 </span>
                 لفه في الصعيد / حكايات وناس ومطارح
               </div>
@@ -112,7 +112,7 @@ export const CraftReelsSection: React.FC = () => {
               <h1 className="text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
                 ريلز
                 <br />
-                <span className="mr-[4vw] text-[#9a6a35] dark:text-[#d6aa72] lg:mr-16">
+                <span className="mr-[4vw] text-primary dark:text-primary-hover lg:mr-16">
                   وه
                 </span>
               </h1>
@@ -123,7 +123,7 @@ export const CraftReelsSection: React.FC = () => {
                   <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
                     ريلز
                   </div>
-                  <div className="mt-3 h-px w-10 bg-[#9a6a35] dark:bg-[#d6aa72]" />
+                  <div className="mt-3 h-px w-10 bg-primary dark:bg-[#d6aa72]" />
                 </div>
 
                 <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
@@ -137,7 +137,7 @@ export const CraftReelsSection: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setActivePage('reels')}
-                className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-[#9a6a35] dark:bg-zinc-800 dark:hover:bg-[#9a6a35] px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2.5 text-xs font-bold text-white bg-[#1a1713] hover:bg-primary dark:bg-zinc-800 dark:hover:bg-primary px-6 py-3.5 rounded-full transition-all duration-200 shadow-md active:scale-95 cursor-pointer"
               >
                 <span>عرض كل الفيديوهات</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -157,7 +157,7 @@ export const CraftReelsSection: React.FC = () => {
               transition={{ duration: 0.4, delay: idx * 0.05 }}
               whileHover={{ y: -6, scale: 1.01 }}
               onClick={() => openReelModal(reel.id)}
-              className="group relative aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-black/10 dark:border-white/10 shadow-lg hover:shadow-2xl hover:border-[#9a6a35] transition-all duration-300 cursor-pointer"
+              className="group relative aspect-[9/16] rounded-3xl overflow-hidden bg-zinc-900 border border-black/10 dark:border-white/10 shadow-lg hover:shadow-2xl hover:border-primary transition-all duration-300 cursor-pointer"
             >
               {/* صورة الغلاف */}
               <img
@@ -173,8 +173,8 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* عناصر الجزء العلوي */}
               <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                <span className="bg-black/50 backdrop-blur-md text-[#d6aa72] dark:text-[#d6aa72] text-[11px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/10 flex items-center gap-1">
-                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#9a6a35] dark:text-[#d6aa72] shrink-0" />
+                <span className="bg-black/50 backdrop-blur-md text-primary-hover dark:text-primary-hover text-[11px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/10 flex items-center gap-1">
+                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary dark:text-primary-hover shrink-0" />
                   <span>{reel.location || reel.governorate}</span>
                 </span>
 
@@ -189,7 +189,7 @@ export const CraftReelsSection: React.FC = () => {
                     </button>
                   )}
                   <span className="bg-black/50 backdrop-blur-md text-white text-[11px] font-bold px-2 py-1 rounded-full border border-white/10 flex items-center gap-1">
-                    <Flame className="w-3 h-3 text-[#d6aa72] fill-[#d6aa72]" />
+                    <Flame className="w-3 h-3 text-primary-hover fill-[#d6aa72]" />
                     {reel.likesCount}
                   </span>
                 </div>
@@ -197,7 +197,7 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* زر التشغيل الشفاف في المنتصف */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:bg-[#9a6a35] transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">
                   <Play className="w-5 h-5 fill-current mr-0.5" />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export const CraftReelsSection: React.FC = () => {
               {/* الجزء السفلي العائم (معلومات المنتج والعنوان بدون تصنيف الحرفة) */}
               <div className="absolute inset-x-0 bottom-0 p-3.5 z-10 flex flex-col justify-end space-y-2.5">
                 <div>
-                  <h3 className="text-white text-sm font-bold line-clamp-1 group-hover:text-[#d6aa72] transition-colors">
+                  <h3 className="text-white text-sm font-bold line-clamp-1 group-hover:text-primary-hover transition-colors">
                     {reel.title}
                   </h3>
                 </div>
@@ -217,7 +217,7 @@ export const CraftReelsSection: React.FC = () => {
                       <span className="text-[10px] text-zinc-300 block truncate">
                         {reel.productTitle || 'القطعة المعروضة'}
                       </span>
-                      <span className="text-xs font-black text-[#d6aa72] font-mono">
+                      <span className="text-xs font-black text-primary-hover font-mono">
                         {reel.productPrice} ج.م
                       </span>
                     </div>
@@ -225,7 +225,7 @@ export const CraftReelsSection: React.FC = () => {
                     <button
                       type="button"
                       onClick={(e) => handleQuickAdd(e, reel)}
-                      className="flex-shrink-0 bg-[#9a6a35] hover:bg-amber-600 text-white p-2 rounded-xl active:scale-95 transition-all cursor-pointer"
+                      className="flex-shrink-0 bg-primary hover:bg-amber-600 text-white p-2 rounded-xl active:scale-95 transition-all cursor-pointer"
                       title="شراء فوري"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />

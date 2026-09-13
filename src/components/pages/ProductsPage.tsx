@@ -36,13 +36,13 @@ export const ProductsPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-[#eee8dc]
-        text-[#211d18]
+        bg-cream
+        text-espresso
         transition-colors
         duration-500
 
-        dark:bg-[#0b0b0a]
-        dark:text-[#f5f0e7]
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
       {/* =====================================================
@@ -59,7 +59,7 @@ export const ProductsPage: React.FC = () => {
             w-[600px]
             rounded-full
             border
-            border-[#9a6a35]/[0.07]
+            border-primary/[0.07]
 
             dark:border-[#d6aa72]/[0.06]
           "
@@ -74,7 +74,7 @@ export const ProductsPage: React.FC = () => {
             w-[700px]
             rounded-full
             border
-            border-[#9a6a35]/[0.05]
+            border-primary/[0.05]
 
             dark:border-[#d6aa72]/[0.05]
           "
@@ -88,7 +88,7 @@ export const ProductsPage: React.FC = () => {
             h-2
             w-2
             rounded-full
-            bg-[#9a6a35]/30
+            bg-primary/30
 
             dark:bg-[#d6aa72]/30
           "
@@ -110,10 +110,10 @@ export const ProductsPage: React.FC = () => {
           z-40
           border-b
           border-black/[0.06]
-          bg-[#eee8dc]/70
+          bg-cream/70
           backdrop-blur-md
           dark:border-white/[0.06]
-          dark:bg-[#0b0b0a]/70
+          dark:bg-espresso-900/70
         "
       >
         <div
@@ -143,8 +143,8 @@ export const ProductsPage: React.FC = () => {
               text-xs
               font-bold
               transition-colors
-              hover:text-[#9a6a35]
-              dark:hover:text-[#d6aa72]
+              hover:text-primary
+              dark:hover:text-primary-hover
               cursor-pointer
               min-h-[38px]
             "
@@ -160,7 +160,7 @@ export const ProductsPage: React.FC = () => {
                 border
                 border-black/10
                 transition-colors
-                group-hover:bg-[#211d18]
+                group-hover:bg-espresso
                 group-hover:text-white
                 dark:border-white/10
                 dark:group-hover:bg-white
@@ -177,7 +177,7 @@ export const ProductsPage: React.FC = () => {
 
           {/* Subtitle */}
           <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#7c7164] dark:text-[#bcae9c]">
-            <ShoppingBag size={13} className="text-[#9a6a35] dark:text-[#d6aa72]" />
+            <ShoppingBag size={13} className="text-primary dark:text-primary-hover" />
             <span>السوق التراثي</span>
           </div>
 
@@ -198,7 +198,7 @@ export const ProductsPage: React.FC = () => {
               text-[10px]
               font-bold
               transition-colors
-              hover:bg-[#211d18]
+              hover:bg-espresso
               hover:text-white
               dark:border-white/10
               dark:hover:bg-white
@@ -265,9 +265,9 @@ export const ProductsPage: React.FC = () => {
                   text-[9px]
                   font-black
                   tracking-[0.28em]
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
               >
                 <span
@@ -278,7 +278,7 @@ export const ProductsPage: React.FC = () => {
                     items-center
                     justify-center
                     rounded-full
-                    bg-[#9a6a35]/10
+                    bg-primary/10
 
                     dark:bg-[#d6aa72]/10
                   "
@@ -309,9 +309,9 @@ export const ProductsPage: React.FC = () => {
                     mr-3
                     sm:mr-6
                     lg:mr-16
-                    text-[#9a6a35]
+                    text-primary
 
-                    dark:text-[#d6aa72]
+                    dark:text-primary-hover
                   "
                 >
                   الصعيد
@@ -347,7 +347,7 @@ export const ProductsPage: React.FC = () => {
                       mt-3
                       h-px
                       w-12
-                      bg-[#9a6a35]
+                      bg-primary
 
                       dark:bg-[#d6aa72]
                     "
@@ -412,7 +412,7 @@ sm:leading-9
                     w-48
                     rounded-full
                     border
-                    border-[#9a6a35]/15
+                    border-primary/15
 
                     dark:border-[#d6aa72]/10
                   "
@@ -436,9 +436,9 @@ sm:leading-9
                     <Gem
                       size={18}
                       className="
-                        text-[#9a6a35]
+                        text-primary
 
-                        dark:text-[#d6aa72]
+                        dark:text-primary-hover
                       "
                     />
                   </div>
@@ -517,9 +517,9 @@ sm:leading-9
                     <CircleDot
                       size={13}
                       className="
-                        text-[#9a6a35]
+                        text-primary
 
-                        dark:text-[#d6aa72]
+                        dark:text-primary-hover
                       "
                     />
 
@@ -560,7 +560,7 @@ sm:leading-9
             rounded-[2rem]
             border
             border-black/[0.08]
-            bg-[#211d18]
+            bg-espresso
             p-5
             text-white
 
@@ -774,9 +774,9 @@ sm:leading-9
             <ScrollText
               size={16}
               className="
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             />
 
@@ -802,9 +802,9 @@ sm:leading-9
             <MapPin
               size={12}
               className="
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             />
 
@@ -862,9 +862,9 @@ sm:leading-9
                 text-[9px]
                 font-black
                 tracking-[0.25em]
-                text-[#9a6a35]
+                text-primary
 
-                dark:text-[#d6aa72]
+                dark:text-primary-hover
               "
             >
               HANDPICKED COLLECTION
@@ -952,9 +952,9 @@ sm:leading-9
                   text-[9px]
                   font-black
                   tracking-[0.3em]
-                  text-[#9a6a35]
+                  text-primary
 
-                  dark:text-[#d6aa72]
+                  dark:text-primary-hover
                 "
               >
                 <Sparkles size={13} />
@@ -980,9 +980,9 @@ sm:leading-9
 
                 <span
                   className="
-                    text-[#9a6a35]
+                    text-primary
 
-                    dark:text-[#d6aa72]
+                    dark:text-primary-hover
                   "
                 >
                   منتج.
@@ -996,7 +996,7 @@ sm:leading-9
                   mb-6
                   h-px
                   w-16
-                  bg-[#9a6a35]
+                  bg-primary
 
                   dark:bg-[#d6aa72]
                 "
@@ -1048,7 +1048,7 @@ sm:leading-9
             relative
             overflow-hidden
             rounded-[2.5rem]
-            bg-[#211d18]
+            bg-espresso
             px-6
             py-16
             text-white
@@ -1100,7 +1100,7 @@ sm:leading-9
                 text-[9px]
                 font-black
                 tracking-[0.3em]
-                text-[#d6aa72]
+                text-primary-hover
               "
             >
               <MapPin size={13} />
@@ -1165,7 +1165,7 @@ sm:leading-9
                   justify-center
                   gap-3
                   rounded-full
-                  bg-[#9a6a35]
+                  bg-primary
                   px-7
                   text-xs
                   text-white

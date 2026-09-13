@@ -87,7 +87,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#eee8dc] dark:bg-[#0b0b0a] text-[#211d18] dark:text-[#f5f0e7] antialiased selection:bg-[#9a6a35]/20 selection:text-[#9a6a35]">
+      <body className="bg-cream dark:bg-espresso-900 text-espresso dark:text-cream antialiased selection:bg-primary/20 selection:text-primary">
         {children}
       </body>
     </html>

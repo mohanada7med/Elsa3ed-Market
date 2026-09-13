@@ -26,7 +26,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center px-5 sm:px-8 py-16" dir="rtl">
-      <div className="max-w-lg w-full bg-white/75 dark:bg-[#151513]/90 backdrop-blur-xl rounded-[2rem] p-8 sm:p-12 text-center border border-black/10 dark:border-white/10 shadow-xl">
+      <div className="max-w-lg w-full bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] p-8 sm:p-12 text-center border border-black/10 dark:border-white/10 shadow-xl">
         <div className="w-20 h-20 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-rose-500/20">
           <ShieldAlert className="w-10 h-10" aria-hidden="true" />
         </div>
@@ -35,11 +35,11 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
           كود الخطأ: 403 Forbidden
         </span>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-[#211d18] dark:text-[#f5f0e7] mb-3 font-serif">
+        <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream mb-3 font-serif">
           {defaultTitle}
         </h1>
 
-        <p className="text-[#211d18]/70 dark:text-[#f5f0e7]/70 text-sm sm:text-base leading-relaxed mb-8">
+        <p className="text-espresso/70 dark:text-cream/70 text-sm sm:text-base leading-relaxed mb-8">
           {defaultMessage}
         </p>
 
@@ -49,7 +49,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-seller-dashboard-btn"
               onClick={() => setActivePage('seller-dashboard')}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Store className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الورشة</span>
@@ -59,7 +59,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-admin-dashboard-btn"
               onClick={() => setActivePage('admin-dashboard')}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Shield className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الإدارة</span>
@@ -69,7 +69,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-login-btn"
               onClick={() => setIsAuthModalOpen(true)}
-              className="flex items-center justify-center gap-2 bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <LogIn className="w-4 h-4" aria-hidden="true" />
               <span>ادخل بحساب مشتري</span>
@@ -80,7 +80,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
             type="button"
             id="forbidden-home-btn"
             onClick={() => setActivePage('home')}
-            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-#FFF6EB/5 hover:bg-black/10 dark:hover:bg-white/10 text-[#211d18] dark:text-[#f5f0e7] px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors text-sm cursor-pointer border border-black/10 dark:border-white/10"
+            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream px-6 py-3.5 rounded-[1.25rem] font-bold transition-colors text-sm cursor-pointer border border-black/10 dark:border-white/10"
           >
             <Home className="w-4 h-4" aria-hidden="true" />
             <span>ارجع للرئيسية</span>

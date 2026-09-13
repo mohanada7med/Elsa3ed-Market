@@ -72,7 +72,7 @@ export const MobileBottomBar: React.FC = () => {
           mx-auto
           rounded-[2rem]
           bg-white/80
-          dark:bg-[#151513]/90
+          dark:bg-espresso-900/90
           backdrop-blur-2xl
           border
           border-black/10
@@ -99,12 +99,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'home' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 الرئيسية
               </span>
             </button>
@@ -118,12 +118,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'seller-products' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 منتجاتي
               </span>
             </button>
@@ -134,10 +134,10 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('seller-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <Store className="w-5 h-5 text-[#9a6a35]" />
+              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <Store className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الورشة</span>
+              <span className="text-[9px] font-black mt-0.5 text-primary">الورشة</span>
             </button>
 
             {/* 4. طلبات الورشة */}
@@ -149,12 +149,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'seller-orders' && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 الطلبات
               </span>
             </button>
@@ -168,19 +168,19 @@ export const MobileBottomBar: React.FC = () => {
               {(activePage === 'messages' || activePage === 'seller-messages') && (
                 <motion.div
                   layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               <div className="relative">
-                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
                 {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#9a6a35] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
+                  <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
                     {chatUnreadCount}
                   </span>
                 )}
               </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 المحادثات
               </span>
             </button>
@@ -230,7 +230,7 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('admin-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
                 <ShieldAlert className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <span className="text-[9px] font-black mt-0.5 text-purple-600 dark:text-purple-400">الإدارة</span>
@@ -285,12 +285,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'home' && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 الرئيسية
               </span>
             </button>
@@ -305,12 +305,12 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'products' && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
-              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 المقتنيات
               </span>
             </button>
@@ -322,10 +322,10 @@ export const MobileBottomBar: React.FC = () => {
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
               aria-label="لفة في الصعيد"
             >
-              <div className="w-12 h-12 rounded-full bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <MapPin className="w-5 h-5 text-[#9a6a35]" />
+              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <MapPin className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-[#9a6a35]">الصعيد</span>
+              <span className="text-[9px] font-black mt-0.5 text-primary">الصعيد</span>
             </button>
 
             {/* 4. سلة المشتريات */}
@@ -338,19 +338,19 @@ export const MobileBottomBar: React.FC = () => {
               {activePage === 'cart' && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               <div className="relative">
-                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-[#9a6a35] text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 bg-primary text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
                     {cartCount > 99 ? '99+' : cartCount}
                   </span>
                 )}
               </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/65'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
                 السلة
               </span>
             </button>
@@ -365,16 +365,16 @@ export const MobileBottomBar: React.FC = () => {
               {isAccountActive && (
                 <motion.div
                   layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-[#9a6a35]/15 dark:bg-[#9a6a35]/25 border border-[#9a6a35]/30"
+                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
                   transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                 />
               )}
               {!isAuthenticated ? (
-                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
               ) : (
-                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/50 dark:text-white/50'}`} />
+                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
               )}
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-[#9a6a35]' : 'text-black/65 dark:text-white/60'}`}>
+              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-primary' : 'text-black/65 dark:text-white/60'}`}>
                 {!isAuthenticated ? 'دخول' : 'حسابي'}
               </span>
             </button>

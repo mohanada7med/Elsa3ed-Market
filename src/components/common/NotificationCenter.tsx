@@ -250,12 +250,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'product_pending_review':
         return (
-          <Sparkles className="h-4 w-4 text-amber-600 dark:text-[#d6aa72]" />
+          <Sparkles className="h-4 w-4 text-amber-600 dark:text-primary-hover" />
         );
 
       case 'low_stock':
         return (
-          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-[#d6aa72]" />
+          <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-primary-hover" />
         );
 
       case 'payout_requested':
@@ -267,7 +267,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'new_review':
         return (
-          <Star className="h-4 w-4 text-[#d6aa72] " />
+          <Star className="h-4 w-4 text-primary-hover " />
         );
 
       case 'new_seller_registered':
@@ -277,12 +277,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
       case 'password_reset_requested':
         return (
-          <KeyRound className="h-4 w-4 text-[#9a6a35]" />
+          <KeyRound className="h-4 w-4 text-primary" />
         );
 
       default:
         return (
-          <Bell className="h-4 w-4 text-[#9a6a35]" />
+          <Bell className="h-4 w-4 text-primary" />
         );
     }
   };
@@ -374,13 +374,13 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           border-black/10
           dark:border-white/10
           bg-white/80
-          dark:bg-#FFF6EB/5
+          dark:bg-cream/5
           text-black/70
           dark:text-white/70
           transition-all
           duration-200
-          hover:border-[#9a6a35]
-          hover:text-[#9a6a35]
+          hover:border-primary
+          hover:text-primary
           hover:bg-white
           dark:hover:bg-white/10
           active:scale-95
@@ -416,7 +416,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               h-[18px]
               px-1
               rounded-full
-              bg-[#9a6a35]
+              bg-primary
               text-white
               text-[9px]
               font-black
@@ -474,7 +474,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               sm:w-[420px]
               max-w-[calc(100vw-16px)]
               bg-white/95
-              dark:bg-[#151513]/95
+              dark:bg-espresso-900/95
               backdrop-blur-2xl
               border
               border-black/10
@@ -494,7 +494,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 px-4
                 py-3.5
                 bg-black/5
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 border-b
                 border-black/10
                 dark:border-white/10
@@ -510,14 +510,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     w-9
                     h-9
                     rounded-xl
-                    bg-[#9a6a35]/10
+                    bg-primary/10
                     flex
                     items-center
                     justify-center
                     shrink-0
                   "
                 >
-                  <Bell className="w-4 h-4 text-[#9a6a35]" />
+                  <Bell className="w-4 h-4 text-primary" />
                 </div>
 
                 <div className="min-w-0">
@@ -527,8 +527,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         text-[13px]
                         sm:text-sm
                         font-black
-                        text-[#211d18]
-                        dark:text-[#f5f0e7]
+                        text-espresso
+                        dark:text-cream
                         truncate
                       "
                     >
@@ -539,7 +539,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       <span
                         className="
                           shrink-0
-                          bg-[#9a6a35]
+                          bg-primary
                           text-white
                           text-[9px]
                           font-black
@@ -583,7 +583,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   rounded-lg
                   text-black/50
                   dark:text-white/50
-                  hover:text-[#9a6a35]
+                  hover:text-primary
                   hover:bg-black/5
                   dark:hover:bg-white/5
                   transition-colors
@@ -599,7 +599,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               className="
                 px-4
                 py-2.5
-                bg-[#9a6a35]/10
+                bg-primary/10
                 border-b
                 border-black/10
                 dark:border-white/10
@@ -615,7 +615,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     w-7
                     h-7
                     rounded-lg
-                    bg-[#9a6a35]
+                    bg-primary
                     text-white
                     flex
                     items-center
@@ -633,8 +633,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       text-[10px]
                       sm:text-[11px]
                       font-black
-                      text-[#211d18]
-                      dark:text-[#f5f0e7]
+                      text-espresso
+                      dark:text-cream
                       truncate
                     "
                   >
@@ -688,8 +688,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         transition-all
                         cursor-pointer
                         ${browserNotificationSettings.soundEnabled
-                          ? 'bg-[#9a6a35]/15 border-[#9a6a35]/30 text-[#9a6a35]'
-                          : 'bg-black/5 dark:bg-#FFF6EB/5 text-black/40 dark:text-white/40 border-black/10 dark:border-white/10'
+                          ? 'bg-primary/15 border-primary/30 text-primary'
+                          : 'bg-black/5 dark:bg-cream/5 text-black/40 dark:text-white/40 border-black/10 dark:border-white/10'
                         }
                       `}
                       title={
@@ -713,12 +713,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         px-2.5
                         rounded-lg
                         bg-white/80
-                        dark:bg-#FFF6EB/5
+                        dark:bg-cream/5
                         border
-                        border-[#9a6a35]/30
-                        hover:border-[#9a6a35]
-                        text-[#9a6a35]
-                        hover:bg-[#9a6a35]
+                        border-primary/30
+                        hover:border-primary
+                        text-primary
+                        hover:bg-primary
                         hover:text-white
                         text-[9px]
                         font-black
@@ -747,12 +747,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     className="
                       h-7
                       px-2.5
-                      bg-[#211d18]
-                      dark:bg-#FFF6EB
+                      bg-espresso
+                      dark:bg-cream
                       text-white
                       dark:text-black
-                      hover:bg-[#9a6a35]
-                      dark:hover:bg-[#d5a56d]
+                      hover:bg-primary
+                      dark:hover:bg-primary-hover
                       disabled:opacity-50
                       rounded-lg
                       text-[9px]
@@ -782,7 +782,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 px-4
                 py-2
                 bg-white/50
-                dark:bg-#FFF6EB/[0.02]
+                dark:bg-cream/[0.02]
                 border-b
                 border-black/10
                 dark:border-white/10
@@ -805,7 +805,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     transition-all
                     cursor-pointer
                     ${filter === 'all'
-                      ? 'bg-[#211d18] text-white dark:bg-#FFF6EB dark:text-black shadow-xs'
+                      ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-xs'
                       : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                     }
                   `}
@@ -825,7 +825,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     transition-all
                     cursor-pointer
                     ${filter === 'unread'
-                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      ? 'bg-primary text-white shadow-xs'
                       : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                     }
                   `}
@@ -843,7 +843,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       className="
                         text-[10px]
                         font-black
-                        text-[#9a6a35]
+                        text-primary
                         hover:underline
                         flex
                         items-center
@@ -921,7 +921,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         group
                         ${notification.read
                           ? 'bg-transparent hover:bg-black/[0.02] dark:hover:bg-white/[0.02]'
-                          : 'bg-[#9a6a35]/5 hover:bg-[#9a6a35]/10'
+                          : 'bg-primary/5 hover:bg-primary/10'
                         }
                       `}
                     >
@@ -934,7 +934,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                             top-3
                             bottom-3
                             w-1
-                            bg-[#9a6a35]
+                            bg-primary
                             rounded-l-full
                           "
                         />
@@ -983,8 +983,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                               leading-5
                               truncate
                               ${notification.read
-                                ? 'text-[#211d18] dark:text-[#f5f0e7]'
-                                : 'text-[#9a6a35]'
+                                ? 'text-espresso dark:text-cream'
+                                : 'text-primary'
                               }
                             `}
                           >
@@ -1045,7 +1045,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                 gap-1
                                 text-[10px]
                                 font-black
-                                text-[#9a6a35]
+                                text-primary
                               "
                             >
                               عرض التفاصيل
@@ -1071,8 +1071,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                                   w-7
                                   h-7
                                   rounded-lg
-                                  text-[#9a6a35]
-                                  hover:bg-[#9a6a35]/10
+                                  text-primary
+                                  hover:bg-primary/10
                                   transition-all
                                   flex
                                   items-center
@@ -1140,11 +1140,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       h-14
                       rounded-2xl
                       bg-black/5
-                      dark:bg-#FFF6EB/5
+                      dark:bg-cream/5
                       flex
                       items-center
                       justify-center
-                      text-[#9a6a35]/40
+                      text-primary/40
                     "
                   >
                     <Bell className="w-7 h-7" />
@@ -1155,8 +1155,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       mt-4
                       text-sm
                       font-black
-                      text-[#211d18]
-                      dark:text-[#f5f0e7]
+                      text-espresso
+                      dark:text-cream
                     "
                   >
                     {filter === 'unread'
@@ -1189,7 +1189,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 px-4
                 py-2.5
                 bg-black/5
-                dark:bg-#FFF6EB/5
+                dark:bg-cream/5
                 border-t
                 border-black/10
                 dark:border-white/10
@@ -1210,7 +1210,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   py-2
                   px-3
                   rounded-xl
-                  bg-[#9a6a35]
+                  bg-primary
                   hover:bg-[#744e26]
                   text-white
                   text-xs

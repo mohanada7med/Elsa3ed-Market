@@ -247,11 +247,11 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
         {/* Header */}
         <div className="p-6 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/5 dark:bg-white/5">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#9a6a35]/10 dark:bg-[#9a6a35]/20 flex items-center justify-center text-[#9a6a35] dark:text-[#E07A5F]">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-[#E07A5F]">
               <Film className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-[#211d18] dark:text-[#f5f0e7] font-heritage">
+              <h2 className="text-lg font-black text-espresso dark:text-cream font-heritage">
                 تعديل بيانات مقطع الفيديو (Craft Reel)
               </h2>
               <p className="text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50">
@@ -283,7 +283,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Live Player & Cloud Link */}
             <div className="lg:col-span-5 space-y-4">
-              <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+              <label className="block text-xs font-bold text-espresso dark:text-cream">
                 معاينة الفيديو المشغل من الكلاود
               </label>
 
@@ -335,8 +335,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               {/* Video Cloud URL Input / Upload switcher */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1.5">
-                    <Film className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <label className="text-xs font-bold text-espresso dark:text-cream flex items-center gap-1.5">
+                    <Film className="w-3.5 h-3.5 text-primary" />
                     <span>تحديد أو استبدال الفيديو</span>
                   </label>
                   <div className="flex items-center bg-black/5 dark:bg-white/5 p-0.5 rounded-lg border border-black/10 dark:border-white/10 text-[11px]">
@@ -344,7 +344,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       type="button"
                       onClick={() => setVideoInputMode('url')}
                       className={`px-2 py-1 rounded-md font-bold transition-all ${videoInputMode === 'url'
-                        ? 'bg-[#9a6a35] text-white'
+                        ? 'bg-primary text-white'
                         : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
@@ -354,7 +354,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                       type="button"
                       onClick={() => setVideoInputMode('upload')}
                       className={`px-2 py-1 rounded-md font-bold transition-all flex items-center gap-1 ${videoInputMode === 'upload'
-                        ? 'bg-[#9a6a35] text-white'
+                        ? 'bg-primary text-white'
                         : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
@@ -374,7 +374,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         setCloudinaryPublicId(undefined);
                       }}
                       placeholder="https://res.cloudinary.com/.../video.mp4 أو https://my-bucket.s3.../video.mp4"
-                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-left font-mono"
+                      className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-mono"
                       dir="ltr"
                       required
                     />
@@ -415,7 +415,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
               {/* Poster Image URL */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                <label className="block text-xs font-bold text-espresso dark:text-cream">
                   رابط صورة الغلاف السحابية (Poster / Thumbnail URL)
                 </label>
                 <input
@@ -423,7 +423,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   value={posterUrl}
                   onChange={(e) => setPosterUrl(e.target.value)}
                   placeholder="https://.../poster.jpg"
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35] text-left font-mono"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary text-left font-mono"
                   dir="ltr"
                 />
               </div>
@@ -473,10 +473,10 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="checkbox"
                         checked={isFeatured}
                         onChange={(e) => setIsFeatured(e.target.checked)}
-                        className="rounded text-[#9a6a35] focus:ring-[#9a6a35]"
+                        className="rounded text-primary focus:ring-primary"
                       />
                       <Star className="w-3.5 h-3.5 text-amber-500" />
-                      <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">فيديو مميز (Featured)</span>
+                      <span className="font-bold text-espresso dark:text-cream">فيديو مميز (Featured)</span>
                     </label>
 
                     <label className="flex items-center gap-1.5 cursor-pointer">
@@ -484,10 +484,10 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="checkbox"
                         checked={isPinned}
                         onChange={(e) => setIsPinned(e.target.checked)}
-                        className="rounded text-[#9a6a35] focus:ring-[#9a6a35]"
+                        className="rounded text-primary focus:ring-primary"
                       />
                       <Pin className="w-3.5 h-3.5 text-blue-500" />
-                      <span className="font-bold text-[#211d18] dark:text-[#f5f0e7]">تثبيت في الصدارة</span>
+                      <span className="font-bold text-espresso dark:text-cream">تثبيت في الصدارة</span>
                     </label>
                   </div>
                 </div>
@@ -495,7 +495,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
 
               {/* Title & Description */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                <label className="block text-xs font-bold text-espresso dark:text-cream">
                   عنوان مقطع الفيديو *
                 </label>
                 <input
@@ -503,13 +503,13 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="مثال: سر تشكيل الفخار القناوي باليد..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                <label className="block text-xs font-bold text-espresso dark:text-cream">
                   وصف كواليس الصنعة والحكاية
                 </label>
                 <textarea
@@ -517,15 +517,15 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="اكتب نبذة عن أسرار الصنعة والمواد الطبيعية المستخدمة..."
-                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-[#9a6a35]"
+                  className="w-full p-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
                 />
               </div>
 
               {/* Governorate, Location & Content Type */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
-                    <Tag className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5 text-primary" />
                     <span>تصنيف المحتوى</span>
                   </label>
                   <select
@@ -546,8 +546,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-primary" />
                     <span>المحافظة</span>
                   </label>
                   <select
@@ -566,8 +566,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
-                    <MapPin className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-primary" />
                     <span>الموقع / المكان</span>
                   </label>
                   <input
@@ -584,8 +584,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               <div className="p-4 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <ShoppingBag className="w-4 h-4 text-[#9a6a35]" />
-                    <span className="text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                    <ShoppingBag className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-bold text-espresso dark:text-cream">
                       المنتج المرتبط (اختياري)
                     </span>
                   </div>
@@ -632,7 +632,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                         type="number"
                         value={productPrice}
                         onChange={(e) => setProductPrice(e.target.value)}
-                        className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-[#9a6a35]"
+                        className="w-full p-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none font-bold text-primary"
                       />
                     </div>
                   </div>
@@ -664,12 +664,12 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 pt-1">
-                  <label className="flex items-center gap-2 text-xs font-bold cursor-pointer text-[#211d18] dark:text-[#f5f0e7]">
+                  <label className="flex items-center gap-2 text-xs font-bold cursor-pointer text-espresso dark:text-cream">
                     <input
                       type="checkbox"
                       checked={inStock}
                       onChange={(e) => setInStock(e.target.checked)}
-                      className="rounded text-[#9a6a35] focus:ring-[#9a6a35]"
+                      className="rounded text-primary focus:ring-primary"
                     />
                     <span>المنتج متوفر بالمخزون وجاهز للطلب الفوري</span>
                   </label>
@@ -679,8 +679,8 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
               {/* Music & Hashtags */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] flex items-center gap-1">
-                    <Music className="w-3.5 h-3.5 text-[#9a6a35]" />
+                  <label className="block text-xs font-bold text-espresso dark:text-cream flex items-center gap-1">
+                    <Music className="w-3.5 h-3.5 text-primary" />
                     <span>الموسيقى التراثية الخلفية</span>
                   </label>
                   <input
@@ -693,7 +693,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-[#211d18] dark:text-[#f5f0e7]">
+                  <label className="block text-xs font-bold text-espresso dark:text-cream">
                     الهاشتاجات (مفصولة بفواصل)
                   </label>
                   <input
@@ -713,7 +713,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-[#211d18] dark:text-[#f5f0e7] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold text-espresso dark:text-cream bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
             >
               إلغاء
             </button>
@@ -721,7 +721,7 @@ export const ReelEditModal: React.FC<ReelEditModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-[#211d18] text-white dark:bg-white dark:text-black hover:bg-[#9a6a35] dark:hover:bg-[#d5a56d] text-xs font-bold shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+              className="px-6 py-2.5 rounded-xl bg-espresso text-white dark:bg-white dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold shadow-md transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? (
                 <span>جاري الحفظ في قاعدة البيانات...</span>

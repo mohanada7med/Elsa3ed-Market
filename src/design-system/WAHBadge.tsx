@@ -29,13 +29,13 @@ export const WAHBadge: React.FC<WAHBadgeProps> = ({
 
   const variantClasses: Record<BadgeVariant, string> = {
     terracotta:
-      'bg-[#9a6a35]/15 text-[#9a6a35] dark:text-[#d5a56d] border border-[#9a6a35]/30',
+      'bg-primary/15 text-primary dark:text-primary-hover border border-primary/30',
     nile:
       'bg-cyan-500/10 text-cyan-800 dark:text-cyan-300 border border-cyan-500/25',
     ochre:
       'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30',
     stone:
-      'bg-black/5 dark:bg-#FFF6EB/10 text-[#211d18] dark:text-[#f5f0e7] border border-black/10 dark:border-white/10',
+      'bg-black/5 dark:bg-cream/10 text-espresso dark:text-cream border border-black/10 dark:border-white/10',
     success:
       'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/25',
     outline:
