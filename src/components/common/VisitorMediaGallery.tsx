@@ -247,7 +247,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
         }
         return prev;
       });
-      addToast('تم التحديث', 'تم اعتماد الصورة كغلاف ', 'success');
+      addToast('تم التحديث', 'تم اعتماد الصورة كغلاف رئيسي', 'success');
     } catch (err: any) {
       addToast('خطأ', err?.message || 'تعذر تعيين الغلاف', 'error');
     } finally {
@@ -400,7 +400,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       {/* PHOTOS TAB */}
       {activeTab === 'photos' && (
         <div>
-          {localGallery.length === 0 ? (dark:bg-#FFF6EB
+          {localGallery.length === 0 ? (
             <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-[#9a6a35]/30 bg-[#9a6a35]/5 py-12 text-center">
               <Images className="h-10 w-10 text-[#9a6a35]/40" />
               <p className="mt-3 text-sm font-bold text-black/60 dark:text-white/60">
@@ -576,7 +576,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                           v.src = selectedVideo;
                           v.load();
                         }
-                      }}dark:bg-#FFF6EB
+                      }}
                       className="h-full w-full object-contain"
                     />
                   )}
@@ -763,7 +763,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
             {/* 4. Bottom Strip */}
             <div
               className={`absolute bottom-0 inset-x-0 z-50 transition-opacity duration-300 ${showOverlayControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                } bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 sm:p-4`}dark:bg-#FFF6EB
+                } bg-gradient-to-t from-black/90 via-black/50 to-transparent p-3 sm:p-4`}
             >
               <div className="flex items-center justify-center gap-2 overflow-x-auto py-1 no-scrollbar">
                 {localGallery.map((thumbUrl, tIdx) => {
@@ -887,7 +887,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                     } else if (typeof uploaded === 'string') {
                       vUrl = uploaded;
                     } else if (uploaded) {
-                      vUrl = uploaded.secureUrl || uploaded.url || '';dark:bg-#FFF6EB
+                      vUrl = uploaded.secureUrl || uploaded.url || '';
                     }
                     if (vUrl) {
                       const clean = vUrl.trim();

@@ -223,7 +223,7 @@ export const PlaceDetailPage: React.FC = () => {
               px-6 py-3
               rounded-full
               bg-[#211d18] text-white
-              dark:bg-#FFF6EB dark:text-black
+              dark:bg-white dark:text-black
               font-bold text-xs
               transition-all
               cursor-pointer
@@ -286,7 +286,7 @@ export const PlaceDetailPage: React.FC = () => {
             className="
               group flex items-center gap-3
               text-sm font-bold
-              trdark:bg-#FFF6EB
+              transition-all
               hover:text-[#9a6a35]
               cursor-pointer
             "
@@ -340,7 +340,7 @@ export const PlaceDetailPage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                dark:bg-#FFF6EBame="w-4 h-4 shrink-0" />
+                <Video className="w-4 h-4 shrink-0" />
                 <span className="hidden md:inline">إدارة الوسائط</span>
               </button>
             )}
@@ -600,7 +600,7 @@ export const PlaceDetailPage: React.FC = () => {
               {/* Vertical marker */}
               <div className="hidden lg:flex lg:col-span-3 justify-end">
                 <div className="flex flex-col items-center gap-4 text-white/35">
-                  <div className="h-28 w-px bg-gradient-to-b from-transparent via-whdark:bg-#FFF6EBnsparent" />
+                  <div className="h-28 w-px bg-gradient-to-b from-transparent via-white/35 to-transparent" />
                   <span className="text-[8px] tracking-[0.28em] [writing-mode:vertical-rl]">
                     DISCOVER · REMEMBER · PRESERVE
                   </span>
@@ -720,7 +720,7 @@ export const PlaceDetailPage: React.FC = () => {
                     01 / THE STORY
                   </span>
                   <span className="w-10 h-px bg-[#9a6a35]/40" />
-                </div>dark:bg-#FFF6EB
+                </div>
 
                 <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
                   حكاية <br />
@@ -818,7 +818,7 @@ export const PlaceDetailPage: React.FC = () => {
 
             {/* إضاءة خلفية سينمائية تفاعلية */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 bg-[#9a6a35]/10 rounded-full blur-[120px] pointer-events-none group-hover:bg-[#9a6a35]/20 transition-all duration-700" />
-dark:bg-#FFF6EB
+
             {/* شريط علوي بتصميم فني فاخر */}
             <div className="relative z-10 flex items-center justify-between mb-6 px-2">
               <div className="flex items-center gap-3">
@@ -935,7 +935,7 @@ dark:bg-#FFF6EB
                   >
                     {place.visitInfo.visitStatus === 'closed_to_public' && (
                       <AlertOctagon className="w-6 h-6" />
-                    )}dark:bg-#FFF6EB
+                    )}
                     {place.visitInfo.visitStatus === 'closed_for_restoration' && (
                       <Hammer className="w-6 h-6" />
                     )}
@@ -961,7 +961,7 @@ dark:bg-#FFF6EB
                       )}
                     </div>
                     <p className="text-sm sm:text-base font-bold leading-relaxed mb-2 break-words">
-                      {place.visitInfo.visitStatusNote || (dark:bg-#FFF6EB
+                      {place.visitInfo.visitStatusNote || (
                         place.visitInfo.visitStatus === 'closed_to_public'
                           ? 'المكان مقفول دلوقتي قدام الزيارات العادية بقرار رسمي ومتاح فقط لمهمات الأبحاث المصرح ليها.'
                           : place.visitInfo.visitStatus === 'closed_for_restoration'
@@ -974,7 +974,7 @@ dark:bg-#FFF6EB
                       )}
                     </p>
                     <p className="text-xs opacity-75 leading-normal">
-                      إحنا في «وه» حريصين نوثق كل حاجة بأمانة ودقةdark:bg-#FFF6EBالوضع الحقيقي بناءً على القرارات الرسمية عشان مشوارك يكون مظبوط ومن غير مفاجآت.
+                      إحنا في «وه» حريصين نوثق كل حاجة بأمانة ودقة؛ بنقولك على الوضع الحقيقي بناءً على القرارات الرسمية عشان مشوارك يكون مظبوط ومن غير مفاجآت.
                     </p>
                   </div>
                 </div>
@@ -987,7 +987,7 @@ dark:bg-#FFF6EB
                     <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
                       <Clock className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">مواعيد وساعات الفتح</span>
-                    </div>dark:bg-#FFF6EB
+                    </div>
                     <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
                       {place.visitInfo.openingHours}
                     </p>
@@ -1000,7 +1000,7 @@ dark:bg-#FFF6EB
                     <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
                       <Hourglass className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">المدة المقترحة للتجربة</span>
-                    </div>dark:bg-#FFF6EB
+                    </div>
                     <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
                       {place.visitDuration}
                     </p>
@@ -1013,7 +1013,7 @@ dark:bg-#FFF6EB
                     <div className="flex items-center gap-3 mb-2 text-[#9a6a35]">
                       <Compass className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">أفضل وقت وموسم للزيارة</span>
-                    </div>dark:bg-#FFF6EB
+                    </div>
                     <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
                       {place.visitInfo.bestTimeToVisit}
                     </p>
@@ -1028,7 +1028,7 @@ dark:bg-#FFF6EB
                       <span className="text-[11px] font-black tracking-wider uppercase">رسوم وتذاكر الدخول</span>
                     </div>
                     <p className="text-sm font-bold text-black/85 dark:text-white/85 break-words">
-                      {place.visitInfo.entryFee}dark:bg-#FFF6EB
+                      {place.visitInfo.entryFee}
                     </p>
                   </div>
                 )}
@@ -1084,19 +1084,19 @@ dark:bg-#FFF6EB
 
         {/* ACCESS & TRANSPORTATION */}
         {(place.access?.description || place.access?.transportation || place.address?.city || place.coordinates) && (
-          <section className="py-14 sm:py-20 lg:py-24 border-t bordark:bg-#FFF6EBdark:border-white/10">
+          <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
             <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
               <div className="lg:col-span-5">
                 <div className="lg:sticky lg:top-8">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
                       05 / ACCESS & DIRECTIONS
-                    </span>dark:bg-#FFF6EB
+                    </span>
                     <span className="w-10 h-px bg-[#9a6a35]/40" />
                   </div>
                   <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
                     العنوان <span className="text-[#9a6a35]">وكيفية الوصول</span>
-                  </h2>dark:bg-#FFF6EB
+                  </h2>
                   <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
                     تفاصيل مسارات الطرق والمواصلات العامة والخاصة للوصول إلى المعلم بسهولة.
                   </p>
@@ -1111,7 +1111,7 @@ dark:bg-#FFF6EB
                       <Building2 className="w-4 h-4 shrink-0" />
                       <span className="text-[11px] font-black tracking-wider uppercase">العنوان التفصيلي</span>
                     </div>
-                    <div className="flex flex-wrap gap-2 items-cendark:bg-#FFF6EBont-bold">
+                    <div className="flex flex-wrap gap-2 items-center text-sm font-bold">
                       {place.address.village && (
                         <span className="px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
                           قرية / منطقة: {place.address.village}
@@ -1124,7 +1124,7 @@ dark:bg-#FFF6EB
                       )}
                       {place.address.governorate && (
                         <span className="px-3 py-1.5 rounded-lg bg-[#9a6a35]/15 text-[#9a6a35] border border-[#9a6a35]/20">
-                          محافظة: {place.address.governorate}dark:bg-#FFF6EB
+                          محافظة: {place.address.governorate}
                         </span>
                       )}
                     </div>
@@ -1184,7 +1184,7 @@ dark:bg-#FFF6EB
             </div>
           </section>
         )}
-dark:bg-#FFF6EB
+
         {/* VISITOR SERVICES & FACILITIES */}
         {place.visitorServices && place.visitorServices.length > 0 && (
           <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
@@ -1226,7 +1226,7 @@ dark:bg-#FFF6EB
             </div>
           </section>
         )}
-dark:bg-#FFF6EB
+
         {/* HERITAGE EVENTS & OCCASIONS */}
         {place.events && place.events.length > 0 && (
           <section className="py-14 sm:py-20 lg:py-24 border-t border-black/10 dark:border-white/10">
@@ -1284,7 +1284,7 @@ dark:bg-#FFF6EB
                       </div>
                     )}
                   </div>
-                </div>dark:bg-#FFF6EB
+                </div>
               ))}
             </div>
           </section>
@@ -1297,7 +1297,7 @@ dark:bg-#FFF6EB
               <span className="text-[10px] font-black tracking-[0.28em] text-[#9a6a35]">
                 08 / LIVING HERITAGE
               </span>
-              <span className="w-10 h-px bg-[#9a6a35]/40" />dark:bg-#FFF6EB
+              <span className="w-10 h-px bg-[#9a6a35]/40" />
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
               حرف تراثية <span className="text-[#9a6a35]">مرتبطة بالمكان</span>
@@ -1310,7 +1310,7 @@ dark:bg-#FFF6EB
                 >
                   <Hammer className="w-4 h-4 text-[#9a6a35]" />
                   <span>{craft}</span>
-                </div>dark:bg-#FFF6EB
+                </div>
               ))}
             </div>
           </section>
@@ -1384,7 +1384,7 @@ dark:bg-#FFF6EB
                 <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
                   KEEP EXPLORING
                 </div>
-                <h2dark:bg-#FFF6EB
+                <h2
                   className="
                     max-w-4xl
                     text-4xl
