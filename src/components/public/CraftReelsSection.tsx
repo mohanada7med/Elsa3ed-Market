@@ -109,10 +109,10 @@ export const CraftReelsSection: React.FC = () => {
               </div>
 
               {/* العنوان التايبوغرافي الضخم */}
-              <h1 className="text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
+              <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                 ريلز
                 <br />
-                <span className="mr-[4vw] text-primary dark:text-primary-hover lg:mr-16">
+                <span className="mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                   وه
                 </span>
               </h1>
@@ -173,8 +173,8 @@ export const CraftReelsSection: React.FC = () => {
 
               {/* عناصر الجزء العلوي */}
               <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                <span className="bg-black/50 backdrop-blur-md text-primary-hover dark:text-primary-hover text-[11px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/10 flex items-center gap-1">
-                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary dark:text-primary-hover shrink-0" />
+                <span className="bg-black/50 backdrop-blur-md text-amber-200 dark:text-primary-hover text-[11px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full border border-white/10 flex items-center gap-1">
+                  <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-200 dark:text-primary-hover shrink-0" />
                   <span>{reel.location || reel.governorate}</span>
                 </span>
 
@@ -194,7 +194,6 @@ export const CraftReelsSection: React.FC = () => {
                   </span>
                 </div>
               </div>
-
               {/* زر التشغيل الشفاف في المنتصف */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-12 h-12 rounded-full bg-black/40 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:bg-primary transition-all duration-300">

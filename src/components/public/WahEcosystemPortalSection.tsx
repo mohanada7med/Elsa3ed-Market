@@ -151,14 +151,14 @@ export const WahEcosystemPortalSection: React.FC = () => {
             </div>
 
             {/* العنوان التايبوغرافي المتجاوب */}
-            <h2 className="font-heritage text-4xl sm:text-6xl lg:text-[7rem] xl:text-[8rem] font-black leading-[1.05] tracking-tight">
+            <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               بوابات
 
               <br />
-              <span className="text-primary dark:text-primary-hover">
+              <span className="mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                 «وه»
               </span>
-            </h2>
+            </h1>
 
             {/* الشرح والمؤشر الجانبي */}
             <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
@@ -170,7 +170,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
-                كل خير وأصالة الصعيد متجمعين في مكان واحد.
+                كل خير الصعيد متجمع في مكان واحد.
                 منصة بتفتحلك الباب على:
                 <br />
                 <strong className="text-primary dark:text-primary-hover">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}

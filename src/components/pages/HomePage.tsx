@@ -54,13 +54,13 @@ export const HomePage: React.FC = () => {
                   BEST SELLERS / الأكتر طلبًا وإقبالًا
                 </div>
 
-                <h2 className="text-[14vw] font-black leading-[0.82] tracking-[-0.08em] sm:text-[11vw] lg:text-[7.5rem] xl:text-[8.5rem]">
+                <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   سوق
                   <br />
-                  <span className="mr-[4vw] text-primary dark:text-primary-hover lg:mr-16">
+                  <span className="mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                     وه
                   </span>
-                </h2>
+                </h1>
 
                 <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
                   <div className="hidden sm:block">
