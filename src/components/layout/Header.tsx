@@ -229,7 +229,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     }}
                   >
                     <Check size={13} />
-                    علّم على الكل كمقروء
+                    علم على الكل كمقروء
                   </button>
                 )}
               </div>
@@ -248,7 +248,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         color: mainText,
                       }}
                     >
-                      سجّل دخولك عشان تشوف إشعاراتك
+                      سجل دخولك عشان تشوف إشعاراتك
                     </p>
 
                     <p
@@ -786,8 +786,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 onClick={() => navigate('quize')}
                 aria-label="لعبة اللهجة"
                 title="تحدي كلام الصعايدة"
-                className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
-                style={{
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative" style={{
                   backgroundColor: activePage === 'quize' ? '#9a6a35' : hoverBg,
                   color: activePage === 'quize' ? '#fff' : '#9a6a35',
                 }}

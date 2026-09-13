@@ -337,7 +337,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         {/* تلميح النقر السريع */}
                         <div className="mt-3 flex items-center gap-1 text-[11px] font-medium text-[#806f5b]/60 dark:text-[#a89988]/60">
                             <Zap className="w-3 h-3 text-primary" />
-                            <span>انقر في أي مكان للدخول المباشر</span>
+                            <span>دوس فى أي مكان علشان تدخل على طول</span>
                         </div>
                     </div>
                 </div>

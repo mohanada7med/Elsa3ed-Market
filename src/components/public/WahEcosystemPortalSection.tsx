@@ -152,7 +152,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
             {/* العنوان التايبوغرافي المتجاوب */}
             <h2 className="font-heritage text-4xl sm:text-6xl lg:text-[7rem] xl:text-[8rem] font-black leading-[1.05] tracking-tight">
-              الصعيد فى مكان واحد
+              بوابات
+
               <br />
               <span className="text-primary dark:text-primary-hover">
                 «وه»
@@ -169,7 +170,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </div>
 
               <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
-                كل خير وأصالة الصعيد — متجمعين في مكان واحد.
+                كل خير وأصالة الصعيد متجمعين في مكان واحد.
                 منصة بتفتحلك الباب على:
                 <br />
                 <strong className="text-primary dark:text-primary-hover">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}

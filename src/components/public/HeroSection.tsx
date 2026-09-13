@@ -139,7 +139,7 @@ export const HeroSection: React.FC = () => {
               size="md"
               icon={<Sparkles className="h-3.5 w-3.5 text-primary" />}
             >
-              «كل الصعيد في حتة واحدة: شغل يدوي أصيل · فيديوهات · وحكاوي زمان»
+              «كل الصعيد في وه: شغل يدوي أصيل · ريلز · حكاوي زمان»
             </WAHBadge>
           </motion.div>
 
