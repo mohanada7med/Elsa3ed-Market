@@ -12,7 +12,7 @@ import {
   X,
   RotateCcw,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 
 export const IntroExperience: React.FC = () => {

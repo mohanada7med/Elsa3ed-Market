@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'motion/react'],
+  },
   serverExternalPackages: ['mongodb', 'bcryptjs', 'express', 'cookie-parser', 'cloudinary', 'multer'],
   allowedDevOrigins: ['192.168.1.3', 'localhost', '127.0.0.1', '192.168.1.3:3000', 'localhost:3000'],
   images: {
@@ -19,6 +22,15 @@ const nextConfig = {
   },
   async headers() {
     return [
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
       {
         source: '/:path*',
         headers: [

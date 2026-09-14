@@ -13,7 +13,7 @@ import {
   Sparkles,
   Clapperboard
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 
 export const CraftReelsSection: React.FC = () => {

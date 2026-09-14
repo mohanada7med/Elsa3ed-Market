@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
 
 export const FeaturedSellers: React.FC = () => {

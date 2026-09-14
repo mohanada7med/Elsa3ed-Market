@@ -270,7 +270,7 @@ export const PeoplePage: React.FC = () => {
                 text-foreground-secondary
                 cursor-pointer
               "
-              title="تحديث البيانات مباشرة من قاعدة البيانات"
+              title="تحديث البيانات"
             >
               <RefreshCw size={14} className={isRefreshing ? 'animate-spin text-accent' : ''} />
               <span className="hidden md:inline">تحديث</span>
@@ -312,10 +312,6 @@ export const PeoplePage: React.FC = () => {
                 <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-accent">
                   Guardians of Heritage / Upper Egypt
                 </span>
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold border border-emerald-500/20">
-                  <CheckCircle2 size={11} className="text-emerald-600 dark:text-emerald-400" />
-                  <span>بيانات حية من قاعدة البيانات</span>
-                </span>
               </div>
 
               <h1
@@ -338,7 +334,7 @@ export const PeoplePage: React.FC = () => {
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-accent" />
                 <p className="text-sm leading-8 text-foreground-secondary sm:text-base">
-                  ناس الصعيد هما روحه وحراسه؛ من الأسطوات اللي ورثوا الصنعة إيد بإيد، للشعراء والمبدعين ورجال الدين والأدب اللي حكوا حكايات البلد بصوتها الصادق.. موثقين تفصيلياً في قاعدة البيانات بأصولهم وأعمالهم وسيرهم الأصيلة.
+                  ناس الصعيد هما روحه وحراسه؛ من الأسطوات اللي ورثوا الصنعة إيد بإيد، للشعراء والمبدعين ورجال الدين والأدب اللي حكوا حكايات البلد بصوتها الصادق.. موثقين بأصولهم وأعمالهم وسيرهم الأصيلة.
                 </p>
               </div>
             </div>
@@ -556,14 +552,14 @@ export const PeoplePage: React.FC = () => {
         <div className="mb-10 flex items-end justify-between">
           <div>
             <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-accent">
-              DATABASE REGISTRY • {people.length} FIGURES
+              سجل الشخصيات • {people.length} رمز وعلم
             </div>
             <h2 className="text-3xl font-black sm:text-4xl">أعلام ورموز وشيوخ الصعيد</h2>
           </div>
 
           <div className="hidden items-center gap-2 text-xs text-foreground-muted sm:flex">
             <Compass size={14} />
-            <span>بيانات موثقة من قاعدة البيانات</span>
+            <span>توثيق معتمد وموثوق</span>
           </div>
         </div>
 
@@ -606,7 +602,7 @@ export const PeoplePage: React.FC = () => {
               <Users size={24} />
             </div>
 
-            <h3 className="text-xl font-black">لم يتم العثور على شخصيات مطابقة في قاعدة البيانات</h3>
+            <h3 className="text-xl font-black">لم يتم العثور على شخصيات مطابقة للبحث</h3>
             <p className="mt-3 text-sm text-foreground-secondary">
               جرّب تغيير كلمات البحث أو المحافظة.
             </p>
@@ -626,7 +622,7 @@ export const PeoplePage: React.FC = () => {
                   cursor-pointer
                 "
               >
-                عرض كل شخصيات قاعدة البيانات ({people.length})
+                عرض كل الشخصيات ({people.length})
               </button>
             )}
           </div>
@@ -777,7 +773,7 @@ export const PeoplePage: React.FC = () => {
                       type="button"
                       onClick={() => setSelectedPersonForModal(person)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-subtle hover:bg-surface border border-border-subtle text-foreground text-[11px] transition-colors cursor-pointer"
-                      title="استعراض كافة بيانات الشخصية من قاعدة البيانات"
+                      title="استعراض كافة بيانات وسيرة الشخصية"
                     >
                       <BookOpen size={13} className="text-accent" />
                       <span>كل البيانات</span>
@@ -1040,7 +1036,7 @@ export const PeoplePage: React.FC = () => {
               </div>
 
               <p className="text-sm leading-8 text-white/70">
-                كل شخصية هنا مسجلة وموثقة في قاعدة البيانات، تمثل حلقة وصل حية بين الماضي المجيد ومستقبل الصعيد، تنقل الحكمة والصنعة للأجيال القادمة.
+                كل شخصية هنا مسجلة وموثقة في سجل وه، تمثل حلقة وصل حية بين الماضي المجيد ومستقبل الصعيد، تنقل الحكمة والصنعة للأجيال القادمة.
               </p>
             </div>
           </div>

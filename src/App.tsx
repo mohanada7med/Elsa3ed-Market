@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import WahIntro from './components/WahIntro';
+import React, { useEffect } from 'react';
 import { AppProvider, useApp, PAGE_ROUTES } from './context/AppContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/layout/Header';
@@ -169,7 +168,6 @@ const MainContent: React.FC = () => {
   } = useApp();
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
-  const [showIntro, setShowIntro] = useState(false);
 
   // Dynamic SEO meta updates on page transition
   useEffect(() => {
@@ -341,13 +339,6 @@ const MainContent: React.FC = () => {
     }
   }, [activePage, selectedProduct, selectedSellerId]);
 
-  if (showIntro) {
-    return (
-      <WahIntro onFinish={() => setShowIntro(false)}
-      />
-    );
-  }
-
   // Initial Auth Verification State: only block for protected accounts/dashboards
   const isProtectedRoute =
     activePage.startsWith('admin') ||
@@ -355,7 +346,7 @@ const MainContent: React.FC = () => {
     activePage === 'buyer-account';
 
   if (isAuthChecking && isProtectedRoute) {
-    return <WahIntro onFinish={() => { }} />;
+    return <LazySectionFallback />;
   }
 
   return (

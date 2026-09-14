@@ -1552,11 +1552,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, [currentRole, currentUser.id]);
 
-  // Initial load: Only public catalog data (products, categories, sellers)
+  // Initial load: Only public catalog data (products, categories, sellers) in parallel for high speed
   useEffect(() => {
-    refreshPublicProducts();
-    refreshCategories();
-    refreshSellers();
+    Promise.allSettled([
+      refreshPublicProducts(),
+      refreshCategories(),
+      refreshSellers()
+    ]);
   }, [refreshPublicProducts, refreshCategories, refreshSellers]);
 
   // Role-specific load: Only triggered after session check resolves to prevent premature guest calls

@@ -3121,6 +3121,11 @@ router.post('/relationships', requireAdmin, async (req: AuthenticatedRequest, re
 
 router.get('/stats', async (req: Request, res: Response) => {
   try {
+    const cached = getWahCached('wah_ecosystem_stats', req);
+    if (cached) {
+      return res.json({ success: true, data: cached });
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
 
     if (isMongo && db) {
@@ -3158,42 +3163,50 @@ router.get('/stats', async (req: Request, res: Response) => {
         db.collection('reels').countDocuments()
       ]);
 
+      const statsData = {
+        governoratesCount,
+        citiesCount,
+        villagesCount,
+        placesCount,
+        craftsCount,
+        traditionsCount,
+        storiesCount,
+        peopleCount,
+        foodsCount,
+        eventsCount,
+        seasonsCount,
+        productsCount,
+        sellersCount,
+        ordersCount,
+        reelsCount
+      };
+
+      setWahCache('wah_ecosystem_stats', statsData, 120);
+
       return res.json({
         success: true,
-        data: {
-          governoratesCount,
-          citiesCount,
-          villagesCount,
-          placesCount,
-          craftsCount,
-          traditionsCount,
-          storiesCount,
-          peopleCount,
-          foodsCount,
-          eventsCount,
-          seasonsCount,
-          productsCount,
-          sellersCount,
-          ordersCount,
-          reelsCount
-        }
+        data: statsData
       });
     }
 
+    const memoryStats = {
+      governoratesCount: memoryDb.governorates.length,
+      placesCount: memoryDb.heritagePlaces.length,
+      craftsCount: memoryDb.culturalCrafts.length,
+      storiesCount: memoryDb.wahStories.length,
+      peopleCount: memoryDb.localPeople.length,
+      foodsCount: memoryDb.upperEgyptFood.length,
+      eventsCount: memoryDb.culturalEvents.length,
+      seasonsCount: ((memoryDb as any).seasons || []).length,
+      productsCount: memoryDb.products.length,
+      sellersCount: memoryDb.sellers.length
+    };
+
+    setWahCache('wah_ecosystem_stats', memoryStats, 120);
+
     return res.json({
       success: true,
-      data: {
-        governoratesCount: memoryDb.governorates.length,
-        placesCount: memoryDb.heritagePlaces.length,
-        craftsCount: memoryDb.culturalCrafts.length,
-        storiesCount: memoryDb.wahStories.length,
-        peopleCount: memoryDb.localPeople.length,
-        foodsCount: memoryDb.upperEgyptFood.length,
-        eventsCount: memoryDb.culturalEvents.length,
-        seasonsCount: ((memoryDb as any).seasons || []).length,
-        productsCount: memoryDb.products.length,
-        sellersCount: memoryDb.sellers.length
-      }
+      data: memoryStats
     });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب إحصائيات المنصة' });
