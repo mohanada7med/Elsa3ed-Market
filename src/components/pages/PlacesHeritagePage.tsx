@@ -488,6 +488,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 </span>
               </div>
               <br /><br />
+              <br />
               <h1
                 className="
                   max-w-5xl
@@ -504,6 +505,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 <br />
                 <span className="mr-[8vw] text-primary lg:mr-28">بتحكي</span>
               </h1>
+              <br />
               <br />
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">

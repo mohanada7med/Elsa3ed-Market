@@ -218,6 +218,7 @@ export const StoriesPage: React.FC = () => {
                 <br />
                 <span className="mr-[8vw] text-primary lg:mr-28">بيحكي</span>
               </h1>
+              <br />
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-primary" />

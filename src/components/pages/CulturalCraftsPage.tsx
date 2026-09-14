@@ -12,8 +12,20 @@ import {
   Search,
   Sparkles,
   X,
-  Scroll,
 } from 'lucide-react';
+
+const GOVERNORATES_LIST = [
+  'الفيوم',
+  'بني سويف',
+  'المنيا',
+  'أسيوط',
+  'سوهاج',
+  'قنا',
+  'الأقصر',
+  'أسوان',
+  'الوادي الجديد',
+  'البحر الأحمر',
+] as const;
 
 export const CulturalCraftsPage: React.FC = () => {
   const { navigateToCraft, setActivePage } = useApp();
@@ -27,7 +39,6 @@ export const CulturalCraftsPage: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
-
     const loadCrafts = async () => {
       try {
         setIsLoading(true);
@@ -54,19 +65,8 @@ export const CulturalCraftsPage: React.FC = () => {
     };
   }, []);
 
-  const governorates = useMemo(() => {
-    return Array.from(
-      new Set(
-        crafts.flatMap((craft) =>
-          Array.isArray(craft.governorates) && craft.governorates.length > 0
-            ? craft.governorates
-            : craft.governorateName
-              ? [craft.governorateName]
-              : []
-        )
-      )
-    ).filter(Boolean) as string[];
-  }, [crafts]);
+  // استخدام قائمة الـ 10 محافظات كاملة وثابتة
+  const governorates = GOVERNORATES_LIST;
 
   const categories = useMemo(() => {
     return Array.from(
