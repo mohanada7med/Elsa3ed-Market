@@ -84,7 +84,7 @@ const StoryDetailPage = React.lazy(() =>
   import('./components/pages/StoryDetailPage').then((m) => ({ default: m.StoryDetailPage }))
 );
 const PeoplePage = React.lazy(() =>
-  import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage }))
+  import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage || m.default }))
 );
 const PersonDetailPage = React.lazy(() =>
   import('./components/pages/PersonDetailPage').then((m) => ({ default: m.PersonDetailPage }))
@@ -289,9 +289,9 @@ const MainContent: React.FC = () => {
       case 'people':
       case 'person-details':
         updatePageSEO({
-          title: 'ناس الصعيد وحراس التراث | وه',
+          title: 'اعلام الصعيد | وه',
           description: 'سير ومسيرات شيوخ الصنعة والرواة والفنانين التلقائيين في صعيد مصر.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'ناس الصعيد وحراس التراث' }])
+          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'اعلام الصعيد' }])
         });
         break;
       case 'food':

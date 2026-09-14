@@ -876,3 +876,18 @@
 .dark .text-gray-500 {
   color: var(--foreground-muted);
 }
+
+/* WAH Cinematic Portrait Card for People */
+.wah-cinematic-card {
+  aspect-ratio: 3 / 4;
+  min-height: 480px;
+}
+@media (min-width: 640px) {
+  .wah-cinematic-card {
+    aspect-ratio: 4 / 5;
+    min-height: 500px;
+  }
+}
+.wah-cinematic-gradient {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 0%, rgba(12, 10, 8, 0.82) 42%, rgba(18, 14, 10, 0.35) 70%, transparent 100%);
+}

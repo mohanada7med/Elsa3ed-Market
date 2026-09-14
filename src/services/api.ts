@@ -4132,7 +4132,10 @@ export const wahApi = {
         }
       });
       const json = await res.json();
-      return json.success && Array.isArray(json.data) ? json.data : [];
+      if (Array.isArray(json)) return json;
+      if (json && Array.isArray(json.data)) return json.data;
+      if (json?.success && Array.isArray(json.data)) return json.data;
+      return [];
     } catch {
       return [];
     }
