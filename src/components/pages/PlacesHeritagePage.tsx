@@ -487,7 +487,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   Digital Heritage Archive / Places
                 </span>
               </div>
-
+              <br /><br />
               <h1
                 className="
                   max-w-5xl
@@ -504,6 +504,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 <br />
                 <span className="mr-[8vw] text-primary lg:mr-28">بتحكي</span>
               </h1>
+              <br />
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
                 <div className="mt-2 h-16 w-px bg-primary" />
@@ -896,7 +897,12 @@ export const PlacesHeritagePage: React.FC = () => {
                 </p>
                 <button
                   onClick={() => setActivePage('map')}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                  className="inline-flex w-fit items-center gap-2
+             rounded-full bg-espresso px-3 py-2
+             font-bold text-white shadow-lg transition-all
+             hover:bg-primary dark:bg-cream dark:text-black
+             dark:hover:bg-primary dark:hover:text-white
+             cursor-pointer text-sm"
                 >
                   <span>افتح الأطلس</span>
                   <ArrowUpLeft size={15} />

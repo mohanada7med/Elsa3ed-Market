@@ -367,7 +367,7 @@ export const PeoplePage: React.FC = () => {
                         {people.length}
                       </div>
                       <div className="mt-2 text-xs text-foreground-secondary font-bold">
-                        علم ورمز موثق بالداتا بيز
+                        علم ورمز موثق
                       </div>
                     </div>
 
@@ -522,25 +522,7 @@ export const PeoplePage: React.FC = () => {
               )}
             </div>
 
-            {/* Add Person CTA Button */}
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="
-                flex items-center justify-center gap-2
-                h-12 px-6
-                rounded-xl
-                bg-accent text-white
-                font-black text-xs sm:text-sm
-                shadow-md hover:bg-accent/90
-                transition-all duration-300
-                hover:scale-[1.02]
-                shrink-0
-                cursor-pointer
-              "
-            >
-              <Plus size={16} />
-              <span>ضيف رمز من بلدك</span>
-            </button>
+
           </div>
         </div>
       </section>
@@ -682,7 +664,7 @@ export const PeoplePage: React.FC = () => {
                           )}
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-300">
                             <CheckCircle2 size={10} className="text-emerald-600 dark:text-emerald-400" />
-                            <span>موثق بالداتا بيز</span>
+                            <span>موثق </span>
                           </span>
                         </div>
                         <span className="rounded-full bg-accent/10 px-3 py-1 text-[10px] font-bold text-accent border border-accent/20">
@@ -859,7 +841,7 @@ export const PeoplePage: React.FC = () => {
                   )}
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
                     <CheckCircle2 size={12} className="text-emerald-600 dark:text-emerald-400" />
-                    <span>مسجل بالداتا بيز</span>
+                    <span>مسجل</span>
                   </span>
                 </div>
 
@@ -869,15 +851,15 @@ export const PeoplePage: React.FC = () => {
 
                 {(selectedPersonForModal.originVillage ||
                   (selectedPersonForModal as any).villageOrOrigin) && (
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-accent">
-                    <MapPin size={14} className="text-accent" />
-                    <span>
-                      الجذور والنشأة:{' '}
-                      {selectedPersonForModal.originVillage ||
-                        (selectedPersonForModal as any).villageOrOrigin}
-                    </span>
-                  </div>
-                )}
+                    <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-accent">
+                      <MapPin size={14} className="text-accent" />
+                      <span>
+                        الجذور والنشأة:{' '}
+                        {selectedPersonForModal.originVillage ||
+                          (selectedPersonForModal as any).villageOrOrigin}
+                      </span>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -1029,10 +1011,9 @@ export const PeoplePage: React.FC = () => {
                     sm:text-6xl
                   "
                 >
-                  أيدٍ تنقش في الذاكرة...
+                  ما كانوش مجرد ناس بتعدي...
                   <br />
-                  وعقول تحرس التراث.
-                </h2>
+                  دول حفروا أساميهم في حيطان المدينة وبقوا عنوانها.                </h2>
               </div>
 
               <p className="text-sm leading-8 text-white/70">

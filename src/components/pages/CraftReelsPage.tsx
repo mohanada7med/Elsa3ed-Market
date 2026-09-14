@@ -146,8 +146,18 @@ export const CraftReelsPage: React.FC = () => {
     };
   }, [viewMode]);
 
-  const governoratesList = ['قنا', 'سوهاج', 'الأقصر', 'أسوان', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'الفيوم'];
-
+  const governoratesList = [
+    'الفيوم',
+    'بني سويف',
+    'المنيا',
+    'أسيوط',
+    'سوهاج',
+    'قنا',
+    'الأقصر',
+    'أسوان',
+    'الوادي الجديد',
+    'البحر الأحمر'
+  ];
   const contentTypesList = [
     { id: 'all', label: 'كل الحكايات' },
     { id: 'places', label: 'أماكن ومعالم' },
@@ -863,9 +873,13 @@ export const CraftReelsPage: React.FC = () => {
                   شارك حكاية عن مكان أثري، سوق شعبي، أكلة أصيلة، حرفة تراثية، أو تجربة عشتها في قلب الصعيد.
                 </p>
                 <button
-                  type="button"
-                  onClick={handleOpenUpload}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs font-bold text-black hover:bg-[#d5a56d] transition-colors cursor-pointer w-fit"
+                  onClick={() => setActivePage('map')}
+                  className="inline-flex w-fit items-center gap-2
+             rounded-full bg-espresso px-3 py-2
+             font-bold text-white shadow-lg transition-all
+             hover:bg-primary dark:bg-cream dark:text-black
+             dark:hover:bg-primary dark:hover:text-white
+             cursor-pointer text-sm"
                 >
                   <span>نشر حكاية جديدة</span>
                   <Plus size={15} />
