@@ -14,6 +14,11 @@ import {
   ChevronDown,
   X,
   Compass,
+  Plus,
+  CheckCircle2,
+  Quote,
+  BookOpen,
+  Heart
 } from 'lucide-react';
 
 export const PeoplePage: React.FC = () => {
@@ -22,6 +27,24 @@ export const PeoplePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
+
+  // Modal State for adding Upper Egypt figures
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    governorateName: 'قنا',
+    villageOrOrigin: '',
+    craftTitle: '',
+    biography: '',
+    anecdote: '',
+    famousWork: '',
+    quote: '',
+    avatarUrl: ''
+  });
 
   useEffect(() => {
     const fetchPeople = async () => {
@@ -39,6 +62,87 @@ export const PeoplePage: React.FC = () => {
   }, []);
 
   const governorates = Array.from(new Set(people.map((p) => p.governorateName))).filter(Boolean);
+
+  const handleContributeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim()) {
+      setSubmitError('لازم تكتب اسم الشخصية أو الرمز الصعيدي يا غالي!');
+      return;
+    }
+    if (!formData.biography.trim()) {
+      setSubmitError('احكي لنا كلمتين بالعامية عن سيرته وحكايته!');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const govIdMap: Record<string, string> = {
+      'قنا': 'gov-qena',
+      'الأقصر': 'gov-luxor',
+      'أسوان': 'gov-aswan',
+      'سوهاج': 'gov-sohag',
+      'أسيوط': 'gov-asyut',
+      'المنيا': 'gov-minya',
+      'بني سويف': 'gov-beni-suef',
+      'الفيوم': 'gov-fayoum',
+      'الوادي الجديد': 'gov-new-valley',
+      'البحر الأحمر': 'gov-red-sea'
+    };
+
+    const newPersonPayload: Partial<LocalPerson> = {
+      name: formData.name.trim(),
+      governorateName: formData.governorateName,
+      governorateId: govIdMap[formData.governorateName] || 'gov-qena',
+      villageOrOrigin: formData.villageOrOrigin.trim(),
+      originVillage: formData.villageOrOrigin.trim(),
+      craftTitle: formData.craftTitle.trim() || 'رمز وعلم صعيدي أصيل',
+      craftOrSkill: formData.craftTitle.trim() || 'رمز وعلم صعيدي أصيل',
+      titleOrRole: formData.craftTitle.trim() || 'رمز وعلم صعيدي أصيل',
+      biography: formData.biography.trim(),
+      bio: formData.biography.trim(),
+      quote: formData.quote.trim() || undefined,
+      avatarUrl: formData.avatarUrl.trim() || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&auto=format&fit=crop&q=80',
+      photoUrl: formData.avatarUrl.trim() || 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=800&auto=format&fit=crop&q=80',
+      yearsOfExperience: 35,
+      isFeatured: true,
+      status: 'approved',
+      verificationStatus: 'verified',
+      sourceName: 'توثيق مجتمعي شعبي - أبناء الصعيد',
+      sourceType: 'community',
+      historicalAnecdotes: formData.anecdote.trim()
+        ? [{ title: 'موقف صعيدي أصيل لا يُنسى', story: formData.anecdote.trim() }]
+        : undefined,
+      famousWorks: formData.famousWork.trim()
+        ? [{ title: formData.famousWork.trim(), type: 'بصمة وأثر خالد' }]
+        : undefined
+    };
+
+    try {
+      const saved = await wahApi.contributePerson(newPersonPayload);
+      setPeople((prev) => [saved, ...prev]);
+      setSubmitSuccess('تسلم إيدك يا غالي.. سيرة العلم ده اتسجلت فخر لكل أهل الصعيد ومحفوظة في الداتا بيز!');
+      setTimeout(() => {
+        setIsAddModalOpen(false);
+        setSubmitSuccess(null);
+        setFormData({
+          name: '',
+          governorateName: 'قنا',
+          villageOrOrigin: '',
+          craftTitle: '',
+          biography: '',
+          anecdote: '',
+          famousWork: '',
+          quote: '',
+          avatarUrl: ''
+        });
+      }, 1600);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'حصل خطأ أثناء الحفظ، جرّب تاني يا طيب.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const filteredPeople = people.filter((person) => {
     const role = person.craftTitle || person.craftOrSkill || person.titleOrRole || '';
@@ -208,7 +312,7 @@ export const PeoplePage: React.FC = () => {
                         {people.length}
                       </div>
                       <div className="mt-2 text-xs text-black/45 dark:text-white/45">
-                        شخصية وأسطى موثق
+                        علم ورمز موثق بالداتا بيز
                       </div>
                     </div>
 
@@ -371,6 +475,26 @@ export const PeoplePage: React.FC = () => {
                 </button>
               )}
             </div>
+
+            {/* Add Person CTA Button (Colloquial Upper Egypt) */}
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="
+                flex items-center justify-center gap-2
+                h-12 px-6
+                rounded-xl
+                bg-primary text-white
+                font-black text-xs sm:text-sm
+                shadow-md hover:bg-primary/90
+                transition-all duration-300
+                hover:scale-[1.02]
+                shrink-0
+                cursor-pointer
+              "
+            >
+              <Plus size={16} />
+              <span>ضيف رمز من بلدك</span>
+            </button>
           </div>
         </div>
       </section>
@@ -384,7 +508,7 @@ export const PeoplePage: React.FC = () => {
             <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary">
               PROFILES
             </div>
-            <h2 className="text-3xl font-black sm:text-4xl">شيوخ الصنعة والرواة</h2>
+            <h2 className="text-3xl font-black sm:text-4xl">أعلام ورموز وشيوخ الصعيد</h2>
           </div>
 
           <div className="hidden items-center gap-2 text-xs text-black/40 dark:text-white/40 sm:flex">
@@ -515,13 +639,27 @@ export const PeoplePage: React.FC = () => {
                     </div>
 
                     {/* Name & Bio */}
-                    <h3 className="text-2xl font-black mb-3 transition-colors group-hover:text-primary">
+                    <h3 className="text-2xl font-black mb-1.5 transition-colors group-hover:text-primary">
                       {person.name}
                     </h3>
 
-                    <p className="text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60 line-clamp-3 mb-4">
+                    {(person.originVillage || (person as any).villageOrOrigin) && (
+                      <div className="text-[11px] font-bold text-primary/80 mb-2.5 flex items-center gap-1">
+                        <MapPin size={12} className="shrink-0 text-primary" />
+                        <span className="truncate">{person.originVillage || (person as any).villageOrOrigin}</span>
+                      </div>
+                    )}
+
+                    <p className="text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60 line-clamp-3 mb-3">
                       {person.bio || person.biography}
                     </p>
+
+                    {person.quote && (
+                      <div className="mb-3 rounded-lg bg-black/[0.03] dark:bg-cream/[0.04] p-2.5 text-[11px] italic text-black/75 dark:text-white/75 line-clamp-2 border-r-2 border-primary flex items-start gap-1.5">
+                        <Quote size={12} className="shrink-0 text-primary mt-0.5" />
+                        <span>{person.quote}</span>
+                      </div>
+                    )}
 
                     {person.yearsOfExperience && (
                       <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-2">
@@ -594,6 +732,332 @@ export const PeoplePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* =====================================================
+          ADD PERSON MODAL (بالعامية الصعيدية الأصيلة)
+      ===================================================== */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          {/* Backdrop */}
+          <div
+            onClick={() => !isSubmitting && setIsAddModalOpen(false)}
+            className="absolute inset-0 bg-black/65 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Modal Card */}
+          <div
+            className="
+              relative z-10
+              w-full max-w-2xl
+              max-h-[90vh] overflow-y-auto
+              rounded-[2rem]
+              border border-black/10
+              bg-cream
+              p-6 sm:p-8
+              shadow-2xl
+              dark:border-white/10
+              dark:bg-espresso-900
+            "
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => !isSubmitting && setIsAddModalOpen(false)}
+              className="
+                absolute left-5 top-5
+                flex h-9 w-9 items-center justify-center
+                rounded-full bg-black/5 dark:bg-white/5
+                hover:bg-black/10 dark:hover:bg-white/10
+                text-black/60 dark:text-white/60
+                transition-colors cursor-pointer
+              "
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 text-primary font-bold text-xs mb-2">
+                <Sparkles size={15} />
+                <span>توثيق شعبي بالعامية لأبناء الصعيد</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-black">
+                أضف رمز أو شخصية صعيدية
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60">
+                شاركنا بسيرة راجل طيّب، شيخ، فنان، أسطى، أو علم من بلدكم ساب علامة في قلوب الناس وتراب الجنوب.. والكلام كله بالعامية والبلدي عشان يوصل لقلوب الناس بسرعة.
+              </p>
+            </div>
+
+            {/* Success Alert */}
+            {submitSuccess && (
+              <div className="mb-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 p-4 text-emerald-800 dark:text-emerald-300 flex items-start gap-3">
+                <CheckCircle2 size={20} className="shrink-0 mt-0.5 text-emerald-600" />
+                <div className="text-xs sm:text-sm font-bold leading-6">
+                  {submitSuccess}
+                </div>
+              </div>
+            )}
+
+            {/* Error Alert */}
+            {submitError && (
+              <div className="mb-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 p-4 text-rose-800 dark:text-rose-300 flex items-start gap-3">
+                <X size={20} className="shrink-0 mt-0.5 text-rose-600" />
+                <div className="text-xs sm:text-sm font-bold leading-6">
+                  {submitError}
+                </div>
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleContributeSubmit} className="space-y-4 text-xs sm:text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Person Name */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    اسم العلم أو الرمز الصعيدي <span className="text-primary">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="مثلاً: الشيخ فلان، الخال، الأسطى..."
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all
+                    "
+                  />
+                </div>
+
+                {/* Governorate */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    المحافظة الصعيدية <span className="text-primary">*</span>
+                  </label>
+                  <select
+                    value={formData.governorateName}
+                    onChange={(e) => setFormData({ ...formData, governorateName: e.target.value })}
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all cursor-pointer font-bold
+                    "
+                  >
+                    {[
+                      'قنا',
+                      'الأقصر',
+                      'أسوان',
+                      'سوهاج',
+                      'أسيوط',
+                      'المنيا',
+                      'بني سويف',
+                      'الفيوم',
+                      'الوادي الجديد',
+                      'البحر الأحمر'
+                    ].map((gov) => (
+                      <option key={gov} value={gov}>
+                        {gov}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Origin Village */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    القرية، النجع، أو المركز الأصيل
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.villageOrOrigin}
+                    onChange={(e) => setFormData({ ...formData, villageOrOrigin: e.target.value })}
+                    placeholder="مثلاً: قرية أبنود، دندرة، الحواتكة، النزلة..."
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all
+                    "
+                  />
+                </div>
+
+                {/* Craft / Role */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    لقبه، مهنته، أو مكانته بين الناس
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.craftTitle}
+                    onChange={(e) => setFormData({ ...formData, craftTitle: e.target.value })}
+                    placeholder="مثلاً: سلطان المداحين، شيخ الصنعة، شاعر العامية..."
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all
+                    "
+                  />
+                </div>
+              </div>
+
+              {/* Biography (Colloquial) */}
+              <div>
+                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  حكايته وسيرته بالبلدي (بالعامية) <span className="text-primary">*</span>
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  value={formData.biography}
+                  onChange={(e) => setFormData({ ...formData, biography: e.target.value })}
+                  placeholder="احكي لنا عنه وعن نشأته وقعدته على المصطبة والناس كانت بتحبه ليه وبصمته في البلد إيه..."
+                  className="
+                    w-full p-4 rounded-xl
+                    border border-black/10 dark:border-white/10
+                    bg-white/60 dark:bg-black/20
+                    outline-none focus:border-primary
+                    transition-all resize-none leading-6
+                  "
+                />
+              </div>
+
+              {/* Anecdote (Colloquial) */}
+              <div>
+                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  موقف صعيدي أو حكاية جدعنة لا تتنسيش في بلده
+                </label>
+                <textarea
+                  rows={2}
+                  value={formData.anecdote}
+                  onChange={(e) => setFormData({ ...formData, anecdote: e.target.value })}
+                  placeholder="موقف كرم، شهامة، أو قصة مشهورة كل أهل النجع بيحكوها عنه..."
+                  className="
+                    w-full p-3 rounded-xl
+                    border border-black/10 dark:border-white/10
+                    bg-white/60 dark:bg-black/20
+                    outline-none focus:border-primary
+                    transition-all resize-none leading-6
+                  "
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Famous Work */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    أهم أعماله أو أثره الخالد
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.famousWork}
+                    onChange={(e) => setFormData({ ...formData, famousWork: e.target.value })}
+                    placeholder="غنوة، كتاب، مسجد، ورشة، أثر لا يُنسى..."
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all
+                    "
+                  />
+                </div>
+
+                {/* Quote */}
+                <div>
+                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                    حكمة أو كلمة صعيدية كان دايماً يقولها
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.quote}
+                    onChange={(e) => setFormData({ ...formData, quote: e.target.value })}
+                    placeholder="«الصاحب الجدع سند، والصعيدي ما يوطيش راسه...»"
+                    className="
+                      w-full h-11 px-4 rounded-xl
+                      border border-black/10 dark:border-white/10
+                      bg-white/60 dark:bg-black/20
+                      outline-none focus:border-primary
+                      transition-all
+                    "
+                  />
+                </div>
+              </div>
+
+              {/* Photo URL */}
+              <div>
+                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  رابط صورة للشخصية (اختياري)
+                </label>
+                <input
+                  type="url"
+                  value={formData.avatarUrl}
+                  onChange={(e) => setFormData({ ...formData, avatarUrl: e.target.value })}
+                  placeholder="https://... (سيبه فاضي لو مش معاك رابط صورة)"
+                  className="
+                    w-full h-11 px-4 rounded-xl
+                    border border-black/10 dark:border-white/10
+                    bg-white/60 dark:bg-black/20
+                    outline-none focus:border-primary
+                    transition-all text-xs
+                  "
+                />
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-black/10 dark:border-white/10">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="
+                    px-5 py-2.5 rounded-xl
+                    border border-black/10 dark:border-white/10
+                    text-black/60 dark:text-white/60
+                    font-bold text-xs
+                    hover:bg-black/5 dark:hover:bg-white/5
+                    transition-all cursor-pointer
+                  "
+                >
+                  إلغاء
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="
+                    flex items-center gap-2
+                    px-6 py-2.5 rounded-xl
+                    bg-primary text-white
+                    font-black text-xs sm:text-sm
+                    shadow-lg hover:bg-primary/90
+                    disabled:opacity-50
+                    transition-all cursor-pointer
+                  "
+                >
+                  {isSubmitting ? (
+                    <span>جاري التسجيل في الداتا بيز...</span>
+                  ) : (
+                    <>
+                      <Plus size={16} />
+                      <span>سجّل الشخصية في الداتا بيز</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

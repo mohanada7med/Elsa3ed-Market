@@ -4152,6 +4152,17 @@ export const wahApi = {
     return json.data;
   },
 
+  async contributePerson(person: Partial<LocalPerson>): Promise<LocalPerson> {
+    const res = await fetch(`${API_BASE}/wah/people/contribute`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(person)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || json.message || 'فشل إضافة الشخصية');
+    return json.data;
+  },
+
   // 6. Food
   async getFood(params?: { governorate?: string; governorateId?: string; status?: string }): Promise<UpperEgyptFood[]> {
     try {

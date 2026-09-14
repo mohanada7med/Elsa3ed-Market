@@ -740,6 +740,12 @@ export interface WahStory {
   updatedAt: string;
 }
 
+export interface LocalPersonMilestone {
+  year?: string;
+  title: string;
+  description: string;
+}
+
 export interface LocalPerson {
   id: string;
   name: string;
@@ -755,8 +761,21 @@ export interface LocalPerson {
   photoUrl?: string;
   quote?: string;
   yearsOfExperience?: number;
+  originVillage?: string;
+  villageOrOrigin?: string;
+  keyMilestones?: LocalPersonMilestone[];
+  famousWorksOrActs?: string[];
+  famousWorks?: Array<{ title: string; type?: string; year?: string; description?: string }>;
+  localImpact?: string;
+  famousAnecdote?: string;
+  historicalAnecdotes?: Array<{ title: string; story: string; eraOrContext?: string }>;
   relatedArtisanId?: string;
   relatedCraftId?: string;
+  isFeatured?: boolean;
+  sourceName?: string;
+  sourceUrl?: string;
+  sourceType?: string;
+  verificationStatus?: string;
   status: VerificationStatus;
   createdAt: string;
   updatedAt: string;

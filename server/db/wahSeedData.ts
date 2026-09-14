@@ -13,6 +13,8 @@ import type {
   SeasonDoc
 } from '../models/types.ts';
 
+import { AUTHENTIC_WAH_PEOPLE } from './authenticWahPeopleData.ts';
+
 // =========================================================================
 // WAH Cultural Ecosystem - Pure MongoDB Driven
 // All in-memory static fallbacks have been completely cleared.
@@ -23,7 +25,7 @@ export const INITIAL_GOVERNORATES: GovernorateDoc[] = [];
 export const INITIAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [];
 export const INITIAL_CULTURAL_CRAFTS: CulturalCraftDoc[] = [];
 export const INITIAL_UPPER_EGYPT_FOOD: UpperEgyptFoodDoc[] = [];
-export const INITIAL_LOCAL_PEOPLE: LocalPersonDoc[] = [];
+export const INITIAL_LOCAL_PEOPLE: LocalPersonDoc[] = AUTHENTIC_WAH_PEOPLE;
 export const INITIAL_WAH_STORIES: WahStoryDoc[] = [];
 export const INITIAL_CULTURAL_EVENTS: CulturalEventDoc[] = [];
 export const INITIAL_CITIES: CityDoc[] = [];

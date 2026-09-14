@@ -1509,6 +1509,52 @@ router.post('/people', requireAdmin, async (req: AuthenticatedRequest, res: Resp
   }
 });
 
+// POST /people/contribute - Public contribution for Upper Egypt figures
+router.post('/people/contribute', async (req: Request, res: Response) => {
+  try {
+    const item: LocalPersonDoc = req.body;
+    if (!item.name || !item.name.trim()) {
+      return res.status(400).json({ success: false, error: 'اسم الشخصية أو الرمز الصعيدي مطلوب' });
+    }
+
+    const now = new Date().toISOString();
+    item.updatedAt = now;
+    if (!item.id) item.id = `person-user-${Date.now()}`;
+    if (!item.createdAt) item.createdAt = now;
+    if (!item.slug) {
+      item.slug = `person-${encodeURIComponent(item.name.trim().toLowerCase().replace(/\s+/g, '-'))}-${Date.now().toString().slice(-4)}`;
+    }
+    item.status = 'approved';
+    if (!item.photoUrl && !item.avatarUrl) {
+      item.avatarUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80';
+      item.photoUrl = item.avatarUrl;
+    }
+    if (!item.craftTitle && item.craftOrSkill) {
+      item.craftTitle = item.craftOrSkill;
+    }
+
+    const { db, isMongo } = await getMongoOrMemory();
+    if (isMongo && db) {
+      await db.collection('wah_local_people').updateOne({ id: item.id }, { $set: item }, { upsert: true });
+    }
+
+    const idx = memoryDb.localPeople.findIndex((p) => p.id === item.id);
+    if (idx >= 0) memoryDb.localPeople[idx] = item;
+    else memoryDb.localPeople.unshift(item);
+
+    invalidateWahCache('people');
+
+    return res.status(201).json({
+      success: true,
+      message: 'تمت إضافة الرمز الصعيدي بنجاح وسُجّل في ذاكرة ناس الصعيد!',
+      data: item
+    });
+  } catch (err: any) {
+    Logger.error('[WAH Content] Error adding contributed person:', err);
+    return res.status(500).json({ success: false, error: 'فشل حفظ الشخصية' });
+  }
+});
+
 router.put('/people/:id', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;

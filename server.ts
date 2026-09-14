@@ -15,7 +15,7 @@ async function startServer() {
   const app = createApp();
 
   // Next.js handles all frontend pages and assets
-  app.all('*', (req, res) => {
+  app.all(/.*/, (req, res) => {
     return handle(req, res);
   });
 

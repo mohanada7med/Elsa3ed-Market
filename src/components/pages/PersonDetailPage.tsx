@@ -148,7 +148,7 @@ export const PersonDetailPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
-            <div className="mt-1 text-sm font-black">شيخ الصنعة</div>
+            <div className="mt-1 text-sm font-black">أعلام وناس الصعيد</div>
           </div>
 
           <button
@@ -217,7 +217,14 @@ export const PersonDetailPage: React.FC = () => {
                 {person.yearsOfExperience && (
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
                     <Award size={13} />
-                    <span>خبرة {person.yearsOfExperience} عاماً</span>
+                    <span>مسيرة تمتد لأكثر من {person.yearsOfExperience} عاماً</span>
+                  </span>
+                )}
+
+                {person.sourceName && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 px-3.5 py-1 text-xs font-bold border border-emerald-500/20">
+                    <Sparkles size={13} className="text-emerald-600 dark:text-emerald-400" />
+                    <span>توثيق: {person.sourceName}</span>
                   </span>
                 )}
               </div>
@@ -226,6 +233,13 @@ export const PersonDetailPage: React.FC = () => {
                 {person.name}
               </h1>
 
+              {person.originVillage && (
+                <div className="flex items-center gap-2 text-sm font-bold text-primary">
+                  <MapPin size={16} className="text-primary shrink-0" />
+                  <span>الجذور والنشأة: {person.originVillage}</span>
+                </div>
+              )}
+
               <p className="text-base sm:text-lg leading-8 text-black/75 dark:text-white/75 font-medium">
                 {bioText}
               </p>
@@ -233,6 +247,155 @@ export const PersonDetailPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* =====================================================
+          TIMELINE & KEY MILESTONES SECTION
+      ===================================================== */}
+      {person.keyMilestones && person.keyMilestones.length > 0 && (
+        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20">
+          <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
+            <div className="mb-10 text-right">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2 uppercase">
+                CAREER TIMELINE & STATIONS
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black font-serif">
+                محطات فاصلة في مسيرته
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {person.keyMilestones.map((milestone, idx) => (
+                <div
+                  key={idx}
+                  className="
+                    relative flex flex-col justify-between
+                    rounded-[1.5rem]
+                    border border-black/10
+                    bg-white/60
+                    p-6 sm:p-7
+                    shadow-sm
+                    backdrop-blur-sm
+                    dark:border-white/10
+                    dark:bg-espresso-800/50
+                  "
+                >
+                  <div>
+                    {milestone.year && (
+                      <span className="inline-block font-mono text-xs font-black text-primary bg-primary/10 px-3 py-1 rounded-full mb-3">
+                        {milestone.year}
+                      </span>
+                    )}
+                    <h3 className="text-base sm:text-lg font-black mb-2 text-espresso dark:text-cream">
+                      {milestone.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm leading-6 text-black/70 dark:text-white/70">
+                      {milestone.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* =====================================================
+          NOTABLE WORKS & ACHIEVEMENTS SECTION
+      ===================================================== */}
+      {person.famousWorksOrActs && person.famousWorksOrActs.length > 0 && (
+        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20 bg-black/[0.015] dark:bg-white/[0.015]">
+          <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
+            <div className="mb-10 text-right">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2 uppercase">
+                LEGACY & MASTERWORKS
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black font-serif">
+                أبرز البصمات والآثار الخالدة
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {person.famousWorksOrActs.map((work, idx) => (
+                <div
+                  key={idx}
+                  className="
+                    flex items-start gap-3.5
+                    rounded-2xl
+                    border border-black/10
+                    bg-white/75
+                    p-5
+                    shadow-sm
+                    dark:border-white/10
+                    dark:bg-espresso-900/60
+                  "
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary font-black text-xs mt-0.5">
+                    {idx + 1}
+                  </span>
+                  <span className="text-xs sm:text-sm font-semibold leading-relaxed text-black/85 dark:text-white/85">
+                    {work}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* =====================================================
+          ANECDOTE & LOCAL IMPACT SECTION
+      ===================================================== */}
+      {(person.famousAnecdote || person.localImpact) && (
+        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20">
+          <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {person.famousAnecdote && (
+                <div
+                  className="
+                    rounded-[2rem]
+                    border border-amber-500/25
+                    bg-amber-500/5
+                    p-7 sm:p-9
+                    relative
+                    overflow-hidden
+                  "
+                >
+                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-4">
+                    <Scroll size={17} />
+                    <span>موقف لا يُنسى من الذاكرة</span>
+                  </div>
+                  <h3 className="text-xl font-black mb-3">حكاية من سيرة المكان</h3>
+                  <p className="text-sm leading-8 text-black/80 dark:text-white/80 font-medium">
+                    {person.famousAnecdote}
+                  </p>
+                </div>
+              )}
+
+              {person.localImpact && (
+                <div
+                  className="
+                    rounded-[2rem]
+                    border border-primary/25
+                    bg-primary/5
+                    p-7 sm:p-9
+                    relative
+                    overflow-hidden
+                  "
+                >
+                  <div className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-wider mb-4">
+                    <Sparkles size={17} />
+                    <span>البصمة والأثر في الصعيد</span>
+                  </div>
+                  <h3 className="text-xl font-black mb-3">أثره في أهله وبلده</h3>
+                  <p className="text-sm leading-8 text-black/80 dark:text-white/80 font-medium">
+                    {person.localImpact}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* =====================================================
           MASTER'S QUOTE SECTION
@@ -254,10 +417,10 @@ export const PersonDetailPage: React.FC = () => {
           >
             <Quote size={36} className="text-primary/30 mb-4" />
             <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2">
-              MASTER'S WISDOM
+              WORDS & LEGACY
             </span>
             <h2 className="text-2xl sm:text-3xl font-black font-serif mb-4">
-              من وصايا وحكم شيخ الصنعة
+              من كلمات وأقوال {person.name}
             </h2>
             <blockquote className="text-xl sm:text-2xl font-serif italic leading-relaxed text-black/80 dark:text-white/80">
               «{person.quote}»

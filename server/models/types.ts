@@ -797,18 +797,33 @@ export interface WahStoryDoc {
   updatedAt: string;
 }
 
+export interface LocalPersonMilestone {
+  year?: string;
+  title: string;
+  description: string;
+}
+
 export interface LocalPersonDoc {
   _id?: string;
   id: string;
   name: string;
   slug: string;
   titleOrRole: string;
+  craftTitle?: string;
   governorateName: string;
   governorateId: string;
   biography: string;
+  bio?: string;
   craftOrSkill: string;
   avatarUrl: string;
+  photoUrl?: string;
+  quote?: string;
   yearsOfExperience?: number;
+  originVillage?: string;
+  keyMilestones?: LocalPersonMilestone[];
+  famousWorksOrActs?: string[];
+  localImpact?: string;
+  famousAnecdote?: string;
   relatedArtisanId?: string;
   relatedCraftId?: string;
   coordinates?: { lat: number; lng: number };
