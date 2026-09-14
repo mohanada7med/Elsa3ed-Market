@@ -9,10 +9,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
   const portals = [
     {
       id: 'marketplace',
-      title: 'سوق وه للحرف والمنتجات',
-      tagline: 'تسوق أصيل من الورش لحد باب دارك',
-      desc: 'سوق متكامل لشراء حِرف ومنتجات الصعيد الأصلية 100% مباشرة من صانعيها، بدفع إلكتروني آمن وشحن سريع لكل المحافظات.',
-      badge: 'سوق وه التجاري',
+      title: 'سوق وه.. من إيد الصانع لدارك',
+      tagline: 'حاجة أصلية من الورشة لحد عندك',
+      desc: 'سوق مليان خير الصعيد وشغل الورش الأصيل 100%، اشترِ اللي يعجبك والدفع أمان وشحن واصل لحد باب بيتك.',
+      badge: 'دكان وه',
       page: 'products' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
       nameEn: 'WAH Marketplace',
@@ -20,10 +20,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'reels',
-      title: 'ريلز وتجارب حية',
-      tagline: 'الصعيد بالصوت والصورة لحظة بلحظة',
-      desc: 'فيديوهات ريلز قصيرة وتفاعلية تاخدك جوة ورش الصنعة وأسواق وحكاوي الشارع الصعيدي الحي.',
-      badge: 'ريلز تفاعلية',
+      title: 'ريلز وحكاوي حية',
+      tagline: 'شوف الصعيد بعينك واسمع حسه',
+      desc: 'فيديوهات قصيرة وخفيفة تاخدك في ثواني جوة حيطان الورش، والأسواق، ووسط الناس في الشارع الصعيدي.',
+      badge: 'ريلز من قلب الصعيد',
       page: 'reels' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
       nameEn: 'Live Reels',
@@ -31,10 +31,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'map',
-      title: 'لفة في الصعيد',
-      tagline: 'خريطة النيل ومعالم الصعيد الحية',
-      desc: 'لف في محافظات الصعيد من الفيوم وبني سويف لحد أسوان والنوبة على خريطة تفاعلية تاخدك لكل حتة.',
-      badge: 'التفاعلي',
+      title: 'لفة على النيل والبلاد',
+      tagline: 'خريطة تاخدك لكل شبر في الصعيد',
+      desc: 'لف في بلادنا براحتك من أول بحري الصعيد لحد أسوان وبلاد النوبة، دوس على الخريطة وشوف كل حتة.',
+      badge: 'الخريطة الحية',
       page: 'map' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
       nameEn: 'Interactive Atlas',
@@ -42,10 +42,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'governorates',
-      title: wahStats?.governoratesCount ? `محافظات الصعيد الـ ${wahStats.governoratesCount}` : 'محافظات صعيد مصر',
-      tagline: 'كل محافظة وليها طابع وتاريخ وصنعة',
-      desc: 'دليل لكل محافظة: حكايتها، ناسها، وطابعها اللي بيميزها عن غيرها على شط النيل وفي حضن الجبل.',
-      badge: `${wahStats?.governoratesCount || 8} محافظات`,
+      title: wahStats?.governoratesCount ? `بلاد الصعيد الـ ${wahStats.governoratesCount}` : 'بلاد ومحافظات الصعيد',
+      tagline: 'كل بلد وليها طبعها وناسها وسرها',
+      desc: 'دليل بلادنا الحلوة: أصل كل محافظة، وناسها الجدعان، وحكايتها اللي بتميزها على شط النيل وفي حضن الجبل.',
+      badge: `${wahStats?.governoratesCount || 8} بلاد ومحافظات`,
       page: 'governorates' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788791500/copy_of_.jpg',
       nameEn: 'Governorates Guide',
@@ -53,10 +53,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'places',
-      title: 'معالم وآثار الصعيد',
-      tagline: 'حكاوي المعابد والصروح العتيقة',
-      desc: 'من معابد الكرنك ودندرة وإدفو لحد الأديرة القديمة وقصور المنيا وعمارة النوبة على النيل.',
-      badge: wahStats?.placesCount ? `${wahStats.placesCount} معلم متوثق` : 'معالم متوثقة',
+      title: 'آثار ومعالم بلدنا',
+      tagline: 'حيطان عتيقة وحكاوي من سنين',
+      desc: 'من عظمة الكرنك ودندرة وإدفو لحد الأديرة القديمة، وقصور المنيا، وبيوت النوبة الملونة على البحر.',
+      badge: wahStats?.placesCount ? `${wahStats.placesCount} مكان متوثق` : 'أماكن متوثقة',
       page: 'places' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
       nameEn: 'Architectural Heritage',
@@ -64,10 +64,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'crafts',
-      title: 'حرف وصنايع الصعيد',
-      tagline: 'سر الصنعة في إيد الأسطوات',
-      desc: 'أسرار فخار قنا، تلي أسيوط الفضي، فركة نقادة، ألباستر القرنة، وسجاد أخميم اليدوي الأصيل.',
-      badge: 'حرف صعيدية',
+      title: 'صنعة اليد وخير الأسطوات',
+      tagline: 'سر الصنعة طالع من إيد أسطى شاطر',
+      desc: 'أسرار قُلل وفخار قنا، خيوط التلي الفضة في أسيوط، فركة نقادة، شغل ألباستر القرنة، وسجاد أخميم الأصيل.',
+      badge: 'صنايعية الصعيد',
       page: 'cultural-crafts' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
       nameEn: 'Crafts Encyclopedia',
@@ -75,10 +75,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'stories',
-      title: 'وه بيحكي — حكاوي وسير',
-      tagline: 'سير الناس ومرويات زمان',
-      desc: 'حكايات بتتوارث من جيل لجيل: مربعات ابن عروس، السيرة الهلالية، أساطير النيل، وحكاوي النجوع والبلاد.',
-      badge: 'حكاوي ومرويات',
+      title: 'وه بيحكي — قهاوي وحكاوي',
+      tagline: 'سيرة الناس وقعدات المصطبة',
+      desc: 'كلام بيتقال من الجدود للأحفاد: مربعات ابن عروس، ليالي السيرة الهلالية، حكاوي السحر والنداهة، وأسرار النجوع.',
+      badge: 'حكاوي ومسامع',
       page: 'stories' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png',
       nameEn: 'Oral History',
@@ -86,21 +86,21 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'people',
-      title: 'ناس الصعيد وحراس الحكاية',
-      tagline: 'شيوخ الصنعة وحراس الحكاية',
-      desc: 'اتعرف على ناس الصعيد الطيبين؛ شيوخ الصنعة، رواة السيرة، الشعراء، وفنانين التراث.',
-      badge: 'وجوه من الصعيد',
+      title: 'أعلام ورموز الصعيد',
+      tagline: 'شيوخ الصنعة وحراس الأصل والكلمة',
+      desc: 'اتعرف على قامات الصعيد؛ شيوخ الصنعة اللي صانوا التراث، رواة السير، وكبار الأدباء والشعراء اللي شرفوا بلدهم.',
+      badge: 'ناس ليها علامة',
       page: 'people' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
-      nameEn: 'People of Upper Egypt',
+      nameEn: 'Figures of Upper Egypt',
       accentColor: 'from-[#744e26]/70'
     },
     {
       id: 'food',
-      title: 'طعم وأكل الصعيد',
-      tagline: 'سر الفرن البلدي وطعم البيوت',
-      desc: 'العيش الشمسي، الفايش الصعيدي بالسمسم، الويكا بالمفراك، الكشك، وخيرات عسل القصب.',
-      badge: 'أكلات ووصفات',
+      title: 'لقمة هنية من قلب بيوتنا',
+      tagline: 'ريحة الفرن البلدي وطبيخ الطواجن',
+      desc: 'طعم العيش الشمسي السخن، فايش بلبن الحمص، ويكة صعيدي مفروكة، كشك مقدوح بالسمن، وخير عسل القصب الصافي.',
+      badge: 'أكل بيوت بلدي',
       page: 'food' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
       nameEn: 'Authentic Kitchen',
@@ -108,18 +108,16 @@ export const WahEcosystemPortalSection: React.FC = () => {
     },
     {
       id: 'events',
-      title: 'مواسم وليالي الصعيد',
-      tagline: 'ليالي الموالد وحلقات التحطيب',
-      desc: 'موسم كسر القصب، مولد سيدي عبد الرحيم القنائي، ليالي التحطيب بالأقصر، وتعامد الشمس في أبو سمبل.',
-      badge: 'مواسم حية',
+      title: 'ليالي الموالد ولمّة الفرح',
+      tagline: 'عصيان التحطيب وزغاريد المواسم',
+      desc: 'فرحة كسر القصب، زحمة ونفحات سيدي عبد الرحيم القنائي، حلقات التحطيب في الأقصر، وشمس أبو سمبل لما تشرق.',
+      badge: 'مواسم وليالي',
       page: 'events' as const,
       image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
       nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70'
     }
-  ];
-
-  const [activeId, setActiveId] = useState<string>(portals[0]?.id || '');
+  ]; const [activeId, setActiveId] = useState<string>(portals[0]?.id || '');
 
   return (
     <section
@@ -148,7 +146,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
               </span>
               DISCOVER / أبواب ودليل «وه»
             </div>
-<br />
+            <br />
             {/* العنوان التايبوغرافي المتجاوب */}
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أبواب
