@@ -130,6 +130,7 @@ export default {
         'input-border': 'var(--input-border)',
         'card-bg': 'var(--card-background)',
         'card-border': 'var(--card-border)',
+        'btn-dark': 'var(--btn-dark)',
 
         // =========================================================================
         // 3. BACKWARD-COMPATIBLE WAH ALIASES

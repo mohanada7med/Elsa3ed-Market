@@ -46,15 +46,12 @@ export const AboutSection: React.FC = () => {
         overflow-hidden
         py-12
         sm:py-14
-        bg-cream
-        text-espresso
+        bg-background
+        text-foreground
         transition-colors
         duration-500
-        dark:bg-espresso-900
-        dark:text-cream
         border-t
-        border-black/10
-        dark:border-white/10
+        border-border-subtle
       "
     >
       {/* Ambient Background */}
@@ -64,8 +61,8 @@ export const AboutSection: React.FC = () => {
             absolute
             -top-40
             -right-40
-            w-[420px]
-            h-[420px]
+            w-105
+            h-105
             rounded-full
             bg-primary/[0.07]
             blur-[100px]
@@ -77,10 +74,10 @@ export const AboutSection: React.FC = () => {
             absolute
             -bottom-40
             -left-40
-            w-[380px]
-            h-[380px]
+            w-95
+            h-95
             rounded-full
-            bg-amber-500/[0.04]
+            bg-amber-500/4
             blur-[100px]
           "
         />
@@ -89,7 +86,7 @@ export const AboutSection: React.FC = () => {
       <div
         className="
           relative
-          max-w-[1250px]
+          max-w-312.5
           mx-auto
           px-5
           sm:px-8
@@ -168,7 +165,7 @@ export const AboutSection: React.FC = () => {
               </span>
               <br />
 
-              <span className="text-black/80 dark:text-white/80">
+              <span className="text-foreground/80">
                 الصعيد حكاية.
               </span>
             </h2>
@@ -181,8 +178,7 @@ export const AboutSection: React.FC = () => {
                 text-xs
                 sm:text-sm
                 leading-7
-                text-black/55
-                dark:text-white/55
+                text-foreground-muted
               "
             >
               «وه» بتجمع روح الصعيد كله في مكان واحد؛
@@ -226,10 +222,8 @@ export const AboutSection: React.FC = () => {
                       group
                       rounded-xl
                       border
-                      border-black/[0.08]
-                      dark:border-white/[0.08]
-                      bg-white/45
-                      dark:bg-cream/[0.035]
+                      border-border-subtle
+                      bg-surface-subtle
                       px-3
                       py-3
                       backdrop-blur-md
@@ -265,8 +259,7 @@ export const AboutSection: React.FC = () => {
                       className="
                         mt-0.5
                         text-[9px]
-                        text-black/40
-                        dark:text-white/40
+                        text-foreground-disabled
                       "
                     >
                       {item.text}
@@ -297,13 +290,11 @@ export const AboutSection: React.FC = () => {
                 onClick={() => setShowIntroVideo(true)}
                 className="
                   group
-                  min-h-[44px]
+                  min-h-11
                   px-5
                   rounded-xl
-                  bg-espresso
-                  dark:bg-cream
-                  text-white
-                  dark:text-black
+                  bg-foreground
+                  text-background
                   text-[11px]
                   font-black
                   flex
@@ -343,7 +334,7 @@ export const AboutSection: React.FC = () => {
                 }}
                 onClick={() => setActivePage('products')}
                 className="
-                  min-h-[44px]
+                  min-h-11
                   px-5
                   rounded-xl
                   border
@@ -377,16 +368,13 @@ export const AboutSection: React.FC = () => {
                 }}
                 onClick={() => setActivePage('places')}
                 className="
-                  min-h-[44px]
+                  min-h-11
                   px-5
                   rounded-xl
                   border
-                  border-black/10
-                  dark:border-white/10
-                  bg-white/45
-                  dark:bg-cream/[0.04]
-                  text-espresso
-                  dark:text-white
+                  border-border-subtle
+                  bg-surface-subtle
+                  text-foreground
                   text-[11px]
                   font-black
                   flex
@@ -395,7 +383,7 @@ export const AboutSection: React.FC = () => {
                   gap-2
                   transition-all
                   hover:bg-black/5
-                  dark:hover:bg-white/[0.08]
+                  dark:hover:bg-white/8
                   cursor-pointer
                 "
               >
@@ -434,9 +422,9 @@ export const AboutSection: React.FC = () => {
             }}
             className="
               relative
-              h-[300px]
-              sm:h-[340px]
-              lg:h-[390px]
+              h-75
+              sm:h-85
+              lg:h-97.5
             "
           >
             {/* Main Image */}
@@ -445,10 +433,9 @@ export const AboutSection: React.FC = () => {
                 absolute
                 inset-0
                 overflow-hidden
-                rounded-[2rem]
+                rounded-4xl
                 border
-                border-white/70
-                dark:border-white/10
+                border-white/30
                 shadow-2xl
                 shadow-black/10
               "
@@ -461,7 +448,7 @@ export const AboutSection: React.FC = () => {
                   h-full
                   object-cover
                   transition-transform
-                  duration-[1200ms]
+                  duration-1200
                   hover:scale-105
                 "
                 loading="lazy"
@@ -471,7 +458,7 @@ export const AboutSection: React.FC = () => {
                 className="
                   absolute
                   inset-0
-                  bg-gradient-to-t
+                  bg-linear-to-t
                   from-black/80
                   via-black/15
                   to-transparent
@@ -528,8 +515,7 @@ export const AboutSection: React.FC = () => {
             items-center
             justify-center
             gap-3
-            text-black/30
-            dark:text-white/30
+            text-foreground/30
           "
         >
           <span className="w-10 h-px bg-current" />

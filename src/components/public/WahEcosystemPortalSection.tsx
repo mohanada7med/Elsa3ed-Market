@@ -127,9 +127,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
       className="
         py-16
         bg-transparent
-        text-espresso
+        text-foreground
         transition-colors duration-500
-        dark:text-cream
         max-w-[1600px]
         mx-auto
         px-5
@@ -139,13 +138,13 @@ export const WahEcosystemPortalSection: React.FC = () => {
       "
     >
       {/* الرأس التحريري */}
-      <div className="relative z-10 mb-12 sm:mb-16 text-espresso dark:text-cream select-none">
+      <div className="relative z-10 mb-12 sm:mb-16 text-foreground select-none">
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
-                <Compass size={14} className="animate-spin-slow text-primary dark:text-primary-hover" />
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-accent">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
+                <Compass size={14} className="animate-spin-slow text-accent" />
               </span>
               DISCOVER / أبواب ودليل «وه»
             </div>
@@ -154,24 +153,24 @@ export const WahEcosystemPortalSection: React.FC = () => {
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أبواب
               <br />
-              <span className="inline-block mr-[2.2ch] sm:mr-[2.5ch] lg:mr-[2.8ch] text-primary dark:text-primary-hover">
+              <span className="inline-block mr-[2.2ch] sm:mr-[2.5ch] lg:mr-[2.8ch] text-accent">
                 وه
               </span>
             </h1>
             {/* الشرح والمؤشر الجانبي */}
             <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
               <div className="hidden sm:block">
-                <div className="text-[10px] font-black tracking-[0.2em] text-black/40 dark:text-white/40">
+                <div className="text-[10px] font-black tracking-[0.2em] text-foreground-disabled">
                   هتلاقى ايه
                 </div>
-                <div className="mt-3 h-px w-10 bg-primary dark:bg-[#d6aa72]" />
+                <div className="mt-3 h-px w-10 bg-accent" />
               </div>
 
-              <p className="max-w-2xl text-sm font-medium leading-7 text-black/70 dark:text-white/70 sm:text-base sm:leading-8">
+              <p className="max-w-2xl text-sm font-medium leading-7 text-foreground-secondary sm:text-base sm:leading-8">
                 كل خير الصعيد متجمع في مكان واحد.
                 منصة بتفتحلك الباب على:
                 <br />
-                <strong className="text-primary dark:text-primary-hover">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}
+                <strong className="text-accent">سوق مباشر تشتري منه من ايد الحرفي</strong>،{' '}
                 وفيديوهات وتجارب حقيقيه من صناع المحتوى، وتوثيق تفاعلي لكل شبر وسر في الصعيد.
               </p>
             </div>
@@ -180,7 +179,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       </div>
 
       {/* شاشة سطح المكتب: أكورديون أفقي متمدد سينمائي */}
-      <div className="hidden lg:flex gap-3 h-[520px] w-full">
+      <div className="hidden lg:flex gap-3 h-130 w-full">
         {portals.map((portal, idx) => {
           const isActive = activeId === portal.id;
 
@@ -201,7 +200,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 flex: isActive ? 4 : 1,
               }}
               transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
-              className="relative h-full rounded-[1.5rem] overflow-hidden cursor-pointer shadow-lg select-none group border border-black/10 dark:border-white/10 bg-black"
+              className="relative h-full rounded-3xl overflow-hidden cursor-pointer shadow-lg select-none group border border-white/10 bg-black"
             >
               <img
                 src={portal.image}
@@ -212,7 +211,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
               <div
                 className={`absolute inset-0 transition-opacity duration-500 ${isActive
-                  ? 'bg-gradient-to-t from-black via-black/40 to-black/25'
+                  ? 'bg-linear-to-t from-black via-black/40 to-black/25'
                   : 'bg-black/65 hover:bg-black/50'
                   }`}
               />
@@ -314,8 +313,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
               }}
               whileTap={{ scale: 0.98 }}
               className="
-                group relative h-[320px] w-full rounded-[2rem] overflow-hidden
-                border border-black/10 dark:border-white/10
+                group relative h-80 w-full rounded-4xl overflow-hidden
+                border border-white/10
                 bg-black shadow-[0_12px_35px_rgba(0,0,0,0.18)]
                 cursor-pointer select-none
               "
@@ -332,8 +331,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 decoding="async"
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
-              <div className={`absolute inset-0 bg-gradient-to-b ${portal.accentColor} to-transparent opacity-40 mix-blend-overlay`} />
+              <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-black/20" />
+              <div className={`absolute inset-0 bg-linear-to-b ${portal.accentColor} to-transparent opacity-40 mix-blend-overlay`} />
 
               <div className="pointer-events-none absolute left-4 top-4 h-16 w-16 rounded-full border border-white/10" />
 

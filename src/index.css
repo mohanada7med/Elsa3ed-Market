@@ -37,6 +37,7 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-light: var(--accent-light);
+  --color-btn-dark: var(--btn-dark);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-error: var(--error);
@@ -107,6 +108,7 @@
   --accent: #9a6a35;
   --accent-hover: #7d5427;
   --accent-light: rgba(154, 106, 53, 0.12);
+  --btn-dark: #1a1713;
   --success: #286644;
   --warning: #C4751B;
   --error: #B9382B;
@@ -179,9 +181,10 @@
   --secondary: #FFEDD8;
   --secondary-hover: #ffffff;
   --secondary-light: rgba(255, 237, 216, 0.15);
-  --accent: #9a6a35;
-  --accent-hover: #b88248;
-  --accent-light: rgba(154, 106, 53, 0.25);
+  --accent: #d6aa72;
+  --accent-hover: #e2be8e;
+  --accent-light: rgba(214, 170, 114, 0.15);
+  --btn-dark: #27272a;
   --success: #489E6E;
   --warning: #E09228;
   --error: #E05344;
