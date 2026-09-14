@@ -4114,14 +4114,23 @@ export const wahApi = {
   },
 
   // 5. People
-  async getPeople(params?: { governorate?: string; governorateId?: string; role?: string; status?: string }): Promise<LocalPerson[]> {
+  async getPeople(params?: { governorate?: string; governorateId?: string; role?: string; status?: string; _t?: string }): Promise<LocalPerson[]> {
     try {
       const query = new URLSearchParams();
       if (params?.governorate) query.set('governorate', params.governorate);
       if (params?.governorateId) query.set('governorate', params.governorateId);
       if (params?.role) query.set('role', params.role);
       if (params?.status) query.set('status', params.status);
-      const res = await fetch(`${API_BASE}/wah/people?${query.toString()}`);
+      if (params?._t) query.set('_t', params._t);
+      else query.set('_t', Date.now().toString());
+
+      const res = await fetch(`${API_BASE}/wah/people?${query.toString()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache'
+        }
+      });
       const json = await res.json();
       return json.success && Array.isArray(json.data) ? json.data : [];
     } catch {
@@ -4133,7 +4142,13 @@ export const wahApi = {
     try {
       const cleanSlug = sanitizeWahSlug(slug);
       if (!cleanSlug) return null;
-      const res = await fetch(`${API_BASE}/wah/people/${encodeURIComponent(cleanSlug)}`);
+      const res = await fetch(`${API_BASE}/wah/people/${encodeURIComponent(cleanSlug)}?_t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache'
+        }
+      });
       const json = await res.json();
       return json.success && json.data ? json.data : null;
     } catch {

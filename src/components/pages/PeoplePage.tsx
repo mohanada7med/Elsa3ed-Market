@@ -18,15 +18,19 @@ import {
   CheckCircle2,
   Quote,
   BookOpen,
-  Heart
+  Heart,
+  RefreshCw,
+  Scroll
 } from 'lucide-react';
 
 export const PeoplePage: React.FC = () => {
   const { navigateToPerson, setActivePage } = useApp();
   const [people, setPeople] = useState<LocalPerson[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
+  const [selectedPersonForModal, setSelectedPersonForModal] = useState<LocalPerson | null>(null);
 
   // Modal State for adding Upper Egypt figures
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -46,20 +50,52 @@ export const PeoplePage: React.FC = () => {
     avatarUrl: ''
   });
 
+  const getPersonPhoto = (person: any) => {
+    if (!person) return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+    const candidates = [
+      person.avatarUrl,
+      person.photoUrl,
+      person.imageUrl,
+      person.image,
+      person.photo,
+      person.coverImage
+    ].filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+
+    const custom = candidates.find((u) => !u.includes('images.unsplash.com') && !u.includes('placeholder'));
+    if (custom) return custom;
+
+    return person.avatarUrl || person.photoUrl || candidates[0] || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+  };
+
+  const fetchPeopleData = async () => {
+    try {
+      const data = await wahApi.getPeople({ _t: Date.now().toString() });
+      setPeople(data);
+    } catch (err) {
+      console.warn('Could not load people:', err);
+    }
+  };
+
   useEffect(() => {
-    const fetchPeople = async () => {
+    const init = async () => {
       setIsLoading(true);
-      try {
-        const data = await wahApi.getPeople();
-        setPeople(data);
-      } catch (err) {
-        console.warn('Could not load people:', err);
-      } finally {
-        setIsLoading(false);
-      }
+      await fetchPeopleData();
+      setIsLoading(false);
     };
-    fetchPeople();
+    init();
   }, []);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      const data = await wahApi.getPeople({ _t: Date.now().toString() });
+      setPeople(data);
+    } catch (err) {
+      console.warn('Could not refresh people:', err);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const governorates = Array.from(new Set(people.map((p) => p.governorateName))).filter(Boolean);
 
@@ -145,14 +181,22 @@ export const PeoplePage: React.FC = () => {
   };
 
   const filteredPeople = people.filter((person) => {
-    const role = person.craftTitle || person.craftOrSkill || person.titleOrRole || '';
-    const bioText = person.bio || person.biography || '';
+    const role = person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole || '';
+    const bioText = person.bio || (person as any).biography || '';
+    const originText = person.originVillage || (person as any).villageOrOrigin || '';
+    const anecdoteText = person.famousAnecdote || '';
+    const query = searchQuery.trim().toLowerCase();
+
     const matchesSearch =
-      !searchQuery.trim() ||
-      person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      bioText.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      person.governorateName.toLowerCase().includes(searchQuery.toLowerCase());
+      !query ||
+      person.name.toLowerCase().includes(query) ||
+      role.toLowerCase().includes(query) ||
+      bioText.toLowerCase().includes(query) ||
+      person.governorateName.toLowerCase().includes(query) ||
+      originText.toLowerCase().includes(query) ||
+      anecdoteText.toLowerCase().includes(query) ||
+      (person.famousWorksOrActs && person.famousWorksOrActs.some((w) => w.toLowerCase().includes(query)));
+
     const matchesGov = governorateFilter === 'all' || person.governorateName === governorateFilter;
     return matchesSearch && matchesGov;
   });
@@ -163,17 +207,15 @@ export const PeoplePage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-cream
-        text-espresso
+        bg-background
+        text-foreground
         transition-colors duration-500
-        dark:bg-espresso-900
-        dark:text-cream
       "
     >
       {/* =====================================================
           NAVBAR
       ===================================================== */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
+      <header className="relative z-50 border-b border-border-subtle">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             onClick={() => setActivePage('home')}
@@ -181,7 +223,7 @@ export const PeoplePage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-primary
+              hover:text-accent
               cursor-pointer
             "
           >
@@ -189,15 +231,11 @@ export const PeoplePage: React.FC = () => {
               className="
                 flex h-10 w-10 items-center justify-center
                 rounded-full
-                border border-black/10
-                bg-white/60
+                border border-border-subtle
+                bg-surface
                 transition-all
-                group-hover:bg-espresso
+                group-hover:bg-btn-dark
                 group-hover:text-white
-                dark:border-white/10
-                dark:bg-cream/5
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
               "
             >
               <ArrowLeft
@@ -210,33 +248,52 @@ export const PeoplePage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-accent">
               WAH
             </div>
 
             <div className="mt-1 text-sm font-black">ناس الصعيد</div>
           </div>
 
-          <button
-            onClick={() => setActivePage('cultural-crafts')}
-            className="
-              flex items-center gap-2
-              rounded-full
-              border border-black/10
-              px-4 py-2.5
-              text-xs font-bold
-              transition-all
-              hover:bg-espresso
-              hover:text-white
-              dark:border-white/10
-              dark:hover:bg-white
-              dark:hover:text-black
-              cursor-pointer
-            "
-          >
-            <span className="hidden sm:block">موسوعة الحرف</span>
-            <Hammer size={15} />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="
+                flex items-center gap-1.5
+                rounded-full
+                border border-border-subtle
+                px-3.5 py-2
+                text-xs font-bold
+                transition-all
+                hover:bg-surface
+                text-foreground-secondary
+                cursor-pointer
+              "
+              title="تحديث البيانات مباشرة من قاعدة البيانات"
+            >
+              <RefreshCw size={14} className={isRefreshing ? 'animate-spin text-accent' : ''} />
+              <span className="hidden md:inline">تحديث</span>
+            </button>
+
+            <button
+              onClick={() => setActivePage('cultural-crafts')}
+              className="
+                flex items-center gap-2
+                rounded-full
+                border border-border-subtle
+                px-4 py-2.5
+                text-xs font-bold
+                transition-all
+                hover:bg-btn-dark
+                hover:text-white
+                cursor-pointer
+              "
+            >
+              <span className="hidden sm:block">موسوعة الحرف</span>
+              <Hammer size={15} />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -244,16 +301,20 @@ export const PeoplePage: React.FC = () => {
           HERO SECTION
       ===================================================== */}
       <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
-        <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
+        <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-border-subtle/50" />
+        <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-border-subtle/50" />
 
         <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-32">
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
               <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-primary" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
+                <Sparkles size={16} className="text-accent" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-accent">
                   Guardians of Heritage / Upper Egypt
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold border border-emerald-500/20">
+                  <CheckCircle2 size={11} className="text-emerald-600 dark:text-emerald-400" />
+                  <span>بيانات حية من قاعدة البيانات</span>
                 </span>
               </div>
 
@@ -271,13 +332,13 @@ export const PeoplePage: React.FC = () => {
               >
                 ناس
                 <br />
-                <span className="mr-[8vw] text-primary lg:mr-28">الصعيد</span>
+                <span className="mr-[8vw] text-accent lg:mr-28">الصعيد</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-primary" />
-                <p className="text-sm leading-8 text-black/55 dark:text-white/55 sm:text-base">
-                  ناس الصعيد هما روحه وحراسه؛ من الأسطوات اللي ورثوا الصنعة إيد بإيد، للشعراء والمبدعين اللي حكوا حكايات البلد بصوتها الصادق.
+                <div className="mt-2 h-16 w-px bg-accent" />
+                <p className="text-sm leading-8 text-foreground-secondary sm:text-base">
+                  ناس الصعيد هما روحه وحراسه؛ من الأسطوات اللي ورثوا الصنعة إيد بإيد، للشعراء والمبدعين ورجال الدين والأدب اللي حكوا حكايات البلد بصوتها الصادق.. موثقين تفصيلياً في قاعدة البيانات بأصولهم وأعمالهم وسيرهم الأصيلة.
                 </p>
               </div>
             </div>
@@ -288,30 +349,28 @@ export const PeoplePage: React.FC = () => {
                 className="
                   relative overflow-hidden
                   rounded-[2rem]
-                  border border-black/10
-                  bg-white/50
+                  border border-border-subtle
+                  bg-surface
                   p-7
-                  backdrop-blur-xl
-                  dark:border-white/10
-                  dark:bg-cream/[0.035]
+                  shadow-lg
                 "
               >
-                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
+                <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-accent/20" />
 
                 <div className="relative">
                   <div className="mb-10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/40 dark:text-white/40">
-                      MASTERS & ARTISANS
+                    <span className="text-[10px] font-bold tracking-[0.25em] text-foreground-muted">
+                      DATABASE REGISTRY
                     </span>
-                    <Users size={18} className="text-primary" />
+                    <Users size={18} className="text-accent" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
                     <div>
-                      <div className="text-5xl font-black tracking-[-0.05em]">
+                      <div className="text-5xl font-black tracking-[-0.05em] text-accent">
                         {people.length}
                       </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                      <div className="mt-2 text-xs text-foreground-secondary font-bold">
                         علم ورمز موثق بالداتا بيز
                       </div>
                     </div>
@@ -320,16 +379,16 @@ export const PeoplePage: React.FC = () => {
                       <div className="text-5xl font-black tracking-[-0.05em]">
                         {governorates.length}
                       </div>
-                      <div className="mt-2 text-xs text-black/45 dark:text-white/45">
+                      <div className="mt-2 text-xs text-foreground-secondary font-bold">
                         محافظة صعيدية
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-xs font-bold">
-                      أرواح تنبض بعبق التراث والأصالة
+                  <div className="mt-10 flex items-center gap-3 border-t border-border-subtle pt-5">
+                    <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                    <span className="text-xs font-bold text-foreground">
+                      سجلات موثقة تشمل السيرة، الحكايات، والآثار الخالدة
                     </span>
                   </div>
                 </div>
@@ -346,14 +405,10 @@ export const PeoplePage: React.FC = () => {
         <div
           className="
             rounded-[1.5rem]
-            border border-black/10
-            bg-white/75
+            border border-border-subtle
+            bg-surface
             p-3
-            shadow-[0_20px_70px_rgba(0,0,0,0.08)]
-            backdrop-blur-2xl
-            dark:border-white/10
-            dark:bg-espresso-900/90
-            dark:shadow-black/30
+            shadow-xl
           "
         >
           <div className="flex flex-col gap-3 lg:flex-row">
@@ -364,29 +419,24 @@ export const PeoplePage: React.FC = () => {
                 className="
                   absolute right-4 top-1/2
                   -translate-y-1/2
-                  text-black/40
-                  dark:text-white/40
+                  text-foreground-muted
                 "
               />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن شيخ صنعة، حرفي، أو راوٍ..."
+                placeholder="ابحث بالاسم، القرية، الصنعة، حكاية أو أثر خالد..."
                 className="
                   h-12 w-full
                   rounded-xl
-                  border border-transparent
-                  bg-black/[0.035]
+                  border border-border-subtle
+                  bg-surface-subtle
                   pr-11 pl-10
-                  text-sm
+                  text-sm text-foreground
                   outline-none
                   transition-all
-                  placeholder:text-black/35
-                  focus:border-primary/40
-                  focus:bg-transparent
-                  dark:bg-cream/[0.04]
-                  dark:placeholder:text-white/30
-                  dark:focus:bg-white/[0.06]
+                  placeholder:text-foreground-muted
+                  focus:border-accent
                 "
               />
               {searchQuery && (
@@ -396,8 +446,8 @@ export const PeoplePage: React.FC = () => {
                     absolute left-3 top-1/2
                     -translate-y-1/2
                     rounded-full p-1.5
-                    hover:bg-black/10
-                    dark:hover:bg-white/10
+                    hover:bg-border-subtle
+                    text-foreground-muted
                     cursor-pointer
                   "
                 >
@@ -415,24 +465,25 @@ export const PeoplePage: React.FC = () => {
                   h-12 w-full
                   appearance-none
                   rounded-xl
-                  border border-transparent
-                  bg-black/[0.035]
+                  border border-border-subtle
+                  bg-surface-subtle
                   px-4
-                  text-sm font-bold
+                  text-sm font-bold text-foreground
                   outline-none
                   transition-all
-                  focus:border-primary/40
-                  dark:bg-cream/[0.04]
-                  dark:focus:bg-white/[0.06]
+                  focus:border-accent
                   cursor-pointer
                 "
               >
-                <option value="all">كل المحافظات</option>
-                {governorates.map((gov) => (
-                  <option key={gov} value={gov}>
-                    {gov}
-                  </option>
-                ))}
+                <option value="all">كل المحافظات ({people.length})</option>
+                {governorates.map((gov) => {
+                  const count = people.filter((p) => p.governorateName === gov).length;
+                  return (
+                    <option key={gov} value={gov}>
+                      {gov} ({count})
+                    </option>
+                  );
+                })}
               </select>
               <ChevronDown
                 size={15}
@@ -440,6 +491,7 @@ export const PeoplePage: React.FC = () => {
                   pointer-events-none
                   absolute left-4 top-1/2
                   -translate-y-1/2
+                  text-foreground-muted
                 "
               />
             </div>
@@ -449,11 +501,9 @@ export const PeoplePage: React.FC = () => {
               className="
                 flex items-center justify-between
                 rounded-xl
-                bg-espresso
+                bg-btn-dark
                 px-5
                 text-white
-                dark:bg-cream
-                dark:text-black
               "
             >
               <div className="flex items-center gap-2">
@@ -469,23 +519,23 @@ export const PeoplePage: React.FC = () => {
                     setSearchQuery('');
                     setGovernorateFilter('all');
                   }}
-                  className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
+                  className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer text-accent"
                 >
                   إعادة
                 </button>
               )}
             </div>
 
-            {/* Add Person CTA Button (Colloquial Upper Egypt) */}
+            {/* Add Person CTA Button */}
             <button
               onClick={() => setIsAddModalOpen(true)}
               className="
                 flex items-center justify-center gap-2
                 h-12 px-6
                 rounded-xl
-                bg-primary text-white
+                bg-accent text-white
                 font-black text-xs sm:text-sm
-                shadow-md hover:bg-primary/90
+                shadow-md hover:bg-accent/90
                 transition-all duration-300
                 hover:scale-[1.02]
                 shrink-0
@@ -505,15 +555,15 @@ export const PeoplePage: React.FC = () => {
       <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary">
-              PROFILES
+            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-accent">
+              DATABASE REGISTRY • {people.length} FIGURES
             </div>
             <h2 className="text-3xl font-black sm:text-4xl">أعلام ورموز وشيوخ الصعيد</h2>
           </div>
 
-          <div className="hidden items-center gap-2 text-xs text-black/40 dark:text-white/40 sm:flex">
+          <div className="hidden items-center gap-2 text-xs text-foreground-muted sm:flex">
             <Compass size={14} />
-            <span>Upper Egypt Masters</span>
+            <span>بيانات موثقة من قاعدة البيانات</span>
           </div>
         </div>
 
@@ -523,7 +573,7 @@ export const PeoplePage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[420px] animate-pulse rounded-[1.5rem] bg-black/5 dark:bg-cream/5"
+                className="h-[420px] animate-pulse rounded-[1.75rem] bg-surface border border-border-subtle"
               />
             ))}
           </div>
@@ -537,9 +587,10 @@ export const PeoplePage: React.FC = () => {
               flex-col items-center justify-center
               rounded-[2rem]
               border border-dashed
-              border-black/15
+              border-border-subtle
+              bg-surface
               text-center
-              dark:border-white/15
+              p-8
             "
           >
             <div
@@ -547,15 +598,16 @@ export const PeoplePage: React.FC = () => {
                 mb-6 flex h-16 w-16
                 items-center justify-center
                 rounded-full
-                border border-black/10
-                dark:border-white/10
+                border border-border-subtle
+                bg-surface-subtle
+                text-foreground-muted
               "
             >
               <Users size={24} />
             </div>
 
-            <h3 className="text-xl font-black">لم يتم العثور على شخصيات مطابقة</h3>
-            <p className="mt-3 text-sm text-black/45 dark:text-white/45">
+            <h3 className="text-xl font-black">لم يتم العثور على شخصيات مطابقة في قاعدة البيانات</h3>
+            <p className="mt-3 text-sm text-foreground-secondary">
               جرّب تغيير كلمات البحث أو المحافظة.
             </p>
 
@@ -568,15 +620,13 @@ export const PeoplePage: React.FC = () => {
                 className="
                   mt-6
                   rounded-full
-                  bg-espresso
+                  bg-btn-dark
                   px-6 py-3
                   text-xs font-bold text-white
-                  dark:bg-cream
-                  dark:text-black
                   cursor-pointer
                 "
               >
-                عرض كل الشخصيات
+                عرض كل شخصيات قاعدة البيانات ({people.length})
               </button>
             )}
           </div>
@@ -586,97 +636,161 @@ export const PeoplePage: React.FC = () => {
         {!isLoading && filteredPeople.length > 0 && (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredPeople.map((person, index) => {
-              const photo =
-                person.photoUrl ||
-                'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
-              const roleTitle = person.craftTitle || person.craftOrSkill || person.titleOrRole || 'حرفي وتراثي';
+              const photo = getPersonPhoto(person);
+              const roleTitle = person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole || 'رمز وعلم صعيدي';
+              const bioText = person.bio || (person as any).biography || '';
+              const originVillage = person.originVillage || (person as any).villageOrOrigin || '';
 
               return (
                 <article
-                  key={person.id || index}
-                  onClick={() => navigateToPerson(person.slug)}
+                  key={person.id || person.slug || index}
                   className="
                     group
                     relative
                     flex flex-col justify-between
                     overflow-hidden
-                    rounded-[1.5rem]
-                    border border-black/10
-                    bg-white/70
+                    rounded-[1.75rem]
+                    border border-border-subtle
+                    bg-surface
                     p-6 sm:p-7
                     shadow-sm
-                    transition-all duration-500
+                    transition-all duration-300
                     hover:-translate-y-1.5
-                    hover:border-primary/60
+                    hover:border-accent/60
                     hover:shadow-xl
-                    dark:border-white/10
-                    dark:bg-espresso-900
-                    cursor-pointer
                   "
                 >
                   <div>
                     {/* Top Row: Avatar & Governorate Badge */}
                     <div className="flex items-start justify-between gap-4 mb-5">
-                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-black/10 dark:border-white/10">
+                      <div
+                        onClick={() => navigateToPerson(person.slug)}
+                        className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-border-subtle cursor-pointer"
+                        title="انقر لعرض ملف الشخصية بالكامل"
+                      >
                         <img
                           src={photo}
                           alt={person.name}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
 
                       <div className="flex flex-col items-end gap-1.5">
-                        {person.governorateName && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-black/5 dark:bg-cream/5 px-3 py-1 text-[10px] font-bold text-black/70 dark:text-white/70">
-                            <MapPin size={11} className="text-primary" />
-                            {person.governorateName}
+                        <div className="flex items-center gap-1.5">
+                          {person.governorateName && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-surface-subtle border border-border-subtle px-3 py-1 text-[10px] font-bold text-foreground-secondary">
+                              <MapPin size={11} className="text-accent" />
+                              {person.governorateName}
+                            </span>
+                          )}
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-300">
+                            <CheckCircle2 size={10} className="text-emerald-600 dark:text-emerald-400" />
+                            <span>موثق بالداتا بيز</span>
                           </span>
-                        )}
-                        <span className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary">
+                        </div>
+                        <span className="rounded-full bg-accent/10 px-3 py-1 text-[10px] font-bold text-accent border border-accent/20">
                           {roleTitle}
                         </span>
                       </div>
                     </div>
 
-                    {/* Name & Bio */}
-                    <h3 className="text-2xl font-black mb-1.5 transition-colors group-hover:text-primary">
+                    {/* Name & Origin Village */}
+                    <h3
+                      onClick={() => navigateToPerson(person.slug)}
+                      className="text-2xl font-black mb-1.5 transition-colors group-hover:text-accent cursor-pointer"
+                    >
                       {person.name}
                     </h3>
 
-                    {(person.originVillage || (person as any).villageOrOrigin) && (
-                      <div className="text-[11px] font-bold text-primary/80 mb-2.5 flex items-center gap-1">
-                        <MapPin size={12} className="shrink-0 text-primary" />
-                        <span className="truncate">{person.originVillage || (person as any).villageOrOrigin}</span>
+                    {originVillage && (
+                      <div className="text-[11px] font-bold text-accent mb-2.5 flex items-center gap-1">
+                        <MapPin size={12} className="shrink-0 text-accent" />
+                        <span className="truncate">{originVillage}</span>
                       </div>
                     )}
 
-                    <p className="text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60 line-clamp-3 mb-3">
-                      {person.bio || person.biography}
+                    {/* Bio */}
+                    <p className="text-xs sm:text-sm leading-6 text-foreground-secondary line-clamp-3 mb-3">
+                      {bioText}
                     </p>
 
+                    {/* Quote if present */}
                     {person.quote && (
-                      <div className="mb-3 rounded-lg bg-black/[0.03] dark:bg-cream/[0.04] p-2.5 text-[11px] italic text-black/75 dark:text-white/75 line-clamp-2 border-r-2 border-primary flex items-start gap-1.5">
-                        <Quote size={12} className="shrink-0 text-primary mt-0.5" />
-                        <span>{person.quote}</span>
+                      <div className="mb-3 rounded-xl bg-surface-subtle p-3 text-[11px] italic text-foreground/85 line-clamp-2 border-r-2 border-accent flex items-start gap-2">
+                        <Quote size={13} className="shrink-0 text-accent mt-0.5" />
+                        <span>«{person.quote}»</span>
                       </div>
                     )}
 
-                    {person.yearsOfExperience && (
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-primary mb-2">
-                        <Award size={14} />
-                        <span>خبرة تمتد لأكثر من {person.yearsOfExperience} عاماً</span>
+                    {/* Anecdote from DB */}
+                    {person.famousAnecdote && (
+                      <div className="mb-3 rounded-xl bg-accent/5 border border-accent/15 p-2.5 text-[11px] text-foreground/80 line-clamp-2 flex items-start gap-1.5">
+                        <Scroll size={12} className="shrink-0 text-accent mt-0.5" />
+                        <span>
+                          <strong className="text-accent font-bold ml-1">حكاية من سيرته:</strong>
+                          {person.famousAnecdote}
+                        </span>
                       </div>
                     )}
+
+                    {/* Famous Works tags from DB */}
+                    {person.famousWorksOrActs && person.famousWorksOrActs.length > 0 && (
+                      <div className="mb-3 flex flex-wrap gap-1.5">
+                        {person.famousWorksOrActs.slice(0, 2).map((work, wIdx) => (
+                          <span
+                            key={wIdx}
+                            className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md bg-surface-subtle border border-border-subtle text-foreground-secondary truncate max-w-[200px]"
+                          >
+                            <Sparkles size={9} className="text-accent shrink-0" />
+                            <span className="truncate">{work}</span>
+                          </span>
+                        ))}
+                        {person.famousWorksOrActs.length > 2 && (
+                          <span className="text-[10px] font-bold text-accent px-1">
+                            +{person.famousWorksOrActs.length - 2} أعمال
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Years of Experience / Source */}
+                    <div className="flex items-center justify-between text-[11px] text-foreground-muted mb-2">
+                      {person.yearsOfExperience ? (
+                        <span className="flex items-center gap-1 font-semibold text-accent">
+                          <Award size={13} />
+                          <span>مسيرة {person.yearsOfExperience} عاماً</span>
+                        </span>
+                      ) : <span />}
+
+                      {person.sourceName && (
+                        <span className="truncate text-[10px] text-foreground-disabled">
+                          المصدر: {person.sourceName}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Footer Action */}
-                  <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
-                    <span className="text-black/50 dark:text-white/50 group-hover:text-primary transition-colors">
-                      السيرة الكاملة والمقتنيات
-                    </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-                      <ArrowUpLeft size={16} />
-                    </span>
+                  {/* Card Action Buttons */}
+                  <div className="pt-4 border-t border-border-subtle flex items-center justify-between gap-2 text-xs font-bold mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPersonForModal(person)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-subtle hover:bg-surface border border-border-subtle text-foreground text-[11px] transition-colors cursor-pointer"
+                      title="استعراض كافة بيانات الشخصية من قاعدة البيانات"
+                    >
+                      <BookOpen size={13} className="text-accent" />
+                      <span>كل البيانات</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => navigateToPerson(person.slug)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-btn-dark text-white hover:bg-accent hover:text-white transition-all text-[11px] cursor-pointer shadow-sm"
+                    >
+                      <span>السيرة الكاملة</span>
+                      <ArrowUpLeft size={13} />
+                    </button>
                   </div>
                 </article>
               );
@@ -686,15 +800,215 @@ export const PeoplePage: React.FC = () => {
       </section>
 
       {/* =====================================================
+          PERSON FULL DATABASE DETAILS MODAL
+      ===================================================== */}
+      {selectedPersonForModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          {/* Backdrop */}
+          <div
+            onClick={() => setSelectedPersonForModal(null)}
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Modal Container */}
+          <div
+            className="
+              relative z-10
+              w-full max-w-3xl
+              max-h-[90vh] overflow-y-auto
+              rounded-[2rem]
+              border border-border-subtle
+              bg-background
+              text-foreground
+              p-6 sm:p-8
+              shadow-2xl
+            "
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedPersonForModal(null)}
+              className="
+                absolute left-5 top-5
+                flex h-9 w-9 items-center justify-center
+                rounded-full bg-surface-subtle
+                hover:bg-border-subtle
+                text-foreground-secondary
+                transition-colors cursor-pointer
+              "
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header info */}
+            <div className="flex flex-col sm:flex-row items-start gap-6 mb-6 pb-6 border-b border-border-subtle">
+              <img
+                src={getPersonPhoto(selectedPersonForModal)}
+                alt={selectedPersonForModal.name}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-border-subtle shadow-md shrink-0"
+              />
+
+              <div className="space-y-2 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent border border-accent/20">
+                    {selectedPersonForModal.craftTitle ||
+                      (selectedPersonForModal as any).craftOrSkill ||
+                      (selectedPersonForModal as any).titleOrRole ||
+                      'رمز وعلم صعيدي'}
+                  </span>
+                  {selectedPersonForModal.governorateName && (
+                    <span className="rounded-full bg-surface-subtle border border-border-subtle px-3 py-1 text-xs font-bold text-foreground-secondary flex items-center gap-1">
+                      <MapPin size={12} className="text-accent" />
+                      محافظة {selectedPersonForModal.governorateName}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                    <CheckCircle2 size={12} className="text-emerald-600 dark:text-emerald-400" />
+                    <span>مسجل بالداتا بيز</span>
+                  </span>
+                </div>
+
+                <h2 className="text-3xl sm:text-4xl font-black font-serif">
+                  {selectedPersonForModal.name}
+                </h2>
+
+                {(selectedPersonForModal.originVillage ||
+                  (selectedPersonForModal as any).villageOrOrigin) && (
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-accent">
+                    <MapPin size={14} className="text-accent" />
+                    <span>
+                      الجذور والنشأة:{' '}
+                      {selectedPersonForModal.originVillage ||
+                        (selectedPersonForModal as any).villageOrOrigin}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="space-y-6 text-sm">
+              {/* Biography */}
+              <div>
+                <h4 className="text-xs font-black uppercase tracking-wider text-accent mb-2">
+                  السيرة والنشأة بالعامية
+                </h4>
+                <p className="leading-7 text-foreground/90 bg-surface p-4 rounded-xl border border-border-subtle">
+                  {selectedPersonForModal.bio ||
+                    (selectedPersonForModal as any).biography ||
+                    'سيرة صعيدية حافلة بالعطاء والأثر الطيب.'}
+                </p>
+              </div>
+
+              {/* Anecdote if exists */}
+              {selectedPersonForModal.famousAnecdote && (
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-accent mb-2 flex items-center gap-1.5">
+                    <Scroll size={14} />
+                    <span>موقف لا يُنسى من الذاكرة وحكاية من سيرته</span>
+                  </h4>
+                  <div className="leading-7 text-foreground/90 bg-accent/5 p-4 rounded-xl border border-accent/20">
+                    {selectedPersonForModal.famousAnecdote}
+                  </div>
+                </div>
+              )}
+
+              {/* Famous Works */}
+              {selectedPersonForModal.famousWorksOrActs &&
+                selectedPersonForModal.famousWorksOrActs.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-accent mb-2 flex items-center gap-1.5">
+                      <Sparkles size={14} />
+                      <span>أبرز البصمات والآثار الخالدة</span>
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {selectedPersonForModal.famousWorksOrActs.map((work, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-2 p-3 rounded-xl bg-surface border border-border-subtle"
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-accent/15 text-accent font-bold text-[10px] mt-0.5">
+                            {idx + 1}
+                          </span>
+                          <span className="text-xs font-semibold">{work}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+              {/* Local Impact */}
+              {selectedPersonForModal.localImpact && (
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-accent mb-2">
+                    الأثر في الصعيد وأهله
+                  </h4>
+                  <p className="leading-7 text-foreground/90 bg-surface p-4 rounded-xl border border-border-subtle">
+                    {selectedPersonForModal.localImpact}
+                  </p>
+                </div>
+              )}
+
+              {/* Quote */}
+              {selectedPersonForModal.quote && (
+                <div className="p-4 rounded-xl bg-surface border-r-4 border-accent italic text-base">
+                  «{selectedPersonForModal.quote}»
+                </div>
+              )}
+
+              {/* Source & Metadata */}
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border-subtle text-xs text-foreground-secondary">
+                {selectedPersonForModal.sourceName && (
+                  <div>
+                    <strong className="text-foreground">مصدر التوثيق:</strong>{' '}
+                    {selectedPersonForModal.sourceName}
+                  </div>
+                )}
+                {selectedPersonForModal.yearsOfExperience && (
+                  <div>
+                    <strong className="text-foreground">سنوات الخبرة والمسيرة:</strong>{' '}
+                    {selectedPersonForModal.yearsOfExperience} عاماً
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="pt-6 mt-6 border-t border-border-subtle flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={() => setSelectedPersonForModal(null)}
+                className="px-5 py-2.5 rounded-xl border border-border-subtle text-foreground-secondary font-bold text-xs hover:bg-surface transition-colors cursor-pointer"
+              >
+                إغلاق
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const s = selectedPersonForModal.slug;
+                  setSelectedPersonForModal(null);
+                  navigateToPerson(s);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-btn-dark text-white font-bold text-xs hover:bg-accent transition-all cursor-pointer shadow-md"
+              >
+                <span>فتح صفحة الملف التفصيلي الكاملة</span>
+                <ArrowUpLeft size={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================
           FINAL CTA
       ===================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10">
+      <section className="border-t border-border-subtle">
         <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-espresso
+              bg-btn-dark
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -706,7 +1020,7 @@ export const PeoplePage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-accent">
                   LIVING LEGENDS
                 </div>
                 <h2
@@ -725,8 +1039,8 @@ export const PeoplePage: React.FC = () => {
                 </h2>
               </div>
 
-              <p className="text-sm leading-8 text-white/55">
-                كل شخصية هنا تمثل حلقة وصل حية بين الماضي المجيد ومستقبل الصعيد، تنقل الحكمة والصنعة للأجيال القادمة.
+              <p className="text-sm leading-8 text-white/70">
+                كل شخصية هنا مسجلة وموثقة في قاعدة البيانات، تمثل حلقة وصل حية بين الماضي المجيد ومستقبل الصعيد، تنقل الحكمة والصنعة للأجيال القادمة.
               </p>
             </div>
           </div>
@@ -751,12 +1065,10 @@ export const PeoplePage: React.FC = () => {
               w-full max-w-2xl
               max-h-[90vh] overflow-y-auto
               rounded-[2rem]
-              border border-black/10
-              bg-cream
+              border border-border-subtle
+              bg-background
               p-6 sm:p-8
               shadow-2xl
-              dark:border-white/10
-              dark:bg-espresso-900
             "
           >
             {/* Close Button */}
@@ -765,9 +1077,9 @@ export const PeoplePage: React.FC = () => {
               className="
                 absolute left-5 top-5
                 flex h-9 w-9 items-center justify-center
-                rounded-full bg-black/5 dark:bg-white/5
-                hover:bg-black/10 dark:hover:bg-white/10
-                text-black/60 dark:text-white/60
+                rounded-full bg-surface-subtle
+                hover:bg-border-subtle
+                text-foreground-secondary
                 transition-colors cursor-pointer
               "
             >
@@ -776,14 +1088,14 @@ export const PeoplePage: React.FC = () => {
 
             {/* Header */}
             <div className="mb-6">
-              <div className="flex items-center gap-2 text-primary font-bold text-xs mb-2">
+              <div className="flex items-center gap-2 text-accent font-bold text-xs mb-2">
                 <Sparkles size={15} />
                 <span>توثيق شعبي بالعامية لأبناء الصعيد</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-black">
                 أضف رمز أو شخصية صعيدية
               </h3>
-              <p className="mt-2 text-xs sm:text-sm leading-6 text-black/60 dark:text-white/60">
+              <p className="mt-2 text-xs sm:text-sm leading-6 text-foreground-secondary">
                 شاركنا بسيرة راجل طيّب، شيخ، فنان، أسطى، أو علم من بلدكم ساب علامة في قلوب الناس وتراب الجنوب.. والكلام كله بالعامية والبلدي عشان يوصل لقلوب الناس بسرعة.
               </p>
             </div>
@@ -813,8 +1125,8 @@ export const PeoplePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Person Name */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
-                    اسم العلم أو الرمز الصعيدي <span className="text-primary">*</span>
+                  <label className="block font-black text-foreground mb-1.5">
+                    اسم العلم أو الرمز الصعيدي <span className="text-accent">*</span>
                   </label>
                   <input
                     type="text"
@@ -824,9 +1136,9 @@ export const PeoplePage: React.FC = () => {
                     placeholder="مثلاً: الشيخ فلان، الخال، الأسطى..."
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all
                     "
                   />
@@ -834,17 +1146,17 @@ export const PeoplePage: React.FC = () => {
 
                 {/* Governorate */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
-                    المحافظة الصعيدية <span className="text-primary">*</span>
+                  <label className="block font-black text-foreground mb-1.5">
+                    المحافظة الصعيدية <span className="text-accent">*</span>
                   </label>
                   <select
                     value={formData.governorateName}
                     onChange={(e) => setFormData({ ...formData, governorateName: e.target.value })}
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all cursor-pointer font-bold
                     "
                   >
@@ -871,7 +1183,7 @@ export const PeoplePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Origin Village */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  <label className="block font-black text-foreground mb-1.5">
                     القرية، النجع، أو المركز الأصيل
                   </label>
                   <input
@@ -881,9 +1193,9 @@ export const PeoplePage: React.FC = () => {
                     placeholder="مثلاً: قرية أبنود، دندرة، الحواتكة، النزلة..."
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all
                     "
                   />
@@ -891,7 +1203,7 @@ export const PeoplePage: React.FC = () => {
 
                 {/* Craft / Role */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  <label className="block font-black text-foreground mb-1.5">
                     لقبه، مهنته، أو مكانته بين الناس
                   </label>
                   <input
@@ -901,9 +1213,9 @@ export const PeoplePage: React.FC = () => {
                     placeholder="مثلاً: سلطان المداحين، شيخ الصنعة، شاعر العامية..."
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all
                     "
                   />
@@ -912,8 +1224,8 @@ export const PeoplePage: React.FC = () => {
 
               {/* Biography (Colloquial) */}
               <div>
-                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
-                  حكايته وسيرته بالبلدي (بالعامية) <span className="text-primary">*</span>
+                <label className="block font-black text-foreground mb-1.5">
+                  حكايته وسيرته بالبلدي (بالعامية) <span className="text-accent">*</span>
                 </label>
                 <textarea
                   required
@@ -923,9 +1235,9 @@ export const PeoplePage: React.FC = () => {
                   placeholder="احكي لنا عنه وعن نشأته وقعدته على المصطبة والناس كانت بتحبه ليه وبصمته في البلد إيه..."
                   className="
                     w-full p-4 rounded-xl
-                    border border-black/10 dark:border-white/10
-                    bg-white/60 dark:bg-black/20
-                    outline-none focus:border-primary
+                    border border-border-subtle
+                    bg-surface
+                    outline-none focus:border-accent
                     transition-all resize-none leading-6
                   "
                 />
@@ -933,7 +1245,7 @@ export const PeoplePage: React.FC = () => {
 
               {/* Anecdote (Colloquial) */}
               <div>
-                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                <label className="block font-black text-foreground mb-1.5">
                   موقف صعيدي أو حكاية جدعنة لا تتنسيش في بلده
                 </label>
                 <textarea
@@ -943,9 +1255,9 @@ export const PeoplePage: React.FC = () => {
                   placeholder="موقف كرم، شهامة، أو قصة مشهورة كل أهل النجع بيحكوها عنه..."
                   className="
                     w-full p-3 rounded-xl
-                    border border-black/10 dark:border-white/10
-                    bg-white/60 dark:bg-black/20
-                    outline-none focus:border-primary
+                    border border-border-subtle
+                    bg-surface
+                    outline-none focus:border-accent
                     transition-all resize-none leading-6
                   "
                 />
@@ -954,7 +1266,7 @@ export const PeoplePage: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Famous Work */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  <label className="block font-black text-foreground mb-1.5">
                     أهم أعماله أو أثره الخالد
                   </label>
                   <input
@@ -964,9 +1276,9 @@ export const PeoplePage: React.FC = () => {
                     placeholder="غنوة، كتاب، مسجد، ورشة، أثر لا يُنسى..."
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all
                     "
                   />
@@ -974,7 +1286,7 @@ export const PeoplePage: React.FC = () => {
 
                 {/* Quote */}
                 <div>
-                  <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                  <label className="block font-black text-foreground mb-1.5">
                     حكمة أو كلمة صعيدية كان دايماً يقولها
                   </label>
                   <input
@@ -984,9 +1296,9 @@ export const PeoplePage: React.FC = () => {
                     placeholder="«الصاحب الجدع سند، والصعيدي ما يوطيش راسه...»"
                     className="
                       w-full h-11 px-4 rounded-xl
-                      border border-black/10 dark:border-white/10
-                      bg-white/60 dark:bg-black/20
-                      outline-none focus:border-primary
+                      border border-border-subtle
+                      bg-surface
+                      outline-none focus:border-accent
                       transition-all
                     "
                   />
@@ -995,7 +1307,7 @@ export const PeoplePage: React.FC = () => {
 
               {/* Photo URL */}
               <div>
-                <label className="block font-black text-black/80 dark:text-white/80 mb-1.5">
+                <label className="block font-black text-foreground mb-1.5">
                   رابط صورة للشخصية (اختياري)
                 </label>
                 <input
@@ -1005,26 +1317,26 @@ export const PeoplePage: React.FC = () => {
                   placeholder="https://... (سيبه فاضي لو مش معاك رابط صورة)"
                   className="
                     w-full h-11 px-4 rounded-xl
-                    border border-black/10 dark:border-white/10
-                    bg-white/60 dark:bg-black/20
-                    outline-none focus:border-primary
+                    border border-border-subtle
+                    bg-surface
+                    outline-none focus:border-accent
                     transition-all text-xs
                   "
                 />
               </div>
 
               {/* Submit Buttons */}
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-black/10 dark:border-white/10">
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-border-subtle">
                 <button
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setIsAddModalOpen(false)}
                   className="
                     px-5 py-2.5 rounded-xl
-                    border border-black/10 dark:border-white/10
-                    text-black/60 dark:text-white/60
+                    border border-border-subtle
+                    text-foreground-secondary
                     font-bold text-xs
-                    hover:bg-black/5 dark:hover:bg-white/5
+                    hover:bg-surface
                     transition-all cursor-pointer
                   "
                 >
@@ -1037,9 +1349,9 @@ export const PeoplePage: React.FC = () => {
                   className="
                     flex items-center gap-2
                     px-6 py-2.5 rounded-xl
-                    bg-primary text-white
+                    bg-accent text-white
                     font-black text-xs sm:text-sm
-                    shadow-lg hover:bg-primary/90
+                    shadow-lg hover:bg-accent/90
                     disabled:opacity-50
                     transition-all cursor-pointer
                   "

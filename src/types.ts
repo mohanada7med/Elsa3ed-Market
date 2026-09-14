@@ -759,6 +759,7 @@ export interface LocalPerson {
   craftOrSkill: string;
   avatarUrl: string;
   photoUrl?: string;
+  imageUrl?: string;
   quote?: string;
   yearsOfExperience?: number;
   originVillage?: string;

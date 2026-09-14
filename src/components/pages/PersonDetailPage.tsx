@@ -34,7 +34,7 @@ export const PersonDetailPage: React.FC = () => {
     (typeof window !== 'undefined' && window.location.pathname.startsWith('/people/')
       ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
       : null) ||
-    'sheikh-qenawy-pottery';
+    'yahya-taher-abdullah-luxor';
 
   useEffect(() => {
     const fetchPerson = async () => {
@@ -63,10 +63,10 @@ export const PersonDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm font-bold text-black/60 dark:text-white/60">جاري تحميل ملف السيرة والمسيرة...</p>
+          <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-bold text-foreground-secondary">جاري تحميل ملف السيرة والمسيرة من قاعدة البيانات...</p>
         </div>
       </div>
     );
@@ -74,13 +74,13 @@ export const PersonDetailPage: React.FC = () => {
 
   if (!person) {
     return (
-      <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 text-center">
         <div>
           <h2 className="text-2xl font-black mb-2">الملف غير موجود</h2>
-          <p className="text-sm text-black/60 dark:text-white/60 mb-6">لم نتمكن من العثور على بيانات هذا الشخص</p>
+          <p className="text-sm text-foreground-secondary mb-6">لم نتمكن من العثور على بيانات هذا الشخص</p>
           <button
             onClick={() => setActivePage('people')}
-            className="px-6 py-3 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-btn-dark text-white dark:bg-surface dark:text-foreground font-bold text-xs cursor-pointer"
           >
             العودة لكافة ناس الصعيد
           </button>
@@ -90,7 +90,25 @@ export const PersonDetailPage: React.FC = () => {
   }
 
   const roleTitle = person.craftTitle || (person as any).craftOrSkill || (person as any).titleOrRole || 'حرفي وتراثي';
-  const avatarImage = person.photoUrl || (person as any).avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+
+  const getPersonPhoto = (p: any) => {
+    if (!p) return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+    const candidates = [
+      p.avatarUrl,
+      p.photoUrl,
+      p.imageUrl,
+      p.image,
+      p.photo,
+      p.coverImage
+    ].filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+
+    const custom = candidates.find((u) => !u.includes('images.unsplash.com') && !u.includes('placeholder'));
+    if (custom) return custom;
+
+    return p.avatarUrl || p.photoUrl || candidates[0] || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+  };
+
+  const avatarImage = getPersonPhoto(person);
   const bioText = person.bio || (person as any).biography || '';
 
   return (
@@ -99,17 +117,15 @@ export const PersonDetailPage: React.FC = () => {
       className="
         min-h-screen
         overflow-x-hidden
-        bg-cream
-        text-espresso
+        bg-background
+        text-foreground
         transition-colors duration-500
-        dark:bg-espresso-900
-        dark:text-cream
       "
     >
       {/* =====================================================
           NAVBAR
       ===================================================== */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10">
+      <header className="relative z-50 border-b border-border-subtle">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             onClick={() => setActivePage('people')}
@@ -117,7 +133,7 @@ export const PersonDetailPage: React.FC = () => {
               group flex items-center gap-3
               text-sm font-bold
               transition-all
-              hover:text-primary
+              hover:text-accent
               cursor-pointer
             "
           >
@@ -125,15 +141,11 @@ export const PersonDetailPage: React.FC = () => {
               className="
                 flex h-10 w-10 items-center justify-center
                 rounded-full
-                border border-black/10
-                bg-white/60
+                border border-border-subtle
+                bg-surface
                 transition-all
-                group-hover:bg-espresso
+                group-hover:bg-btn-dark
                 group-hover:text-white
-                dark:border-white/10
-                dark:bg-cream/5
-                dark:group-hover:bg-white
-                dark:group-hover:text-black
               "
             >
               <ArrowLeft
@@ -145,7 +157,7 @@ export const PersonDetailPage: React.FC = () => {
           </button>
 
           <div className="absolute left-1/2 -translate-x-1/2 text-center">
-            <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
+            <div className="text-[9px] font-bold tracking-[0.35em] text-accent">
               WAH
             </div>
             <div className="mt-1 text-sm font-black">أعلام وناس الصعيد</div>
@@ -157,15 +169,12 @@ export const PersonDetailPage: React.FC = () => {
             className="
               flex items-center gap-2
               rounded-full
-              border border-black/10
+              border border-border-subtle
               px-4 py-2.5
               text-xs font-bold
               transition-all
-              hover:bg-espresso
+              hover:bg-btn-dark
               hover:text-white
-              dark:border-white/10
-              dark:hover:bg-white
-              dark:hover:text-black
               cursor-pointer
             "
             title="مشاركة الملف"
@@ -179,14 +188,14 @@ export const PersonDetailPage: React.FC = () => {
       {/* =====================================================
           PERSON HERO DOSSIER SECTION
       ===================================================== */}
-      <section className="relative overflow-hidden border-b border-black/10 dark:border-white/10">
-        <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
-        <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
+      <section className="relative overflow-hidden border-b border-border-subtle">
+        <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-border-subtle/50" />
+        <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-border-subtle/50" />
 
         <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10 lg:gap-14 items-center">
             {/* Avatar Frame */}
-            <div className="relative mx-auto lg:mx-0 w-64 h-64 sm:w-80 sm:h-80 overflow-hidden rounded-[2.5rem] border-4 border-black/10 dark:border-white/10 shadow-2xl">
+            <div className="relative mx-auto lg:mx-0 w-64 h-64 sm:w-80 sm:h-80 overflow-hidden rounded-[2.5rem] border-4 border-border-subtle shadow-2xl">
               <img
                 src={avatarImage}
                 alt={person.name}
@@ -194,7 +203,7 @@ export const PersonDetailPage: React.FC = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               <div className="absolute bottom-4 right-4 left-4 text-center">
-                <span className="inline-block rounded-full bg-black/40 backdrop-blur-md px-3.5 py-1 text-[11px] font-bold text-white border border-white/20">
+                <span className="inline-block rounded-full bg-black/50 backdrop-blur-md px-3.5 py-1 text-[11px] font-bold text-white border border-white/20">
                   {roleTitle}
                 </span>
               </div>
@@ -207,15 +216,15 @@ export const PersonDetailPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigateToGovernorate(person.governorateId || 'qena')}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-black/5 dark:bg-cream/5 px-3.5 py-1 text-xs font-bold text-black/70 dark:text-white/70 hover:bg-primary hover:text-white transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-1 text-xs font-bold text-foreground-secondary hover:bg-accent hover:text-white transition-colors cursor-pointer border border-border-subtle"
                   >
-                    <MapPin size={13} className="text-primary" />
+                    <MapPin size={13} className="text-accent" />
                     <span>محافظة {person.governorateName}</span>
                   </button>
                 )}
 
                 {person.yearsOfExperience && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3.5 py-1 text-xs font-bold text-accent border border-accent/20">
                     <Award size={13} />
                     <span>مسيرة تمتد لأكثر من {person.yearsOfExperience} عاماً</span>
                   </span>
@@ -234,13 +243,13 @@ export const PersonDetailPage: React.FC = () => {
               </h1>
 
               {person.originVillage && (
-                <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                  <MapPin size={16} className="text-primary shrink-0" />
+                <div className="flex items-center gap-2 text-sm font-bold text-accent">
+                  <MapPin size={16} className="text-accent shrink-0" />
                   <span>الجذور والنشأة: {person.originVillage}</span>
                 </div>
               )}
 
-              <p className="text-base sm:text-lg leading-8 text-black/75 dark:text-white/75 font-medium">
+              <p className="text-base sm:text-lg leading-8 text-foreground/80 font-medium">
                 {bioText}
               </p>
             </div>
@@ -252,10 +261,10 @@ export const PersonDetailPage: React.FC = () => {
           TIMELINE & KEY MILESTONES SECTION
       ===================================================== */}
       {person.keyMilestones && person.keyMilestones.length > 0 && (
-        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20">
+        <section className="border-b border-border-subtle py-14 sm:py-20">
           <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
             <div className="mb-10 text-right">
-              <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2 uppercase">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-accent block mb-2 uppercase">
                 CAREER TIMELINE & STATIONS
               </span>
               <h2 className="text-2xl sm:text-3xl font-black font-serif">
@@ -270,25 +279,22 @@ export const PersonDetailPage: React.FC = () => {
                   className="
                     relative flex flex-col justify-between
                     rounded-[1.5rem]
-                    border border-black/10
-                    bg-white/60
+                    border border-border-subtle
+                    bg-surface
                     p-6 sm:p-7
                     shadow-sm
-                    backdrop-blur-sm
-                    dark:border-white/10
-                    dark:bg-espresso-800/50
                   "
                 >
                   <div>
                     {milestone.year && (
-                      <span className="inline-block font-mono text-xs font-black text-primary bg-primary/10 px-3 py-1 rounded-full mb-3">
+                      <span className="inline-block font-mono text-xs font-black text-accent bg-accent/10 px-3 py-1 rounded-full mb-3">
                         {milestone.year}
                       </span>
                     )}
-                    <h3 className="text-base sm:text-lg font-black mb-2 text-espresso dark:text-cream">
+                    <h3 className="text-base sm:text-lg font-black mb-2 text-foreground">
                       {milestone.title}
                     </h3>
-                    <p className="text-xs sm:text-sm leading-6 text-black/70 dark:text-white/70">
+                    <p className="text-xs sm:text-sm leading-6 text-foreground-secondary">
                       {milestone.description}
                     </p>
                   </div>
@@ -303,10 +309,10 @@ export const PersonDetailPage: React.FC = () => {
           NOTABLE WORKS & ACHIEVEMENTS SECTION
       ===================================================== */}
       {person.famousWorksOrActs && person.famousWorksOrActs.length > 0 && (
-        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20 bg-black/[0.015] dark:bg-white/[0.015]">
+        <section className="border-b border-border-subtle py-14 sm:py-20 bg-surface/50">
           <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
             <div className="mb-10 text-right">
-              <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2 uppercase">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-accent block mb-2 uppercase">
                 LEGACY & MASTERWORKS
               </span>
               <h2 className="text-2xl sm:text-3xl font-black font-serif">
@@ -321,18 +327,16 @@ export const PersonDetailPage: React.FC = () => {
                   className="
                     flex items-start gap-3.5
                     rounded-2xl
-                    border border-black/10
-                    bg-white/75
+                    border border-border-subtle
+                    bg-surface
                     p-5
                     shadow-sm
-                    dark:border-white/10
-                    dark:bg-espresso-900/60
                   "
                 >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary font-black text-xs mt-0.5">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-accent/15 text-accent font-black text-xs mt-0.5">
                     {idx + 1}
                   </span>
-                  <span className="text-xs sm:text-sm font-semibold leading-relaxed text-black/85 dark:text-white/85">
+                  <span className="text-xs sm:text-sm font-semibold leading-relaxed text-foreground">
                     {work}
                   </span>
                 </div>
@@ -346,26 +350,26 @@ export const PersonDetailPage: React.FC = () => {
           ANECDOTE & LOCAL IMPACT SECTION
       ===================================================== */}
       {(person.famousAnecdote || person.localImpact) && (
-        <section className="border-b border-black/10 dark:border-white/10 py-14 sm:py-20">
+        <section className="border-b border-border-subtle py-14 sm:py-20">
           <div className="mx-auto max-w-[1200px] px-5 sm:px-8 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {person.famousAnecdote && (
                 <div
                   className="
                     rounded-[2rem]
-                    border border-amber-500/25
-                    bg-amber-500/5
+                    border border-accent/25
+                    bg-accent/5
                     p-7 sm:p-9
                     relative
                     overflow-hidden
                   "
                 >
-                  <div className="flex items-center gap-2 text-amber-800 dark:text-amber-400 text-xs font-black uppercase tracking-wider mb-4">
+                  <div className="flex items-center gap-2 text-accent text-xs font-black uppercase tracking-wider mb-4">
                     <Scroll size={17} />
-                    <span>موقف لا يُنسى من الذاكرة</span>
+                    <span>موقف لا يُنسى من الذاكرة الصعيدية</span>
                   </div>
                   <h3 className="text-xl font-black mb-3">حكاية من سيرة المكان</h3>
-                  <p className="text-sm leading-8 text-black/80 dark:text-white/80 font-medium">
+                  <p className="text-sm leading-8 text-foreground/80 font-medium">
                     {person.famousAnecdote}
                   </p>
                 </div>
@@ -375,19 +379,19 @@ export const PersonDetailPage: React.FC = () => {
                 <div
                   className="
                     rounded-[2rem]
-                    border border-primary/25
-                    bg-primary/5
+                    border border-border-subtle
+                    bg-surface
                     p-7 sm:p-9
                     relative
                     overflow-hidden
                   "
                 >
-                  <div className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-wider mb-4">
+                  <div className="flex items-center gap-2 text-accent text-xs font-black uppercase tracking-wider mb-4">
                     <Sparkles size={17} />
                     <span>البصمة والأثر في الصعيد</span>
                   </div>
                   <h3 className="text-xl font-black mb-3">أثره في أهله وبلده</h3>
-                  <p className="text-sm leading-8 text-black/80 dark:text-white/80 font-medium">
+                  <p className="text-sm leading-8 text-foreground/80 font-medium">
                     {person.localImpact}
                   </p>
                 </div>
@@ -406,23 +410,20 @@ export const PersonDetailPage: React.FC = () => {
             className="
               relative overflow-hidden
               rounded-[2rem]
-              border border-black/10
-              bg-white/75
+              border border-border-subtle
+              bg-surface
               p-8 sm:p-12
               shadow-lg
-              backdrop-blur-xl
-              dark:border-white/10
-              dark:bg-espresso-900/90
             "
           >
-            <Quote size={36} className="text-primary/30 mb-4" />
-            <span className="text-[10px] font-bold tracking-[0.3em] text-primary block mb-2">
+            <Quote size={36} className="text-accent/30 mb-4" />
+            <span className="text-[10px] font-bold tracking-[0.3em] text-accent block mb-2">
               WORDS & LEGACY
             </span>
             <h2 className="text-2xl sm:text-3xl font-black font-serif mb-4">
               من كلمات وأقوال {person.name}
             </h2>
-            <blockquote className="text-xl sm:text-2xl font-serif italic leading-relaxed text-black/80 dark:text-white/80">
+            <blockquote className="text-xl sm:text-2xl font-serif italic leading-relaxed text-foreground/90">
               «{person.quote}»
             </blockquote>
           </div>
@@ -432,13 +433,13 @@ export const PersonDetailPage: React.FC = () => {
       {/* =====================================================
           FINAL CTA
       ===================================================== */}
-      <section className="border-t border-black/10 dark:border-white/10">
+      <section className="border-t border-border-subtle">
         <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
           <div
             className="
               relative overflow-hidden
               rounded-[2rem]
-              bg-espresso
+              bg-btn-dark
               px-6 py-14
               text-white
               sm:px-12 sm:py-20
@@ -450,7 +451,7 @@ export const PersonDetailPage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-accent">
                   GUARDING THE LEGACY
                 </div>
                 <h2
@@ -470,12 +471,13 @@ export const PersonDetailPage: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-4">
-                <p className="text-sm leading-8 text-white/55">
+                <p className="text-sm leading-8 text-white/70">
                   تعرّف على باقي شيوخ الصنعة والرواة الذين يحملون تاريخ الصعيد في قلوبهم وأفئدتهم.
                 </p>
                 <button
                   onClick={() => setActivePage('people')}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-espresso text-white dark:bg-cream dark:text-black px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-primary dark:hover:bg-primary-hover shadow-md cursor-pointer w-fit"                >
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-surface text-foreground px-6 py-3.5 text-xs font-bold transition-all duration-300 hover:bg-accent hover:text-white shadow-md cursor-pointer w-fit border border-border-subtle"
+                >
                   <span>تصفح كافة ناس الصعيد</span>
                   <ArrowLeft size={15} />
                 </button>

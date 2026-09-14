@@ -38,7 +38,10 @@ interface CacheEntry {
 
 const wahServerCache = new Map<string, CacheEntry>();
 
-function getWahCached(key: string): any | null {
+function getWahCached(key: string, req?: Request): any | null {
+  if (req && (req.headers['cache-control']?.includes('no-cache') || req.query?.refresh === 'true' || req.query?._t)) {
+    return null;
+  }
   const entry = wahServerCache.get(key);
   if (!entry) return null;
   if (Date.now() - entry.timestamp > entry.ttlMs) {
@@ -48,7 +51,7 @@ function getWahCached(key: string): any | null {
   return entry.data;
 }
 
-function setWahCache(key: string, data: any, ttlSeconds = 300): void {
+function setWahCache(key: string, data: any, ttlSeconds = 60): void {
   wahServerCache.set(key, {
     data,
     timestamp: Date.now(),
@@ -75,6 +78,59 @@ router.use((req, res, next) => {
   }
   next();
 });
+
+/**
+ * Robust helper to resolve person image from any possible database field
+ * and ensure that updated/custom images (e.g. Cloudinary, user URLs) take precedence
+ * over old stock Unsplash placeholders.
+ */
+export function resolvePersonImage(p: any): string {
+  if (!p) return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+
+  const candidates = [
+    p.avatarUrl,
+    p.photoUrl,
+    p.imageUrl,
+    p.image,
+    p.photo,
+    p.coverImage,
+    p.picture,
+    ...(Array.isArray(p.images) ? p.images : [])
+  ].filter((url): url is string => typeof url === 'string' && url.trim().length > 0);
+
+  if (candidates.length === 0) {
+    return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800';
+  }
+
+  // Priority 1: Check for any custom, user-uploaded or non-unsplash URL
+  const customImage = candidates.find(
+    (url) => !url.includes('images.unsplash.com') && !url.includes('placeholder')
+  );
+  if (customImage) {
+    return customImage.trim();
+  }
+
+  // Priority 2: Return first candidate
+  return candidates[0].trim();
+}
+
+/**
+ * Normalizes person document so that photoUrl, avatarUrl, and imageUrl are always in sync
+ * with the latest edited image from the database.
+ */
+export function normalizePerson(p: any) {
+  if (!p) return p;
+  const resolvedPhoto = resolvePersonImage(p);
+  return {
+    ...p,
+    photoUrl: resolvedPhoto,
+    avatarUrl: resolvedPhoto,
+    imageUrl: resolvedPhoto,
+    craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
+    bio: p.bio || p.biography,
+    biography: p.biography || p.bio
+  };
+}
 
 // Helper to ensure MongoDB collection fallback safely
 async function getMongoOrMemory() {
@@ -281,14 +337,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       narrator: s.narrator || s.authorName
     }));
 
-    const normalizedPeople = people.map((p: any) => ({
-      ...p,
-      photoUrl: p.photoUrl || p.avatarUrl,
-      avatarUrl: p.avatarUrl || p.photoUrl,
-      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
-      bio: p.bio || p.biography,
-      biography: p.biography || p.bio
-    }));
+    const normalizedPeople = people.map(normalizePerson);
 
     const normalizedFoods = foods.map((f: any) => ({
       ...f,
@@ -717,16 +766,26 @@ router.delete('/villages/:id', requireAdmin, async (req: AuthenticatedRequest, r
 // 3. HERITAGE PLACES (المعالم والمزارات التراثية)
 // ==========================================
 
-function normalizePlaceMedia<T extends { coverImage?: string; imageUrl?: string; gallery?: string[]; galleryImages?: string[] }>(place: T | null): T | null {
+function normalizePlaceMedia<T extends any>(place: T | null): T | null {
   if (!place) return null;
-  const cover = place.coverImage?.trim() || place.imageUrl?.trim();
+  const p = place as any;
+  const cover =
+    p.coverImage?.trim() ||
+    p.imageUrl?.trim() ||
+    p.image?.trim() ||
+    p.photo?.trim() ||
+    (Array.isArray(p.images) && typeof p.images[0] === 'string' && p.images[0].trim()) ||
+    (Array.isArray(p.gallery) && typeof p.gallery[0] === 'string' && p.gallery[0].trim()) ||
+    (Array.isArray(p.galleryImages) && typeof p.galleryImages[0] === 'string' && p.galleryImages[0].trim());
   if (cover) {
-    const gallery = Array.isArray(place.gallery) ? [...place.gallery] : [];
+    p.coverImage = cover;
+    p.imageUrl = cover;
+    const gallery = Array.isArray(p.gallery) ? [...p.gallery] : [];
     const exists = gallery.some((img: string) => img === cover || img.split('?')[0] === cover.split('?')[0]);
     if (!exists) {
       gallery.unshift(cover);
-      place.gallery = gallery;
-      place.galleryImages = gallery;
+      p.gallery = gallery;
+      p.galleryImages = gallery;
     }
   }
   return place;
@@ -1414,14 +1473,7 @@ router.get('/people', async (req: Request, res: Response) => {
     const { governorate, status } = req.query;
     const { db, isMongo } = await getMongoOrMemory();
 
-    const normalizePerson = (p: any) => ({
-      ...p,
-      photoUrl: p.photoUrl || p.avatarUrl,
-      avatarUrl: p.avatarUrl || p.photoUrl,
-      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
-      bio: p.bio || p.biography,
-      biography: p.biography || p.bio
-    });
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     if (isMongo && db) {
       const query: any = {};
@@ -1448,14 +1500,7 @@ router.get('/people/:slugOrId', async (req: Request, res: Response) => {
     }
     const { db, isMongo } = await getMongoOrMemory();
 
-    const normalizePerson = (p: any) => ({
-      ...p,
-      photoUrl: p.photoUrl || p.avatarUrl,
-      avatarUrl: p.avatarUrl || p.photoUrl,
-      craftTitle: p.craftTitle || p.craftOrSkill || p.titleOrRole,
-      bio: p.bio || p.biography,
-      biography: p.biography || p.bio
-    });
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     let person: LocalPersonDoc | null = null;
     if (isMongo && db) {
@@ -1484,6 +1529,11 @@ router.post('/people', requireAdmin, async (req: AuthenticatedRequest, res: Resp
     if (!item.slug) item.slug = `person-${encodeURIComponent(item.name.trim().toLowerCase().replace(/\s+/g, '-'))}`;
     if (!item.status) item.status = 'approved';
 
+    const resolvedPhoto = resolvePersonImage(item);
+    item.photoUrl = resolvedPhoto;
+    item.avatarUrl = resolvedPhoto;
+    item.imageUrl = resolvedPhoto;
+
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       await db.collection('wah_local_people').updateOne({ id: item.id }, { $set: item }, { upsert: true });
@@ -1492,6 +1542,9 @@ router.post('/people', requireAdmin, async (req: AuthenticatedRequest, res: Resp
     const idx = memoryDb.localPeople.findIndex((p) => p.id === item.id);
     if (idx >= 0) memoryDb.localPeople[idx] = item;
     else memoryDb.localPeople.push(item);
+
+    invalidateWahCache('people');
+    invalidateWahCache('gov_detail_');
 
     await createAuditLog({
       actorId: req.user?.id,
@@ -1503,7 +1556,7 @@ router.post('/people', requireAdmin, async (req: AuthenticatedRequest, res: Resp
       details: `تم حفظ الشخصية التراثية (${item.name}) في قاعدة البيانات`
     });
 
-    return res.status(201).json({ success: true, message: 'تم حفظ بيانات الشخصية بنجاح', data: item });
+    return res.status(201).json({ success: true, message: 'تم حفظ بيانات الشخصية بنجاح', data: normalizePerson(item) });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل حفظ الشخصية' });
   }
@@ -1525,10 +1578,12 @@ router.post('/people/contribute', async (req: Request, res: Response) => {
       item.slug = `person-${encodeURIComponent(item.name.trim().toLowerCase().replace(/\s+/g, '-'))}-${Date.now().toString().slice(-4)}`;
     }
     item.status = 'approved';
-    if (!item.photoUrl && !item.avatarUrl) {
-      item.avatarUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80';
-      item.photoUrl = item.avatarUrl;
-    }
+
+    const resolvedPhoto = resolvePersonImage(item);
+    item.photoUrl = resolvedPhoto;
+    item.avatarUrl = resolvedPhoto;
+    item.imageUrl = resolvedPhoto;
+
     if (!item.craftTitle && item.craftOrSkill) {
       item.craftTitle = item.craftOrSkill;
     }
@@ -1543,11 +1598,12 @@ router.post('/people/contribute', async (req: Request, res: Response) => {
     else memoryDb.localPeople.unshift(item);
 
     invalidateWahCache('people');
+    invalidateWahCache('gov_detail_');
 
     return res.status(201).json({
       success: true,
       message: 'تمت إضافة الرمز الصعيدي بنجاح وسُجّل في ذاكرة ناس الصعيد!',
-      data: item
+      data: normalizePerson(item)
     });
   } catch (err: any) {
     Logger.error('[WAH Content] Error adding contributed person:', err);
@@ -1561,10 +1617,19 @@ router.put('/people/:id', requireAdmin, async (req: AuthenticatedRequest, res: R
     const updateData = { ...req.body, updatedAt: new Date().toISOString() };
     delete updateData._id;
 
+    const resolvedPhoto = resolvePersonImage(updateData);
+    if (updateData.photoUrl || updateData.avatarUrl || updateData.imageUrl || updateData.image) {
+      updateData.photoUrl = resolvedPhoto;
+      updateData.avatarUrl = resolvedPhoto;
+      updateData.imageUrl = resolvedPhoto;
+    }
+
     const { db, isMongo } = await getMongoOrMemory();
     if (isMongo && db) {
       const updated = await db.collection('wah_local_people').findOneAndUpdate({ id }, { $set: updateData }, { returnDocument: 'after' });
-      return res.json({ success: true, message: 'تم تحديث بيانات الشخصية بنجاح', data: updated });
+      invalidateWahCache('people');
+      invalidateWahCache('gov_detail_');
+      return res.json({ success: true, message: 'تم تحديث بيانات الشخصية بنجاح', data: updated ? normalizePerson(updated) : updated });
     }
     return res.status(400).json({ success: false, error: 'قاعدة البيانات غير متاحة' });
   } catch (err: any) {

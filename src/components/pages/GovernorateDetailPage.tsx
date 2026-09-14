@@ -215,11 +215,22 @@ export const GovernorateDetailPage: React.FC = () => {
     );
   };
 
-  const getPersonImage = (person: any) =>
-    person?.photoUrl ||
-    person?.avatarUrl ||
-    person?.imageUrl ||
-    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+  const getPersonImage = (person: any) => {
+    if (!person) return 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+    const candidates = [
+      person.avatarUrl,
+      person.photoUrl,
+      person.imageUrl,
+      person.image,
+      person.photo,
+      person.coverImage
+    ].filter((u): u is string => typeof u === 'string' && u.trim().length > 0);
+
+    const custom = candidates.find((u) => !u.includes('images.unsplash.com') && !u.includes('placeholder'));
+    if (custom) return custom;
+
+    return person.avatarUrl || person.photoUrl || candidates[0] || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80';
+  };
 
   const getFoodTitle = (food: any) => food?.title || food?.name || 'أكلة من الصعيد';
 

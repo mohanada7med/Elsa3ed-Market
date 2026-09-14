@@ -228,6 +228,8 @@ async function syncMediaWithEntity(
         if (isPrimary) {
           if (entityType.toLowerCase().includes('person')) {
             updateFields.avatarUrl = secureUrl;
+            updateFields.photoUrl = secureUrl;
+            updateFields.imageUrl = secureUrl;
           } else {
             updateFields.coverImage = secureUrl;
             updateFields.imageUrl = secureUrl;
