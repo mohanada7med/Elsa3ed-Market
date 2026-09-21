@@ -1097,7 +1097,7 @@ export const DialectDictionaryPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={shareWhatsAppMessage}
-                    className="flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
+                    className="sm:col-span-2 flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] hover:bg-[#1EBA59] text-white text-xs font-black transition-colors cursor-pointer"
                   >
                     <MessageCircle size={15} />
                     واتساب
