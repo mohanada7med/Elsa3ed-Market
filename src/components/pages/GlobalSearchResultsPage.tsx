@@ -25,7 +25,6 @@ export const GlobalSearchResultsPage: React.FC = () => {
     navigateToGovernorate,
     navigateToPlace,
     navigateToCraft,
-    navigateToStory,
     navigateToPerson,
     navigateToFood,
     navigateToEvent,
@@ -73,9 +72,6 @@ export const GlobalSearchResultsPage: React.FC = () => {
       case 'craft':
         navigateToCraft(item.slug);
         break;
-      case 'story':
-        navigateToStory(item.slug);
-        break;
       case 'person':
         navigateToPerson(item.slug);
         break;
@@ -114,8 +110,6 @@ export const GlobalSearchResultsPage: React.FC = () => {
         return Landmark;
       case 'craft':
         return Hammer;
-      case 'story':
-        return BookOpen;
       case 'person':
         return Users;
       case 'food':
@@ -147,7 +141,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
             البحث الشامل في منصة <span className="text-primary">وَه</span>
           </h1>
           <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mb-6 font-medium">
-            ابحث في كافة معالم، محافظات، حكايات، حرف، أكلات، ناس، ومنتجات صعيد مصر
+            ابحث في كافة معالم، محافظات، حرف، أكلات، ناس، ومنتجات صعيد مصر
           </p>
 
           <div className="relative w-full">

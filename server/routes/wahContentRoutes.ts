@@ -230,7 +230,6 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       const [
         placesDocs,
         craftsDocs,
-        storiesDocs,
         peopleDocs,
         foodsDocs,
         eventsDocs,
@@ -250,10 +249,6 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
             { governorateName: gov.name },
             { governorateId: gov.id }
           ],
-          status: { $ne: 'archived' }
-        }).toArray(),
-        db.collection('wah_stories').find({
-          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
           status: { $ne: 'archived' }
         }).toArray(),
         db.collection('wah_local_people').find({
@@ -294,7 +289,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
 
       places = placesDocs;
       crafts = craftsDocs;
-      stories = storiesDocs;
+      stories = [];
       people = peopleDocs;
       foods = foodsDocs;
       events = eventsDocs;
@@ -1322,55 +1317,15 @@ router.delete('/traditions/:id', requireAdmin, async (req: AuthenticatedRequest,
 });
 
 // ==========================================
-// 6. WAH STORIES (وه بيحكي - قصص وحكايات التراث)
+// 6. WAH STORIES (تم إلغاء القسم بناءً على طلب المستخدم)
 // ==========================================
 
-router.get('/stories', async (req: Request, res: Response) => {
-  try {
-    const { governorate, category, status } = req.query;
-    const { db, isMongo } = await getMongoOrMemory();
-
-    if (isMongo && db) {
-      const query: any = {};
-      if (governorate) query.$or = [{ governorateName: governorate }, { governorateId: governorate }];
-      if (category) query.category = category;
-      if (status) query.status = status;
-      const stories = await db.collection<WahStoryDoc>('wah_stories').find(query).toArray();
-      return res.json({ success: true, count: stories.length, data: stories });
-    }
-
-    let list = memoryDb.wahStories;
-    if (governorate) list = list.filter((s) => s.governorateName === governorate || s.governorateId === governorate);
-    if (category) list = list.filter((s) => s.category === category);
-    if (status) list = list.filter((s) => s.status === status);
-    return res.json({ success: true, count: list.length, data: list });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: 'فشل جلب القصص' });
-  }
+router.get('/stories', async (_req: Request, res: Response) => {
+  return res.json({ success: true, count: 0, data: [] });
 });
 
-router.get('/stories/:slugOrId', async (req: Request, res: Response) => {
-  try {
-    const { slugOrId } = req.params;
-    if (!slugOrId || slugOrId === '[object Object]' || slugOrId === 'undefined' || slugOrId === 'null') {
-      return res.status(400).json({ success: false, error: 'معرف القصة غير صالح', code: 'INVALID_IDENTIFIER' });
-    }
-    const { db, isMongo } = await getMongoOrMemory();
-
-    let story: WahStoryDoc | null = null;
-    if (isMongo && db) {
-      story = await db.collection<WahStoryDoc>('wah_stories').findOne({
-        $or: [{ slug: slugOrId }, { id: slugOrId }]
-      });
-    } else {
-      story = memoryDb.wahStories.find((s) => s.slug === slugOrId || s.id === slugOrId) || null;
-    }
-
-    if (!story) return res.status(404).json({ success: false, error: 'القصة غير موجودة' });
-    return res.json({ success: true, data: story });
-  } catch (err: any) {
-    return res.status(500).json({ success: false, error: 'فشل جلب تفاصيل القصة' });
-  }
+router.get('/stories/:slugOrId', async (_req: Request, res: Response) => {
+  return res.status(404).json({ success: false, error: 'تم إلغاء هذا القسم' });
 });
 
 router.post('/stories', requireAdmin, async (req: AuthenticatedRequest, res: Response) => {
@@ -2434,11 +2389,10 @@ router.get('/search', async (req: Request, res: Response) => {
     const regex = new RegExp(query, 'i');
 
     if (isMongo && db) {
-      const [govs, places, crafts, stories, foods, products] = await Promise.all([
+      const [govs, places, crafts, foods, products] = await Promise.all([
         db.collection<GovernorateDoc>('wah_governorates').find({ $or: [{ name: regex }, { shortIntro: regex }, { famousFor: regex }] }).limit(5).toArray(),
         db.collection<HeritagePlaceDoc>('wah_heritage_places').find({ $or: [{ title: regex }, { description: regex }, { governorateName: regex }] }).limit(5).toArray(),
         db.collection<CulturalCraftDoc>('wah_cultural_crafts').find({ $or: [{ title: regex }, { shortDescription: regex }, { governorates: regex }] }).limit(5).toArray(),
-        db.collection<WahStoryDoc>('wah_stories').find({ $or: [{ title: regex }, { excerpt: regex }, { content: regex }] }).limit(5).toArray(),
         db.collection<UpperEgyptFoodDoc>('wah_food').find({ $or: [{ title: regex }, { description: regex }, { ingredients: regex }] }).limit(5).toArray(),
         db.collection('products').find({ $or: [{ title: regex }, { description: regex }, { categoryName: regex }, { sellerGovernorate: regex }] }).limit(5).toArray()
       ]);
@@ -2479,19 +2433,6 @@ router.get('/search', async (req: Request, res: Response) => {
           coverImage: c.coverImage,
           url: `/crafts/${c.slug}`,
           slug: c.slug
-        });
-      });
-
-      stories.forEach((s) => {
-        results.push({
-          id: s.id,
-          title: s.title,
-          type: 'story',
-          typeLabel: 'وه بيحكي',
-          subtitle: `${s.governorateName} • قراءة ${s.readingTimeMinutes || 3} دقائق`,
-          coverImage: s.coverImage,
-          url: `/stories/${s.slug}`,
-          slug: s.slug
         });
       });
 

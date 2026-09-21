@@ -436,9 +436,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'cultural-craft-details': '/cultural-crafts/:slug',
   'craft-details': '/cultural-crafts/:slug',
 
-  stories: '/stories',
-  'story-details': '/stories/:slug',
-
   people: '/people',
   'person-details': '/people/:slug',
 
@@ -586,9 +583,9 @@ function getInitialNavigationState(): {
     return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug };
   }
 
-  const storySlug = params.get('story') || params.get('storySlug') || (pageParam === 'story-details' ? slugFromQuery : null);
-  if (storySlug) {
-    return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug };
+  const storySlug = params.get('story') || params.get('storySlug');
+  if (storySlug || (pageParam as string) === 'stories' || (pageParam as string) === 'story-details') {
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   const personSlug = params.get('person') || params.get('personSlug') || (pageParam === 'person-details' ? slugFromQuery : null);
@@ -671,13 +668,9 @@ function getInitialNavigationState(): {
     return { page: 'cultural-crafts', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // Stories: /stories or /stories/:slug
+  // Stories route redirected
   if (rawPath === '/stories' || rawPath.startsWith('/stories/')) {
-    const rawCandidate = slugFromQuery || (rawPath.startsWith('/stories/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (isValidRouteIdentifier(rawCandidate)) {
-      return { page: 'story-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, storySlug: rawCandidate!.trim() };
-    }
-    return { page: 'stories', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // People: /people or /people/:slug
@@ -888,7 +881,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const isDynamicRoute = [
         'product-details', 'product-detail', 'category-details', 'seller-details', 'order-details',
         'governorate-details', 'place-details', 'cultural-craft-details',
-        'story-details', 'person-details', 'food-details', 'event-details'
+        'person-details', 'food-details', 'event-details'
       ].includes(activePage);
       if (!isDynamicRoute) {
         const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
@@ -2231,18 +2224,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToStory = (slugOrStory: string | { slug?: string; id?: string }) => {
-    const slug = safeExtractIdentifier(slugOrStory);
-    if (!slug) {
-      console.warn('Invalid identifier passed to navigateToStory:', slugOrStory);
-      setActivePageState('stories');
-      return;
-    }
-    setSelectedStorySlug(slug);
-    setActivePageState('story-details');
+  const navigateToStory = (_slugOrStory?: string | { slug?: string; id?: string }) => {
+    setActivePageState('home');
     try {
-      sessionStorage.setItem('wah_selected_story_slug', slug);
-      window.history.pushState({ page: 'story-details', slug }, '', `/stories/${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'home' }, '', '/');
     } catch { }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

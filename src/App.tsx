@@ -78,12 +78,6 @@ const CulturalCraftsPage = React.lazy(() =>
 const CulturalCraftDetailPage = React.lazy(() =>
   import('./components/pages/CulturalCraftDetailPage').then((m) => ({ default: m.CulturalCraftDetailPage }))
 );
-const StoriesPage = React.lazy(() =>
-  import('./components/pages/StoriesPage').then((m) => ({ default: m.StoriesPage }))
-);
-const StoryDetailPage = React.lazy(() =>
-  import('./components/pages/StoryDetailPage').then((m) => ({ default: m.StoryDetailPage }))
-);
 const PeoplePage = React.lazy(() =>
   import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage || m.default }))
 );
@@ -277,14 +271,6 @@ const MainContent: React.FC = () => {
           title: 'موسوعة الحرف والورش التراثية | وه',
           description: 'أسرار صنائع الأجداد: الفخار، التلي، الفركة، الخزف، والألباستر.',
           schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'موسوعة الحرف والورش التراثية' }])
-        });
-        break;
-      case 'stories':
-      case 'story-details':
-        updatePageSEO({
-          title: 'وه بيحكي — حكايات ومرويات الصعيد | وه',
-          description: 'مستودع المرويات الشفاهية والسيرة الهلالية وأساطير النيل والجبل بالصعيد.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'حكايات ومرويات الصعيد' }])
         });
         break;
       case 'people':
@@ -662,8 +648,6 @@ const MainContent: React.FC = () => {
               {activePage === 'place-details' && <PlaceDetailPage />}
               {activePage === 'cultural-crafts' && <CulturalCraftsPage />}
               {(activePage === 'craft-details' || activePage === 'cultural-craft-details') && <CulturalCraftDetailPage />}
-              {activePage === 'stories' && <StoriesPage />}
-              {activePage === 'story-details' && <StoryDetailPage />}
               {activePage === 'people' && <PeoplePage />}
               {activePage === 'person-details' && <PersonDetailPage />}
               {activePage === 'food' && <FoodHeritagePage />}

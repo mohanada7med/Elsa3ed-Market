@@ -239,11 +239,6 @@ async function seedMongoDatabase(database: Db) {
       database.collection('wah_traditions').createIndex({ slug: 1 }, { unique: true }),
       database.collection('wah_traditions').createIndex({ governorateId: 1 }),
 
-      database.collection('wah_stories').createIndex({ id: 1 }, { unique: true }),
-      database.collection('wah_stories').createIndex({ slug: 1 }, { unique: true }),
-      database.collection('wah_stories').createIndex({ governorateId: 1, category: 1 }),
-      database.collection('wah_stories').createIndex({ status: 1 }),
-
       database.collection('wah_local_people').createIndex({ id: 1 }, { unique: true }),
       database.collection('wah_local_people').createIndex({ slug: 1 }, { unique: true }),
       database.collection('wah_local_people').createIndex({ governorateId: 1 }),

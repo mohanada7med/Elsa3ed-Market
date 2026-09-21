@@ -688,14 +688,13 @@ export const CulturalCmsAdminPage: React.FC = () => {
           </div>
 
           {/* LIVE MONGODB STATS BAR (Real Numbers Only) */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
               { label: 'المعالم التراثية', count: dashboardStats?.heritageSitesCount ?? places.length, icon: Landmark, color: 'text-amber-500' },
               { label: 'الأماكن', count: dashboardStats?.placesCount ?? places.length, icon: MapPin, color: 'text-blue-500' },
               { label: 'الحرف والتراث', count: dashboardStats?.craftsCount ?? crafts.length, icon: Hammer, color: 'text-orange-500' },
               { label: 'أكلات المحافظة', count: dashboardStats?.foodsCount ?? foods.length, icon: Utensils, color: 'text-rose-500' },
               { label: 'شيوخ الصنعة', count: dashboardStats?.peopleCount ?? people.length, icon: Users, color: 'text-indigo-500' },
-              { label: 'وه بيحكي', count: dashboardStats?.storiesCount ?? stories.length, icon: BookOpen, color: 'text-emerald-500' },
               { label: 'مواسم وفعاليات', count: (dashboardStats?.eventsCount ?? events.length) + (dashboardStats?.seasonsCount ?? seasons.length), icon: Calendar, color: 'text-teal-500' }
             ].map((stat, idx) => {
               const Icon = stat.icon;
@@ -726,7 +725,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
               { id: 'crafts', label: `الحرف والتراث (${crafts.length})`, icon: Hammer },
               { id: 'food', label: `أكلات المحافظة (${foods.length})`, icon: Utensils },
               { id: 'people_artisans', label: `الناس والحرفيين (${people.length})`, icon: Users },
-              { id: 'stories', label: `وه بيحكي (${stories.length})`, icon: BookOpen },
               { id: 'events_seasons', label: `الفعاليات والمواسم (${events.length + seasons.length})`, icon: Calendar },
               { id: 'products', label: `منتجات سوق وه (${products.length})`, icon: ShoppingBag },
               { id: 'map', label: 'خريطة المحافظة', icon: MapIcon },
@@ -1348,61 +1346,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
           )}
 
           {/* ======================================================= */}
-          {/* SUBTAB 7: WAH STORIES (وه بيحكي)                         */}
-          {/* ======================================================= */}
-          {activeSubTab === 'stories' && (
-            <div className="space-y-4">
-              {stories.length === 0 ? (
-                <div className="text-center py-16 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-lg backdrop-blur-xl">
-                  <BookOpen className="w-12 h-12 text-black/40 dark:text-white/40 mx-auto mb-3" />
-                  <h3 className="text-base font-bold">لا توجد حكايات موثقة لهذه المحافظة في وه بيحكي</h3>
-                  <p className="text-xs text-black/60 dark:text-white/60 mt-1">وثّق المرويات الشفاهية والأساطير الشعبية لـ {activeGov.name}.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {stories.map((story) => (
-                    <div key={story.id} className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <span className="text-[11px] font-bold text-primary">وه بيحكي</span>
-                          {renderStatusBadge(story.status)}
-                        </div>
-                        <h4 className="font-bold text-base mb-1">{story.title}</h4>
-                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-3 mb-3 leading-relaxed">
-                          {story.excerpt || story.content}
-                        </p>
-                        <p className="text-[10px] text-black/50 dark:text-white/50">الراوي / الكاتب: {story.authorName} • قراءة {story.readingTimeMinutes || 3} د</p>
-                      </div>
-
-                      <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
-                        <button
-                          type="button"
-                          onClick={() => setDeleteConfirmation({ isOpen: true, item: story, entityType: 'stories' })}
-                          className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>حذف</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingEntityType('story');
-                            setEditingItem(story);
-                            setIsEditModalOpen(true);
-                          }}
-                          className="text-xs text-primary hover:underline font-bold cursor-pointer"
-                        >
-                          تعديل الحكاية
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ======================================================= */}
           {/* SUBTAB 8: EVENTS & SEASONS (الفعاليات والمواسم)           */}
           {/* ======================================================= */}
           {activeSubTab === 'events_seasons' && (
@@ -1637,7 +1580,6 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 { type: 'craft', label: 'إضافة حرفة أصيلة', icon: Hammer, color: 'text-orange-500' },
                 { type: 'food', label: 'إضافة أكلة تراثية', icon: Utensils, color: 'text-rose-500' },
                 { type: 'person', label: 'إضافة شيخ صنعة / حرفي', icon: Users, color: 'text-indigo-500' },
-                { type: 'story', label: 'إضافة قصة في وه بيحكي', icon: BookOpen, color: 'text-emerald-500' },
                 { type: 'event', label: 'إضافة فعالية ثقافية', icon: Calendar, color: 'text-teal-500' },
                 { type: 'season', label: 'إضافة موسم حصاد', icon: Wheat, color: 'text-yellow-500' },
                 { type: 'city', label: 'إضافة مدينة / مركز', icon: MapPin, color: 'text-blue-500' },
@@ -1852,55 +1794,6 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
               type="button"
               disabled={isLinking || crafts.length === 0 || people.length === 0}
               onClick={handleLinkCraftArtisan}
-              className="w-full py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
-            >
-              {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
-            </button>
-          </div>
-        </div>
-
-        {/* Link Story <-> Place */}
-        <div className="p-5 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 space-y-4">
-          <h4 className="text-sm font-bold flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-emerald-500" />
-            <span>ربط قصة في "وه بيحكي" بمعلم تراثي</span>
-          </h4>
-
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">الحكاية الشعبية:</label>
-              <select
-                value={selectedStoryId}
-                onChange={(e) => setSelectedStoryId(e.target.value)}
-                className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
-              >
-                {stories.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs text-black/60 dark:text-white/60 mb-1 font-bold">المعلم التراثي المرتبط:</label>
-              <select
-                value={selectedPlaceId}
-                onChange={(e) => setSelectedPlaceId(e.target.value)}
-                className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none cursor-pointer"
-              >
-                {places.map((pl) => (
-                  <option key={pl.id} value={pl.id}>
-                    {pl.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="button"
-              disabled={isLinking || stories.length === 0 || places.length === 0}
-              onClick={handleLinkStoryPlace}
               className="w-full py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}

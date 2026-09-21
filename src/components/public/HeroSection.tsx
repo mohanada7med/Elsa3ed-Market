@@ -100,11 +100,11 @@ export const HeroSection: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => setActivePage('map')}
+              onClick={() => setActivePage('governorates')}
               className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-foreground hover:bg-black text-background text-xs font-bold active:scale-95 shadow-xs transition-all"
             >
               <Ship className="h-3.5 w-3.5 text-primary" />
-              <span>خريطة الصعيد</span>
+              <span>محافظات الصعيد</span>
             </button>
           </div>
 
@@ -260,7 +260,7 @@ export const HeroSection: React.FC = () => {
                 type="button"
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => setActivePage('map')}
+                onClick={() => setActivePage('governorates')}
                 className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary min-w-43.75"
               >
                 <Ship className="h-5 w-5 text-primary" />

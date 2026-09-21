@@ -74,17 +74,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       accentColor: 'from-orange-950/70'
     },
     {
-      id: 'stories',
-      title: 'وه بيحكي — قهاوي وحكاوي',
-      tagline: 'سيرة الناس وقعدات المصطبة',
-      desc: 'كلام بيتقال من الجدود للأحفاد: مربعات ابن عروس، ليالي السيرة الهلالية، حكاوي السحر والنداهة، وأسرار النجوع.',
-      badge: 'حكاوي ومسامع',
-      page: 'stories' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790419/3a9467d6-9e60-4f24-987d-d65a73d19fed.png',
-      nameEn: 'Oral History',
-      accentColor: 'from-yellow-950/70'
-    },
-    {
       id: 'people',
       title: 'أعلام ورموز الصعيد',
       tagline: 'شيوخ الصنعة وحراس الأصل والكلمة',

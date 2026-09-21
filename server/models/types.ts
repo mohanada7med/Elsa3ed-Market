@@ -776,6 +776,8 @@ export interface WahStoryDoc {
   content: string;
   category: 'craft_origins' | 'places_myths' | 'villages_history' | 'artisan_journey' | 'oral_tradition' | 'folklore';
   authorName: string;
+  narrator?: string;
+  culturalSignificance?: string;
   governorateName: string;
   governorateId: string;
   coverImage: string;

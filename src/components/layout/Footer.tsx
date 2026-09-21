@@ -102,7 +102,6 @@ export const Footer: React.FC = () => {
     { label: 'محافظات الصعيد', page: 'governorates' },
     { label: 'المعالم والتراث المعماري', page: 'places' },
     { label: 'حرف وصنايع الصعيد', page: 'cultural-crafts' },
-    { label: 'وه بيحكي (المرويات)', page: 'stories' },
     { label: 'ناس الصعيد وحُرّاس الحكاية', page: 'people' },
     { label: 'طعم الصعيد (المطبخ الأصيل)', page: 'food' },
     { label: 'فعاليات ومواسم الصعيد', page: 'events' },

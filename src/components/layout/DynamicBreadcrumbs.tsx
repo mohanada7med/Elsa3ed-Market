@@ -77,7 +77,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
     selectedGovernorateSlug,
     selectedPlaceSlug,
     selectedCraftSlug,
-    selectedStorySlug,
     selectedPersonSlug,
     selectedFoodSlug,
     selectedEventSlug,
@@ -119,9 +118,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         } else if ((activePage === 'cultural-craft-details' || activePage === 'craft-details') && selectedCraftSlug) {
           const data = await wahApi.getCraftBySlug(selectedCraftSlug);
           if (isMounted && data?.title) setAsyncEntityName(data.title);
-        } else if (activePage === 'story-details' && selectedStorySlug) {
-          const data = await wahApi.getStoryBySlug(selectedStorySlug);
-          if (isMounted && data?.title) setAsyncEntityName(data.title);
         } else if (activePage === 'person-details' && selectedPersonSlug) {
           const data = await wahApi.getPersonBySlug(selectedPersonSlug);
           if (isMounted && data?.name) setAsyncEntityName(data.name);
@@ -147,7 +143,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
     selectedGovernorateSlug,
     selectedPlaceSlug,
     selectedCraftSlug,
-    selectedStorySlug,
     selectedPersonSlug,
     selectedFoodSlug,
     selectedEventSlug
@@ -449,27 +444,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/cultural-crafts/${selectedCraftSlug || ''}`,
         isCurrent: true
       });
-    } else if (activePage === 'stories') {
-      items.push({
-        id: 'stories',
-        label: 'حكايات ومرويات الصعيد',
-        url: `${origin}/stories`,
-        isCurrent: true
-      });
-    } else if (activePage === 'story-details') {
-      items.push({
-        id: 'stories-parent',
-        label: 'حكايات ومرويات الصعيد',
-        page: 'stories',
-        url: `${origin}/stories`,
-        onClick: () => setActivePage('stories')
-      });
-      items.push({
-        id: 'current-story',
-        label: asyncEntityName || formatSlug(selectedStorySlug, 'تفاصيل الحكاية'),
-        url: `${origin}/stories/${selectedStorySlug || ''}`,
-        isCurrent: true
-      });
     } else if (activePage === 'people') {
       items.push({
         id: 'people',
@@ -614,7 +588,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
     selectedGovernorateSlug,
     selectedPlaceSlug,
     selectedCraftSlug,
-    selectedStorySlug,
     selectedPersonSlug,
     selectedFoodSlug,
     selectedEventSlug,

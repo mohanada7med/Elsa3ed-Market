@@ -30,7 +30,6 @@ import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 import {
   HeritagePlace,
   CulturalCraft,
-  WahStory,
   LocalPerson,
   UpperEgyptFood,
   CulturalEvent,
@@ -54,7 +53,6 @@ export const GovernorateDetailPage: React.FC = () => {
     selectedGovernorateSlug,
     navigateToPlace,
     navigateToCraft,
-    navigateToStory,
     navigateToPerson,
     navigateToFood,
     navigateToEvent,
@@ -118,7 +116,6 @@ export const GovernorateDetailPage: React.FC = () => {
 
   const places = governorate?.places || [];
   const crafts = governorate?.crafts || [];
-  const stories = governorate?.stories || [];
   const people = governorate?.people || [];
   const foods = governorate?.foods || [];
   const events = governorate?.events || [];
@@ -147,36 +144,29 @@ export const GovernorateDetailPage: React.FC = () => {
         count: crafts.length,
       },
       {
-        id: 'stories',
-        number: '04',
-        label: 'الحكايات',
-        icon: ScrollText,
-        count: stories.length,
-      },
-      {
         id: 'people',
-        number: '05',
+        number: '04',
         label: 'الناس',
         icon: Users,
         count: people.length,
       },
       {
         id: 'food',
-        number: '06',
+        number: '05',
         label: 'الأكل',
         icon: Utensils,
         count: foods.length,
       },
       {
         id: 'events',
-        number: '07',
+        number: '06',
         label: 'المواسم',
         icon: CalendarDays,
         count: events.length,
       },
       {
         id: 'market',
-        number: '08',
+        number: '07',
         label: 'السوق',
         icon: Store,
         count: products.length,
@@ -185,7 +175,6 @@ export const GovernorateDetailPage: React.FC = () => {
     [
       places.length,
       crafts.length,
-      stories.length,
       people.length,
       foods.length,
       events.length,
@@ -397,8 +386,8 @@ export const GovernorateDetailPage: React.FC = () => {
                 {[
                   ['المعالم', places.length],
                   ['الصنايع', crafts.length],
-                  ['الحكايات', stories.length],
                   ['الناس', people.length],
+                  ['الأكلات', foods.length],
                 ].map(([label, count]) => (
                   <div
                     key={String(label)}
@@ -718,71 +707,12 @@ export const GovernorateDetailPage: React.FC = () => {
         </section>
 
         {/* =======================================================
-            STORIES
-        ======================================================= */}
-
-        <section id="stories" className="scroll-mt-20 py-16 sm:py-24">
-          <SectionHeading
-            number="04"
-            eyebrow="STORIES"
-            title="الحكاية قبل الصورة"
-            description="مرويات وأحداث وذاكرة شعبية بتخلي المكان له صوت."
-            icon={ScrollText}
-          />
-
-          {stories.length > 0 ? (
-            <div className="mt-12 grid gap-6 lg:grid-cols-3">
-              {stories.slice(0, 6).map((story: WahStory, index: number) => (
-                <button
-                  key={story.id || story.slug || index}
-                  onClick={() => navigateToStory(story.slug || story.id)}
-                  className={`group relative overflow-hidden rounded-[30px] border border-[#E4DBD2] bg-white text-right dark:border-[#382D27] dark:bg-[#1B1613] ${index === 0 ? 'lg:row-span-2' : ''
-                    }`}
-                >
-                  <div
-                    className={
-                      index === 0
-                        ? 'h-[500px]'
-                        : 'h-[260px]'
-                    }
-                  >
-                    <img
-                      src={getImage(story)}
-                      alt={story.title}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent p-6 pt-24">
-                    <div className="mb-3 text-[10px] font-black tracking-[0.18em] text-[#E8B19D]">
-                      STORY {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    <h3 className="text-xl font-black text-white sm:text-2xl">
-                      {story.title || 'حكاية من الصعيد'}
-                    </h3>
-
-                    <p className="mt-2 line-clamp-2 text-xs leading-6 text-white/65">
-                      {story.excerpt ||
-                        story.content ||
-                        'حكاية من ذاكرة المكان.'}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <EmptyState text="لسه بنجمع حكايات المحافظة." />
-          )}
-        </section>
-
-        {/* =======================================================
             PEOPLE
         ======================================================= */}
 
         <section id="people" className="scroll-mt-20 py-16 sm:py-24">
           <SectionHeading
-            number="05"
+            number="04"
             eyebrow="PEOPLE"
             title="الناس هم التراث"
             description="أصحاب الصنعة، الرواة، والشخصيات اللي بتحافظ على روح المكان."
@@ -838,7 +768,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
         <section id="food" className="scroll-mt-20 py-16 sm:py-24">
           <SectionHeading
-            number="06"
+            number="05"
             eyebrow="FOOD"
             title="طعم المكان"
             description="الأكل جزء من الحكاية، وكل وصفة ليها مناسبة وذاكرة."
@@ -899,7 +829,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
         <section id="events" className="scroll-mt-20 py-16 sm:py-24">
           <SectionHeading
-            number="07"
+            number="06"
             eyebrow="SEASONS"
             title="المواسم اللي بتجمع الناس"
             description="مناسبات وأحداث بتحرك الذاكرة وتجمع أهل المكان."
@@ -956,7 +886,7 @@ export const GovernorateDetailPage: React.FC = () => {
             <div className="relative z-10 flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
               <div className="max-w-2xl">
                 <div className="mb-5 flex items-center gap-3 text-xs font-black tracking-[0.18em] text-[#E8B19D]">
-                  <span>08</span>
+                  <span>07</span>
                   <span className="h-px w-10 bg-[#d5a56d]" />
                   MARKET
                 </div>

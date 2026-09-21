@@ -243,7 +243,6 @@ export function resolveNotificationNavigation(
     'reels': 'reels',
     'governorates': 'governorates',
     'places': 'places',
-    'stories': 'stories',
     'people': 'people',
     'food': 'food',
     'events': 'events'

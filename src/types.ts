@@ -294,8 +294,6 @@ export type ActivePage =
   | 'cultural-crafts'
   | 'cultural-craft-details'
   | 'craft-details'
-  | 'stories'
-  | 'story-details'
   | 'people'
   | 'person-details'
   | 'food'
@@ -740,6 +738,20 @@ export interface WahStory {
   updatedAt: string;
 }
 
+export const STORY_CATEGORY_LABELS: Record<string, string> = {
+  craft_origins: 'أصل الصنعة',
+  places_myths: 'أساطير وأماكن',
+  villages_history: 'تاريخ القرى',
+  oral_tradition: 'سير وروايات شفاهية',
+  folklore: 'تراث ومأثورات شعبية',
+  artisan_journey: 'رحلة أسطى'
+};
+
+export const getStoryCategoryLabel = (category?: string): string => {
+  if (!category) return 'حكاية صعيدية';
+  return STORY_CATEGORY_LABELS[category] || category;
+};
+
 export interface LocalPersonMilestone {
   year?: string;
   title: string;
@@ -867,7 +879,6 @@ export type MapMarkerType =
   | 'event'
   | 'artisan'
   | 'reel'
-  | 'story'
   | 'product';
 
 export interface MapMarkerItem {
@@ -919,7 +930,7 @@ export interface MapPayload {
 export interface GlobalSearchResult {
   id: string;
   title: string;
-  type: 'governorate' | 'place' | 'craft' | 'story' | 'person' | 'food' | 'event' | 'product' | 'seller';
+  type: 'governorate' | 'place' | 'craft' | 'person' | 'food' | 'event' | 'product' | 'seller';
   typeLabel: string;
   subtitle?: string;
   coverImage?: string;
@@ -1047,7 +1058,7 @@ export interface GovernorateDashboardStats {
 }
 
 export interface BulkActionPayload {
-  entityType: 'places' | 'crafts' | 'foods' | 'people' | 'stories' | 'events' | 'seasons' | 'cities' | 'villages' | 'products';
+  entityType: 'places' | 'crafts' | 'foods' | 'people' | 'events' | 'seasons' | 'cities' | 'villages' | 'products';
   action: 'approve' | 'archive' | 'publish' | 'unpublish' | 'feature' | 'unfeature' | 'reject';
   ids: string[];
   rejectionReason?: string;
