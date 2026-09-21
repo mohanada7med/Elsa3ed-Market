@@ -264,7 +264,7 @@ export const HeroSection: React.FC = () => {
                 className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary min-w-43.75"
               >
                 <Ship className="h-5 w-5 text-primary" />
-                <span>خريطة الصعيد</span>
+                <span>محافظات الصعيد</span>
               </motion.button>
             </motion.div>
 
