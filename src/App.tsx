@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { AppProvider, useApp, PAGE_ROUTES } from './context/AppContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './components/layout/Header';
+import { DynamicBreadcrumbs } from './components/layout/DynamicBreadcrumbs';
 import { Footer } from './components/layout/Footer';
 import { ToastContainer } from './components/layout/ToastContainer';
 import { GlobalConfirmModal } from './components/common/GlobalConfirmModal';
@@ -353,6 +354,7 @@ const MainContent: React.FC = () => {
     <main className="min-h-screen flex flex-col justify-between bg-cream dark:bg-espresso-900 text-espresso dark:text-cream transition-colors duration-500">
       <div>
         <Header />
+        <DynamicBreadcrumbs />
 
         <AnimatePresence mode="wait">
           <motion.div

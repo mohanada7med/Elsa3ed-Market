@@ -417,7 +417,7 @@ router.post(
   uploadLimiter,
   requireAuth,
   (req: AuthenticatedRequest, res: Response, next) => {
-    videoMulter.single('videoFile')(req, res, (err) => {
+    (videoMulter.single('videoFile') as any)(req, res, (err: any) => {
       if (err) {
         if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({

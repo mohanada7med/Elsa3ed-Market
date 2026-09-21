@@ -77,7 +77,7 @@ router.post('/upload', (req: AuthenticatedRequest, res: Response, next) => {
   // If multipart form data, run multer; otherwise proceed to json handler
   const contentType = req.headers['content-type'] || '';
   if (contentType.includes('multipart/form-data')) {
-    upload.single('file')(req, res, (err) => {
+    (upload.single('file') as any)(req, res, (err: any) => {
       if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
@@ -399,7 +399,7 @@ router.post('/url', async (req: AuthenticatedRequest, res: Response) => {
 router.post(['/replace/:id', '/:id/replace'], (req: AuthenticatedRequest, res: Response, next) => {
   const contentType = req.headers['content-type'] || '';
   if (contentType.includes('multipart/form-data')) {
-    upload.single('file')(req, res, next);
+    (upload.single('file') as any)(req, res, next);
   } else {
     next();
   }
