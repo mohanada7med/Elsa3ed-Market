@@ -41,17 +41,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       accentColor: 'from-amber-900/60'
     },
     {
-      id: 'governorates',
-      title: wahStats?.governoratesCount ? `بلاد الصعيد الـ ${wahStats.governoratesCount}` : 'بلاد ومحافظات الصعيد',
-      tagline: 'كل بلد وليها طبعها وناسها وسرها',
-      desc: 'دليل بلادنا الحلوة: أصل كل محافظة، وناسها الجدعان، وحكايتها اللي بتميزها على شط النيل وفي حضن الجبل.',
-      badge: `${wahStats?.governoratesCount || 8} بلاد ومحافظات`,
-      page: 'governorates' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788791500/copy_of_.jpg',
-      nameEn: 'Governorates Guide',
-      accentColor: 'from-stone-900/60'
-    },
-    {
       id: 'places',
       title: 'آثار ومعالم بلدنا',
       tagline: 'حيطان عتيقة وحكاوي من سنين',

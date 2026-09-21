@@ -116,7 +116,7 @@ export const FoodHeritagePage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setActivePage('governorates')}
+            onClick={() => setActivePage('map')}
             className="
               flex items-center gap-2
               rounded-full
@@ -132,7 +132,7 @@ export const FoodHeritagePage: React.FC = () => {
               cursor-pointer
             "
           >
-            <span className="hidden sm:block">أكلات المحافظات</span>
+            <span className="hidden sm:block">خريطة الصعيد</span>
             <ArrowUpLeft size={15} />
           </button>
         </div>

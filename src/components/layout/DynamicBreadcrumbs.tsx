@@ -380,20 +380,13 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/map`,
         isCurrent: true
       });
-    } else if (activePage === 'governorates') {
-      items.push({
-        id: 'governorates',
-        label: 'محافظات صعيد مصر',
-        url: `${origin}/governorates`,
-        isCurrent: true
-      });
     } else if (activePage === 'governorate-details') {
       items.push({
-        id: 'governorates-parent',
-        label: 'محافظات صعيد مصر',
-        page: 'governorates',
-        url: `${origin}/governorates`,
-        onClick: () => setActivePage('governorates')
+        id: 'map-parent',
+        label: 'خريطة الصعيد',
+        page: 'map',
+        url: `${origin}/map`,
+        onClick: () => setActivePage('map')
       });
       const govName = asyncEntityName || (selectedGovernorateSlug ? GOVERNORATE_NAMES[selectedGovernorateSlug] : null) || formatSlug(selectedGovernorateSlug, 'المحافظة');
       items.push({

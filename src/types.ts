@@ -286,7 +286,6 @@ export interface PasswordResetRequest {
 export type ActivePage =
   | 'home'
   | 'explore'
-  | 'governorates'
   | 'governorate-details'
   | 'map'
   | 'places'

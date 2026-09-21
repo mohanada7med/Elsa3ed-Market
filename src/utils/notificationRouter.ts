@@ -241,7 +241,7 @@ export function resolveNotificationNavigation(
     'crafts': 'crafts',
     'cultural-crafts': 'cultural-crafts',
     'reels': 'reels',
-    'governorates': 'governorates',
+    'governorates': 'map',
     'places': 'places',
     'people': 'people',
     'food': 'food',

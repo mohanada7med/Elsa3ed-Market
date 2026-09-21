@@ -271,11 +271,11 @@ export const GovernorateDetailPage: React.FC = () => {
             </p>
 
             <button
-              onClick={() => setActivePage('governorates')}
+              onClick={() => setActivePage('map')}
               className="inline-flex items-center gap-2 rounded-full bg-[#241E1A] px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-primary dark:bg-[#FFF8F1] dark:text-[#17120F] dark:hover:bg-primary-hover dark:hover:text-white"
             >
               <ArrowLeft className="h-4 w-4" />
-              رجوع للمحافظات
+              رجوع للخريطة
             </button>
           </div>
         </div>
@@ -332,7 +332,7 @@ export const GovernorateDetailPage: React.FC = () => {
                 </div>
 
                 <button
-                  onClick={() => setActivePage('governorates')}
+                  onClick={() => setActivePage('map')}
                   className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white backdrop-blur-md transition hover:bg-white hover:text-[#241E1A]"
                   aria-label="رجوع"
                 >

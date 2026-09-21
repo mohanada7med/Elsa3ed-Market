@@ -421,7 +421,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   home: '/',
   explore: '/explore',
 
-  governorates: '/governorates',
   'governorate-details': '/governorates/:slug',
 
   map: '/map',
@@ -641,13 +640,13 @@ function getInitialNavigationState(): {
   };
 
   // 2. Dynamic RESTful Path-based Routes with URL decoding
-  // Governorates: /governorates or /governorates/:slug
+  // Governorates: /governorates/:slug (redirect directory /governorates to /map)
   if (rawPath === '/governorates' || rawPath.startsWith('/governorates/')) {
     const rawCandidate = slugFromQuery || (rawPath.startsWith('/governorates/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
     if (isValidRouteIdentifier(rawCandidate)) {
       return { page: 'governorate-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, governorateSlug: rawCandidate!.trim() };
     }
-    return { page: 'governorates', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+    return { page: 'map', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Heritage Places: /places, /places/:slug, /heritage/places, /heritage/places/:slug
@@ -2180,7 +2179,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const slug = safeExtractIdentifier(slugOrGov);
     if (!slug) {
       console.warn('Invalid identifier passed to navigateToGovernorate:', slugOrGov);
-      setActivePageState('governorates');
+      setActivePageState('map');
       return;
     }
     setSelectedGovernorateSlug(slug);

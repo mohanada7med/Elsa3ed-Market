@@ -115,7 +115,7 @@ export const EventsPage: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => setActivePage('governorates')}
+            onClick={() => setActivePage('map')}
             className="
               flex items-center gap-2
               rounded-full
@@ -131,7 +131,7 @@ export const EventsPage: React.FC = () => {
               cursor-pointer
             "
           >
-            <span className="hidden sm:block">فعاليات المحافظات</span>
+            <span className="hidden sm:block">خريطة الصعيد</span>
             <ArrowUpLeft size={15} />
           </button>
         </div>

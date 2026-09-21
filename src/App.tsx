@@ -60,9 +60,6 @@ const ForbiddenPage = React.lazy(() =>
 );
 
 // WAH Upper Egypt Digital Platform Pages (Lazy Loaded)
-const GovernoratesPage = React.lazy(() =>
-  import('./components/pages/GovernoratesPage').then((m) => ({ default: m.GovernoratesPage }))
-);
 const GovernorateDetailPage = React.lazy(() =>
   import('./components/pages/GovernorateDetailPage').then((m) => ({ default: m.GovernorateDetailPage }))
 );
@@ -249,7 +246,6 @@ const MainContent: React.FC = () => {
           description: 'استكشف محافظات صعيد مصر ومعالمها التراثية وحرفها وأسواقها على الأطلس التفاعلي ومسار رحلة النيل التراثية.'
         });
         break;
-      case 'governorates':
       case 'governorate-details':
         updatePageSEO({
           title: 'محافظات صعيد مصر | وه',
@@ -642,7 +638,6 @@ const MainContent: React.FC = () => {
                   <UpperEgyptMapPage />
                 </React.Suspense>
               )}
-              {activePage === 'governorates' && <GovernoratesPage />}
               {activePage === 'governorate-details' && <GovernorateDetailPage />}
               {activePage === 'places' && <PlacesHeritagePage />}
               {activePage === 'place-details' && <PlaceDetailPage />}

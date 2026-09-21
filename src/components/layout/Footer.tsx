@@ -99,7 +99,6 @@ export const Footer: React.FC = () => {
 
   const appPortals = [
     { label: 'لفة في الصعيد', page: 'map' },
-    { label: 'محافظات الصعيد', page: 'governorates' },
     { label: 'المعالم والتراث المعماري', page: 'places' },
     { label: 'حرف وصنايع الصعيد', page: 'cultural-crafts' },
     { label: 'ناس الصعيد وحُرّاس الحكاية', page: 'people' },
