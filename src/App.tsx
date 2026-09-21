@@ -18,122 +18,149 @@ import { MobileBottomBar } from './components/layout/MobileBottomBar';
 // Pages
 import { HomePage } from './components/pages/HomePage';
 
-// Dynamic code-splitting for all secondary pages so initial bundle is tiny & super fast
-const ProductsPage = React.lazy(() =>
+// Dynamic code-splitting with automatic recovery for chunk loading issues (e.g. after updates/rebuilds)
+const lazyWithRetry = <T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+) =>
+  React.lazy(async () => {
+    try {
+      return await factory();
+    } catch (error: any) {
+      const errorMsg = error?.message || error?.toString?.() || '';
+      const isChunkError =
+        error?.name === 'ChunkLoadError' ||
+        errorMsg.includes('Loading chunk') ||
+        errorMsg.includes('missing:') ||
+        errorMsg.includes('Failed to fetch dynamically imported module');
+
+      if (isChunkError && typeof window !== 'undefined') {
+        const lastReload = window.sessionStorage.getItem('chunk_retry_reload');
+        const now = Date.now();
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          window.sessionStorage.setItem('chunk_retry_reload', now.toString());
+          window.location.reload();
+          return { default: (() => null) as unknown as T };
+        }
+      }
+      throw error;
+    }
+  });
+
+const ProductsPage = lazyWithRetry(() =>
   import('./components/pages/ProductsPage').then((m) => ({ default: m.ProductsPage }))
 );
-const ProductDetailsView = React.lazy(() =>
+const ProductDetailsView = lazyWithRetry(() =>
   import('./components/products/ProductDetailsView').then((m) => ({ default: m.ProductDetailsView }))
 );
-const CategoriesPage = React.lazy(() =>
+const CategoriesPage = lazyWithRetry(() =>
   import('./components/pages/CategoriesPage').then((m) => ({ default: m.CategoriesPage }))
 );
-const CraftsPage = React.lazy(() =>
+const CraftsPage = lazyWithRetry(() =>
   import('./components/pages/CraftsPage').then((m) => ({ default: m.CraftsPage }))
 );
-const SellersDirectoryPage = React.lazy(() =>
+const SellersDirectoryPage = lazyWithRetry(() =>
   import('./components/pages/SellersDirectoryPage').then((m) => ({ default: m.SellersDirectoryPage }))
 );
-const SellerProfileView = React.lazy(() =>
+const SellerProfileView = lazyWithRetry(() =>
   import('./components/pages/SellerProfileView').then((m) => ({ default: m.SellerProfileView }))
 );
-const CheckoutPage = React.lazy(() =>
+const CheckoutPage = lazyWithRetry(() =>
   import('./components/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
 );
-const FavoritesPage = React.lazy(() =>
+const FavoritesPage = lazyWithRetry(() =>
   import('./components/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
 );
-const BuyerAccountPage = React.lazy(() =>
+const BuyerAccountPage = lazyWithRetry(() =>
   import('./components/pages/BuyerAccountPage').then((m) => ({ default: m.BuyerAccountPage }))
 );
-const AboutSection = React.lazy(() =>
+const AboutSection = lazyWithRetry(() =>
   import('./components/public/AboutSection').then((m) => ({ default: m.AboutSection }))
 );
-const CartPage = React.lazy(() =>
+const CartPage = lazyWithRetry(() =>
   import('./components/pages/CartPage').then((m) => ({ default: m.CartPage }))
 );
-const ChatView = React.lazy(() =>
+const ChatView = lazyWithRetry(() =>
   import('./components/chat/ChatView').then((m) => ({ default: m.ChatView }))
 );
-const ForbiddenPage = React.lazy(() =>
+const ForbiddenPage = lazyWithRetry(() =>
   import('./components/pages/ForbiddenPage').then((m) => ({ default: m.ForbiddenPage }))
 );
 
 // WAH Upper Egypt Digital Platform Pages (Lazy Loaded)
-const GovernorateDetailPage = React.lazy(() =>
+const GovernorateDetailPage = lazyWithRetry(() =>
   import('./components/pages/GovernorateDetailPage').then((m) => ({ default: m.GovernorateDetailPage }))
 );
-const PlacesHeritagePage = React.lazy(() =>
+const PlacesHeritagePage = lazyWithRetry(() =>
   import('./components/pages/PlacesHeritagePage').then((m) => ({ default: m.PlacesHeritagePage }))
 );
-const PlaceDetailPage = React.lazy(() =>
+const PlaceDetailPage = lazyWithRetry(() =>
   import('./components/pages/PlaceDetailPage').then((m) => ({ default: m.PlaceDetailPage }))
 );
-const CulturalCraftsPage = React.lazy(() =>
+const CulturalCraftsPage = lazyWithRetry(() =>
   import('./components/pages/CulturalCraftsPage').then((m) => ({ default: m.CulturalCraftsPage }))
 );
-const CulturalCraftDetailPage = React.lazy(() =>
+const CulturalCraftDetailPage = lazyWithRetry(() =>
   import('./components/pages/CulturalCraftDetailPage').then((m) => ({ default: m.CulturalCraftDetailPage }))
 );
-const PeoplePage = React.lazy(() =>
-  import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage || m.default }))
+const PeoplePage = lazyWithRetry(() =>
+  import('./components/pages/PeoplePage').then((m) => ({ default: (m.PeoplePage || (m as any).default) }))
 );
-const PersonDetailPage = React.lazy(() =>
+const PersonDetailPage = lazyWithRetry(() =>
   import('./components/pages/PersonDetailPage').then((m) => ({ default: m.PersonDetailPage }))
 );
-const FoodHeritagePage = React.lazy(() =>
+const FoodHeritagePage = lazyWithRetry(() =>
   import('./components/pages/FoodHeritagePage').then((m) => ({ default: m.FoodHeritagePage }))
 );
-const FoodDetailPage = React.lazy(() =>
+const FoodDetailPage = lazyWithRetry(() =>
   import('./components/pages/FoodDetailPage').then((m) => ({ default: m.FoodDetailPage }))
 );
-const EventsPage = React.lazy(() =>
+const EventsPage = lazyWithRetry(() =>
   import('./components/pages/EventsPage').then((m) => ({ default: m.EventsPage }))
 );
-const EventDetailPage = React.lazy(() =>
+const EventDetailPage = lazyWithRetry(() =>
   import('./components/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage }))
 );
-const GlobalSearchResultsPage = React.lazy(() =>
+const GlobalSearchResultsPage = lazyWithRetry(() =>
   import('./components/pages/GlobalSearchResultsPage').then((m) => ({ default: m.GlobalSearchResultsPage }))
 );
-const NotificationsPage = React.lazy(() =>
+const NotificationsPage = lazyWithRetry(() =>
   import('./components/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
 );
-const ResetPasswordPage = React.lazy(() =>
+const ResetPasswordPage = lazyWithRetry(() =>
   import('./components/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
 );
-const NotFoundPage = React.lazy(() =>
+const NotFoundPage = lazyWithRetry(() =>
   import('./components/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
 );
 
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
 // Dynamic code-splitting for heavy non-public dashboard and heavy standalone page bundles
-const SellerDashboard = React.lazy(() =>
+const SellerDashboard = lazyWithRetry(() =>
   import('./components/seller/SellerDashboard').then((m) => ({ default: m.SellerDashboard }))
 );
-const AdminDashboard = React.lazy(() =>
+const AdminDashboard = lazyWithRetry(() =>
   import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
 );
-const WholesalePage = React.lazy(() =>
+const WholesalePage = lazyWithRetry(() =>
   import('./components/pages/WholesalePage').then((m) => ({ default: m.WholesalePage }))
 );
-const CulturalCmsAdminPage = React.lazy(() =>
+const CulturalCmsAdminPage = lazyWithRetry(() =>
   import('./components/pages/CulturalCmsAdminPage').then((m) => ({ default: m.CulturalCmsAdminPage }))
 );
-const AdminMapEditorPage = React.lazy(() =>
+const AdminMapEditorPage = lazyWithRetry(() =>
   import('./components/pages/AdminMapEditorPage').then((m) => ({ default: m.AdminMapEditorPage }))
 );
-const UpperEgyptMapPage = React.lazy(() =>
+const UpperEgyptMapPage = lazyWithRetry(() =>
   import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
 );
-const CraftReelsPage = React.lazy(() =>
+const CraftReelsPage = lazyWithRetry(() =>
   import('./components/pages/CraftReelsPage').then((m) => ({ default: m.CraftReelsPage }))
 );
-const DialectDictionaryPage = React.lazy(() =>
+const DialectDictionaryPage = lazyWithRetry(() =>
   import('./components/pages/quize').then((m) => ({ default: m.DialectDictionaryPage }))
 );
-const OrdersTrackingPage = React.lazy(() =>
+const OrdersTrackingPage = lazyWithRetry(() =>
   import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
 );
 

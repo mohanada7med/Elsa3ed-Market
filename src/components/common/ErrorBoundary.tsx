@@ -25,6 +25,26 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('[ErrorBoundary] Uncaught application error:', error, errorInfo);
+
+    if (typeof window !== 'undefined') {
+      const errorMsg = error?.message || error?.toString?.() || '';
+      const isChunkError =
+        error?.name === 'ChunkLoadError' ||
+        errorMsg.includes('Loading chunk') ||
+        errorMsg.includes('missing:') ||
+        errorMsg.includes('Failed to fetch dynamically imported module');
+
+      if (isChunkError) {
+        const lastReload = window.sessionStorage.getItem('chunk_eb_last_reload');
+        const now = Date.now();
+        // If not reloaded within the last 10 seconds, reload to get fresh assets
+        if (!lastReload || now - parseInt(lastReload, 10) > 10000) {
+          window.sessionStorage.setItem('chunk_eb_last_reload', now.toString());
+          console.warn('[ErrorBoundary] Detected stale chunk load error, automatically refreshing page...');
+          window.location.reload();
+        }
+      }
+    }
   }
 
   private handleReload = () => {
@@ -38,6 +58,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      const errorMsg = this.state.error?.message || this.state.error?.toString?.() || '';
+      const isChunkError =
+        this.state.error?.name === 'ChunkLoadError' ||
+        errorMsg.includes('Loading chunk') ||
+        errorMsg.includes('missing:') ||
+        errorMsg.includes('Failed to fetch dynamically imported module');
+
       return (
         <div
           className="min-h-screen bg-cream dark:bg-espresso-900 text-espresso dark:text-cream flex items-center justify-center p-4 transition-colors"
@@ -49,11 +76,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </div>
 
             <h1 className="text-2xl font-black text-espresso dark:text-cream mb-2 font-serif">
-              عذراً، حدث خطأ غير متوقع
+              {isChunkError ? 'تحديث جديد للمنصة' : 'عذراً، حدث خطأ غير متوقع'}
             </h1>
 
             <p className="text-black/60 dark:text-white/60 text-sm mb-6 leading-relaxed font-medium">
-              واجهت المنصة مشكلة مؤقتة أثناء معالجة الصفحة. لقد تم تسجيل هذا الخطأ لحله في أقرب وقت.
+              {isChunkError
+                ? 'تم إطلاق تحديث جديد للمنصة وأصبح الإصدار الحالي قديماً في المتصفح. يُرجى إعادة تحميل الصفحة لمتابعة التصفح بأحدث الميزات.'
+                : 'واجهت المنصة مشكلة مؤقتة أثناء معالجة الصفحة. لقد تم تسجيل هذا الخطأ لحله في أقرب وقت.'}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
