@@ -239,7 +239,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('reels')}
-                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary hover:bg-white min-w-43.75"
+                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary min-w-43.75"
               >
                 <Film className="h-5 w-5 text-primary" />
                 <span>فيديوهات وه</span>
@@ -250,7 +250,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('places')}
-                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary hover:bg-white min-w-43.75"
+                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary min-w-43.75"
               >
                 <Landmark className="h-5 w-5 text-primary" />
                 <span>أماكن وه</span>
@@ -261,7 +261,7 @@ export const HeroSection: React.FC = () => {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActivePage('map')}
-                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary hover:bg-white min-w-43.75"
+                className="group flex min-h-13 items-center justify-center gap-2.5 rounded-2xl border border-primary/30 bg-surface px-5 text-sm font-bold text-foreground backdrop-blur-md transition-all hover:border-primary min-w-43.75"
               >
                 <Ship className="h-5 w-5 text-primary" />
                 <span>خريطة الصعيد</span>
