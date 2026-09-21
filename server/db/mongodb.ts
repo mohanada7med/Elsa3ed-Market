@@ -27,6 +27,7 @@ import type {
 import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
+import { AUTHENTIC_WAH_FOOD } from './authenticWahFoodData.ts';
 import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts';
 
 dotenv.config();
@@ -212,6 +213,13 @@ async function seedMongoDatabase(database: Db) {
       { $setOnInsert: INITIAL_PLATFORM_SETTINGS },
       { upsert: true }
     );
+
+    // Initialize authentic Upper Egypt food database if empty
+    const foodCount = await database.collection('wah_food').countDocuments().catch(() => 1);
+    if (foodCount === 0) {
+      await database.collection('wah_food').insertMany(AUTHENTIC_WAH_FOOD as any[]);
+      Logger.info('[MongoDB] Initialized authentic Upper Egypt food collection');
+    }
 
     // Parallel index creation grouped by collection to ensure optimal performance and integrity
     const indexOperations = [

@@ -195,7 +195,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
     }
 
     const cacheKey = `gov_detail_${slugOrId}`;
-    const cached = getWahCached(cacheKey);
+    const cached = getWahCached(cacheKey, req);
     if (cached) {
       return res.json(cached);
     }
@@ -258,6 +258,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
         db.collection('wah_food').find({
           $or: [
             { governorateId: gov.id },
+            { governorateId: gov.slug },
             { governorateName: gov.name },
             { governorates: gov.name }
           ],

@@ -845,13 +845,17 @@ export interface UpperEgyptFoodDoc {
   _id?: string;
   id: string;
   title: string;
+  name?: string;
   slug: string;
   governorateName: string;
   governorateId: string;
   description: string;
   ingredients: string[];
   preparationMethod: string;
+  preparation?: string;
   originStory: string;
+  story?: string;
+  category?: string;
   occasionOrTradition?: string;
   coverImage: string;
   coordinates?: { lat: number; lng: number };
