@@ -20,6 +20,10 @@ import {
   Flame,
   CheckCircle2,
   Image as ImageIcon,
+  Film,
+  Video,
+  Play,
+  Edit
 } from 'lucide-react';
 
 export const EventDetailPage: React.FC = () => {
@@ -321,6 +325,61 @@ export const EventDetailPage: React.FC = () => {
     );
   }
 
+  const renderVideoPlayer = (url: string, index: number) => {
+    if (!url) return null;
+    const trimmed = url.trim();
+    const ytMatch = trimmed.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/
+    );
+    if (ytMatch && ytMatch[1]) {
+      return (
+        <div
+          key={index}
+          className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-black/10 dark:border-white/10"
+        >
+          <iframe
+            src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+            title={`تسجيل مرئي ${index + 1}`}
+            className="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      );
+    }
+    const vimeoMatch = trimmed.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+    if (vimeoMatch && vimeoMatch[1]) {
+      return (
+        <div
+          key={index}
+          className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-black/10 dark:border-white/10"
+        >
+          <iframe
+            src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
+            title={`تسجيل مرئي ${index + 1}`}
+            className="w-full h-full border-0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      );
+    }
+    return (
+      <div
+        key={index}
+        className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border border-black/10 dark:border-white/10"
+      >
+        <video
+          src={trimmed}
+          controls
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-contain"
+        />
+      </div>
+    );
+  };
+
   return (
     <main
       dir="rtl"
@@ -489,50 +548,77 @@ export const EventDetailPage: React.FC = () => {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleShare}
-            className="
-              group
-              flex
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-black/10
-              px-3
-              py-2
-              text-[10px]
-              font-bold
-              transition-all
-
-              hover:border-primary/30
-              hover:bg-[#201c17]
-              hover:text-white
-
-              dark:border-white/10
-
-              dark:hover:bg-white
-              dark:hover:text-black
-
-              sm:px-4
-              sm:text-xs
-
-              cursor-pointer
-            "
-          >
-            <span className="hidden sm:block">
-              مشاركة
-            </span>
-
-            <Share2
-              size={14}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setActivePage('admin-events')}
               className="
-                transition-transform
-                group-hover:scale-110
+                group
+                flex
+                items-center
+                gap-1.5
+                rounded-full
+                bg-primary/15
+                hover:bg-primary
+                text-primary
+                hover:text-cream
+                px-3
+                py-2
+                text-[10px]
+                font-bold
+                transition-all
+                border
+                border-primary/30
+                cursor-pointer
+                sm:px-3.5
+                sm:text-xs
               "
-            />
-          </button>
+              title="تعديل هذا الاحتفال في لوحة الإدارة"
+            >
+              <Edit size={13} />
+              <span className="hidden sm:block">تعديل وميديا الاحتفال</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleShare}
+              className="
+                group
+                flex
+                items-center
+                gap-2
+                rounded-full
+                border
+                border-black/10
+                px-3
+                py-2
+                text-[10px]
+                font-bold
+                transition-all
+                hover:border-primary/30
+                hover:bg-[#201c17]
+                hover:text-white
+                dark:border-white/10
+                dark:hover:bg-white
+                dark:hover:text-black
+                sm:px-4
+                sm:text-xs
+                cursor-pointer
+              "
+            >
+              <span className="hidden sm:block">
+                مشاركة
+              </span>
+
+              <Share2
+                size={14}
+                className="
+                  transition-transform
+                  group-hover:scale-110
+                "
+              />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -1228,6 +1314,33 @@ export const EventDetailPage: React.FC = () => {
                         <span>{act}</span>
                       </span>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* VIDEOS & RECORDINGS (مرئيات وتسجيلات الليلة الحية) */}
+              {(event.videoUrl || (event.videos && event.videos.length > 0)) && (
+                <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
+                  <div className="mb-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-500/20 text-rose-500">
+                        <Film size={18} />
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-black sm:text-2xl">مرئيات وتسجيلات الليلة الحية</h3>
+                        <p className="text-xs text-black/60 dark:text-white/60">
+                          تسجيلات حية للمرماح، حلقات الذكر، الإنشاد الصوفي، والبهجة الشعبية
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {Array.from(
+                      new Set(
+                        [event.videoUrl, ...(event.videos || [])].filter(Boolean) as string[]
+                      )
+                    ).map((url, vIdx) => renderVideoPlayer(url, vIdx))}
                   </div>
                 </div>
               )}

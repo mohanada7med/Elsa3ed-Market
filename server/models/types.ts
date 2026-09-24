@@ -896,6 +896,8 @@ export interface CulturalEventDoc {
   activities?: string[];
   coverImage: string;
   gallery?: string[];
+  videoUrl?: string;
+  videos?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   status: VerificationStatus;

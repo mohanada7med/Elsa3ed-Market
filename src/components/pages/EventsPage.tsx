@@ -159,7 +159,29 @@ export const EventsPage: React.FC = () => {
             <div className="mt-1 text-sm font-black font-serif">مواسم وليالي الصعيد</div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setActivePage('admin-events')}
+              className="
+                flex items-center gap-1.5 sm:gap-2
+                rounded-full
+                bg-primary
+                text-cream
+                px-3.5 sm:px-4 py-2 sm:py-2.5
+                text-xs font-bold
+                transition-all
+                hover:bg-primary-hover
+                shadow-xs
+                cursor-pointer
+              "
+              title="إدارة بيانات المواسم والأعياد والموالد الصعيدية، وإضافة الصور والفيديوهات والتعديل"
+            >
+              <Calendar size={14} />
+              <span className="hidden md:inline">إدارة المواسم والموالد (صور وفيديوهات)</span>
+              <span className="md:hidden">إدارة المواسم</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setActivePage('map')}

@@ -335,6 +335,8 @@ export type ActivePage =
   | 'admin-cultural-cms'
   | 'admin-map-editor'
   | 'admin-media'
+  | 'admin-events'
+  | 'admin-events-manager'
 
   | 'admin-sellers'
   | 'admin-products'
@@ -840,6 +842,8 @@ export interface CulturalEvent {
   activities?: string[];
   coverImage: string;
   gallery?: string[];
+  videoUrl?: string;
+  videos?: string[];
   coordinates?: { lat: number; lng: number };
   isFeatured?: boolean;
   sourceName?: string;

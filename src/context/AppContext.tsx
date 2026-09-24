@@ -504,6 +504,8 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   'admin-audit-logs': '/admin-audit-logs',
   'admin-settings': '/admin-settings',
   'admin-media': '/admin-media',
+  'admin-events': '/admin-events',
+  'admin-events-manager': '/admin-events-manager',
   'dialect-dictionary': '/dialect-dictionary',
   'reset-password': '/reset-password'
 };

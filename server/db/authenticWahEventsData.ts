@@ -54,6 +54,10 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'شراء الهدايا الشعبية من طرابيش وخواتم فضة ومسابح اليسر'
     ],
     coverImage: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=kYJvM9e2y74',
+    videos: [
+      'https://www.youtube.com/watch?v=kYJvM9e2y74'
+    ],
     gallery: [
       'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800&auto=format&fit=crop&q=80',
       'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80'
@@ -170,6 +174,10 @@ export const AUTHENTIC_WAH_EVENTS: CulturalEventDoc[] = [
       'التجول في أسواق التذكارات والبخور والبهارات الأقصرية'
     ],
     coverImage: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1200&auto=format&fit=crop&q=80',
+    videoUrl: 'https://www.youtube.com/watch?v=0k5Fk-6eYgU',
+    videos: [
+      'https://www.youtube.com/watch?v=0k5Fk-6eYgU'
+    ],
     gallery: [
       'https://images.unsplash.com/photo-1544885935-98dd03b09034?w=800&auto=format&fit=crop&q=80'
     ],

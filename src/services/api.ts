@@ -4262,6 +4262,21 @@ export const wahApi = {
     return json.data;
   },
 
+  async updateEvent(id: string, event: Partial<CulturalEvent>, user?: { id?: string; role?: string }): Promise<CulturalEvent> {
+    const cleanId = sanitizeWahSlug(id) || id;
+    const res = await fetch(`${API_BASE}/wah/events/${encodeURIComponent(cleanId)}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(event)
+    });
+    const json = await res.json();
+    if (!json.success) {
+      // Fallback to saveEvent if PUT failed
+      return this.saveEvent({ ...event, id }, user);
+    }
+    return json.data;
+  },
+
   // 8. Map Data
   async getMapData(): Promise<MapGovernorateData[]> {
     try {

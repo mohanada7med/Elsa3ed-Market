@@ -68,6 +68,7 @@ import {
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
+import { AdminEventsManagerComponent } from './AdminEventsManagerPage';
 import { i } from 'motion/react-client';
 
 type GovernorateSubTab =
@@ -1397,49 +1398,35 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Cultural Events Section */}
+              {/* Cultural Events & Moulids Management Component */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    <span>المهروجانات والموالد والفعاليات ({events.length})</span>
-                  </h3>
+                  <div>
+                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      <span>إدارة الموالد والمواسم والأعياد الصعيدية الكاملة</span>
+                    </h3>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                      إدارة وتوثيق احتفالات وليالي الصعيد مع الفيديوهات والصور وتخزينها في قاعدة البيانات.
+                    </p>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setEditingEntityType('event');
-                      setEditingItem(null);
-                      setIsEditModalOpen(true);
-                    }}
-                    className="px-3.5 py-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 rounded-xl text-xs font-bold text-primary flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
+                    onClick={() => setActivePage('admin-events')}
+                    className="px-3.5 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
                   >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>إضافة فعالية</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>فتح اللوحة المستقلة الشاملة</span>
                   </button>
                 </div>
 
-                {events.length === 0 ? (
-                  <p className="text-xs text-black/60 dark:text-white/60 text-center py-6">لم يتم تسجيل فعاليات دورية لهذه المحافظة بعد.</p>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {events.map((ev) => (
-                      <div key={ev.id} className="p-4 rounded-2xl bg-black/[0.035] dark:bg-cream/[0.04] border border-black/10 dark:border-white/10 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] text-primary font-bold">{ev.eventDate}</span>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirmation({ isOpen: true, item: ev, entityType: 'events' })}
-                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <h4 className="font-bold text-sm">{ev.title}</h4>
-                        <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{ev.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {/* Embedded Manager */}
+                <div className="pt-2">
+                  <AdminEventsManagerComponent
+                    governorateName={activeGov?.name}
+                    governorateId={activeGov?.id}
+                  />
+                </div>
               </div>
             </div>
           )}
