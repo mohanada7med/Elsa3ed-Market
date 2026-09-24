@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { CulturalEvent } from '../../types';
+import { AdminEventsManagerComponent, EventEditorModal } from './AdminEventsManagerPage';
 import {
   Calendar,
   Search,
@@ -18,6 +19,9 @@ import {
   Eye,
   Feather,
   Compass,
+  SlidersHorizontal,
+  Edit,
+  Shield,
 } from 'lucide-react';
 
 const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
@@ -30,12 +34,36 @@ const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
 };
 
 export const EventsPage: React.FC = () => {
-  const { navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
+  const { currentUser, currentRole, activePage, navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+
   const [events, setEvents] = useState<CulturalEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
+
+  // Admin exclusive states: only active when user is admin
+  const [isAdminManagerOpen, setIsAdminManagerOpen] = useState(false);
+  const [isCardEditModalOpen, setIsCardEditModalOpen] = useState(false);
+  const [editingCardEvent, setEditingCardEvent] = useState<CulturalEvent | null>(null);
+
+  useEffect(() => {
+    if (isAdmin && (activePage === 'admin-events' || activePage === 'admin-events-manager')) {
+      setIsAdminManagerOpen(true);
+    }
+  }, [isAdmin, activePage]);
+
+  const refreshEvents = async () => {
+    try {
+      const data = await wahApi.getEvents();
+      if (data && data.length > 0) {
+        setEvents(data);
+      }
+    } catch (err) {
+      console.warn('Could not refresh events:', err);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -159,28 +187,39 @@ export const EventsPage: React.FC = () => {
             <div className="mt-1 text-sm font-black font-serif">مواسم وليالي الصعيد</div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-events')}
-              className="
-                flex items-center gap-1.5 sm:gap-2
-                rounded-full
-                bg-primary
-                text-cream
-                px-3.5 sm:px-4 py-2 sm:py-2.5
-                text-xs font-bold
-                transition-all
-                hover:bg-primary-hover
-                shadow-xs
-                cursor-pointer
-              "
-              title="إدارة بيانات المواسم والأعياد والموالد الصعيدية، وإضافة الصور والفيديوهات والتعديل"
-            >
-              <Calendar size={14} />
-              <span className="hidden md:inline">إدارة المواسم والموالد (صور وفيديوهات)</span>
-              <span className="md:hidden">إدارة المواسم</span>
-            </button>
+          <div className="flex items-center gap-3">
+            {/* ADMIN ONLY: Edit & Management Trigger */}
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setIsAdminManagerOpen((prev) => !prev)}
+                className={`
+                  flex items-center gap-2
+                  rounded-full
+                  px-3.5 sm:px-4 py-2 sm:py-2.5
+                  text-xs font-bold
+                  transition-all
+                  cursor-pointer
+                  shadow-sm
+                  ${isAdminManagerOpen
+                    ? 'bg-espresso text-white dark:bg-white dark:text-espresso border border-primary ring-2 ring-primary/30'
+                    : 'bg-primary/20 hover:bg-primary text-primary hover:text-white dark:hover:text-black border border-primary/40'
+                  }
+                `}
+                title="إدارة وتعديل احتفالات وليالي الصعيد التراثية (للإدارة فقط)"
+              >
+                <SlidersHorizontal size={14} />
+                <span className="hidden xs:inline">
+                  {isAdminManagerOpen ? 'إغلاق لوحة التعديل' : 'تعديل المواسم والليالي'}
+                </span>
+                <span className="xs:hidden">
+                  {isAdminManagerOpen ? 'إغلاق' : 'تعديل'}
+                </span>
+                <span className="rounded-full bg-primary/30 px-1.5 py-0.5 text-[10px] font-mono">
+                  أدمن
+                </span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -207,6 +246,49 @@ export const EventsPage: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* ========================================================================= */}
+      {/* ADMIN ONLY: MANAGEMENT OF UPPER EGYPT CELEBRATIONS & MOULIDS (إدارة احتفالات وليالي الصعيد) */}
+      {/* ========================================================================= */}
+      {isAdmin && isAdminManagerOpen && (
+        <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 my-8 animate-in fade-in duration-300">
+          <div className="rounded-[2.5rem] border-2 border-primary/40 bg-espresso-950/95 p-5 sm:p-8 shadow-2xl text-cream backdrop-blur-2xl">
+            <div className="flex items-center justify-between pb-5 mb-6 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
+                  <SlidersHorizontal size={22} />
+                </div>
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-primary text-xs font-bold">
+                    <Sparkles size={13} />
+                    <span>لوحة الإدارة الحصرية للمواسم</span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black font-serif text-cream">
+                    إدارة احتفالات وليالي الصعيد التراثية
+                  </h2>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsAdminManagerOpen(false)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-cream text-xs font-bold transition-all cursor-pointer"
+              >
+                <X size={16} />
+                <span>إغلاق لوحة التعديل</span>
+              </button>
+            </div>
+
+            <AdminEventsManagerComponent
+              onClose={() => {
+                setIsAdminManagerOpen(false);
+                refreshEvents();
+              }}
+              onEventUpdated={refreshEvents}
+            />
+          </div>
+        </section>
+      )}
 
       {/* =====================================================
           HERO SECTION (Matching Prestige Heritage Quality)
@@ -816,9 +898,29 @@ export const EventsPage: React.FC = () => {
                       <Eye size={14} />
                       <span>حكاية الليلة وطقوسها</span>
                     </span>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-                      <ArrowUpLeft size={16} />
-                    </span>
+
+                    <div className="flex items-center gap-2">
+                      {/* ADMIN ONLY: Direct card edit trigger */}
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingCardEvent(event);
+                            setIsCardEditModalOpen(true);
+                          }}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary hover:bg-primary-hover text-cream text-xs font-bold transition-all shadow-sm cursor-pointer z-10 hover:scale-105 active:scale-95"
+                          title={`تعديل بيانات وميديا احتفال ${event.title}`}
+                        >
+                          <SlidersHorizontal size={12} />
+                          <span>تعديل وميديا الاحتفال</span>
+                        </button>
+                      )}
+
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+                        <ArrowUpLeft size={16} />
+                      </span>
+                    </div>
                   </div>
                 </article>
               );
@@ -892,6 +994,22 @@ export const EventsPage: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* DIRECT IN-PAGE EVENT EDIT MODAL (ADMIN ONLY) */}
+      {isAdmin && isCardEditModalOpen && editingCardEvent && (
+        <EventEditorModal
+          isOpen={isCardEditModalOpen}
+          onClose={() => {
+            setIsCardEditModalOpen(false);
+            setEditingCardEvent(null);
+          }}
+          event={editingCardEvent}
+          onSaved={() => {
+            setIsCardEditModalOpen(false);
+            setEditingCardEvent(null);
+            refreshEvents();
+          }}
+        />
+      )}
     </div>
   );
 };

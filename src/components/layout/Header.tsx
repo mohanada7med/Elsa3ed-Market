@@ -27,6 +27,7 @@ import {
   Flame,
   Film,
   AlertTriangle,
+  Calendar,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -582,6 +583,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           id: 'admin-orders',
           label: 'الطلبات',
           icon: ShoppingBag,
+        },
+        {
+          id: 'admin-events',
+          label: 'المواسم والموالد',
+          icon: Calendar,
         },
         {
           id: 'admin-reports',

@@ -68,7 +68,6 @@ import {
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
-import { AdminEventsManagerComponent } from './AdminEventsManagerPage';
 import { i } from 'motion/react-client';
 
 type GovernorateSubTab =
@@ -1398,34 +1397,26 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Cultural Events & Moulids Management Component */}
-              <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
-                <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <div>
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary" />
-                      <span>إدارة الموالد والمواسم والأعياد الصعيدية الكاملة</span>
-                    </h3>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                      إدارة وتوثيق احتفالات وليالي الصعيد مع الفيديوهات والصور وتخزينها في قاعدة البيانات.
-                    </p>
-                  </div>
+              {/* Cultural Events & Moulids Redirection Notice */}
+              <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 shadow-lg backdrop-blur-xl text-center space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mx-auto text-2xl border border-primary/20">
+                  <Calendar className="w-7 h-7" />
+                </div>
+                <h3 className="text-lg font-bold font-serif">
+                  إدارة وتعديل مواسم وموالد صعيد مصر
+                </h3>
+                <p className="text-sm text-black/65 dark:text-white/65 max-w-md mx-auto leading-relaxed">
+                  تتم إدارة احتفالات وليالي الصعيد التراثية وتعديل بياناتها حصرياً للمشرفين والمديرين من داخل صفحة المواسم التفاعلية عند النقر على زر «تعديل».
+                </p>
+                <div className="pt-2">
                   <button
                     type="button"
-                    onClick={() => setActivePage('admin-events')}
-                    className="px-3.5 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                    onClick={() => setActivePage('events')}
+                    className="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold inline-flex items-center gap-2 shadow-md transition-all cursor-pointer"
                   >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>فتح اللوحة المستقلة الشاملة</span>
+                    <ExternalLink className="w-4 h-4" />
+                    <span>الانتقال إلى صفحة المواسم للتعديل</span>
                   </button>
-                </div>
-
-                {/* Embedded Manager */}
-                <div className="pt-2">
-                  <AdminEventsManagerComponent
-                    governorateName={activeGov?.name}
-                    governorateId={activeGov?.id}
-                  />
                 </div>
               </div>
             </div>

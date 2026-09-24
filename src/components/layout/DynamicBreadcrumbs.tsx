@@ -59,6 +59,8 @@ const ADMIN_SECTION_LABELS: Record<string, string> = {
   'admin-reports': 'البلاغات والشكاوى الفنية',
   'admin-audit-logs': 'سجلات الأمان والعمليات',
   'admin-media': 'مكتبة الوسائط السحابية',
+  'admin-events': 'المواسم والموالد التراثية',
+  'admin-events-manager': 'المواسم والموالد التراثية',
   'admin-settings': 'الإعدادات العامة للمنصة'
 };
 

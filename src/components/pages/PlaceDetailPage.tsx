@@ -34,8 +34,11 @@ import {
   Layers,
   Sparkle,
   AlertOctagon,
-  GraduationCap
+  GraduationCap,
+  SlidersHorizontal,
+  Edit
 } from 'lucide-react';
+import { PlaceEditorModal } from './PlaceEditorModal';
 
 export const PlaceDetailPage: React.FC = () => {
   const {
@@ -60,6 +63,7 @@ export const PlaceDetailPage: React.FC = () => {
   const cachedPlace = wahApi.getCachedPlaceBySlug(slug);
   const [place, setPlace] = useState<HeritagePlace | null>(() => cachedPlace || null);
   const [isLoading, setIsLoading] = useState(() => !cachedPlace);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -322,26 +326,56 @@ export const PlaceDetailPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-
             {isAdmin && (
               <button
                 type="button"
-                onClick={scrollToGallery}
+                onClick={() => setIsEditModalOpen(true)}
                 className="
-                  h-10 px-4
+                  h-10 px-3.5 sm:px-4
                   rounded-full
                   bg-primary
-                  hover:bg-[#83572c]
+                  hover:bg-primary-hover
                   text-white
                   text-xs
                   font-bold
                   flex items-center gap-2
                   transition-all
                   cursor-pointer
+                  shadow-sm
+                  hover:scale-105 active:scale-95
                 "
+                title="تعديل تفاصيل ومعلومات وميديا المعلم التراثي في نفس الصفحة"
               >
-                <Video className="w-4 h-4 shrink-0" />
-                <span className="hidden md:inline">إدارة الوسائط</span>
+                <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline">تعديل وميديا المعلم</span>
+                <span className="sm:hidden">تعديل</span>
+                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[9px] font-mono">
+                  أدمن
+                </span>
+              </button>
+            )}
+
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={scrollToGallery}
+                className="
+                  h-10 px-3.5
+                  rounded-full
+                  bg-black/5 dark:bg-white/10
+                  hover:bg-black/10 dark:hover:bg-white/20
+                  text-espresso dark:text-cream
+                  border border-black/10 dark:border-white/10
+                  text-xs
+                  font-bold
+                  flex items-center gap-1.5
+                  transition-all
+                  cursor-pointer
+                "
+                title="التمرير لمعرض الوسائط والصور"
+              >
+                <Video className="w-3.5 h-3.5 shrink-0 text-primary" />
+                <span className="hidden md:inline">الوسائط</span>
               </button>
             )}
 
@@ -556,6 +590,20 @@ export const PlaceDetailPage: React.FC = () => {
                 >
                   {place.shortDescription || place.description}
                 </p>
+
+                {/* Admin Quick Action in Hero */}
+                {isAdmin && (
+                  <div className="mt-4 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/90 hover:bg-primary text-white text-xs font-bold backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-lg hover:scale-105 active:scale-95"
+                    >
+                      <SlidersHorizontal size={13} />
+                      <span>تعديل بيانات وميديا المعلم (أدمن)</span>
+                    </button>
+                  </div>
+                )}
 
                 {/* Location */}
                 <div className="mt-6 sm:mt-7 flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-3">
@@ -1416,6 +1464,19 @@ export const PlaceDetailPage: React.FC = () => {
           </div>
         </div>
       </section>
+      {/* ========================================================================= */}
+      {/* MODAL: LIVE IN-PAGE LANDMARK EDITOR (ADMIN ONLY)                          */}
+      {/* ========================================================================= */}
+      {isEditModalOpen && (
+        <PlaceEditorModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          place={place}
+          onSaved={(updatedPlace) => {
+            setPlace(updatedPlace);
+          }}
+        />
+      )}
     </div>
   );
 };

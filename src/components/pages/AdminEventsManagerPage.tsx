@@ -106,12 +106,16 @@ interface AdminEventsManagerProps {
   governorateId?: string;
   governorateName?: string;
   onNavigateBack?: () => void;
+  onClose?: () => void;
+  onEventUpdated?: () => void;
 }
 
 export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
   governorateId,
   governorateName,
-  onNavigateBack
+  onNavigateBack,
+  onClose,
+  onEventUpdated
 }) => {
   const { setActivePage, navigateToEvent, addToast, currentUser } = useApp();
 
@@ -207,6 +211,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
       addToast('تم الحذف', `تم حذف احتفال «${event.title}» من قاعدة البيانات`, 'success');
       setEvents((prev) => prev.filter((e) => e.id !== event.id));
       setDeleteConfirmation({ isOpen: false, event: null });
+      if (onEventUpdated) onEventUpdated();
     } catch (err: any) {
       console.error('Delete event error:', err);
       addToast('خطأ في الحذف', err.message || 'تعذر حذف الفعالية', 'error');
@@ -255,6 +260,17 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span>تحديث البيانات</span>
             </button>
+
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-3 rounded-2xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-sm flex items-center gap-2 backdrop-blur-md border border-amber-500/30 transition-all cursor-pointer shadow-md"
+              >
+                <X className="w-4 h-4" />
+                <span>إغلاق لوحة التعديل</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -554,15 +570,16 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
 
                   {/* Card Actions Footer */}
                   <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2">
-                    {/* View on site button */}
+                    {/* View & Live Edit on site button */}
                     <button
                       type="button"
                       onClick={() => navigateToEvent(event.slug)}
-                      className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-cream/10 hover:bg-black/10 dark:hover:bg-cream/20 text-xs font-bold flex items-center gap-1 cursor-pointer transition-all text-black/80 dark:text-cream"
-                      title="عرض في صفحة الزوار"
+                      className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-cream/10 hover:bg-black/10 dark:hover:bg-cream/20 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all text-black/80 dark:text-cream border border-black/5 dark:border-white/5"
+                      title="فتح صفحة المولد الحية مع إمكانية التعديل المباشر"
                     >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>عرض</span>
+                      <Eye className="w-3.5 h-3.5 text-primary" />
+                      <span>صفحة المولد الحية</span>
+                      <ExternalLink className="w-3 h-3 opacity-60" />
                     </button>
 
                     <div className="flex items-center gap-1.5">
@@ -573,10 +590,11 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                           setEditingEvent(event);
                           setIsEditModalOpen(true);
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1 cursor-pointer transition-all shadow-xs"
+                        className="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs"
+                        title="تعديل تفاصيل وبيانات وميديا الاحتفال"
                       >
                         <Edit className="w-3.5 h-3.5" />
-                        <span>تعديل وميديا</span>
+                        <span>تعديل وميديا الاحتفال</span>
                       </button>
 
                       {/* Delete button */}
@@ -618,6 +636,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
               return [savedEvent, ...prev];
             });
             addToast('تم الحفظ بنجاح', `تم حفظ بيانات «${savedEvent.title}» في قاعدة البيانات`, 'success');
+            if (onEventUpdated) onEventUpdated();
           }}
         />
       )}
@@ -708,7 +727,7 @@ export const AdminEventsManagerPage: React.FC = () => {
 // ============================================================================
 // MODAL: RICH EVENT EDITOR WITH DIALECT NARRATIVES, PHOTOS & VIDEOS
 // ============================================================================
-interface EventEditorModalProps {
+export interface EventEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   event: CulturalEvent | null;
@@ -716,7 +735,7 @@ interface EventEditorModalProps {
   onSaved: (savedEvent: CulturalEvent) => void;
 }
 
-const EventEditorModal: React.FC<EventEditorModalProps> = ({
+export const EventEditorModal: React.FC<EventEditorModalProps> = ({
   isOpen,
   onClose,
   event,

@@ -151,9 +151,6 @@ const CulturalCmsAdminPage = lazyWithRetry(() =>
 const AdminMapEditorPage = lazyWithRetry(() =>
   import('./components/pages/AdminMapEditorPage').then((m) => ({ default: m.AdminMapEditorPage }))
 );
-const AdminEventsManagerPage = lazyWithRetry(() =>
-  import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerPage }))
-);
 const UpperEgyptMapPage = lazyWithRetry(() =>
   import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
 );
@@ -627,7 +624,7 @@ const MainContent: React.FC = () => {
               ))}
 
               {/* Admin Dashboard */}
-              {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
+              {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && activePage !== 'admin-events' && activePage !== 'admin-events-manager' && (
                 isAuthenticated && currentRole === 'admin' ? (
                   <React.Suspense fallback={<LazySectionFallback />}>
                     <AdminDashboard />
@@ -684,7 +681,7 @@ const MainContent: React.FC = () => {
               {activePage === 'person-details' && <PersonDetailPage />}
               {activePage === 'food' && <FoodHeritagePage />}
               {activePage === 'food-details' && <FoodDetailPage />}
-              {activePage === 'events' && <EventsPage />}
+              {(activePage === 'events' || activePage === 'admin-events' || activePage === 'admin-events-manager') && <EventsPage />}
               {activePage === 'event-details' && <EventDetailPage />}
               {activePage === 'global-search' && <GlobalSearchResultsPage />}
               {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && (
@@ -695,11 +692,6 @@ const MainContent: React.FC = () => {
               {activePage === 'admin-map-editor' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <AdminMapEditorPage />
-                </React.Suspense>
-              )}
-              {(activePage === 'admin-events' || activePage === 'admin-events-manager') && (
-                <React.Suspense fallback={<LazySectionFallback />}>
-                  <AdminEventsManagerPage />
                 </React.Suspense>
               )}
 
