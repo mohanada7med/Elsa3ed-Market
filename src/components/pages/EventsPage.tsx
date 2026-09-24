@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { CulturalEvent } from '../../types';
@@ -13,10 +13,24 @@ import {
   ChevronDown,
   X,
   Flame,
+  Music,
+  Utensils,
+  Eye,
+  Feather,
+  Compass,
 } from 'lucide-react';
 
+const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
+  all: { label: 'كافة المواسم والليالي', icon: '✨' },
+  moulid: { label: 'موالد وليالي ذكر', icon: '🕌' },
+  harvest: { label: 'مواسم زراعية وحصاد', icon: '🌾' },
+  festival: { label: 'احتفالات ومهرجانات كبرى', icon: '🎉' },
+  cultural_night: { label: 'فروسية ومرماح وهجن', icon: '🐎' },
+  market_fair: { label: 'أسواق ومواسم حرفية', icon: '🏺' },
+};
+
 export const EventsPage: React.FC = () => {
-  const { navigateToEvent, setActivePage } = useApp();
+  const { navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
   const [events, setEvents] = useState<CulturalEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,35 +38,67 @@ export const EventsPage: React.FC = () => {
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
 
   useEffect(() => {
+    let isMounted = true;
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
         const data = await wahApi.getEvents();
-        setEvents(data);
+        if (isMounted) {
+          setEvents(data || []);
+        }
       } catch (err) {
         console.warn('Could not load events:', err);
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
     fetchEvents();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const governorates = Array.from(new Set(events.map((e) => e.governorateName))).filter(Boolean);
-  const categories = Array.from(new Set(events.map((e) => e.category))).filter(Boolean);
+  const governorates = useMemo(() => {
+    return Array.from(new Set(events.map((e) => e.governorateName))).filter(Boolean);
+  }, [events]);
 
-  const filteredEvents = events.filter((event) => {
-    const loc = event.location || event.locationName || '';
-    const matchesSearch =
-      !searchQuery.trim() ||
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.governorateName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      loc.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCat = categoryFilter === 'all' || event.category === categoryFilter;
-    const matchesGov = governorateFilter === 'all' || event.governorateName === governorateFilter;
-    return matchesSearch && matchesCat && matchesGov;
-  });
+  const categories = useMemo(() => {
+    return Array.from(new Set(events.map((e) => e.category))).filter(Boolean);
+  }, [events]);
+
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      const loc = event.location || event.locationName || event.cityName || '';
+      const query = searchQuery.trim().toLowerCase();
+      const matchesSearch =
+        !query ||
+        event.title.toLowerCase().includes(query) ||
+        event.description.toLowerCase().includes(query) ||
+        event.governorateName.toLowerCase().includes(query) ||
+        loc.toLowerCase().includes(query) ||
+        (event.rituals && event.rituals.some((r) => r.toLowerCase().includes(query))) ||
+        (event.famousFoods && event.famousFoods.some((f) => f.toLowerCase().includes(query)));
+
+      let matchesCat = true;
+      if (categoryFilter !== 'all') {
+        matchesCat = event.category === categoryFilter;
+      }
+
+      const matchesGov = governorateFilter === 'all' || event.governorateName === governorateFilter;
+      return matchesSearch && matchesCat && matchesGov;
+    });
+  }, [events, searchQuery, categoryFilter, governorateFilter]);
+
+  const featuredEvent = useMemo(() => {
+    return events.find((e) => e.isFeatured) || events[0] || null;
+  }, [events]);
+
+  const getCategoryLabel = (cat?: string) => {
+    if (!cat) return 'موسم تراثي';
+    return CATEGORY_MAP[cat]?.label || cat;
+  };
 
   return (
     <div
@@ -68,9 +114,9 @@ export const EventsPage: React.FC = () => {
       "
     >
       {/* =====================================================
-          NAVBAR
+          NAVBAR (Consistent with Food & Places Pages)
       ===================================================== */}
-      <header className="relative z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/70 dark:bg-espresso-900/90">
+      <header className="sticky top-0 z-50 border-b border-black/10 dark:border-white/10 backdrop-blur-xl bg-white/80 dark:bg-espresso-900/90">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           <button
             type="button"
@@ -110,72 +156,75 @@ export const EventsPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
-            <div className="mt-1 text-sm font-black font-serif">فعاليات الصعيد</div>
+            <div className="mt-1 text-sm font-black font-serif">مواسم وليالي الصعيد</div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setActivePage('map')}
-            className="
-              flex items-center gap-2
-              rounded-full
-              border border-black/10
-              px-4 py-2.5
-              text-xs font-bold
-              transition-all
-              hover:bg-espresso
-              hover:text-white
-              dark:border-white/10
-              dark:hover:bg-white
-              dark:hover:text-black
-              cursor-pointer
-            "
-          >
-            <span className="hidden sm:block">خريطة الصعيد</span>
-            <ArrowUpLeft size={15} />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setActivePage('map')}
+              className="
+                flex items-center gap-2
+                rounded-full
+                border border-black/10
+                px-4 py-2.5
+                text-xs font-bold
+                transition-all
+                hover:bg-espresso
+                hover:text-white
+                dark:border-white/10
+                dark:hover:bg-white
+                dark:hover:text-black
+                cursor-pointer
+              "
+            >
+              <Compass size={15} />
+              <span className="hidden sm:block">خريطة الصعيد</span>
+              <ArrowUpLeft size={14} className="hidden sm:block" />
+            </button>
+          </div>
         </div>
       </header>
 
       {/* =====================================================
-          HERO SECTION
-      ================================================     */}
+          HERO SECTION (Matching Prestige Heritage Quality)
+      ===================================================== */}
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
         <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
 
-        <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-32">
+        <div className="mx-auto max-w-[1600px] px-5 pb-12 pt-14 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 lg:pb-20 lg:pt-28">
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1fr_420px]">
             <div>
-              <div className="mb-8 flex items-center gap-3">
-                <Sparkles size={16} className="text-primary" />
+              <div className="mb-6 flex items-center gap-3">
+                <Sparkles size={16} className="text-primary animate-pulse" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
-                  Upper Egypt Seasons / Festivals
+                  Upper Egypt Seasons & Layali / التراث الشعبي الحي
                 </span>
               </div>
 
               <h1
                 className="
                   max-w-5xl
-                  text-[14vw]
+                  text-[13vw]
                   font-black
                   font-serif
-                  leading-[0.78]
-                  tracking-[-0.08em]
-                  sm:text-[11vw]
-                  lg:text-[9rem]
-                  xl:text-[11rem]
+                  leading-[0.82]
+                  tracking-[-0.06em]
+                  sm:text-[10vw]
+                  lg:text-[8rem]
+                  xl:text-[9.5rem]
                 "
               >
                 مواسم
                 <br />
-                <span className="mr-[8vw] text-primary lg:mr-28">البهجة</span>
+                <span className="mr-[6vw] text-primary lg:mr-24">البهجة والليالي</span>
               </h1>
 
-              <div className="mt-10 flex max-w-2xl items-start gap-5">
-                <div className="mt-2 h-16 w-px bg-primary" />
-                <p className="text-sm leading-8 text-black/65 dark:text-white/65 sm:text-base">
-                  أجواء الفرحة في الصعيد؛ من ليالي الموالد ولمة الحبايب، لمواسم كسر القصب وعصر العسل، وحلقات التحطيب وتعامد شمس أبو سمبل.
+              <div className="mt-8 flex max-w-2xl items-start gap-5">
+                <div className="mt-2 h-16 w-px bg-primary shrink-0" />
+                <p className="text-sm leading-8 text-black/75 dark:text-white/75 sm:text-base">
+                  دليل موثق بالعامية الصعيدية لأعرق موالد ومواسم وأفراح الصعيد؛ من ليلة القنائي وأبو الحجاج وسيدي أبو الحسن الشاذلي، لمواسم كسر القصب وعصير العسل الأسود، وحصاد البلح، والمرماح وألعاب الفروسية والتحطيب.
                 </p>
               </div>
             </div>
@@ -189,7 +238,7 @@ export const EventsPage: React.FC = () => {
                   border border-black/10
                   bg-white/75
                   p-7
-                  shadow-lg
+                  shadow-xl
                   backdrop-blur-2xl
                   dark:border-white/10
                   dark:bg-espresso-900/90
@@ -199,37 +248,37 @@ export const EventsPage: React.FC = () => {
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />
 
                 <div className="relative">
-                  <div className="mb-10 flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/45 dark:text-white/45">
-                      FESTIVALS CALENDAR
+                  <div className="mb-8 flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-[0.25em] text-black/45 dark:text-white/45 uppercase">
+                      Heritage Calendar
                     </span>
-                    <Calendar size={18} className="text-primary" />
+                    <Calendar size={20} className="text-primary" />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-8">
-                    <div>
-                      <div className="text-5xl font-black tracking-[-0.05em] font-mono">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="border-l border-black/10 dark:border-white/10 pl-4">
+                      <div className="text-5xl font-black tracking-[-0.05em] font-mono text-espresso dark:text-cream">
                         {events.length}
                       </div>
-                      <div className="mt-2 text-xs text-black/55 dark:text-white/55 font-bold">
-                        فعالية وموسم موثق
+                      <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">
+                        ليلة وموسم موثق
                       </div>
                     </div>
 
                     <div>
-                      <div className="text-5xl font-black tracking-[-0.05em] font-mono">
-                        {governorates.length}
+                      <div className="text-5xl font-black tracking-[-0.05em] font-mono text-espresso dark:text-cream">
+                        {governorates.length || 9}
                       </div>
-                      <div className="mt-2 text-xs text-black/55 dark:text-white/55 font-bold">
+                      <div className="mt-2 text-xs text-black/60 dark:text-white/60 font-bold">
                         محافظة صعيدية
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-xs font-bold">
-                      دليل مواسم وأفراح الصعيد
+                  <div className="mt-8 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
+                    <div className="h-2.5 w-2.5 rounded-full bg-primary animate-ping" />
+                    <span className="text-xs font-bold text-black/80 dark:text-white/80">
+                      من بركة الموالد ودفا ليالي السمر والنفحة
                     </span>
                   </div>
                 </div>
@@ -240,15 +289,83 @@ export const EventsPage: React.FC = () => {
       </section>
 
       {/* =====================================================
-          FLOATING FILTERS BAR
+          SPOTLIGHT BANNER (Featured Event)
       ===================================================== */}
-      <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
+      {featuredEvent && (
+        <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 mb-10">
+          <div
+            onClick={() => navigateToEvent(featuredEvent.slug)}
+            className="
+              group relative overflow-hidden rounded-[2.5rem]
+              border border-black/10 dark:border-white/10
+              bg-espresso text-white
+              shadow-2xl transition-all duration-500
+              hover:border-primary/50 cursor-pointer
+            "
+          >
+            <div className="absolute inset-0">
+              <img
+                src={featuredEvent.coverImage}
+                alt={featuredEvent.title}
+                className="h-full w-full object-cover opacity-35 transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
+            </div>
+
+            <div className="relative z-10 p-7 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[360px]">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-primary px-3.5 py-1 text-xs font-black text-black">
+                    ليلة مميزة في الصعيد
+                  </span>
+                  <span className="rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
+                    {getCategoryLabel(featuredEvent.category)}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-bold text-primary-hover">
+                  <Clock size={14} />
+                  <span>{featuredEvent.timeOfYear || featuredEvent.eventDate}</span>
+                </div>
+              </div>
+
+              <div className="mt-8 max-w-4xl">
+                <div className="flex items-center gap-2 text-xs font-bold text-white/70 mb-2">
+                  <MapPin size={14} className="text-primary" />
+                  <span>{featuredEvent.locationName || featuredEvent.governorateName}</span>
+                </div>
+
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
+                  {featuredEvent.title}
+                </h2>
+
+                <p className="mt-4 text-xs sm:text-sm md:text-base leading-7 text-white/80 line-clamp-2 max-w-3xl">
+                  {featuredEvent.description}
+                </p>
+
+                <div className="mt-6 flex items-center gap-3 text-xs font-bold text-primary-hover">
+                  <span>تعال نقرأ حكاية الليلة وطقوسها بالعامية</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 group-hover:bg-primary group-hover:text-black transition-all">
+                    <ArrowUpLeft size={16} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* =====================================================
+          FLOATING FILTERS & CATEGORY BAR
+      ===================================================== */}
+      <section className="sticky top-[76px] z-40 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">
         <div
           className="
-            rounded-[2rem]
+            rounded-[1.75rem]
             border border-black/10
-            bg-white/75
-            p-3
+            bg-white/85
+            p-3.5
             shadow-[0_20px_70px_rgba(0,0,0,0.08)]
             backdrop-blur-2xl
             dark:border-white/10
@@ -256,6 +373,7 @@ export const EventsPage: React.FC = () => {
             dark:shadow-black/30
           "
         >
+          {/* Top Row: Search & Dropdowns */}
           <div className="flex flex-col gap-3 lg:flex-row">
             {/* Search Input */}
             <div className="relative flex-1">
@@ -272,21 +390,21 @@ export const EventsPage: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن مولد، موسم حصاد، أو معرض..."
+                placeholder="ابحث عن مولد، ليلة ذكر، موسم كسر قصب، أو مرماح..."
                 className="
                   h-12 w-full
                   rounded-xl
                   border border-transparent
-                  bg-black/[0.035]
+                  bg-black/[0.04]
                   pr-11 pl-10
                   text-sm
                   outline-none
                   transition-all
-                  placeholder:text-black/35
-                  focus:border-primary/40
+                  placeholder:text-black/40
+                  focus:border-primary/50
                   focus:bg-transparent
-                  dark:bg-cream/[0.04]
-                  dark:placeholder:text-white/30
+                  dark:bg-cream/[0.05]
+                  dark:placeholder:text-white/40
                   dark:focus:bg-white/[0.06]
                 "
               />
@@ -309,7 +427,7 @@ export const EventsPage: React.FC = () => {
             </div>
 
             {/* Category Select */}
-            <div className="relative lg:w-60">
+            <div className="relative lg:w-64">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
@@ -318,23 +436,23 @@ export const EventsPage: React.FC = () => {
                   appearance-none
                   rounded-xl
                   border border-transparent
-                  bg-black/[0.035]
+                  bg-black/[0.04]
                   px-4
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-primary/40
-                  dark:bg-cream/[0.04]
+                  focus:border-primary/50
+                  dark:bg-cream/[0.05]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
               >
-                <option value="all" className="dark:bg-espresso-900">كافة الفعاليات</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat} className="dark:bg-espresso-900">
-                    {cat}
-                  </option>
-                ))}
+                <option value="all" className="dark:bg-espresso-900">كافة أنواع المواسم والليالي</option>
+                <option value="moulid" className="dark:bg-espresso-900">موالد وليالي ذكر</option>
+                <option value="harvest" className="dark:bg-espresso-900">مواسم زراعية وحصاد</option>
+                <option value="festival" className="dark:bg-espresso-900">احتفالات ومهرجانات كبرى</option>
+                <option value="cultural_night" className="dark:bg-espresso-900">فروسية ومرماح وهجن</option>
+                <option value="market_fair" className="dark:bg-espresso-900">أسواق ومواسم حرفية</option>
               </select>
               <ChevronDown
                 size={15}
@@ -342,12 +460,13 @@ export const EventsPage: React.FC = () => {
                   pointer-events-none
                   absolute left-4 top-1/2
                   -translate-y-1/2
+                  text-black/50 dark:text-white/50
                 "
               />
             </div>
 
             {/* Governorate Select */}
-            <div className="relative lg:w-60">
+            <div className="relative lg:w-56">
               <select
                 value={governorateFilter}
                 onChange={(e) => setGovernorateFilter(e.target.value)}
@@ -356,18 +475,18 @@ export const EventsPage: React.FC = () => {
                   appearance-none
                   rounded-xl
                   border border-transparent
-                  bg-black/[0.035]
+                  bg-black/[0.04]
                   px-4
                   text-sm font-bold
                   outline-none
                   transition-all
-                  focus:border-primary/40
-                  dark:bg-cream/[0.04]
+                  focus:border-primary/50
+                  dark:bg-cream/[0.05]
                   dark:focus:bg-white/[0.06]
                   cursor-pointer
                 "
               >
-                <option value="all" className="dark:bg-espresso-900">كل المحافظات</option>
+                <option value="all" className="dark:bg-espresso-900">كل محافظات الصعيد</option>
                 {governorates.map((gov) => (
                   <option key={gov} value={gov} className="dark:bg-espresso-900">
                     {gov}
@@ -380,11 +499,12 @@ export const EventsPage: React.FC = () => {
                   pointer-events-none
                   absolute left-4 top-1/2
                   -translate-y-1/2
+                  text-black/50 dark:text-white/50
                 "
               />
             </div>
 
-            {/* Result Counter & Clear */}
+            {/* Counter badge & reset */}
             <div
               className="
                 flex items-center justify-between
@@ -394,12 +514,13 @@ export const EventsPage: React.FC = () => {
                 text-white
                 dark:bg-cream
                 dark:text-black
+                min-h-[48px]
               "
             >
               <div className="flex items-center gap-2">
-                <Calendar size={14} />
+                <Calendar size={15} className="text-primary" />
                 <span className="text-xs font-bold">
-                  {filteredEvents.length} فعالية
+                  {filteredEvents.length} ليلة وموسم
                 </span>
               </div>
 
@@ -411,31 +532,58 @@ export const EventsPage: React.FC = () => {
                     setCategoryFilter('all');
                     setGovernorateFilter('all');
                   }}
-                  className="mr-5 text-[10px] font-bold underline underline-offset-4 cursor-pointer"
+                  className="mr-4 text-[11px] font-black underline underline-offset-4 cursor-pointer text-primary"
                 >
-                  إعادة
+                  إعادة ضبط
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Bottom Quick Category Pills */}
+          <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+            {Object.entries(CATEGORY_MAP).map(([key, item]) => {
+              const isActive = categoryFilter === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setCategoryFilter(key)}
+                  className={`
+                    flex shrink-0 items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer
+                    ${
+                      isActive
+                        ? 'bg-primary text-black shadow-md'
+                        : 'bg-black/[0.04] text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    }
+                  `}
+                >
+                  <span>{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* =====================================================
-          EVENTS GRID SECTION (Modern Glassmorphism Cards)
-      ================================================     */}
-      <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-14 sm:px-8 sm:pt-20 lg:px-12">
+          EVENTS GRID SECTION (Rich Modern Heritage Cards)
+      ===================================================== */}
+      <section className="mx-auto max-w-[1600px] px-5 pb-24 pt-12 sm:px-8 lg:px-12">
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary">
-              UPPER EGYPT SEASONS
+            <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
+              Upper Egypt Layali & Festivals
             </div>
-            <h2 className="text-3xl font-black sm:text-4xl font-serif">مواسم الصعيد الاحتفالية</h2>
+            <h2 className="text-3xl font-black sm:text-4xl font-serif">
+              أجندة أفراح وليالي الصعيد
+            </h2>
           </div>
 
           <div className="hidden items-center gap-2 text-xs text-black/50 dark:text-white/50 sm:flex">
-            <Flame size={14} />
-            <span>Cultural Calendar</span>
+            <Flame size={15} className="text-primary" />
+            <span>حكايات حقيقية بالعامية الصعيدية</span>
           </div>
         </div>
 
@@ -445,7 +593,7 @@ export const EventsPage: React.FC = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="h-[440px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-cream/5"
+                className="h-[480px] animate-pulse rounded-[2rem] bg-black/5 dark:bg-cream/5"
               />
             ))}
           </div>
@@ -463,7 +611,7 @@ export const EventsPage: React.FC = () => {
               text-center
               dark:border-white/15
               bg-white/50 dark:bg-espresso-900/50
-              backdrop-blur-xl
+              backdrop-blur-xl p-8
             "
           >
             <div
@@ -475,47 +623,46 @@ export const EventsPage: React.FC = () => {
                 dark:border-white/10
               "
             >
-              <Calendar size={24} />
+              <Calendar size={24} className="text-primary" />
             </div>
 
-            <h3 className="text-xl font-black">لم يتم العثور على فعاليات مطابقة</h3>
-            <p className="mt-3 text-sm text-black/60 dark:text-white/60">
-              جرب البحث بكلمات أخرى أو تغيير الفلاتر لاستعراض مواسم الصعيد.
+            <h3 className="text-xl font-black">ملقيناش مواسم أو ليالي مطابقة لبحثك</h3>
+            <p className="mt-3 text-sm text-black/60 dark:text-white/60 max-w-md">
+              جرّب البحث بكلمة تانية زي "قنا" أو "بلح" أو "أبو الحجاج" أو غيّر الفلتر لتصفح باقي الاحتفالات.
             </p>
 
-            {(searchQuery.trim() !== '' || categoryFilter !== 'all' || governorateFilter !== 'all') && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('');
-                  setCategoryFilter('all');
-                  setGovernorateFilter('all');
-                }}
-                className="
-                  mt-6
-                  rounded-full
-                  bg-espresso
-                  px-6 py-3
-                  text-xs font-bold text-white
-                  dark:bg-cream
-                  dark:text-black
-                  cursor-pointer
-                "
-              >
-                عرض كل الفعاليات
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setCategoryFilter('all');
+                setGovernorateFilter('all');
+              }}
+              className="
+                mt-6
+                rounded-full
+                bg-espresso
+                px-6 py-3
+                text-xs font-bold text-white
+                dark:bg-cream
+                dark:text-black
+                cursor-pointer
+              "
+            >
+              عرض كافة مواسم الصعيد
+            </button>
           </div>
         )}
 
-        {/* Events Grid (Refined Design) */}
+        {/* Events Grid */}
         {!isLoading && filteredEvents.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
             {filteredEvents.map((event, index) => {
               const image =
                 event.coverImage ||
                 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800';
-              const seasonText = event.season || event.dateText || 'موسمي';
+              const seasonText = event.season || event.timeOfYear || event.eventDate || 'موسمي';
+              const categoryLabel = getCategoryLabel(event.category);
 
               return (
                 <article
@@ -528,22 +675,22 @@ export const EventsPage: React.FC = () => {
                     overflow-hidden
                     rounded-[2rem]
                     border border-black/10
-                    bg-white/75
+                    bg-white/80
                     p-6 sm:p-7
                     shadow-lg
                     backdrop-blur-xl
                     transition-all duration-500
-                    hover:-translate-y-1.5
+                    hover:-translate-y-2
                     hover:border-primary
-                    hover:shadow-[0_20px_50px_rgba(154,106,53,0.12)]
+                    hover:shadow-[0_20px_50px_rgba(154,106,53,0.15)]
                     dark:border-white/10
                     dark:bg-espresso-900/90
                     cursor-pointer
                   "
                 >
                   <div>
-                    {/* Top Image & Badges */}
-                    <div className="relative mb-6 h-56 w-full overflow-hidden rounded-2xl border border-black/10 dark:border-white/10">
+                    {/* Image Box */}
+                    <div className="relative mb-5 h-60 w-full overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black">
                       <img
                         src={image}
                         alt={event.title}
@@ -557,71 +704,96 @@ export const EventsPage: React.FC = () => {
                         "
                       />
 
-                      {/* Category Badge */}
-                      <div className="absolute left-3 top-3">
-                        {event.category && (
-                          <span
-                            className="
-                              inline-flex
-                              rounded-xl
-                              border border-white/20
-                              bg-black/40
-                              px-3 py-1
-                              text-[10px]
-                              font-bold
-                              text-white
-                              backdrop-blur-md
-                            "
-                          >
-                            {event.category}
-                          </span>
-                        )}
+                      {/* Dark Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Serial Number */}
+                      <div
+                        className="
+                          absolute right-4 top-4
+                          text-5xl
+                          font-black
+                          leading-none
+                          tracking-[-0.08em]
+                          text-white/20
+                          transition-all
+                          duration-500
+                          group-hover:text-white/40
+                        "
+                      >
+                        {String(index + 1).padStart(2, '0')}
                       </div>
 
-                      {/* Governorate Badge */}
-                      <div className="absolute right-3 top-3">
-                        {event.governorateName && (
-                          <span
-                            className="
-                              inline-flex items-center gap-1
-                              rounded-xl
-                              border border-white/20
-                              bg-black/40
-                              px-3 py-1
-                              text-[10px]
-                              font-bold
-                              text-white
-                              backdrop-blur-md
-                            "
-                          >
-                            <MapPin size={11} className="text-primary" />
-                            {event.governorateName}
-                          </span>
-                        )}
+                      {/* Category Badge */}
+                      <div className="absolute left-4 top-4">
+                        <span
+                          className="
+                            inline-flex items-center gap-1
+                            rounded-full
+                            border border-white/20
+                            bg-black/40
+                            px-3 py-1
+                            text-[10px]
+                            font-black
+                            text-white
+                            backdrop-blur-md
+                          "
+                        >
+                          {categoryLabel}
+                        </span>
+                      </div>
+
+                      {/* Bottom Info inside Image */}
+                      <div className="absolute inset-x-0 bottom-0 p-4 flex items-center justify-between text-xs font-bold text-white">
+                        <div className="flex items-center gap-1.5 bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                          <MapPin size={12} className="text-primary" />
+                          <span>{event.governorateName}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1 bg-primary/90 text-black px-2.5 py-1 rounded-full font-black text-[11px]">
+                          <Clock size={11} />
+                          <span>{event.dateText || event.eventDate}</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Metadata (Date / Season) */}
-                    <div className="mb-2.5 flex items-center gap-2 text-xs font-semibold text-primary">
-                      <Clock size={14} />
-                      <span>{seasonText}</span>
+                    {/* Season / Time text */}
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
+                      <Sparkles size={13} />
+                      <span className="truncate">{seasonText}</span>
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-2xl font-black mb-3 transition-colors group-hover:text-primary font-serif">
+                    <h3 className="text-xl sm:text-2xl font-black mb-3 transition-colors group-hover:text-primary font-serif leading-snug line-clamp-2">
                       {event.title}
                     </h3>
 
-                    {/* Description */}
-                    <p className="text-xs sm:text-sm leading-6 text-black/65 dark:text-white/65 line-clamp-3 mb-4">
+                    {/* Colloquial Description */}
+                    <p className="text-xs sm:text-sm leading-6 text-black/70 dark:text-white/70 line-clamp-3 mb-4">
                       {event.description}
                     </p>
+
+                    {/* Famous Foods / Rituals Tags */}
+                    {event.famousFoods && event.famousFoods.length > 0 && (
+                      <div className="mb-4 flex flex-wrap gap-1.5">
+                        {event.famousFoods.slice(0, 2).map((food, fIdx) => (
+                          <span
+                            key={fIdx}
+                            className="inline-flex items-center gap-1 rounded-md bg-black/5 px-2 py-1 text-[10px] font-bold text-black/60 dark:bg-white/5 dark:text-white/60"
+                          >
+                            <Utensils size={10} className="text-primary" />
+                            <span className="truncate max-w-[130px]">{food}</span>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Footer Action */}
                   <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
-                    <span className="text-black/50 dark:text-white/50 group-hover:text-primary transition-colors">
-                      استكشاف تفاصيل الموسم
+                    <span className="text-black/60 dark:text-white/60 group-hover:text-primary transition-colors flex items-center gap-1">
+                      <Eye size={14} />
+                      <span>حكاية الليلة وطقوسها</span>
                     </span>
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
                       <ArrowUpLeft size={16} />
@@ -635,14 +807,14 @@ export const EventsPage: React.FC = () => {
       </section>
 
       {/* =====================================================
-          FINAL CTA
-      ================================================     */}
+          FINAL CTA (Matching Grand Brand Signature)
+      ===================================================== */}
       <section className="border-t border-black/10 dark:border-white/10">
-        <div className="mx-auto max-w-[1600px] px-5 py-24 sm:px-8 lg:px-12 lg:py-32">
+        <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
           <div
             className="
               relative overflow-hidden
-              rounded-[2rem]
+              rounded-[2.5rem]
               bg-espresso
               px-6 py-14
               text-white
@@ -658,29 +830,43 @@ export const EventsPage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-primary">
-                  SEASONS & FESTIVALS
+                <div className="mb-4 text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
+                  Upper Egypt Heritage Living
                 </div>
                 <h2
                   className="
                     max-w-4xl
-                    text-4xl
+                    text-3xl
                     font-black
                     font-serif
                     leading-tight
                     tracking-[-0.04em]
-                    sm:text-6xl
+                    sm:text-5xl
                   "
                 >
                   مواسم بتتجدد...
                   <br />
-                  <span className="text-primary">وفرحة بتجمع القلوب.</span>
+                  <span className="text-primary">وفرحة بتجمع الصعيد كله.</span>
                 </h2>
               </div>
 
-              <p className="text-sm leading-8 text-white/70 dark:text-black/70">
-                الفعاليات والموالد في الصعيد مش مجرد احتفالات، دي طقوس مجتمعية بتعبر عن الروح والأصل والترابط.
-              </p>
+              <div>
+                <p className="text-sm leading-8 text-white/70 dark:text-black/70 mb-6">
+                  الموالد والمواسم في الصعيد مش مجرد احتفالات عابرة، دي دورة حياة كاملة مرتبطة بالأرض والزرع والمحبة والكرم.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActivePage('map')}
+                  className="
+                    inline-flex items-center gap-2 rounded-full
+                    bg-primary px-6 py-3.5 text-xs font-bold text-black
+                    transition-transform hover:scale-105 cursor-pointer shadow-lg
+                  "
+                >
+                  <span>استكشف خريطة محافظات الصعيد</span>
+                  <ArrowUpLeft size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>

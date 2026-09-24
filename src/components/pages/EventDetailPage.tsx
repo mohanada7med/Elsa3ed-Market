@@ -16,6 +16,10 @@ import {
   Share2,
   Sparkles,
   Users,
+  Utensils,
+  Flame,
+  CheckCircle2,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 export const EventDetailPage: React.FC = () => {
@@ -37,7 +41,7 @@ export const EventDetailPage: React.FC = () => {
         window.location.pathname.split('/')[2] || ''
       )
       : null) ||
-    'kenawi-moulid';
+    'moulid-kenawi-qena';
 
   useEffect(() => {
     let mounted = true;
@@ -1120,12 +1124,10 @@ export const EventDetailPage: React.FC = () => {
                     text-base
                     font-medium
                     leading-9
-                    text-black/65
-
+                    text-black/75
                     sm:text-lg
                     sm:leading-10
-
-                    dark:text-white/65
+                    dark:text-white/75
                   "
                 >
                   {event.traditions}
@@ -1141,13 +1143,118 @@ export const EventDetailPage: React.FC = () => {
                     text-sm
                     leading-7
                     text-black/40
-
                     dark:border-white/10
                     dark:text-white/40
                   "
                 >
                   تفاصيل الطقوس والمراسم الخاصة
                   بالفعالية هتكون متاحة قريبًا.
+                </div>
+              )}
+
+              {/* RITUALS LIST */}
+              {event.rituals && event.rituals.length > 0 && (
+                <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <CheckCircle2 size={18} />
+                    </span>
+                    <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {event.rituals.map((ritual, rIdx) => (
+                      <div
+                        key={rIdx}
+                        className="flex items-start gap-3 rounded-2xl border border-black/10 bg-black/[0.02] p-4 dark:border-white/10 dark:bg-white/[0.03]"
+                      >
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-black text-xs font-black">
+                          ✓
+                        </span>
+                        <span className="text-sm font-bold leading-relaxed text-black/80 dark:text-white/85">
+                          {ritual}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* FAMOUS FOODS & DRINKS */}
+              {event.famousFoods && event.famousFoods.length > 0 && (
+                <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <Utensils size={18} />
+                    </span>
+                    <div>
+                      <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
+                      <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {event.famousFoods.map((food, fIdx) => (
+                      <div
+                        key={fIdx}
+                        className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/[0.04] p-4 dark:border-primary/20 dark:bg-primary/[0.08]"
+                      >
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-black font-bold">
+                          🥣
+                        </span>
+                        <span className="text-sm font-black text-espresso dark:text-cream">
+                          {food}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ACTIVITIES */}
+              {event.activities && event.activities.length > 0 && (
+                <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <Flame size={18} />
+                    </span>
+                    <h3 className="text-xl font-black sm:text-2xl">أبرز المشاهد والفعاليات الحية</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2.5">
+                    {event.activities.map((act, aIdx) => (
+                      <span
+                        key={aIdx}
+                        className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-2 text-xs font-bold text-black/80 dark:border-white/10 dark:bg-white/5 dark:text-white/80"
+                      >
+                        <Sparkles size={12} className="text-primary" />
+                        <span>{act}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* GALLERY */}
+              {event.gallery && event.gallery.length > 0 && (
+                <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <ImageIcon size={18} />
+                    </span>
+                    <h3 className="text-xl font-black sm:text-2xl">معرض لقطات من قلب الليلة والموسم</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    {event.gallery.map((imgUrl, gIdx) => (
+                      <div
+                        key={gIdx}
+                        className="group relative h-48 sm:h-64 overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`${event.title} - ${gIdx + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

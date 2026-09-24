@@ -28,6 +28,7 @@ import { Logger } from '../utils/logger.ts';
 import { PLATFORM_CATEGORIES } from '../config/platformCategories.ts';
 import { INITIAL_PLATFORM_SETTINGS } from './wahSeedData.ts';
 import { AUTHENTIC_WAH_FOOD } from './authenticWahFoodData.ts';
+import { AUTHENTIC_WAH_EVENTS } from './authenticWahEventsData.ts';
 import { runHeritagePlacesMigration } from '../utils/heritagePlacesMigration.ts';
 
 dotenv.config();
@@ -69,14 +70,14 @@ class MemoryStore {
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
   reports: import('../models/types.ts').ReportTicketDocument[] = [];
 
-  // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB)
+  // WAH Cultural Ecosystem Data (Database-driven solely from MongoDB, with rich authentic defaults)
   governorates: GovernorateDoc[] = [];
   heritagePlaces: HeritagePlaceDoc[] = [];
   culturalCrafts: CulturalCraftDoc[] = [];
   wahStories: WahStoryDoc[] = [];
   localPeople: LocalPersonDoc[] = [];
-  upperEgyptFood: UpperEgyptFoodDoc[] = [];
-  culturalEvents: CulturalEventDoc[] = [];
+  upperEgyptFood: UpperEgyptFoodDoc[] = [...AUTHENTIC_WAH_FOOD];
+  culturalEvents: CulturalEventDoc[] = [...AUTHENTIC_WAH_EVENTS];
   seasons: SeasonDoc[] = [];
   media: import('../models/types.ts').MediaAssetDoc[] = [];
 
@@ -219,6 +220,22 @@ async function seedMongoDatabase(database: Db) {
     if (foodCount === 0) {
       await database.collection('wah_food').insertMany(AUTHENTIC_WAH_FOOD as any[]);
       Logger.info('[MongoDB] Initialized authentic Upper Egypt food collection');
+    }
+
+    // Initialize authentic Upper Egypt events & seasons database
+    const eventsCount = await database.collection('wah_events').countDocuments().catch(() => 0);
+    if (eventsCount === 0) {
+      await database.collection('wah_events').insertMany(AUTHENTIC_WAH_EVENTS as any[]);
+      Logger.info('[MongoDB] Initialized authentic Upper Egypt events & seasons collection');
+    } else {
+      for (const evt of AUTHENTIC_WAH_EVENTS) {
+        await database.collection('wah_events').updateOne(
+          { $or: [{ id: evt.id }, { slug: evt.slug }] },
+          { $set: evt },
+          { upsert: true }
+        );
+      }
+      Logger.info('[MongoDB] Synced authentic Upper Egypt events & seasons');
     }
 
     // Parallel index creation grouped by collection to ensure optimal performance and integrity
