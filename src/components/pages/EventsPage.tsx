@@ -551,10 +551,9 @@ export const EventsPage: React.FC = () => {
                   onClick={() => setCategoryFilter(key)}
                   className={`
                     flex shrink-0 items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer
-                    ${
-                      isActive
-                        ? 'bg-primary text-black shadow-md'
-                        : 'bg-black/[0.04] text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ${isActive
+                      ? 'bg-primary text-black shadow-md'
+                      : 'bg-black/[0.04] text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                     }
                   `}
                 >
@@ -818,8 +817,8 @@ export const EventsPage: React.FC = () => {
               bg-espresso
               px-6 py-14
               text-white
-              dark:bg-cream
-              dark:text-black
+              dark:bg-espresso
+              dark:text-white
               sm:px-12 sm:py-20
               lg:px-20
               shadow-2xl
@@ -851,7 +850,7 @@ export const EventsPage: React.FC = () => {
               </div>
 
               <div>
-                <p className="text-sm leading-8 text-white/70 dark:text-black/70 mb-6">
+                <p className="text-sm leading-8 text-white/70 mb-6">
                   الموالد والمواسم في الصعيد مش مجرد احتفالات عابرة، دي دورة حياة كاملة مرتبطة بالأرض والزرع والمحبة والكرم.
                 </p>
                 <button
