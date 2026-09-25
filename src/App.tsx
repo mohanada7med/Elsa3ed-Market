@@ -151,6 +151,9 @@ const CulturalCmsAdminPage = lazyWithRetry(() =>
 const AdminMapEditorPage = lazyWithRetry(() =>
   import('./components/pages/AdminMapEditorPage').then((m) => ({ default: m.AdminMapEditorPage }))
 );
+const AdminEventsManagerPage = lazyWithRetry(() =>
+  import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerPage }))
+);
 const UpperEgyptMapPage = lazyWithRetry(() =>
   import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
 );
@@ -335,6 +338,13 @@ const MainContent: React.FC = () => {
         updatePageSEO({
           title: 'محرر إحداثيات الخريطة التفاعلية (GIS) | وه',
           description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
+        });
+        break;
+      case 'admin-events':
+      case 'admin-events-manager':
+        updatePageSEO({
+          title: 'إدارة المواسم والأعياد والموالد الصعيدية | وه',
+          description: 'لوحة التحكم الشاملة لإدارة وتوثيق مواسم وموالد صعيد مصر بالعامية مع الصور والفيديوهات والتعديل المباشر.'
         });
         break;
       case 'quize':
@@ -685,6 +695,11 @@ const MainContent: React.FC = () => {
               {activePage === 'admin-map-editor' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <AdminMapEditorPage />
+                </React.Suspense>
+              )}
+              {(activePage === 'admin-events' || activePage === 'admin-events-manager') && (
+                <React.Suspense fallback={<LazySectionFallback />}>
+                  <AdminEventsManagerPage />
                 </React.Suspense>
               )}
 

@@ -585,6 +585,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           icon: ShoppingBag,
         },
         {
+          id: 'admin-events',
+          label: 'إدارة الموالد والاحتفالات',
+          icon: Calendar,
+        },
+        {
           id: 'admin-reports',
           label: 'البلاغات والشكاوى',
           icon: AlertTriangle,
@@ -613,6 +618,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       {
         id: 'map',
         label: 'محافظات الصعيد',
+        isNew: true,
+      },
+      {
+        id: 'events',
+        label: 'مواسم وليالي الصعيد',
+        icon: Calendar,
         isNew: true,
       },
       {
@@ -844,6 +855,18 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   >
                     جديد
                   </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('events')}
+                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
+                  style={{
+                    color: activePage === 'events' ? '#9a6a35' : mainText,
+                  }}
+                >
+                  <Calendar size={15} className="text-primary" />
+                  مواسم وليالي الصعيد
                 </button>
 
                 <button
