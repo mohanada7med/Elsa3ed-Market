@@ -1753,3 +1753,5 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
     </div>
   );
 };
+
+export default AdminEventsManagerPage;

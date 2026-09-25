@@ -137,6 +137,12 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
     }
   };
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const handleShare = async (url: string) => {
     if (typeof window === 'undefined') return;
     try {
@@ -152,7 +158,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
     } catch {}
   };
 
-  if (!isOpen || images.length === 0 || typeof document === 'undefined') {
+  if (!mounted || !isOpen || images.length === 0 || typeof document === 'undefined') {
     return null;
   }
 
