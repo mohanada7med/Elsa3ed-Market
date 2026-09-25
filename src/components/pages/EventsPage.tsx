@@ -129,9 +129,52 @@ export const EventsPage: React.FC = () => {
     }
   };
 
+  const loadEventsAndSeasons = async (): Promise<CulturalEvent[]> => {
+    try {
+      const [eventsData, seasonsData] = await Promise.all([
+        wahApi.getEvents(),
+        wahApi.getSeasons()
+      ]);
+
+      const normalizedSeasons: CulturalEvent[] = (seasonsData || []).map((s: any) => ({
+        id: s.id,
+        title: s.title,
+        slug: s.slug || s.id,
+        governorateName: s.governorateName,
+        governorateId: s.governorateId,
+        cityName: s.cityName || s.governorateName,
+        location: s.cityName ? `${s.cityName}، ${s.governorateName}` : s.governorateName,
+        locationName: s.cityName || s.governorateName,
+        category: (s.category === 'harvest' ? 'harvest' : (s.category === 'craft' ? 'market_fair' : 'harvest')) as any,
+        eventDate: `موسم سنوي (${s.startPeriod || ''} - ${s.endPeriod || ''})`,
+        startDate: s.startPeriod,
+        endDate: s.endPeriod,
+        dateText: `${s.startPeriod || ''} - ${s.endPeriod || ''}`,
+        season: `${s.startPeriod || ''} - ${s.endPeriod || ''}`,
+        timeOfYear: `${s.startPeriod || ''} - ${s.endPeriod || ''}`,
+        description: s.description,
+        coverImage: s.coverImage || 'https://images.unsplash.com/photo-1599833975787-5c143f373c30?w=1200&auto=format&fit=crop&q=80',
+        famousFoods: s.relatedFoods || [],
+        rituals: s.relatedStories || ['أهازيج التراث والعمل المشترك', 'طقوس الحصاد الصعيدي'],
+        activities: s.relatedCrafts || [],
+        status: s.status || 'approved',
+        createdAt: s.createdAt || new Date().toISOString(),
+        updatedAt: s.updatedAt || new Date().toISOString()
+      }));
+
+      const existingEventSlugs = new Set((eventsData || []).map((e: any) => e.slug || e.id));
+      const uniqueSeasons = normalizedSeasons.filter((s) => !existingEventSlugs.has(s.slug) && !existingEventSlugs.has(s.id));
+
+      return [...(eventsData || []), ...uniqueSeasons];
+    } catch (err) {
+      console.warn('Could not load events & seasons from database:', err);
+      return [];
+    }
+  };
+
   const refreshEvents = async () => {
     try {
-      const data = await wahApi.getEvents();
+      const data = await loadEventsAndSeasons();
       if (data && data.length > 0) {
         setEvents(data);
       }
@@ -145,12 +188,12 @@ export const EventsPage: React.FC = () => {
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
-        const data = await wahApi.getEvents();
+        const data = await loadEventsAndSeasons();
         if (isMounted) {
           setEvents(data || []);
         }
       } catch (err) {
-        console.warn('Could not load events:', err);
+        console.warn('Could not load events & seasons:', err);
       } finally {
         if (isMounted) {
           setIsLoading(false);

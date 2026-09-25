@@ -3,7 +3,16 @@ import { Logger } from './logger.ts';
 import { memoryDb } from '../db/mongodb.ts';
 import type {
     GovernorateDoc,
-    HeritagePlaceDoc
+    HeritagePlaceDoc,
+    CulturalCraftDoc,
+    LocalPersonDoc,
+    UpperEgyptFoodDoc,
+    CulturalEventDoc,
+    SeasonDoc,
+    CityDoc,
+    VillageDoc,
+    CulturalTraditionDoc,
+    WahStoryDoc
 } from '../models/types.ts';
 
 /**
@@ -28,26 +37,57 @@ export async function runHeritagePlacesMigration(db: Db): Promise<{
             }
         );
 
-        // 2. قراءة كل المحافظات مباشرة من الداتا بيز ومزامنة الذاكرة المؤقتة (memoryDb)
-        const dbGovernorates = await db.collection<GovernorateDoc>('wah_governorates').find({}).toArray();
+        // 2. قراءة وتحميل كافة البيانات التراثية والمواسم مباشرة وحصرياً من MongoDB
+        const [
+            dbGovernorates,
+            dbPlaces,
+            dbCrafts,
+            dbPeople,
+            dbFood,
+            dbEvents,
+            dbSeasons,
+            dbCities,
+            dbVillages,
+            dbTraditions,
+            dbStories
+        ] = await Promise.all([
+            db.collection<GovernorateDoc>('wah_governorates').find({}).toArray(),
+            db.collection<HeritagePlaceDoc>('wah_heritage_places').find({}).toArray(),
+            db.collection<CulturalCraftDoc>('wah_cultural_crafts').find({}).toArray(),
+            db.collection<LocalPersonDoc>('wah_local_people').find({}).toArray(),
+            db.collection<UpperEgyptFoodDoc>('wah_food').find({}).toArray(),
+            db.collection<CulturalEventDoc>('wah_events').find({}).toArray(),
+            db.collection<SeasonDoc>('wah_seasons').find({}).toArray(),
+            db.collection<CityDoc>('wah_cities').find({}).toArray(),
+            db.collection<VillageDoc>('wah_villages').find({}).toArray(),
+            db.collection<CulturalTraditionDoc>('wah_traditions').find({}).toArray(),
+            db.collection<WahStoryDoc>('wah_stories').find({}).toArray()
+        ]);
+
         memoryDb.governorates = dbGovernorates;
-
-        // 3. قراءة كل الأماكن التراثية مباشرة من الداتا بيز ومزامنة الذاكرة المؤقتة (memoryDb)
-        const dbPlaces = await db.collection<HeritagePlaceDoc>('wah_heritage_places').find({}).toArray();
-
-        // التأكد من خلو عناصر الذاكرة من حقل rating
         memoryDb.heritagePlaces = dbPlaces.map((place) => {
             const cleanPlace = { ...place };
             delete (cleanPlace as any).rating;
             return cleanPlace;
         });
+        memoryDb.culturalCrafts = dbCrafts;
+        memoryDb.localPeople = dbPeople;
+        memoryDb.upperEgyptFood = dbFood;
+        memoryDb.culturalEvents = dbEvents;
+        memoryDb.seasons = dbSeasons;
+        (memoryDb as any).cities = dbCities;
+        (memoryDb as any).villages = dbVillages;
+        (memoryDb as any).traditions = dbTraditions;
+        memoryDb.wahStories = dbStories;
 
         const totalPlaces = dbPlaces.length;
         const totalGovs = dbGovernorates.length;
+        const totalEvents = dbEvents.length;
+        const totalSeasons = dbSeasons.length;
         const cleanedRatingsCount = ratingCleanupResult.modifiedCount;
 
         Logger.info(
-            `[Heritage Places Sync] Loaded successfully from MongoDB. Total Places: ${totalPlaces}, Total Governorates: ${totalGovs}, Cleaned ratings: ${cleanedRatingsCount}`
+            `[WAH Database Sync] Loaded exclusively from MongoDB. Places: ${totalPlaces}, Governorates: ${totalGovs}, Events: ${totalEvents}, Seasons: ${totalSeasons}, People: ${dbPeople.length}, Food: ${dbFood.length}`
         );
 
         return {
