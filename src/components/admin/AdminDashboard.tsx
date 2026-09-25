@@ -13,6 +13,7 @@ import { AdminMediaUploader } from '../common/AdminMediaUploader.tsx';
 import { AdminMediaLibraryPage } from './AdminMediaLibraryPage.tsx';
 import { AdminReportsManager } from './AdminReportsManager.tsx';
 import {
+  Calendar,
   AlertTriangle,
   ShieldAlert,
   TrendingUp,
@@ -5171,6 +5172,7 @@ export const AdminDashboard: React.FC = () => {
           {activeTab === 'reports' && (
             <AdminReportsManager onTicketCountChange={setPendingReportsCount} />
           )}
+
         </main>
       </div>
 

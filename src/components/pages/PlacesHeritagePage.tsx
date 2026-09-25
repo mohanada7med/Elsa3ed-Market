@@ -12,8 +12,10 @@ import {
   Sparkles,
   X,
   ChevronDown,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { WAHEmptyState } from '../../design-system/WAHEmptyState';
+import { PlaceEditorModal } from './PlaceEditorModal';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -95,12 +97,16 @@ interface PlaceTimelineCardProps {
   place: HeritagePlace;
   index: number;
   onNavigate: (slug: string) => void;
+  isAdmin?: boolean;
+  onEdit?: (place: HeritagePlace) => void;
 }
 
 const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
   place,
   index,
   onNavigate,
+  isAdmin,
+  onEdit,
 }) => {
   const { ref, isInView } = useInView();
   const isEven = index % 2 === 0;
@@ -255,32 +261,63 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           </p>
         </button>
 
-        <button
-          type="button"
-          onClick={() => onNavigate(place.slug)}
-          className="
-            mt-7 flex w-fit items-center gap-3 text-xs font-black
-            transition-colors hover:text-primary cursor-pointer
-          "
-        >
-          اعرف الحكاية
-          <span
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate(place.slug)}
             className="
-              flex h-8 w-8 items-center justify-center rounded-full
-              border border-black/10 transition-colors hover:border-primary
-              dark:border-white/10
+              flex w-fit items-center gap-3 text-xs font-black
+              transition-colors hover:text-primary cursor-pointer
             "
           >
-            <ArrowLeft className="h-3.5 w-3.5" />
-          </span>
-        </button>
+            اعرف الحكاية
+            <span
+              className="
+                flex h-8 w-8 items-center justify-center rounded-full
+                border border-black/10 transition-colors hover:border-primary
+                dark:border-white/10
+              "
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+            </span>
+          </button>
+
+          {isAdmin && onEdit && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(place);
+              }}
+              className="
+                flex items-center gap-1.5
+                px-3.5 py-1.5
+                rounded-full
+                bg-primary
+                hover:bg-primary-hover
+                text-white
+                text-xs font-bold
+                transition-all
+                shadow-sm
+                cursor-pointer
+                hover:scale-105 active:scale-95
+              "
+              title={`تعديل بيانات وميديا ${place.title}`}
+            >
+              <SlidersHorizontal size={12} />
+              <span>تعديل وميديا المعلم</span>
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );
 };
 
 export const PlacesHeritagePage: React.FC = () => {
-  const { navigateToPlace, setActivePage } = useApp();
+  const { navigateToPlace, setActivePage, currentUser, currentRole } = useApp();
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const [editingPlace, setEditingPlace] = useState<HeritagePlace | null>(null);
 
   const cachedPlaces = wahApi.getCachedPlaces();
   const hasValidCache = Boolean(cachedPlaces && cachedPlaces.length > 0);
@@ -823,6 +860,8 @@ export const PlacesHeritagePage: React.FC = () => {
                   place={place}
                   index={index}
                   onNavigate={navigateToPlace}
+                  isAdmin={isAdmin}
+                  onEdit={(p) => setEditingPlace(p)}
                 />
               ))}
 
@@ -928,6 +967,22 @@ export const PlacesHeritagePage: React.FC = () => {
           WAH / 2026
         </p>
       </footer>
+      {/* ========================================================================= */}
+      {/* MODAL: LIVE LANDMARK EDITOR (ADMIN ONLY)                                  */}
+      {/* ========================================================================= */}
+      {editingPlace && (
+        <PlaceEditorModal
+          isOpen={!!editingPlace}
+          onClose={() => setEditingPlace(null)}
+          place={editingPlace}
+          onSaved={(updatedPlace) => {
+            setPlaces((prev) =>
+              prev.map((p) => (p.id === updatedPlace.id || p.slug === updatedPlace.slug ? updatedPlace : p))
+            );
+            setEditingPlace(null);
+          }}
+        />
+      )}
     </div>
   );
 };

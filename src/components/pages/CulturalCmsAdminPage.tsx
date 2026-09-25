@@ -68,7 +68,6 @@ import {
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { AdminMediaLibraryPage } from '../admin/AdminMediaLibraryPage';
-import { AdminEventsManagerComponent } from './AdminEventsManagerPage';
 import { i } from 'motion/react-client';
 
 type GovernorateSubTab =
@@ -1398,35 +1397,114 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Cultural Events & Moulids Management Component */}
+              {/* Cultural Events & Moulids Section (احتفالات وليالي الصعيد والموالد) */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <div>
-                    <h3 className="text-base font-bold font-serif flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary" />
-                      <span>إدارة الموالد والمواسم والأعياد الصعيدية الكاملة</span>
-                    </h3>
-                    <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                      إدارة وتوثيق احتفالات وليالي الصعيد مع الفيديوهات والصور وتخزينها في قاعدة البيانات.
-                    </p>
-                  </div>
+                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span>احتفالات وليالي وموالد الصعيد التراثية ({events.length})</span>
+                  </h3>
                   <button
                     type="button"
-                    onClick={() => setActivePage('admin-events')}
-                    className="px-3.5 py-2 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                    onClick={() => {
+                      setEditingEntityType('event');
+                      setEditingItem(null);
+                      setIsEditModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 rounded-xl text-xs font-bold text-primary flex items-center gap-1 cursor-pointer border border-black/10 dark:border-white/10"
                   >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>فتح اللوحة المستقلة الشاملة</span>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>إضافة ليلة أو احتفال</span>
                   </button>
                 </div>
 
-                {/* Embedded Manager */}
-                <div className="pt-2">
-                  <AdminEventsManagerComponent
-                    governorateName={activeGov?.name}
-                    governorateId={activeGov?.id}
-                  />
-                </div>
+                {events.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="w-12 h-12 text-black/30 dark:text-white/30 mx-auto mb-3" />
+                    <h4 className="text-sm font-bold">لا توجد احتفالات أو موالد مسجلة حالياً لهذه المحافظة</h4>
+                    <p className="text-xs text-black/60 dark:text-white/60 mt-1">
+                      وثّق ليالي الذكر وموالد الأولياء ومهرجانات التراث في {activeGov.name}.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {events.map((eventItem) => (
+                      <div
+                        key={eventItem.id}
+                        className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 shadow-lg backdrop-blur-xl flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-start justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={
+                                  eventItem.coverImage ||
+                                  'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=120'
+                                }
+                                alt={eventItem.title}
+                                className="w-12 h-12 rounded-xl object-cover border border-black/10 dark:border-white/10"
+                              />
+                              <div>
+                                <h4 className="font-bold text-sm line-clamp-1">{eventItem.title}</h4>
+                                <p className="text-[11px] text-primary font-bold">
+                                  {eventItem.eventDate || eventItem.dateText || 'موسم سنوي'}
+                                </p>
+                              </div>
+                            </div>
+                            {renderStatusBadge(eventItem.status)}
+                          </div>
+                          <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2 mb-2 leading-relaxed">
+                            {eventItem.description}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-black/50 dark:text-white/50">
+                            <span className="px-2 py-0.5 rounded-md bg-black/5 dark:bg-cream/5 font-semibold">
+                              {eventItem.cityName || eventItem.locationName || activeGov.name}
+                            </span>
+                            {eventItem.category && (
+                              <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary font-bold">
+                                {eventItem.category === 'moulid'
+                                  ? 'مولد وليلة ذكر'
+                                  : eventItem.category === 'harvest'
+                                  ? 'موسم زراعي'
+                                  : eventItem.category === 'cultural_night'
+                                  ? 'فروسية ومرماح'
+                                  : 'احتفال تراثي'}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between mt-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setDeleteConfirmation({
+                                isOpen: true,
+                                item: eventItem,
+                                entityType: 'events',
+                              })
+                            }
+                            className="text-xs text-rose-600 hover:underline flex items-center gap-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>حذف</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingEntityType('event');
+                              setEditingItem(eventItem);
+                              setIsEditModalOpen(true);
+                            }}
+                            className="text-xs text-primary hover:underline font-bold cursor-pointer"
+                          >
+                            تعديل الاحتفال
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1979,6 +2057,15 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
     editingItem?.events || []
   );
 
+  // Event & Moulid Specific Fields
+  const [eventDate, setEventDate] = useState(editingItem?.eventDate || editingItem?.dateText || 'موسم سنوي');
+  const [ritualsText, setRitualsText] = useState(
+    Array.isArray(editingItem?.rituals) ? editingItem.rituals.join('\n') : ''
+  );
+  const [famousFoodsText, setFamousFoodsText] = useState(
+    Array.isArray(editingItem?.famousFoods) ? editingItem.famousFoods.join('\n') : ''
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -2158,6 +2245,15 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           authUser
         );
       } else if (entityType === 'event') {
+        const parsedRituals = ritualsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const parsedFoods = famousFoodsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
         await wahApi.saveEvent(
           {
             id: editingItem?.id,
@@ -2165,11 +2261,19 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             slug,
             governorateId: govId,
             governorateName: selectedGovName,
-            category: (category as any) || 'festival',
-            locationName: selectedGovName,
-            eventDate: 'موسم سنوي',
-            description: fullContent.trim() || shortDesc.trim(),
+            category: (category as any) || 'moulid',
+            cityName: city.trim() || undefined,
+            locationName: city.trim() || selectedGovName,
+            eventDate: eventDate.trim() || 'موسم سنوي',
+            description: shortDesc.trim() || fullContent.trim(),
+            traditions: fullContent.trim() || undefined,
+            rituals: parsedRituals.length > 0 ? parsedRituals : undefined,
+            famousFoods: parsedFoods.length > 0 ? parsedFoods : undefined,
             coverImage: coverImage.trim() || 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800',
+            videoUrl: videoUrl.trim() || undefined,
+            videos: videoUrl.trim() ? [videoUrl.trim()] : (editingItem?.videos || []),
+            gallery: gallery.length > 0 ? gallery : undefined,
+            coordinates,
             status: verificationStatus === 'verified' ? 'approved' : 'pending_review'
           },
           authUser
@@ -2295,8 +2399,8 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             helperText="ارفع صورة معتمدة من جهازك أو اعتمد رابطاً خارجياً للظهور في المنصة والخريطة"
           />
 
-          {/* Video and Gallery uploaders for places, crafts, and stories */}
-          {(entityType === 'place' || entityType === 'craft' || entityType === 'story') && (
+          {/* Video and Gallery uploaders for places, crafts, stories, and events */}
+          {(entityType === 'place' || entityType === 'craft' || entityType === 'story' || entityType === 'event') && (
             <div className="space-y-4 pt-2 border-t border-black/10 dark:border-white/10">
               <div className="bg-black/[0.02] dark:bg-cream/[0.02] p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5">
                 <div className="flex items-center justify-between">
@@ -2331,9 +2435,11 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       ? 'فيديو الحرفة التوثيقي'
                       : entityType === 'story'
                         ? 'فيديو القصة التوثيقي'
-                        : 'فيديو المعلم أو الموقع التوثيقي'
+                        : entityType === 'event'
+                          ? 'فيديو الليلة أو الاحتفال التوثيقي'
+                          : 'فيديو المعلم أو الموقع التوثيقي'
                   }
-                  helperText="ارفع فيديو ليظهر في مشغل الفيديو ومعرض المكان أو الحرفة للزوار"
+                  helperText="ارفع فيديو ليظهر في مشغل الفيديو ومعرض المكان أو الاحتفال للزوار"
                 />
               </div>
 
@@ -2341,13 +2447,13 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-black text-primary flex items-center gap-1.5">
                     <ImageIcon className="w-4 h-4" />
-                    <span>معرض صور إضافية للمكان (Gallery)</span>
+                    <span>معرض صور إضافية ({gallery.length} صورة)</span>
                   </span>
                   <span className="text-[11px] text-black/50 dark:text-white/50">{gallery.length} صورة</span>
                 </div>
                 <AdminMediaUploader
                   entityType={entityType}
-                  entitySlug={editingItem?.slug || title || 'place-gallery'}
+                  entitySlug={editingItem?.slug || title || 'media-gallery'}
                   entityId={editingItem?.id}
                   entityTitle={title}
                   mediaCategory="image"
@@ -2363,8 +2469,8 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                       setGallery((prev) => Array.from(new Set([...prev, uploaded])));
                     }
                   }}
-                  label="ألبوم صور إضافية للمعلم"
-                  helperText="ارفع مجموعة صور إضافية للمعلم التراثي ليتمكن الزوار من تصفحها بالمعرض"
+                  label="ألبوم صور إضافية"
+                  helperText="ارفع مجموعة صور إضافية ليتمكن الزوار من تصفحها بالمعرض"
                 />
               </div>
             </div>
@@ -2427,6 +2533,73 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
               className="w-full bg-black/[0.035] dark:bg-cream/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-primary"
             />
           </div>
+
+          {/* Event & Moulid Specific Fields */}
+          {entityType === 'event' && (
+            <div className="bg-primary/5 dark:bg-primary/10 border border-primary/30 rounded-2xl p-4 sm:p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-primary/20">
+                <span className="text-xs font-black text-primary flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>بيانات وتفاصيل الاحتفال والمولد وطقوس الليلة</span>
+                </span>
+                <span className="text-[11px] text-stone-500 dark:text-stone-400 font-bold">توثيق مباشر</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                    موعد وتاريخ الليلة الكبيرة أو الفعالية:
+                  </label>
+                  <input
+                    type="text"
+                    value={eventDate}
+                    onChange={(e) => setEventDate(e.target.value)}
+                    placeholder="مثال: النصف من شعبان، الليلة الكبيرة في رجب..."
+                    className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-primary font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                    المدينة أو القرية أو ساحة المقام:
+                  </label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="مثال: ساحة سيدي عبد الرحيم القنائي، غرب النيل..."
+                    className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl px-3 py-2 border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                  أبرز طقوس ومراسم وعادات الليلة (كل طقس في سطر):
+                </label>
+                <textarea
+                  rows={3}
+                  value={ritualsText}
+                  onChange={(e) => setRitualsText(e.target.value)}
+                  placeholder="دورة المحمل وركوب الخيل&#10;حلقات الذكر والمديح الصوفي&#10;سباقات المرماح والفروسية الشعبية&#10;حلبات التحطيب بالعصا"
+                  className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl p-3 border border-black/10 dark:border-white/10 outline-none focus:border-primary resize-none leading-relaxed"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-black/60 dark:text-white/60 mb-1">
+                  أكلات ومشروبات النفحة والضيافة (كل صنف في سطر):
+                </label>
+                <textarea
+                  rows={2}
+                  value={famousFoodsText}
+                  onChange={(e) => setFamousFoodsText(e.target.value)}
+                  placeholder="الفتة الصعيدي باللحمة البلدي&#10;الكشك الصعيدي المطبوخ&#10;شربات الورد ومشروب القرفة"
+                  className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl p-3 border border-black/10 dark:border-white/10 outline-none focus:border-primary resize-none leading-relaxed"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Extended Heritage Place Fields (Live Database Fields in MongoDB) */}
           {entityType === 'place' && (

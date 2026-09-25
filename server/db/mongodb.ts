@@ -76,8 +76,8 @@ class MemoryStore {
   culturalCrafts: CulturalCraftDoc[] = [];
   wahStories: WahStoryDoc[] = [];
   localPeople: LocalPersonDoc[] = [];
-  upperEgyptFood: UpperEgyptFoodDoc[] = [...AUTHENTIC_WAH_FOOD];
-  culturalEvents: CulturalEventDoc[] = [...AUTHENTIC_WAH_EVENTS];
+  upperEgyptFood: UpperEgyptFoodDoc[] = [];
+  culturalEvents: CulturalEventDoc[] = [];
   seasons: SeasonDoc[] = [];
   media: import('../models/types.ts').MediaAssetDoc[] = [];
 
@@ -222,20 +222,10 @@ async function seedMongoDatabase(database: Db) {
       Logger.info('[MongoDB] Initialized authentic Upper Egypt food collection');
     }
 
-    // Initialize authentic Upper Egypt events & seasons database
+    // Do not forcibly overwrite or upsert any events or seasons - data is fetched strictly from MongoDB
     const eventsCount = await database.collection('wah_events').countDocuments().catch(() => 0);
     if (eventsCount === 0) {
-      await database.collection('wah_events').insertMany(AUTHENTIC_WAH_EVENTS as any[]);
-      Logger.info('[MongoDB] Initialized authentic Upper Egypt events & seasons collection');
-    } else {
-      for (const evt of AUTHENTIC_WAH_EVENTS) {
-        await database.collection('wah_events').updateOne(
-          { $or: [{ id: evt.id }, { slug: evt.slug }] },
-          { $set: evt },
-          { upsert: true }
-        );
-      }
-      Logger.info('[MongoDB] Synced authentic Upper Egypt events & seasons');
+      Logger.info('[MongoDB] wah_events collection is ready');
     }
 
     // Parallel index creation grouped by collection to ensure optimal performance and integrity

@@ -269,7 +269,12 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
           status: { $ne: 'archived' }
         }).toArray(),
         db.collection('wah_seasons').find({
-          $or: [{ governorateId: gov.id }, { governorateName: gov.name }],
+          $or: [
+            { governorateId: gov.id },
+            { governorateId: gov.slug },
+            { governorateId: `gov-${gov.slug}` },
+            { governorateName: gov.name }
+          ],
           status: { $ne: 'archived' }
         }).toArray(),
         db.collection('wah_cities').find({
@@ -350,6 +355,16 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       location: e.location || e.locationName
     }));
 
+    const normalizedSeasons = seasons.map((s: any) => ({
+      ...s,
+      timeOfYear: s.timeOfYear || `${s.startPeriod || ''} - ${s.endPeriod || ''}`.trim() || 'موسمي',
+      eventDate: s.eventDate || `موسم سنوي (${s.startPeriod || ''} - ${s.endPeriod || ''})`,
+      startDate: s.startDate || s.startPeriod,
+      endDate: s.endDate || s.endPeriod,
+      location: s.location || (s.cityName ? `${s.cityName}، ${s.governorateName || gov.name}` : (gov.name || s.governorateName)),
+      category: s.category || 'harvest'
+    }));
+
     const populatedGov = {
       ...gov,
       places: normalizedPlaces,
@@ -358,7 +373,7 @@ router.get('/governorates/:slugOrId', async (req: Request, res: Response) => {
       people: normalizedPeople,
       foods: normalizedFoods,
       events: normalizedEvents,
-      seasons,
+      seasons: normalizedSeasons,
       cities,
       villages,
       products
@@ -1803,11 +1818,73 @@ router.get('/events/:slugOrId', async (req: Request, res: Response) => {
       event = await db.collection<CulturalEventDoc>('wah_events').findOne({
         $or: [{ slug: slugOrId }, { id: slugOrId }]
       });
+      if (!event) {
+        const season = await db.collection<SeasonDoc>('wah_seasons').findOne({
+          $or: [{ slug: slugOrId }, { id: slugOrId }]
+        });
+        if (season) {
+          event = {
+            id: season.id,
+            title: season.title,
+            slug: season.slug,
+            governorateId: season.governorateId,
+            governorateName: season.governorateName,
+            cityName: season.cityName || season.governorateName,
+            location: season.cityName ? `${season.cityName}، ${season.governorateName}` : season.governorateName,
+            locationName: season.cityName || season.governorateName,
+            category: (season.category as any) || 'harvest',
+            eventDate: `موسم سنوي (${season.startPeriod || ''} - ${season.endPeriod || ''})`,
+            startDate: season.startPeriod,
+            endDate: season.endPeriod,
+            dateText: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            season: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            timeOfYear: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            description: season.description,
+            coverImage: season.coverImage,
+            famousFoods: season.relatedFoods || [],
+            rituals: season.relatedStories || ['أهازيج التراث الصعيدي', 'طقوس الحصاد والعمل المشترك'],
+            activities: season.relatedCrafts || [],
+            status: season.status || 'approved',
+            createdAt: season.createdAt,
+            updatedAt: season.updatedAt
+          } as any;
+        }
+      }
     } else {
       event = memoryDb.culturalEvents.find((e) => e.slug === slugOrId || e.id === slugOrId) || null;
+      if (!event) {
+        const season = memoryDb.seasons.find((s) => s.slug === slugOrId || s.id === slugOrId);
+        if (season) {
+          event = {
+            id: season.id,
+            title: season.title,
+            slug: season.slug,
+            governorateId: season.governorateId,
+            governorateName: season.governorateName,
+            cityName: season.cityName || season.governorateName,
+            location: season.cityName ? `${season.cityName}، ${season.governorateName}` : season.governorateName,
+            locationName: season.cityName || season.governorateName,
+            category: (season.category as any) || 'harvest',
+            eventDate: `موسم سنوي (${season.startPeriod || ''} - ${season.endPeriod || ''})`,
+            startDate: season.startPeriod,
+            endDate: season.endPeriod,
+            dateText: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            season: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            timeOfYear: `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+            description: season.description,
+            coverImage: season.coverImage,
+            famousFoods: season.relatedFoods || [],
+            rituals: season.relatedStories || ['أهازيج التراث الصعيدي', 'طقوس الحصاد والعمل المشترك'],
+            activities: season.relatedCrafts || [],
+            status: season.status || 'approved',
+            createdAt: season.createdAt,
+            updatedAt: season.updatedAt
+          } as any;
+        }
+      }
     }
 
-    if (!event) return res.status(404).json({ success: false, error: 'الفعالية غير موجودة' });
+    if (!event) return res.status(404).json({ success: false, error: 'الفعالية أو الموسم غير موجود' });
     return res.json({ success: true, data: event });
   } catch (err: any) {
     return res.status(500).json({ success: false, error: 'فشل جلب تفاصيل الفعالية' });
@@ -2485,22 +2562,53 @@ router.get('/seasons', async (req: Request, res: Response) => {
 
     if (isMongo && db) {
       const query: any = {};
-      if (governorateId) query.governorateId = governorateId;
-      if (governorateName) query.governorateName = governorateName;
-      if (status) query.status = status;
-      if (category) query.category = category;
-      if (search && typeof search === 'string') {
+      if (governorateId && typeof governorateId === 'string') {
+        const clean = governorateId.trim();
+        const withGov = clean.startsWith('gov-') ? clean : `gov-${clean}`;
+        const withoutGov = clean.replace(/^gov-/, '');
         query.$or = [
-          { title: { $regex: search, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } }
+          { governorateId: clean },
+          { governorateId: withGov },
+          { governorateId: withoutGov },
+          { governorateName: clean }
         ];
+      }
+      if (governorateName && typeof governorateName === 'string') {
+        query.governorateName = governorateName;
+      }
+      if (status && typeof status === 'string') query.status = status;
+      if (category && typeof category === 'string') query.category = category;
+      if (search && typeof search === 'string') {
+        const searchRegex = { $regex: search, $options: 'i' };
+        if (query.$or) {
+          query.$and = [
+            { $or: query.$or },
+            { $or: [{ title: searchRegex }, { description: searchRegex }] }
+          ];
+          delete query.$or;
+        } else {
+          query.$or = [
+            { title: searchRegex },
+            { description: searchRegex }
+          ];
+        }
       }
       const list = await db.collection<SeasonDoc>('wah_seasons').find(query).sort({ createdAt: -1 }).toArray();
       return res.json({ success: true, count: list.length, data: list });
     }
 
     let list = (memoryDb as any).seasons || [];
-    if (governorateId) list = list.filter((s: SeasonDoc) => s.governorateId === governorateId);
+    if (governorateId) {
+      const clean = String(governorateId).trim();
+      const withGov = clean.startsWith('gov-') ? clean : `gov-${clean}`;
+      const withoutGov = clean.replace(/^gov-/, '');
+      list = list.filter((s: SeasonDoc) =>
+        s.governorateId === clean ||
+        s.governorateId === withGov ||
+        s.governorateId === withoutGov ||
+        s.governorateName === clean
+      );
+    }
     if (governorateName) list = list.filter((s: SeasonDoc) => s.governorateName === governorateName);
     if (status) list = list.filter((s: SeasonDoc) => s.status === status);
     if (category) list = list.filter((s: SeasonDoc) => s.category === category);

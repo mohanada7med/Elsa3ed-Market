@@ -118,7 +118,30 @@ export const GovernorateDetailPage: React.FC = () => {
   const crafts = governorate?.crafts || [];
   const people = governorate?.people || [];
   const foods = governorate?.foods || [];
-  const events = governorate?.events || [];
+  const rawEvents = governorate?.events || [];
+  const rawSeasons = governorate?.seasons || [];
+  const events = useMemo(() => {
+    const combined = [...rawEvents];
+    for (const season of rawSeasons) {
+      if (!combined.some((e: any) => e.id === season.id || (season.slug && e.slug === season.slug))) {
+        combined.push({
+          id: season.id,
+          title: season.title,
+          slug: season.slug || season.id,
+          governorateId: season.governorateId,
+          governorateName: season.governorateName,
+          category: season.category || 'harvest',
+          eventDate: season.eventDate || `موسم سنوي (${season.startPeriod || ''} - ${season.endPeriod || ''})`,
+          timeOfYear: season.timeOfYear || `${season.startPeriod || ''} - ${season.endPeriod || ''}`,
+          description: season.description,
+          coverImage: season.coverImage,
+          locationName: season.cityName || season.governorateName,
+          status: season.status || 'approved'
+        });
+      }
+    }
+    return combined;
+  }, [rawEvents, rawSeasons]);
   const products = governorate?.products || [];
 
   const sections = useMemo(

@@ -7,6 +7,7 @@ import { CulturalEvent } from '../../types';
 import {
   ArrowLeft,
   ArrowUpLeft,
+  Calendar,
   CalendarDays,
   Clock3,
   Compass,
@@ -23,11 +24,8 @@ import {
   Film,
   Video,
   Play,
-  Edit,
-  Maximize2
+  Building2
 } from 'lucide-react';
-import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
-import { EventEditorModal } from './AdminEventsManagerPage';
 
 export const EventDetailPage: React.FC = () => {
   const {
@@ -35,16 +33,10 @@ export const EventDetailPage: React.FC = () => {
     navigateToGovernorate,
     setActivePage,
     addToast,
-    currentUser,
-    currentRole,
   } = useApp();
-  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
 
   const [event, setEvent] = useState<CulturalEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const slug =
     selectedEventSlug ||
@@ -97,29 +89,6 @@ export const EventDetailPage: React.FC = () => {
       'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1800&q=90'
     );
   }, [event]);
-
-  // Combined gallery containing the cover image as the first image + all gallery photos
-  const allGalleryImages = useMemo(() => {
-    const list: string[] = [];
-    const cover = event?.coverImage?.trim();
-    if (cover) {
-      list.push(cover);
-    }
-    if (event?.gallery && Array.isArray(event.gallery)) {
-      event.gallery.forEach((img) => {
-        const trimmed = img?.trim();
-        if (trimmed && !list.includes(trimmed)) {
-          list.push(trimmed);
-        }
-      });
-    }
-    return list;
-  }, [event?.coverImage, event?.gallery]);
-
-  const openLightbox = (index: number = 0) => {
-    setLightboxIndex(index);
-    setLightboxOpen(true);
-  };
 
   const season = useMemo(() => {
     if (!event) return 'موسم سنوي';
@@ -560,8 +529,6 @@ export const EventDetailPage: React.FC = () => {
               left-1/2
               -translate-x-1/2
               text-center
-              pointer-events-none
-              hidden xs:block
             "
           >
             <div
@@ -570,6 +537,7 @@ export const EventDetailPage: React.FC = () => {
                 font-black
                 tracking-[0.5em]
                 text-primary
+
                 dark:text-primary-hover
               "
             >
@@ -582,37 +550,6 @@ export const EventDetailPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="
-                  group
-                  flex
-                  items-center
-                  gap-1.5
-                  rounded-full
-                  bg-gradient-to-r from-amber-600 via-primary to-amber-700
-                  hover:scale-[1.03] active:scale-95
-                  text-white
-                  px-3
-                  py-2
-                  text-[10px]
-                  font-bold
-                  transition-all
-                  shadow-md shadow-primary/20
-                  cursor-pointer
-                  sm:px-3.5
-                  sm:text-xs
-                "
-                title="تعديل هذا الاحتفال وميديا الصور والفيديوهات مباشرة"
-              >
-                <Edit size={13} />
-                <span className="hidden md:inline">تعديل وميديا الاحتفال</span>
-                <span className="md:hidden">تعديل</span>
-              </button>
-            )}
-
             <button
               type="button"
               onClick={handleShare}
@@ -782,30 +719,6 @@ export const EventDetailPage: React.FC = () => {
                 <Sparkles size={11} />
                 WAH CULTURAL STORY
               </div>
-
-              {/* Cover Fullscreen Trigger */}
-              <button
-                type="button"
-                onClick={() => openLightbox(0)}
-                className="
-                  flex items-center gap-1.5
-                  rounded-full border border-white/25
-                  bg-black/35 hover:bg-black/70
-                  px-3.5 py-1.5
-                  text-[11px] font-bold text-white
-                  backdrop-blur-xl transition-all
-                  hover:scale-105 active:scale-95 cursor-pointer shadow-lg
-                "
-                title="عرض صورة الغلاف بحجم كامل"
-              >
-                <Maximize2 size={12} className="text-primary" />
-                <span>فتح الغلاف بحجم كامل</span>
-                {allGalleryImages.length > 1 && (
-                  <span className="mr-1 text-[10px] text-white/70">
-                    ({allGalleryImages.length} صور)
-                  </span>
-                )}
-              </button>
 
               <div
                 className="
@@ -1248,17 +1161,19 @@ export const EventDetailPage: React.FC = () => {
                   <ScrollText size={17} />
                 </span>
 
-                <h2
-                  className="
-                    text-2xl
-                    font-black
-                    tracking-[-0.04em]
+                <div className="flex items-center justify-between flex-wrap gap-2 w-full">
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                      tracking-[-0.04em]
 
-                    sm:text-3xl
-                  "
-                >
-                  الطقوس والمراسم
-                </h2>
+                      sm:text-3xl
+                    "
+                  >
+                    الطقوس والمراسم
+                  </h2>
+                </div>
               </div>
 
               {event.traditions ? (
@@ -1299,11 +1214,13 @@ export const EventDetailPage: React.FC = () => {
               {/* RITUALS LIST */}
               {event.rituals && event.rituals.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
-                  <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
-                      <CheckCircle2 size={18} />
-                    </span>
-                    <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                  <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <CheckCircle2 size={18} />
+                      </span>
+                      <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {event.rituals.map((ritual, rIdx) => (
@@ -1326,13 +1243,15 @@ export const EventDetailPage: React.FC = () => {
               {/* FAMOUS FOODS & DRINKS */}
               {event.famousFoods && event.famousFoods.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
-                  <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
-                      <Utensils size={18} />
-                    </span>
-                    <div>
-                      <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
-                      <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
+                  <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <Utensils size={18} />
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
+                        <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
+                      </div>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -1403,77 +1322,28 @@ export const EventDetailPage: React.FC = () => {
                 </div>
               )}
 
-              {/* GALLERY (Including coverImage + all gallery photos) */}
-              {allGalleryImages.length > 0 && (
+              {/* GALLERY */}
+              {event.gallery && event.gallery.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
-                  <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/20 text-primary">
-                        <ImageIcon size={20} />
-                      </span>
-                      <div>
-                        <h3 className="text-xl font-black sm:text-2xl font-serif">
-                          معرض لقطات من قلب الليلة والموسم
-                        </h3>
-                        <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
-                          يشمل صورة الغلاف التراثية الرئيسية وصور وتوثيقات الميدان ({allGalleryImages.length} صور)
-                        </p>
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => openLightbox(0)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary text-primary hover:text-white text-xs font-bold transition-all cursor-pointer border border-primary/20 shadow-xs hover:shadow-md"
-                    >
-                      <Maximize2 size={13} />
-                      <span>عرض المعرض بحجم كامل</span>
-                    </button>
+                  <div className="mb-6 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                      <ImageIcon size={18} />
+                    </span>
+                    <h3 className="text-xl font-black sm:text-2xl">معرض لقطات من قلب الليلة والموسم</h3>
                   </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
-                    {allGalleryImages.map((imgUrl, gIdx) => {
-                      const isCover = Boolean(event?.coverImage && imgUrl === event.coverImage);
-                      return (
-                        <div
-                          key={gIdx}
-                          onClick={() => openLightbox(gIdx)}
-                          className="group relative h-48 sm:h-64 overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black cursor-pointer shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-primary/50"
-                        >
-                          <img
-                            src={imgUrl}
-                            alt={`${event?.title || 'صورة'} - ${gIdx + 1}`}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-                            loading="lazy"
-                          />
-
-                          {/* Hover Gradient Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-3.5 sm:p-4">
-                            <div className="flex justify-end">
-                              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-md text-white shadow-md">
-                                <Maximize2 size={15} />
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-white text-xs font-bold">
-                              <span>فتح الصورة بحجم كامل</span>
-                              <span className="text-[10px] text-white/70 font-mono">
-                                {gIdx + 1} / {allGalleryImages.length}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Cover Image Badge */}
-                          {isCover && (
-                            <div className="absolute top-3 right-3 z-10">
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-black text-[10px] font-black shadow-lg backdrop-blur-md border border-white/20">
-                                <Sparkles size={11} />
-                                <span>صورة الغلاف</span>
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="grid grid-cols-2 gap-4">
+                    {event.gallery.map((imgUrl, gIdx) => (
+                      <div
+                        key={gIdx}
+                        className="group relative h-48 sm:h-64 overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-black"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`${event.title} - ${gIdx + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -1859,32 +1729,6 @@ export const EventDetailPage: React.FC = () => {
         </div>
       </section>
 
-      <div className="h-6 sm:h-10" />
-
-      {/* FULL-SIZE IMAGE LIGHTBOX MODAL */}
-      <EventImageLightboxModal
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        images={allGalleryImages}
-        initialIndex={lightboxIndex}
-        coverImage={event?.coverImage}
-        title={event?.title || 'معرض صور الليلة'}
-      />
-
-      {/* DIRECT EVENT EDIT MODAL FOR THIS CELEBRATION */}
-      {isAdmin && isEditModalOpen && event && (
-        <EventEditorModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          event={event}
-          initialTab="media"
-          onSaved={(updatedEvent) => {
-            setEvent(updatedEvent);
-            setIsEditModalOpen(false);
-            addToast('تم الحفظ بنجاح', `تم تحديث وتوثيق بيانات وميديا «${updatedEvent.title}» بنجاح`, 'success');
-          }}
-        />
-      )}
     </main>
   );
 };
