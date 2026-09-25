@@ -20,5 +20,12 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   // Remove fingerprinting headers
   res.removeHeader('X-Powered-By');
 
+  // In development: never cache responses so changes are immediately visible
+  if (process.env.NODE_ENV !== 'production') {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+
   next();
 }

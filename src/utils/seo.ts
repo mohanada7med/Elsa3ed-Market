@@ -107,14 +107,14 @@ export function generateProductSchema(product: {
     },
     ...(product.rating
       ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: product.rating,
-            reviewCount: product.reviewCount || 1,
-            bestRating: 5,
-            worstRating: 1
-          }
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: product.rating,
+          reviewCount: product.reviewCount || 1,
+          bestRating: 5,
+          worstRating: 1
         }
+      }
       : {})
   };
 }
@@ -162,12 +162,12 @@ export function generatePlaceSchema(place: {
     },
     ...(place.latitude && place.longitude
       ? {
-          geo: {
-            '@type': 'GeoCoordinates',
-            latitude: place.latitude,
-            longitude: place.longitude
-          }
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: place.latitude,
+          longitude: place.longitude
         }
+      }
       : {})
   };
 }
@@ -199,7 +199,7 @@ export function generateArticleSchema(article: {
       name: 'وه | WAH',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png'
+        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png'
       }
     },
     datePublished: article.datePublished || new Date().toISOString()

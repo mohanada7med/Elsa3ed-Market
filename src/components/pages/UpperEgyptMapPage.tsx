@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 
 const LOGO_URL =
-  'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto:eco,w_100/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png';
+  'https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=1200&auto=format&fit=crop&q=80';

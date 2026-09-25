@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { CulturalEvent } from '../../types';
@@ -18,7 +18,11 @@ import {
   Eye,
   Feather,
   Compass,
+  SlidersHorizontal,
+  Maximize2,
 } from 'lucide-react';
+import { AdminEventsManagerComponent } from './AdminEventsManagerPage';
+import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
 const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
   all: { label: 'كافة المواسم والليالي', icon: '✨' },
@@ -30,35 +34,53 @@ const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
 };
 
 export const EventsPage: React.FC = () => {
-  const { navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
+  const { navigateToEvent, setActivePage, navigateToGovernorate, currentUser, currentRole } = useApp();
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const [showAdminManager, setShowAdminManager] = useState(false);
   const [events, setEvents] = useState<CulturalEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchEvents = async () => {
-      setIsLoading(true);
-      try {
-        const data = await wahApi.getEvents();
-        if (isMounted) {
-          setEvents(data || []);
-        }
-      } catch (err) {
-        console.warn('Could not load events:', err);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-    fetchEvents();
-    return () => {
-      isMounted = false;
-    };
+  // Full-size Lightbox state
+  const [lightboxState, setLightboxState] = useState<{
+    isOpen: boolean;
+    images: string[];
+    currentIndex: number;
+    coverImage?: string;
+    title?: string;
+  }>({
+    isOpen: false,
+    images: [],
+    currentIndex: 0,
+  });
+
+  const openLightbox = (images: string[], index: number = 0, coverImage?: string, title?: string) => {
+    setLightboxState({
+      isOpen: true,
+      images,
+      currentIndex: index,
+      coverImage,
+      title,
+    });
+  };
+
+  const fetchEvents = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await wahApi.getEvents();
+      setEvents(data || []);
+    } catch (err) {
+      console.warn('Could not load events:', err);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const governorates = useMemo(() => {
     return Array.from(new Set(events.map((e) => e.governorateName))).filter(Boolean);
@@ -152,35 +174,51 @@ export const EventsPage: React.FC = () => {
             <span className="hidden sm:block">الرئيسية</span>
           </button>
 
-          <div className="absolute left-1/2 -translate-x-1/2 text-center">
+          <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none hidden xs:block">
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
-            <div className="mt-1 text-sm font-black font-serif">مواسم وليالي الصعيد</div>
+            <div className="mt-1 text-xs sm:text-sm font-black font-serif">
+              {showAdminManager ? 'إدارة احتفالات وليالي الصعيد' : 'مواسم وليالي الصعيد'}
+            </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-events')}
-              className="
-                flex items-center gap-1.5 sm:gap-2
-                rounded-full
-                bg-primary
-                text-cream
-                px-3.5 sm:px-4 py-2 sm:py-2.5
-                text-xs font-bold
-                transition-all
-                hover:bg-primary-hover
-                shadow-xs
-                cursor-pointer
-              "
-              title="إدارة بيانات المواسم والأعياد والموالد الصعيدية، وإضافة الصور والفيديوهات والتعديل"
-            >
-              <Calendar size={14} />
-              <span className="hidden md:inline">إدارة المواسم والموالد (صور وفيديوهات)</span>
-              <span className="md:hidden">إدارة المواسم</span>
-            </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowAdminManager((prev) => !prev)}
+                className={`
+                  flex items-center gap-1.5 sm:gap-2
+                  rounded-full
+                  px-3 sm:px-4 py-2
+                  text-xs font-bold
+                  transition-all duration-300
+                  cursor-pointer shadow-md
+                  ${
+                    showAdminManager
+                      ? 'bg-espresso text-cream hover:bg-black dark:bg-cream dark:text-espresso dark:hover:bg-white'
+                      : 'bg-gradient-to-r from-amber-600 via-primary to-amber-700 text-cream hover:scale-[1.03] active:scale-95 shadow-primary/20'
+                  }
+                `}
+                title="إدارة احتفالات وليالي الصعيد التراثية (خاص بالمسؤول)"
+              >
+                {showAdminManager ? (
+                  <>
+                    <Eye size={14} />
+                    <span>عرض الزوار</span>
+                  </>
+                ) : (
+                  <>
+                    <Calendar size={14} />
+                    <span>إدارة الاحتفالات</span>
+                    <span className="hidden sm:inline-block px-1.5 py-0.5 rounded-full bg-black/20 text-[9px] font-mono font-black text-amber-200">
+                      Admin
+                    </span>
+                  </>
+                )}
+              </button>
+            )}
 
             <button
               type="button"
@@ -209,9 +247,24 @@ export const EventsPage: React.FC = () => {
       </header>
 
       {/* =====================================================
-          HERO SECTION (Matching Prestige Heritage Quality)
+          MAIN BODY: SWITCH BETWEEN ADMIN MANAGER & VISITOR VIEW
       ===================================================== */}
-      <section className="relative overflow-hidden">
+      {showAdminManager ? (
+        <main className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 py-8 animate-in fade-in duration-300">
+          <AdminEventsManagerComponent
+            onNavigateBack={() => {
+              setShowAdminManager(false);
+              fetchEvents();
+            }}
+          />
+        </main>
+      ) : (
+        <>
+
+          {/* =====================================================
+              HERO SECTION (Matching Prestige Heritage Quality)
+          ===================================================== */}
+          <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-20 h-[500px] w-[500px] rounded-full border border-black/5 dark:border-white/5" />
         <div className="pointer-events-none absolute -left-32 bottom-0 h-[350px] w-[350px] rounded-full border border-black/5 dark:border-white/5" />
 
@@ -346,9 +399,37 @@ export const EventsPage: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-bold text-primary-hover">
-                  <Clock size={14} />
-                  <span>{featuredEvent.timeOfYear || featuredEvent.eventDate}</span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const allImgs: string[] = [];
+                      if (featuredEvent.coverImage) allImgs.push(featuredEvent.coverImage);
+                      if (featuredEvent.gallery && Array.isArray(featuredEvent.gallery)) {
+                        featuredEvent.gallery.forEach((g) => {
+                          if (g && !allImgs.includes(g)) allImgs.push(g);
+                        });
+                      }
+                      openLightbox(allImgs, 0, featuredEvent.coverImage, featuredEvent.title);
+                    }}
+                    className="
+                      flex items-center gap-1.5
+                      rounded-full border border-white/25
+                      bg-black/40 hover:bg-black/70
+                      px-3.5 py-1 text-xs font-bold text-white
+                      backdrop-blur-md transition-all hover:scale-105 active:scale-95 cursor-pointer
+                    "
+                    title="فتح صورة الغلاف بحجم كامل"
+                  >
+                    <Maximize2 size={12} className="text-primary" />
+                    <span>فتح الغلاف بحجم كامل</span>
+                  </button>
+
+                  <div className="flex items-center gap-2 text-xs font-bold text-primary-hover">
+                    <Clock size={14} />
+                    <span>{featuredEvent.timeOfYear || featuredEvent.eventDate}</span>
+                  </div>
                 </div>
               </div>
 
@@ -745,8 +826,8 @@ export const EventsPage: React.FC = () => {
                         {String(index + 1).padStart(2, '0')}
                       </div>
 
-                      {/* Category Badge */}
-                      <div className="absolute left-4 top-4">
+                      {/* Category Badge & Zoom Button */}
+                      <div className="absolute left-4 top-4 z-10 flex items-center gap-1.5">
                         <span
                           className="
                             inline-flex items-center gap-1
@@ -762,6 +843,33 @@ export const EventsPage: React.FC = () => {
                         >
                           {categoryLabel}
                         </span>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const allImgs: string[] = [];
+                            if (event.coverImage) allImgs.push(event.coverImage);
+                            if (event.gallery && Array.isArray(event.gallery)) {
+                              event.gallery.forEach((g) => {
+                                if (g && !allImgs.includes(g)) allImgs.push(g);
+                              });
+                            }
+                            if (allImgs.length === 0 && image) allImgs.push(image);
+                            openLightbox(allImgs, 0, event.coverImage, event.title);
+                          }}
+                          className="
+                            flex h-6 w-6 items-center justify-center
+                            rounded-full border border-white/20
+                            bg-black/40 hover:bg-primary hover:text-black
+                            text-white
+                            backdrop-blur-md transition-all
+                            hover:scale-110 active:scale-95 cursor-pointer shadow-xs
+                          "
+                          title="تكبير وتصفح الصور بحجم كامل"
+                        >
+                          <Maximize2 size={11} />
+                        </button>
                       </div>
 
                       {/* Bottom Info inside Image */}
@@ -892,6 +1000,18 @@ export const EventsPage: React.FC = () => {
           </div>
         </div>
       </section>
+        </>
+      )}
+
+      {/* FULL-SIZE IMAGE LIGHTBOX MODAL */}
+      <EventImageLightboxModal
+        isOpen={lightboxState.isOpen}
+        onClose={() => setLightboxState((prev) => ({ ...prev, isOpen: false }))}
+        images={lightboxState.images}
+        initialIndex={lightboxState.currentIndex}
+        coverImage={lightboxState.coverImage}
+        title={lightboxState.title}
+      />
     </div>
   );
 };

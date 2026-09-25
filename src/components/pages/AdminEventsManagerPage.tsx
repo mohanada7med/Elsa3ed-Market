@@ -33,10 +33,12 @@ import {
   Building2,
   Wheat,
   Share2,
-  Award
+  Award,
+  Maximize2
 } from 'lucide-react';
 import { AdminMediaUploader } from '../common/AdminMediaUploader';
 import { isVideoUrl, getOptimizedVideoUrl } from '../../utils/cloudinaryMedia';
+import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
 // Upper Egypt Governorates List
 const UPPER_EGYPT_GOVERNORATES = [
@@ -86,13 +88,13 @@ const DIALECT_FOOD_SUGGESTIONS = [
 function getVideoEmbedUrl(url: string): string | null {
   if (!url) return null;
   const trimmed = url.trim();
-  
+
   // YouTube watch link
   const ytMatch = trimmed.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
   if (ytMatch && ytMatch[1]) {
     return `https://www.youtube.com/embed/${ytMatch[1]}`;
   }
-  
+
   // Vimeo
   const vimeoMatch = trimmed.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
   if (vimeoMatch && vimeoMatch[1]) {
@@ -130,6 +132,29 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
     isOpen: boolean;
     event: CulturalEvent | null;
   }>({ isOpen: false, event: null });
+
+  // Lightbox State
+  const [lightboxState, setLightboxState] = useState<{
+    isOpen: boolean;
+    images: string[];
+    currentIndex: number;
+    coverImage?: string;
+    title?: string;
+  }>({
+    isOpen: false,
+    images: [],
+    currentIndex: 0,
+  });
+
+  const openLightbox = (images: string[], index: number = 0, coverImage?: string, title?: string) => {
+    setLightboxState({
+      isOpen: true,
+      images,
+      currentIndex: index,
+      coverImage,
+      title,
+    });
+  };
 
   // Load events from database
   const loadEvents = async (silent = false) => {
@@ -258,11 +283,17 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
 
             <button
               type="button"
-              onClick={() => setActivePage('events')}
+              onClick={() => {
+                if (onNavigateBack) {
+                  onNavigateBack();
+                } else {
+                  setActivePage('events');
+                }
+              }}
               className="px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/15 text-cream/90 font-medium text-sm flex items-center gap-1.5 border border-white/10 transition-all cursor-pointer"
             >
               <Eye className="w-4 h-4" />
-              <span>معاينة صفحة الزوار</span>
+              <span>{onNavigateBack ? 'العودة لصفحة الزوار' : 'معاينة صفحة الزوار'}</span>
             </button>
           </div>
         </div>
@@ -380,11 +411,10 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
           <button
             type="button"
             onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer ${
-              selectedCategory === 'all'
+            className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer ${selectedCategory === 'all'
                 ? 'bg-primary text-cream font-bold'
                 : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
-            }`}
+              }`}
           >
             الكل ({events.length})
           </button>
@@ -395,11 +425,10 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                  selectedCategory === cat.id
+                className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer flex items-center gap-1 ${selectedCategory === cat.id
                     ? 'bg-primary text-cream font-bold'
                     : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
-                }`}
+                  }`}
               >
                 <span>{cat.icon}</span>
                 <span>{cat.label}</span>
@@ -471,7 +500,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                     )}
                   </div>
 
-                  {/* Media badges (Videos & Gallery) */}
+                  {/* Media badges (Videos & Gallery & Fullscreen preview) */}
                   <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10">
                     {hasVideo && (
                       <span className="px-2.5 py-1 rounded-full bg-rose-600/90 text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
@@ -479,12 +508,26 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                         <span>فيديو 🎥</span>
                       </span>
                     )}
-                    {galleryCount > 0 && (
-                      <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 border border-white/10">
-                        <ImageIcon className="w-3 h-3" />
-                        <span>{galleryCount} صور</span>
-                      </span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const allImgs: string[] = [];
+                        if (event.coverImage) allImgs.push(event.coverImage);
+                        if (event.gallery && Array.isArray(event.gallery)) {
+                          event.gallery.forEach((g) => {
+                            if (g && !allImgs.includes(g)) allImgs.push(g);
+                          });
+                        }
+                        if (allImgs.length === 0 && event.coverImage) allImgs.push(event.coverImage);
+                        openLightbox(allImgs, 0, event.coverImage, event.title);
+                      }}
+                      className="px-2.5 py-1 rounded-full bg-black/60 hover:bg-primary hover:text-black backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 border border-white/10 transition-all cursor-pointer shadow-sm"
+                      title="فتح صور الفعالية بحجم كامل"
+                    >
+                      <Maximize2 className="w-3 h-3" />
+                      <span>{galleryCount + (event.coverImage ? 1 : 0)} صور</span>
+                    </button>
                   </div>
 
                   {/* Date Badge over image bottom */}
@@ -656,6 +699,16 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
           </div>
         </div>
       )}
+
+      {/* Lightbox for Admin viewing */}
+      <EventImageLightboxModal
+        isOpen={lightboxState.isOpen}
+        onClose={() => setLightboxState((prev) => ({ ...prev, isOpen: false }))}
+        images={lightboxState.images}
+        initialIndex={lightboxState.currentIndex}
+        coverImage={lightboxState.coverImage}
+        title={lightboxState.title}
+      />
     </div>
   );
 };
@@ -708,24 +761,28 @@ export const AdminEventsManagerPage: React.FC = () => {
 // ============================================================================
 // MODAL: RICH EVENT EDITOR WITH DIALECT NARRATIVES, PHOTOS & VIDEOS
 // ============================================================================
-interface EventEditorModalProps {
+export interface EventEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   event: CulturalEvent | null;
   lockedGovernorate?: string;
+  initialTab?: 'basic' | 'dialect_content' | 'media' | 'preview';
   onSaved: (savedEvent: CulturalEvent) => void;
 }
 
-const EventEditorModal: React.FC<EventEditorModalProps> = ({
+export const EventEditorModal: React.FC<EventEditorModalProps> = ({
   isOpen,
   onClose,
   event,
   lockedGovernorate,
+  initialTab = 'basic',
   onSaved
 }) => {
   const { currentUser, addToast } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'basic' | 'dialect_content' | 'media' | 'preview'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'dialect_content' | 'media' | 'preview'>(
+    initialTab || 'basic'
+  );
 
   // Form fields
   const [title, setTitle] = useState(event?.title || '');
@@ -776,6 +833,37 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
   const [lng, setLng] = useState<string>(event?.coordinates?.lng?.toString() || '');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Sync state whenever event or isOpen changes
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(event?.title || '');
+      setGovernorateName(event?.governorateName || lockedGovernorate || 'قنا');
+      setCityName(event?.cityName || '');
+      setLocationName(event?.locationName || '');
+      setCategory(event?.category || 'moulid');
+      setEventDate(event?.eventDate || 'النصف من شهر شعبان (سنوياً)');
+      setStartDate(event?.startDate || '');
+      setEndDate(event?.endDate || '');
+      setEventTime(event?.eventTime || 'من بعد صلاة العصر وحتى صلاة الفجر');
+      setSeason(event?.season || 'موسم سنوي');
+      setDescription(event?.description || '');
+      setTraditions(event?.traditions || '');
+      setRitualsText(event?.rituals && event.rituals.length > 0 ? event.rituals.join('\n') : '');
+      setFamousFoodsText(event?.famousFoods && event.famousFoods.length > 0 ? event.famousFoods.join('\n') : '');
+      setActivitiesText(event?.activities && event.activities.length > 0 ? event.activities.join('\n') : '');
+      setSourceName(event?.sourceName || 'أطلس المأثورات الشعبية ومجتمع صعيد مصر');
+      setCoverImage(event?.coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200');
+      setVideoUrl(event?.videoUrl || '');
+      setAdditionalVideos(event?.videos && event.videos.length > 0 ? event.videos : []);
+      setGallery(event?.gallery && event.gallery.length > 0 ? event.gallery : []);
+      setLat(event?.coordinates?.lat?.toString() || '');
+      setLng(event?.coordinates?.lng?.toString() || '');
+      if (initialTab) {
+        setActiveTab(initialTab);
+      }
+    }
+  }, [isOpen, event, lockedGovernorate, initialTab]);
 
   // Quick helper to insert suggested dialect text
   const addRitualSuggestion = (suggestion: string) => {
@@ -904,16 +992,16 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
   const primaryVideoEmbed = getVideoEmbedUrl(videoUrl);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-sm animate-in fade-in overflow-y-auto">
-      <div className="bg-white dark:bg-espresso-950 rounded-[2.5rem] max-w-4xl w-full max-h-[92vh] flex flex-col border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden my-auto">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
+      <div className="bg-white dark:bg-[#181411] rounded-3xl sm:rounded-[2.5rem] max-w-4xl w-full h-[90vh] max-h-[860px] flex flex-col border border-black/10 dark:border-white/10 shadow-2xl overflow-hidden my-auto">
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02]">
+        <div className="px-6 py-4 sm:py-5 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-black/[0.02] dark:bg-white/[0.02] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-primary/20 text-primary flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-serif font-black">
+              <h2 className="text-base sm:text-lg font-serif font-black text-espresso dark:text-cream">
                 {event ? `تعديل احتفال: ${event.title}` : 'إضافة احتفال أو موسم صعيدي جديد'}
               </h2>
               <p className="text-xs text-black/60 dark:text-white/60">
@@ -932,692 +1020,691 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
         </div>
 
         {/* Tab Selector */}
-        <div className="px-6 border-b border-black/10 dark:border-white/10 flex items-center gap-2 bg-black/[0.01] dark:bg-white/[0.01] overflow-x-auto text-xs font-bold">
+        <div className="px-6 border-b border-black/10 dark:border-white/10 flex items-center gap-2 bg-black/[0.01] dark:bg-white/[0.01] overflow-x-auto text-xs font-bold shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('basic')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'basic'
-                ? 'border-primary text-primary'
+            className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'basic'
+                ? 'border-primary text-primary font-black'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+              }`}
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>1. البيانات الأساسية والموقع</span>
+            <span>1. البيانات والموقع</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('dialect_content')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'dialect_content'
-                ? 'border-primary text-primary'
+            className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'dialect_content'
+                ? 'border-primary text-primary font-black'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+              }`}
           >
             <Flame className="w-3.5 h-3.5" />
-            <span>2. الحكاية بالعامية والطقوس والنفحات</span>
+            <span>2. الحكاية والطقوس</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('media')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'media'
-                ? 'border-primary text-primary'
+            className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'media'
+                ? 'border-primary text-primary font-black'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+              }`}
           >
             <Video className="w-3.5 h-3.5" />
             <span>3. الصور والفيديوهات</span>
             {(videoUrl || gallery.length > 0) && (
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
             )}
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 ${
-              activeTab === 'preview'
-                ? 'border-primary text-primary'
+            className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'preview'
+                ? 'border-primary text-primary font-black'
                 : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+              }`}
           >
             <Eye className="w-3.5 h-3.5" />
             <span>4. معاينة فورية</span>
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
-          {/* TAB 1: BASIC INFO */}
-          {activeTab === 'basic' && (
-            <div className="space-y-4 animate-in fade-in">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2 space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                    اسم الاحتفال أو المولد أو الموسم *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="مثال: ليلة القنائي الكبيرة - مولد سيدي عبد الرحيم القنائي"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">المحافظة *</label>
-                  <select
-                    value={governorateName}
-                    onChange={(e) => setGovernorateName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
-                  >
-                    {UPPER_EGYPT_GOVERNORATES.map((g) => (
-                      <option key={g.id} value={g.name}>
-                        {g.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">نوع الاحتفال *</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
-                  >
-                    {EVENT_CATEGORIES.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.icon} {c.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">المدينة أو المركز</label>
-                  <input
-                    type="text"
-                    placeholder="مثال: مدينة قنا، طهطا، إسنا، نجع حمادي"
-                    value={cityName}
-                    onChange={(e) => setCityName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                    ميدان وساحة الاحتفال الدقيقة
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="مثال: ساحة ومسجد سيدي عبد الرحيم القنائي، ميدان المرماح"
-                    value={locationName}
-                    onChange={(e) => setLocationName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                    موعد وتاريخ الليلة الكبيرة
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="مثال: النصف من شعبان سنوياً، أو 15 طوبة"
-                    value={eventDate}
-                    onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">التوقيت اليومي</label>
-                  <input
-                    type="text"
-                    placeholder="مثال: من بعد العصر حتى آذان الفجر"
-                    value={eventTime}
-                    onChange={(e) => setEventTime(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">الفصل والموسم التراثي</label>
-                  <input
-                    type="text"
-                    placeholder="مثال: موسم كسر القصب في الشتاء، مقدمات شهر رمضان"
-                    value={season}
-                    onChange={(e) => setSeason(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">جهة التوثيق والمصدر</label>
-                  <input
-                    type="text"
-                    placeholder="مثال: أطلس المأثورات الشعبية، وزارة الثقافة المصرية"
-                    value={sourceName}
-                    onChange={(e) => setSourceName(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">خط العرض (Latitude)</label>
-                  <input
-                    type="number"
-                    step="any"
-                    placeholder="مثال: 26.1551"
-                    value={lat}
-                    onChange={(e) => setLat(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">خط الطول (Longitude)</label>
-                  <input
-                    type="number"
-                    step="any"
-                    placeholder="مثال: 32.716"
-                    value={lng}
-                    onChange={(e) => setLng(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: DIALECT CONTENT, TRADITIONS & NAFHA */}
-          {activeTab === 'dialect_content' && (
-            <div className="space-y-5 animate-in fade-in">
-              <div className="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-2xl border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
-                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <p>
-                  <strong>نصيحة الصياغة بالعامية المصرية الصعيدية:</strong> اكتب تفاصيل الليلة بروح أهل البلد وطريقتهم في السرد (مثال: «أكبر لمة وفرحة في الصعيد، البيوت بتفتح بيبانها، وقدور الفول النابت بتستوي في الحارات، والشوربة بالليمون والكمون بتنزل نفحة لله»).
-                </p>
-              </div>
-
-              {/* Description in dialect */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                  حكاية الليلة والموسم بالعامية المصرية الأصيلة *
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="احكي حكاية المولد بالعامية، مين صاحب الليلة؟ وإيه اللي بيحصل فيها وليه الناس بتجيله من كل أنحاء مصر؟"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              {/* Historical traditions narrative */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                  السياق التاريخي والتقاليد الشعبية المرتبطة بالاحتفال
-                </label>
-                <textarea
-                  rows={4}
-                  placeholder="التفاصيل التاريخية: أصل العادة، متى بدأت زفة المحمل، سباق المرماح وعادات شيوخ القبائل عبر القرون..."
-                  value={traditions}
-                  onChange={(e) => setTraditions(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-primary"
-                />
-              </div>
-
-              {/* Rituals list */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                    قائمة طقوس الليلة الصعيدية (سطر لكل طقس)
-                  </label>
-                </div>
-                <textarea
-                  rows={3}
-                  placeholder="مثال:&#10;مرماح الخيل الصعيدي واستعراضات الفروسية&#10;زفة المحمل والجمال المزركشة&#10;حلقات الذكر والإنشاد الديني"
-                  value={ritualsText}
-                  onChange={(e) => setRitualsText(e.target.value)}
-                  className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                />
-                {/* Dialect suggestions */}
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="text-[10px] text-black/50 dark:text-white/50 font-bold self-center">
-                    مقترحات سريعة:
-                  </span>
-                  {DIALECT_RITUAL_SUGGESTIONS.slice(0, 4).map((sug, sIdx) => (
-                    <button
-                      key={sIdx}
-                      type="button"
-                      onClick={() => addRitualSuggestion(sug)}
-                      className="text-[10px] px-2 py-0.5 rounded-lg bg-black/5 dark:bg-cream/10 hover:bg-primary/20 hover:text-primary transition-all cursor-pointer"
-                    >
-                      + {sug}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Famous Foods / Nafha */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                  أكلات ومشروبات النفحة والضيافة (سطر لكل صنف)
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="مثال:&#10;الفول النابت الصعيدي بالليمون والكمون&#10;شربات الورد بالموز المثلج&#10;الكسكسي المسقي بشوربة اللحم"
-                  value={famousFoodsText}
-                  onChange={(e) => setFamousFoodsText(e.target.value)}
-                  className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                />
-                {/* Food suggestions */}
-                <div className="flex flex-wrap gap-1.5">
-                  <span className="text-[10px] text-black/50 dark:text-white/50 font-bold self-center">
-                    أشهر أكلات النفحة:
-                  </span>
-                  {DIALECT_FOOD_SUGGESTIONS.map((food, fIdx) => (
-                    <button
-                      key={fIdx}
-                      type="button"
-                      onClick={() => addFoodSuggestion(food)}
-                      className="text-[10px] px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer"
-                    >
-                      + {food}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Activities */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold text-black/80 dark:text-white/80">
-                  الأنشطة والفعاليات الحية (سطر لكل نشاط)
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="حلقات التحطيب التراثي بالعصا&#10;شراء الهدايا والطرابيش الشعبية وعرائس المولد"
-                  value={activitiesText}
-                  onChange={(e) => setActivitiesText(e.target.value)}
-                  className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: MEDIA (PHOTOS & VIDEOS) */}
-          {activeTab === 'media' && (
-            <div className="space-y-6 animate-in fade-in">
-              {/* Cover Image */}
-              <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4 text-primary" />
-                    <span>صورة الغلاف الرئيسية للاحتفال *</span>
-                  </label>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="url"
-                    placeholder="ضع رابط صورة الغلاف عالية الدقة..."
-                    value={coverImage}
-                    onChange={(e) => setCoverImage(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary text-left"
-                    dir="ltr"
-                  />
-                  <AdminMediaUploader
-                    entityType="cultural-event"
-                    entitySlug={event?.slug || title || 'event-cover'}
-                    entityId={event?.id}
-                    entityTitle={title}
-                    governorateName={governorateName}
-                    value={coverImage}
-                    onChange={(val: any) => {
-                      if (typeof val === 'string') setCoverImage(val);
-                      else if (val?.secureUrl || val?.url) setCoverImage(val.secureUrl || val.url);
-                    }}
-                    label="رفع صورة غلاف جديدة من جهازك"
-                  />
-                </div>
-
-                {/* Cover preview */}
-                {coverImage && (
-                  <div className="relative h-44 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/10">
-                    <img src={coverImage} alt="معاينة الغلاف" className="w-full h-full object-cover" />
-                    <span className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 text-white text-[10px] font-bold">
-                      معاينة الغلاف الحالي
-                    </span>
+        {/* Form Body with Fixed Footer */}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden min-h-0">
+          <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6 overscroll-contain">
+            {/* TAB 1: BASIC INFO */}
+            {activeTab === 'basic' && (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2 space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                      اسم الاحتفال أو المولد أو الموسم *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="مثال: ليلة القنائي الكبيرة - مولد سيدي عبد الرحيم القنائي"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
                   </div>
-                )}
-              </div>
 
-              {/* Main Video URL */}
-              <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                    <Video className="w-4 h-4 text-rose-500" />
-                    <span>رابط الفيديو الرئيسي لليلة (YouTube, MP4, Vimeo, Reels)</span>
-                  </label>
-                  {videoUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setVideoUrl('')}
-                      className="text-rose-500 hover:text-rose-700 text-xs font-bold cursor-pointer"
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">المحافظة *</label>
+                    <select
+                      value={governorateName}
+                      onChange={(e) => setGovernorateName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
                     >
-                      إزالة الفيديو
-                    </button>
+                      {UPPER_EGYPT_GOVERNORATES.map((g) => (
+                        <option key={g.id} value={g.name}>
+                          {g.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">نوع الاحتفال *</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-primary cursor-pointer"
+                    >
+                      {EVENT_CATEGORIES.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.icon} {c.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">المدينة أو المركز</label>
+                    <input
+                      type="text"
+                      placeholder="مثال: مدينة قنا، طهطا، إسنا، نجع حمادي"
+                      value={cityName}
+                      onChange={(e) => setCityName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                      ميدان وساحة الاحتفال الدقيقة
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="مثال: ساحة ومسجد سيدي عبد الرحيم القنائي، ميدان المرماح"
+                      value={locationName}
+                      onChange={(e) => setLocationName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                      موعد وتاريخ الليلة الكبيرة
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="مثال: النصف من شعبان سنوياً، أو 15 طوبة"
+                      value={eventDate}
+                      onChange={(e) => setEventDate(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">التوقيت اليومي</label>
+                    <input
+                      type="text"
+                      placeholder="مثال: من بعد العصر حتى آذان الفجر"
+                      value={eventTime}
+                      onChange={(e) => setEventTime(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">الفصل والموسم التراثي</label>
+                    <input
+                      type="text"
+                      placeholder="مثال: موسم كسر القصب في الشتاء، مقدمات شهر رمضان"
+                      value={season}
+                      onChange={(e) => setSeason(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">جهة التوثيق والمصدر</label>
+                    <input
+                      type="text"
+                      placeholder="مثال: أطلس المأثورات الشعبية، وزارة الثقافة المصرية"
+                      value={sourceName}
+                      onChange={(e) => setSourceName(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">خط العرض (Latitude)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      placeholder="مثال: 26.1551"
+                      value={lat}
+                      onChange={(e) => setLat(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">خط الطول (Longitude)</label>
+                    <input
+                      type="number"
+                      step="any"
+                      placeholder="مثال: 32.716"
+                      value={lng}
+                      onChange={(e) => setLng(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: DIALECT CONTENT, TRADITIONS & NAFHA */}
+            {activeTab === 'dialect_content' && (
+              <div className="space-y-5 animate-in fade-in">
+                <div className="bg-amber-50 dark:bg-amber-950/30 p-4 rounded-2xl border border-amber-200 dark:border-amber-800/40 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <p>
+                    <strong>نصيحة الصياغة بالعامية المصرية الصعيدية:</strong> اكتب تفاصيل الليلة بروح أهل البلد وطريقتهم في السرد (مثال: «أكبر لمة وفرحة في الصعيد، البيوت بتفتح بيبانها، وقدور الفول النابت بتستوي في الحارات، والشوربة بالليمون والكمون بتنزل نفحة لله»).
+                  </p>
+                </div>
+
+                {/* Description in dialect */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                    حكاية الليلة والموسم بالعامية المصرية الأصيلة *
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="احكي حكاية المولد بالعامية، مين صاحب الليلة؟ وإيه اللي بيحصل فيها وليه الناس بتجيله من كل أنحاء مصر؟"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                {/* Historical traditions narrative */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                    السياق التاريخي والتقاليد الشعبية المرتبطة بالاحتفال
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="التفاصيل التاريخية: أصل العادة، متى بدأت زفة المحمل، سباق المرماح وعادات شيوخ القبائل عبر القرون..."
+                    value={traditions}
+                    onChange={(e) => setTraditions(e.target.value)}
+                    className="w-full p-4 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm leading-relaxed focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+
+                {/* Rituals list */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                      قائمة طقوس الليلة الصعيدية (سطر لكل طقس)
+                    </label>
+                  </div>
+                  <textarea
+                    rows={3}
+                    placeholder="مثال:&#10;مرماح الخيل الصعيدي واستعراضات الفروسية&#10;زفة المحمل والجمال المزركشة&#10;حلقات الذكر والإنشاد الديني"
+                    value={ritualsText}
+                    onChange={(e) => setRitualsText(e.target.value)}
+                    className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  />
+                  {/* Dialect suggestions */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="text-[10px] text-black/50 dark:text-white/50 font-bold self-center">
+                      مقترحات سريعة:
+                    </span>
+                    {DIALECT_RITUAL_SUGGESTIONS.slice(0, 4).map((sug, sIdx) => (
+                      <button
+                        key={sIdx}
+                        type="button"
+                        onClick={() => addRitualSuggestion(sug)}
+                        className="text-[10px] px-2 py-0.5 rounded-lg bg-black/5 dark:bg-cream/10 hover:bg-primary/20 hover:text-primary transition-all cursor-pointer"
+                      >
+                        + {sug}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Famous Foods / Nafha */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                    أكلات ومشروبات النفحة والضيافة (سطر لكل صنف)
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="مثال:&#10;الفول النابت الصعيدي بالليمون والكمون&#10;شربات الورد بالموز المثلج&#10;الكسكسي المسقي بشوربة اللحم"
+                    value={famousFoodsText}
+                    onChange={(e) => setFamousFoodsText(e.target.value)}
+                    className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  />
+                  {/* Food suggestions */}
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="text-[10px] text-black/50 dark:text-white/50 font-bold self-center">
+                      أشهر أكلات النفحة:
+                    </span>
+                    {DIALECT_FOOD_SUGGESTIONS.map((food, fIdx) => (
+                      <button
+                        key={fIdx}
+                        type="button"
+                        onClick={() => addFoodSuggestion(food)}
+                        className="text-[10px] px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-500/20 transition-all cursor-pointer"
+                      >
+                        + {food}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Activities */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-black/80 dark:text-white/80">
+                    الأنشطة والفعاليات الحية (سطر لكل نشاط)
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="حلقات التحطيب التراثي بالعصا&#10;شراء الهدايا والطرابيش الشعبية وعرائس المولد"
+                    value={activitiesText}
+                    onChange={(e) => setActivitiesText(e.target.value)}
+                    className="w-full p-3 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: MEDIA (PHOTOS & VIDEOS) */}
+            {activeTab === 'media' && (
+              <div className="space-y-6 animate-in fade-in">
+                {/* Cover Image */}
+                <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-primary" />
+                      <span>صورة الغلاف الرئيسية للاحتفال *</span>
+                    </label>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      type="url"
+                      placeholder="ضع رابط صورة الغلاف عالية الدقة..."
+                      value={coverImage}
+                      onChange={(e) => setCoverImage(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary text-left"
+                      dir="ltr"
+                    />
+                    <AdminMediaUploader
+                      entityType="cultural-event"
+                      entitySlug={event?.slug || title || 'event-cover'}
+                      entityId={event?.id}
+                      entityTitle={title}
+                      governorateName={governorateName}
+                      value={coverImage}
+                      onChange={(val: any) => {
+                        if (typeof val === 'string') setCoverImage(val);
+                        else if (val?.secureUrl || val?.url) setCoverImage(val.secureUrl || val.url);
+                      }}
+                      label="رفع صورة غلاف جديدة من جهازك"
+                    />
+                  </div>
+
+                  {/* Cover preview */}
+                  {coverImage && (
+                    <div className="relative h-44 rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/10">
+                      <img src={coverImage} alt="معاينة الغلاف" className="w-full h-full object-cover" />
+                      <span className="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 text-white text-[10px] font-bold">
+                        معاينة الغلاف الحالي
+                      </span>
+                    </div>
                   )}
                 </div>
 
-                <div className="space-y-3">
-                  <input
-                    type="url"
-                    placeholder="مثال: https://www.youtube.com/watch?v=... أو رابط MP4 مباشر"
-                    value={videoUrl}
-                    onChange={(e) => setVideoUrl(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary text-left"
-                    dir="ltr"
-                  />
-                  <AdminMediaUploader
-                    entityType="cultural-event"
-                    entitySlug={event?.slug || title || 'event-video'}
-                    entityId={event?.id}
-                    entityTitle={title}
-                    governorateName={governorateName}
-                    mediaCategory="video"
-                    multiple={false}
-                    value={videoUrl ? [videoUrl] : []}
-                    onChange={(uploaded: any) => {
-                      let vUrl = '';
-                      if (Array.isArray(uploaded) && uploaded.length > 0) {
-                        const item = uploaded[0];
-                        vUrl = typeof item === 'string' ? item : (item?.secureUrl || item?.url || '');
-                      } else if (typeof uploaded === 'string') {
-                        vUrl = uploaded;
-                      } else if (uploaded && typeof uploaded === 'object') {
-                        vUrl = uploaded.secureUrl || uploaded.url || '';
-                      }
-                      if (vUrl) setVideoUrl(vUrl);
-                    }}
-                    label="رفع فيديو للمنصة (MP4 / Cloudinary)"
-                  />
-                </div>
-
-                {/* Video Preview Player */}
-                {videoUrl && (
-                  <div className="space-y-2 pt-2">
-                    <span className="text-[11px] font-bold text-black/60 dark:text-white/60">
-                      معاينة مشغل الفيديو:
-                    </span>
-                    <div className="relative rounded-2xl overflow-hidden bg-black aspect-video border border-black/10 dark:border-white/10">
-                      {primaryVideoEmbed ? (
-                        <iframe
-                          src={primaryVideoEmbed}
-                          title="معاينة فيديو الليلة"
-                          className="w-full h-full border-0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : isVideoUrl(videoUrl) || videoUrl.endsWith('.mp4') ? (
-                        <video
-                          src={getOptimizedVideoUrl(videoUrl)}
-                          controls
-                          playsInline
-                          preload="metadata"
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-white/70 space-y-2 p-4 text-center">
-                          <Film className="w-8 h-8 text-rose-400" />
-                          <p className="text-xs">رابط خارجي للفيديو:</p>
-                          <a
-                            href={videoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-amber-300 underline font-mono break-all line-clamp-1"
-                          >
-                            {videoUrl}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Additional Videos List */}
-              <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
-                <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                  <Film className="w-4 h-4 text-primary" />
-                  <span>فيديوهات ومقاطع إضافية (مرماح، مداحين، زفة المحمل)</span>
-                </label>
-
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder="رابط فيديو إضافي (YouTube / MP4)..."
-                    value={newVideoInput}
-                    onChange={(e) => setNewVideoInput(e.target.value)}
-                    className="flex-1 px-4 py-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-xs text-left"
-                    dir="ltr"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleAddVideo();
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddVideo}
-                    className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold cursor-pointer"
-                  >
-                    إضافة
-                  </button>
-                </div>
-
-                {additionalVideos.length > 0 && (
-                  <div className="space-y-2 pt-2">
-                    {additionalVideos.map((vid, vIdx) => (
-                      <div
-                        key={vIdx}
-                        className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-espresso-900 border border-black/10 dark:border-white/10 text-xs"
+                {/* Main Video URL */}
+                <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
+                      <Video className="w-4 h-4 text-rose-500" />
+                      <span>رابط الفيديو الرئيسي لليلة (YouTube, MP4, Vimeo, Reels)</span>
+                    </label>
+                    {videoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => setVideoUrl('')}
+                        className="text-rose-500 hover:text-rose-700 text-xs font-bold cursor-pointer"
                       >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <Film className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                          <span className="font-mono text-[11px] truncate text-left" dir="ltr">
-                            {vid}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveVideo(vIdx)}
-                          className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
+                        إزالة الفيديو
+                      </button>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {/* Photo Gallery */}
-              <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
-                    <ImageIcon className="w-4 h-4 text-emerald-500" />
-                    <span>معرض صور الاحتفال والميدان ({gallery.length} صور)</span>
-                  </label>
+                  <div className="space-y-3">
+                    <input
+                      type="url"
+                      placeholder="مثال: https://www.youtube.com/watch?v=... أو رابط MP4 مباشر"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-sm focus:outline-hidden focus:ring-2 focus:ring-primary text-left"
+                      dir="ltr"
+                    />
+                    <AdminMediaUploader
+                      entityType="cultural-event"
+                      entitySlug={event?.slug || title || 'event-video'}
+                      entityId={event?.id}
+                      entityTitle={title}
+                      governorateName={governorateName}
+                      mediaCategory="video"
+                      multiple={false}
+                      value={videoUrl ? [videoUrl] : []}
+                      onChange={(uploaded: any) => {
+                        let vUrl = '';
+                        if (Array.isArray(uploaded) && uploaded.length > 0) {
+                          const item = uploaded[0];
+                          vUrl = typeof item === 'string' ? item : (item?.secureUrl || item?.url || '');
+                        } else if (typeof uploaded === 'string') {
+                          vUrl = uploaded;
+                        } else if (uploaded && typeof uploaded === 'object') {
+                          vUrl = uploaded.secureUrl || uploaded.url || '';
+                        }
+                        if (vUrl) setVideoUrl(vUrl);
+                      }}
+                      label="رفع فيديو للمنصة (MP4 / Cloudinary)"
+                    />
+                  </div>
+
+                  {/* Video Preview Player */}
+                  {videoUrl && (
+                    <div className="space-y-2 pt-2">
+                      <span className="text-[11px] font-bold text-black/60 dark:text-white/60">
+                        معاينة مشغل الفيديو:
+                      </span>
+                      <div className="relative rounded-2xl overflow-hidden bg-black aspect-video border border-black/10 dark:border-white/10">
+                        {primaryVideoEmbed ? (
+                          <iframe
+                            src={primaryVideoEmbed}
+                            title="معاينة فيديو الليلة"
+                            className="w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        ) : isVideoUrl(videoUrl) || videoUrl.endsWith('.mp4') ? (
+                          <video
+                            src={getOptimizedVideoUrl(videoUrl)}
+                            controls
+                            playsInline
+                            preload="metadata"
+                            className="w-full h-full object-contain"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center h-full text-white/70 space-y-2 p-4 text-center">
+                            <Film className="w-8 h-8 text-rose-400" />
+                            <p className="text-xs">رابط خارجي للفيديو:</p>
+                            <a
+                              href={videoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-amber-300 underline font-mono break-all line-clamp-1"
+                            >
+                              {videoUrl}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-3">
+                {/* Additional Videos List */}
+                <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
+                  <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
+                    <Film className="w-4 h-4 text-primary" />
+                    <span>فيديوهات ومقاطع إضافية (مرماح، مداحين، زفة المحمل)</span>
+                  </label>
+
                   <div className="flex gap-2">
                     <input
                       type="url"
-                      placeholder="رابط صورة جديدة للمعرض..."
-                      value={newGalleryImageInput}
-                      onChange={(e) => setNewGalleryImageInput(e.target.value)}
+                      placeholder="رابط فيديو إضافي (YouTube / MP4)..."
+                      value={newVideoInput}
+                      onChange={(e) => setNewVideoInput(e.target.value)}
                       className="flex-1 px-4 py-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-xs text-left"
                       dir="ltr"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          handleAddGalleryImage();
+                          handleAddVideo();
                         }
                       }}
                     />
                     <button
                       type="button"
-                      onClick={handleAddGalleryImage}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                      onClick={handleAddVideo}
+                      className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold cursor-pointer"
                     >
-                      إضافة بالرابط
+                      إضافة
                     </button>
                   </div>
 
-                  <AdminMediaUploader
-                    entityType="cultural-event"
-                    entitySlug={event?.slug || title || 'event-gallery'}
-                    entityId={event?.id}
-                    entityTitle={title}
-                    governorateName={governorateName}
-                    mediaCategory="image"
-                    multiple={true}
-                    value={gallery}
-                    onChange={(uploaded: any) => {
-                      if (Array.isArray(uploaded)) {
-                        const urls = uploaded
-                          .map((u: any) => (typeof u === 'string' ? u : u?.secureUrl || u?.url || ''))
-                          .filter(Boolean);
-                        setGallery(urls);
-                      } else if (typeof uploaded === 'string' && uploaded) {
-                        setGallery((prev) => [...prev, uploaded]);
-                      }
-                    }}
-                    label="رفع صور متعددة لمعرض الاحتفال"
-                  />
-                </div>
-
-                {/* Gallery thumbnails */}
-                {gallery.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 pt-2">
-                    {gallery.map((img, iIdx) => (
-                      <div
-                        key={iIdx}
-                        className="group relative h-20 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/10"
-                      >
-                        <img src={img} alt={`صورة ${iIdx + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveGalleryImage(iIdx)}
-                          className="absolute top-1 left-1 p-1 rounded-md bg-rose-600 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                          title="حذف الصورة"
+                  {additionalVideos.length > 0 && (
+                    <div className="space-y-2 pt-2">
+                      {additionalVideos.map((vid, vIdx) => (
+                        <div
+                          key={vIdx}
+                          className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-espresso-900 border border-black/10 dark:border-white/10 text-xs"
                         >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: LIVE PREVIEW */}
-          {activeTab === 'preview' && (
-            <div className="space-y-4 animate-in fade-in">
-              <div className="rounded-3xl overflow-hidden border border-black/10 dark:border-white/10 bg-white dark:bg-espresso-900 shadow-xl">
-                {/* Hero preview */}
-                <div className="relative h-64 bg-black/20">
-                  <img
-                    src={coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200'}
-                    alt="معاينة"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  <div className="absolute bottom-6 right-6 left-6 text-cream space-y-2">
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="px-2.5 py-1 rounded-full bg-primary font-bold">
-                        {governorateName}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-full bg-black/60 font-bold">
-                        {eventDate || 'موسم سنوي'}
-                      </span>
-                      {videoUrl && (
-                        <span className="px-2.5 py-1 rounded-full bg-rose-600 font-bold flex items-center gap-1">
-                          <Film className="w-3 h-3" />
-                          <span>فيديو متاح</span>
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-2xl font-serif font-black">{title || 'عنوان الاحتفال'}</h3>
-                    <p className="text-xs text-cream/80 flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-amber-300" />
-                      <span>{locationName || cityName || governorateName}</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Body preview */}
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h4 className="text-xs font-bold text-black/50 dark:text-white/50 mb-1">
-                      الحكاية بالعامية:
-                    </h4>
-                    <p className="text-sm leading-relaxed text-black/80 dark:text-cream/90">
-                      {description || 'لم يتم كتابة وصف بعد.'}
-                    </p>
-                  </div>
-
-                  {ritualsText && (
-                    <div>
-                      <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
-                        <Flame className="w-3.5 h-3.5" />
-                        <span>طقوس الليلة:</span>
-                      </h4>
-                      <ul className="text-xs space-y-1 list-disc list-inside text-black/70 dark:text-white/70">
-                        {ritualsText
-                          .split('\n')
-                          .filter(Boolean)
-                          .map((r, idx) => (
-                            <li key={idx}>{r}</li>
-                          ))}
-                      </ul>
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <Film className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                            <span className="font-mono text-[11px] truncate text-left" dir="ltr">
+                              {vid}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveVideo(vIdx)}
+                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   )}
+                </div>
 
-                  {famousFoodsText && (
-                    <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 text-xs">
-                      <strong className="text-emerald-800 dark:text-emerald-300 flex items-center gap-1 mb-1">
-                        <Utensils className="w-3.5 h-3.5" />
-                        <span>أكلات النفحة:</span>
-                      </strong>
-                      <p className="text-emerald-900 dark:text-emerald-200">
-                        {famousFoodsText.split('\n').filter(Boolean).join(' • ')}
+                {/* Photo Gallery */}
+                <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-5 rounded-3xl border border-black/10 dark:border-white/10">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-black/80 dark:text-white/80 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-emerald-500" />
+                      <span>معرض صور الاحتفال والميدان ({gallery.length} صور)</span>
+                    </label>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        placeholder="رابط صورة جديدة للمعرض..."
+                        value={newGalleryImageInput}
+                        onChange={(e) => setNewGalleryImageInput(e.target.value)}
+                        className="flex-1 px-4 py-2 rounded-xl bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-xs text-left"
+                        dir="ltr"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddGalleryImage();
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddGalleryImage}
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        إضافة بالرابط
+                      </button>
+                    </div>
+
+                    <AdminMediaUploader
+                      entityType="cultural-event"
+                      entitySlug={event?.slug || title || 'event-gallery'}
+                      entityId={event?.id}
+                      entityTitle={title}
+                      governorateName={governorateName}
+                      mediaCategory="image"
+                      multiple={true}
+                      value={gallery}
+                      onChange={(uploaded: any) => {
+                        if (Array.isArray(uploaded)) {
+                          const urls = uploaded
+                            .map((u: any) => (typeof u === 'string' ? u : u?.secureUrl || u?.url || ''))
+                            .filter(Boolean);
+                          setGallery(urls);
+                        } else if (typeof uploaded === 'string' && uploaded) {
+                          setGallery((prev) => [...prev, uploaded]);
+                        }
+                      }}
+                      label="رفع صور متعددة لمعرض الاحتفال"
+                    />
+                  </div>
+
+                  {/* Gallery thumbnails */}
+                  {gallery.length > 0 && (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 pt-2">
+                      {gallery.map((img, iIdx) => (
+                        <div
+                          key={iIdx}
+                          className="group relative h-20 rounded-xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/10"
+                        >
+                          <img src={img} alt={`صورة ${iIdx + 1}`} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveGalleryImage(iIdx)}
+                            className="absolute top-1 left-1 p-1 rounded-md bg-rose-600 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            title="حذف الصورة"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: LIVE PREVIEW */}
+            {activeTab === 'preview' && (
+              <div className="space-y-4 animate-in fade-in">
+                <div className="rounded-3xl overflow-hidden border border-black/10 dark:border-white/10 bg-white dark:bg-espresso-900 shadow-xl">
+                  {/* Hero preview */}
+                  <div className="relative h-64 bg-black/20">
+                    <img
+                      src={coverImage || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1200'}
+                      alt="معاينة"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                    <div className="absolute bottom-6 right-6 left-6 text-cream space-y-2">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="px-2.5 py-1 rounded-full bg-primary font-bold">
+                          {governorateName}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-full bg-black/60 font-bold">
+                          {eventDate || 'موسم سنوي'}
+                        </span>
+                        {videoUrl && (
+                          <span className="px-2.5 py-1 rounded-full bg-rose-600 font-bold flex items-center gap-1">
+                            <Film className="w-3 h-3" />
+                            <span>فيديو متاح</span>
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-2xl font-serif font-black">{title || 'عنوان الاحتفال'}</h3>
+                      <p className="text-xs text-cream/80 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-amber-300" />
+                        <span>{locationName || cityName || governorateName}</span>
                       </p>
                     </div>
-                  )}
+                  </div>
+
+                  {/* Body preview */}
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <h4 className="text-xs font-bold text-black/50 dark:text-white/50 mb-1">
+                        الحكاية بالعامية:
+                      </h4>
+                      <p className="text-sm leading-relaxed text-black/80 dark:text-cream/90">
+                        {description || 'لم يتم كتابة وصف بعد.'}
+                      </p>
+                    </div>
+
+                    {ritualsText && (
+                      <div>
+                        <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-1.5 flex items-center gap-1">
+                          <Flame className="w-3.5 h-3.5" />
+                          <span>طقوس الليلة:</span>
+                        </h4>
+                        <ul className="text-xs space-y-1 list-disc list-inside text-black/70 dark:text-white/70">
+                          {ritualsText
+                            .split('\n')
+                            .filter(Boolean)
+                            .map((r, idx) => (
+                              <li key={idx}>{r}</li>
+                            ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {famousFoodsText && (
+                      <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 text-xs">
+                        <strong className="text-emerald-800 dark:text-emerald-300 flex items-center gap-1 mb-1">
+                          <Utensils className="w-3.5 h-3.5" />
+                          <span>أكلات النفحة:</span>
+                        </strong>
+                        <p className="text-emerald-900 dark:text-emerald-200">
+                          {famousFoodsText.split('\n').filter(Boolean).join(' • ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Modal Footer */}
-          <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-3">
+          </div>
+
+          {/* Sticky Modal Footer - Always accessible */}
+          <div className="shrink-0 px-6 py-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-3 bg-black/[0.02] dark:bg-white/[0.02] backdrop-blur-xs">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-2xl border border-black/10 dark:border-white/10 text-xs font-bold hover:bg-black/5 dark:hover:bg-cream/10 cursor-pointer"
+              className="px-5 py-2.5 rounded-2xl border border-black/10 dark:border-white/10 text-xs font-bold hover:bg-black/5 dark:hover:bg-cream/10 cursor-pointer transition-colors"
             >
               إلغاء
             </button>
@@ -1631,7 +1718,7 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
                     else if (activeTab === 'media') setActiveTab('dialect_content');
                     else if (activeTab === 'dialect_content') setActiveTab('basic');
                   }}
-                  className="px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/10 text-xs font-bold hover:bg-black/10 cursor-pointer"
+                  className="px-4 py-2.5 rounded-2xl bg-black/5 dark:bg-cream/10 text-xs font-bold hover:bg-black/10 cursor-pointer transition-colors"
                 >
                   السابق
                 </button>
@@ -1645,7 +1732,7 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
                     else if (activeTab === 'dialect_content') setActiveTab('media');
                     else if (activeTab === 'media') setActiveTab('preview');
                   }}
-                  className="px-4 py-2.5 rounded-2xl bg-black/10 dark:bg-cream/15 text-xs font-bold hover:bg-black/20 cursor-pointer"
+                  className="px-4 py-2.5 rounded-2xl bg-black/10 dark:bg-cream/15 text-xs font-bold hover:bg-black/20 cursor-pointer transition-colors"
                 >
                   التالي
                 </button>
@@ -1654,7 +1741,7 @@ const EventEditorModal: React.FC<EventEditorModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 rounded-2xl bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 rounded-2xl bg-primary hover:bg-primary-hover text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-50 transition-all hover:scale-[1.02] active:scale-98"
               >
                 <Save className={`w-4 h-4 ${isSubmitting ? 'animate-spin' : ''}`} />
                 <span>{isSubmitting ? 'جاري الحفظ في الداتابيز...' : 'حفظ وتثبيت في قاعدة البيانات'}</span>

@@ -122,7 +122,7 @@ export const WhatsAppButton: React.FC = () => {
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center p-1 border border-white/20">
                     <img
-                      src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                      src="https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png"
                       alt="وه | WAH"
                       className="w-full h-full object-contain"
                     />

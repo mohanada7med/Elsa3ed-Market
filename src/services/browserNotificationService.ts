@@ -114,7 +114,7 @@ class BrowserNotificationService {
       }
 
       if (this.audioCtx.state === 'suspended') {
-        this.audioCtx.resume().catch(() => {});
+        this.audioCtx.resume().catch(() => { });
       }
 
       const now = this.audioCtx.currentTime;
@@ -215,17 +215,17 @@ class BrowserNotificationService {
       try {
         const notif = new Notification(options.title, {
           body: options.body,
-          icon: '/favicon.ico',
+          icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png',
           tag: options.tag || options.type || 'saeed-alert',
           dir: 'rtl',
           lang: 'ar',
-          badge: '/favicon.ico'
+          badge: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png'
         });
 
         notif.onclick = () => {
           try {
             window.focus();
-          } catch {}
+          } catch { }
 
           if (options.onClick) {
             options.onClick();

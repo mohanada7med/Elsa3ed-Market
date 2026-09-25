@@ -682,7 +682,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
     (currentUser as any)?.avatar ||
-    'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png';
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png';
 
   /* =========================================================
      COLORS
@@ -881,7 +881,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
               >
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png"
                   alt="وه"
                   draggable={false}
                   className="block h-[38px] w-auto max-w-[76px] object-contain sm:h-[52px] sm:max-w-[105px] lg:h-[68px] lg:max-w-[140px]"
@@ -1564,7 +1564,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   className="flex items-center"
                 >
                   <img
-                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png"
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1790364861/logo_wah_copy2.png"
                     alt="وه"
                     className="h-11 w-auto object-contain sm:h-12"
                   />
