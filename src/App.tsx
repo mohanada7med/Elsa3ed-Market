@@ -115,10 +115,10 @@ const FoodDetailPage = lazyWithRetry(() =>
   import('./components/pages/FoodDetailPage').then((m) => ({ default: m.FoodDetailPage }))
 );
 const EventsPage = lazyWithRetry(() =>
-  import('./components/pages/EventsPage').then((m) => ({ default: m.EventsPage }))
+  import('./components/pages/EventsPage').then((m) => ({ default: m.default || m.EventsPage }))
 );
 const EventDetailPage = lazyWithRetry(() =>
-  import('./components/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage }))
+  import('./components/pages/EventDetailPage').then((m) => ({ default: m.default || m.EventDetailPage }))
 );
 const GlobalSearchResultsPage = lazyWithRetry(() =>
   import('./components/pages/GlobalSearchResultsPage').then((m) => ({ default: m.GlobalSearchResultsPage }))
@@ -152,7 +152,7 @@ const AdminMapEditorPage = lazyWithRetry(() =>
   import('./components/pages/AdminMapEditorPage').then((m) => ({ default: m.AdminMapEditorPage }))
 );
 const AdminEventsManagerPage = lazyWithRetry(() =>
-  import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerPage }))
+  import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.default || m.AdminEventsManagerPage }))
 );
 const UpperEgyptMapPage = lazyWithRetry(() =>
   import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))

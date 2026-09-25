@@ -21,7 +21,6 @@ import {
   SlidersHorizontal,
   Maximize2,
 } from 'lucide-react';
-import { AdminEventsManagerComponent } from './AdminEventsManagerPage';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
 const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
