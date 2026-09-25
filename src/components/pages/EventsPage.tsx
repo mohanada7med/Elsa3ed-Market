@@ -23,6 +23,10 @@ import {
 } from 'lucide-react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 
+const AdminEventsManagerComponent = React.lazy(() =>
+  import('./AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerComponent }))
+);
+
 const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
   all: { label: 'كافة المواسم والليالي', icon: '✨' },
   moulid: { label: 'موالد وليالي ذكر', icon: '🕌' },
@@ -250,12 +254,14 @@ export const EventsPage: React.FC = () => {
       ===================================================== */}
       {showAdminManager ? (
         <main className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-12 py-8 animate-in fade-in duration-300">
-          <AdminEventsManagerComponent
-            onNavigateBack={() => {
-              setShowAdminManager(false);
-              fetchEvents();
-            }}
-          />
+          <React.Suspense fallback={<div className="p-12 text-center text-primary font-bold">جاري تحميل لوحة إدارة الموالد والاحتفالات...</div>}>
+            <AdminEventsManagerComponent
+              onNavigateBack={() => {
+                setShowAdminManager(false);
+                fetchEvents();
+              }}
+            />
+          </React.Suspense>
         </main>
       ) : (
         <>
