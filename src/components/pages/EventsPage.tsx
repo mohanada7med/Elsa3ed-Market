@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { wahApi } from '../../services/api';
 import { CulturalEvent } from '../../types';
-import { AdminEventsManagerComponent, EventEditorModal } from './AdminEventsManagerPage';
 import {
   Calendar,
   Search,
@@ -19,9 +18,8 @@ import {
   Eye,
   Feather,
   Compass,
-  SlidersHorizontal,
-  Edit,
-  Shield,
+  Plus,
+  CheckCircle2,
 } from 'lucide-react';
 
 const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
@@ -34,8 +32,7 @@ const CATEGORY_MAP: Record<string, { label: string; icon: string }> = {
 };
 
 export const EventsPage: React.FC = () => {
-  const { currentUser, currentRole, activePage, navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
-  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const { navigateToEvent, setActivePage, navigateToGovernorate } = useApp();
 
   const [events, setEvents] = useState<CulturalEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,16 +40,94 @@ export const EventsPage: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [governorateFilter, setGovernorateFilter] = useState<string>('all');
 
-  // Admin exclusive states: only active when user is admin
-  const [isAdminManagerOpen, setIsAdminManagerOpen] = useState(false);
-  const [isCardEditModalOpen, setIsCardEditModalOpen] = useState(false);
-  const [editingCardEvent, setEditingCardEvent] = useState<CulturalEvent | null>(null);
+  // Modal State for adding Upper Egypt celebrations (identical design pattern to PeoplePage)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    governorateName: 'قنا',
+    locationName: '',
+    category: 'moulid',
+    eventDate: '',
+    description: '',
+    famousFoods: '',
+    rituals: '',
+    coverImage: ''
+  });
 
-  useEffect(() => {
-    if (isAdmin && (activePage === 'admin-events' || activePage === 'admin-events-manager')) {
-      setIsAdminManagerOpen(true);
+  const handleAddEventSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title.trim()) {
+      setSubmitError('لازم تكتب اسم الليلة أو المولد يا غالي!');
+      return;
     }
-  }, [isAdmin, activePage]);
+    if (!formData.description.trim()) {
+      setSubmitError('احكي لنا كلمتين بالعامية عن طقوس الليلة وسيرتها وبركتها!');
+      return;
+    }
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const govIdMap: Record<string, string> = {
+      'قنا': 'gov-qena',
+      'الأقصر': 'gov-luxor',
+      'أسوان': 'gov-aswan',
+      'سوهاج': 'gov-sohag',
+      'أسيوط': 'gov-asyut',
+      'المنيا': 'gov-minya',
+      'بني سويف': 'gov-beni-suef',
+      'الفيوم': 'gov-fayoum',
+      'الوادي الجديد': 'gov-new-valley',
+      'البحر الأحمر': 'gov-red-sea'
+    };
+
+    const newEventPayload: Partial<CulturalEvent> = {
+      title: formData.title.trim(),
+      governorateName: formData.governorateName,
+      governorateId: govIdMap[formData.governorateName] || 'gov-qena',
+      locationName: formData.locationName.trim() || formData.governorateName,
+      category: formData.category as any,
+      eventDate: formData.eventDate.trim() || 'موسم سنوي مبارك',
+      dateText: formData.eventDate.trim() || 'موسم سنوي مبارك',
+      season: formData.eventDate.trim() || 'موسم سنوي مبارك',
+      description: formData.description.trim(),
+      coverImage: formData.coverImage.trim() || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
+      status: 'approved',
+      famousFoods: formData.famousFoods.trim()
+        ? formData.famousFoods.split(/[,،\n]+/).map((s) => s.trim()).filter(Boolean)
+        : ['حلاوة المولد الصعيدية', 'النفحة والشربات بالورد'],
+      rituals: formData.rituals.trim()
+        ? formData.rituals.split(/[,،\n]+/).map((s) => s.trim()).filter(Boolean)
+        : ['حلقات الذكر والمديح النبوي', 'سباقات الخيل والمرماح والتحطيب']
+    };
+
+    try {
+      const saved = await wahApi.saveEvent(newEventPayload);
+      setEvents((prev) => [saved, ...prev]);
+      setSubmitSuccess('تسلم إيدك يا غالي.. اتسجلت الليلة بكل بركتها في داتا بيز وه ومحفوظة لأهل الصعيد!');
+      setTimeout(() => {
+        setIsAddModalOpen(false);
+        setSubmitSuccess(null);
+        setFormData({
+          title: '',
+          governorateName: 'قنا',
+          locationName: '',
+          category: 'moulid',
+          eventDate: '',
+          description: '',
+          famousFoods: '',
+          rituals: '',
+          coverImage: ''
+        });
+      }, 1600);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'حصل خطأ أثناء الحفظ، جرّب تاني يا طيب.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const refreshEvents = async () => {
     try {
@@ -188,39 +263,6 @@ export const EventsPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* ADMIN ONLY: Edit & Management Trigger */}
-            {isAdmin && (
-              <button
-                type="button"
-                onClick={() => setIsAdminManagerOpen((prev) => !prev)}
-                className={`
-                  flex items-center gap-2
-                  rounded-full
-                  px-3.5 sm:px-4 py-2 sm:py-2.5
-                  text-xs font-bold
-                  transition-all
-                  cursor-pointer
-                  shadow-sm
-                  ${isAdminManagerOpen
-                    ? 'bg-espresso text-white dark:bg-white dark:text-espresso border border-primary ring-2 ring-primary/30'
-                    : 'bg-primary/20 hover:bg-primary text-primary hover:text-white dark:hover:text-black border border-primary/40'
-                  }
-                `}
-                title="إدارة وتعديل احتفالات وليالي الصعيد التراثية (للإدارة فقط)"
-              >
-                <SlidersHorizontal size={14} />
-                <span className="hidden xs:inline">
-                  {isAdminManagerOpen ? 'إغلاق لوحة التعديل' : 'تعديل المواسم والليالي'}
-                </span>
-                <span className="xs:hidden">
-                  {isAdminManagerOpen ? 'إغلاق' : 'تعديل'}
-                </span>
-                <span className="rounded-full bg-primary/30 px-1.5 py-0.5 text-[10px] font-mono">
-                  أدمن
-                </span>
-              </button>
-            )}
-
             <button
               type="button"
               onClick={() => setActivePage('map')}
@@ -246,49 +288,6 @@ export const EventsPage: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* ========================================================================= */}
-      {/* ADMIN ONLY: MANAGEMENT OF UPPER EGYPT CELEBRATIONS & MOULIDS (إدارة احتفالات وليالي الصعيد) */}
-      {/* ========================================================================= */}
-      {isAdmin && isAdminManagerOpen && (
-        <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 my-8 animate-in fade-in duration-300">
-          <div className="rounded-[2.5rem] border-2 border-primary/40 bg-espresso-950/95 p-5 sm:p-8 shadow-2xl text-cream backdrop-blur-2xl">
-            <div className="flex items-center justify-between pb-5 mb-6 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary">
-                  <SlidersHorizontal size={22} />
-                </div>
-                <div>
-                  <div className="inline-flex items-center gap-1.5 text-primary text-xs font-bold">
-                    <Sparkles size={13} />
-                    <span>لوحة الإدارة الحصرية للمواسم</span>
-                  </div>
-                  <h2 className="text-xl sm:text-2xl font-black font-serif text-cream">
-                    إدارة احتفالات وليالي الصعيد التراثية
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setIsAdminManagerOpen(false)}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-cream text-xs font-bold transition-all cursor-pointer"
-              >
-                <X size={16} />
-                <span>إغلاق لوحة التعديل</span>
-              </button>
-            </div>
-
-            <AdminEventsManagerComponent
-              onClose={() => {
-                setIsAdminManagerOpen(false);
-                refreshEvents();
-              }}
-              onEventUpdated={refreshEvents}
-            />
-          </div>
-        </section>
-      )}
 
       {/* =====================================================
           HERO SECTION (Matching Prestige Heritage Quality)
@@ -642,6 +641,22 @@ export const EventsPage: React.FC = () => {
                 </button>
               )}
             </div>
+
+            {/* Add Event Button (matching PeoplePage style) */}
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(true)}
+              className="
+                flex h-12 shrink-0 items-center justify-center gap-2
+                rounded-xl bg-primary px-5 text-xs font-black text-white
+                shadow-md transition-all duration-300
+                hover:bg-[#744e26] hover:shadow-lg active:scale-[0.98]
+                cursor-pointer
+              "
+            >
+              <Plus size={16} />
+              <span>ضيف ليلة أو مولد من بلدك</span>
+            </button>
           </div>
 
           {/* Bottom Quick Category Pills */}
@@ -893,34 +908,15 @@ export const EventsPage: React.FC = () => {
                   </div>
 
                   {/* Footer Action */}
-                  <div className="pt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold">
+                  <div className="mt-4 flex items-center justify-between border-t border-black/10 dark:border-white/10 pt-4 text-xs font-bold">
                     <span className="text-black/60 dark:text-white/60 group-hover:text-primary transition-colors flex items-center gap-1">
                       <Eye size={14} />
                       <span>حكاية الليلة وطقوسها</span>
                     </span>
 
-                    <div className="flex items-center gap-2">
-                      {/* ADMIN ONLY: Direct card edit trigger */}
-                      {isAdmin && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingCardEvent(event);
-                            setIsCardEditModalOpen(true);
-                          }}
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary hover:bg-primary-hover text-cream text-xs font-bold transition-all shadow-sm cursor-pointer z-10 hover:scale-105 active:scale-95"
-                          title={`تعديل بيانات وميديا احتفال ${event.title}`}
-                        >
-                          <SlidersHorizontal size={12} />
-                          <span>تعديل وميديا الاحتفال</span>
-                        </button>
-                      )}
-
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-                        <ArrowUpLeft size={16} />
-                      </span>
-                    </div>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 dark:bg-cream/5 text-black dark:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+                      <ArrowUpLeft size={16} />
+                    </span>
                   </div>
                 </article>
               );
@@ -994,21 +990,229 @@ export const EventsPage: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* DIRECT IN-PAGE EVENT EDIT MODAL (ADMIN ONLY) */}
-      {isAdmin && isCardEditModalOpen && editingCardEvent && (
-        <EventEditorModal
-          isOpen={isCardEditModalOpen}
-          onClose={() => {
-            setIsCardEditModalOpen(false);
-            setEditingCardEvent(null);
-          }}
-          event={editingCardEvent}
-          onSaved={() => {
-            setIsCardEditModalOpen(false);
-            setEditingCardEvent(null);
-            refreshEvents();
-          }}
-        />
+
+      {/* =====================================================
+          CONTRIBUTE EVENT MODAL (Matching PeoplePage)
+      ===================================================== */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          {/* Backdrop */}
+          <div
+            onClick={() => !isSubmitting && setIsAddModalOpen(false)}
+            className="fixed inset-0 bg-black/75 backdrop-blur-md"
+          />
+
+          {/* Modal Box */}
+          <div className="relative z-10 my-auto flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2rem] border border-black/10 bg-white text-espresso shadow-2xl dark:border-white/10 dark:bg-espresso-900 dark:text-cream">
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => !isSubmitting && setIsAddModalOpen(false)}
+              className="absolute left-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-all hover:bg-primary cursor-pointer"
+              aria-label="إغلاق"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Modal Header */}
+            <div className="relative shrink-0 overflow-hidden bg-espresso px-6 pb-6 pt-10 text-white sm:px-8">
+              <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-primary/25 blur-3xl" />
+              <div className="relative z-10">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-3 py-1 text-[10px] font-black text-amber-300">
+                  <Sparkles size={12} />
+                  <span>توثيق شعبي ومجتمعي</span>
+                </span>
+                <h3 className="mt-2 text-2xl font-black font-serif sm:text-3xl">
+                  وثّق ليلة أو موسم من بلدك
+                </h3>
+                <p className="mt-1 text-xs text-white/70">
+                  سجل موالد الأولياء، مواسم الحصاد، أو ليالي المرماح والفروسية في صعيد مصر عشان تتخلد في موسوعة وه.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Body / Form */}
+            <form onSubmit={handleAddEventSubmit} className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-4">
+              {submitSuccess && (
+                <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-emerald-700 dark:text-emerald-300">
+                  <CheckCircle2 size={20} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-xs sm:text-sm font-bold leading-relaxed">{submitSuccess}</p>
+                </div>
+              )}
+
+              {submitError && (
+                <div className="flex items-center gap-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 p-4 text-rose-700 dark:text-rose-300">
+                  <X size={18} className="shrink-0 text-rose-600 dark:text-rose-400" />
+                  <p className="text-xs sm:text-sm font-bold leading-relaxed">{submitError}</p>
+                </div>
+              )}
+
+              {/* Title & Governorate */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    اسم الليلة أو المولد أو الموسم *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="مثال: ليلة سيدي عبد الرحيم القنائي"
+                    className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    المحافظة *
+                  </label>
+                  <select
+                    value={formData.governorateName}
+                    onChange={(e) => setFormData({ ...formData, governorateName: e.target.value })}
+                    className="w-full h-11 px-4 text-xs font-bold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary cursor-pointer"
+                  >
+                    {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الفيوم', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
+                      <option key={gov} value={gov} className="dark:bg-espresso-900">{gov}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Location & Category */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    المركز أو القرية أو مكان الساحة
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.locationName}
+                    onChange={(e) => setFormData({ ...formData, locationName: e.target.value })}
+                    placeholder="مثال: ميدان سيدي عبد الرحيم، قنا"
+                    className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    نوع الليلة أو الفعالية
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full h-11 px-4 text-xs font-bold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary cursor-pointer"
+                  >
+                    <option value="moulid" className="dark:bg-espresso-900">موالد وليالي ذكر وأولياء</option>
+                    <option value="harvest" className="dark:bg-espresso-900">مواسم زراعية وحصاد (كسر قصب، بلح)</option>
+                    <option value="cultural_night" className="dark:bg-espresso-900">فروسية ومرماح وهجن</option>
+                    <option value="festival" className="dark:bg-espresso-900">احتفالات ومهرجانات كبرى</option>
+                    <option value="market_fair" className="dark:bg-espresso-900">أسواق ومواسم حرفية شعبية</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Date / Season text */}
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                  الموعد السنوي أو تاريخ الليلة
+                </label>
+                <input
+                  type="text"
+                  value={formData.eventDate}
+                  onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                  placeholder="مثال: النصف من شعبان سنوياً، أو شهر طوبة مع كسر القصب"
+                  className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                  حكاية الليلة وطقوسها بالعامية *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="احكي لنا حكاية الليلة بالبلدي: مين صاحب المقام أو الموسم؟ وإيه اللي بيحصل فيها ومنين بييجوا الناس؟"
+                  className="w-full p-4 text-xs sm:text-sm font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary leading-relaxed"
+                />
+              </div>
+
+              {/* Rituals & Foods */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    أهم الطقوس والفعاليات
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.rituals}
+                    onChange={(e) => setFormData({ ...formData, rituals: e.target.value })}
+                    placeholder="مثال: الذكر والإنشاد، حلقات التحطيب، المرماح"
+                    className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                    أكلات ونفحات مشهورة بالليلة
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.famousFoods}
+                    onChange={(e) => setFormData({ ...formData, famousFoods: e.target.value })}
+                    placeholder="مثال: الكشك الصعيدي، حلاوة المولد، النفحة والشربات"
+                    className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary"
+                  />
+                </div>
+              </div>
+
+              {/* Cover Image */}
+              <div>
+                <label className="block text-xs font-bold mb-1.5 text-black/70 dark:text-white/70">
+                  رابط صورة توثيقية (اختياري)
+                </label>
+                <input
+                  type="url"
+                  value={formData.coverImage}
+                  onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                  placeholder="https://..."
+                  className="w-full h-11 px-4 text-xs font-semibold rounded-xl bg-black/[0.04] dark:bg-white/[0.05] border border-black/10 dark:border-white/10 outline-none focus:border-primary text-left"
+                  dir="ltr"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  disabled={isSubmitting}
+                  className="px-5 py-2.5 rounded-xl border border-black/10 dark:border-white/10 text-xs font-bold hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer disabled:opacity-50"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-black hover:bg-[#744e26] transition-all shadow-md cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <span>جاري التوثيق والحفظ...</span>
+                  ) : (
+                    <>
+                      <Sparkles size={14} />
+                      <span>توثيق الليلة وحفظها</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

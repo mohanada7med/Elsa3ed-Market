@@ -337,13 +337,6 @@ const MainContent: React.FC = () => {
           description: 'لوحة التحكم الإدارية لضبط إحداثيات ومواقع معالم ومحافظات صعيد مصر.'
         });
         break;
-      case 'admin-events':
-      case 'admin-events-manager':
-        updatePageSEO({
-          title: 'إدارة المواسم والأعياد والموالد الصعيدية | وه',
-          description: 'لوحة التحكم الشاملة لإدارة وتوثيق مواسم وموالد صعيد مصر بالعامية مع الصور والفيديوهات والتعديل المباشر.'
-        });
-        break;
       case 'quize':
       case 'dialect-dictionary':
         updatePageSEO({
@@ -624,7 +617,7 @@ const MainContent: React.FC = () => {
               ))}
 
               {/* Admin Dashboard */}
-              {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && activePage !== 'admin-events' && activePage !== 'admin-events-manager' && (
+              {activePage.startsWith('admin-') && activePage !== 'admin-cultural-cms' && activePage !== 'admin-map-editor' && (
                 isAuthenticated && currentRole === 'admin' ? (
                   <React.Suspense fallback={<LazySectionFallback />}>
                     <AdminDashboard />
@@ -681,7 +674,7 @@ const MainContent: React.FC = () => {
               {activePage === 'person-details' && <PersonDetailPage />}
               {activePage === 'food' && <FoodHeritagePage />}
               {activePage === 'food-details' && <FoodDetailPage />}
-              {(activePage === 'events' || activePage === 'admin-events' || activePage === 'admin-events-manager') && <EventsPage />}
+              {activePage === 'events' && <EventsPage />}
               {activePage === 'event-details' && <EventDetailPage />}
               {activePage === 'global-search' && <GlobalSearchResultsPage />}
               {(activePage === 'cultural-cms' || activePage === 'admin-cultural-cms') && (

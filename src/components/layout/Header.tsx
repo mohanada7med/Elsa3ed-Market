@@ -585,11 +585,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           icon: ShoppingBag,
         },
         {
-          id: 'admin-events',
-          label: 'المواسم والموالد',
-          icon: Calendar,
-        },
-        {
           id: 'admin-reports',
           label: 'البلاغات والشكاوى',
           icon: AlertTriangle,

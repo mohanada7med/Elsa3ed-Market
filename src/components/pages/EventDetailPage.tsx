@@ -24,13 +24,8 @@ import {
   Film,
   Video,
   Play,
-  Edit,
-  SlidersHorizontal,
-  Building2,
-  ShieldCheck,
-  Settings
+  Building2
 } from 'lucide-react';
-import { EventEditorModal } from './AdminEventsManagerPage';
 
 export const EventDetailPage: React.FC = () => {
   const {
@@ -38,12 +33,10 @@ export const EventDetailPage: React.FC = () => {
     navigateToGovernorate,
     setActivePage,
     addToast,
-    currentRole,
   } = useApp();
 
   const [event, setEvent] = useState<CulturalEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const slug =
     selectedEventSlug ||
@@ -557,71 +550,6 @@ export const EventDetailPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {currentRole === 'admin' && (
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="
-                    group
-                    flex
-                    items-center
-                    gap-1.5
-                    rounded-full
-                    bg-primary
-                    hover:bg-primary-hover
-                    text-cream
-                    px-3
-                    py-2
-                    text-[10px]
-                    font-bold
-                    transition-all
-                    shadow-sm
-                    cursor-pointer
-                    sm:px-3.5
-                    sm:text-xs
-                  "
-                  title="تعديل تفاصيل وبيانات وميديا هذا الاحتفال مباشرة في نفس الصفحة"
-                >
-                  <SlidersHorizontal size={13} />
-                  <span>تعديل وميديا الاحتفال</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActivePage('events')}
-                  className="
-                    group
-                    hidden
-                    md:flex
-                    items-center
-                    gap-1.5
-                    rounded-full
-                    bg-black/5
-                    dark:bg-white/5
-                    hover:bg-black/10
-                    dark:hover:bg-white/10
-                    text-espresso
-                    dark:text-cream
-                    px-3
-                    py-2
-                    text-[10px]
-                    font-medium
-                    transition-all
-                    border
-                    border-black/10
-                    dark:border-white/10
-                    cursor-pointer
-                    sm:text-xs
-                  "
-                  title="العودة إلى صفحة المواسم والليالي"
-                >
-                  <Calendar size={13} />
-                  <span>صفحة المواسم</span>
-                </button>
-              </div>
-            )}
-
             <button
               type="button"
               onClick={handleShare}
@@ -1233,17 +1161,19 @@ export const EventDetailPage: React.FC = () => {
                   <ScrollText size={17} />
                 </span>
 
-                <h2
-                  className="
-                    text-2xl
-                    font-black
-                    tracking-[-0.04em]
+                <div className="flex items-center justify-between flex-wrap gap-2 w-full">
+                  <h2
+                    className="
+                      text-2xl
+                      font-black
+                      tracking-[-0.04em]
 
-                    sm:text-3xl
-                  "
-                >
-                  الطقوس والمراسم
-                </h2>
+                      sm:text-3xl
+                    "
+                  >
+                    الطقوس والمراسم
+                  </h2>
+                </div>
               </div>
 
               {event.traditions ? (
@@ -1284,11 +1214,13 @@ export const EventDetailPage: React.FC = () => {
               {/* RITUALS LIST */}
               {event.rituals && event.rituals.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
-                  <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
-                      <CheckCircle2 size={18} />
-                    </span>
-                    <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                  <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <CheckCircle2 size={18} />
+                      </span>
+                      <h3 className="text-xl font-black sm:text-2xl">أبرز طقوس وعادات الليلة</h3>
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {event.rituals.map((ritual, rIdx) => (
@@ -1311,13 +1243,15 @@ export const EventDetailPage: React.FC = () => {
               {/* FAMOUS FOODS & DRINKS */}
               {event.famousFoods && event.famousFoods.length > 0 && (
                 <div className="mt-12 pt-10 border-t border-black/10 dark:border-white/10">
-                  <div className="mb-6 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
-                      <Utensils size={18} />
-                    </span>
-                    <div>
-                      <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
-                      <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
+                  <div className="mb-6 flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary">
+                        <Utensils size={18} />
+                      </span>
+                      <div>
+                        <h3 className="text-xl font-black sm:text-2xl">أكلات ومشروبات النفحة والليلة</h3>
+                        <p className="text-xs text-black/50 dark:text-white/50 mt-1">الخير الممدود في ساحات وضيافة الصعايدة</p>
+                      </div>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -1795,66 +1729,6 @@ export const EventDetailPage: React.FC = () => {
         </div>
       </section>
 
-      <div className="h-6 sm:h-10" />
-
-      {/* Floating In-Page Admin Toolbar for direct live editing & settings */}
-      {currentRole === 'admin' && event && (
-        <aside aria-label="شريط إدارة المولد الحي" className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[92%] sm:w-auto">
-          <div className="bg-[#1c1917]/95 dark:bg-[#121110]/95 backdrop-blur-md text-cream px-4 sm:px-5 py-3 rounded-full border border-primary/40 shadow-2xl flex items-center justify-between sm:justify-start gap-3 sm:gap-5">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-              <div className="text-right">
-                <p className="text-[11px] font-bold text-cream flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                  <span>وضع إدارة وتعديل المولد</span>
-                </p>
-                <p className="text-[9px] text-white/60 hidden sm:block">
-                  تعديل مباشر في نفس الصفحة أو عبر لوحة الإدارة
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary hover:bg-primary-hover text-cream text-xs font-bold transition-all shadow-sm cursor-pointer hover:scale-105 active:scale-95"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>تعديل المولد الآن</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActivePage('events')}
-                className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-cream text-xs font-medium transition-all cursor-pointer"
-                title="العودة لصفحة مواسم وليالي الصعيد"
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                <span>صفحة المواسم</span>
-              </button>
-            </div>
-          </div>
-        </aside>
-      )}
-
-      {/* Comprehensive In-Page Event Editor Modal */}
-      {isEditModalOpen && event && (
-        <EventEditorModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          event={event}
-          onSaved={(savedEvent) => {
-            setIsEditModalOpen(false);
-            setEvent(savedEvent);
-            addToast(
-              'تم حفظ التعديلات مباشرة',
-              `تم تحديث وتطبيق بيانات وإعدادات «${savedEvent.title}» في الصفحة فورياً!`,
-              'success'
-            );
-          }}
-        />
-      )}
     </main>
   );
 };
