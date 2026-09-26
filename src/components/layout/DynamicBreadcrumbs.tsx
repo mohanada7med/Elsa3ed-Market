@@ -115,9 +115,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
           }
           const data = await wahApi.getPlaceBySlug(selectedPlaceSlug);
           if (isMounted && data?.title) setAsyncEntityName(data.title);
-        } else if ((activePage === 'cultural-craft-details' || activePage === 'craft-details') && selectedCraftSlug) {
-          const data = await wahApi.getCraftBySlug(selectedCraftSlug);
-          if (isMounted && data?.title) setAsyncEntityName(data.title);
         } else if (activePage === 'person-details' && selectedPersonSlug) {
           const data = await wahApi.getPersonBySlug(selectedPersonSlug);
           if (isMounted && data?.name) setAsyncEntityName(data.name);
@@ -414,27 +411,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         id: 'current-place',
         label: asyncEntityName || formatSlug(selectedPlaceSlug, 'تفاصيل المعلم'),
         url: `${origin}/places/${selectedPlaceSlug || ''}`,
-        isCurrent: true
-      });
-    } else if (activePage === 'cultural-crafts') {
-      items.push({
-        id: 'cultural-crafts',
-        label: 'موسوعة الحرف والورش التراثية',
-        url: `${origin}/cultural-crafts`,
-        isCurrent: true
-      });
-    } else if (activePage === 'cultural-craft-details' || activePage === 'craft-details') {
-      items.push({
-        id: 'crafts-parent',
-        label: 'موسوعة الحرف التراثية',
-        page: 'cultural-crafts',
-        url: `${origin}/cultural-crafts`,
-        onClick: () => setActivePage('cultural-crafts')
-      });
-      items.push({
-        id: 'current-craft',
-        label: asyncEntityName || formatSlug(selectedCraftSlug, 'تفاصيل الحرفة'),
-        url: `${origin}/cultural-crafts/${selectedCraftSlug || ''}`,
         isCurrent: true
       });
     } else if (activePage === 'people') {

@@ -65,8 +65,6 @@ import { ForbiddenPage } from './components/pages/ForbiddenPage';
 import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
 import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
 import { PlaceDetailPage } from './components/pages/PlaceDetailPage';
-import { CulturalCraftsPage } from './components/pages/CulturalCraftsPage';
-import { CulturalCraftDetailPage } from './components/pages/CulturalCraftDetailPage';
 import { PeoplePage } from './components/pages/PeoplePage';
 import { PersonDetailPage } from './components/pages/PersonDetailPage';
 import { FoodHeritagePage } from './components/pages/FoodHeritagePage';
@@ -225,14 +223,6 @@ const MainContent: React.FC = () => {
           title: 'المعالم والتراث المعماري | وه',
           description: 'توثيق المعابد، القلاع، الأديرة، المساجد العتيقة، والبيوت التراثية بالصعيد.',
           schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'المعالم والتراث المعماري' }])
-        });
-        break;
-      case 'cultural-crafts':
-      case 'craft-details':
-        updatePageSEO({
-          title: 'موسوعة الحرف والورش التراثية | وه',
-          description: 'أسرار صنائع الأجداد: الفخار، التلي، الفركة، الخزف، والألباستر.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'موسوعة الحرف والورش التراثية' }])
         });
         break;
       case 'people':
@@ -614,8 +604,6 @@ const MainContent: React.FC = () => {
               {activePage === 'governorate-details' && <GovernorateDetailPage />}
               {activePage === 'places' && <PlacesHeritagePage />}
               {activePage === 'place-details' && <PlaceDetailPage />}
-              {activePage === 'cultural-crafts' && <CulturalCraftsPage />}
-              {(activePage === 'craft-details' || activePage === 'cultural-craft-details') && <CulturalCraftDetailPage />}
               {activePage === 'people' && <PeoplePage />}
               {activePage === 'person-details' && <PersonDetailPage />}
               {activePage === 'food' && <FoodHeritagePage />}

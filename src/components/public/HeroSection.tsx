@@ -284,7 +284,7 @@ export const HeroSection: React.FC = () => {
                 <span className="text-xs font-medium text-foreground-muted">مكان وأثر</span>
               </div>
               <div className="border-r border-foreground/15 pr-5 text-right">
-                <span className="block text-2xl font-black text-primary">{wahStats?.craftsCount}</span>
+                <span className="block text-2xl font-black text-primary">{wahStats?.productsCount}</span>
                 <span className="text-xs font-medium text-foreground-muted">صنعة وشغل إيد</span>
               </div>
             </motion.div>

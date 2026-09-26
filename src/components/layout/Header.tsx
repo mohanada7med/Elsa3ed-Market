@@ -28,6 +28,11 @@ import {
   Film,
   AlertTriangle,
   Calendar,
+  Landmark,
+  Users,
+  UtensilsCrossed,
+  Compass,
+  Layers,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -107,7 +112,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     if (!item) return;
     markNotificationAsRead(item.id);
     setOpen(false);
-
     resolveNotificationNavigation(item, currentRole, {
       setActivePage,
       navigateToOrder,
@@ -122,25 +126,30 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         id="header-notifications-btn"
         type="button"
         aria-label="الإشعارات"
-        aria-expanded={open}
-        onClick={() => setOpen((prev) => !prev)}
-        className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
+        onClick={() => {
+          if (isGuest) {
+            setAuthModalTab('login');
+            setIsAuthModalOpen(true);
+            return;
+          }
+          setOpen((prev) => !prev);
+        }}
+        className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
         style={{
-          backgroundColor: hoverBg,
-          color: mainText,
+          backgroundColor: open ? '#9a6a35' : hoverBg,
+          color: open ? '#fff' : mainText,
         }}
       >
         <Bell size={18} />
-
         {displayCount > 0 && (
           <span
-            className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold animate-pulse"
+            className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
             style={{
               backgroundColor: '#9a6a35',
               color: '#fff',
             }}
           >
-            {displayCount > 9 ? '9+' : displayCount}
+            {displayCount > 99 ? '99+' : displayCount}
           </span>
         )}
       </button>
@@ -149,118 +158,60 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         {open && (
           <>
             <motion.div
-              className="fixed inset-x-0 bottom-0 top-16 sm:top-[78px] lg:top-[94px] z-[400] bg-black/30 sm:hidden"
+              className="fixed inset-0 z-[490] bg-black/25 backdrop-blur-[2px] sm:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
             />
-
             <motion.div
-              initial={{
-                opacity: 0,
-                y: -8,
-                scale: 0.97,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: -8,
-                scale: 0.97,
-              }}
-              transition={{
-                duration: 0.16,
-              }}
-              className="
-                fixed
-                left-3
-                right-3
-                top-[74px]
-                z-[410]
-                overflow-hidden
-                rounded-[1.5rem]
-                border
-                shadow-2xl
-                backdrop-blur-2xl
-                sm:absolute
-                sm:left-auto
-                sm:right-0
-                sm:top-[calc(100%+10px)]
-                sm:w-[350px]
-              "
+              id="notifications-dropdown-menu"
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.18 }}
+              className="absolute left-0 top-[calc(100%+8px)] z-[500] w-[320px] sm:w-[380px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[1.75rem] border shadow-2xl backdrop-blur-3xl"
               style={{
-                backgroundColor: isDark
-                  ? 'rgba(21, 21, 19, 0.95)'
-                  : 'rgba(255, 255, 255, 0.95)',
+                backgroundColor: isDark ? 'rgba(21, 21, 19, 0.98)' : 'rgba(255, 255, 255, 0.98)',
                 borderColor,
+                color: mainText,
               }}
             >
               <div
-                className="flex items-center justify-between border-b px-4 py-3.5"
-                style={{
-                  borderColor,
-                }}
+                className="flex items-center justify-between border-b px-4 py-3 sm:px-5 sm:py-3.5"
+                style={{ borderColor }}
               >
-                <div>
-                  <h3 className="text-sm font-bold">
-                    الإشعارات
-                  </h3>
-
-                  <p
-                    className="mt-0.5 text-[11px]"
-                    style={{
-                      color: secondaryText,
-                    }}
-                  >
-                    {isGuest ? 'تنبيهات وه' : 'أحدث التنبيهات والأخبار أول بأول'}
-                  </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold">الإشعارات</span>
+                  {displayCount > 0 && (
+                    <span
+                      className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                      style={{ backgroundColor: '#9a6a35' }}
+                    >
+                      {displayCount} جديد
+                    </span>
+                  )}
                 </div>
-
-                {!isGuest && displayCount > 0 && (
+                {displayCount > 0 && (
                   <button
                     type="button"
                     onClick={() => markAllNotificationsAsRead()}
-                    className="flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
-                    style={{
-                      color: '#9a6a35',
-                    }}
+                    className="flex items-center gap-1 text-xs font-semibold cursor-pointer hover:underline"
+                    style={{ color: '#9a6a35' }}
                   >
                     <Check size={13} />
-                    علم على الكل كمقروء
+                    <span>تحديد الكل كمقروء</span>
                   </button>
                 )}
               </div>
 
-              <div className="max-h-[55vh] overflow-y-auto">
+              <div className="max-h-[380px] overflow-y-auto">
                 {isGuest ? (
                   <div className="px-5 py-10 text-center">
-                    <Bell
-                      size={28}
-                      className="mx-auto opacity-30"
-                    />
-
-                    <p
-                      className="mt-3 text-sm font-semibold"
-                      style={{
-                        color: mainText,
-                      }}
-                    >
-                      سجل دخولك عشان تشوف إشعاراتك
+                    <Bell size={28} className="mx-auto opacity-30" />
+                    <p className="mt-3 text-sm font-semibold" style={{ color: mainText }}>
+                      سجل دخول عشان تشوف إشعاراتك
                     </p>
-
-                    <p
-                      className="mt-1 text-xs"
-                      style={{
-                        color: secondaryText,
-                      }}
-                    >
-                      هتلاقي هنا كل جديد يخص طلباتك والورش والرسايل أول بأول
-                    </p>
-
                     <button
                       type="button"
                       onClick={() => {
@@ -268,13 +219,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="mt-4 inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-xs font-semibold cursor-pointer shadow-md"
-                      style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
-                      }}
+                      className="mt-3 rounded-full px-4 py-1.5 text-xs font-bold text-white bg-primary cursor-pointer hover:bg-primary-hover"
                     >
-                      ادخل لحسابك
+                      تسجيل الدخول
                     </button>
                   </div>
                 ) : userNotifications.length > 0 ? (
@@ -285,18 +232,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         key={notification.id}
                         type="button"
                         onClick={() => handleNotificationClick(notification)}
-                        className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer"
+                        className="flex w-full gap-3 border-b px-4 py-4 text-right transition-colors cursor-pointer hover:bg-black/5 dark:hover:bg-white/5"
                         style={{
                           borderColor,
                           backgroundColor: isUnread
                             ? isDark
-                              ? 'rgba(154,106,53,0.08)'
-                              : 'rgba(154,106,53,0.05)'
+                              ? 'rgba(154,106,53,0.12)'
+                              : 'rgba(154,106,53,0.06)'
                             : 'transparent',
                         }}
                       >
                         <div
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                          className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
                           style={{
                             backgroundColor: isDark
                               ? 'rgba(154,106,53,0.16)'
@@ -306,37 +253,27 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         >
                           <Bell size={16} />
                         </div>
-
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-xs font-bold">
+                            <p className="text-xs font-bold truncate">
                               {notification.title}
                             </p>
-
                             {isUnread && (
                               <span
                                 className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: '#9a6a35',
-                                }}
+                                style={{ backgroundColor: '#9a6a35' }}
                               />
                             )}
                           </div>
-
                           <p
                             className="mt-1 text-[11px] leading-5"
-                            style={{
-                              color: secondaryText,
-                            }}
+                            style={{ color: secondaryText }}
                           >
                             {notification.message}
                           </p>
-
                           <p
                             className="mt-1 text-[10px]"
-                            style={{
-                              color: secondaryText,
-                            }}
+                            style={{ color: secondaryText }}
                           >
                             {formatRelativeTime(notification.createdAt)}
                           </p>
@@ -346,26 +283,11 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   })
                 ) : (
                   <div className="px-5 py-10 text-center">
-                    <Bell
-                      size={28}
-                      className="mx-auto opacity-30"
-                    />
-
-                    <p
-                      className="mt-3 text-sm font-semibold"
-                      style={{
-                        color: mainText,
-                      }}
-                    >
+                    <Bell size={28} className="mx-auto opacity-30" />
+                    <p className="mt-3 text-sm font-semibold" style={{ color: mainText }}>
                       مفيش إشعارات
                     </p>
-
-                    <p
-                      className="mt-1 text-xs"
-                      style={{
-                        color: secondaryText,
-                      }}
-                    >
+                    <p className="mt-1 text-xs" style={{ color: secondaryText }}>
                       هتظهر هنا أي تحديثات جديدة لطلباتك وحسابك
                     </p>
                   </div>
@@ -374,9 +296,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
               <div
                 className="border-t p-2 flex items-center gap-2"
-                style={{
-                  borderColor,
-                }}
+                style={{ borderColor }}
               >
                 <button
                   type="button"
@@ -410,6 +330,85 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 };
 
 /* =========================================================
+   WAH PORTALS PREVIEW INFO (FOR HOVER CARDS)
+   ========================================================= */
+const WAH_PORTALS_PREVIEW: Record<
+  string,
+  { title: string; desc: string; image: string; badge: string }
+> = {
+  map: {
+    title: 'خريطة الصعيد التفاعلية',
+    desc: 'اكتشف محافظات وقرى الصعيد وتراث كل بلد على النيل.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
+    badge: 'الخريطة الحية',
+  },
+  places: {
+    title: 'آثار ومعالم الصعيد',
+    desc: 'معابد الكرنك ودندرة وإدفو وقصور المنيا وبيوت النوبة.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
+    badge: 'معالم متوثقة',
+  },
+  people: {
+    title: 'أعلام ورموز الصعيد',
+    desc: 'شيوخ الصنعة ورواة السير والأدباء والشعراء الكبار.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
+    badge: 'حُرّاس الأصل',
+  },
+  food: {
+    title: 'طعم الصعيد البلدي',
+    desc: 'طبيخ الطواجن، عيش شمسي سخن، وفايش بلبن الحمص.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
+    badge: 'أكل بيوت',
+  },
+  events: {
+    title: 'مواسم وليالي الصعيد',
+    desc: 'حلقات التحطيب، ليالي الموالد، وزغاريد الأفراح والمواسم.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
+    badge: 'ليالي الجنوب',
+  },
+  reels: {
+    title: 'ريلز وحكاوي وه',
+    desc: 'فيديوهات قصيرة تاخدك جوة حيطان الورش وأزقة الأسواق.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+    badge: 'فيديوهات حية',
+  },
+  sellers: {
+    title: 'شيوخ الصنعة والورش',
+    desc: 'دكاكين وورش الحرفيين الأصليين في الفخار والخزف والنسيج.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
+    badge: 'ورش الصعايدة',
+  },
+  categories: {
+    title: 'التصنيفات التراثية',
+    desc: 'تصفح كل منتجات وحرف الصعيد مقسمة حسب الصناعة والخامات.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+    badge: 'حرف أصيلة',
+  },
+  quize: {
+    title: 'انت صعيدى ؟ (لعبة اللهجة)',
+    desc: 'تحدي تفاعلي سريع يختبر معرفتك بأصالة الكلمات والمصطلحات الصعيدية.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
+    badge: 'تحدي ولعبة',
+  },
+  about: {
+    title: 'عن منصة وه',
+    desc: 'قصة ورسالة إحياء الحرف التراثية وتوثيق كل شبر في الصعيد.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png',
+    badge: 'حكاية وه',
+  },
+};
+
+/* =========================================================
    HEADER
    ========================================================= */
 
@@ -438,6 +437,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [searchOverlayOpen, setSearchOverlayOpen] = useState(false);
+  const [hoveredPortalId, setHoveredPortalId] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -450,11 +450,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
      CLOSE ACCOUNT DROPDOWN (CLICK OUTSIDE)
      ========================================================= */
   useEffect(() => {
-    if (!userDropdownOpen) return;
-
     const handleClickOutside = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setUserDropdownOpen(false);
       }
     };
@@ -466,7 +466,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   }, [userDropdownOpen]);
 
   /* =========================================================
-     SEARCH FOCUS
+     SEARCH OVERLAY FOCUS
      ========================================================= */
   useEffect(() => {
     if (!searchOverlayOpen) return;
@@ -519,7 +519,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   };
 
   /* =========================================================
-     NAV LINKS
+     ROLE NAVIGATION LINKS
      ========================================================= */
   const roleNavLinks = useMemo(() => {
     if (currentRole === 'seller') {
@@ -601,34 +601,75 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
       {
         id: 'home',
         label: 'الرئيسية',
+        shortLabel: 'الرئيسية',
       },
       {
         id: 'products',
         label: 'المنتجات',
-      },
-      {
-        id: 'categories',
-        label: 'التصنيفات',
+        shortLabel: 'المنتجات',
       },
       {
         id: 'map',
         label: 'محافظات الصعيد',
+        shortLabel: 'خريطة الصعيد',
+        icon: Compass,
         isNew: true,
       },
       {
-        id: 'quize',
-        label: 'انت صعيدى ؟',
-        isNew: true,
-        icon: Flame,
+        id: 'places',
+        label: 'المعالم والآثار',
+        shortLabel: 'المعالم والآثار',
+        icon: Landmark,
+      },
+      {
+        id: 'people',
+        label: 'أعلام ورموز الصعيد',
+        shortLabel: 'أعلام الصعيد',
+        icon: Users,
+      },
+      {
+        id: 'food',
+        label: 'طعم الصعيد (المطبخ الأصيل)',
+        shortLabel: 'طعم الصعيد',
+        icon: UtensilsCrossed,
+      },
+      {
+        id: 'events',
+        label: 'مواسم وليالي الصعيد',
+        shortLabel: 'ليالي ومواسم',
+        icon: Calendar,
       },
       {
         id: 'reels',
         label: 'ريلز وه',
+        shortLabel: 'ريلز وه',
         isNew: true,
+        icon: Film,
       },
       {
         id: 'sellers',
-        label: 'البائعين',
+        label: 'شيوخ الصنعة والورش',
+        shortLabel: 'ورش الصنعة',
+        icon: Store,
+      },
+      {
+        id: 'categories',
+        label: 'التصنيفات التراثية',
+        shortLabel: 'التصنيفات',
+        icon: Layers,
+      },
+      {
+        id: 'quize',
+        label: 'انت صعيدى ؟ (لعبة اللهجة)',
+        shortLabel: 'انت صعيدى؟',
+        isNew: true,
+        icon: Flame,
+      },
+      {
+        id: 'about',
+        label: 'عن وه',
+        shortLabel: 'عن وه',
+        icon: Sparkles,
       },
     ];
 
@@ -637,17 +678,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         id: 'cart',
         label: 'السلة',
       });
-
       links.push({
         id: 'orders',
         label: 'طلباتي',
       });
     }
-
-    links.push({
-      id: 'about',
-      label: 'عن وه',
-    });
 
     return links;
   }, [currentRole, isAuthenticated]);
@@ -675,7 +710,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
      USER
      ========================================================= */
   const displayName = currentUser?.name || currentUser?.username || 'حسابي';
-
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
     (currentUser as any)?.avatar ||
@@ -685,7 +719,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
      COLORS
      ========================================================= */
   const isDark = theme === 'dark';
-
   const mainText = isDark ? '#f5f0e7' : '#211d18';
   const secondaryText = isDark ? '#b3a59a' : '#76675b';
   const borderColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)';
@@ -738,7 +771,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* MAIN ROW */}
         <div className="relative mx-auto max-w-[1600px] px-3 sm:px-6 lg:px-12">
           <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
-
             {/* START ACTIONS */}
             <div
               id="header-start-actions"
@@ -783,7 +815,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 onClick={() => navigate('quize')}
                 aria-label="لعبة اللهجة"
                 title="تحدي كلام الصعايدة"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative" style={{
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
+                style={{
                   backgroundColor: activePage === 'quize' ? '#9a6a35' : hoverBg,
                   color: activePage === 'quize' ? '#fff' : '#9a6a35',
                 }}
@@ -839,39 +872,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     }}
                   >
                     جديد
-                  </span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate('events')}
-                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                  style={{
-                    color: activePage === 'events' ? '#9a6a35' : mainText,
-                  }}
-                >
-                  <Calendar size={15} className="text-primary" />
-                  مواسم وليالي الصعيد
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigate('quize')}
-                  className="flex items-center gap-1.5 whitespace-nowrap text-sm font-black transition-colors cursor-pointer"
-                  style={{
-                    color: activePage === 'quize' ? '#9a6a35' : mainText,
-                  }}
-                >
-                  <Flame size={15} className="text-primary" color="currentColor" />
-                  انت صعيدى؟
-                  <span
-                    className="rounded-full px-2 py-0.5 text-[9px] font-black"
-                    style={{
-                      backgroundColor: '#9a6a35',
-                      color: '#fff',
-                    }}
-                  >
-                    لعبة
                   </span>
                 </button>
               </div>
@@ -1075,8 +1075,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                       <ChevronDown
                         size={15}
-                        className={`hidden sm:block text-primary transition-transform duration-300 ease-out ${userDropdownOpen ? 'rotate-180' : ''
-                          }`}
+                        className={`hidden sm:block text-primary transition-transform duration-300 ease-out ${
+                          userDropdownOpen ? 'rotate-180' : ''
+                        }`}
                       />
                     </button>
 
@@ -1351,44 +1352,221 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           </div>
         </div>
 
-        {/* SUB BAR */}
+        {/* SUB BAR - SLIM EXPANDABLE HERITAGE DOCK */}
         <div
-          className="hidden border-t lg:block"
+          className="hidden border-t py-1.5 px-4 lg:block select-none relative overflow-visible"
           style={{
             borderColor,
+            backgroundColor: isDark ? 'rgba(16, 14, 12, 0.45)' : 'rgba(242, 237, 227, 0.55)',
           }}
         >
-          <nav className="mx-auto flex h-12 max-w-[1600px] items-center justify-center gap-7 overflow-x-auto px-6 scrollbar-none">
-            {roleNavLinks.map((link: any) => {
-              const Icon = link.icon;
+          <div className="mx-auto flex max-w-[1600px] items-center justify-center">
+            <nav
+              onMouseLeave={() => setHoveredPortalId(null)}
+              className="inline-flex items-center gap-1.5 p-1 rounded-full border border-primary/20 bg-stone-500/[0.04] dark:bg-white/[0.03] backdrop-blur-md shadow-2xs relative overflow-visible"
+            >
+              {/* BRAND LEAD: أبواب وه */}
+              <div className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-black text-primary select-none shrink-0 border-l border-foreground/15">
+                <Compass size={13} className="text-primary shrink-0 animate-spin-slow" />
+                <span className="tracking-wide">أبواب وه</span>
+              </div>
 
-              return (
+              {/* WAH DOORS ITEMS (مقفولين ولما تقف عليهم تفتح اللي واقف عليها) */}
+              {roleNavLinks
+                .filter(
+                  (link: any) =>
+                    link.id !== 'home' &&
+                    link.id !== 'products' &&
+                    link.id !== 'cart' &&
+                    link.id !== 'orders' &&
+                    link.id !== 'about'
+                )
+                .map((link: any) => {
+                  const Icon = link.icon;
+                  const isActive = activePage === link.id;
+                  const isHovered = hoveredPortalId === link.id;
+                  const isExpanded = isHovered || (!hoveredPortalId && isActive);
+                  const preview = WAH_PORTALS_PREVIEW[link.id];
+
+                  return (
+                    <div
+                      key={link.id}
+                      className="relative"
+                      onMouseEnter={() => setHoveredPortalId(link.id)}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigate(link.id);
+                          setHoveredPortalId(null);
+                        }}
+                        aria-label={link.label}
+                        className={`group relative flex shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
+                          isExpanded
+                            ? 'px-3 py-1 gap-1.5'
+                            : 'h-7 w-7 p-0'
+                        } ${
+                          isActive
+                            ? 'bg-[#9a6a35] text-white shadow-xs font-black'
+                            : isHovered
+                            ? 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                            : 'text-foreground-secondary hover:text-[#9a6a35] hover:bg-black/5 dark:hover:bg-white/5'
+                        }`}
+                      >
+                        {Icon && (
+                          <Icon
+                            size={13}
+                            className={`shrink-0 transition-transform group-hover:scale-110 ${
+                              isActive ? 'text-white' : 'text-[#9a6a35]'
+                            }`}
+                          />
+                        )}
+
+                        {/* LABEL THAT OPENS ONLY WHEN EXPANDED */}
+                        {isExpanded && (
+                          <motion.span
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: 'auto' }}
+                            exit={{ opacity: 0, width: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="whitespace-nowrap overflow-hidden"
+                          >
+                            {link.shortLabel || link.label}
+                          </motion.span>
+                        )}
+
+                        {link.isNew && isExpanded && (
+                          <span
+                            className={`rounded-full px-1.5 py-0.2 text-[8px] font-black ${
+                              isActive ? 'bg-white/25 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                            }`}
+                          >
+                            جديد
+                          </span>
+                        )}
+                      </button>
+
+                      {/* FLOATING PREVIEW CARD ON HOVER */}
+                      <AnimatePresence>
+                        {isHovered && preview && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 5, scale: 0.98 }}
+                            transition={{ duration: 0.16, ease: 'easeOut' }}
+                            onClick={() => {
+                              navigate(link.id);
+                              setHoveredPortalId(null);
+                            }}
+                            className="absolute top-full right-1/2 translate-x-1/2 mt-2 w-64 p-3 rounded-2xl shadow-xl z-[150] cursor-pointer text-right border select-none"
+                            style={{
+                              backgroundColor: isDark ? 'rgba(20, 18, 16, 0.97)' : 'rgba(255, 253, 249, 0.98)',
+                              borderColor: isDark ? 'rgba(154, 106, 53, 0.35)' : 'rgba(154, 106, 53, 0.25)',
+                              boxShadow: '0 12px 32px -4px rgba(0, 0, 0, 0.35)',
+                              backdropFilter: 'blur(16px)',
+                            }}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <img
+                                src={preview.image}
+                                alt={preview.title}
+                                className="w-11 h-11 rounded-xl object-cover border border-primary/20 shrink-0"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <span className="inline-block text-[9px] font-black text-primary px-1.5 py-0.2 rounded-md bg-primary/10 mb-0.5">
+                                  {preview.badge}
+                                </span>
+                                <h5 className="text-xs font-black truncate" style={{ color: mainText }}>
+                                  {preview.title}
+                                </h5>
+                              </div>
+                            </div>
+                            <p className="mt-2 text-[11px] leading-relaxed text-right line-clamp-2" style={{ color: secondaryText }}>
+                              {preview.desc}
+                            </p>
+                            <div className="mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-bold text-primary" style={{ borderColor }}>
+                              <span>دخول الباب</span>
+                              <ArrowLeft size={11} className="transition-transform group-hover:-translate-x-1" />
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+
+              {/* SEPARATOR */}
+              <div className="h-3.5 w-px bg-foreground/15 mx-0.5 shrink-0" />
+
+              {/* ABOUT WAH - DISTINCT FEATURED BUTTON */}
+              <div
+                className="relative"
+                onMouseEnter={() => setHoveredPortalId('about')}
+              >
                 <button
-                  key={link.id}
                   type="button"
-                  onClick={() => navigate(link.id)}
-                  className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-sm font-bold transition-colors cursor-pointer"
-                  style={{
-                    color: activePage === link.id ? '#9a6a35' : mainText,
+                  onClick={() => {
+                    navigate('about');
+                    setHoveredPortalId(null);
                   }}
+                  className={`flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-150 cursor-pointer ${
+                    activePage === 'about'
+                      ? 'bg-[#9a6a35] text-white shadow-xs'
+                      : 'bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/25'
+                  }`}
                 >
-                  {Icon && <Icon size={15} />}
-                  <span>{link.label}</span>
-                  {link.isNew && (
-                    <span
-                      className="rounded-full px-1.5 py-0.5 text-[9px] font-bold"
+                  <Sparkles size={12} className="shrink-0" />
+                  <span>عن وه</span>
+                </button>
+
+                {/* ABOUT PREVIEW CARD */}
+                <AnimatePresence>
+                  {hoveredPortalId === 'about' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 5, scale: 0.98 }}
+                      transition={{ duration: 0.16, ease: 'easeOut' }}
+                      onClick={() => {
+                        navigate('about');
+                        setHoveredPortalId(null);
+                      }}
+                      className="absolute top-full left-0 mt-2 w-64 p-3 rounded-2xl shadow-xl z-[150] cursor-pointer text-right border select-none"
                       style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
+                        backgroundColor: isDark ? 'rgba(20, 18, 16, 0.97)' : 'rgba(255, 253, 249, 0.98)',
+                        borderColor: isDark ? 'rgba(154, 106, 53, 0.35)' : 'rgba(154, 106, 53, 0.25)',
+                        boxShadow: '0 12px 32px -4px rgba(0, 0, 0, 0.35)',
+                        backdropFilter: 'blur(16px)',
                       }}
                     >
-                      جديد
-                    </span>
+                      <div className="flex items-center gap-2.5">
+                        <img
+                          src={WAH_PORTALS_PREVIEW.about.image}
+                          alt={WAH_PORTALS_PREVIEW.about.title}
+                          className="w-11 h-11 rounded-xl object-contain bg-white/5 p-1 border border-primary/20 shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <span className="inline-block text-[9px] font-black text-primary px-1.5 py-0.2 rounded-md bg-primary/10 mb-0.5">
+                            {WAH_PORTALS_PREVIEW.about.badge}
+                          </span>
+                          <h5 className="text-xs font-black truncate" style={{ color: mainText }}>
+                            {WAH_PORTALS_PREVIEW.about.title}
+                          </h5>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-[11px] leading-relaxed text-right line-clamp-2" style={{ color: secondaryText }}>
+                        {WAH_PORTALS_PREVIEW.about.desc}
+                      </p>
+                      <div className="mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-bold text-primary" style={{ borderColor }}>
+                        <span>اقرأ الحكاية</span>
+                        <ArrowLeft size={11} />
+                      </div>
+                    </motion.div>
                   )}
-                </button>
-              );
-            })}
-          </nav>
+                </AnimatePresence>
+              </div>
+            </nav>
+          </div>
         </div>
       </header>
 
@@ -1417,7 +1595,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <p className="text-xs font-bold" style={{ color: '#9a6a35' }}>وه</p>
                   <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">بتدور على إيه؟</h2>
                 </div>
-
                 <button
                   type="button"
                   onClick={() => setSearchOverlayOpen(false)}
@@ -1447,7 +1624,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     className="shrink-0"
                     style={{ color: secondaryText }}
                   />
-
                   <input
                     ref={searchInputRef}
                     type="text"
@@ -1457,7 +1633,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     className="h-14 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:opacity-60 sm:text-base font-bold"
                     style={{ color: mainText }}
                   />
-
                   <button
                     type="submit"
                     className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-90 transition-opacity"
@@ -1479,7 +1654,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 >
                   ممكن يعجبك تدور على
                 </p>
-
                 <div className="flex flex-wrap gap-2">
                   {[
                     'فخار',
@@ -1567,64 +1741,53 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <X size={20} />
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => navigate('home')}
-                  className="flex items-center"
-                >
-                  <img
-                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
-                    alt="وه"
-                    className="h-11 w-auto object-contain sm:h-12"
-                  />
-                </button>
+                <img
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
+                  alt="وه"
+                  className="h-10 w-auto sm:h-12"
+                />
               </div>
 
-              <div className="p-4">
+              <div className="p-4 sm:p-5">
+                {/* USER CARD IN MOBILE MENU */}
                 {isAuthenticated ? (
                   <div
-                    className="mb-5 rounded-[1.5rem] border p-4 shadow-sm backdrop-blur-xl"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate(getAccountPage());
+                    }}
+                    className="mb-4 flex items-center gap-3.5 rounded-2xl border p-3.5 cursor-pointer transition-all hover:scale-[1.01]"
                     style={{
                       borderColor,
                       backgroundColor: hoverBg,
                     }}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="relative">
                       <img
                         src={profileImage}
                         alt={displayName}
-                        className="h-12 w-12 shrink-0 rounded-full object-cover"
+                        className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/30"
                       />
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-bold">{displayName}</p>
-                        <p
-                          className="mt-1 text-xs font-bold"
-                          style={{ color: secondaryText }}
-                        >
-                          {currentRole === 'admin'
-                            ? 'إدارة وه'
-                            : isSeller
-                              ? 'حساب الورشة / بائع'
-                              : 'حساب زبون'}
-                        </p>
-                      </div>
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#121210]" />
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => navigate(getAccountPage())}
-                      className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
-                      style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
-                      }}
-                    >
-                      <UserCircle size={17} />
-                      {isSeller ? 'لوحة الورشة' : isAdmin ? 'لوحة الإدارة' : 'حسابي'}
-                    </button>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="truncate text-sm font-black" style={{ color: mainText }}>
+                          {displayName}
+                        </p>
+                        <ArrowLeft size={14} className="text-primary" />
+                      </div>
+                      <p className="mt-0.5 text-xs font-semibold" style={{ color: secondaryText }}>
+                        {currentRole === 'admin'
+                          ? 'إدارة وه'
+                          : isSeller
+                            ? 'شيخ صنعة / بائع'
+                            : 'ابن البلد / زبون'}
+                      </p>
+                    </div>
                   </div>
                 ) : (
-                  <div className="mb-5 grid grid-cols-2 gap-2">
+                  <div className="mb-4 flex gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -1632,10 +1795,13 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="rounded-xl border py-3 text-sm font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                      style={{ borderColor, color: mainText }}
+                      className="flex-1 rounded-xl py-3 text-center text-xs font-bold border transition-colors cursor-pointer"
+                      style={{
+                        borderColor,
+                        color: mainText,
+                      }}
                     >
-                      تسجيل دخول
+                      ادخل لحسابك
                     </button>
                     <button
                       type="button"
@@ -1644,8 +1810,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
-                      className="rounded-xl py-3 text-sm font-bold cursor-pointer hover:opacity-90 transition-opacity"
-                      style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                      className="flex-1 rounded-xl py-3 text-center text-xs font-bold text-white transition-opacity cursor-pointer"
+                      style={{
+                        backgroundColor: '#9a6a35',
+                      }}
                     >
                       اعمل حساب جديد
                     </button>

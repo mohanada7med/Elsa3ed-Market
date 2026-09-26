@@ -10,7 +10,6 @@ import {
   ArrowUpLeft,
   Award,
   Sparkles,
-  Hammer,
   ChevronDown,
   X,
   Compass,
@@ -277,24 +276,6 @@ export const PeoplePage: React.FC = () => {
             >
               <RefreshCw size={14} className={isRefreshing ? 'animate-spin text-accent' : ''} />
               <span className="hidden md:inline">تحديث</span>
-            </button>
-
-            <button
-              onClick={() => setActivePage('cultural-crafts')}
-              className="
-                flex items-center gap-2
-                rounded-full
-                border border-border-subtle
-                px-4 py-2.5
-                text-xs font-bold
-                transition-all
-                hover:bg-btn-dark
-                hover:text-white
-                cursor-pointer
-              "
-            >
-              <span className="hidden sm:block">موسوعة الحرف</span>
-              <Hammer size={15} />
             </button>
           </div>
         </div>

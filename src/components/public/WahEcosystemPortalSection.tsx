@@ -52,17 +52,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
       accentColor: 'from-[#9a6a35]/70'
     },
     {
-      id: 'crafts',
-      title: 'صنعة اليد وخير الأسطوات',
-      tagline: 'سر الصنعة طالع من إيد أسطى شاطر',
-      desc: 'أسرار قُلل وفخار قنا، خيوط التلي الفضة في أسيوط، فركة نقادة، شغل ألباستر القرنة، وسجاد أخميم الأصيل.',
-      badge: 'صنايعية الصعيد',
-      page: 'cultural-crafts' as const,
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
-      nameEn: 'Crafts Encyclopedia',
-      accentColor: 'from-orange-950/70'
-    },
-    {
       id: 'people',
       title: 'أعلام ورموز الصعيد',
       tagline: 'شيوخ الصنعة وحراس الأصل والكلمة',

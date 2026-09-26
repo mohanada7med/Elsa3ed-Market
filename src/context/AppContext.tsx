@@ -431,10 +431,6 @@ export const PAGE_ROUTES: Record<ActivePage, string> = {
   market: '/market',
   profile: '/profile',
 
-  'cultural-crafts': '/cultural-crafts',
-  'cultural-craft-details': '/cultural-crafts/:slug',
-  'craft-details': '/cultural-crafts/:slug',
-
   people: '/people',
   'person-details': '/people/:slug',
 
@@ -579,9 +575,9 @@ function getInitialNavigationState(): {
     return { page: 'place-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, placeSlug };
   }
 
-  const craftSlug = params.get('craft') || params.get('craftSlug') || ((pageParam === 'cultural-craft-details' || pageParam === 'craft-details') ? slugFromQuery : null);
+  const craftSlug = params.get('craft') || params.get('craftSlug') || ((pageParam as any) === 'cultural-craft-details' || (pageParam as any) === 'craft-details' ? slugFromQuery : null);
   if (craftSlug) {
-    return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   const storySlug = params.get('story') || params.get('storySlug');
@@ -660,13 +656,9 @@ function getInitialNavigationState(): {
     return { page: 'places', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
-  // Cultural Crafts: /cultural-crafts or /cultural-crafts/:slug
+  // Cultural Crafts: removed, redirect to home
   if (rawPath === '/cultural-crafts' || rawPath.startsWith('/cultural-crafts/')) {
-    const rawCandidate = slugFromQuery || (rawPath.startsWith('/cultural-crafts/') ? decodeURIComponent(rawPath.split('/')[2] || '') : null);
-    if (isValidRouteIdentifier(rawCandidate)) {
-      return { page: 'cultural-craft-details', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm, craftSlug: rawCandidate!.trim() };
-    }
-    return { page: 'cultural-crafts', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
+    return { page: 'home', productId: null, categoryId: null, sellerId: null, orderId: null, searchQuery: queryTerm };
   }
 
   // Stories route redirected
@@ -881,7 +873,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sessionStorage.setItem('elsa3ed_active_page', activePage);
       const isDynamicRoute = [
         'product-details', 'product-detail', 'category-details', 'seller-details', 'order-details',
-        'governorate-details', 'place-details', 'cultural-craft-details',
+        'governorate-details', 'place-details',
         'person-details', 'food-details', 'event-details'
       ].includes(activePage);
       if (!isDynamicRoute) {
@@ -2209,20 +2201,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const navigateToCraft = (slugOrCraft: string | { slug?: string; id?: string }) => {
-    const slug = safeExtractIdentifier(slugOrCraft);
-    if (!slug) {
-      console.warn('Invalid identifier passed to navigateToCraft:', slugOrCraft);
-      setActivePageState('cultural-crafts');
-      return;
-    }
-    setSelectedCraftSlug(slug);
-    setActivePageState('cultural-craft-details');
+  const navigateToCraft = (_slugOrCraft?: string | { slug?: string; id?: string }) => {
+    setActivePageState('home');
     try {
-      sessionStorage.setItem('wah_selected_craft_slug', slug);
-      window.history.pushState({ page: 'cultural-craft-details', slug }, '', `/cultural-crafts/${encodeURIComponent(slug)}`);
+      window.history.pushState({ page: 'home' }, '', '/');
     } catch { }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToStory = (_slugOrStory?: string | { slug?: string; id?: string }) => {
