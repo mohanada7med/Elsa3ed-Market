@@ -41,7 +41,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
     const [phase, setPhase] = useState<IntroPhase>(initialPhase);
     const [pillarIndex, setPillarIndex] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
-    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png');
+    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png');
 
     useEffect(() => {
         setPhase(initialPhase);
@@ -233,7 +233,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             loading="eager"
                             decoding="async"
                             onError={() => {
-                                setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png');
+                                setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png');
                             }}
                             className={`object-contain select-none transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                                 ? 'h-20 w-20 sm:h-24 sm:w-24 drop-shadow'
@@ -269,6 +269,11 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             : 'opacity-0 scale-95 pointer-events-none'
                             }`}
                     >
+                        <img
+                            src="/mascot/welcoming.png"
+                            alt="مرحب بيكم في وه"
+                            className="h-32 w-auto sm:h-40 object-contain drop-shadow-md mb-2 animate-fade-in"
+                        />
                         <div className="mb-2 flex items-center justify-center gap-2">
                             <span className="h-px w-6 bg-primary/40" />
                             <span className="h-1.5 w-1.5 rounded-full bg-[#c28b4d]" />

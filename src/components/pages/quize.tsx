@@ -869,16 +869,23 @@ export const DialectDictionaryPage: React.FC = () => {
           <section className="relative z-30 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pb-12">
             <div className="relative overflow-hidden rounded-3xl bg-espresso px-6 py-8 text-white sm:px-10 sm:py-12">
               <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-primary-hover">
-                    READY TO START?
+                <div className="flex items-center gap-5 sm:gap-7">
+                  <img
+                    src="/mascot/quiz.png"
+                    alt="تحدي اللهجة الصعيدية"
+                    className="hidden sm:block h-32 w-auto lg:h-44 object-contain drop-shadow-2xl shrink-0 -my-4 animate-fade-in"
+                  />
+                  <div>
+                    <div className="mb-2 text-[9px] font-black tracking-[0.25em] text-primary-hover">
+                      READY TO START?
+                    </div>
+                    <h2 className="text-2xl sm:text-4xl font-black">
+                      مستعد لاختبار الصعيد؟
+                    </h2>
+                    <p className="mt-2 max-w-xl text-xs sm:text-sm leading-6 text-white/50">
+                      شوف نفسك صعيدي أصيل وتستحق لقب العمدة ولا محتاج تلف لفة تانية في القرى.
+                    </p>
                   </div>
-                  <h2 className="text-2xl sm:text-4xl font-black">
-                    مستعد لاختبار الصعيد؟
-                  </h2>
-                  <p className="mt-2 max-w-xl text-xs sm:text-sm leading-6 text-white/50">
-                    شوف نفسك صعيدي أصيل وتستحق لقب العمدة ولا محتاج تلف لفة تانية في القرى.
-                  </p>
                 </div>
 
                 <button
@@ -1029,6 +1036,11 @@ export const DialectDictionaryPage: React.FC = () => {
         <section className="relative z-20 mx-auto max-w-[1000px] px-4 pt-6 pb-16 sm:px-8 sm:pt-10">
           <div className="rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 sm:p-10 text-center dark:border-white/[0.08] dark:bg-[#121210]">
             <div className="max-w-xl mx-auto">
+              <img
+                src={score >= 70 ? "/mascot/quiz.png" : "/mascot/empty-search.png"}
+                alt="نتيجة التحدي"
+                className="h-36 sm:h-44 w-auto mx-auto object-contain drop-shadow-xl mb-4 animate-fade-in"
+              />
               <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-[#1a1815] px-3.5 py-1.5 text-xs font-black text-primary dark:text-primary-hover">
                 <Trophy size={14} />
                 {result.badge}

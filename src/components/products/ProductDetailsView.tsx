@@ -92,7 +92,7 @@ export const ProductDetailsView: React.FC = () => {
       product.images.length > 0
       ? product.images
       : [
-        'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png',
+        'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
       ];
 
   const productTags = Array.isArray(product?.tags) ? product.tags : [];
@@ -2536,15 +2536,15 @@ export const ProductDetailsView: React.FC = () => {
                 type="button"
                 onClick={() => setRelatedFilter('all')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'all'
-                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                  ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                  : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                   }`}
               >
                 <span>كل الحكاية</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'all'
-                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                    ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                    : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
                     }`}
                 >
                   {allStoryProducts.length}
@@ -2556,16 +2556,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('artisan')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'artisan'
-                      ? 'bg-primary text-white shadow-md dark:bg-primary-hover dark:text-black'
-                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-primary text-white shadow-md dark:bg-primary-hover dark:text-black'
+                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                     }`}
                 >
                   <Store size={14} />
                   <span>من ورشة {product.sellerName || 'الحرفي'}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'artisan'
-                        ? 'bg-white/25 text-white dark:text-black'
-                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/25 text-white dark:text-black'
+                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
                       }`}
                   >
                     {relatedArtisanProducts.length}
@@ -2578,16 +2578,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('category')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'category'
-                      ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                     }`}
                 >
                   <Layers3 size={14} />
                   <span>من نفس الحرفة</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'category'
-                        ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
                       }`}
                   >
                     {relatedCategoryProducts.length}
@@ -2600,16 +2600,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('governorate')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'governorate'
-                      ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                     }`}
                 >
                   <MapPin size={14} />
                   <span>من أرض {product.sellerGovernorate}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'governorate'
-                        ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
                       }`}
                   >
                     {relatedGovernorateProducts.length}

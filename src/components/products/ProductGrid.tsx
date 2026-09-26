@@ -1753,45 +1753,32 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
           dark:bg-cream/[0.015]
         "
       >
-        <div
-          className="
-            flex
-            h-16
-            w-16
-            items-center
-            justify-center
-            rounded-2xl
-            bg-primary/10
-            text-primary
-
-            dark:bg-[#d6aa72]/10
-            dark:text-primary-hover
-          "
-        >
-          <Search size={24} />
-        </div>
+        <img
+          src="/mascot/empty-search.png"
+          alt="مفيش نتيجة"
+          className="h-44 sm:h-52 w-auto object-contain drop-shadow-md mb-2 animate-fade-in"
+        />
 
         <h3
           className="
-            mt-6
+            mt-3
             text-xl
             font-black
           "
         >
-          مفيش نتيجة
+          ملقيناش منتجات بالبحث ده يا بوي
         </h3>
 
         <p
           className="
-            mt-3
+            mt-2
             text-sm
             leading-7
-            text-black/40
-
-            dark:text-white/35
+            text-black/50
+            dark:text-white/45
           "
         >
-          جرّب كلمة بحث أو تصنيف مختلف.
+          جرّب كلمة بحث تانية أو وسّع نطاق التصنيف وهتلاقي خير كتير من إيد شيوخ الصنعة.
         </p>
       </div>
     );

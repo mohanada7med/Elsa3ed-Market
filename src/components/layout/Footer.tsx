@@ -189,7 +189,7 @@ export const Footer: React.FC = () => {
           {/* 1. هوية المنصة والنبذة التأسيسية */}
           <div className="lg:col-span-3 space-y-5">
             <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
+              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
               alt="شعار منصة وه"
               width={150}
               className="brightness-125"

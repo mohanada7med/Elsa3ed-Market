@@ -895,7 +895,7 @@ export function buildPasswordResetEmailTemplate(
 
           <img
             class="logo"
-            src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
+            src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
             alt="شعار وه | WAH"
           >
 

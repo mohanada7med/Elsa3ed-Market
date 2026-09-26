@@ -199,7 +199,7 @@ export function generateArticleSchema(article: {
       name: 'وه | WAH',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png'
+        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png'
       }
     },
     datePublished: article.datePublished || new Date().toISOString()

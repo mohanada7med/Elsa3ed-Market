@@ -161,13 +161,15 @@ export const CartPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-lg mx-auto text-center py-12 sm:py-16 px-5 sm:px-6 bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-xl my-6 sm:my-8 space-y-5 backdrop-blur-xl"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-black/5 dark:bg-cream/5 text-primary flex items-center justify-center mx-auto shadow-inner">
-              <ShoppingBag className="w-10 h-10 sm:w-12 sm:h-12 opacity-80" />
-            </div>
+            <img
+              src="/mascot/empty-cart.png"
+              alt="السلة فاضية يا بوي"
+              className="h-44 sm:h-56 w-auto object-contain drop-shadow-xl mx-auto mb-2 animate-fade-in"
+            />
 
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl font-black font-serif">
-                السلة فاضية لسه
+                سلتك فاضية يا بوي
               </h2>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 max-w-sm mx-auto leading-relaxed">
                 لف في السوق دلوقتي واكتشف روائع الفخار والكليم والعسل وخيرات الصعيد الأصيلة.

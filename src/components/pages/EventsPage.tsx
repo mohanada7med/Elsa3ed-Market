@@ -723,20 +723,14 @@ export const EventsPage: React.FC = () => {
               backdrop-blur-xl p-8
             "
               >
-                <div
-                  className="
-                mb-6 flex h-16 w-16
-                items-center justify-center
-                rounded-full
-                border border-black/10
-                dark:border-white/10
-              "
-                >
-                  <Calendar size={24} className="text-primary" />
-                </div>
+                <img
+                  src="/mascot/empty-search.png"
+                  alt="ملقيناش مواسم"
+                  className="h-44 sm:h-52 w-auto object-contain drop-shadow-md mb-3"
+                />
 
-                <h3 className="text-xl font-black">ملقيناش مواسم أو ليالي مطابقة لبحثك</h3>
-                <p className="mt-3 text-sm text-black/60 dark:text-white/60 max-w-md">
+                <h3 className="text-xl font-black">ملقيناش مواسم أو ليالي مطابقة لبحثك يا بوي</h3>
+                <p className="mt-2 text-sm text-black/60 dark:text-white/60 max-w-md">
                   جرّب البحث بكلمة تانية زي "قنا" أو "بلح" أو "أبو الحجاج" أو غيّر الفلتر لتصفح باقي الاحتفالات.
                 </p>
 

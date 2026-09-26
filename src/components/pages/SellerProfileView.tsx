@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from '../products/ProductCard';
 import {
@@ -11,21 +11,39 @@ import {
   Calendar,
   Sparkles,
   Award,
-  Share2
+  Share2,
+  Package,
+  Layers,
+  ArrowDownLeft,
+  ShoppingBag,
+  ShieldCheck,
+  Heart,
+  WandSparkles,
 } from 'lucide-react';
 
 export const SellerProfileView: React.FC = () => {
-  const { sellers, selectedSellerId, products, setActivePage, addToast } = useApp();
+  const {
+    sellers,
+    selectedSellerId,
+    products,
+    setActivePage,
+    addToast,
+  } = useApp();
 
   const effectiveSellerId =
     selectedSellerId ||
-    (typeof window !== 'undefined' && window.location.pathname.startsWith('/sellers/')
-      ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
+    (typeof window !== 'undefined' &&
+      window.location.pathname.startsWith('/sellers/')
+      ? decodeURIComponent(
+        window.location.pathname.split('/')[2] || ''
+      )
       : null);
 
   const matchedSeller = useMemo(() => {
     if (!effectiveSellerId) return sellers[0] || null;
+
     const trimmed = effectiveSellerId.trim();
+
     return (
       sellers.find(
         (s) =>
@@ -40,9 +58,18 @@ export const SellerProfileView: React.FC = () => {
 
   const [directSeller, setDirectSeller] = useState<any>(null);
   const [isLoadingDirect, setIsLoadingDirect] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [visibleSections, setVisibleSections] = useState<
+    Record<string, boolean>
+  >({});
+
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   }, [effectiveSellerId]);
 
   useEffect(() => {
@@ -50,8 +77,11 @@ export const SellerProfileView: React.FC = () => {
       setDirectSeller(null);
       return;
     }
+
     let isMounted = true;
+
     setIsLoadingDirect(true);
+
     fetch(`/api/sellers/${encodeURIComponent(effectiveSellerId)}`)
       .then((res) => res.json())
       .then((json) => {
@@ -59,9 +89,11 @@ export const SellerProfileView: React.FC = () => {
           setDirectSeller(json.data);
         }
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => {
-        if (isMounted) setIsLoadingDirect(false);
+        if (isMounted) {
+          setIsLoadingDirect(false);
+        }
       });
 
     return () => {
@@ -69,19 +101,64 @@ export const SellerProfileView: React.FC = () => {
     };
   }, [matchedSeller, effectiveSellerId]);
 
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    Object.entries(sectionRefs.current).forEach(([key, element]) => {
+      if (!element) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => ({
+              ...prev,
+              [key]: true,
+            }));
+
+            observer.disconnect();
+          }
+        },
+        {
+          threshold: 0.12,
+          rootMargin: '0px 0px -60px 0px',
+        }
+      );
+
+      observer.observe(element);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, []);
+
   const seller = matchedSeller || directSeller;
 
   if (isLoadingDirect || (!seller && sellers.length === 0)) {
     return (
       <div
         dir="rtl"
-        className="min-h-[60vh] flex items-center justify-center max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-16"
+        className="min-h-[70vh] flex items-center justify-center px-5"
       >
-        <div className="text-center space-y-3">
-          <div className="h-10 w-10 mx-auto animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
-          <p className="text-xs font-bold text-black/50 dark:text-white/50">
-            جاري فتح ورشة الحرفي...
-          </p>
+        <div className="relative text-center">
+          <div className="absolute inset-0 blur-3xl bg-primary/10 rounded-full scale-150" />
+
+          <div className="relative">
+            <div className="w-16 h-16 mx-auto rounded-[1.5rem] bg-surface-subtle border border-border-subtle flex items-center justify-center shadow-xl">
+              <Store className="w-7 h-7 text-primary animate-pulse" />
+            </div>
+
+            <p className="mt-5 text-sm font-black text-foreground">
+              بنفتحلك ديار الصانع...
+            </p>
+
+            <div className="flex justify-center gap-1 mt-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -91,23 +168,34 @@ export const SellerProfileView: React.FC = () => {
     return (
       <div
         dir="rtl"
-        className="min-h-[60vh] flex items-center justify-center max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-16"
+        className="min-h-[70vh] flex items-center justify-center px-5"
       >
-        <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 text-center space-y-4 shadow-lg max-w-md w-full">
-          <Store className="w-12 h-12 text-primary mx-auto" />
-          <h3 className="text-xl font-black font-serif text-espresso dark:text-cream">
-            صفحة الورشة مش موجودة دلوقتي
-          </h3>
-          <p className="text-xs text-black/50 dark:text-white/40 leading-relaxed">
-            قد تكون الورشة قيد الاعتماد أو تم تعديل بياناتها، تصفح باقي شيوخ الصنعة في صعيد مصر.
-          </p>
-          <button
-            type="button"
-            onClick={() => setActivePage('sellers')}
-            className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-[1.25rem] text-xs font-black transition-colors cursor-pointer"
-          >
-            شوف باقي شيوخ الصنعة
-          </button>
+        <div className="relative w-full max-w-md overflow-hidden rounded-[2.5rem] border border-border-subtle bg-surface-subtle p-8 sm:p-12 text-center shadow-2xl">
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full" />
+          <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-primary/10 blur-3xl rounded-full" />
+
+          <div className="relative">
+            <div className="w-20 h-20 rounded-[1.75rem] bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <Store className="w-9 h-9" />
+            </div>
+
+            <h3 className="mt-6 text-2xl font-black font-serif text-foreground">
+              الورشة دي مش معروضة دلوقتي
+            </h3>
+
+            <p className="mt-3 text-sm text-foreground-muted leading-7">
+              قد تكون الورشة قيد مراجعة الجودة أو تم تحديث بياناتها؛
+              تصفح بقية شيوخ الصنعة في الجنوب.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setActivePage('sellers')}
+              className="mt-7 w-full py-4 rounded-2xl bg-foreground text-background hover:bg-primary hover:text-white transition-all duration-300 font-black text-sm shadow-lg hover:-translate-y-1"
+            >
+              شوف باقي شيوخ الصنعة
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -121,213 +209,467 @@ export const SellerProfileView: React.FC = () => {
       p.approvalStatus === 'approved'
   );
 
-  const brandTitle = seller.brandName || seller.name || 'ورشة الحرفي';
+  const brandTitle =
+    seller.brandName || seller.name || 'ورشة الحرفي';
+
   const coverImg =
     seller.coverImage ||
-    'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80';
+    'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1600&q=85';
+
   const avatarImg =
     seller.avatar ||
     'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
-  const joinedYear = String(seller.joinedDate || '2023').slice(0, 4);
+
+  const joinedYear = String(
+    seller.joinedDate || '2023'
+  ).slice(0, 4);
 
   const handleShare = () => {
-    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(seller.id || effectiveSellerId || '')}`;
+    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(
+      seller.id || effectiveSellerId || ''
+    )}`;
+
     if (navigator.share) {
       navigator
         .share({
           title: brandTitle,
-          text: `ورشة ${brandTitle} - حرفيو صعيد مصر على منصة وه`,
-          url: shareUrl
+          text: `ورشة ${brandTitle} - شيوخ صنعة صعيد مصر على منصة وه`,
+          url: shareUrl,
         })
         .catch(() => {
           navigator.clipboard?.writeText(shareUrl);
-          addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي المباشر بنجاح', 'info');
+          addToast(
+            'تم نسخ الرابط',
+            'تم نسخ رابط ورشة الحرفي بنجاح',
+            'info'
+          );
         });
     } else {
       navigator.clipboard?.writeText(shareUrl);
-      addToast('تم نسخ الرابط', 'تم نسخ رابط ورشة الحرفي المباشر بنجاح', 'info');
+      addToast(
+        'تم نسخ الرابط',
+        'تم نسخ رابط ورشة الحرفي بنجاح',
+        'info'
+      );
     }
   };
 
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-cream text-espresso dark:bg-espresso-900 dark:text-cream max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-8 space-y-8"
+      className="min-h-screen bg-background text-foreground overflow-hidden"
     >
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-espresso/60 dark:text-cream/60 font-medium">
-        <button
-          type="button"
-          onClick={() => setActivePage('home')}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
-        >
-          الرئيسية
-        </button>
-        <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <button
-          type="button"
-          onClick={() => setActivePage('sellers')}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
-        >
-          دليل شيوخ الصنعة
-        </button>
-        <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <span className="text-espresso dark:text-cream font-bold">{brandTitle}</span>
-      </nav>
+      {/* =========================================================
+          BACKGROUND DECORATION
+      ========================================================= */}
 
-      {/* Workshop Header & Profile Banner */}
-      <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg">
-        {/* Cover Banner */}
-        <div className="relative h-48 sm:h-64 w-full bg-black/5 dark:bg-cream/5">
-          <img src={coverImg} alt={brandTitle} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[8%] -right-40 w-[28rem] h-[28rem] rounded-full bg-primary/[0.055] blur-3xl" />
+        <div className="absolute top-[45%] -left-40 w-[28rem] h-[28rem] rounded-full bg-orange-500/[0.035] blur-3xl" />
+        <div className="absolute bottom-[5%] right-[35%] w-[20rem] h-[20rem] rounded-full bg-amber-500/[0.025] blur-3xl" />
+      </div>
 
-          {/* Governorate tag & Share */}
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <span className="bg-primary text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" />
-              <span>محافظة {seller.governorate || 'صعيد مصر'}</span>
+      <div className="relative max-w-[1650px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-5 sm:py-8">
+        {/* =========================================================
+            BREADCRUMB
+        ========================================================= */}
+
+        <nav className="flex items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-foreground-disabled overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setActivePage('home')}
+              className="hover:text-primary transition-colors shrink-0"
+            >
+              الرئيسية
+            </button>
+
+            <ChevronRight className="w-3 h-3 rotate-180 opacity-30 shrink-0" />
+
+            <button
+              type="button"
+              onClick={() => setActivePage('sellers')}
+              className="hover:text-primary transition-colors shrink-0"
+            >
+              دليل الصنّاع
+            </button>
+
+            <ChevronRight className="w-3 h-3 rotate-180 opacity-30 shrink-0" />
+
+            <span className="text-foreground truncate">
+              {brandTitle}
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleShare}
-            className="absolute top-4 left-4 p-2.5 rounded-full bg-white/90 dark:bg-espresso-900/90 hover:bg-white text-espresso dark:text-cream backdrop-blur-md shadow-sm transition-all cursor-pointer"
-            title="مشاركة رابط الورشة"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
-        </div>
+          <div className="flex items-center gap-2 shrink-0">
 
-        {/* Profile Details Bar */}
-        <div className="p-5 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-16 sm:-mt-20 mb-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-end text-center sm:text-right gap-4">
-              <div className="relative shrink-0">
-                <img
-                  src={avatarImg}
-                  alt={seller.name || brandTitle}
-                  className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl object-cover border-4 border-white dark:border-[#151513] shadow-xl bg-stone-100"
-                />
-                {seller.verified && (
-                  <div
-                    className="absolute -bottom-1 -left-1 bg-emerald-600 text-white rounded-full p-1 shadow-md"
-                    title="حرفي موثق"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
+
+            <button
+              type="button"
+              onClick={handleShare}
+              className="h-10 px-3.5 sm:px-4 rounded-xl border border-border-subtle bg-surface-subtle hover:border-primary/30 hover:text-primary inline-flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <Share2 className="w-4 h-4" />
+              <span className="hidden sm:inline text-[11px] font-black">
+                مشاركة
+              </span>
+            </button>
+          </div>
+        </nav>
+
+        {/* =========================================================
+            HERO
+        ========================================================= */}
+
+        <section
+          ref={(el) => {
+            sectionRefs.current.hero = el;
+          }}
+          className={`transition-all duration-1000 ${visibleSections.hero
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-8'
+            }`}
+        >
+          <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[3rem] min-h-[480px] sm:min-h-[580px] lg:min-h-[620px] border border-white/10 shadow-2xl group">
+            {/* IMAGE */}
+
+            <img
+              src={coverImg}
+              alt={brandTitle}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1800ms] ease-out group-hover:scale-[1.045]"
+            />
+
+            {/* DARK GRADIENT */}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/5" />
+
+            <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-transparent" />
+
+            {/* MOVING LIGHT */}
+
+            <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl opacity-60 group-hover:opacity-90 transition-opacity duration-1000" />
+
+            {/* HERO CONTENT */}
+
+            <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 lg:p-12">
+              <div className="max-w-4xl">
+                {/* BADGES */}
+
+                <div className="flex flex-wrap items-center gap-2 mb-5">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-black/45 backdrop-blur-xl border border-white/15 text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
+                    <MapPin className="w-3.5 h-3.5 text-primary" />
+                    {seller.governorate || 'الصعيد'}
+                  </span>
+
+                  <span className="inline-flex items-center gap-2 rounded-full bg-primary/90 backdrop-blur-xl text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    {seller.specialty || 'مشغولات يدوية'}
+                  </span>
+
+                  {seller.verified && (
+                    <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/90 text-white px-3.5 py-2 text-[10px] sm:text-xs font-black shadow-lg">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      صانع موثّق
+                    </span>
+                  )}
+                </div>
+
+                {/* TITLE */}
+
+                <div className="flex items-end gap-4 sm:gap-6">
+                  <div className="relative shrink-0">
+                    <div className="absolute inset-0 rounded-[1.4rem] bg-primary/50 blur-xl animate-pulse" />
+
+                    <img
+                      src={avatarImg}
+                      alt={seller.name || brandTitle}
+                      className="relative w-20 h-20 sm:w-28 sm:h-28 rounded-[1.4rem] object-cover border-2 border-white/30 shadow-2xl bg-background transition-transform duration-500 group-hover:-translate-y-2"
+                    />
+
+                    {seller.verified && (
+                      <div className="absolute -bottom-2 -left-2 w-7 h-7 rounded-full bg-emerald-500 border-2 border-white/80 text-white flex items-center justify-center shadow-lg">
+                        <CheckCircle2 className="w-4 h-4" />
+                      </div>
+                    )}
                   </div>
-                )}
+
+                  <div className="min-w-0">
+                    <p className="text-white/65 text-[10px] sm:text-xs font-bold mb-1">
+                      ورشة من قلب صعيد مصر
+                    </p>
+
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif text-white leading-[1.05] tracking-tight">
+                      {brandTitle}
+                    </h1>
+
+                    <p className="mt-2 text-white/70 text-xs sm:text-sm">
+                      بإدارة الصانع:
+                      <span className="text-white font-black mr-1">
+                        {seller.name || 'حرفي الجنوب'}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* DESCRIPTION */}
+
+                <p className="max-w-2xl mt-6 text-white/75 text-xs sm:text-sm leading-7">
+                  {seller.bio ||
+                    'ورشة متخصصة في المشغولات الصعيدية التراثية المتوارثة أباً عن جد؛ نصنع بعناية ونوصل الحكاية من يد الصانع لباب بيتك.'}
+                </p>
+
+                {/* STATS */}
+
+                <div className="grid grid-cols-3 max-w-xl mt-7 rounded-2xl sm:rounded-3xl border border-white/10 bg-black/25 backdrop-blur-xl overflow-hidden">
+                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center">
+                    <div className="flex items-center justify-center gap-1.5 text-amber-400">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="text-sm sm:text-base font-black">
+                        {seller.rating ?? 0}
+                      </span>
+                    </div>
+                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
+                      التقييم
+                    </span>
+                  </div>
+
+                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center border-x border-white/10">
+                    <span className="block text-sm sm:text-base font-black text-white">
+                      {seller.salesCount ?? 0}
+                    </span>
+                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
+                      مبيعة
+                    </span>
+                  </div>
+
+                  <div className="px-3 py-4 sm:px-6 sm:py-5 text-center">
+                    <span className="block text-sm sm:text-base font-black text-white">
+                      {sellerProducts.length}
+                    </span>
+                    <span className="block mt-1 text-[9px] sm:text-[10px] text-white/50 font-bold">
+                      قطعة
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* FLOATING CORNER */}
+
+            <div className="absolute top-5 left-5 sm:top-8 sm:left-8 hidden sm:flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/10 text-white/80 text-[10px] font-bold">
+              <WandSparkles className="w-3.5 h-3.5 text-primary" />
+              صناعة بإيدين مصرية
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            INFO STRIP
+        ========================================================= */}
+
+        <section
+          ref={(el) => {
+            sectionRefs.current.info = el;
+          }}
+          className={`mt-5 sm:mt-7 transition-all duration-1000 delay-150 ${visibleSections.info
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-8'
+            }`}
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Calendar className="w-4.5 h-4.5" />
+                </div>
+
+                <div>
+                  <span className="block text-[9px] text-foreground-disabled font-bold">
+                    موجود على وه من
+                  </span>
+                  <span className="block mt-0.5 text-xs font-black">
+                    {joinedYear}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <ShieldCheck className="w-4.5 h-4.5" />
+                </div>
+
+                <div>
+                  <span className="block text-[9px] text-foreground-disabled font-bold">
+                    الجودة
+                  </span>
+                  <span className="block mt-0.5 text-xs font-black">
+                    إنتاج يدوي أصيل
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="group rounded-2xl border border-border-subtle bg-surface-subtle p-4 sm:p-5 hover:border-primary/30 transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <MapPin className="w-4.5 h-4.5" />
+                </div>
+
+                <div>
+                  <span className="block text-[9px] text-foreground-disabled font-bold">
+                    مكان الورشة
+                  </span>
+                  <span className="block mt-0.5 text-xs font-black">
+                    {seller.governorate || 'صعيد مصر'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            PRODUCTS HEADER
+        ========================================================= */}
+
+        <section
+          ref={(el) => {
+            sectionRefs.current.products = el;
+          }}
+          className={`mt-12 sm:mt-16 transition-all duration-1000 delay-200 ${visibleSections.products
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-10'
+            }`}
+        >
+          <div className="relative">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
+              <div>
+                <div className="inline-flex items-center gap-2 text-primary text-[10px] sm:text-xs font-black mb-2">
+                  <Package className="w-4 h-4" />
+                  <span>المعروضات الجاهزة للطلب</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl sm:text-4xl font-black font-serif">
+                    شغل إيدين {brandTitle}
+                  </h2>
+
+                  <div className="hidden sm:block w-12 h-1 rounded-full bg-primary/70" />
+                </div>
+
+                <p className="mt-2 text-xs sm:text-sm text-foreground-muted">
+                  كل قطعة بتطلع من الورشة بحكاية لوحدها
+                </p>
               </div>
 
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream font-serif">
-                  {brandTitle}
-                </h1>
-                <p className="text-xs sm:text-sm text-espresso/70 dark:text-cream/70 font-semibold mt-0.5">
-                  الصانع: {seller.name || 'حرفي من الصعيد'} • تخصص: {seller.specialty || 'مشغولات وحرف تراثية'}
+              <div className="inline-flex self-start sm:self-auto items-center gap-2 px-4 py-2.5 rounded-2xl bg-surface-subtle border border-border-subtle text-xs font-black">
+                <ShoppingBag className="w-4 h-4 text-primary" />
+                {sellerProducts.length} قطعة متاحة
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================
+            PRODUCTS
+        ========================================================= */}
+
+        <section
+          className={`mt-6 transition-all duration-1000 delay-300 ${visibleSections.products
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-10'
+            }`}
+        >
+          {sellerProducts.length === 0 ? (
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-border-subtle bg-surface-subtle p-12 sm:p-20 text-center">
+              <div className="absolute top-0 right-1/2 translate-x-1/2 w-72 h-72 bg-primary/5 blur-3xl rounded-full" />
+
+              <div className="relative">
+                <div className="w-20 h-20 rounded-[1.75rem] bg-background border border-border-subtle flex items-center justify-center mx-auto shadow-lg">
+                  <Store className="w-9 h-9 text-foreground-disabled opacity-50" />
+                </div>
+
+                <h4 className="mt-6 font-black text-lg font-serif">
+                  الصانع شغال على قطع جديدة
+                </h4>
+
+                <p className="mt-2 text-xs sm:text-sm text-foreground-disabled max-w-sm mx-auto leading-7">
+                  تابع الورشة قريباً لمشاهدة المشغولات اليدوية الجديدة فور توفرها.
                 </p>
               </div>
             </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+              {sellerProducts.map((p, index) => (
+                <div
+                  key={p.id}
+                  className="group relative transition-all duration-500 hover:-translate-y-2"
+                  style={{
+                    transitionDelay: `${Math.min(index * 70, 350)}ms`,
+                  }}
+                >
+                  <div className="absolute -inset-1 rounded-[2rem] bg-primary/0 group-hover:bg-primary/[0.035] blur-xl transition-all duration-500 pointer-events-none" />
 
-            {/* Performance metrics */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
-              <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
-                <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                  <span>{seller.rating ?? 5}</span>
+                  <div className="relative">
+                    <ProductCard product={p} />
+                  </div>
                 </div>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
-                  تقييم المتسوقين
-                </span>
-              </div>
-
-              <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
-                <span className="font-black text-xs sm:text-sm text-primary dark:text-primary-hover block">
-                  {seller.salesCount ?? 0}+
-                </span>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
-                  قطعة تم شحنها
-                </span>
-              </div>
-
-              <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
-                <span className="font-bold text-xs sm:text-sm text-espresso dark:text-cream block">
-                  {seller.productsCount ?? sellerProducts.length}
-                </span>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
-                  منتجات معروضة
-                </span>
-              </div>
+              ))}
             </div>
-          </div>
+          )}
+        </section>
 
-          {/* Artisan Story / Bio */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-5 border-t border-black/10 dark:border-white/10">
-            <div className="lg:col-span-8 space-y-3">
-              <h3 className="text-sm font-black text-primary dark:text-primary-hover flex items-center gap-1.5 font-serif">
-                <Sparkles className="w-4 h-4" />
-                <span>عن الورشة وتاريخ الصنعة التراثية</span>
-              </h3>
-              <p className="text-xs sm:text-sm text-espresso/80 dark:text-cream/80 leading-relaxed">
-                {seller.bio ||
-                  'ورشة متخصصة في عمل المشغولات الصعيدية والتراثية على أصولها لتصلكم بأصالتها وحرفية أيدي أبناء الصعيد.'}
-              </p>
-            </div>
+        {/* =========================================================
+            BOTTOM STORY
+        ========================================================= */}
 
-            {/* Contact / Workshop Info */}
-            <div className="lg:col-span-4 bg-black/5 dark:bg-cream/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs text-espresso/70 dark:text-cream/70">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-amber-600 dark:text-primary-hover" />
-                <span>عضو معتمد في منصة وه منذ {joinedYear}</span>
-              </div>
-              {seller.phone && (
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  <span dir="ltr" className="font-mono text-espresso dark:text-cream font-semibold">
-                    {seller.phone}
+        <section
+          ref={(el) => {
+            sectionRefs.current.story = el;
+          }}
+          className={`mt-14 sm:mt-20 transition-all duration-1000 ${visibleSections.story
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-10'
+            }`}
+        >
+          <div className="relative overflow-hidden rounded-[2.5rem] sm:rounded-[3rem] border border-border-subtle bg-surface-subtle p-6 sm:p-10 lg:p-14">
+            <div className="absolute -top-32 -left-32 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
+
+            <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 text-primary text-[10px] font-black mb-3">
+                  <Layers className="w-4 h-4" />
+                  أصل الصنعة
+                </div>
+
+                <h3 className="text-2xl sm:text-3xl font-black font-serif">
+                  مش مجرد ورشة...
+                  <br />
+                  <span className="text-primary">
+                    دي حكاية بتكمل.
                   </span>
-                </div>
-              )}
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-primary dark:text-primary-hover" />
-                <span>حرف يدوية أصيلة خالية من المواد الصناعية</span>
+                </h3>
+
+                <p className="mt-4 max-w-2xl text-xs sm:text-sm text-foreground-muted leading-7">
+                  {seller.bio ||
+                    'صنعة اتوارثت من جيل لجيل، ولسه مستمرة بإيدين بتحب اللي بتعمله وتحافظ على روح المكان.'}
+                </p>
+              </div>
+
+              <div className="hidden sm:flex w-28 h-28 rounded-full border border-primary/20 bg-primary/5 items-center justify-center">
+                <Award className="w-12 h-12 text-primary" />
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Seller's Products Catalog */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-espresso dark:text-cream font-serif">
-              شغل وحلاوة {brandTitle}
-            </h2>
-            <p className="text-xs text-espresso/60 dark:text-cream/60 mt-0.5">
-              كل القطع بتتشحن على طول من الورشة في {seller.governorate || 'صعيد مصر'} لحد عندك
-            </p>
-          </div>
-          <span className="text-xs font-bold text-primary dark:text-primary-hover bg-primary/10 px-3.5 py-1 rounded-full border border-primary/20">
-            {sellerProducts.length} قطع جاهزة
-          </span>
-        </div>
+        {/* =========================================================
+            CONTACT FOOTER
+        ========================================================= */}
 
-        {sellerProducts.length === 0 ? (
-          <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-12 text-center shadow-lg">
-            <Store className="w-12 h-12 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
-            <h4 className="font-bold text-espresso/70 dark:text-cream/70 text-sm font-serif">
-              لسه مفيش قطع معروضة للورشة دي حالياً
-            </h4>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {sellerProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        )}
+
       </div>
     </div>
   );
