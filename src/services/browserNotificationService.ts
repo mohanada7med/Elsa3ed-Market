@@ -215,11 +215,11 @@ class BrowserNotificationService {
       try {
         const notif = new Notification(options.title, {
           body: options.body,
-          icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png',
+          icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png',
           tag: options.tag || options.type || 'saeed-alert',
           dir: 'rtl',
           lang: 'ar',
-          badge: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png'
+          badge: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png'
         });
 
         notif.onclick = () => {

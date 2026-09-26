@@ -121,8 +121,8 @@ export const HeroSection: React.FC = () => {
             </div>
             <div className="h-4 w-px bg-foreground/15" />
             <div>
-              <span className="block text-sm font-black text-primary">{wahStats?.craftsCount}</span>
-              <span className="text-[10px] text-foreground-muted">صنعة يدوية</span>
+              <span className="block text-sm font-black text-primary">{wahStats?.productsCount}</span>
+              <span className="text-[10px] text-foreground-muted">منتجات صعيدية</span>
             </div>
           </div>
         </div>

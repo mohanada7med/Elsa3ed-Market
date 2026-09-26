@@ -41,7 +41,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
     const [phase, setPhase] = useState<IntroPhase>(initialPhase);
     const [pillarIndex, setPillarIndex] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
-    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png');
+    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png');
 
     useEffect(() => {
         setPhase(initialPhase);
@@ -233,7 +233,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             loading="eager"
                             decoding="async"
                             onError={() => {
-                                setLogoSrc('/logo-wah.png');
+                                setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png');
                             }}
                             className={`object-contain select-none transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                                 ? 'h-20 w-20 sm:h-24 sm:w-24 drop-shadow'

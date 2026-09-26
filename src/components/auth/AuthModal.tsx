@@ -948,7 +948,7 @@ export const AuthModal: React.FC = () => {
               "
             >
               <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
                 alt="WAH"
                 className="
                   h-full

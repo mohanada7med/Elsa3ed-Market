@@ -441,7 +441,7 @@ export const AboutSection: React.FC = () => {
               "
             >
               <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
                 alt="وه - العالم الرقمي لصعيد مصر"
                 className="
                   w-full

@@ -403,7 +403,7 @@ const WAH_PORTALS_PREVIEW: Record<
     title: 'عن منصة وه',
     desc: 'قصة ورسالة إحياء الحرف التراثية وتوثيق كل شبر في الصعيد.',
     image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png',
+      'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png',
     badge: 'حكاية وه',
   },
 };
@@ -713,7 +713,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
     (currentUser as any)?.avatar ||
-    'https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png';
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png';
 
   /* =========================================================
      COLORS
@@ -890,7 +890,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 className="flex items-center justify-center rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer focus:outline-none"
               >
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
                   alt="وه"
                   draggable={false}
                   className="block h-[38px] w-auto max-w-[76px] object-contain sm:h-[52px] sm:max-w-[105px] lg:h-[68px] lg:max-w-[140px]"
@@ -1075,9 +1075,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                       <ChevronDown
                         size={15}
-                        className={`hidden sm:block text-primary transition-transform duration-300 ease-out ${
-                          userDropdownOpen ? 'rotate-180' : ''
-                        }`}
+                        className={`hidden sm:block text-primary transition-transform duration-300 ease-out ${userDropdownOpen ? 'rotate-180' : ''
+                          }`}
                       />
                     </button>
 
@@ -1401,24 +1400,21 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           setHoveredPortalId(null);
                         }}
                         aria-label={link.label}
-                        className={`group relative flex shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
-                          isExpanded
+                        className={`group relative flex shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${isExpanded
                             ? 'px-3 py-1 gap-1.5'
                             : 'h-7 w-7 p-0'
-                        } ${
-                          isActive
+                          } ${isActive
                             ? 'bg-[#9a6a35] text-white shadow-xs font-black'
                             : isHovered
-                            ? 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                            : 'text-foreground-secondary hover:text-[#9a6a35] hover:bg-black/5 dark:hover:bg-white/5'
-                        }`}
+                              ? 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                              : 'text-foreground-secondary hover:text-[#9a6a35] hover:bg-black/5 dark:hover:bg-white/5'
+                          }`}
                       >
                         {Icon && (
                           <Icon
                             size={13}
-                            className={`shrink-0 transition-transform group-hover:scale-110 ${
-                              isActive ? 'text-white' : 'text-[#9a6a35]'
-                            }`}
+                            className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-[#9a6a35]'
+                              }`}
                           />
                         )}
 
@@ -1437,9 +1433,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
                         {link.isNew && isExpanded && (
                           <span
-                            className={`rounded-full px-1.5 py-0.2 text-[8px] font-black ${
-                              isActive ? 'bg-white/25 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                            }`}
+                            className={`rounded-full px-1.5 py-0.2 text-[8px] font-black ${isActive ? 'bg-white/25 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
+                              }`}
                           >
                             جديد
                           </span>
@@ -1509,11 +1504,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     navigate('about');
                     setHoveredPortalId(null);
                   }}
-                  className={`flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-150 cursor-pointer ${
-                    activePage === 'about'
+                  className={`flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-150 cursor-pointer ${activePage === 'about'
                       ? 'bg-[#9a6a35] text-white shadow-xs'
                       : 'bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/25'
-                  }`}
+                    }`}
                 >
                   <Sparkles size={12} className="shrink-0" />
                   <span>عن وه</span>
@@ -1742,7 +1736,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 </button>
 
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790452621/char.png"
                   alt="وه"
                   className="h-10 w-auto sm:h-12"
                 />
