@@ -941,8 +941,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     type="button"
                     onClick={() => navigate('favorites')}
                     aria-label="المفضلة"
-                    className="relative hidden h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 md:flex lg:h-11 lg:w-11 cursor-pointer"
-                    style={{
+                    className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer" style={{
                       backgroundColor: hoverBg,
                       color: mainText,
                     }}

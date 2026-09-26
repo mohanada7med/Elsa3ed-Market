@@ -41,10 +41,10 @@ export const FavoritesPage: React.FC = () => {
       className="
         min-h-screen
         overflow-hidden
-        bg-[#F5F0E7]
-        text-[#241A14]
-        dark:bg-[#171310]
-        dark:text-[#F5F0E7]
+        bg-cream
+        text-espresso
+        dark:bg-espresso-900
+        dark:text-cream
       "
     >
 
@@ -66,18 +66,17 @@ export const FavoritesPage: React.FC = () => {
         "
       >
 
-
-
         <div className="relative mx-auto max-w-[1500px]">
 
           {/* Small label */}
           <div className="mb-8 flex items-center gap-3">
+
             <span
               className="
                 h-px
                 w-10
-                bg-[#241A14]/30
-                dark:bg-white/30
+                bg-espresso/30
+                dark:bg-cream/30
               "
             />
 
@@ -91,6 +90,7 @@ export const FavoritesPage: React.FC = () => {
             >
               مفضلاتك
             </span>
+
           </div>
 
           {/* Main hero grid */}
@@ -117,15 +117,17 @@ export const FavoritesPage: React.FC = () => {
                   font-black
                   leading-[0.95]
                   tracking-tight
+                  text-espresso
                   sm:text-7xl
                   lg:text-8xl
                   xl:text-[7rem]
+                  dark:text-cream
                 "
               >
                 الحاجات اللي
                 <br />
 
-                <span className="opacity-40">
+                <span className="text-primary">
                   وقعت عينك عليها.
                 </span>
               </h1>
@@ -136,9 +138,10 @@ export const FavoritesPage: React.FC = () => {
                   max-w-xl
                   text-sm
                   leading-7
-                  opacity-60
+                  text-black/60
                   sm:text-base
                   sm:leading-8
+                  dark:text-white/60
                 "
               >
                 كل قطعة عجبتك وخليتها جنبك.
@@ -167,6 +170,7 @@ export const FavoritesPage: React.FC = () => {
                         text-6xl
                         font-black
                         leading-none
+                        text-primary
                         sm:text-7xl
                       "
                     >
@@ -178,7 +182,8 @@ export const FavoritesPage: React.FC = () => {
                         mt-2
                         text-xs
                         font-bold
-                        opacity-50
+                        text-black/45
+                        dark:text-white/45
                       "
                     >
                       قطعة محفوظة
@@ -191,7 +196,8 @@ export const FavoritesPage: React.FC = () => {
                       mb-2
                       h-7
                       w-7
-                      opacity-40
+                      text-primary
+                      opacity-70
                     "
                     strokeWidth={1.5}
                   />
@@ -209,14 +215,15 @@ export const FavoritesPage: React.FC = () => {
                       items-center
                       gap-4
                       border-b
-                      border-[#241A14]/30
+                      border-primary/30
                       pb-3
                       text-sm
                       font-bold
+                      text-primary
                       transition-all
-                      hover:border-[#241A14]
-                      dark:border-white/30
-                      dark:hover:border-white
+                      hover:border-primary
+                      dark:border-primary/40
+                      dark:hover:border-primary
                     "
                   >
                     <span>
@@ -262,8 +269,7 @@ export const FavoritesPage: React.FC = () => {
                   h-[260px]
                   w-[260px]
                   rounded-full
-                  bg-[#E4D3BC]/60
-                  dark:bg-white/[0.035]
+                  bg-primary/10
                   sm:h-[330px]
                   sm:w-[330px]
                   lg:h-[390px]
@@ -279,8 +285,7 @@ export const FavoritesPage: React.FC = () => {
                   w-[300px]
                   rounded-full
                   border
-                  border-[#241A14]/[0.06]
-                  dark:border-white/[0.06]
+                  border-primary/10
                   sm:h-[380px]
                   sm:w-[380px]
                   lg:h-[440px]
@@ -325,7 +330,7 @@ export const FavoritesPage: React.FC = () => {
                   rounded-full
                   bg-white
                   shadow-[0_10px_30px_rgba(36,26,20,0.12)]
-                  dark:bg-[#241A14]
+                  dark:bg-espresso
                   sm:h-14
                   sm:w-14
                 "
@@ -334,8 +339,8 @@ export const FavoritesPage: React.FC = () => {
                   className="
                     h-5
                     w-5
-                    fill-[#B65F50]
-                    text-[#B65F50]
+                    fill-primary
+                    text-primary
                   "
                 />
               </div>
@@ -350,7 +355,7 @@ export const FavoritesPage: React.FC = () => {
                   h-3
                   w-3
                   rounded-full
-                  bg-[#B65F50]/60
+                  bg-primary/60
                 "
               />
 
@@ -387,6 +392,7 @@ export const FavoritesPage: React.FC = () => {
                 gap-5
               "
             >
+
               <div
                 className="
                   h-px
@@ -414,6 +420,7 @@ export const FavoritesPage: React.FC = () => {
                   dark:bg-white/10
                 "
               />
+
             </div>
 
             {/* Products */}
@@ -508,7 +515,7 @@ export const FavoritesPage: React.FC = () => {
                 items-center
                 justify-center
                 rounded-full
-                bg-black/[0.035]
+                bg-primary/[0.06]
                 dark:bg-white/[0.04]
               "
             >
@@ -516,27 +523,31 @@ export const FavoritesPage: React.FC = () => {
                 className="
                   h-9
                   w-9
-                  opacity-30
+                  text-primary
+                  opacity-40
                 "
                 strokeWidth={1}
               />
             </div>
+
+            {/* Empty Character */}
             <img
               src="mascot/favbrock.png"
               alt="شخصية وَه"
               className="
-                  relative
-                  z-10
-                  w-[250px]
-                  select-none
-                  object-contain
-                  transition-transform
-                  duration-500
-                  scale-100
-                  sm:w-[310px]
-                  lg:w-[370px]
-                "
+                relative
+                z-10
+                w-[250px]
+                select-none
+                object-contain
+                transition-transform
+                duration-500
+                scale-100
+                sm:w-[310px]
+                lg:w-[370px]
+              "
             />
+
             <p
               className="
                 mt-6
@@ -556,7 +567,7 @@ export const FavoritesPage: React.FC = () => {
               className="
                 mt-9
                 rounded-full
-                bg-[#241A14]
+                bg-espresso
                 px-8
                 py-4
                 text-sm
@@ -565,8 +576,8 @@ export const FavoritesPage: React.FC = () => {
                 transition-all
                 hover:-translate-y-1
                 hover:shadow-xl
-                dark:bg-[#F5F0E7]
-                dark:text-[#241A14]
+                dark:bg-cream
+                dark:text-espresso
               "
             >
               ادخل سوق وَه
