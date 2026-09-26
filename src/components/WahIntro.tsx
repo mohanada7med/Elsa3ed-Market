@@ -41,7 +41,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
     const [phase, setPhase] = useState<IntroPhase>(initialPhase);
     const [pillarIndex, setPillarIndex] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
-    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/%D9%84%D9%88%D8%AC%D9%88_%D9%88%D9%87_copy.png');
+    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1788711341/لوجو_وه_copy.png');
 
     useEffect(() => {
         setPhase(initialPhase);
@@ -255,7 +255,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             }`}
                     >
                         <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl">
-                            دوس على <span className="text-primary">اللوجو</span>
+                            دوس على <span className="text-primary">وه</span>
                         </p>
                         <p className="mt-1.5 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988]">
                             وخلي الحكاية تبدأ
