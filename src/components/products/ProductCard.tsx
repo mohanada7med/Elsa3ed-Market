@@ -88,8 +88,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 }
               }}
               className={`p-2.5 rounded-xl backdrop-blur-md transition-all shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer ${favorite
-                  ? 'bg-rose-500 text-white'
-                  : 'bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#20201d] text-espresso dark:text-cream hover:text-rose-500 border border-black/10 dark:border-white/10'
+                ? 'bg-rose-500 text-white'
+                : 'bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#20201d] text-espresso dark:text-cream hover:text-rose-500 border border-black/10 dark:border-white/10'
                 }`}
               title={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}
               aria-label={favorite ? `إزالة ${product.title} من المفضلة` : `إضافة ${product.title} للمفضلة`}

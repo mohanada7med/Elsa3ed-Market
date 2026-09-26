@@ -67,6 +67,13 @@ export const ProductDetailsView: React.FC = () => {
   const product =
     products.find((p) => p.id === effectiveProductId) ||
     (!effectiveProductId ? products[0] : undefined);
+  useEffect(() => {
+    setSelectedImageIndex(0);
+    setQuantity(1);
+    setActiveTab('desc');
+    setNewRating(5);
+    setNewComment('');
+  }, [selectedProductId]);
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -76,7 +83,13 @@ export const ProductDetailsView: React.FC = () => {
 
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
-
+  useEffect(() => {
+    setSelectedImageIndex(0);
+    setQuantity(1);
+    setActiveTab('desc');
+    setNewRating(5);
+    setNewComment('');
+  }, [selectedProductId]);
   const productImages =
     product?.images &&
       Array.isArray(product.images) &&
