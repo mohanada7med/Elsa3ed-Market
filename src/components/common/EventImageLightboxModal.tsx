@@ -165,7 +165,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
   return createPortal(
     <div
       dir="rtl"
-      className="fixed inset-0 z-[9999999] flex flex-col justify-between bg-black/95 text-white select-none overflow-hidden backdrop-blur-2xl animate-in fade-in duration-300"
+      className="fixed inset-0 z-9999999 flex flex-col justify-between bg-black/95 text-white select-none overflow-hidden backdrop-blur-2xl animate-in fade-in duration-300"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -181,7 +181,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
       </div>
 
       {/* TOP HEADER */}
-      <header className="relative z-30 flex items-center justify-between p-4 sm:p-6 bg-gradient-to-b from-black/90 via-black/50 to-transparent">
+      <header className="relative z-30 flex items-center justify-between p-4 sm:p-6 bg-linear-to-b from-black/90 via-black/50 to-transparent">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-mono font-bold backdrop-blur-md">
@@ -296,7 +296,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
       </div>
 
       {/* BOTTOM THUMBNAILS CAROUSEL */}
-      <footer className="relative z-30 p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent">
+      <footer className="relative z-30 p-4 bg-linear-to-t from-black/95 via-black/70 to-transparent">
         <div className="mx-auto max-w-4xl">
           {images.length > 1 && (
             <div
