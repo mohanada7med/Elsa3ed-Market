@@ -81,6 +81,10 @@ export const AuthModal: React.FC = () => {
   const [governorate, setGovernorate] =
     useState('');
 
+  // المحافظة التي يكتبها المستخدم يدويًا عند اختيار "أخرى"
+  const [customGovernorate, setCustomGovernorate] =
+    useState('');
+
   const [workshopName, setWorkshopName] =
     useState('');
 
@@ -123,12 +127,15 @@ export const AuthModal: React.FC = () => {
 
   useEffect(() => {
     if (!isAuthModalOpen) {
-      const cartDrawerRoot = document.getElementById('cart-drawer-root');
+      const cartDrawerRoot =
+        document.getElementById('cart-drawer-root');
+
       if (!cartDrawerRoot) {
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
         document.body.style.paddingRight = '';
       }
+
       return;
     }
 
@@ -144,7 +151,9 @@ export const AuthModal: React.FC = () => {
     }
 
     return () => {
-      const cartDrawerRoot = document.getElementById('cart-drawer-root');
+      const cartDrawerRoot =
+        document.getElementById('cart-drawer-root');
+
       if (!cartDrawerRoot) {
         document.body.style.overflow = '';
         document.documentElement.style.overflow = '';
@@ -154,53 +163,84 @@ export const AuthModal: React.FC = () => {
   }, [isAuthModalOpen]);
 
   /* =========================================================
-     ESCAPE KEY
+     PREVENT BACKGROUND SCROLL (SOLID LOCK)
   ========================================================= */
-
-  /* =========================================================
-       PREVENT BACKGROUND SCROLL (SOLID LOCK)
-    ========================================================= */
 
   useEffect(() => {
     if (!isAuthModalOpen) return;
 
-    // حساب عرض السكرول بار لمنع اهتزاز الصفحة على الديسكتوب
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollbarWidth =
+      window.innerWidth -
+      document.documentElement.clientWidth;
+
     const scrollY = window.scrollY;
 
-    const originalOverflow = document.body.style.overflow;
-    const originalPosition = document.body.style.position;
-    const originalTop = document.body.style.top;
-    const originalWidth = document.body.style.width;
-    const originalPaddingRight = document.body.style.paddingRight;
-    const originalHtmlOverflow = document.documentElement.style.overflow;
+    const originalOverflow =
+      document.body.style.overflow;
 
-    // قفل كامل على HTML و Body
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
+    const originalPosition =
+      document.body.style.position;
+
+    const originalTop =
+      document.body.style.top;
+
+    const originalWidth =
+      document.body.style.width;
+
+    const originalPaddingRight =
+      document.body.style.paddingRight;
+
+    const originalHtmlOverflow =
+      document.documentElement.style.overflow;
+
+    document.documentElement.style.overflow =
+      'hidden';
+
+    document.body.style.overflow =
+      'hidden';
+
+    document.body.style.position =
+      'fixed';
+
+    document.body.style.top =
+      `-${scrollY}px`;
+
+    document.body.style.width =
+      '100%';
 
     if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      document.body.style.paddingRight =
+        `${scrollbarWidth}px`;
     }
 
     return () => {
-      const cartDrawerRoot = document.getElementById('cart-drawer-root');
-      if (!cartDrawerRoot) {
-        document.documentElement.style.overflow = originalHtmlOverflow;
-        document.body.style.overflow = originalOverflow;
-        document.body.style.position = originalPosition;
-        document.body.style.top = originalTop;
-        document.body.style.width = originalWidth;
-        document.body.style.paddingRight = originalPaddingRight;
+      const cartDrawerRoot =
+        document.getElementById('cart-drawer-root');
 
-        // استرجاع نفس موضع التمرير اللي كان المستخدم واقف عليه
+      if (!cartDrawerRoot) {
+        document.documentElement.style.overflow =
+          originalHtmlOverflow;
+
+        document.body.style.overflow =
+          originalOverflow;
+
+        document.body.style.position =
+          originalPosition;
+
+        document.body.style.top =
+          originalTop;
+
+        document.body.style.width =
+          originalWidth;
+
+        document.body.style.paddingRight =
+          originalPaddingRight;
+
         window.scrollTo(0, scrollY);
       }
     };
   }, [isAuthModalOpen]);
+
   if (!isAuthModalOpen) {
     return null;
   }
@@ -337,7 +377,9 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
-    const isEmail = normalizedUsername.includes('@');
+    const isEmail =
+      normalizedUsername.includes('@');
+
     if (
       !isEmail &&
       !USERNAME_REGEX.test(
@@ -403,6 +445,16 @@ export const AuthModal: React.FC = () => {
     const normalizedWorkshop =
       workshopName.trim();
 
+    /*
+      لو المستخدم اختار "أخرى"
+      ناخد المحافظة اللي كتبها يدويًا.
+      غير كده ناخد المحافظة المختارة عادي.
+    */
+    const normalizedGovernorate =
+      governorate === 'أخرى'
+        ? customGovernorate.trim()
+        : governorate.trim();
+
     if (!normalizedUsername) {
       setError(
         'من فضلك اكتب اسم المستخدم.'
@@ -462,6 +514,21 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
+    /*
+      المحافظة اختيارية بشكل عام.
+      لكن لو المستخدم اختار "أخرى"
+      لازم يكتب اسم المحافظة.
+    */
+    if (
+      governorate === 'أخرى' &&
+      !normalizedGovernorate
+    ) {
+      setError(
+        'من فضلك اكتب اسم المحافظة.'
+      );
+      return;
+    }
+
     if (
       roleType === 'seller' &&
       !normalizedWorkshop
@@ -491,8 +558,13 @@ export const AuthModal: React.FC = () => {
           email.trim() ||
           undefined,
 
+        /*
+          هنا أهم تعديل:
+          لو كتب محافظة مخصصة، يتم إرسالها
+          بدل "أخرى".
+        */
         governorate:
-          governorate ||
+          normalizedGovernorate ||
           undefined,
 
         role:
@@ -521,6 +593,7 @@ export const AuthModal: React.FC = () => {
       setPhone('');
       setEmail('');
       setGovernorate('');
+      setCustomGovernorate('');
       setWorkshopName('');
 
       setRoleType('buyer');
@@ -559,7 +632,9 @@ export const AuthModal: React.FC = () => {
 
       setError('');
 
-      const trimmedIdentifier = forgotIdentifier.trim();
+      const trimmedIdentifier =
+        forgotIdentifier.trim();
+
       if (!trimmedIdentifier) {
         setError(
           'اكتب اسم المستخدم أو الإيميل بتاعك.'
@@ -570,27 +645,41 @@ export const AuthModal: React.FC = () => {
       try {
         setSubmitting(true);
 
-        const res = await api.requestPasswordReset(
-          trimmedIdentifier
+        const res =
+          await api.requestPasswordReset(
+            trimmedIdentifier
+          );
+
+        const isEmail =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+            trimmedIdentifier
+          );
+
+        const emailHint =
+          isEmail
+            ? trimmedIdentifier
+            : undefined;
+
+        setForgotSuccessEmailHint(
+          emailHint
         );
 
-        // Determine email hint:
-        // Pass user's entered email when an email was entered.
-        // If username was entered, do not display username as email and avoid enumeration.
-        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedIdentifier);
-        const emailHint = isEmail ? trimmedIdentifier : undefined;
+        setForgotSuccessMessage(
+          res?.message
+        );
 
-        setForgotSuccessEmailHint(emailHint);
-        setForgotSuccessMessage(res?.message);
-        setIsForgotSuccessModalOpen(true);
+        setIsForgotSuccessModalOpen(
+          true
+        );
 
-        // Reset inline forgot-password form back to login tab so when modal closes, user is on login
         setForgotPassword(false);
         setForgotIdentifier('');
         setAuthModalTab('login');
       } catch (err: any) {
-        // Do NOT open modal on failure
-        setIsForgotSuccessModalOpen(false);
+        setIsForgotSuccessModalOpen(
+          false
+        );
+
         setError(
           err?.message ||
           'حصلت مشكلة وإحنا بنبعت طلب استرجاع كلمة السر، جرّب تاني.'
@@ -696,7 +785,6 @@ export const AuthModal: React.FC = () => {
       id="auth-modal-backdrop"
       dir="rtl"
       onTouchMove={(e) => {
-        // منع سحب الخلفية باللمس لو اللمس تم على الـ Backdrop نفسه
         if (e.target === e.currentTarget) {
           e.preventDefault();
         }
@@ -718,7 +806,6 @@ export const AuthModal: React.FC = () => {
         backdrop-blur-xl
         touch-none
       "
-
     >
       {/* =====================================================
           MODAL
@@ -768,7 +855,6 @@ export const AuthModal: React.FC = () => {
             backdrop-blur-xl
           "
         >
-          {/* Decorative circles */}
           <div
             className="
               pointer-events-none
@@ -798,6 +884,7 @@ export const AuthModal: React.FC = () => {
           />
 
           {/* Close Button */}
+
           <button
             id="auth-modal-close"
             type="button"
@@ -841,6 +928,7 @@ export const AuthModal: React.FC = () => {
           </button>
 
           {/* Brand */}
+
           <div className="relative z-10 flex min-w-0 items-center gap-3">
             <div
               className="
@@ -1211,8 +1299,7 @@ export const AuthModal: React.FC = () => {
                               hover:text-primary
                               dark:text-white/60
                               dark:hover:text-primary
-                            `
-                      }
+                            `}
                     `}
                   >
                     <User size={17} />
@@ -1253,8 +1340,7 @@ export const AuthModal: React.FC = () => {
                               hover:text-primary
                               dark:text-white/60
                               dark:hover:text-primary
-                            `
-                      }
+                            `}
                     `}
                   >
                     <Sparkles size={16} />
@@ -1272,6 +1358,7 @@ export const AuthModal: React.FC = () => {
                     className="space-y-4 sm:space-y-5"
                   >
                     {/* Username */}
+
                     <div>
                       <label
                         htmlFor="login-username-input"
@@ -1343,6 +1430,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Password */}
+
                     <div>
                       <label
                         htmlFor="login-password-input"
@@ -1505,6 +1593,7 @@ export const AuthModal: React.FC = () => {
                     className="space-y-4 sm:space-y-5"
                   >
                     {/* Role */}
+
                     <div>
                       <label className={labelClass}>
                         هتستخدم وه إزاي؟
@@ -1512,6 +1601,7 @@ export const AuthModal: React.FC = () => {
 
                       <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                         {/* Buyer */}
+
                         <button
                           id="role-buyer-select"
                           type="button"
@@ -1549,8 +1639,7 @@ export const AuthModal: React.FC = () => {
                                     text-black/70
                                     dark:text-white/70
                                     hover:border-primary/40
-                                  `
-                            }
+                                  `}
                           `}
                         >
                           {roleType === 'buyer' && (
@@ -1571,6 +1660,7 @@ export const AuthModal: React.FC = () => {
                         </button>
 
                         {/* Seller */}
+
                         <button
                           id="role-seller-select"
                           type="button"
@@ -1611,8 +1701,7 @@ export const AuthModal: React.FC = () => {
                                     text-black/70
                                     dark:text-white/70
                                     hover:border-black/30
-                                  `
-                            }
+                                  `}
                           `}
                         >
                           {roleType === 'seller' && (
@@ -1635,6 +1724,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Avatar */}
+
                     <div
                       className="
                         flex
@@ -1757,6 +1847,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Username */}
+
                     <div>
                       <label
                         htmlFor="register-username-input"
@@ -1827,6 +1918,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Name */}
+
                     <div>
                       <label
                         htmlFor="register-name-input"
@@ -1861,6 +1953,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Workshop */}
+
                     {roleType === 'seller' && (
                       <div>
                         <label
@@ -1897,6 +1990,7 @@ export const AuthModal: React.FC = () => {
                     )}
 
                     {/* Phone */}
+
                     <div>
                       <label
                         htmlFor="register-phone-input"
@@ -1932,7 +2026,10 @@ export const AuthModal: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Governorate */}
+                    {/* =================================================
+                        GOVERNORATE
+                    ================================================== */}
+
                     <div>
                       <label
                         htmlFor="register-governorate-select"
@@ -1950,11 +2047,23 @@ export const AuthModal: React.FC = () => {
                         <select
                           id="register-governorate-select"
                           value={governorate}
-                          onChange={(e) =>
-                            setGovernorate(
-                              e.target.value
-                            )
-                          }
+                          onChange={(e) => {
+                            const value =
+                              e.target.value;
+
+                            setGovernorate(value);
+
+                            /*
+                              لو رجع من "أخرى"
+                              لمحافظة عادية، نمسح
+                              المحافظة المكتوبة يدويًا.
+                            */
+                            if (
+                              value !== 'أخرى'
+                            ) {
+                              setCustomGovernorate('');
+                            }
+                          }}
                           className={`${inputClass} cursor-pointer appearance-none`}
                         >
                           <option value="">
@@ -2014,9 +2123,54 @@ export const AuthModal: React.FC = () => {
                           </option>
                         </select>
                       </div>
+
+                      {/* =================================================
+                          CUSTOM GOVERNORATE INPUT
+                      ================================================== */}
+
+                      {governorate === 'أخرى' && (
+                        <div className="mt-3">
+                          <label
+                            htmlFor="register-custom-governorate-input"
+                            className={labelClass}
+                          >
+                            اسم المحافظة
+                            <span className="mr-1 text-primary">
+                              *
+                            </span>
+                          </label>
+
+                          <div className="relative">
+                            <MapPin
+                              size={20}
+                              className={iconClass}
+                            />
+
+                            <input
+                              id="register-custom-governorate-input"
+                              type="text"
+                              value={customGovernorate}
+                              onChange={(e) =>
+                                setCustomGovernorate(
+                                  e.target.value
+                                )
+                              }
+                              placeholder="اكتب اسم المحافظة"
+                              className={inputClass}
+                              autoComplete="address-level1"
+                              maxLength={100}
+                            />
+                          </div>
+
+                          <p className="mt-2 text-[11px] leading-5 text-black/55 dark:text-white/55 sm:text-[12px]">
+                            اكتب اسم المحافظة اللي مش موجودة في القائمة.
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Email */}
+
                     <div>
                       <label
                         htmlFor="register-email-input"
@@ -2053,6 +2207,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Password */}
+
                     <div>
                       <label
                         htmlFor="register-password-input"
@@ -2138,6 +2293,7 @@ export const AuthModal: React.FC = () => {
                     </div>
 
                     {/* Submit */}
+
                     <button
                       id="auth-submit-btn"
                       type="submit"
@@ -2197,9 +2353,12 @@ export const AuthModal: React.FC = () => {
       {/* =====================================================
           FORGOT PASSWORD SUCCESS MODAL
       ===================================================== */}
+
       <ForgotPasswordModal
         isOpen={isForgotSuccessModalOpen}
-        onClose={() => setIsForgotSuccessModalOpen(false)}
+        onClose={() =>
+          setIsForgotSuccessModalOpen(false)
+        }
         emailHint={forgotSuccessEmailHint}
         message={forgotSuccessMessage}
       />
@@ -2207,19 +2366,32 @@ export const AuthModal: React.FC = () => {
   );
 };
 
+/* =========================================================
+   REGISTER MODAL
+========================================================= */
+
 export interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function RegisterModal({ isOpen, onClose }: RegisterModalProps) {
+export function RegisterModal({
+  isOpen,
+  onClose,
+}: RegisterModalProps) {
   useEffect(() => {
     if (isOpen) {
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = 'hidden';
+      const originalStyle =
+        window.getComputedStyle(
+          document.body
+        ).overflow;
+
+      document.body.style.overflow =
+        'hidden';
 
       return () => {
-        document.body.style.overflow = originalStyle;
+        document.body.style.overflow =
+          originalStyle;
       };
     }
   }, [isOpen]);

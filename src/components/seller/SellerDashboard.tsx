@@ -3108,36 +3108,51 @@ export const SellerDashboard: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* التصنيف التراثي */}
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">التصنيف التراثي *</label>
+                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
+                    التصنيف التراثي *
+                  </label>
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer"
+                    className="w-full p-2.5 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
                     {categories.map((c) => (
-                      <option key={c.id} value={c.id}>
+                      <option
+                        key={c.id}
+                        value={c.id}
+                        className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream"
+                      >
                         {c.name}
                       </option>
                     ))}
                   </select>
                 </div>
+
+                {/* محافظة المنشأ الأصيلة (10 محافظات صعيدية) */}
                 <div>
-                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">محافظة المنشأ الأصيلة</label>
+                  <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">
+                    محافظة المنشأ الأصيلة
+                  </label>
                   <select
                     value={governorate}
                     onChange={(e) => setGovernorate(e.target.value as Governorate)}
-                    className="w-full p-2.5 bg-white/60 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer"
+                    className="w-full p-2.5 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
-                    <option value="قنا">قنا</option>
-                    <option value="سوهاج">سوهاج</option>
-                    <option value="أسوان">أسوان</option>
-                    <option value="الأقصر">الأقصر</option>
-                    <option value="أسيوط">أسيوط</option>
+                    <option value="أسوان" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">أسوان</option>
+                    <option value="الأقصر" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الأقصر</option>
+                    <option value="قنا" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">قنا</option>
+                    <option value="سوهاج" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">سوهاج</option>
+                    <option value="أسيوط" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">أسيوط</option>
+                    <option value="المنيا" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">المنيا</option>
+                    <option value="بني سويف" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">بني سويف</option>
+                    <option value="الفيوم" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الفيوم</option>
+                    <option value="الوادى الجديد" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الجيزة</option>
+                    <option value="البحر الاحمر" className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream">الوادي الجديد</option>
                   </select>
                 </div>
               </div>
-
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-espresso dark:text-cream mb-1">السعر (ج.م) *</label>

@@ -31,7 +31,8 @@ const lazyWithRetry = <T extends React.ComponentType<any>>(
         error?.name === 'ChunkLoadError' ||
         errorMsg.includes('Loading chunk') ||
         errorMsg.includes('missing:') ||
-        errorMsg.includes('Failed to fetch dynamically imported module');
+        errorMsg.includes('Failed to fetch dynamically imported module') ||
+        errorMsg.includes("reading 'call'");
 
       if (isChunkError && typeof window !== 'undefined') {
         const lastReload = window.sessionStorage.getItem('chunk_retry_reload');
@@ -62,7 +63,7 @@ const SellersDirectoryPage = lazyWithRetry(() =>
   import('./components/pages/SellersDirectoryPage').then((m) => ({ default: m.SellersDirectoryPage }))
 );
 const SellerProfileView = lazyWithRetry(() =>
-  import('./components/pages/SellerProfileView').then((m) => ({ default: m.SellerProfileView }))
+  import('./components/pages/SellerProfileView').then((m) => ({ default: m.default || m.SellerProfileView }))
 );
 const CheckoutPage = lazyWithRetry(() =>
   import('./components/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))

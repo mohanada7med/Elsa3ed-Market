@@ -232,3 +232,5 @@ export const SellerProfileView: React.FC = () => {
     </div>
   );
 };
+
+export default SellerProfileView;

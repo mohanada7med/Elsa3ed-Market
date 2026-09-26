@@ -202,8 +202,8 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
                 {String(index + 1).padStart(2, '0')}
               </span>
 
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-black transition-colors duration-300 group-hover:bg-primary group-hover:text-white">
-                <ArrowLeft className="h-4 w-4" />
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white transition-colors duration-300 group-hover:bg-primary dark:bg-zinc-800">
+                <ArrowLeft className="h-4 w-4 text-[#201309] dark:text-zinc-100 group-hover:text-white" />
               </span>
             </div>
           </div>

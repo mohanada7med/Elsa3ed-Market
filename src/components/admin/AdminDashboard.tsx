@@ -7024,7 +7024,7 @@ export const AdminDashboard: React.FC = () => {
                       const cat = categories.find((c) => c.id === e.target.value);
                       if (cat) setProdCategoryName(cat.name);
                     }}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    className="w-full px-3 py-2 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -7039,7 +7039,7 @@ export const AdminDashboard: React.FC = () => {
                   <select
                     value={prodSellerId}
                     onChange={(e) => setProdSellerId(e.target.value)}
-                    className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
+                    className="w-full px-3 py-2 bg-white dark:bg-[#1f1610] text-espresso dark:text-cream border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary cursor-pointer transition-colors"
                   >
                     {sellers.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -7086,14 +7086,20 @@ export const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-espresso dark:text-cream">محافظة المنشأ:</label>
+                  <label className="block text-xs font-bold text-espresso dark:text-cream">
+                    محافظة المنشأ:
+                  </label>
                   <select
                     value={prodOriginGovernorate}
                     onChange={(e) => setProdOriginGovernorate(e.target.value as Governorate)}
                     className="w-full px-3 py-2 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-xl text-xs outline-none focus:border-primary"
                   >
                     {['قنا', 'الأقصر', 'أسوان', 'سوهاج', 'أسيوط', 'المنيا', 'بني سويف', 'الوادي الجديد', 'البحر الأحمر'].map((gov) => (
-                      <option key={gov} value={gov}>
+                      <option
+                        key={gov}
+                        value={gov}
+                        className="bg-white dark:bg-[#1f1610] text-espresso dark:text-cream"
+                      >
                         محافظة {gov}
                       </option>
                     ))}
