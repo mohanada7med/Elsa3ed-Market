@@ -28,7 +28,7 @@ export function validateAndGetEnv(): EnvConfig {
 
   const NODE_ENV = (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development';
   const PORT = Number(process.env.PORT) || 3000;
-  const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+  const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
   const MONGODB_URI = (
     process.env.MONGODB_URI ||
     process.env.MONGODB_CONNECTION_URL ||

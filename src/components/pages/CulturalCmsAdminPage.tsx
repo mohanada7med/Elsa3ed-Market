@@ -1381,13 +1381,28 @@ export const CulturalCmsAdminPage: React.FC = () => {
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300">
                             {s.startPeriod} - {s.endPeriod}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => setDeleteConfirmation({ isOpen: true, item: s, entityType: 'seasons' })}
-                            className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingEntityType('season');
+                                setEditingItem(s);
+                                setIsEditModalOpen(true);
+                              }}
+                              className="text-xs text-primary hover:underline font-bold px-2.5 py-1 rounded-lg bg-black/5 dark:bg-cream/5 cursor-pointer"
+                              title="تعديل تفاصيل وتوقيت الموسم"
+                            >
+                              تعديل
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeleteConfirmation({ isOpen: true, item: s, entityType: 'seasons' })}
+                              className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                              title="حذف الموسم"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                         <h4 className="font-bold text-sm">{s.title}</h4>
                         <p className="text-xs text-black/60 dark:text-white/60 line-clamp-2">{s.description}</p>
@@ -2059,11 +2074,21 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
 
   // Event & Moulid Specific Fields
   const [eventDate, setEventDate] = useState(editingItem?.eventDate || editingItem?.dateText || 'موسم سنوي');
+  const [startPeriod, setStartPeriod] = useState(editingItem?.startPeriod || 'فترة الحصاد (طوبة)');
+  const [endPeriod, setEndPeriod] = useState(editingItem?.endPeriod || 'نهاية الموسم (أمشير)');
   const [ritualsText, setRitualsText] = useState(
-    Array.isArray(editingItem?.rituals) ? editingItem.rituals.join('\n') : ''
+    Array.isArray(editingItem?.rituals)
+      ? editingItem.rituals.join('\n')
+      : Array.isArray(editingItem?.relatedStories)
+      ? editingItem.relatedStories.join('\n')
+      : ''
   );
   const [famousFoodsText, setFamousFoodsText] = useState(
-    Array.isArray(editingItem?.famousFoods) ? editingItem.famousFoods.join('\n') : ''
+    Array.isArray(editingItem?.famousFoods)
+      ? editingItem.famousFoods.join('\n')
+      : Array.isArray(editingItem?.relatedFoods)
+      ? editingItem.relatedFoods.join('\n')
+      : ''
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -2279,6 +2304,15 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
           authUser
         );
       } else if (entityType === 'season') {
+        const parsedStories = ritualsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const parsedFoods = famousFoodsText
+          .split('\n')
+          .map((s) => s.trim())
+          .filter(Boolean);
+
         await wahApi.saveSeason(
           {
             id: editingItem?.id,
@@ -2286,10 +2320,14 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             slug,
             governorateId: govId,
             governorateName: selectedGovName,
-            category: 'harvest',
-            startPeriod: 'فترة الحصاد',
-            endPeriod: 'نهاية الموسم',
+            cityName: city.trim() || undefined,
+            category: (category as any) || 'harvest',
+            startPeriod: startPeriod.trim() || 'فترة الحصاد',
+            endPeriod: endPeriod.trim() || 'نهاية الموسم',
             description: shortDesc.trim() || fullContent.trim(),
+            relatedStories: parsedStories.length > 0 ? parsedStories : undefined,
+            relatedFoods: parsedFoods.length > 0 ? parsedFoods : undefined,
+            coverImage: coverImage.trim() || undefined,
             sourceName: sourceName.trim(),
             sourceUrl: sourceUrl.trim(),
             verificationStatus,
@@ -2333,42 +2371,42 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] p-4 sm:p-7 max-w-2xl w-full border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-2xl my-4 sm:my-8 max-h-[92vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-4 border-b border-black/10 dark:border-white/10 mb-5">
-          <h3 className="text-lg font-bold font-serif flex items-center gap-2">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-[#181411] text-stone-900 dark:text-stone-100 rounded-none sm:rounded-[2rem] p-4 sm:p-7 max-w-2xl w-full h-full sm:h-auto max-h-[92dvh] border border-stone-200 dark:border-stone-800 shadow-2xl backdrop-blur-2xl my-auto overflow-y-auto">
+        <div className="flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800 mb-5">
+          <h3 className="text-lg font-bold font-serif flex items-center gap-2 text-stone-900 dark:text-stone-100">
             <Plus className="w-4 h-4 text-primary" />
             <span>{editingItem ? 'تعديل السجل في MongoDB' : `توثيق ${entityType} جديد في قاعدة البيانات`}</span>
           </h3>
-          <button type="button" onClick={onClose} className="p-1 rounded-lg text-black/50 dark:text-white/50 hover:bg-black/5 cursor-pointer" aria-label="إغلاق">
+          <button type="button" onClick={onClose} className="p-1.5 rounded-lg text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer" aria-label="إغلاق">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">الاسم أو العنوان الرئيسي *</label>
+            <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">الاسم أو العنوان الرئيسي *</label>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="مثال: الدير المحرق، فن التلي، العيش الشمسي..."
-              className="w-full bg-black/[0.035] dark:bg-cream/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold focus:border-primary"
+              className="w-full bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-stone-300 dark:border-stone-700 outline-none font-bold focus:border-primary"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-black/60 dark:text-white/60 mb-1">المحافظة التابعة</label>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">المحافظة التابعة</label>
               <select
                 value={selectedGovName}
                 onChange={(e) => setSelectedGovName(e.target.value)}
                 disabled={!!lockedGovernorate && !editingItem}
-                className="w-full bg-black/[0.035] dark:bg-cream/[0.04] text-xs sm:text-sm rounded-xl px-4 py-2.5 border border-black/10 dark:border-white/10 outline-none font-bold disabled:opacity-75 cursor-pointer"
+                className="w-full bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 border border-stone-300 dark:border-stone-700 text-xs sm:text-sm rounded-xl px-4 py-2.5 outline-none font-bold disabled:opacity-75 cursor-pointer"
               >
                 {governorates.map((g) => (
-                  <option key={g.id} value={g.name}>
+                  <option key={g.id} value={g.name} className="bg-white text-stone-900 dark:bg-stone-900 dark:text-stone-100 font-bold">
                     محافظة {g.name}
                   </option>
                 ))}
@@ -2596,6 +2634,60 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
                   onChange={(e) => setFamousFoodsText(e.target.value)}
                   placeholder="الفتة الصعيدي باللحمة البلدي&#10;الكشك الصعيدي المطبوخ&#10;شربات الورد ومشروب القرفة"
                   className="w-full bg-white dark:bg-espresso-900 text-xs rounded-xl p-3 border border-black/10 dark:border-white/10 outline-none focus:border-primary resize-none leading-relaxed"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Season Specific Fields */}
+          {entityType === 'season' && (
+            <div className="bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-amber-500/20">
+                <span className="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                  <Wheat className="w-4 h-4" />
+                  <span>توقيت ومراحل موسم الحصاد أو التراث الزراعي في الصعيد</span>
+                </span>
+                <span className="text-[11px] text-stone-500 dark:text-stone-400 font-bold">توثيق الموسم</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                    بداية الموسم (التاريخ أو الشهر القبطي/الميلادي):
+                  </label>
+                  <input
+                    type="text"
+                    value={startPeriod}
+                    onChange={(e) => setStartPeriod(e.target.value)}
+                    placeholder="مثال: شهر طوبة (يناير)، أو بداية فصل الربيع"
+                    className="w-full bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 text-xs rounded-xl px-3 py-2 border border-stone-300 dark:border-stone-700 outline-none focus:border-amber-500 font-bold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                    نهاية الموسم أو ذروة الحصاد:
+                  </label>
+                  <input
+                    type="text"
+                    value={endPeriod}
+                    onChange={(e) => setEndPeriod(e.target.value)}
+                    placeholder="مثال: نهاية أمشير، أو أواخر مايو"
+                    className="w-full bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 text-xs rounded-xl px-3 py-2 border border-stone-300 dark:border-stone-700 outline-none focus:border-amber-500 font-bold"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                  أكلات وطقوس الحصاد المرتبطة بالموسم (كل صنف في سطر):
+                </label>
+                <textarea
+                  rows={2}
+                  value={famousFoodsText}
+                  onChange={(e) => setFamousFoodsText(e.target.value)}
+                  placeholder="عسل القصب الطازج&#10;العيش الشمسي والجبن القديم"
+                  className="w-full bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 dark:placeholder:text-stone-500 text-xs rounded-xl p-3 border border-stone-300 dark:border-stone-700 outline-none focus:border-amber-500 resize-none leading-relaxed"
                 />
               </div>
             </div>

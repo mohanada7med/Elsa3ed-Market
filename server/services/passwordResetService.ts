@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { getDatabase, memoryDb } from '../db/mongodb.ts';
+import { validateAndGetEnv } from '../config/env.ts';
 import type { PasswordResetRequestDocument, UserDocument } from '../models/types.ts';
 import {
   findUserByUsername,
@@ -412,6 +413,7 @@ export async function requestAutomatedPasswordReset(
     let appBaseUrl = (
       configuredUrl ||
       baseUrlOrOrigin ||
+      validateAndGetEnv().APP_URL ||
       'http://localhost:3000'
     ).trim().replace(/\/$/, '');
 

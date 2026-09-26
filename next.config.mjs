@@ -7,16 +7,18 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   experimental: {
-    optimizePackageImports: ['lucide-react', 'motion/react'],
+    optimizePackageImports: ['lucide-react'],
   },
   serverExternalPackages: ['mongodb', 'bcryptjs', 'express', 'cookie-parser', 'cloudinary', 'multer'],
   allowedDevOrigins: [
     '192.168.1.3',
     'localhost',
     '127.0.0.1',
+    '0.0.0.0',
     '192.168.1.3:*',
     'localhost:*',
     '127.0.0.1:*',
+    '0.0.0.0:*',
   ],
   images: {
     remotePatterns: [
@@ -86,7 +88,17 @@ const nextConfig = {
       },
       {
         source: '/:path*',
-        headers: commonHeaders,
+        headers: [
+          ...commonHeaders,
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+        ],
       },
     ];
   },
