@@ -17,6 +17,7 @@ import { MobileBottomBar } from './components/layout/MobileBottomBar';
 
 // Pages
 import { HomePage } from './components/pages/HomePage';
+import { SellerProfileView } from './components/pages/SellerProfileView';
 
 // Dynamic code-splitting with automatic recovery for chunk loading issues (e.g. after updates/rebuilds)
 const lazyWithRetry = <T extends React.ComponentType<any>>(
@@ -47,92 +48,35 @@ const lazyWithRetry = <T extends React.ComponentType<any>>(
     }
   });
 
-const ProductsPage = lazyWithRetry(() =>
-  import('./components/pages/ProductsPage').then((m) => ({ default: m.ProductsPage }))
-);
-const ProductDetailsView = lazyWithRetry(() =>
-  import('./components/products/ProductDetailsView').then((m) => ({ default: m.ProductDetailsView }))
-);
-const CategoriesPage = lazyWithRetry(() =>
-  import('./components/pages/CategoriesPage').then((m) => ({ default: m.CategoriesPage }))
-);
-const CraftsPage = lazyWithRetry(() =>
-  import('./components/pages/CraftsPage').then((m) => ({ default: m.CraftsPage }))
-);
-const SellersDirectoryPage = lazyWithRetry(() =>
-  import('./components/pages/SellersDirectoryPage').then((m) => ({ default: m.SellersDirectoryPage }))
-);
-const SellerProfileView = lazyWithRetry(() =>
-  import('./components/pages/SellerProfileView').then((m) => ({ default: m.default || m.SellerProfileView }))
-);
-const CheckoutPage = lazyWithRetry(() =>
-  import('./components/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
-);
-const FavoritesPage = lazyWithRetry(() =>
-  import('./components/pages/FavoritesPage').then((m) => ({ default: m.FavoritesPage }))
-);
-const BuyerAccountPage = lazyWithRetry(() =>
-  import('./components/pages/BuyerAccountPage').then((m) => ({ default: m.BuyerAccountPage }))
-);
-const AboutSection = lazyWithRetry(() =>
-  import('./components/public/AboutSection').then((m) => ({ default: m.AboutSection }))
-);
-const CartPage = lazyWithRetry(() =>
-  import('./components/pages/CartPage').then((m) => ({ default: m.CartPage }))
-);
-const ChatView = lazyWithRetry(() =>
-  import('./components/chat/ChatView').then((m) => ({ default: m.ChatView }))
-);
-const ForbiddenPage = lazyWithRetry(() =>
-  import('./components/pages/ForbiddenPage').then((m) => ({ default: m.ForbiddenPage }))
-);
+import { ProductsPage } from './components/pages/ProductsPage';
+import { ProductDetailsView } from './components/products/ProductDetailsView';
+import { CategoriesPage } from './components/pages/CategoriesPage';
+import { CraftsPage } from './components/pages/CraftsPage';
+import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
+import { CheckoutPage } from './components/pages/CheckoutPage';
+import { FavoritesPage } from './components/pages/FavoritesPage';
+import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
+import { AboutSection } from './components/public/AboutSection';
+import { CartPage } from './components/pages/CartPage';
+import { ChatView } from './components/chat/ChatView';
+import { ForbiddenPage } from './components/pages/ForbiddenPage';
 
-// WAH Upper Egypt Digital Platform Pages (Lazy Loaded)
-const GovernorateDetailPage = lazyWithRetry(() =>
-  import('./components/pages/GovernorateDetailPage').then((m) => ({ default: m.GovernorateDetailPage }))
-);
-const PlacesHeritagePage = lazyWithRetry(() =>
-  import('./components/pages/PlacesHeritagePage').then((m) => ({ default: m.PlacesHeritagePage }))
-);
-const PlaceDetailPage = lazyWithRetry(() =>
-  import('./components/pages/PlaceDetailPage').then((m) => ({ default: m.PlaceDetailPage }))
-);
-const CulturalCraftsPage = lazyWithRetry(() =>
-  import('./components/pages/CulturalCraftsPage').then((m) => ({ default: m.CulturalCraftsPage }))
-);
-const CulturalCraftDetailPage = lazyWithRetry(() =>
-  import('./components/pages/CulturalCraftDetailPage').then((m) => ({ default: m.CulturalCraftDetailPage }))
-);
-const PeoplePage = lazyWithRetry(() =>
-  import('./components/pages/PeoplePage').then((m) => ({ default: (m.PeoplePage || (m as any).default) }))
-);
-const PersonDetailPage = lazyWithRetry(() =>
-  import('./components/pages/PersonDetailPage').then((m) => ({ default: m.PersonDetailPage }))
-);
-const FoodHeritagePage = lazyWithRetry(() =>
-  import('./components/pages/FoodHeritagePage').then((m) => ({ default: m.FoodHeritagePage }))
-);
-const FoodDetailPage = lazyWithRetry(() =>
-  import('./components/pages/FoodDetailPage').then((m) => ({ default: m.FoodDetailPage }))
-);
-const EventsPage = lazyWithRetry(() =>
-  import('./components/pages/EventsPage').then((m) => ({ default: m.default || m.EventsPage }))
-);
-const EventDetailPage = lazyWithRetry(() =>
-  import('./components/pages/EventDetailPage').then((m) => ({ default: m.default || m.EventDetailPage }))
-);
-const GlobalSearchResultsPage = lazyWithRetry(() =>
-  import('./components/pages/GlobalSearchResultsPage').then((m) => ({ default: m.GlobalSearchResultsPage }))
-);
-const NotificationsPage = lazyWithRetry(() =>
-  import('./components/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
-);
-const ResetPasswordPage = lazyWithRetry(() =>
-  import('./components/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
-);
-const NotFoundPage = lazyWithRetry(() =>
-  import('./components/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage }))
-);
+// WAH Upper Egypt Digital Platform Pages
+import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
+import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
+import { PlaceDetailPage } from './components/pages/PlaceDetailPage';
+import { CulturalCraftsPage } from './components/pages/CulturalCraftsPage';
+import { CulturalCraftDetailPage } from './components/pages/CulturalCraftDetailPage';
+import { PeoplePage } from './components/pages/PeoplePage';
+import { PersonDetailPage } from './components/pages/PersonDetailPage';
+import { FoodHeritagePage } from './components/pages/FoodHeritagePage';
+import { FoodDetailPage } from './components/pages/FoodDetailPage';
+import { EventsPage } from './components/pages/EventsPage';
+import { EventDetailPage } from './components/pages/EventDetailPage';
+import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
+import { NotificationsPage } from './components/pages/NotificationsPage';
+import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
+import { NotFoundPage } from './components/pages/NotFoundPage';
 
 import { WhatsAppButton } from './components/common/WhatsAppButton';
 
@@ -143,9 +87,12 @@ const SellerDashboard = lazyWithRetry(() =>
 const AdminDashboard = lazyWithRetry(() =>
   import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
 );
-const WholesalePage = lazyWithRetry(() =>
-  import('./components/pages/WholesalePage').then((m) => ({ default: m.WholesalePage }))
-);
+import { WholesalePage } from './components/pages/WholesalePage';
+import { UpperEgyptMapPage } from './components/pages/UpperEgyptMapPage';
+import { CraftReelsPage } from './components/pages/CraftReelsPage';
+import { DialectDictionaryPage } from './components/pages/quize';
+import { OrdersTrackingPage } from './components/pages/OrdersTrackingPage';
+
 const CulturalCmsAdminPage = lazyWithRetry(() =>
   import('./components/pages/CulturalCmsAdminPage').then((m) => ({ default: m.CulturalCmsAdminPage }))
 );
@@ -154,18 +101,6 @@ const AdminMapEditorPage = lazyWithRetry(() =>
 );
 const AdminEventsManagerPage = lazyWithRetry(() =>
   import('./components/pages/AdminEventsManagerPage').then((m) => ({ default: m.default || m.AdminEventsManagerPage }))
-);
-const UpperEgyptMapPage = lazyWithRetry(() =>
-  import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
-);
-const CraftReelsPage = lazyWithRetry(() =>
-  import('./components/pages/CraftReelsPage').then((m) => ({ default: m.CraftReelsPage }))
-);
-const DialectDictionaryPage = lazyWithRetry(() =>
-  import('./components/pages/quize').then((m) => ({ default: m.DialectDictionaryPage }))
-);
-const OrdersTrackingPage = lazyWithRetry(() =>
-  import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
 );
 
 const LazySectionFallback: React.FC = () => (

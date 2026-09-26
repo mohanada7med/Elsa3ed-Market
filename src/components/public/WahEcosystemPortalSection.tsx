@@ -118,7 +118,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
             {/* الشارة العلوية */}
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-accent">
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
                 <Compass size={14} className="animate-spin-slow text-accent" />
               </span>
@@ -129,7 +129,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أبواب
               <br />
-              <span className="inline-block mr-[2.2ch] sm:mr-[2.5ch] lg:mr-[2.8ch] text-accent">
+              <span className="ps-22 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                 وه
               </span>
             </h1>

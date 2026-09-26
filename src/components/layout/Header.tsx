@@ -585,11 +585,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           icon: ShoppingBag,
         },
         {
-          id: 'admin-events',
-          label: 'إدارة الموالد والاحتفالات',
-          icon: Calendar,
-        },
-        {
           id: 'admin-reports',
           label: 'البلاغات والشكاوى',
           icon: AlertTriangle,
@@ -619,16 +614,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         id: 'map',
         label: 'محافظات الصعيد',
         isNew: true,
-      },
-      {
-        id: 'events',
-        label: 'مواسم وليالي الصعيد',
-        icon: Calendar,
-        isNew: true,
-      },
-      {
-        id: 'crafts',
-        label: 'الحرف',
       },
       {
         id: 'quize',

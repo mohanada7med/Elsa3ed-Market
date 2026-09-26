@@ -22,6 +22,7 @@ import {
   RefreshCw,
   Scroll
 } from 'lucide-react';
+import FloatingDock from '../common/FloatingDock';
 
 export const PeoplePage: React.FC = () => {
   const { navigateToPerson, setActivePage } = useApp();
@@ -212,6 +213,8 @@ export const PeoplePage: React.FC = () => {
         transition-colors duration-500
       "
     >
+
+      <FloatingDock count={people.length} label="علم من الصعيد" />
       {/* =====================================================
           NAVBAR
       ===================================================== */}

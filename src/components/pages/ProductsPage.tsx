@@ -16,9 +16,11 @@ import {
   ScrollText,
   CircleDot,
 } from 'lucide-react';
+import FloatingDock from '../common/FloatingDock';
 
 export const ProductsPage: React.FC = () => {
   const {
+
     setActivePage,
     searchQuery,
     setSearchQuery,
@@ -45,6 +47,8 @@ export const ProductsPage: React.FC = () => {
         dark:text-cream
       "
     >
+      <FloatingDock count={products.length} label="منتج يدوي" />
+
       {/* =====================================================
           DECORATIVE BACKGROUND
       ===================================================== */}

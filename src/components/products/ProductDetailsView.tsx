@@ -67,29 +67,25 @@ export const ProductDetailsView: React.FC = () => {
   const product =
     products.find((p) => p.id === effectiveProductId) ||
     (!effectiveProductId ? products[0] : undefined);
-  useEffect(() => {
-    setSelectedImageIndex(0);
-    setQuantity(1);
-    setActiveTab('desc');
-    setNewRating(5);
-    setNewComment('');
-  }, [selectedProductId]);
-
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<
     'desc' | 'specs' | 'reviews' | 'shipping'
   >('desc');
-
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
+  const [relatedFilter, setRelatedFilter] = useState<'all' | 'artisan' | 'category' | 'governorate'>('all');
+
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setSelectedImageIndex(0);
     setQuantity(1);
     setActiveTab('desc');
     setNewRating(5);
     setNewComment('');
-  }, [selectedProductId]);
+    setRelatedFilter('all');
+  }, [product?.id, effectiveProductId]);
+
   const productImages =
     product?.images &&
       Array.isArray(product.images) &&
@@ -138,18 +134,93 @@ export const ProductDetailsView: React.FC = () => {
     });
   }, [product, productReviews.length]);
 
-  const relatedProducts = useMemo(
-    () =>
-      (products || [])
-        .filter(
-          (p) =>
-            p.categoryId === product?.categoryId &&
-            p.id !== product?.id &&
-            p.approvalStatus === 'approved'
-        )
-        .slice(0, 4),
-    [products, product]
-  );
+  // Smart pieces of the same story: matching artisan workshop, category, and governorate
+  const {
+    relatedArtisanProducts,
+    relatedCategoryProducts,
+    relatedGovernorateProducts,
+    allStoryProducts,
+  } = useMemo(() => {
+    if (!product) {
+      return {
+        relatedArtisanProducts: [],
+        relatedCategoryProducts: [],
+        relatedGovernorateProducts: [],
+        allStoryProducts: [],
+      };
+    }
+
+    const approvedList = (products || []).filter(
+      (p) =>
+        p.id !== product.id &&
+        (p.approvalStatus === 'approved' || !p.approvalStatus)
+    );
+
+    // 1. Same artisan / workshop
+    const artisanItems = approvedList.filter(
+      (p) =>
+        (product.sellerId && p.sellerId === product.sellerId) ||
+        (product.sellerName && p.sellerName === product.sellerName)
+    );
+
+    // 2. Same craft / category
+    const categoryItems = approvedList.filter(
+      (p) => product.categoryId && p.categoryId === product.categoryId
+    );
+
+    // 3. Same Upper Egypt governorate
+    const governorateItems = approvedList.filter(
+      (p) =>
+        product.sellerGovernorate &&
+        p.sellerGovernorate &&
+        p.sellerGovernorate.trim().toLowerCase() ===
+          product.sellerGovernorate.trim().toLowerCase()
+    );
+
+    // Build curated list: workshop items first, then same craft, then same governorate, then other approved
+    const seenIds = new Set<string>();
+    const storyList: typeof approvedList = [];
+
+    const addUnique = (items: typeof approvedList) => {
+      for (const item of items) {
+        if (!seenIds.has(item.id)) {
+          seenIds.add(item.id);
+          storyList.push(item);
+        }
+      }
+    };
+
+    addUnique(artisanItems);
+    addUnique(categoryItems);
+    addUnique(governorateItems);
+    addUnique(approvedList);
+
+    return {
+      relatedArtisanProducts: artisanItems,
+      relatedCategoryProducts: categoryItems,
+      relatedGovernorateProducts: governorateItems,
+      allStoryProducts: storyList.slice(0, 8),
+    };
+  }, [products, product]);
+
+  const displayedRelatedProducts = useMemo(() => {
+    if (relatedFilter === 'artisan' && relatedArtisanProducts.length > 0) {
+      return relatedArtisanProducts.slice(0, 8);
+    }
+    if (relatedFilter === 'category' && relatedCategoryProducts.length > 0) {
+      return relatedCategoryProducts.slice(0, 8);
+    }
+    if (relatedFilter === 'governorate' && relatedGovernorateProducts.length > 0) {
+      return relatedGovernorateProducts.slice(0, 8);
+    }
+    return allStoryProducts;
+  }, [
+    relatedFilter,
+    relatedArtisanProducts,
+    relatedCategoryProducts,
+    relatedGovernorateProducts,
+    allStoryProducts,
+  ]);
 
   const stockCount = product?.stockCount || 0;
 
@@ -905,7 +976,7 @@ export const ProductDetailsView: React.FC = () => {
             <button
               type="button"
               onClick={() =>
-                navigateToSeller(product.sellerId)
+                navigateToSeller(product.sellerId || product.sellerName || '')
               }
               className="
                 mt-8
@@ -2399,36 +2470,31 @@ export const ProductDetailsView: React.FC = () => {
         </section>
 
         {/* ========================================= */}
-        {/* RELATED PRODUCTS */}
+        {/* RELATED PRODUCTS - قطع من نفس الحكاية */}
         {/* ========================================= */}
 
-        {relatedProducts.length > 0 && (
-          <section className="mt-16 pb-24">
-            <div
-              className="
-                mb-7
-                flex
-                items-end
-                justify-between
-                gap-5
-              "
-            >
+        {allStoryProducts.length > 0 && (
+          <section className="mt-20 pb-24 border-t border-black/10 dark:border-white/10 pt-14">
+            {/* Header with heritage badge & controls */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
               <div>
-                <div
-                  className="
-                    text-[9px]
-                    font-black
-                    tracking-[0.2em]
-                    text-primary
-                    dark:text-primary-hover
-                  "
-                >
-                  YOU MAY ALSO LIKE
+                <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-[11px] font-black tracking-wider text-primary dark:border-primary-hover/30 dark:bg-primary-hover/10 dark:text-primary-hover mb-2.5 shadow-xs">
+                  <Sparkles size={14} className="text-amber-500 animate-pulse" />
+                  <span>تراث يكمل بعضه • PIECES OF THE SAME STORY</span>
                 </div>
 
-                <h2 className="mt-2 text-2xl font-black sm:text-3xl">
-                  قطع من نفس الحكاية
-                </h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-2xl font-black sm:text-3xl text-espresso dark:text-cream">
+                    قطع من نفس الحكاية
+                  </h2>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-black/5 dark:bg-cream/10 text-espresso/70 dark:text-cream/70 border border-black/5 dark:border-white/5">
+                    {displayedRelatedProducts.length} قطع
+                  </span>
+                </div>
+
+                <p className="mt-2 text-xs sm:text-sm text-black/60 dark:text-white/50 max-w-2xl leading-relaxed">
+                  مشغولات يدوية تشترك في أصالة الصنعة، الروح التراثية، أو إبداع نفس ورش الصعيد لتكمل بها مجموعتك.
+                </p>
               </div>
 
               <button
@@ -2438,63 +2504,231 @@ export const ProductDetailsView: React.FC = () => {
                   hidden
                   items-center
                   gap-2
+                  rounded-xl
+                  border
+                  border-primary/30
+                  bg-primary/5
+                  px-4
+                  py-2.5
                   text-xs
                   font-bold
                   text-primary
-                  hover:underline
+                  transition
+                  hover:bg-primary
+                  hover:text-white
+                  dark:border-primary-hover/30
+                  dark:bg-primary-hover/10
                   dark:text-primary-hover
+                  dark:hover:bg-primary-hover
+                  dark:hover:text-black
                   sm:flex
                   cursor-pointer
                 "
               >
-                عرض كل المنتجات
+                <span>عرض كل معروضات السوق</span>
                 <ArrowUpLeft size={15} />
               </button>
             </div>
 
-            <div
-              className="
-                grid
-                grid-cols-1
-                gap-4
-                sm:grid-cols-2
-                lg:grid-cols-4
-              "
-            >
-              {relatedProducts.map((related) => (
-                <ProductCard
-                  key={related.id}
-                  product={related}
-                />
-              ))}
+            {/* Filter Pills for Story exploration */}
+            <div className="flex flex-wrap items-center gap-2 mb-6">
+              <button
+                type="button"
+                onClick={() => setRelatedFilter('all')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  relatedFilter === 'all'
+                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                }`}
+              >
+                <span>كل الحكاية</span>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                    relatedFilter === 'all'
+                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                  }`}
+                >
+                  {allStoryProducts.length}
+                </span>
+              </button>
+
+              {relatedArtisanProducts.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRelatedFilter('artisan')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    relatedFilter === 'artisan'
+                      ? 'bg-primary text-white shadow-md dark:bg-primary-hover dark:text-black'
+                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                  }`}
+                >
+                  <Store size={14} />
+                  <span>من ورشة {product.sellerName || 'الحرفي'}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      relatedFilter === 'artisan'
+                        ? 'bg-white/25 text-white dark:text-black'
+                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                    }`}
+                  >
+                    {relatedArtisanProducts.length}
+                  </span>
+                </button>
+              )}
+
+              {relatedCategoryProducts.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setRelatedFilter('category')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    relatedFilter === 'category'
+                      ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                  }`}
+                >
+                  <Layers3 size={14} />
+                  <span>من نفس الحرفة</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      relatedFilter === 'category'
+                        ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                    }`}
+                  >
+                    {relatedCategoryProducts.length}
+                  </span>
+                </button>
+              )}
+
+              {relatedGovernorateProducts.length > 0 && product.sellerGovernorate && (
+                <button
+                  type="button"
+                  onClick={() => setRelatedFilter('governorate')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    relatedFilter === 'governorate'
+                      ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
+                      : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                  }`}
+                >
+                  <MapPin size={14} />
+                  <span>من أرض {product.sellerGovernorate}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                      relatedFilter === 'governorate'
+                        ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
+                        : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                    }`}
+                  >
+                    {relatedGovernorateProducts.length}
+                  </span>
+                </button>
+              )}
             </div>
 
-            <button
-              type="button"
-              onClick={() => setActivePage('products')}
-              className="
-                mt-5
-                flex
-                w-full
-                items-center
-                justify-center
-                gap-2
-                rounded-2xl
-                border
-                border-black/10
-                bg-white/50
-                py-4
-                text-xs
-                font-bold
-                dark:border-white/10
-                dark:bg-cream/[0.025]
-                sm:hidden
-                cursor-pointer
-              "
-            >
-              عرض كل المنتجات
-              <ArrowUpLeft size={15} />
-            </button>
+            {/* Seller Workshop Ribbon */}
+            {product.sellerName && (
+              <div className="mb-8 rounded-3xl border border-primary/20 bg-linear-to-r from-primary/10 via-amber-500/5 to-transparent p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-md">
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-md">
+                    <Store size={22} />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold text-primary dark:text-primary-hover">
+                      ورشة معتمدة في سوق وه
+                    </div>
+                    <h4 className="text-sm font-black text-espresso dark:text-cream">
+                      {product.sellerName} {product.sellerGovernorate ? `• ${product.sellerGovernorate}` : ''}
+                    </h4>
+                    <p className="text-[11px] text-black/50 dark:text-white/40 mt-0.5">
+                      تصفح جميع المشغولات والقطع اليدوية الخارجة من نفس الورشة
+                    </p>
+                  </div>
+                </div>
+
+                {(product.sellerId || product.sellerName) && (
+                  <button
+                    type="button"
+                    onClick={() => navigateToSeller(product.sellerId || product.sellerName || '')}
+                    className="inline-flex items-center gap-2 rounded-xl bg-espresso px-4 py-2.5 text-xs font-bold text-white transition hover:bg-primary dark:bg-cream dark:text-black dark:hover:bg-primary-hover cursor-pointer shrink-0 shadow-sm"
+                  >
+                    <span>زيارة ورشة الحرفي</span>
+                    <ArrowUpLeft size={14} />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Grid of related items */}
+            {displayedRelatedProducts.length > 0 ? (
+              <div
+                className="
+                  grid
+                  grid-cols-1
+                  gap-5
+                  sm:grid-cols-2
+                  lg:grid-cols-4
+                "
+              >
+                {displayedRelatedProducts.map((related) => (
+                  <ProductCard
+                    key={related.id}
+                    product={related}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 rounded-3xl border border-dashed border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-white/[0.01]">
+                <p className="text-xs text-black/50 dark:text-white/40">
+                  لا توجد قطع مطابقة لهذا الفلتر حالياً، استكشف باقي أقسام الحكاية.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setRelatedFilter('all')}
+                  className="mt-3 text-xs font-bold text-primary dark:text-primary-hover hover:underline cursor-pointer"
+                >
+                  العودة لكل المعروضات
+                </button>
+              </div>
+            )}
+
+            {/* Bottom Actions */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setActivePage('products')}
+                className="
+                  w-full
+                  sm:w-auto
+                  inline-flex
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-2xl
+                  border
+                  border-black/10
+                  bg-white/70
+                  px-8
+                  py-3.5
+                  text-xs
+                  font-black
+                  shadow-xs
+                  transition
+                  hover:border-primary
+                  hover:text-primary
+                  hover:bg-white
+                  dark:border-white/10
+                  dark:bg-espresso-800/80
+                  dark:hover:bg-espresso-800
+                  dark:hover:border-primary-hover
+                  dark:hover:text-primary-hover
+                  cursor-pointer
+                "
+              >
+                <span>استكشف المزيد من كنوز صعيد مصر</span>
+                <ArrowUpLeft size={15} />
+              </button>
+            </div>
           </section>
         )}
       </div>

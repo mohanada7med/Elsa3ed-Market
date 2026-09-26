@@ -52,7 +52,7 @@ export const HomePage: React.FC = () => {
           <div className="relative z-10 mb-12 sm:mb-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
               <div>
-                <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-accent">
+                <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
                     <ShoppingBasket size={14} className="text-accent" />
                   </span>
@@ -62,7 +62,7 @@ export const HomePage: React.FC = () => {
                 <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
                   سوق
                   <br />
-                  <span className="inline-block mr-[2ch] sm:mr-[2.3ch] lg:mr-[2.6ch] text-accent">
+                  <span className="ps-18 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                     وه
                   </span>
                 </h1>

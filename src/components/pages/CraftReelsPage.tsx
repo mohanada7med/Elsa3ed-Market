@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
+import FloatingDock from '../common/FloatingDock.tsx';
 
 export const CraftReelsPage: React.FC = () => {
   const {
@@ -310,6 +311,8 @@ export const CraftReelsPage: React.FC = () => {
         dark:text-cream
       "
     >
+      <FloatingDock count={reels.length} label="فيديوهات صعيديه" />
+
       {/* NAVBAR */}
       <header className="relative z-50 border-b border-black/10 dark:border-white/10">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">

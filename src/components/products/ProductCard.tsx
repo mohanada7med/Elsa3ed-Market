@@ -13,6 +13,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const {
     setSelectedProductId,
     setActivePage,
+    navigateToProduct,
     addToCart,
     setIsCartDrawerOpen,
     addToFavorites,
@@ -33,8 +34,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&q=80';
 
   const handleCardClick = () => {
-    setSelectedProductId(product.id);
-    setActivePage('product-detail');
+    if (navigateToProduct) {
+      navigateToProduct(product.id);
+    } else {
+      setSelectedProductId(product.id);
+      setActivePage('product-detail');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (

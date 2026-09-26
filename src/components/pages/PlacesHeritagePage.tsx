@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
+import FloatingDock from '../common/FloatingDock';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -444,6 +445,7 @@ export const PlacesHeritagePage: React.FC = () => {
         dark:text-cream
       "
     >
+      <FloatingDock count={places.length} label="أماكن التراث" />
       {/* NAVBAR */}
       <header className="relative z-50 border-b border-black/10 dark:border-white/10">
         <div className="mx-auto flex h-[76px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">

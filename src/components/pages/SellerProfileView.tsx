@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from '../products/ProductCard';
 import {
@@ -23,7 +23,69 @@ export const SellerProfileView: React.FC = () => {
       ? decodeURIComponent(window.location.pathname.split('/')[2] || '')
       : null);
 
-  const seller = sellers.find((s) => s.id === effectiveSellerId) || (!effectiveSellerId ? sellers[0] : undefined);
+  const matchedSeller = useMemo(() => {
+    if (!effectiveSellerId) return sellers[0] || null;
+    const trimmed = effectiveSellerId.trim();
+    return (
+      sellers.find(
+        (s) =>
+          s.id === trimmed ||
+          (s as any)._id === trimmed ||
+          s.userId === trimmed ||
+          (s.brandName && s.brandName.trim() === trimmed) ||
+          (s.name && s.name.trim() === trimmed)
+      ) || null
+    );
+  }, [sellers, effectiveSellerId]);
+
+  const [directSeller, setDirectSeller] = useState<any>(null);
+  const [isLoadingDirect, setIsLoadingDirect] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [effectiveSellerId]);
+
+  useEffect(() => {
+    if (matchedSeller || !effectiveSellerId) {
+      setDirectSeller(null);
+      return;
+    }
+    let isMounted = true;
+    setIsLoadingDirect(true);
+    fetch(`/api/sellers/${encodeURIComponent(effectiveSellerId)}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (isMounted && json?.data) {
+          setDirectSeller(json.data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (isMounted) setIsLoadingDirect(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [matchedSeller, effectiveSellerId]);
+
+  const seller = matchedSeller || directSeller;
+
+  if (isLoadingDirect || (!seller && sellers.length === 0)) {
+    return (
+      <div
+        dir="rtl"
+        className="min-h-[60vh] flex items-center justify-center max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 py-16"
+      >
+        <div className="text-center space-y-3">
+          <div className="h-10 w-10 mx-auto animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
+          <p className="text-xs font-bold text-black/50 dark:text-white/50">
+            جاري فتح ورشة الحرفي...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!seller) {
     return (
@@ -33,7 +95,12 @@ export const SellerProfileView: React.FC = () => {
       >
         <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-10 text-center space-y-4 shadow-lg max-w-md w-full">
           <Store className="w-12 h-12 text-primary mx-auto" />
-          <h3 className="text-xl font-black font-serif text-espresso dark:text-cream">صفحة الورشة مش موجودة دلوقتي</h3>
+          <h3 className="text-xl font-black font-serif text-espresso dark:text-cream">
+            صفحة الورشة مش موجودة دلوقتي
+          </h3>
+          <p className="text-xs text-black/50 dark:text-white/40 leading-relaxed">
+            قد تكون الورشة قيد الاعتماد أو تم تعديل بياناتها، تصفح باقي شيوخ الصنعة في صعيد مصر.
+          </p>
           <button
             type="button"
             onClick={() => setActivePage('sellers')}
@@ -41,23 +108,35 @@ export const SellerProfileView: React.FC = () => {
           >
             شوف باقي شيوخ الصنعة
           </button>
-
         </div>
       </div>
     );
   }
 
-  const sellerProducts = products.filter(
-    (p) => (p.sellerId === seller.id || p.sellerName === seller.brandName) && p.approvalStatus === 'approved'
+  const sellerProducts = (products || []).filter(
+    (p) =>
+      (p.sellerId === seller.id ||
+        (seller.userId && p.sellerId === seller.userId) ||
+        (seller.brandName && p.sellerName === seller.brandName)) &&
+      p.approvalStatus === 'approved'
   );
 
+  const brandTitle = seller.brandName || seller.name || 'ورشة الحرفي';
+  const coverImg =
+    seller.coverImage ||
+    'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1200&q=80';
+  const avatarImg =
+    seller.avatar ||
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1788710904/user.jpg';
+  const joinedYear = String(seller.joinedDate || '2023').slice(0, 4);
+
   const handleShare = () => {
-    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(seller.id)}`;
+    const shareUrl = `${window.location.origin}/sellers/${encodeURIComponent(seller.id || effectiveSellerId || '')}`;
     if (navigator.share) {
       navigator
         .share({
-          title: seller.brandName,
-          text: `ورشة ${seller.brandName} - حرفيو صعيد مصر على منصة وه`,
+          title: brandTitle,
+          text: `ورشة ${brandTitle} - حرفيو صعيد مصر على منصة وه`,
           url: shareUrl
         })
         .catch(() => {
@@ -90,23 +169,24 @@ export const SellerProfileView: React.FC = () => {
           onClick={() => setActivePage('sellers')}
           className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
         >
-          دليل شيوخ الصنعة        </button>
+          دليل شيوخ الصنعة
+        </button>
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
-        <span className="text-espresso dark:text-cream font-bold">{seller.brandName}</span>
+        <span className="text-espresso dark:text-cream font-bold">{brandTitle}</span>
       </nav>
 
       {/* Workshop Header & Profile Banner */}
       <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 overflow-hidden shadow-lg">
         {/* Cover Banner */}
         <div className="relative h-48 sm:h-64 w-full bg-black/5 dark:bg-cream/5">
-          <img src={seller.coverImage} alt={seller.brandName} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+          <img src={coverImg} alt={brandTitle} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
 
           {/* Governorate tag & Share */}
           <div className="absolute top-4 right-4 flex items-center gap-2">
             <span className="bg-primary text-white text-xs font-bold px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5" />
-              <span>محافظة {seller.governorate}</span>
+              <span>محافظة {seller.governorate || 'صعيد مصر'}</span>
             </span>
           </div>
 
@@ -126,12 +206,15 @@ export const SellerProfileView: React.FC = () => {
             <div className="flex flex-col sm:flex-row items-center sm:items-end text-center sm:text-right gap-4">
               <div className="relative shrink-0">
                 <img
-                  src={seller.avatar}
-                  alt={seller.name}
+                  src={avatarImg}
+                  alt={seller.name || brandTitle}
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl object-cover border-4 border-white dark:border-[#151513] shadow-xl bg-stone-100"
                 />
                 {seller.verified && (
-                  <div className="absolute -bottom-1 -left-1 bg-emerald-600 text-white rounded-full p-1 shadow-md" title="حرفي موثق">
+                  <div
+                    className="absolute -bottom-1 -left-1 bg-emerald-600 text-white rounded-full p-1 shadow-md"
+                    title="حرفي موثق"
+                  >
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                 )}
@@ -139,10 +222,10 @@ export const SellerProfileView: React.FC = () => {
 
               <div>
                 <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream font-serif">
-                  {seller.brandName}
+                  {brandTitle}
                 </h1>
                 <p className="text-xs sm:text-sm text-espresso/70 dark:text-cream/70 font-semibold mt-0.5">
-                  الصانع: {seller.name} • تخصص: {seller.specialty}
+                  الصانع: {seller.name || 'حرفي من الصعيد'} • تخصص: {seller.specialty || 'مشغولات وحرف تراثية'}
                 </p>
               </div>
             </div>
@@ -151,20 +234,30 @@ export const SellerProfileView: React.FC = () => {
             <div className="grid grid-cols-3 gap-2 sm:gap-3 w-full sm:w-auto">
               <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
                 <div className="flex items-center justify-center gap-1 text-amber-500 font-bold text-xs sm:text-sm">
-                  <Star className="w-3.5 h-3.5 " />
-                  <span>{seller.rating}</span>
+                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                  <span>{seller.rating ?? 5}</span>
                 </div>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">تقييم المتسوقين</span>
+                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
+                  تقييم المتسوقين
+                </span>
               </div>
 
               <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
-                <span className="font-black text-xs sm:text-sm text-primary dark:text-primary-hover block">{seller.salesCount}+</span>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">قطعة تم شحنها</span>
+                <span className="font-black text-xs sm:text-sm text-primary dark:text-primary-hover block">
+                  {seller.salesCount ?? 0}+
+                </span>
+                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
+                  قطعة تم شحنها
+                </span>
               </div>
 
               <div className="bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 px-3.5 sm:px-4 py-2.5 rounded-[1.25rem] text-center">
-                <span className="font-bold text-xs sm:text-sm text-espresso dark:text-cream block">{seller.productsCount}</span>
-                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">منتجات معروضة</span>
+                <span className="font-bold text-xs sm:text-sm text-espresso dark:text-cream block">
+                  {seller.productsCount ?? sellerProducts.length}
+                </span>
+                <span className="text-[10px] text-espresso/60 dark:text-cream/60 block mt-0.5">
+                  منتجات معروضة
+                </span>
               </div>
             </div>
           </div>
@@ -177,7 +270,8 @@ export const SellerProfileView: React.FC = () => {
                 <span>عن الورشة وتاريخ الصنعة التراثية</span>
               </h3>
               <p className="text-xs sm:text-sm text-espresso/80 dark:text-cream/80 leading-relaxed">
-                {seller.bio}
+                {seller.bio ||
+                  'ورشة متخصصة في عمل المشغولات الصعيدية والتراثية على أصولها لتصلكم بأصالتها وحرفية أيدي أبناء الصعيد.'}
               </p>
             </div>
 
@@ -185,12 +279,16 @@ export const SellerProfileView: React.FC = () => {
             <div className="lg:col-span-4 bg-black/5 dark:bg-cream/5 p-4 rounded-2xl border border-black/10 dark:border-white/10 space-y-2.5 text-xs text-espresso/70 dark:text-cream/70">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-amber-600 dark:text-primary-hover" />
-                <span>عضو معتمد في منصة وه منذ {seller.joinedDate?.slice(0, 4) || '2023'}</span>
+                <span>عضو معتمد في منصة وه منذ {joinedYear}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span dir="ltr" className="font-mono text-espresso dark:text-cream font-semibold">{seller.phone}</span>
-              </div>
+              {seller.phone && (
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span dir="ltr" className="font-mono text-espresso dark:text-cream font-semibold">
+                    {seller.phone}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <Award className="w-4 h-4 text-primary dark:text-primary-hover" />
                 <span>حرف يدوية أصيلة خالية من المواد الصناعية</span>
@@ -205,10 +303,10 @@ export const SellerProfileView: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-espresso dark:text-cream font-serif">
-              شغل وحلاوة {seller.brandName}
+              شغل وحلاوة {brandTitle}
             </h2>
             <p className="text-xs text-espresso/60 dark:text-cream/60 mt-0.5">
-              كل القطع بتتشحن على طول من الورشة في {seller.governorate} لحد عندك
+              كل القطع بتتشحن على طول من الورشة في {seller.governorate || 'صعيد مصر'} لحد عندك
             </p>
           </div>
           <span className="text-xs font-bold text-primary dark:text-primary-hover bg-primary/10 px-3.5 py-1 rounded-full border border-primary/20">
@@ -219,7 +317,9 @@ export const SellerProfileView: React.FC = () => {
         {sellerProducts.length === 0 ? (
           <div className="bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl rounded-[2rem] border border-black/10 dark:border-white/10 p-12 text-center shadow-lg">
             <Store className="w-12 h-12 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
-            <h4 className="font-bold text-espresso/70 dark:text-cream/70 text-sm font-serif">لسه مفيش قطع معروضة للورشة دي حالياً</h4>
+            <h4 className="font-bold text-espresso/70 dark:text-cream/70 text-sm font-serif">
+              لسه مفيش قطع معروضة للورشة دي حالياً
+            </h4>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
