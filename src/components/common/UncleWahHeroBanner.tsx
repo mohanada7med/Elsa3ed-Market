@@ -111,7 +111,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
                 — عم وه، صاحب وموثّق حكاوي وتراث الصعيد
               </span>
               <span className="text-foreground-disabled font-normal text-[10px]">
-                توثيق ميداني أصيل 100%
+                توثيق صعيدى أصيل 100%
               </span>
             </div>
           </div>

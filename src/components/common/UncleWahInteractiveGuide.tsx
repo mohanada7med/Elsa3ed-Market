@@ -225,7 +225,7 @@ export const UncleWahInteractiveGuide: React.FC<UncleWahInteractiveGuideProps> =
             {/* Bubble footer with interaction trigger */}
             <div className="mt-2 flex items-center justify-between border-t border-border-subtle/70 pt-1.5 text-[10px] text-foreground-disabled">
               <span className="font-medium">
-                {locationName ? `من وحي ديار ${locationName}` : title ? `عن: ${title}` : 'توثيق ميداني أصيل'}
+                {locationName ? `من وحي ديار ${locationName}` : title ? `عن: ${title}` : 'توثيق صعيدى أصيل'}
               </span>
 
               <button
