@@ -20,6 +20,7 @@ import {
   Heart,
   WandSparkles,
 } from 'lucide-react';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const SellerProfileView: React.FC = () => {
   const {
@@ -316,6 +317,16 @@ export const SellerProfileView: React.FC = () => {
             </button>
           </div>
         </nav>
+
+        {/* UNCLE WAH INTERACTIVE GUIDE */}
+        <div className="mb-6">
+          <UncleWahInteractiveGuide
+            context="crafts"
+            title={brandTitle}
+            locationName={seller?.governorate}
+            customQuote={`«عم وه زار ورشة ${brandTitle} في ${seller?.governorate || 'الصعيد'}، وشاف سر الصنعة وخطوات الشغل اليدوي بعينه.. صنايعي شاطر من رجالة بلدنا وأمين على التراث الصعيدي!»`}
+          />
+        </div>
 
         {/* =========================================================
             HERO

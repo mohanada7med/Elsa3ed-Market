@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import FloatingDock from '../common/FloatingDock';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 const AdminEventsManagerComponent = React.lazy(() =>
   import('./AdminEventsManagerPage').then((m) => ({ default: m.AdminEventsManagerComponent }))
@@ -369,6 +370,20 @@ export const EventsPage: React.FC = () => {
               </div>
             </div>
           </section>
+
+          {/* UNCLE WAH HERO BANNER - MASTER OF EVENTS & SEASONS */}
+          <div className="relative z-20 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 -mt-4 mb-8">
+            <UncleWahHeroBanner
+              doorTitle="ليالي الموالد ولمّة الفرح وعصيان التحطيب"
+              doorBadge="باب مواسم وليالي الصعيد"
+              mascotSrc="/mascot/quiz.png"
+              mascotRole="عم وه في قلب الموالد"
+              quote="عم وه حضر ليالي الموالد ولمّة الفرح ودقّة عصيان التحطيب وزغاريد المواسم ورجعلكم بالبهجة كلها.. اعرف مواعيد كل مولد وافرح معانا!"
+              statsText={`${events.length} موسم وليلة`}
+              actionText="خريطة الموالد"
+              onAction={() => setActivePage('map')}
+            />
+          </div>
 
           {/* =====================================================
           SPOTLIGHT BANNER (Featured Event)

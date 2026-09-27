@@ -21,6 +21,7 @@ import {
   Compass,
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 // كاش في الذاكرة لتفادي ضرب السيرفر عند الرجوع للصفحة
 let cachedFoods: UpperEgyptFood[] | null = null;
@@ -280,6 +281,20 @@ export const FoodHeritagePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF FOOD */}
+      <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 -mt-4 mb-8">
+        <UncleWahHeroBanner
+          doorTitle="لقمة هنية من قلب بيوت الصعيد"
+          doorBadge="باب طعم الصعيد"
+          mascotSrc="/mascot/welcoming.png"
+          mascotRole="سفرة عم وه وخير الجنوب"
+          quote="عم وه داغ خير البيوت الصعيدية.. من عيش شمسي سخن طالع من الفرن، وطواجن بلدي معسلة، لحد فايش بلبن الحمص وعسل القصب الصافي.. بالهنا والشفا على قلبكم!"
+          statsText={`${foods.length} أكلة متوثقة`}
+          actionText="أكلة على البركة"
+          onAction={handleRandomPick}
+        />
+      </div>
 
       {/* Search Header */}
       <section className="relative z-30 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16">

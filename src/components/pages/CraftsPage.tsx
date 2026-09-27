@@ -17,6 +17,7 @@ import {
 import { CraftStory } from '../../types';
 import { api } from '../../services/api';
 import { motion } from 'motion/react';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 const UPPER_EGYPT_GOVS = ['الكل', 'أسوان', 'الأقصر', 'قنا', 'سوهاج', 'أسيوط', 'المنيا'];
 
@@ -91,6 +92,13 @@ export const CraftsPage: React.FC = () => {
         <ChevronRight className="w-3.5 h-3.5 rotate-180 opacity-50" />
         <span className="text-espresso dark:text-cream font-bold">حكايات صنعة الصعيد</span>
       </nav>
+
+      {/* UNCLE WAH INTERACTIVE GUIDE */}
+      <UncleWahInteractiveGuide
+        context="crafts"
+        title="حكايات صنعة وحرف الصعيد"
+        customQuote="«صنعة يد تتوزن بالذهب! شيوخ الصنعة ورثوا السر ده أب عن جد.. كل قطعة معمولة بحب وعرق وتاريخ، دا شغل يدوي أصيل 100%!»"
+      />
 
       {/* Hero Banner with Documentary CTA */}
       <div className="bg-espresso text-cream rounded-[2rem] p-6 sm:p-12 shadow-xl relative overflow-hidden border border-black/10 dark:border-white/10">

@@ -25,6 +25,7 @@ import {
   X,
   Loader2,
 } from 'lucide-react';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 const LOGO_URL =
   'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png';
@@ -436,6 +437,20 @@ export const UpperEgyptMapPage: React.FC = () => {
 
       {/* المحتوى الرئيسي */}
       <main className="mx-auto max-w-[1600px] px-5 py-8 sm:px-8 sm:py-12 lg:px-12">
+        {/* UNCLE WAH HERO BANNER - MASTER OF THE MAP */}
+        <div className="mb-10">
+          <UncleWahHeroBanner
+            doorTitle="خريطة بلاد ودكاكين ونيل الصعيد"
+            doorBadge="باب خريطة الصعيد"
+            mascotSrc="/mascot/welcoming.png"
+            mascotRole="دليل عم وه للبلاد"
+            quote="عم وه رسم لكم خريطة الصعيد شبر شبر من بحري لحد أسوان والنوبة عشان متتوهش في ديارنا.. دوس على أي محافظة وشوف حكاياتها وخيرها!"
+            statsText={`${governorates.length} محافظة صعيدية`}
+            actionText="شوف مركب النيل"
+            onAction={() => setDisplayMode('voyage')}
+          />
+        </div>
+
         {/* نظام الشبكة */}
         {displayMode === 'grid' && (
           <section className="mb-14">

@@ -17,6 +17,7 @@ import {
 import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
 import FloatingDock from '../common/FloatingDock';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -611,6 +612,20 @@ export const PlacesHeritagePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF PLACES */}
+      <div className="relative z-20 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 -mt-4 mb-8">
+        <UncleWahHeroBanner
+          doorTitle="معالم وآثار بلادنا في الصعيد"
+          doorBadge="باب الآثار والمعالم"
+          mascotSrc="/mascot/char.png"
+          mascotRole="عم وه حارس الآثار والعتيق"
+          quote="عم وه لف وتعب وداس في كل سكة وجبل عشان يوصل للأماكن دي ويوثق تاريخها وحيطانها العتيقة من أقصى الشمال لأقصى الجنوب.. شاور على أي أثر وتعرف على عظمته وأصله وحكايته!"
+          statsText={`${places.length} مكان متوثق`}
+          actionText="استكشف الخريطة"
+          onAction={() => setActivePage('map')}
+        />
+      </div>
 
       {/* FLOATING FILTERS BAR */}
       <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12">

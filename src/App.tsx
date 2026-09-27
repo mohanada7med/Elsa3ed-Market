@@ -14,6 +14,7 @@ import { ForceChangePasswordModal } from './components/auth/ForceChangePasswordM
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { updatePageSEO, generateBreadcrumbSchema } from './utils/seo';
 import { MobileBottomBar } from './components/layout/MobileBottomBar';
+import { FloatingUncleWahCompanion } from './components/common/FloatingUncleWahCompanion';
 
 // Pages
 import { HomePage } from './components/pages/HomePage';
@@ -647,6 +648,9 @@ const MainContent: React.FC = () => {
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />
+
+      {/* Floating Uncle Wah Interactive Guide across All Pages */}
+      <FloatingUncleWahCompanion />
 
       {/* Global Modals & Drawers */}
       {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}

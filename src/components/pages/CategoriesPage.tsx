@@ -12,6 +12,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 export const CategoriesPage: React.FC = () => {
   const { categories, navigateToCategory, setActivePage } = useApp();
@@ -76,6 +77,16 @@ export const CategoriesPage: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF CATEGORIES */}
+      <UncleWahHeroBanner
+        doorTitle="أطلس وتصنيفات حِرف وفنون الصعيد"
+        doorBadge="أطلس الصنعة"
+        mascotSrc="/mascot/empty-cart.png"
+        mascotRole="عم وه حارس الصنعة"
+        quote="عم وه قسّم لكم كل حرفة وصنعة في باب لوحدها؛ من فخار قنا لخزف جرجيس ونسيج أخميم وخوص النوبة، عشان تلاقوا طلبكم على طول وتشوفوا غنى وتنوع بلادنا الأصيل!"
+        statsText={`${categories.length} تصنيف وحرفة متوثقة`}
+      />
 
       {/* الرأس التحريري الفاخر */}
       <div className="relative rounded-[2rem] p-6 sm:p-12 bg-espresso text-cream overflow-hidden shadow-xl border border-black/10 dark:border-white/10">

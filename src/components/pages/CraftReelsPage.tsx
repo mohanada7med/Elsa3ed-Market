@@ -27,6 +27,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 import FloatingDock from '../common/FloatingDock.tsx';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner.tsx';
 
 export const CraftReelsPage: React.FC = () => {
   const {
@@ -478,6 +479,20 @@ export const CraftReelsPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF REELS */}
+      <div className="relative z-20 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 -mt-4 mb-8">
+        <UncleWahHeroBanner
+          doorTitle="حكاوي وتجارب حية من ورش ودكاكين الصعيد"
+          doorBadge="باب ريلز وه"
+          mascotSrc="/mascot/quiz.png"
+          mascotRole="عم وه في قلب الحدث"
+          quote="عم وه صور لكم بكاميرته من قلب الورش وأزقة الأسواق حكاوي حية وسريعة تشوفوها بعينكم.. اتفرج على سر الصنعة واسمع حس الحرفيين!"
+          statsText={`${reels.length} حكاية مصورة`}
+          actionText="شارك حكايتك"
+          onAction={handleOpenUpload}
+        />
+      </div>
 
       {/* UPPER EGYPT DISCOVERY BAR */}
       <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pb-8">

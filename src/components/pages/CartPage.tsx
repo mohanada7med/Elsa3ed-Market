@@ -17,6 +17,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const CartPage: React.FC = () => {
   const {
@@ -152,6 +153,17 @@ export const CartPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* UNCLE WAH INTERACTIVE GUIDE WHEN CART HAS ITEMS */}
+        {cart.length > 0 && (
+          <div className="mb-6">
+            <UncleWahInteractiveGuide
+              context="crafts"
+              title="سلة مشترياتك من سوق وه"
+              customQuote="«عم وه راجع طلبيتك بنفسه، وضمن لك إن المنتجات دي طالعة من إيد الصانع الصعيدي لدارك على طول وبأعلى جودة وأمانة.. يا بخت اللي بيته عمران بخير الصعيد!»"
+            />
+          </div>
+        )}
 
         {/* Cart Contents */}
         {cart.length === 0 ? (

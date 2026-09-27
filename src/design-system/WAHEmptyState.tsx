@@ -6,6 +6,7 @@ import { renderIcon } from './renderIcon';
 
 export interface WAHEmptyStateProps {
   icon?: React.ElementType | React.ReactNode;
+  mascotSrc?: string;
   title: string;
   description?: string;
   actionLabel?: string;
@@ -16,6 +17,7 @@ export interface WAHEmptyStateProps {
 
 export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
   icon,
+  mascotSrc,
   title,
   description,
   actionLabel,
@@ -32,11 +34,20 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
       <WAHPattern type={pattern} opacity={0.05} />
 
       <div className="relative z-10 max-w-md mx-auto space-y-4">
-        {renderedIcon && (
+        {mascotSrc ? (
+          <div className="relative mx-auto w-fit select-none">
+            <img
+              src={mascotSrc}
+              alt="عم وه"
+              className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.22)] mx-auto animate-bounce-subtle"
+            />
+            <div className="w-24 sm:w-28 h-2 rounded-[100%] bg-black/35 blur-xs mx-auto -mt-1" />
+          </div>
+        ) : renderedIcon ? (
           <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center border border-primary/30 shadow-xs">
             {renderedIcon}
           </div>
-        )}
+        ) : null}
 
         <div className="space-y-1.5">
           <h3 className="text-lg sm:text-xl font-black font-serif text-espresso dark:text-cream">

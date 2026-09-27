@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { EventImageLightboxModal } from '../common/EventImageLightboxModal';
 import { EventEditorModal } from './AdminEventsManagerPage';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const EventDetailPage: React.FC = () => {
   const {
@@ -655,6 +656,16 @@ export const EventDetailPage: React.FC = () => {
           </div>
         </div>
       </header>
+
+      {/* UNCLE WAH INTERACTIVE GUIDE */}
+      <div className="relative z-10 mx-auto max-w-[1500px] px-4 pt-3 pb-1 sm:px-6 lg:px-8">
+        <UncleWahInteractiveGuide
+          context="events"
+          title={event.title}
+          locationName={event.governorateName}
+          customQuote={`«ليلة من ليالي الفرح والبركة! ${event.title} في ${event.governorateName || 'الصعيد'}.. اسمع دقة عصيان التحطيب وزغاريد المواسم وعيش البهجة والنفحات كلها!»`}
+        />
+      </div>
 
       {/* =====================================================
           HERO

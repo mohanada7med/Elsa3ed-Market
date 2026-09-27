@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import {
   HeritagePlace,
   CulturalCraft,
@@ -311,6 +312,16 @@ export const GovernorateDetailPage: React.FC = () => {
       dir="rtl"
       className="min-h-screen w-full overflow-x-hidden bg-cream text-espresso dark:bg-espresso-900 dark:text-cream transition-colors duration-500"
     >
+      {/* UNCLE WAH INTERACTIVE GUIDE */}
+      <div className="mx-auto max-w-[1500px] px-4 pt-4 sm:px-6 lg:px-8">
+        <UncleWahInteractiveGuide
+          context="governorate"
+          locationName={governorate.name}
+          title={governorate.title || governorate.name}
+          customQuote={`«نورت ديار ${governorate.name}! المحافظة دي كل شبر فيها ليه حكاية وخير ونفحات.. أنا لفيت قراها ونجوعها شبر شبر عشان أجمع لكم أصل الحكاية!»`}
+        />
+      </div>
+
       {/* =========================================================
           HERO — MUSEUM EXHIBITION
       ========================================================= */}

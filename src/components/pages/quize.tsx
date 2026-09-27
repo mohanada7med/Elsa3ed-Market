@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 interface QuizQuestion {
   id: string;
@@ -773,6 +774,18 @@ export const DialectDictionaryPage: React.FC = () => {
       {/* 2. شاشة البداية */}
       {showIntro && countdown === null && (
         <div className="relative z-10">
+          {/* UNCLE WAH HERO BANNER - MASTER OF DIALECT */}
+          <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 pt-6 pb-2">
+            <UncleWahHeroBanner
+              doorTitle="تحدي اللهجة الصعيدية.. انت صعيدي بجد؟"
+              doorBadge="تحدي عم وه"
+              mascotSrc="/mascot/quiz.png"
+              mascotRole="عم وه حكم التحدي"
+              quote="عم وه نقّى لكم أصعب وأجمل الكلمات والأمثال الصعيدية الأصيلة، وعمل لكم التحدي ده عشان يشوف مين الصعيدي الأصلي ومين اللي محتاج يتدرب.. وريني شطارتك يا بوي!"
+              statsText="50 سؤال وتعبير أصيل"
+            />
+          </div>
+
           <section className="mx-auto max-w-[1700px] px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-20 lg:px-12 xl:px-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
               <div>

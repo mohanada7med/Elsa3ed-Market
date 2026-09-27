@@ -15,6 +15,7 @@ import {
   BookOpen,
   Compass,
 } from 'lucide-react';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const FoodDetailPage: React.FC = () => {
   const {
@@ -163,6 +164,16 @@ export const FoodDetailPage: React.FC = () => {
           </div>
         </div>
       </nav>
+
+      {/* UNCLE WAH INTERACTIVE GUIDE */}
+      <div className="relative z-10 mx-auto max-w-[1700px] px-4 pt-5 pb-1 sm:px-8 lg:px-12 xl:px-16">
+        <UncleWahInteractiveGuide
+          context="food"
+          title={food.title || food.name}
+          locationName={food.governorateName}
+          customQuote={`«وه! ${food.title || food.name} دي تروق البال وتغذي الروح! يا زين ما نقيت، دا طبيخ صعيدي بلدي أصيل 100%.. بالهنا والشفا على قلبك!»`}
+        />
+      </div>
 
       {/* HERO BANNER WITH NATURAL CLEAR IMAGE */}
       <section className="relative z-10 mx-auto max-w-[1700px] px-4 pt-6 sm:px-8 lg:px-12 xl:px-16">

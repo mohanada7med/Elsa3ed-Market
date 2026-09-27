@@ -22,6 +22,7 @@ import {
   Scroll
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 export const PeoplePage: React.FC = () => {
   const { navigateToPerson, setActivePage } = useApp();
@@ -377,6 +378,20 @@ export const PeoplePage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF PEOPLE */}
+      <div className="relative z-20 mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-10 -mt-4 mb-8">
+        <UncleWahHeroBanner
+          doorTitle="قامات ورجالة ورموز الصعيد"
+          doorBadge="باب أعلام الصعيد"
+          mascotSrc="/mascot/fav.png"
+          mascotRole="عم وه في مضايف الكبار"
+          quote="عم وه قعد في مضايف الكبار وسمع حكايات شيوخ الصنعة والرواة والشعراء اللي سابوا علامة في تاريخ الجنوب.. اقرأ سيرتهم العطرة واعرف أصل الحكاية!"
+          statsText={`${people.length} رمز متوثق`}
+          actionText="أضف قامة صعيدية"
+          onAction={() => setIsAddModalOpen(true)}
+        />
+      </div>
 
       {/* =====================================================
           FLOATING FILTERS BAR

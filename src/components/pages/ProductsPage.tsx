@@ -17,6 +17,7 @@ import {
   CircleDot,
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
+import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 export const ProductsPage: React.FC = () => {
   const {
@@ -537,6 +538,20 @@ sm:leading-9
           </div>
         </div>
       </section>
+
+      {/* UNCLE WAH HERO BANNER - MASTER OF MARKETPLACE */}
+      <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 -mt-4 mb-8">
+        <UncleWahHeroBanner
+          doorTitle="سوق وه.. من إيد الصانع لدارك على طول"
+          doorBadge="باب سوق وه"
+          mascotSrc="/mascot/empty-cart.png"
+          mascotRole="عم وه تاجر الصنعة والبركة"
+          quote="عم وه وهو بيتمشى في أسواق وورش الصعيد.. لقى المنتجات الخطيرة دي! كلها شغل إيد أصيل 100% من إيد شيوخ الصنعة لدارك، جمعتها لكم عشان تاخدوا الأصلي بسعر أمانة وبدون وسيط."
+          statsText={`${approvedCount} قطعة أصيلة معروضة`}
+          actionText="تصفح التصنيفات"
+          onAction={() => setActivePage('categories')}
+        />
+      </div>
 
       {/* =====================================================
           SEARCH EXPERIENCE

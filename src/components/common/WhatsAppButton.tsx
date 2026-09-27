@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   MessageCircle,
@@ -8,6 +7,8 @@ import {
   Building2,
   PackageCheck,
   HelpCircle,
+  Clock,
+  Phone,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -16,7 +17,7 @@ export const WHATSAPP_INT_NUMBER = '201158969931';
 
 export function getWhatsAppUrl(customMessage?: string): string {
   const defaultMsg =
-    'السلام عليكم، أود الاستفسار عن منصة وه ومنتجات سوق وه التراثية.';
+    'السلام عليكم يا عم وه، أود الاستفسار عن منصة وه ومنتجات سوق وه التراثية.';
 
   const text = encodeURIComponent(customMessage || defaultMsg);
 
@@ -31,7 +32,7 @@ export const WhatsAppButton: React.FC = () => {
     const finalMsg =
       textToSend ||
       userMsg ||
-      'السلام عليكم، أود الاستفسار عن منصة وه وسوق وه.';
+      'السلام عليكم يا عم وه، أود الاستفسار عن منصة وه وسوق وه.';
 
     const url = getWhatsAppUrl(finalMsg);
 
@@ -44,100 +45,83 @@ export const WhatsAppButton: React.FC = () => {
   const quickQuestions = [
     {
       icon: (
-        <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
       ),
-      title: 'طلب عروض أسعار بيع بالجملة والتصدير (B2B)',
-      text: 'السلام عليكم، نود الاستفسار عن عروض أسعار البيع بالجملة والتوريدات للفنادق والمؤسسات.',
+      title: 'يا عم وه: طلب عروض أسعار بيع بالجملة والتصدير (B2B)',
+      text: 'السلام عليكم يا عم وه، نود الاستفسار عن عروض أسعار البيع بالجملة والتوريدات للفنادق والمؤسسات.',
     },
     {
       icon: (
-        <Sparkles className="w-4 h-4 text-amber-600 dark:text-primary-hover" />
+        <Sparkles className="w-4 h-4 text-amber-600 dark:text-primary-hover shrink-0" />
       ),
-      title: 'طلب تفصيل أو نقش مخصص على الحرف',
-      text: 'السلام عليكم، أريد طلب قطعة يدوية مخصصة ونقش اسم/شعار خاص.',
+      title: 'يا عم وه: طلب تفصيل أو نقش مخصص على الحرف',
+      text: 'السلام عليكم يا عم وه، أريد طلب قطعة يدوية مخصصة ونقش اسم/شعار خاص.',
     },
     {
       icon: (
-        <PackageCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <PackageCheck className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
       ),
-      title: 'متابعة شحنة أو استفسار عن التوصيل',
-      text: 'السلام عليكم، أود الاستفسار عن موعد وتفاصيل شحن طلبي.',
+      title: 'يا عم وه: متابعة شحنة أو استفسار عن التوصيل',
+      text: 'السلام عليكم يا عم وه، أود الاستفسار عن موعد وتفاصيل شحن طلبي.',
     },
     {
       icon: (
-        <HelpCircle className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+        <HelpCircle className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
       ),
-      title: 'استفسار عام عن منتجات الورش الأصيلة',
-      text: 'السلام عليكم، أود المساعدة في اختيار منتجات وهدايا تراثية من سوق وه.',
+      title: 'يا عم وه: محتاج نصيحة لاختيار منتجات أصيلة من السوق',
+      text: 'السلام عليكم يا عم وه، أود مساعدتك وخبرتك في اختيار منتجات وهدايا تراثية أصيلة من سوق وه.',
     },
   ];
 
   return (
     <div
-      className="fixed bottom-[calc(7rem+env(safe-area-inset-bottom,0px))] md:bottom-16 left-3 sm:left-6 z-40"
+      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] md:bottom-8 left-3 sm:left-6 z-50 select-none font-sans"
       dir="rtl"
     >
-      {/* Chat Window */}
+      {/* Chat Window with Uncle Wah */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{
-              opacity: 0,
-              scale: 0.95,
+            initial={{ opacity: 0, scale: 0.9, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 15 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute bottom-full left-0 mb-3 w-[calc(100vw-2rem)] max-w-[360px] overflow-hidden rounded-3xl border border-emerald-500/30 bg-surface/95 shadow-2xl backdrop-blur-2xl text-foreground origin-bottom-left"
+            style={{
+              boxShadow: '0 20px 45px -8px rgba(0, 0, 0, 0.45)',
             }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-            }}
-            exit={{
-              opacity: 0,
-              scale: 0.95,
-            }}
-            transition={{
-              duration: 0.2,
-              ease: 'easeOut',
-            }}
-            className="
-              absolute
-              bottom-full
-              left-0
-              mb-3
-              w-[calc(100vw-2rem)]
-              max-w-[360px]
-              bg-white/95
-              dark:bg-espresso-900/95
-              backdrop-blur-2xl
-              rounded-[2rem]
-              shadow-2xl
-              border
-              border-black/10
-              dark:border-white/10
-              overflow-hidden
-              origin-bottom-left
-            "
           >
-            {/* Header */}
-            <div className="bg-primary text-white p-4 flex items-center justify-between">
+            {/* Header: Uncle Wah's Presence */}
+            <div className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-700 p-4 text-white flex items-center justify-between shadow-md">
               <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center p-1 border border-white/20">
+                <div className="relative shrink-0">
+                  <div className="h-12 w-12 rounded-full bg-white/15 p-0.5 border-2 border-white/30 backdrop-blur-xs overflow-hidden flex items-end justify-center">
                     <img
-                      src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
-                      alt="وه | WAH"
-                      className="w-full h-full object-contain"
+                      src="/mascot/welcoming.png"
+                      alt="عم وه"
+                      style={{
+                        imageRendering: 'crisp-edges',
+                        WebkitFontSmoothing: 'antialiased',
+                      }}
+                      className="h-12 w-auto object-contain select-none -scale-x-100"
                     />
                   </div>
-
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-amber-300 border-2 border-primary rounded-full" />
+                  <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-emerald-400 border-2 border-white shadow-xs" />
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-sm leading-tight text-white">
-                    خدمة عملاء وه | WAH
-                  </h4>
+                  <div className="flex items-center gap-1.5">
+                    <h4 className="font-black text-sm text-white leading-tight">
+                      «عم وه» صاحب المنصة
+                    </h4>
+                    <span className="rounded-full bg-white/20 px-1.5 py-0.2 text-[9px] font-bold">
+                      أونلاين
+                    </span>
+                  </div>
 
-                  <p className="text-[11px] text-amber-100/90 font-mono mt-0.5">
-                    01158969931 (واتساب مباشر)
+                  <p className="text-[11px] text-emerald-100/90 font-mono mt-0.5 flex items-center gap-1">
+                    <Phone size={10} />
+                    <span>01158969931 (واتساب مباشر)</span>
                   </p>
                 </div>
               </div>
@@ -145,7 +129,7 @@ export const WhatsAppButton: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+                className="text-white/80 hover:text-white p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
                 aria-label="إغلاق نافذة المحادثة"
               >
                 <X className="w-5 h-5" />
@@ -153,22 +137,29 @@ export const WhatsAppButton: React.FC = () => {
             </div>
 
             {/* Chat Body */}
-            <div className="p-4 bg-[#E5DDD5]/30 dark:bg-[#14100E] space-y-3 max-h-[300px] overflow-y-auto">
-              <div className="bg-white dark:bg-[#221C18] p-3 rounded-2xl rounded-tr-none shadow-2xs border border-gray-100 dark:border-[#332A24] text-xs text-gray-800 dark:text-[#DDD2C7] leading-relaxed">
-                <p className="font-bold text-primary dark:text-[#FF855D] mb-1">
-                  مرحباً بك في وه! 🏺✨
-                </p>
-
-                <p>
-                  فريقنا في خدمتك لمساعدتك في استفسارات المنتجات التراثية،
-                  طلبات الجملة والتصدير، وتفصيل القطع الخاصة.
-                </p>
+            <div className="p-4 bg-black/[0.02] dark:bg-black/20 space-y-3 max-h-[300px] overflow-y-auto">
+              {/* Uncle Wah's Welcome Balloon */}
+              <div className="flex items-start gap-2.5">
+                <img
+                  src="/mascot/char.png"
+                  alt="عم وه"
+                  style={{ imageRendering: 'crisp-edges' }}
+                  className="h-10 w-auto object-contain shrink-0 select-none"
+                />
+                <div className="bg-surface p-3 rounded-2xl rounded-tr-none shadow-xs border border-border-subtle text-xs text-foreground leading-relaxed">
+                  <p className="font-black text-emerald-600 dark:text-emerald-400 mb-1">
+                    يا مرحب بيك في ديار وه! 🏺✨
+                  </p>
+                  <p>
+                    أنا «عم وه» في خدمتك.. محتاج تستفسر عن منتج، تطلب تفصيل حتة خاصة، أو تسأل عن شحن لدارك؟ ابعتلي على طول وهرد عليك!
+                  </p>
+                </div>
               </div>
 
               {/* Quick Questions */}
               <div className="space-y-1.5 pt-1">
-                <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 px-1">
-                  استفسارات سريعة ومباشرة:
+                <p className="text-[10px] font-bold text-foreground-disabled px-1">
+                  استفسارات سريعة لعم وه:
                 </p>
 
                 {quickQuestions.map((q, idx) => (
@@ -176,33 +167,11 @@ export const WhatsAppButton: React.FC = () => {
                     key={idx}
                     type="button"
                     onClick={() => handleSendMessage(q.text)}
-                    className="
-                      w-full
-                      text-right
-                      p-2.5
-                      bg-white
-                      dark:bg-[#221C18]
-                      hover:bg-emerald-50
-                      dark:hover:bg-[#2A231E]
-                      border
-                      border-gray-200
-                      dark:border-[#352B24]
-                      rounded-xl
-                      text-xs
-                      font-medium
-                      text-gray-800
-                      dark:text-[#E8DFD8]
-                      flex
-                      items-center
-                      gap-2.5
-                      transition-all
-                      group
-                    "
+                    className="w-full text-right p-2.5 bg-surface hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20 border border-border-subtle hover:border-emerald-500/40 rounded-xl text-xs font-medium text-foreground flex items-center gap-2.5 transition-all group cursor-pointer"
                   >
-                    <span className="shrink-0 p-1 bg-gray-50 dark:bg-[#191411] rounded-lg group-hover:scale-110 transition-transform">
+                    <span className="shrink-0 p-1 bg-surface-subtle rounded-lg group-hover:scale-110 transition-transform">
                       {q.icon}
                     </span>
-
                     <span className="truncate group-hover:text-emerald-700 dark:group-hover:text-emerald-400 font-bold">
                       {q.title}
                     </span>
@@ -212,7 +181,7 @@ export const WhatsAppButton: React.FC = () => {
             </div>
 
             {/* Custom Input */}
-            <div className="p-3 bg-white/95 dark:bg-espresso-900/95 border-t border-black/10 dark:border-white/10 flex items-center gap-2">
+            <div className="p-3 bg-surface border-t border-border-subtle flex items-center gap-2">
               <input
                 type="text"
                 value={userMsg}
@@ -223,44 +192,16 @@ export const WhatsAppButton: React.FC = () => {
                     handleSendMessage();
                   }
                 }}
-                placeholder="اكتب استفسارك هنا..."
-                className="
-                  flex-1
-                  text-xs
-                  bg-gray-50
-                  dark:bg-[#26201B]
-                  text-gray-900
-                  dark:text-white
-                  px-3
-                  py-2.5
-                  rounded-xl
-                  border
-                  border-gray-200
-                  dark:border-[#3A3028]
-                  focus:border-primary
-                  focus:outline-none
-                "
+                placeholder="اكتب رسالتك لعم وه..."
+                className="flex-1 text-xs bg-surface-subtle text-foreground px-3 py-2.5 rounded-xl border border-border-subtle focus:border-emerald-500 focus:outline-hidden"
               />
 
               <button
                 type="button"
                 onClick={() => handleSendMessage()}
-                className="
-                  p-2.5
-                  bg-primary
-                  hover:bg-primary-hover
-                  text-white
-                  rounded-xl
-                  shadow-xs
-                  transition-transform
-                  active:scale-95
-                  flex
-                  items-center
-                  justify-center
-                  shrink-0
-                  cursor-pointer
-                "
-                aria-label="التواصل عبر واتساب"
+                className="p-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-transform active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                aria-label="التواصل مع عم وه عبر واتساب"
+                title="إرسال لعم وه على الواتساب"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -269,52 +210,55 @@ export const WhatsAppButton: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Floating Main Button */}
+      {/* Floating Main Button - Uncle Wah WhatsApp Button */}
       <div className="relative group">
-        <button
+        <motion.button
           type="button"
           id="global-floating-whatsapp-btn"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setIsOpen(!isOpen)}
-          aria-label="تواصل معنا عبر واتساب"
-          className="
-            w-14
-            h-14
-            rounded-full
-            bg-primary
-            hover:bg-primary
-            text-white
-            shadow-xl
-            hover:shadow-2xl
-            hover:scale-105
-            active:scale-95
-            transition-all
-            flex
-            items-center
-            justify-center
-            relative
-            cursor-pointer
-          "
+          aria-label="تواصل مع عم وه عبر واتساب"
+          className="relative flex items-center gap-2.5 rounded-full border-2 border-emerald-500 bg-surface/95 px-2.5 py-1.5 shadow-2xl backdrop-blur-xl hover:border-emerald-400 cursor-pointer transition-all"
+          style={{
+            boxShadow: '0 12px 30px -4px rgba(16, 185, 129, 0.38)',
+          }}
         >
-          {/* Animated Pulse */}
-          <span className="absolute inset-0 rounded-full bg-primary opacity-30 animate-ping pointer-events-none" />
+          {/* Animated Green Pulse ring */}
+          <span className="absolute -inset-1 rounded-full bg-emerald-500/25 blur-sm animate-pulse pointer-events-none" />
 
-          <MessageCircle className="w-7 h-7 fill-white text-[#e97248]" />
+          {/* Uncle Wah Mascot cutout with Crisp Edges */}
+          <div className="relative z-10 -my-2.5 shrink-0">
+            <img
+              src="/mascot/welcoming.png"
+              alt="عم وه"
+              style={{
+                imageRendering: 'crisp-edges',
+                WebkitFontSmoothing: 'antialiased',
+              }}
+              className="h-13 sm:h-14 w-auto object-contain drop-shadow-md select-none -scale-x-100 group-hover:scale-110 transition-transform duration-300"
+            />
 
-          {/* Online Badge */}
-          <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-white rounded-full flex items-center justify-center shadow-xs">
-            <span className="w-2.5 h-2.5 bg-[#f35d24] rounded-full" />
-          </span>
-        </button>
-
-        {/* Hover Tooltip */}
-        {!isOpen && (
-          <div className="hidden sm:block absolute bottom-full left-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-            <div className="bg-primary text-white text-xs font-bold py-1.5 px-3 rounded-xl shadow-lg flex items-center gap-1.5">
-              <span>تواصل واتساب</span>
-            </div>
+            {/* WhatsApp Mini Badge on shoulder */}
+            <span className="absolute -bottom-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md border-2 border-surface">
+              <MessageCircle size={10} className="fill-white" />
+            </span>
           </div>
-        )}
+
+          {/* Text Labels */}
+          <div className="relative z-10 text-right pr-0.5">
+            <span className="flex items-center gap-1.5 text-[11px] font-black text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight">
+              <span>دردش مع عم وه</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+            </span>
+            <span className="block text-[9px] font-bold text-emerald-600 dark:text-emerald-400 leading-tight">
+              {isOpen ? 'انقر للإغلاق' : 'واتساب مباشر 💬'}
+            </span>
+          </div>
+        </motion.button>
       </div>
     </div>
   );
 };
+
+export default WhatsAppButton;

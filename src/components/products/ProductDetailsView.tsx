@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 
 import { getWhatsAppUrl } from '../common/WhatsAppButton';
+import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 
 export const ProductDetailsView: React.FC = () => {
   const {
@@ -567,6 +568,16 @@ export const ProductDetailsView: React.FC = () => {
               WAH / CRAFT ARCHIVE
             </span>
           </div>
+        </div>
+
+        {/* UNCLE WAH INTERACTIVE GUIDE */}
+        <div className="mb-6">
+          <UncleWahInteractiveGuide
+            context="crafts"
+            title={product.title}
+            locationName={product.sellerGovernorate || product.specifications?.originGovernorate}
+            customQuote={`«وأنا بتمشى في ورش الصعيد.. لقيت ${product.title}! شغل يدوي أصيل 100% من إيد شيوخ الصنعة الحقيقيين، متسعر بأمانة وضمان لحد باب دارك.»`}
+          />
         </div>
 
         {/* ========================================= */}
