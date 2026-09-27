@@ -1,23 +1,13 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { HeroSection } from '../public/HeroSection';
 import { WahEcosystemPortalSection } from '../public/WahEcosystemPortalSection';
 import { ProductGrid } from '../products/ProductGrid';
 import { ArrowLeft, ShoppingBasket } from 'lucide-react';
-
-// تحميل المكونات الكبيرة عند الحاجة لمنع تجميد الصفحة
-const CraftReelsSection = lazy(() =>
-  import('../public/CraftReelsSection').then(m => ({ default: m.CraftReelsSection }))
-);
-const DialectDictionaryPage = lazy(() =>
-  import('./quize').then(m => ({ default: m.DialectDictionaryPage }))
-);
-const FeaturedSellers = lazy(() =>
-  import('../public/FeaturedSellers').then(m => ({ default: m.FeaturedSellers }))
-);
-const AboutSection = lazy(() =>
-  import('../public/AboutSection').then(m => ({ default: m.AboutSection }))
-);
+import { CraftReelsSection } from '../public/CraftReelsSection';
+import { DialectDictionaryPage } from './quize';
+import { FeaturedSellers } from '../public/FeaturedSellers';
+import { AboutSection } from '../public/AboutSection';
 
 export const HomePage: React.FC = () => {
   const { setActivePage } = useApp();
@@ -42,10 +32,8 @@ export const HomePage: React.FC = () => {
         {/* 2. Ecosystem Portals (تحميل فوري بدون حجب) */}
         <WahEcosystemPortalSection />
 
-        {/* 3. Craft Reels (تحميل خلفي سلس) */}
-        <Suspense fallback={<div className="h-96 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
-          <CraftReelsSection />
-        </Suspense>
+        {/* 3. Craft Reels (تحميل موثوق ومباشر) */}
+        <CraftReelsSection />
 
         {/* 4. Products Section - سوق وه */}
         <section className="py-8 max-w-[1600px] mx-auto px-5 sm:px-8 lg:px-12 text-foreground select-none">
@@ -98,19 +86,13 @@ export const HomePage: React.FC = () => {
         </section>
 
         {/* 5. Dialect Dictionary & Quiz Page */}
-        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
-          <DialectDictionaryPage />
-        </Suspense>
+        <DialectDictionaryPage />
 
         {/* 6. Featured Sellers */}
-        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
-          <FeaturedSellers />
-        </Suspense>
+        <FeaturedSellers />
 
         {/* 7. About Section */}
-        <Suspense fallback={<div className="h-64 w-full animate-pulse bg-espresso/5 rounded-3xl" />}>
-          <AboutSection />
-        </Suspense>
+        <AboutSection />
       </div>
     </div>
   );

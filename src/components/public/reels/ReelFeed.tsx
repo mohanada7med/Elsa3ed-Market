@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { CraftReel } from '../../../types.ts';
-import { ReelItem } from './ReelItem.tsx';
+import { CraftReel } from '../../../types';
+import { ReelItem } from './ReelItem';
 import { ChevronUp, ChevronDown, Film } from 'lucide-react';
-import { getOptimizedVideoPoster } from '../../../utils/cloudinaryMedia.ts';
+import { getOptimizedVideoPoster } from '../../../utils/cloudinaryMedia';
 
 interface ReelFeedProps {
   reels: CraftReel[];

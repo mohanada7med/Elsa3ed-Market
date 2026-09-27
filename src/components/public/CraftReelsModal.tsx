@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { CraftReel } from '../../types.ts';
-import { ReelFeed } from './reels/ReelFeed.tsx';
+import { CraftReel } from '../../types';
+import { ReelFeed } from './reels/ReelFeed';
 import { AnimatePresence, motion } from 'motion/react';
 
 interface CraftReelsModalProps {

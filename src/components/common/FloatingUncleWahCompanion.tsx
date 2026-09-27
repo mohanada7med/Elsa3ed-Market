@@ -260,7 +260,7 @@ export const FloatingUncleWahCompanion: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-3 w-[300px] sm:w-[350px] overflow-hidden rounded-3xl border border-primary/30 bg-surface/95 p-4 shadow-2xl backdrop-blur-2xl text-foreground origin-bottom-right"
+            className="mb-3 w-[calc(100vw-2rem)] max-w-[320px] sm:max-w-[350px] overflow-hidden rounded-3xl border border-primary/30 bg-surface/95 p-4 shadow-2xl backdrop-blur-2xl text-foreground origin-bottom-right"
             style={{
               boxShadow: '0 20px 45px -8px rgba(0, 0, 0, 0.45)',
             }}
@@ -352,30 +352,35 @@ export const FloatingUncleWahCompanion: React.FC = () => {
       <motion.button
         type="button"
         whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="group relative flex items-center gap-2.5 rounded-full border border-primary/40 bg-surface/95 px-3 py-1.5 shadow-2xl backdrop-blur-xl hover:border-primary cursor-pointer transition-all"
+        className="group relative flex items-center gap-1.5 sm:gap-2.5 rounded-full border border-primary/40 bg-surface/95 p-1.5 sm:px-3 sm:py-1.5 shadow-xl sm:shadow-2xl backdrop-blur-xl hover:border-primary cursor-pointer transition-all"
         style={{
-          boxShadow: '0 12px 30px -4px rgba(0, 0, 0, 0.35)',
+          boxShadow: '0 8px 25px -4px rgba(0, 0, 0, 0.35)',
         }}
       >
         {/* Pulsing beacon ring */}
-        <span className="absolute -inset-0.5 rounded-full bg-primary/20 blur-sm group-hover:bg-primary/30 transition-all pointer-events-none" />
+        <span className="absolute -inset-0.5 rounded-full bg-primary/20 blur-xs sm:blur-sm group-hover:bg-primary/30 transition-all pointer-events-none" />
 
         {/* Mascot Avatar with Crisp Edges */}
-        <div className="relative z-10 -my-2 -mr-1">
+        <div className="relative z-10 -my-1 sm:-my-2 shrink-0">
           <img
             src={activeStory.mascot}
             alt="عم وه"
             style={{
               imageRendering: 'crisp-edges',
             }}
-            className="h-11 sm:h-12 w-auto object-contain drop-shadow-md select-none -scale-x-100"
+            className="h-10 sm:h-12 w-auto object-contain drop-shadow-md select-none -scale-x-100"
           />
+
+          {/* Mini Sparkle badge on mobile */}
+          <span className="sm:hidden absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white shadow-md border border-surface sm:border-2">
+            <Sparkles size={8} />
+          </span>
         </div>
 
-        {/* Text pill */}
-        <div className="relative z-10 text-right">
+        {/* Text pill - hidden on mobile, shown on sm+ */}
+        <div className="relative z-10 text-right hidden sm:block">
           <span className="block text-[11px] font-black text-foreground group-hover:text-primary transition-colors leading-tight">
             حكاية «عم وه»
           </span>
@@ -384,8 +389,8 @@ export const FloatingUncleWahCompanion: React.FC = () => {
           </span>
         </div>
 
-        {/* Small sparkle icon */}
-        <div className="relative z-10 flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+        {/* Small sparkle icon - desktop only */}
+        <div className="relative z-10 hidden sm:flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
           <Sparkles size={11} />
         </div>
       </motion.button>

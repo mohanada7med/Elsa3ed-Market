@@ -216,19 +216,19 @@ export const WhatsAppButton: React.FC = () => {
           type="button"
           id="global-floating-whatsapp-btn"
           whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.92 }}
           onClick={() => setIsOpen(!isOpen)}
           aria-label="تواصل مع عم وه عبر واتساب"
-          className="relative flex items-center gap-2.5 rounded-full border-2 border-emerald-500 bg-surface/95 px-2.5 py-1.5 shadow-2xl backdrop-blur-xl hover:border-emerald-400 cursor-pointer transition-all"
+          className="relative flex items-center gap-1.5 sm:gap-2.5 rounded-full border border-emerald-500/80 sm:border-2 sm:border-emerald-500 bg-surface/95 p-1.5 sm:px-2.5 sm:py-1.5 shadow-xl sm:shadow-2xl backdrop-blur-xl hover:border-emerald-400 cursor-pointer transition-all"
           style={{
-            boxShadow: '0 12px 30px -4px rgba(16, 185, 129, 0.38)',
+            boxShadow: '0 8px 25px -4px rgba(16, 185, 129, 0.35)',
           }}
         >
           {/* Animated Green Pulse ring */}
-          <span className="absolute -inset-1 rounded-full bg-emerald-500/25 blur-sm animate-pulse pointer-events-none" />
+          <span className="absolute -inset-1 rounded-full bg-emerald-500/25 blur-xs sm:blur-sm animate-pulse pointer-events-none" />
 
           {/* Uncle Wah Mascot cutout with Crisp Edges */}
-          <div className="relative z-10 -my-2.5 shrink-0">
+          <div className="relative z-10 -my-1 sm:-my-2.5 shrink-0">
             <img
               src="/mascot/welcoming.png"
               alt="عم وه"
@@ -236,17 +236,17 @@ export const WhatsAppButton: React.FC = () => {
                 imageRendering: 'crisp-edges',
                 WebkitFontSmoothing: 'antialiased',
               }}
-              className="h-13 sm:h-14 w-auto object-contain drop-shadow-md select-none -scale-x-100 group-hover:scale-110 transition-transform duration-300"
+              className="h-10 sm:h-14 w-auto object-contain drop-shadow-md select-none -scale-x-100 group-hover:scale-110 transition-transform duration-300"
             />
 
             {/* WhatsApp Mini Badge on shoulder */}
-            <span className="absolute -bottom-1 -left-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md border-2 border-surface">
-              <MessageCircle size={10} className="fill-white" />
+            <span className="absolute -bottom-0.5 -left-0.5 sm:-bottom-1 sm:-left-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md border border-surface sm:border-2">
+              <MessageCircle size={9} className="sm:w-2.5 sm:h-2.5 fill-white" />
             </span>
           </div>
 
-          {/* Text Labels */}
-          <div className="relative z-10 text-right pr-0.5">
+          {/* Text Labels - hidden on mobile, shown on sm+ */}
+          <div className="relative z-10 text-right pr-0.5 hidden sm:block">
             <span className="flex items-center gap-1.5 text-[11px] font-black text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight">
               <span>دردش مع عم وه</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useApp } from '../../context/AppContext.tsx';
-import { CraftReel } from '../../types.ts';
-import { craftReelsService } from '../../services/craftReelsService.ts';
-import { CraftReelsModal } from './CraftReelsModal.tsx';
+import { useApp } from '../../context/AppContext';
+import { CraftReel } from '../../types';
+import { craftReelsService } from '../../services/craftReelsService';
+import { CraftReelsModal } from './CraftReelsModal';
 import {
   Play,
   ShoppingBag,
@@ -14,7 +14,7 @@ import {
   Clapperboard
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
+import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia';
 
 export const CraftReelsSection: React.FC = () => {
   const { setActivePage, addToCart, addToast, confirmModal, currentUser } = useApp();

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useApp } from '../../../context/AppContext.tsx';
-import { CraftReel } from '../../../types.ts';
-import { craftReelsService } from '../../../services/craftReelsService.ts';
-import { ReelInfoSection } from './ReelInfoSection.tsx';
-import { ReelActionButtons } from './ReelActionButtons.tsx';
-import { ReelCommentsDrawer } from './ReelCommentsDrawer.tsx';
-import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../../utils/cloudinaryMedia.ts';
-import { generateVideoSchema, updatePageSEO } from '../../../utils/seo.ts';
+import { useApp } from '../../../context/AppContext';
+import { CraftReel } from '../../../types';
+import { craftReelsService } from '../../../services/craftReelsService';
+import { ReelInfoSection } from './ReelInfoSection';
+import { ReelActionButtons } from './ReelActionButtons';
+import { ReelCommentsDrawer } from './ReelCommentsDrawer';
+import { getOptimizedVideoUrl, getOptimizedVideoPoster } from '../../../utils/cloudinaryMedia';
+import { generateVideoSchema, updatePageSEO } from '../../../utils/seo';
 import {
   Play,
   Heart,

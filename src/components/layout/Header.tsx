@@ -334,7 +334,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
    ========================================================= */
 const WAH_PORTALS_PREVIEW: Record<
   string,
-  { title: string; desc: string; image: string; badge: string; mascot?: string; mascotStory?: string }
+  { title: string; desc: string; image: string; badge: string }
 > = {
   map: {
     title: 'خريطة الصعيد التفاعلية',
@@ -342,8 +342,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
     badge: 'الخريطة الحية',
-    mascot: '/mascot/welcoming.png',
-    mascotStory: 'عم وه رسم لكم خريطة الصعيد شبر شبر من بحري لحد أسوان والنوبة عشان متتوهش في ديارنا!'
   },
   places: {
     title: 'آثار ومعالم الصعيد',
@@ -351,17 +349,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
     badge: 'معالم متوثقة',
-    mascot: '/mascot/char.png',
-    mascotStory: 'عم وه لف وتعب وداس في كل سكة وجبل عشان يوصل للأماكن دي ويوثق تاريخها وحيطانها العتيقة!'
-  },
-  products: {
-    title: 'سوق وه.. من إيد الصانع لدارك',
-    desc: 'منتجات حرفية ويدوية 100% من ورش ودكاكين الصعيد مباشرة.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
-    badge: 'سوق وه',
-    mascot: '/mascot/empty-cart.png',
-    mascotStory: 'عم وه وهو بيتمشى في أسواق وورش الصعيد.. لقى المنتجات الخطيرة دي، شغل يدوي 100%!'
   },
   people: {
     title: 'أعلام ورموز الصعيد',
@@ -369,8 +356,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
     badge: 'حُرّاس الأصل',
-    mascot: '/mascot/fav.png',
-    mascotStory: 'عم وه قعد في مضايف الكبار وسمع حكايات شيوخ الصنعة والرواة والشعراء اللي سابوا علامة في تاريخ الجنوب!'
   },
   food: {
     title: 'طعم الصعيد البلدي',
@@ -378,8 +363,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
     badge: 'أكل بيوت',
-    mascot: '/mascot/welcoming.png',
-    mascotStory: 'عم وه داغ خير البيوت الصعيدية.. من عيش شمسي سخن وطواجن بلدي معسلة لحد فايش بلبن الحمص!'
   },
   events: {
     title: 'مواسم وليالي الصعيد',
@@ -387,8 +370,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
     badge: 'ليالي الجنوب',
-    mascot: '/mascot/quiz.png',
-    mascotStory: 'عم وه حضر ليالي الموالد ولمّة الفرح ودقّة عصيان التحطيب وزغاريد المواسم ورجعلكم بالبهجة كلها!'
   },
   reels: {
     title: 'ريلز وحكاوي وه',
@@ -396,8 +377,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
     badge: 'فيديوهات حية',
-    mascot: '/mascot/quiz.png',
-    mascotStory: 'عم وه صور لكم بكاميرته من قلب الورش وأزقة الأسواق حكاوي حية وسريعة تشوفوها بعينكم!'
   },
   sellers: {
     title: 'شيوخ الصنعة والورش',
@@ -405,8 +384,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
     badge: 'ورش الصعايدة',
-    mascot: '/mascot/empty-cart.png',
-    mascotStory: 'عم وه وهو بيتمشى في ورش ودكاكين الصعيد لقى شيوخ الصنعة الأصليين!'
   },
   categories: {
     title: 'التصنيفات التراثية',
@@ -414,8 +391,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
     badge: 'حرف أصيلة',
-    mascot: '/mascot/char.png',
-    mascotStory: 'عم وه قسم لكم كل حرفة وصنعة في باب لوحدها عشان تلاقي طلبك على طول!'
   },
   quize: {
     title: 'انت صعيدى ؟ (لعبة اللهجة)',
@@ -423,8 +398,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
     badge: 'تحدي ولعبة',
-    mascot: '/mascot/quiz.png',
-    mascotStory: 'عم وه بيتحداك: وريني شطارتك في كلام بلادنا يا بوي!'
   },
   about: {
     title: 'عن منصة وه',
@@ -432,8 +405,6 @@ const WAH_PORTALS_PREVIEW: Record<
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
     badge: 'حكاية وه',
-    mascot: '/mascot/char.png',
-    mascotStory: 'حكاية عم وه وتعب سنين عشان يجمع خير وتراث الصعيد في مكان واحد.'
   },
 };
 
@@ -803,7 +774,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             {/* START ACTIONS */}
             <div
               id="header-start-actions"
-              className="absolute start-0 ltr:left-0 rtl:right-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center px-1 sm:max-w-[calc(50%-55px)] sm:px-2.5 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+              className="absolute start-0 ltr:left-0 rtl:right-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center px-1.5 sm:max-w-[calc(50%-55px)] sm:px-2.5 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
             >
               {/* MOBILE MENU TOGGLE */}
               <button
@@ -844,7 +815,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 onClick={() => navigate('quize')}
                 aria-label="لعبة اللهجة"
                 title="تحدي كلام الصعايدة"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
+                className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 ms-1.5 sm:ms-2 lg:hidden cursor-pointer relative"
                 style={{
                   backgroundColor: activePage === 'quize' ? '#9a6a35' : hoverBg,
                   color: activePage === 'quize' ? '#fff' : '#9a6a35',
@@ -930,7 +901,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             {/* END ACTIONS */}
             <div
               id="header-end-actions"
-              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-38px)] items-center justify-end px-1 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
+              className="absolute end-0 ltr:right-0 rtl:left-0 top-0 flex h-full max-w-[calc(50%-44px)] items-center justify-end px-1.5 sm:max-w-[calc(50%-55px)] sm:px-2 z-10 lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto"
             >
               <div className="flex min-w-0 items-center gap-1 sm:gap-1.5 lg:gap-2">
                 {/* SEARCH */}
@@ -963,14 +934,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   {isDark ? <Sun size={18} className="text-primary-hover" /> : <Moon size={18} />}
                 </button>
 
-                {/* FAVORITES (مخفية للبائع والأدمن) */}
+                {/* FAVORITES (مخفية للبائع والأدمن، ومخفية في الموبايل الصغير لوجودها في شريط التنقل السفلي) */}
                 {!isStaff && (
                   <button
                     id="nav-favorites-btn"
                     type="button"
                     onClick={() => navigate('favorites')}
                     aria-label="المفضلة"
-                    className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer" style={{
+                    className="relative hidden sm:flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer" style={{
                       backgroundColor: hoverBg,
                       color: mainText,
                     }}
@@ -1331,15 +1302,15 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <button
                       type="button"
                       onClick={() => {
-                        setAuthModalTab('register');
+                        setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      title="اعمل حساب / ادخل لحسابك"
-                      aria-label="اعمل حساب / ادخل لحسابك"
-                      className="flex sm:hidden h-8.5 items-center gap-1.5 shrink-0 rounded-full px-2.5 text-xs font-bold text-white shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+                      title="تسجيل الدخول / إنشاء حساب"
+                      aria-label="تسجيل الدخول / إنشاء حساب"
+                      className="flex sm:hidden h-8 items-center gap-1 shrink-0 rounded-full px-2.5 text-[11px] font-black text-white shadow-xs transition-all hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
                       style={{ backgroundColor: '#9a6a35' }}
                     >
-                      <UserPlus size={14} />
+                      <UserCircle size={15} />
                       <span>دخول</span>
                     </button>
 
@@ -1481,19 +1452,19 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               navigate(link.id);
                               setHoveredPortalId(null);
                             }}
-                            className="absolute top-full right-1/2 translate-x-1/2 mt-2 w-72 p-3.5 rounded-2xl shadow-2xl z-[150] cursor-pointer text-right border select-none"
+                            className="absolute top-full right-1/2 translate-x-1/2 mt-2 w-64 p-3 rounded-2xl shadow-xl z-[150] cursor-pointer text-right border select-none"
                             style={{
-                              backgroundColor: isDark ? 'rgba(20, 18, 16, 0.98)' : 'rgba(255, 253, 249, 0.99)',
-                              borderColor: isDark ? 'rgba(154, 106, 53, 0.4)' : 'rgba(154, 106, 53, 0.3)',
-                              boxShadow: '0 16px 40px -4px rgba(0, 0, 0, 0.4)',
-                              backdropFilter: 'blur(20px)',
+                              backgroundColor: isDark ? 'rgba(20, 18, 16, 0.97)' : 'rgba(255, 253, 249, 0.98)',
+                              borderColor: isDark ? 'rgba(154, 106, 53, 0.35)' : 'rgba(154, 106, 53, 0.25)',
+                              boxShadow: '0 12px 32px -4px rgba(0, 0, 0, 0.35)',
+                              backdropFilter: 'blur(16px)',
                             }}
                           >
                             <div className="flex items-center gap-2.5">
                               <img
                                 src={preview.image}
                                 alt={preview.title}
-                                className="w-12 h-12 rounded-xl object-cover border border-primary/20 shrink-0"
+                                className="w-11 h-11 rounded-xl object-cover border border-primary/20 shrink-0"
                               />
                               <div className="min-w-0 flex-1">
                                 <span className="inline-block text-[9px] font-black text-primary px-1.5 py-0.2 rounded-md bg-primary/10 mb-0.5">
@@ -1504,23 +1475,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 </h5>
                               </div>
                             </div>
-
-                            {/* Uncle Wah Quote in Flyout */}
-                            {preview.mascotStory && (
-                              <div className="mt-2.5 p-2 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-2">
-                                <img
-                                  src={preview.mascot || '/mascot/char.png'}
-                                  alt="عم وه"
-                                  className="w-8 h-8 object-contain shrink-0 drop-shadow -scale-x-100"
-                                />
-                                <p className="text-[10px] font-bold text-foreground leading-snug line-clamp-2">
-                                  "{preview.mascotStory}"
-                                </p>
-                              </div>
-                            )}
-
-                            <div className="mt-2.5 pt-2 border-t flex items-center justify-between text-[10px] font-black text-primary" style={{ borderColor }}>
-                              <span>دخول الباب مع عم وه</span>
+                            <p className="mt-2 text-[11px] leading-relaxed text-right line-clamp-2" style={{ color: secondaryText }}>
+                              {preview.desc}
+                            </p>
+                            <div className="mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-bold text-primary" style={{ borderColor }}>
+                              <span>دخول الباب</span>
                               <ArrowLeft size={11} className="transition-transform group-hover:-translate-x-1" />
                             </div>
                           </motion.div>
