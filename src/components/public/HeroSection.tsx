@@ -200,15 +200,15 @@ export const HeroSection: React.FC = () => {
             "
           >
             <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary shadow-[0_0_8px_rgba(255,255,255,0.35)]" />
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary shadow-[0_0_6px_rgba(255,255,255,0.35)]" />
 
-                <span className="text-[10px] font-black leading-tight text-white">
+                <span className="text-[9px] font-black leading-tight text-white">
                   أهلاً بيك، أنا عم وه 👋
                 </span>
               </div>
 
-              <span className="pl-3.5 text-[9px] leading-relaxed text-white/55">
+              <span className="pl-3 text-[8px] leading-relaxed text-white/55">
                 وهساعدك تكتشف حكايات الصعيد ومنتجاته
               </span>
             </div>
