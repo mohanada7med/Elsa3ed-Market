@@ -643,7 +643,7 @@ export const HeroSection: React.FC = () => {
 
           {/* Character */}
           <img
-            src="/mascot/pro.png"
+            src="/mascot/welcoming.png"
             alt="عم وه"
             className="
       relative

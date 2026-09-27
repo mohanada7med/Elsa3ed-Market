@@ -366,7 +366,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
   places: {
     title: 'عم وه في حكايات زمان',
     desc: 'جولة بين المعابد والمقابر والبيوت والأماكن القديمة اللي لسه بتحكي حكايات أهلها.',
-    avatar: '/mascot/athar.png',
+    avatar: '/mascot/make.png',
     badge: 'جولة عم وه',
     accentColor: '#b45f42',
   },
@@ -2705,8 +2705,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
             </div>
 
-            {/* BOTTOM LINE */}
-            <div className="relative h-px w-full overflow-hidden">
+            {/* FULL WIDTH SHIMMER LINE */}
+            <div className="relative left-1/2 h-px w-screen -translate-x-1/2 overflow-hidden">
+              {/* Base line */}
               <div
                 className="absolute inset-0"
                 style={{
@@ -2715,19 +2716,25 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     : 'rgba(0,0,0,0.04)',
                 }}
               />
+
+              {/* Single continuous shimmer */}
               <motion.div
+                initial={{
+                  left: '-320px',
+                }}
                 animate={{
-                  x: ['-100%', '100%'],
+                  left: '100%',
                 }}
                 transition={{
-                  duration: 8,
+                  duration: 6,
                   repeat: Infinity,
+                  repeatType: 'loop',
                   ease: 'linear',
                 }}
-                className="absolute h-full w-32"
+                className="absolute top-0 h-full w-80"
                 style={{
                   background:
-                    'linear-gradient(90deg, transparent, #9a6a35, transparent)',
+                    'linear-gradient(90deg, transparent 0%, #9a6a35 50%, transparent 100%)',
                 }}
               />
             </div>

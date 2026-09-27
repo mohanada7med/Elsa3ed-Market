@@ -93,7 +93,7 @@ export const SellersDirectoryPage: React.FC = () => {
           <UncleWahHeroBanner
             doorTitle="دليل ورش وشيوخ صنعة الصعيد"
             doorBadge="ورش الصعايدة"
-            mascotSrc="/mascot/empty-cart.png"
+            mascotSrc="/mascot/make.png"
             mascotRole="عم وه بين شيوخ الصنعة"
             quote="عم وه خبط على بيبان ورش الصعيد دكان دكان، وقعد مع شيوخ الصنعة الحقيقيين وتأكد من أمانتهم وجودة شغلهم عشان تتعاملوا معاهم وإنتوا متطمنين 100%!"
             statsText={`${sellers.length} ورشة ودكان متوثق`}

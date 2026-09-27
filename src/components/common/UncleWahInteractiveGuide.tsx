@@ -63,7 +63,7 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   crafts: {
     // تاجر الصنعة الخبير المقدر لشغل اليد الحرفي
-    primaryImg: '/mascot/pro.png',
+    primaryImg: '/mascot/make.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه تاجر الصنعة والبركة',
     badge: 'شغل يد يتوزن بالذهب',

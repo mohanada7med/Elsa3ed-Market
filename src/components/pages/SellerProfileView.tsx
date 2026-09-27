@@ -146,8 +146,15 @@ export const SellerProfileView: React.FC = () => {
           <div className="absolute inset-0 blur-3xl bg-primary/10 rounded-full scale-150" />
 
           <div className="relative">
-            <div className="w-16 h-16 mx-auto rounded-[1.5rem] bg-surface-subtle border border-border-subtle flex items-center justify-center shadow-xl">
-              <Store className="w-7 h-7 text-primary animate-pulse" />
+            {/* عم وه */}
+            <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl animate-pulse" />
+
+              <img
+                src="/mascot/make.png"
+                alt="عم وه"
+                className="relative z-10 w-20 h-20 object-contain animate-[pulse_2s_ease-in-out_infinite]"
+              />
             </div>
 
             <p className="mt-5 text-sm font-black text-foreground">
