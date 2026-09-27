@@ -49,9 +49,38 @@ const nextConfig = {
       },
     ];
 
+    const staticAssetHeaders = [
+      ...commonHeaders,
+      {
+        key: 'Cache-Control',
+        value: 'public, max-age=604800, stale-while-revalidate=86400',
+      },
+    ];
+
     if (!isProd) {
-      // In development: disable all browser caching so every code change is instantly reflected
+      // In development: cache static images/assets, keep dynamic routes no-cache
       return [
+        {
+          source: '/mascot/:path*',
+          headers: staticAssetHeaders,
+        },
+        {
+          source: '/audio/:path*',
+          headers: staticAssetHeaders,
+        },
+        {
+          source: '/:file((?:favicon|logo|mascot).*\\.(?:ico|png|jpg|svg|webp))',
+          headers: staticAssetHeaders,
+        },
+        {
+          source: '/_next/static/:path*',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
         {
           source: '/:path*',
           headers: [
@@ -82,6 +111,18 @@ const nextConfig = {
             value: 'public, max-age=31536000, immutable',
           },
         ],
+      },
+      {
+        source: '/mascot/:path*',
+        headers: staticAssetHeaders,
+      },
+      {
+        source: '/audio/:path*',
+        headers: staticAssetHeaders,
+      },
+      {
+        source: '/:file((?:favicon|logo|mascot).*\\.(?:ico|png|jpg|svg|webp))',
+        headers: staticAssetHeaders,
       },
       {
         source: '/:path*',

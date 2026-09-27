@@ -28,9 +28,11 @@ export const HeroSection: React.FC = () => {
         {/* 1. الصورة والتدرج السفلي */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://res.cloudinary.com/kuana1nl/image/upload/v1788832698/WAH/heritage-places/alexan-pasha-palace/dclassic-2026-08-21-02083951477127237e_1788832673058_bzeh.jpg"
+            src="https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800,c_limit/v1788832698/WAH/heritage-places/alexan-pasha-palace/dclassic-2026-08-21-02083951477127237e_1788832673058_bzeh.jpg"
             alt="قصر ألكسان باشا"
             className="h-full w-full object-cover object-center"
+            decoding="async"
+            fetchPriority="high"
           />
 
           {/* فيد الموبايل السفلي متطابق مع الخلفية */}
@@ -140,9 +142,10 @@ export const HeroSection: React.FC = () => {
           aria-hidden="true"
         >
           <img
-            src="https://res.cloudinary.com/kuana1nl/image/upload/q_auto,f_auto/v1789326122/WAH/heritage-places/alexan-pasha-palace/img_2824_1789326122576_jjul.jpg"
+            src="https://res.cloudinary.com/kuana1nl/image/upload/q_auto,f_auto,w_1440,c_limit/v1789326122/WAH/heritage-places/alexan-pasha-palace/img_2824_1789326122576_jjul.jpg"
             alt="قصر ألكسان باشا"
             className="h-full w-full object-cover object-center opacity-85 contrast-105"
+            decoding="async"
           />
         </motion.div>
 

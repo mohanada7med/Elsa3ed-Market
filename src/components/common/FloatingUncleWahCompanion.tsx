@@ -503,11 +503,28 @@ export const FloatingUncleWahCompanion: React.FC = () => {
             <div className="relative z-10 mt-3 flex items-start gap-3">
 
               {/* =========================
-                  MASCOT
+                  MASCOT (Floating animation on hover & idle)
               ========================== */}
               <motion.div
-                whileHover={{ scale: 1.08 }}
-                className="shrink-0 relative"
+                animate={{
+                  y: [0, -4, 0],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 3.2,
+                  ease: 'easeInOut',
+                }}
+                whileHover={{
+                  scale: 1.14,
+                  y: [-2, -8, -3],
+                  rotate: [-2, 2.5, -2],
+                  transition: {
+                    repeat: Infinity,
+                    duration: 1.4,
+                    ease: 'easeInOut',
+                  },
+                }}
+                className="shrink-0 relative cursor-pointer"
               >
                 <AnimatePresence mode="wait">
                   <motion.img
@@ -530,11 +547,15 @@ export const FloatingUncleWahCompanion: React.FC = () => {
                       x: -10,
                     }}
                     transition={{
-                      duration: 0.2,
+                      duration: 0.25,
+                      ease: [0.16, 1, 0.3, 1],
                     }}
                     style={{
                       imageRendering: 'crisp-edges',
                     }}
+                    width={96}
+                    height={96}
+                    decoding="async"
                     className="h-20 sm:h-24 w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.25)] select-none"
                   />
                 </AnimatePresence>
@@ -601,7 +622,8 @@ export const FloatingUncleWahCompanion: React.FC = () => {
       <motion.button
         type="button"
         whileHover={{
-          scale: 1.05,
+          scale: 1.06,
+          y: -4,
         }}
         whileTap={{
           scale: 0.92,
@@ -618,64 +640,97 @@ export const FloatingUncleWahCompanion: React.FC = () => {
         {/* Pulsing beacon ring */}
         <span className="absolute -inset-0.5 rounded-full bg-primary/20 blur-xs sm:blur-sm group-hover:bg-primary/30 transition-all pointer-events-none" />
 
-        {/* =========================
-            MASCOT AVATAR
-        ========================== */}
-        <div className="relative z-10 -my-1 sm:-my-2 shrink-0">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentStory.image}
-              src={currentStory.image}
-              alt="عم وه"
-              initial={{
-                opacity: 0,
-                scale: 0.85,
-              }}
+        {/* Transition wrapper for smooth page change fade in/out */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activePage}
+            initial={{
+              opacity: 0,
+              y: 8,
+              scale: 0.94,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              y: -8,
+              scale: 0.94,
+            }}
+            transition={{
+              duration: 0.32,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="flex items-center gap-1.5 sm:gap-2.5"
+          >
+            {/* =========================
+                MASCOT AVATAR (Float Animation on Hover & Idle)
+            ========================== */}
+            <motion.div
+              className="relative z-10 -my-1 sm:-my-2 shrink-0"
               animate={{
-                opacity: 1,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.85,
+                y: [0, -3.5, 0],
               }}
               transition={{
-                duration: 0.18,
+                repeat: Infinity,
+                duration: 3,
+                ease: 'easeInOut',
               }}
-              style={{
-                imageRendering: 'crisp-edges',
+              whileHover={{
+                y: [-3, -8, -3],
+                rotate: [0, -3, 3, 0],
+                scale: 1.16,
+                transition: {
+                  repeat: Infinity,
+                  duration: 1.4,
+                  ease: 'easeInOut',
+                },
               }}
-              className="h-10 sm:h-12 w-auto object-contain drop-shadow-md select-none -scale-x-100"
-            />
-          </AnimatePresence>
+            >
+              <img
+                src={currentStory.image}
+                alt="عم وه"
+                style={{
+                  imageRendering: 'crisp-edges',
+                }}
+                width={48}
+                height={48}
+                decoding="async"
+                loading="eager"
+                className="h-10 sm:h-12 w-auto object-contain drop-shadow-md select-none -scale-x-100"
+              />
 
-          {/* Mini Sparkle badge on mobile */}
-          <span className="sm:hidden absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white shadow-md border border-surface sm:border-2">
-            <Sparkles size={8} />
-          </span>
-        </div>
+              {/* Mini Sparkle badge on mobile */}
+              <span className="sm:hidden absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white shadow-md border border-surface sm:border-2">
+                <Sparkles size={8} />
+              </span>
+            </motion.div>
 
-        {/* =========================
-            TEXT PILL
-        ========================== */}
-        <div className="relative z-10 text-right hidden sm:block">
-          <span className="block text-[11px] font-black text-foreground group-hover:text-primary transition-colors leading-tight">
-            حكاية «عم وه»
-          </span>
+            {/* =========================
+                TEXT PILL
+            ========================== */}
+            <div className="relative z-10 text-right hidden sm:block">
+              <span className="block text-[11px] font-black text-foreground group-hover:text-primary transition-colors leading-tight">
+                حكاية «عم وه»
+              </span>
 
-          <span className="block text-[9px] font-bold text-primary leading-tight">
-            {isOpen
-              ? 'انقر للإغلاق'
-              : 'عملت إيه هنا؟'}
-          </span>
-        </div>
+              <span className="block text-[9px] font-bold text-primary leading-tight">
+                {isOpen
+                  ? 'انقر للإغلاق'
+                  : 'عملت إيه هنا؟'}
+              </span>
+            </div>
 
-        {/* =========================
-            SPARKLE ICON
-        ========================== */}
-        <div className="relative z-10 hidden sm:flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-          <Sparkles size={11} />
-        </div>
+            {/* =========================
+                SPARKLE ICON
+            ========================== */}
+            <div className="relative z-10 hidden sm:flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+              <Sparkles size={11} />
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </motion.button>
     </aside>
   );
