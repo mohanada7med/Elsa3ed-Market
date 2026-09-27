@@ -3677,7 +3677,7 @@ export const api = {
   },
 
   async getOrCreateConversation(
-    data: { sellerId: string; productId?: string; orderId?: string; initialMessage?: string },
+    data: { sellerId?: string; buyerId?: string; productId?: string; orderId?: string; initialMessage?: string },
     user?: { id?: string; role?: string; sellerId?: string }
   ): Promise<Conversation> {
     const res = await fetch(`${API_BASE}/chat/conversations`, {
@@ -3755,6 +3755,82 @@ export const api = {
     });
     const json: any = await res.json();
     return json.readCount || 0;
+  },
+
+  async deleteConversation(
+    conversationId: string,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: any = await res.json();
+    if (!json.success) {
+      throw new Error(json.message || json.error || 'فشل في حذف المحادثة');
+    }
+    return true;
+  },
+
+  async deleteAllConversations(
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/chat/conversations`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: any = await res.json();
+    if (!json.success) {
+      throw new Error(json.message || json.error || 'فشل في مسح جميع المحادثات');
+    }
+    return true;
+  },
+
+  async deleteChatMessage(
+    messageId: string,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/chat/messages/${messageId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(user)
+    });
+    const json: any = await res.json();
+    if (!json.success) {
+      throw new Error(json.message || json.error || 'فشل في حذف الرسالة');
+    }
+    return true;
+  },
+
+  async clearConversationMessages(
+    conversationId: string,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<boolean> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}/clear`, {
+      method: 'POST',
+      headers: getAuthHeaders(user)
+    });
+    const json: any = await res.json();
+    if (!json.success) {
+      throw new Error(json.message || json.error || 'فشل في تفريغ المحادثة');
+    }
+    return true;
+  },
+
+  async updateConversationStatus(
+    conversationId: string,
+    status: 'active' | 'archived' | 'blocked',
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<Conversation> {
+    const res = await fetch(`${API_BASE}/chat/conversations/${conversationId}/status`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify({ status })
+    });
+    const json: any = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.message || json.error || 'فشل في تحديث حالة المحادثة');
+    }
+    return json.data;
   },
 
   // Reports and Complaints System (نظام البلاغات والشكاوى)

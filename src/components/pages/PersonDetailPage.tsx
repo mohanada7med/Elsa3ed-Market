@@ -160,15 +160,7 @@ export const PersonDetailPage: React.FC = () => {
         </div>
       </header>
 
-      {/* UNCLE WAH INTERACTIVE GUIDE */}
-      <div className="relative z-40 mx-auto max-w-[1400px] px-6 sm:px-12 pt-2 pb-4">
-        <UncleWahInteractiveGuide
-          context="people"
-          title={person.name}
-          locationName={person.governorateName}
-          customQuote={`«قعدت في مضايف الكبار وسمعت من شيوخ الصنعة والرواة.. وسيرة ${person.name} تفضل علامة وشرف لكل صعيدي!»`}
-        />
-      </div>
+
 
       {/* =====================================================
           CINEMATIC HERO (Widescreen Spotlight - Always Dramatic)

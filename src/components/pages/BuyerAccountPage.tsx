@@ -44,6 +44,8 @@ export const BuyerAccountPage: React.FC = () => {
     openReportModal
   } = useApp();
 
+  const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+
   const [name, setName] = useState(currentUser.name || '');
   const [email, setEmail] = useState(currentUser.email || '');
   const [phone, setPhone] = useState(currentUser.phone || '');
@@ -93,14 +95,14 @@ export const BuyerAccountPage: React.FC = () => {
     try {
       if (typeof window !== 'undefined' && sessionStorage.getItem('open_seller_apply') === 'true') {
         sessionStorage.removeItem('open_seller_apply');
-        if (currentUser?.sellerStatus !== 'approved' && currentRole !== 'seller') {
+        if (currentUser?.sellerStatus !== 'approved' && currentRole !== 'seller' && !isAdmin) {
           setIsApplyModalOpen(true);
         }
       }
     } catch {
       // ignore
     }
-  }, [currentUser?.sellerStatus, currentRole]);
+  }, [currentUser?.sellerStatus, currentRole, isAdmin]);
 
   const handleRefreshStatus = async () => {
     setIsCheckingStatus(true);
@@ -527,104 +529,128 @@ export const BuyerAccountPage: React.FC = () => {
 
         {/* Sidebar Shortcut Options */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-3 text-right shadow-lg backdrop-blur-xl">
-            {currentUser.sellerStatus === 'approved' || currentRole === 'seller' ? (
-              <>
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs">ورشتك الحرفية المعتمدة</h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                    <CheckCircle2 className="w-3 h-3" />
-                    معتمدة وموثقة
-                  </span>
-                </div>
-                <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                  متجرك <strong>"{currentUser.seller?.brandName || 'ورشة الحرفي'}"</strong> متوثق وشغال في السوق. تقدر تدير منتجاتك ومبيعاتك وأرباحك من لوحة التحكم.
-                </p>
-                <button
-                  type="button"
-                  id="go-to-seller-dashboard-btn"
-                  onClick={() => setActivePage('seller-dashboard')}
-                  className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Store className="w-4 h-4" />
-                  <span>ادخل للوحة البائع الحرفي</span>
-                </button>
-              </>
-            ) : currentUser.sellerStatus === 'pending' ? (
-              <>
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary-hover border border-amber-500/20">
-                    <Clock className="w-3 h-3" />
-                    قيد المراجعة والتدقيق
-                  </span>
-                </div>
-                <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary-hover space-y-1">
-                  <p className="font-bold">{currentUser.seller?.brandName || workshopName || 'ورشة مسجلة'}</p>
-                  <p className="text-[11px] opacity-80">
-                    محافظة {currentUser.seller?.governorate || applyGovernorate} • {currentUser.seller?.specialty || specialty}
+          {isAdmin ? (
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-primary/20 space-y-3 text-right shadow-lg backdrop-blur-xl">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-xs text-primary dark:text-primary-hover">لوحة الإدارة العليا</h4>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary dark:text-primary-hover border border-primary/20">
+                  <ShieldCheck className="w-3 h-3" />
+                  مدير المنصة
+                </span>
+              </div>
+              <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                أنت مسجل كمدير عام لمنصة وه. تدار كافة الورش والبائعين والمنتجات والطلبات والتراث مباشرة من لوحة الإدارة.
+              </p>
+              <button
+                type="button"
+                id="go-to-admin-dashboard-btn"
+                onClick={() => setActivePage('admin-dashboard')}
+                className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>الانتقال للوحة تحكم الإدارة</span>
+              </button>
+            </div>
+          ) : (
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-6 rounded-[2rem] border border-black/10 dark:border-white/10 space-y-3 text-right shadow-lg backdrop-blur-xl">
+              {currentUser.sellerStatus === 'approved' || currentRole === 'seller' ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-xs">ورشتك الحرفية المعتمدة</h4>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                      <CheckCircle2 className="w-3 h-3" />
+                      معتمدة وموثقة
+                    </span>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                    متجرك <strong>"{currentUser.seller?.brandName || 'ورشة الحرفي'}"</strong> متوثق وشغال في السوق. تقدر تدير منتجاتك ومبيعاتك وأرباحك من لوحة التحكم.
                   </p>
-                </div>
-                <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed">
-                  طلبك محفوظ عندنا تمام، وإدارة منصة وه بتراجع بيانات الورشة دلوقتي وهنرد عليك قريب.
-                </p>
-                <button
-                  type="button"
-                  id="refresh-seller-status-btn"
-                  onClick={handleRefreshStatus}
-                  disabled={isCheckingStatus}
-                  className="w-full py-2.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
-                  <span>{isCheckingStatus ? 'بنراجع...' : 'حدّث حالة الطلب'}</span>
-                </button>
-              </>
-            ) : currentUser.sellerStatus === 'rejected' ? (
-              <>
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20">
-                    <AlertCircle className="w-3 h-3" />
-                    تم الرفض
-                  </span>
-                </div>
-                <div className="p-3 bg-rose-500/5 dark:bg-rose-500/10 rounded-xl border border-rose-500/20 text-xs text-rose-900 dark:text-rose-200 space-y-1">
-                  <span className="font-bold block text-[11px]">سبب الرفض:</span>
-                  <p className="text-[11px]">{currentUser.seller?.rejectionReason || 'لم يستوفِ الملف المعايير التراثية المطلوبة.'}</p>
-                </div>
-                <button
-                  type="button"
-                  id="reapply-seller-btn"
-                  onClick={() => setIsApplyModalOpen(true)}
-                  className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Store className="w-4 h-4" />
-                  <span>عدّل وقدّم الطلب تاني</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-xs">افتح ورشتك في وه</h4>
-                  <span className="text-[10px] text-primary font-bold px-2 py-0.5 bg-primary/10 rounded-full">
-                    متاح للمشترين
-                  </span>
-                </div>
-                <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
-                  عندك ورشة أو بتعمل حرف يدوية في الصعيد؟ تقدر تقدم عشان تنضم كبائع حرفي وتعرض منتجاتك للناس، وتتابع طلباتك وتستلم فلوسك على فودافون كاش أو إنستاباي بعد ما الإدارة تراجع طلبك.
-                </p>
-                <button
-                  type="button"
-                  id="open-apply-seller-modal-btn"
-                  onClick={() => setIsApplyModalOpen(true)}
-                  className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Store className="w-4 h-4" />
-                  <span>قدّم طلب عشان تفتح ورشتك كبائع</span>
-                </button>
-              </>
-            )}
-          </div>
+                  <button
+                    type="button"
+                    id="go-to-seller-dashboard-btn"
+                    onClick={() => setActivePage('seller-dashboard')}
+                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>ادخل للوحة البائع الحرفي</span>
+                  </button>
+                </>
+              ) : currentUser.sellerStatus === 'pending' ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-primary-hover border border-amber-500/20">
+                      <Clock className="w-3 h-3" />
+                      قيد المراجعة والتدقيق
+                    </span>
+                  </div>
+                  <div className="p-3 bg-amber-500/5 dark:bg-amber-500/10 rounded-xl border border-amber-500/20 text-xs text-amber-900 dark:text-primary-hover space-y-1">
+                    <p className="font-bold">{currentUser.seller?.brandName || workshopName || 'ورشة مسجلة'}</p>
+                    <p className="text-[11px] opacity-80">
+                      محافظة {currentUser.seller?.governorate || applyGovernorate} • {currentUser.seller?.specialty || specialty}
+                    </p>
+                  </div>
+                  <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed">
+                    طلبك محفوظ عندنا تمام، وإدارة منصة وه بتراجع بيانات الورشة دلوقتي وهنرد عليك قريب.
+                  </p>
+                  <button
+                    type="button"
+                    id="refresh-seller-status-btn"
+                    onClick={handleRefreshStatus}
+                    disabled={isCheckingStatus}
+                    className="w-full py-2.5 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream font-bold text-xs rounded-xl border border-black/10 dark:border-white/10 flex items-center justify-center gap-2 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${isCheckingStatus ? 'animate-spin' : ''}`} />
+                    <span>{isCheckingStatus ? 'بنراجع...' : 'حدّث حالة الطلب'}</span>
+                  </button>
+                </>
+              ) : currentUser.sellerStatus === 'rejected' ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-xs">طلب انضمام ورشة حرفية</h4>
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/20">
+                      <AlertCircle className="w-3 h-3" />
+                      تم الرفض
+                    </span>
+                  </div>
+                  <div className="p-3 bg-rose-500/5 dark:bg-rose-500/10 rounded-xl border border-rose-500/20 text-xs text-rose-900 dark:text-rose-200 space-y-1">
+                    <span className="font-bold block text-[11px]">سبب الرفض:</span>
+                    <p className="text-[11px]">{currentUser.seller?.rejectionReason || 'لم يستوفِ الملف المعايير التراثية المطلوبة.'}</p>
+                  </div>
+                  <button
+                    type="button"
+                    id="reapply-seller-btn"
+                    onClick={() => setIsApplyModalOpen(true)}
+                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>عدّل وقدّم الطلب تاني</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-xs">افتح ورشتك في وه</h4>
+                    <span className="text-[10px] text-primary font-bold px-2 py-0.5 bg-primary/10 rounded-full">
+                      متاح للمشترين
+                    </span>
+                  </div>
+                  <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
+                    عندك ورشة أو بتعمل حرف يدوية في الصعيد؟ تقدر تقدم عشان تنضم كبائع حرفي وتعرض منتجاتك للناس، وتتابع طلباتك وتستلم فلوسك على فودافون كاش أو إنستاباي بعد ما الإدارة تراجع طلبك.
+                  </p>
+                  <button
+                    type="button"
+                    id="open-apply-seller-modal-btn"
+                    onClick={() => setIsApplyModalOpen(true)}
+                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>قدّم طلب عشان تفتح ورشتك كبائع</span>
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           {/* Complaints & Support Center Card */}
           <div className="bg-white/80 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-amber-500/20 text-xs space-y-3 shadow-lg backdrop-blur-xl">
@@ -674,7 +700,7 @@ export const BuyerAccountPage: React.FC = () => {
       </div>
 
       {/* In-Place Seller Application Modal */}
-      {isApplyModalOpen && (
+      {!isAdmin && isApplyModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div
             className="w-full max-w-xl bg-white dark:bg-espresso-900 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto no-scrollbar text-right"

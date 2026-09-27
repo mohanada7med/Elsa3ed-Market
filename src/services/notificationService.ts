@@ -155,41 +155,46 @@ class NotificationService {
   }
 
   /**
-   * Get notifications for a user based on role and seller/user ID.
+   * Get notifications strictly belonging to the authenticated user.
+   * If recipientId/userId is present, it MUST match the authenticated user's ID or sellerId.
    * For guests, returns empty list.
    */
-  getNotifications(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): AppNotification[] {
-    if (role === 'guest') {
+  getNotifications(
+    role: 'admin' | 'seller' | 'buyer' | 'guest',
+    targetId?: string,
+    secondaryId?: string
+  ): AppNotification[] {
+    if (role === 'guest' || (!targetId && !secondaryId)) {
       return [];
     }
+
+    const validIds = new Set<string>();
+    if (targetId) validIds.add(targetId);
+    if (secondaryId) validIds.add(secondaryId);
+
     return this.notifications.filter((n) => {
-      if (targetId && (n.recipientId === targetId || (n as any).userId === targetId)) {
-        return true;
+      const docUserId = n.recipientId || (n as any).userId;
+      // If notification has a specific recipient/user ID, it MUST strictly match the authenticated user
+      if (docUserId) {
+        return validIds.has(docUserId);
       }
+      // If notification has no specific user ID (broadcasts), check role match
       if (role === 'admin') {
-        return n.recipientRole === 'admin' || n.recipientRole === 'all' || !n.recipientRole || (n as any).targetType === 'all';
+        return n.recipientRole === 'admin' || n.recipientRole === 'all';
       }
       if (role === 'seller') {
-        return (
-          (n.recipientRole === 'seller' && (!n.recipientId || !targetId || n.recipientId === targetId)) ||
-          n.recipientRole === 'all' ||
-          !n.recipientRole
-        );
+        return n.recipientRole === 'seller' || n.recipientRole === 'all';
       }
       if (role === 'buyer') {
-        return (
-          (n.recipientRole === 'buyer' && (!n.recipientId || !targetId || n.recipientId === targetId)) ||
-          n.recipientRole === 'all' ||
-          !n.recipientRole
-        );
+        return n.recipientRole === 'buyer' || n.recipientRole === 'all';
       }
-      return true;
+      return false;
     });
   }
 
-  getUnreadCount(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string): number {
+  getUnreadCount(role: 'admin' | 'seller' | 'buyer' | 'guest', targetId?: string, secondaryId?: string): number {
     if (role === 'guest') return 0;
-    const list = this.getNotifications(role, targetId);
+    const list = this.getNotifications(role, targetId, secondaryId);
     return list.filter((n) => !n.read).length;
   }
 

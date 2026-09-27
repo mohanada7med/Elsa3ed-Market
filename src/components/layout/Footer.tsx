@@ -41,14 +41,19 @@ export const Footer: React.FC = () => {
     addToast
   } = useApp();
 
+  const isAdmin =
+    isAuthenticated &&
+    (currentRole === 'admin' || currentUser?.role === 'admin');
+
   const isSeller =
+    !isAdmin &&
     isAuthenticated &&
     (currentRole === 'seller' ||
       currentUser?.role === 'seller' ||
       currentUser?.sellerStatus === 'approved');
 
   const handleWorkshopRegister = () => {
-    if (isSeller) {
+    if (isSeller || isAdmin) {
       return;
     }
 
@@ -145,7 +150,7 @@ export const Footer: React.FC = () => {
       <div className="relative z-10 max-w-[1720px] mx-auto px-6 sm:px-10 lg:px-16 py-16">
 
         {/* شريط علوي ملكي: دعوة انضمام الحرفيين والورش + الفيلم التوثيقي */}
-        {!isSeller && (
+        {!isSeller && !isAdmin && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center pb-12 mb-14 border-b border-white/10">
 
             <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">

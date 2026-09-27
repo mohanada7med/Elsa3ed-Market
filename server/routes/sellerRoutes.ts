@@ -34,6 +34,14 @@ const router = express.Router();
 // GET /api/seller/status - Accessible to any authenticated user to check their seller review / workshop status
 router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
+    if (req.user?.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'حساب مدير المنصة مخصص للإدارة ولا يرتبط بورشة بائع',
+        code: 'ADMIN_ACCOUNT'
+      });
+    }
+
     const { db, isMongo } = await getDatabase();
     const sellerId = req.user?.sellerId || req.user?.id;
     let sellerDoc: any = null;
@@ -94,6 +102,15 @@ router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Respon
 router.post('/apply', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
+
+    if (user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'لا يمكن لحساب مدير المنصة إنشاء ورشة أو التقديم كبائع',
+        code: 'ADMIN_CANNOT_BE_SELLER'
+      });
+    }
+
     const {
       workshopName,
       specialty,

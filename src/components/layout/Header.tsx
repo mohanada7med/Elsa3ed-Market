@@ -477,8 +477,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
+  const isSeller = !isAdmin && (currentRole === 'seller' || currentUser?.role === 'seller');
   const isStaff = isSeller || isAdmin;
 
   /* =========================================================

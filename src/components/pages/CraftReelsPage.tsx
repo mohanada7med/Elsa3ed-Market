@@ -505,6 +505,7 @@ export const CraftReelsPage: React.FC = () => {
                 onClick={() => setSelectedGovernorate(gov.name)}
                 className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
               >
+                <br />
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
                     ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-primary/40 scale-105'

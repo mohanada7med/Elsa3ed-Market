@@ -897,8 +897,8 @@ export const SellerDashboard: React.FC = () => {
     },
     {
       id: 'logistics_customers',
-      title: 'الطلبات والزبائن',
-      description: 'الشحن والتوصيل والمحادثات المباشرة',
+      title: 'الطلبات والتواصل',
+      description: 'الشحن والتوصيل ومراسلة إدارة المنصة',
       items: [
         {
           id: 'orders',
@@ -910,8 +910,8 @@ export const SellerDashboard: React.FC = () => {
         },
         {
           id: 'messages',
-          label: 'محادثات الزبائن المباشرة',
-          sublabel: 'تواصل فوري مع المشترين',
+          label: 'مراسلة إدارة المنصة',
+          sublabel: 'الدعم الفني واستفسارات الورشة',
           icon: MessageSquare,
           badge: chatUnreadCount > 0 ? chatUnreadCount : undefined,
           elementId: 'seller-nav-messages-btn'

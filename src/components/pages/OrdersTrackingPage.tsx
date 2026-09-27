@@ -386,18 +386,15 @@ export const OrdersTrackingPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const firstItem = currentSelected.items?.[0];
-                      const sellerId = firstItem?.product?.sellerId || (firstItem as any)?.sellerId || currentSelected.sellerIds?.[0] || (currentSelected as any).sellerId;
                       openChatWithArtisan({
-                        sellerId,
                         orderId: currentSelected.id,
-                        initialMessage: `السلام عليكم، أستفسر بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
+                        initialMessage: `السلام عليكم، أود التواصل مع إدارة المنصة بخصوص طلبي رقم (${currentSelected.orderNumber || currentSelected.id}).`
                       });
                     }}
                     className="px-4 py-2.5 bg-primary/15 hover:bg-primary/25 text-primary dark:text-primary-hover text-xs font-bold rounded-xl border border-primary/30 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <MessageSquare className="w-4 h-4 text-primary dark:text-primary-hover" />
-                    <span>محادثة الحرفي بخصوص هذا الطلب</span>
+                    <span>مراسلة إدارة المنصة بخصوص هذا الطلب</span>
                   </button>
 
                   {/* Report Issue to Admin Button */}

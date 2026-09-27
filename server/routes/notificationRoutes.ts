@@ -82,8 +82,9 @@ router.get('/broadcasts', requireAdmin, async (req: AuthenticatedRequest, res: R
 router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
+    const sellerId = req.user?.sellerId;
     const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 50;
-    const notifications = await getUserNotifications(userId, limit);
+    const notifications = await getUserNotifications(userId, limit, sellerId);
 
     res.json({
       success: true,
@@ -106,7 +107,8 @@ router.get('/', async (req: AuthenticatedRequest, res: Response) => {
 router.get('/unread-count', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    const count = await getUnreadNotificationsCount(userId);
+    const sellerId = req.user?.sellerId;
+    const count = await getUnreadNotificationsCount(userId, sellerId);
 
     res.json({
       success: true,
@@ -128,7 +130,8 @@ router.get('/unread-count', async (req: AuthenticatedRequest, res: Response) => 
 router.patch('/read-all', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    await markAllNotificationsAsRead(userId);
+    const sellerId = req.user?.sellerId;
+    await markAllNotificationsAsRead(userId, sellerId);
 
     res.json({
       success: true,
@@ -145,11 +148,12 @@ router.patch('/read-all', async (req: AuthenticatedRequest, res: Response) => {
 
 /**
  * PATCH /api/notifications/:id/read
- * Mark a single notification as read (strictly owned by req.user.id).
+ * Mark a single notification as read (strictly owned by req.user.id or req.user.sellerId).
  */
 router.patch('/:id/read', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
+    const sellerId = req.user?.sellerId;
     const notificationId = req.params.id;
 
     if (!notificationId) {
@@ -160,7 +164,7 @@ router.patch('/:id/read', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const success = await markNotificationAsRead(userId, notificationId);
+    const success = await markNotificationAsRead(userId, notificationId, sellerId);
     if (!success) {
       return res.status(404).json({
         success: false,
@@ -189,7 +193,8 @@ router.patch('/:id/read', async (req: AuthenticatedRequest, res: Response) => {
 router.delete('/clear-all', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
-    await clearAllUserNotifications(userId);
+    const sellerId = req.user?.sellerId;
+    await clearAllUserNotifications(userId, sellerId);
 
     res.json({
       success: true,
@@ -206,11 +211,12 @@ router.delete('/clear-all', async (req: AuthenticatedRequest, res: Response) => 
 
 /**
  * DELETE /api/notifications/:id
- * Delete a single notification (strictly owned by req.user.id).
+ * Delete a single notification (strictly owned by req.user.id or req.user.sellerId).
  */
 router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user!.id;
+    const sellerId = req.user?.sellerId;
     const notificationId = req.params.id;
 
     if (!notificationId) {
@@ -221,7 +227,7 @@ router.delete('/:id', async (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const success = await deleteNotification(userId, notificationId);
+    const success = await deleteNotification(userId, notificationId, sellerId);
     if (!success) {
       return res.status(404).json({
         success: false,

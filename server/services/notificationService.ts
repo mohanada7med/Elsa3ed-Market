@@ -12,16 +12,22 @@ const memoryBroadcasts: AdminBroadcastDocument[] = [];
  */
 export async function getUserNotifications(
   userId: string,
-  limit: number = 50
+  limit: number = 50,
+  sellerId?: string
 ): Promise<NotificationDocument[]> {
   if (!userId) return [];
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
       const notifs = await db
         .collection('notifications')
-        .find({ userId })
+        .find({ userId: { $in: userIds } })
         .sort({ createdAt: -1 })
         .limit(Math.min(Math.max(1, limit), 100))
         .toArray();
@@ -31,26 +37,34 @@ export async function getUserNotifications(
     }
   }
 
-  return memoryNotifications.filter((n) => n.userId === userId).slice(0, limit);
+  return memoryNotifications.filter((n) => userIds.includes(n.userId)).slice(0, limit);
 }
 
 /**
  * Get real count of unread notifications for a user directly from the database.
  */
-export async function getUnreadNotificationsCount(userId: string): Promise<number> {
+export async function getUnreadNotificationsCount(userId: string, sellerId?: string): Promise<number> {
   if (!userId) return 0;
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
-      const count = await db.collection('notifications').countDocuments({ userId, isRead: false });
+      const count = await db.collection('notifications').countDocuments({
+        userId: { $in: userIds },
+        isRead: false
+      });
       return count;
     } catch (e) {
       Logger.error('[NotificationService] Error counting unread notifications in MongoDB:', e);
     }
   }
 
-  return memoryNotifications.filter((n) => n.userId === userId && !n.isRead).length;
+  return memoryNotifications.filter((n) => userIds.includes(n.userId) && !n.isRead).length;
 }
 
 /**
@@ -111,17 +125,23 @@ export async function createNotification(params: {
  */
 export async function markNotificationAsRead(
   userId: string,
-  notificationId: string
+  notificationId: string,
+  sellerId?: string
 ): Promise<boolean> {
   if (!userId || !notificationId) return false;
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
-      const notif = await db.collection('notifications').findOne({ id: notificationId, userId });
+      const notif = await db.collection('notifications').findOne({ id: notificationId, userId: { $in: userIds } });
       const res = await db
         .collection('notifications')
-        .updateOne({ id: notificationId, userId }, { $set: { isRead: true } });
+        .updateOne({ id: notificationId, userId: { $in: userIds } }, { $set: { isRead: true } });
 
       if (notif?.broadcastId) {
         await db.collection('admin_broadcasts').updateOne(
@@ -136,7 +156,7 @@ export async function markNotificationAsRead(
     }
   }
 
-  const notif = memoryNotifications.find((n) => n.id === notificationId && n.userId === userId);
+  const notif = memoryNotifications.find((n) => n.id === notificationId && userIds.includes(n.userId));
   if (notif) {
     notif.isRead = true;
     if (notif.broadcastId) {
@@ -153,19 +173,24 @@ export async function markNotificationAsRead(
 /**
  * Mark all notifications for the authenticated user as read.
  */
-export async function markAllNotificationsAsRead(userId: string): Promise<boolean> {
+export async function markAllNotificationsAsRead(userId: string, sellerId?: string): Promise<boolean> {
   if (!userId) return false;
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
       const unreadBroadcasts = await db
         .collection('notifications')
-        .distinct('broadcastId', { userId, isRead: false, broadcastId: { $exists: true, $ne: null } });
+        .distinct('broadcastId', { userId: { $in: userIds }, isRead: false, broadcastId: { $exists: true, $ne: null } });
 
       await db
         .collection('notifications')
-        .updateMany({ userId, isRead: false }, { $set: { isRead: true } });
+        .updateMany({ userId: { $in: userIds }, isRead: false }, { $set: { isRead: true } });
 
       if (Array.isArray(unreadBroadcasts) && unreadBroadcasts.length > 0) {
         await db.collection('admin_broadcasts').updateMany(
@@ -180,7 +205,7 @@ export async function markAllNotificationsAsRead(userId: string): Promise<boolea
   }
 
   memoryNotifications.forEach((n) => {
-    if (n.userId === userId) {
+    if (userIds.includes(n.userId)) {
       n.isRead = true;
       if (n.broadcastId) {
         const bcast = memoryBroadcasts.find((b) => b.id === n.broadcastId);
@@ -198,21 +223,27 @@ export async function markAllNotificationsAsRead(userId: string): Promise<boolea
  */
 export async function deleteNotification(
   userId: string,
-  notificationId: string
+  notificationId: string,
+  sellerId?: string
 ): Promise<boolean> {
   if (!userId || !notificationId) return false;
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
-      const res = await db.collection('notifications').deleteOne({ id: notificationId, userId });
+      const res = await db.collection('notifications').deleteOne({ id: notificationId, userId: { $in: userIds } });
       return res.deletedCount > 0;
     } catch (e) {
       Logger.error('[NotificationService] Error deleting notification from MongoDB:', e);
     }
   }
 
-  const index = memoryNotifications.findIndex((n) => n.id === notificationId && n.userId === userId);
+  const index = memoryNotifications.findIndex((n) => n.id === notificationId && userIds.includes(n.userId));
   if (index >= 0) {
     memoryNotifications.splice(index, 1);
     return true;
@@ -223,24 +254,30 @@ export async function deleteNotification(
 /**
  * Clear all notifications for the authenticated user.
  */
-export async function clearAllUserNotifications(userId: string): Promise<boolean> {
+export async function clearAllUserNotifications(userId: string, sellerId?: string): Promise<boolean> {
   if (!userId) return false;
+
+  const userIds = [userId];
+  if (sellerId && sellerId !== userId) {
+    userIds.push(sellerId);
+  }
 
   const { db, isMongo } = await getDatabase();
   if (isMongo && db) {
     try {
-      await db.collection('notifications').deleteMany({ userId });
+      await db.collection('notifications').deleteMany({ userId: { $in: userIds } });
       return true;
     } catch (e) {
       Logger.error('[NotificationService] Error clearing user notifications in MongoDB:', e);
     }
   }
 
-  const remaining = memoryNotifications.filter((n) => n.userId !== userId);
+  const remaining = memoryNotifications.filter((n) => !userIds.includes(n.userId));
   memoryNotifications.length = 0;
   memoryNotifications.push(...remaining);
   return true;
 }
+
 
 /**
  * Resolves a seller ID (or workshop ID) to the actual owner user's ID.
@@ -268,21 +305,21 @@ export async function notifyAdmins(params: {
   title: string;
   message: string;
   type?:
-    | 'seller_request'
-    | 'seller_approved'
-    | 'seller_rejected'
-    | 'new_order'
-    | 'order_status'
-    | 'payment_status'
-    | 'payout_request'
-    | 'payout_response'
-    | 'password_request'
-    | 'password_response'
-    | 'account'
-    | 'system'
-    | 'order'
-    | 'product'
-    | 'promotion';
+  | 'seller_request'
+  | 'seller_approved'
+  | 'seller_rejected'
+  | 'new_order'
+  | 'order_status'
+  | 'payment_status'
+  | 'payout_request'
+  | 'payout_response'
+  | 'password_request'
+  | 'password_response'
+  | 'account'
+  | 'system'
+  | 'order'
+  | 'product'
+  | 'promotion';
   link?: string;
   metadata?: any;
 }): Promise<void> {

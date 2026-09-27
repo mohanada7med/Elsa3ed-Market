@@ -15,6 +15,15 @@ const router = express.Router();
 router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
+    if (user.role === 'admin') {
+      return res.json({
+        success: true,
+        data: null,
+        sellerStatus: 'none',
+        message: 'حساب مدير المنصة مخصص للإدارة ولا يرتبط بورشة بائع'
+      });
+    }
+
     const sellerId = user.sellerId || user.id;
     const { db, isMongo } = await getDatabase();
     let sellerDoc: any = null;
@@ -85,6 +94,14 @@ router.get('/status', requireAuth, async (req: AuthenticatedRequest, res: Respon
 router.post('/', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = req.user!;
+    if (user.role === 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'لا يمكن لحساب مدير المنصة إنشاء ورشة أو التقديم كبائع',
+        code: 'ADMIN_CANNOT_BE_SELLER'
+      });
+    }
+
     const {
       workshopName,
       specialty,

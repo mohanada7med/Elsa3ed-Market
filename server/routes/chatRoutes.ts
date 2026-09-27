@@ -25,7 +25,8 @@ function requireAuth(req: AuthenticatedRequest, res: Response, next: Function) {
  */
 router.get('/stream', requireAuth, (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  chatRealtimeService.registerClient(userId, res);
+  const isAdmin = req.user!.role === 'admin';
+  chatRealtimeService.registerClient(userId, res, isAdmin);
 });
 
 /**
@@ -72,37 +73,22 @@ router.get('/conversations', requireAuth, async (req: AuthenticatedRequest, res:
 
 /**
  * 4. POST /api/chat/conversations
- * Start or retrieve a conversation with a seller (business context: product or order)
+ * Start or retrieve a support conversation with Platform Admin
+ * (or between Admin and specific user). Direct Buyer <-> Seller messaging is blocked.
  */
 router.post('/conversations', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { sellerId, productId, orderId, initialMessage } = req.body;
-
-    if (!sellerId) {
-      return res.status(400).json({
-        success: false,
-        error: 'MISSING_SELLER_ID',
-        message: 'معرف الورشة أو البائع مطلوب لبدء المحادثة'
-      });
-    }
-
-    // Prevent user from creating conversation with themselves
-    if (req.user!.sellerId === sellerId || req.user!.id === sellerId) {
-      return res.status(400).json({
-        success: false,
-        error: 'SELF_CONVERSATION',
-        message: 'لا يمكنك بدء محادثة مع حسابك الخاص'
-      });
-    }
+    const { sellerId, buyerId, productId, orderId, initialMessage } = req.body;
 
     const conversation = await ChatService.getOrCreateConversation({
-      buyerId: req.user!.id,
+      buyerId: req.user!.role === 'admin' ? buyerId : req.user!.id,
       buyerName: req.user!.name || req.user!.username,
       buyerAvatar: req.user!.avatar || req.user!.profileImage?.secureUrl,
-      sellerId,
+      sellerId: req.user!.role === 'admin' ? sellerId : (req.user!.role === 'seller' ? (req.user!.sellerId || req.user!.id) : 'admin'),
       productId,
       orderId,
-      initialMessage
+      initialMessage,
+      currentUser: req.user!
     });
 
     return res.json({
@@ -114,7 +100,7 @@ router.post('/conversations', requireAuth, async (req: AuthenticatedRequest, res
     return res.status(500).json({
       success: false,
       error: 'SERVER_ERROR',
-      message: 'فشل بدء المحادثة'
+      message: 'فشل بدء المحادثة مع الإدارة'
     });
   }
 });
@@ -253,6 +239,183 @@ router.patch('/conversations/:id/read', requireAuth, async (req: AuthenticatedRe
       success: false,
       error: 'SERVER_ERROR',
       message: 'فشل تحديث حالة القراءة'
+    });
+  }
+});
+
+/**
+ * 9. DELETE /api/chat/conversations
+ * Admin: Bulk delete all conversations from DB
+ */
+router.delete('/conversations', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await ChatService.deleteAllConversations(req.user!);
+    return res.json({
+      success: true,
+      message: 'تم مسح كافة المحادثات من قاعدة البيانات بنجاح'
+    });
+  } catch (error: any) {
+    if (error.message === 'FORBIDDEN_ADMIN_ONLY') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'هذا الإجراء متاح فقط لمدير المنصة'
+      });
+    }
+    Logger.error('[ChatAPI] Error wiping all conversations:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'فشل مسح المحادثات من قاعدة البيانات'
+    });
+  }
+});
+
+/**
+ * 10. DELETE /api/chat/conversations/:id
+ * Admin: Permanently delete a conversation and its messages from DB
+ */
+router.delete('/conversations/:id', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await ChatService.deleteConversation(req.params.id, req.user!);
+    return res.json({
+      success: true,
+      message: 'تم حذف المحادثة نهائياً من قاعدة البيانات'
+    });
+  } catch (error: any) {
+    if (error.message === 'FORBIDDEN_ADMIN_ONLY') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'هذا الإجراء متاح فقط لمدير المنصة'
+      });
+    }
+    if (error.message === 'CONVERSATION_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: 'المحادثة غير موجودة'
+      });
+    }
+    Logger.error('[ChatAPI] Error deleting conversation:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'فشل حذف المحادثة من قاعدة البيانات'
+    });
+  }
+});
+
+/**
+ * 11. DELETE /api/chat/messages/:messageId
+ * Admin: Permanently delete a single message from DB
+ */
+router.delete('/messages/:messageId', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await ChatService.deleteMessage(req.params.messageId, req.user!);
+    return res.json({
+      success: true,
+      message: 'تم حذف الرسالة نهائياً من قاعدة البيانات'
+    });
+  } catch (error: any) {
+    if (error.message === 'FORBIDDEN_ADMIN_ONLY') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'هذا الإجراء متاح فقط لمدير المنصة'
+      });
+    }
+    if (error.message === 'MESSAGE_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: 'الرسالة غير موجودة'
+      });
+    }
+    Logger.error('[ChatAPI] Error deleting message:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'فشل حذف الرسالة'
+    });
+  }
+});
+
+/**
+ * 12. POST /api/chat/conversations/:id/clear
+ * Admin: Clear all messages from conversation without deleting conversation thread
+ */
+router.post('/conversations/:id/clear', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    await ChatService.clearConversationMessages(req.params.id, req.user!);
+    return res.json({
+      success: true,
+      message: 'تم إفراغ سجل الرسائل بنجاح'
+    });
+  } catch (error: any) {
+    if (error.message === 'FORBIDDEN_ADMIN_ONLY') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'هذا الإجراء متاح فقط لمدير المنصة'
+      });
+    }
+    if (error.message === 'CONVERSATION_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: 'المحادثة غير موجودة'
+      });
+    }
+    Logger.error('[ChatAPI] Error clearing conversation messages:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'فشل إفراغ سجل المحادثة'
+    });
+  }
+});
+
+/**
+ * 13. PATCH /api/chat/conversations/:id/status
+ * Admin: Change conversation status (active, archived, blocked)
+ */
+router.patch('/conversations/:id/status', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { status } = req.body;
+    if (!['active', 'archived', 'blocked'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'INVALID_STATUS',
+        message: 'الحالة يجب أن تكون active أو archived أو blocked'
+      });
+    }
+
+    const updated = await ChatService.updateConversationStatus(req.params.id, status, req.user!);
+    return res.json({
+      success: true,
+      data: updated
+    });
+  } catch (error: any) {
+    if (error.message === 'FORBIDDEN_ADMIN_ONLY') {
+      return res.status(403).json({
+        success: false,
+        error: 'FORBIDDEN',
+        message: 'هذا الإجراء متاح فقط لمدير المنصة'
+      });
+    }
+    if (error.message === 'CONVERSATION_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        error: 'NOT_FOUND',
+        message: 'المحادثة غير موجودة'
+      });
+    }
+    Logger.error('[ChatAPI] Error updating conversation status:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'SERVER_ERROR',
+      message: 'فشل تحديث حالة المحادثة'
     });
   }
 });

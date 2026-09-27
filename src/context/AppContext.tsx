@@ -311,7 +311,8 @@ interface AppContextType {
   refreshChatUnreadCount: () => Promise<void>;
   activeConversationId: string | null;
   setActiveConversationId: (id: string | null) => void;
-  openChatWithArtisan: (params: { sellerId: string; productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
+  openChatWithArtisan: (params: { sellerId?: string; productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
+  openChatWithAdmin: (params?: { productId?: string; orderId?: string; initialMessage?: string }) => Promise<void>;
 
   // Global Confirm Dialog
   confirmModalState: ConfirmModalOptions | null;
@@ -1222,7 +1223,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Sync notificationService subscriber to AppContext state
   useEffect(() => {
     const unsubscribe = notificationService.subscribe(() => {
-      const list = notificationService.getNotifications(currentRole, currentUser?.sellerId || currentUser?.id);
+      const list = notificationService.getNotifications(currentRole, currentUser?.id, currentUser?.sellerId);
       setNotifications(list);
       setUnreadNotificationsCount(list.filter((n) => !n.read).length);
     });
@@ -1689,9 +1690,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [isAuthenticated, currentUser?.id, refreshChatUnreadCount, addToast]);
 
-  // Open Chat with Artisan Action
-  const openChatWithArtisan = useCallback(async (params: {
-    sellerId: string;
+  // Open Support Chat with Admin Action (Direct Buyer <-> Seller messaging is strictly blocked)
+  const openChatWithAdmin = useCallback(async (params?: {
     productId?: string;
     orderId?: string;
     initialMessage?: string;
@@ -1699,13 +1699,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!isAuthenticated || !currentUser?.id) {
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
-      addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول لبدء المحادثة المباشرة مع الحرفي', 'info');
+      addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول للتواصل مع إدارة المنصة والدعم الفني', 'info');
       return;
     }
 
     try {
       setIsLoading(true);
-      const conv = await api.getOrCreateConversation(params, {
+      const conv = await api.getOrCreateConversation({
+        ...params,
+        sellerId: 'admin'
+      }, {
         id: currentUser.id,
         role: currentRole,
         sellerId: currentUser.sellerId || currentUser.id
@@ -1720,11 +1723,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refreshChatUnreadCount();
     } catch (err: any) {
       console.error('[AppContext] Failed to open conversation:', err);
-      addToast('خطأ في المحادثة', err?.message || 'تعذر بدء المحادثة، يرجى المحاولة لاحقاً', 'error');
+      addToast('خطأ في المحادثة', err?.message || 'تعذر بدء المحادثة مع الإدارة، يرجى المحاولة لاحقاً', 'error');
     } finally {
       setIsLoading(false);
     }
   }, [isAuthenticated, currentUser, currentRole, setActivePage, refreshChatUnreadCount, addToast]);
+
+  const openChatWithArtisan = useCallback(async (params: {
+    sellerId?: string;
+    productId?: string;
+    orderId?: string;
+    initialMessage?: string;
+  }) => {
+    // Redirect all requests strictly to platform admin support
+    return openChatWithAdmin(params);
+  }, [openChatWithAdmin]);
 
 
 
@@ -1815,6 +1828,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setCurrentUser(GUEST_USER);
       setCurrentRole('guest');
       setAuthState('UNAUTHENTICATED');
+      setNotifications([]);
+      setUnreadNotificationsCount(0);
+      notificationService.clearMemory();
+      setChatUnreadCount(0);
       // If the user is on a protected page, navigate to public homepage
       setActivePage((prev) => {
         if (['buyer-account', 'seller-dashboard', 'admin-dashboard', 'checkout', 'favorites'].includes(prev)) {
@@ -2486,6 +2503,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     payoutMethod?: string;
     payoutAccount?: string;
   }) => {
+    if (currentRole === 'admin' || currentUser?.role === 'admin') {
+      addToast('غير مسموح', 'لا يمكن لحساب مدير المنصة إنشاء ورشة أو التقديم كبائع', 'warning');
+      throw new Error('لا يمكن لحساب مدير المنصة إنشاء ورشة أو التقديم كبائع');
+    }
+
     try {
       const result = await api.applyToBecomeSeller({ id: currentUser.id, role: currentRole }, data);
       const freshUser = await api.getMe();
@@ -3186,6 +3208,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeConversationId,
         setActiveConversationId,
         openChatWithArtisan,
+        openChatWithAdmin,
 
         confirmModalState,
         confirmModal,

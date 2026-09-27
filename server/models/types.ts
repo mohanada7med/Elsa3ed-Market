@@ -587,6 +587,10 @@ export interface ConversationDocument {
   sellerId: string;
   sellerName: string;
   sellerAvatar?: string;
+  conversationType?: 'buyer_support' | 'seller_support';
+  participantRole?: 'buyer' | 'seller';
+  participantId?: string;
+  participantName?: string;
   productId?: string;
   productTitle?: string;
   productImage?: string;

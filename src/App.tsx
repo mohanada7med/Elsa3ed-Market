@@ -77,7 +77,7 @@ import { NotificationsPage } from './components/pages/NotificationsPage';
 import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 
-import { WhatsAppButton } from './components/common/WhatsAppButton';
+import { AmWahSupportButton } from './components/common/AmWahSupportButton';
 
 // Dynamic code-splitting for heavy non-public dashboard and heavy standalone page bundles
 const SellerDashboard = lazyWithRetry(() =>
@@ -403,9 +403,9 @@ const MainContent: React.FC = () => {
                     <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-primary-hover flex items-center justify-center mx-auto text-2xl">
                       💬
                     </div>
-                    <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">المحادثة المباشرة مع الحرفيين</h2>
+                    <h2 className="text-xl font-bold text-stone-900 dark:text-stone-100">مراسلة إدارة منصة وه (الدعم الفني)</h2>
                     <p className="text-sm text-stone-500 dark:text-stone-400 leading-relaxed">
-                      يرجى تسجيل الدخول لبدء أو استكمال محادثاتك مع ورش الحرف التراثية ومتابعة استفساراتك.
+                      يرجى تسجيل الدخول للتواصل مباشرة مع فريق إدارة المنصة والدعم الفني ومتابعة استفساراتك.
                     </p>
                     <button
                       type="button"
@@ -535,20 +535,22 @@ const MainContent: React.FC = () => {
                     >
                       تسجيل دخول البائع
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (isAuthenticated) {
-                          setActivePage('buyer-account');
-                        } else {
-                          setAuthModalTab('register');
-                          setIsAuthModalOpen(true);
-                        }
-                      }}
-                      className="w-full py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
-                    >
-                      تقديم طلب انضمام ورشة جديدة
-                    </button>
+                    {currentRole !== 'admin' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isAuthenticated) {
+                            setActivePage('buyer-account');
+                          } else {
+                            setAuthModalTab('register');
+                            setIsAuthModalOpen(true);
+                          }
+                        }}
+                        className="w-full py-2.5 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 text-espresso dark:text-cream font-bold rounded-xl text-xs hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                      >
+                        تقديم طلب انضمام ورشة جديدة
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -643,8 +645,8 @@ const MainContent: React.FC = () => {
 
       <Footer />
 
-      {/* Floating Direct WhatsApp Support & Inquiries */}
-      <WhatsAppButton />
+      {/* Floating Uncle Wah Technical Support Concierge (عم وه - الدعم الفني) */}
+      <AmWahSupportButton />
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />

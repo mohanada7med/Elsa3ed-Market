@@ -39,7 +39,7 @@ const SELLER_SECTION_LABELS: Record<string, string> = {
   'seller-products': 'إدارة المنتجات والمقتنيات',
   'seller-inventory': 'المخزون والكميات',
   'seller-orders': 'طلبات الورشة الواردة',
-  'seller-messages': 'محادثات الزبائن',
+  'seller-messages': 'مراسلة إدارة المنصة',
   'seller-payouts': 'المستحقات والأرباح',
   'seller-analytics': 'تقارير المبيعات والإحصائيات',
   'seller-account': 'إعدادات متجر الورشة'
@@ -328,7 +328,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
     } else if (activePage === 'messages') {
       items.push({
         id: 'messages',
-        label: 'المحادثات المباشرة مع الحرفيين',
+        label: 'مراسلة إدارة المنصة (الدعم الفني)',
         url: `${origin}/messages`,
         isCurrent: true
       });

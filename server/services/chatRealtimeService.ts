@@ -6,6 +6,7 @@ interface ClientConnection {
   userId: string;
   res: Response;
   connectedAt: number;
+  isAdmin?: boolean;
 }
 
 class ChatRealtimeService {
@@ -23,7 +24,7 @@ class ChatRealtimeService {
   /**
    * Register a new SSE connection for a specific authenticated user
    */
-  public registerClient(userId: string, res: Response): void {
+  public registerClient(userId: string, res: Response, isAdmin: boolean = false): void {
     if (!userId || !res) return;
 
     // Set SSE headers
@@ -36,7 +37,8 @@ class ChatRealtimeService {
     const connection: ClientConnection = {
       userId,
       res,
-      connectedAt: Date.now()
+      connectedAt: Date.now(),
+      isAdmin
     };
 
     if (!this.clients.has(userId)) {
@@ -48,10 +50,11 @@ class ChatRealtimeService {
     this.sendEventToConnection(connection, 'connected', {
       status: 'connected',
       userId,
+      isAdmin,
       timestamp: new Date().toISOString()
     });
 
-    Logger.info(`[ChatSSE] User ${userId} connected. Active connections for user: ${this.clients.get(userId)!.size}`);
+    Logger.info(`[ChatSSE] User ${userId} (${isAdmin ? 'Admin' : 'User'}) connected. Active connections for user: ${this.clients.get(userId)!.size}`);
 
     // Handle connection close
     res.on('close', () => {
@@ -67,9 +70,24 @@ class ChatRealtimeService {
   }
 
   /**
-   * Dispatch an event to all open connections of a user
+   * Dispatch an event to all open connections of a user (or all admins if userId === 'admin')
    */
   public notifyUser(userId: string, event: string, data: any): void {
+    if (userId === 'admin') {
+      for (const [uid, conns] of this.clients.entries()) {
+        for (const conn of conns) {
+          if (conn.isAdmin) {
+            try {
+              this.sendEventToConnection(conn, event, data);
+            } catch (err) {
+              Logger.error(`[ChatSSE] Failed to send event to admin ${uid}:`, err);
+            }
+          }
+        }
+      }
+      return;
+    }
+
     const userConns = this.clients.get(userId);
     if (!userConns || userConns.size === 0) return;
 
@@ -86,7 +104,7 @@ class ChatRealtimeService {
    * Broadcast new message to recipient and sender
    */
   public broadcastNewMessage(message: MessageDocument, conversation: ConversationDocument): void {
-    // 1. Notify the receiver
+    // 1. Notify the receiver (if 'admin', all active admins receive it)
     this.notifyUser(message.receiverId, 'chat:new_message', {
       message,
       conversation
@@ -116,6 +134,33 @@ class ChatRealtimeService {
   public broadcastConversationUpdate(conversation: ConversationDocument): void {
     this.notifyUser(conversation.buyerId, 'chat:conversation_updated', { conversation });
     this.notifyUser(conversation.sellerId, 'chat:conversation_updated', { conversation });
+  }
+
+  /**
+   * Broadcast conversation deletion to participants and admins
+   */
+  public broadcastConversationDeleted(conversationId: string, buyerId: string, sellerId: string): void {
+    this.notifyUser(buyerId, 'chat:conversation_deleted', { conversationId });
+    this.notifyUser(sellerId, 'chat:conversation_deleted', { conversationId });
+    this.notifyUser('admin', 'chat:conversation_deleted', { conversationId });
+  }
+
+  /**
+   * Broadcast message deletion to participants and admins
+   */
+  public broadcastMessageDeleted(conversationId: string, messageId: string, buyerId?: string, sellerId?: string): void {
+    if (buyerId) this.notifyUser(buyerId, 'chat:message_deleted', { conversationId, messageId });
+    if (sellerId) this.notifyUser(sellerId, 'chat:message_deleted', { conversationId, messageId });
+    this.notifyUser('admin', 'chat:message_deleted', { conversationId, messageId });
+  }
+
+  /**
+   * Broadcast conversation messages cleared
+   */
+  public broadcastConversationCleared(conversationId: string, buyerId: string, sellerId: string): void {
+    this.notifyUser(buyerId, 'chat:conversation_cleared', { conversationId });
+    this.notifyUser(sellerId, 'chat:conversation_cleared', { conversationId });
+    this.notifyUser('admin', 'chat:conversation_cleared', { conversationId });
   }
 
   /**

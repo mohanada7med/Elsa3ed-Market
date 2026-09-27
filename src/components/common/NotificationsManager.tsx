@@ -93,10 +93,8 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   const [broadcastError, setBroadcastError] = useState<string | null>(null);
   const [broadcastSuccessMessage, setBroadcastSuccessMessage] = useState<string | null>(null);
 
-  const targetSellerId = currentUser?.sellerId || currentUser?.id;
-
   const refreshList = () => {
-    const list = notificationService.getNotifications(viewMode, targetSellerId);
+    const list = notificationService.getNotifications(viewMode, currentUser?.id, currentUser?.sellerId);
     setNotifications(list);
   };
 
@@ -132,7 +130,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
     return () => {
       unsub();
     };
-  }, [viewMode, targetSellerId]);
+  }, [viewMode, currentUser?.id, currentUser?.sellerId]);
 
   useEffect(() => {
     if (viewMode === 'admin') {
@@ -149,7 +147,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   };
 
   const handleMarkAllAsRead = () => {
-    notificationService.markAllAsRead(viewMode, targetSellerId);
+    notificationService.markAllAsRead();
     refreshList();
     addToast('تم التحديث', 'تم تعليم كافة الإشعارات كمقروءة', 'success');
   };
@@ -166,7 +164,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
       confirmText: 'مسح السجل',
       danger: true,
       onConfirm: async () => {
-        notificationService.clearAll(viewMode, targetSellerId);
+        notificationService.clearAll();
         refreshList();
         addToast('تم المسح', 'تم مسح سجل الإشعارات بنجاح', 'info');
       }

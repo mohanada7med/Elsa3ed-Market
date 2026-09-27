@@ -1452,11 +1452,8 @@ export const ProductDetailsView: React.FC = () => {
                     type="button"
                     onClick={() =>
                       openChatWithArtisan({
-                        sellerId:
-                          product.sellerId ||
-                          product.id,
                         productId: product.id,
-                        initialMessage: `سلام عليكم يا معلم، كنت عايز أسأل عن "${product.title}" المعروضة على سوق وه.`,
+                        initialMessage: `السلام عليكم، أود الاستفسار من إدارة المنصة حول عمل "${product.title}" المعروض على سوق وه.`,
                       })
                     }
                     className="
@@ -1485,7 +1482,7 @@ export const ProductDetailsView: React.FC = () => {
                     "
                   >
                     <MessageSquare size={16} />
-                    تواصل مع الحرفي
+                    استفسار لإدارة المنصة حول هذا المنتج
                   </button>
                 </>
               ) : currentRole === 'seller' ? (
@@ -2735,134 +2732,6 @@ export const ProductDetailsView: React.FC = () => {
           </section>
         )}
       </div>
-
-      {/* ========================================= */}
-      {/* MOBILE STICKY CART */}
-      {/* ========================================= */}
-
-      {(currentRole === 'buyer' ||
-        !isAuthenticated) &&
-        product.inStock && (
-          <div
-            className="
-              fixed
-              bottom-0
-              left-0
-              right-0
-              z-50
-              border-t
-              border-black/10
-              bg-cream/95
-              p-3
-              pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]
-              shadow-[0_-10px_40px_rgba(0,0,0,0.12)]
-              backdrop-blur-2xl
-              dark:border-white/10
-              dark:bg-espresso-900/95
-              sm:hidden
-            "
-          >
-            <div className="flex items-center gap-3">
-              <div className="min-w-0">
-                <div className="text-[9px] text-black/40 dark:text-white/35">
-                  الإجمالي
-                </div>
-
-                <div className="text-base font-black text-primary dark:text-primary-hover">
-                  {totalPrice} ج.م
-                </div>
-              </div>
-
-              <div
-                className="
-                  flex
-                  shrink-0
-                  items-center
-                  rounded-xl
-                  border
-                  border-black/10
-                  bg-black/[0.03]
-                  dark:border-white/10
-                  dark:bg-cream/[0.03]
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setQuantity(
-                      Math.max(1, quantity - 1)
-                    )
-                  }
-                  className="
-                    flex
-                    h-10
-                    w-9
-                    items-center
-                    justify-center
-                    cursor-pointer
-                  "
-                >
-                  <Minus size={14} />
-                </button>
-
-                <span className="w-7 text-center text-xs font-black">
-                  {quantity}
-                </span>
-
-                <button
-                  type="button"
-                  disabled={quantity >= stockCount}
-                  onClick={() =>
-                    setQuantity(
-                      Math.min(
-                        stockCount || 99,
-                        quantity + 1
-                      )
-                    )
-                  }
-                  className="
-                    flex
-                    h-10
-                    w-9
-                    items-center
-                    justify-center
-                    disabled:opacity-30
-                    cursor-pointer
-                  "
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={() =>
-                  addToCart(product, quantity)
-                }
-                className="
-                  flex
-                  min-h-11
-                  flex-1
-                  items-center
-                  justify-center
-                  gap-2
-                  rounded-xl
-                  bg-espresso
-                  px-3
-                  text-xs
-                  font-black
-                  text-white
-                  dark:bg-cream
-                  dark:text-black
-                  cursor-pointer
-                "
-              >
-                <ShoppingBag size={16} />
-                حط في السلة
-              </button>
-            </div>
-          </div>
-        )}
     </main>
   );
 };

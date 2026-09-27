@@ -58,8 +58,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const targetSellerId = currentUser?.sellerId || currentUser?.id;
-
   const role = currentRole as 'admin' | 'seller' | 'buyer';
 
   /* =========================================================
@@ -69,7 +67,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const loadNotifications = () => {
     const list = notificationService.getNotifications(
       role,
-      targetSellerId
+      currentUser?.id,
+      currentUser?.sellerId
     );
 
     setNotifications(list);
@@ -81,7 +80,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     return () => {
       unsub();
     };
-  }, [currentRole, targetSellerId]);
+  }, [currentRole, currentUser?.id, currentUser?.sellerId]);
 
   /* =========================================================
      OUTSIDE CLICK
@@ -169,11 +168,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   const handleMarkAllAsRead = () => {
-    notificationService.markAllAsRead(
-      role,
-      targetSellerId
-    );
-
+    notificationService.markAllAsRead();
     loadNotifications();
   };
 
@@ -195,10 +190,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       confirmText: 'مسح الكل',
       danger: true,
       onConfirm: async () => {
-        notificationService.clearAll(
-          role,
-          targetSellerId
-        );
+        notificationService.clearAll();
         loadNotifications();
       }
     });

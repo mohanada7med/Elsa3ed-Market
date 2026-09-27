@@ -565,15 +565,18 @@ export async function deleteSellerCompletely(
   memoryDb.products = memoryDb.products.filter((p) => p.sellerId !== targetSellerId && p.sellerId !== targetUserId);
   memoryDb.stockMovements = memoryDb.stockMovements.filter((m) => m.sellerId !== targetSellerId && m.sellerId !== targetUserId);
 
-  // 2. حذف فيديوهات الحرفيين (Reels) المرتبطة
+  // 2. حذف أو فك ارتباط فيديوهات الحرفيين (Reels) المرتبطة
   if (isMongo && db) {
-    const sellerReels = await db.collection('craft_reels').find({ sellerId: { $in: [targetSellerId, targetUserId] } }).toArray();
+    const sellerReels = await db.collection('reels').find({ sellerId: { $in: [targetSellerId, targetUserId] } }).toArray();
     deletedReelsCount = sellerReels.length;
-    await db.collection('craft_reels').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+    await db.collection('reels').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+    try {
+      await db.collection('craft_reels').deleteMany({ sellerId: { $in: [targetSellerId, targetUserId] } });
+    } catch { }
   }
-  memoryDb.craftReels = memoryDb.craftReels.filter((r) => r.sellerId !== targetSellerId && r.sellerId !== targetUserId);
+  memoryDb.craftReels = memoryDb.craftReels ? memoryDb.craftReels.filter((r: any) => r.sellerId !== targetSellerId && r.sellerId !== targetUserId) : [];
 
-  // 3. حذف سجل الورشة وحساب المستخدم المرتبط
+  // 3. حذف سجل الورشة وحساب المستخدم المرتبط (مع حماية حساب المدير إن وجد)
   if (isMongo && db) {
     const sellerFilter: any[] = [{ id: targetSellerId }, { userId: targetUserId }];
     if (ObjectId.isValid(targetSellerId) && targetSellerId.length === 24) {
@@ -585,11 +588,30 @@ export async function deleteSellerCompletely(
     if (ObjectId.isValid(targetUserId) && targetUserId.length === 24) {
       try { userFilter.push({ _id: new ObjectId(targetUserId) }); } catch { }
     }
-    await db.collection('users').deleteMany({ $or: userFilter });
+    const targetUser = await db.collection('users').findOne({ $or: userFilter });
+    if (targetUser && targetUser.role === 'admin') {
+      // حماية حساب المدير: تفريغ بيانات الورشة دون حذف الحساب
+      await db.collection('users').updateOne(
+        { _id: targetUser._id },
+        { $unset: { sellerId: "", sellerStatus: "", seller: "", sellerRequest: "" } }
+      );
+    } else {
+      await db.collection('users').deleteMany({ $or: userFilter });
+    }
   }
 
   memoryDb.sellers = memoryDb.sellers.filter((s) => s.id !== targetSellerId && (s as any).userId !== targetUserId);
-  memoryDb.users = memoryDb.users.filter((u) => u.id !== targetUserId && u.id !== targetSellerId);
+  memoryDb.users = memoryDb.users.filter((u) => {
+    if (u.id === targetUserId || u.id === targetSellerId) {
+      if (u.role === 'admin') {
+        delete (u as any).sellerId;
+        delete (u as any).seller;
+        return true;
+      }
+      return false;
+    }
+    return true;
+  });
 
   cacheService.invalidateSellers(targetSellerId);
   cacheService.invalidateProducts();

@@ -12,6 +12,7 @@ export type Governorate =
   | 'بني سويف'
   | 'الوادي الجديد'
   | 'الفيوم'
+  | 'البحر الاحمر'
   | 'القاهرة'
   | 'الجيزة'
   | 'الإسكندرية'
@@ -528,6 +529,10 @@ export interface Conversation {
   sellerId: string;
   sellerName: string;
   sellerAvatar?: string;
+  conversationType?: 'buyer_support' | 'seller_support';
+  participantRole?: 'buyer' | 'seller';
+  participantId?: string;
+  participantName?: string;
   productId?: string;
   productTitle?: string;
   productImage?: string;
@@ -1171,11 +1176,3 @@ export interface ReportTicket {
   createdAt: string;
   updatedAt: string;
 }
-
-
-
-
-
-
-
-
