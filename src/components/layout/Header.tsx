@@ -342,96 +342,107 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     </div>
   );
 };
+
 /* =========================================================
-   WAH PORTALS PREVIEW INFO (FOR HOVER CARDS)
+   WAH PORTALS PREVIEW INFO (CHARACTERS & MASCOTS FROM /public)
    ========================================================= */
 export interface PortalPreviewItem {
   title: string;
   desc: string;
-  image: string;
+  avatar: string;
   badge: string;
+  accentColor: string;
 }
 
 const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
   map: {
-    title: 'خريطة الصعيد التفاعلية',
-    desc: 'اكتشف محافظات وقرى الصعيد وتراث كل بلد على ضفاف النيل.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
-    badge: 'الخريطة الحية',
+    title: 'جولة عم وه في الصعيد',
+    desc: 'تعالى نمشي مع عم وه في خريطة الصعيد ونكتشف كل محافظة وقرية ومكان له حكاية.',
+    avatar: '/mascot/saaed.png',
+    badge: 'جولة عم وه',
+    accentColor: '#9a6a35',
   },
+
   places: {
-    title: 'آثار ومعالم الصعيد',
-    desc: 'معابد الكرنك ودندرة وإدفو، قصور المنيا وبيوت غرب سهيل النوبية.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
-    badge: 'معالم متوثقة',
+    title: 'عم وه في حكايات زمان',
+    desc: 'جولة بين المعابد والمقابر والبيوت والأماكن القديمة اللي لسه بتحكي حكايات أهلها.',
+    avatar: '/mascot/athar.png',
+    badge: 'جولة عم وه',
+    accentColor: '#b45f42',
   },
+
   people: {
-    title: 'أعلام ورموز الصعيد',
-    desc: 'شيوخ الصنعة ورواة السير والأدباء والشعراء الكبار.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
-    badge: 'حُرّاس الأصل',
+    title: 'عم وه مع ناس الصعيد',
+    desc: 'نتعرف مع عم وه على شخصيات وناس من الصعيد، وكل واحد منهم وراه حكاية تستاهل تتحكي.',
+    avatar: '/mascot/fan.png',
+    badge: 'جولة عم وه',
+    accentColor: '#9a6a35',
   },
+
   food: {
-    title: 'طعم الصعيد البلدي',
-    desc: 'طبيخ الطواجن، عيش شمسي سخن، وفايش بلبن الحمص.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
-    badge: 'أكل بيوت',
+    title: 'عم وه على سفرة الصعيد',
+    desc: 'جولة مع عم وه في أكلات الصعيد ووصفاته وحكايات الأكل اللي اتنقلت من جيل لجيل.',
+    avatar: '/mascot/foods.png',
+    badge: 'جولة عم وه',
+    accentColor: '#d6aa72',
   },
+
   events: {
-    title: 'مواسم وليالي الصعيد',
-    desc: 'حلقات التحطيب، ليالي الموالد، وزغاريد الأفراح والمواسم.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
-    badge: 'ليالي الجنوب',
+    title: 'عم وه في مواسم الصعيد',
+    desc: 'نلف مع عم وه في الموالد والمواسم والاحتفالات والعادات اللي بتجمع أهل الصعيد.',
+    avatar: '/mascot/events.png',
+    badge: 'جولة عم وه',
+    accentColor: '#b45f42',
   },
+
   reels: {
-    title: 'ريلز وحكاوي وه',
-    desc: 'فيديوهات قصيرة تاخدك جوة حيطان الورش وأزقة الأسواق.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
-    badge: 'فيديوهات حية',
+    title: 'عم وه بيحكيلك',
+    desc: 'حكايات قصيرة من قلب الصعيد، أماكن وناس وحرف بنشوفها مع عم وه بطريقة مختلفة.',
+    avatar: '/mascot/reels.png',
+    badge: 'حكايات عم وه',
+    accentColor: '#9a6a35',
   },
+
   sellers: {
-    title: 'شيوخ الصنعة والورش',
-    desc: 'دكاكين وورش الحرفيين الأصليين في الفخار والخزف والنسيج.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
-    badge: 'ورش الصعايدة',
+    title: 'عم وه عند أهل الصنعة',
+    desc: 'جولة بين ورش وحرفيي الصعيد، نشوف الصنعة وهي بتتعمل ونسمع حكاية كل صاحب حرفة.',
+    avatar: '/mascot/pro.png',
+    badge: 'جولة عم وه',
+    accentColor: '#9a6a35',
   },
+
   categories: {
-    title: 'التصنيفات التراثية',
-    desc: 'تصفح كل منتجات وحرف الصعيد مقسمة حسب الصناعة والخامات.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
-    badge: 'حرف أصيلة',
+    title: 'عم وه يكتشف الحرف',
+    desc: 'تعالى مع عم وه نتعرف على حرف الصعيد وخاماته، من الفخار والتلي للنسيج والجريد.',
+    avatar: '/mascot/fav.png',
+    badge: 'جولة عم وه',
+    accentColor: '#d6aa72',
   },
+
   quize: {
-    title: 'انت صعيدي؟ (لعبة اللهجة)',
-    desc: 'تحدي تفاعلي سريع يختبر معرفتك بأصالة الكلمات والمصطلحات الصعيدية.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
-    badge: 'تحدي ولعبة',
+    title: 'عم وه بيختبرك',
+    desc: 'فاكر إنك صعيدي أصيل؟ عم وه هيختبرك في اللهجة والكلمات والأمثال ومعانيها.',
+    avatar: '/mascot/quiz.png',
+    badge: 'تحدي عم وه',
+    accentColor: '#b45f42',
   },
+
   quiz: {
-    title: 'انت صعيدي؟ (لعبة اللهجة)',
-    desc: 'تحدي تفاعلي سريع يختبر معرفتك بأصالة الكلمات والمصطلحات الصعيدية.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
-    badge: 'تحدي ولعبة',
+    title: 'عم وه بيختبرك',
+    desc: 'فاكر إنك صعيدي أصيل؟ عم وه هيختبرك في اللهجة والكلمات والأمثال ومعانيها.',
+    avatar: '/mascot/quiz.png',
+    badge: 'تحدي عم وه',
+    accentColor: '#b45f42',
   },
+
   about: {
-    title: 'عن منصة وه',
-    desc: 'قصة ورسالة إحياء الحرف التراثية وتوثيق كل شبر في الصعيد.',
-    image:
-      'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
-    badge: 'حكاية وه',
+    title: 'عم وه يحكيلك عن وَه',
+    desc: 'اقعد مع عم وه واعرف حكاية وَه، وليه بنوثق تراث الصعيد وحكاياته ونوصلها لكل الناس.',
+    avatar: '/mascot/logo.png',
+    badge: 'حكاية عم وه',
+    accentColor: '#9a6a35',
   },
 };
-
 /* =========================================================
    HEADER
    ========================================================= */
@@ -2050,7 +2061,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
         {/* =========================================================
             وَه — SIGNATURE HEADER
-            Minimal / Editorial / Heritage (Extended Logo Center)
+            Interactive Heritage Preview Cards + Extended Logo Center
         ========================================================= */}
         <div
           className="hidden lg:block relative z-[100] select-none"
@@ -2075,7 +2086,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             />
 
             <div className="mx-auto flex h-[68px] max-w-[1450px] items-center px-8 overflow-visible">
-
               {/* RIGHT NAVIGATION */}
               <div className="flex flex-1 items-center justify-end gap-1">
                 {roleNavLinks
@@ -2208,7 +2218,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           )}
                         </motion.button>
 
-                        {/* بطاقة المعاينة التفاعلية الأنيقة */}
+                        {/* بطاقة الكراكتر التفاعلية */}
                         <AnimatePresence>
                           {isHovered && preview && (
                             <motion.div
@@ -2223,11 +2233,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 right-1/2
                                 translate-x-1/2
                                 z-[500]
-                                w-64
+                                w-[250px]
                                 overflow-hidden
-                                rounded-2xl
+                                rounded-3xl
                                 border shadow-2xl
                                 backdrop-blur-2xl
+                                p-4
                               "
                               style={{
                                 backgroundColor: isDark
@@ -2238,39 +2249,67 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   : 'rgba(154, 106, 53, 0.22)',
                               }}
                             >
-                              <div className="relative h-28 w-full overflow-hidden bg-black/10">
-                                <img
-                                  src={preview.image}
-                                  alt={preview.title}
-                                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                                <span
-                                  className="
-                                    absolute top-2.5 right-2.5
-                                    rounded-full px-2 py-0.5
-                                    text-[9px] font-black text-white shadow-sm
-                                  "
-                                  style={{ backgroundColor: '#9a6a35' }}
-                                >
-                                  {preview.badge}
-                                </span>
+                              <div className="flex items-center gap-3">
+                                <div className="relative shrink-0">
+                                  <div
+                                    className="h-14 w-14 rounded-full overflow-hidden border-2 p-0.5 shadow-md flex items-center justify-center"
+                                    style={{
+                                      borderColor: preview.accentColor,
+                                      backgroundColor: isDark
+                                        ? '#1a1816'
+                                        : '#f5f0e7',
+                                    }}
+                                  >
+                                    <img
+                                      src={preview.avatar}
+                                      className="h-full w-full object-cover rounded-full"
+                                    />
+                                  </div>
+                                  <span
+                                    className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2"
+                                    style={{
+                                      backgroundColor: preview.accentColor,
+                                      borderColor: isDark ? '#12100e' : '#fff',
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="min-w-0 flex-1 text-right">
+                                  <span
+                                    className="inline-block rounded-full px-2 py-0.5 text-[8px] font-black text-white"
+                                    style={{
+                                      backgroundColor: preview.accentColor,
+                                    }}
+                                  >
+                                    {preview.badge}
+                                  </span>
+                                  <p
+                                    className="mt-1 text-xs font-black truncate"
+                                    style={{ color: mainText }}
+                                  >
+                                  </p>
+                                  <p
+                                    className="text-[10px] font-bold opacity-75"
+                                    style={{ color: secondaryText }}
+                                  >
+                                    {preview.title}
+                                  </p>
+                                </div>
                               </div>
 
-                              <div className="p-3 text-right">
-                                <h4
-                                  className="text-xs font-black truncate"
-                                  style={{ color: mainText }}
-                                >
-                                  {preview.title}
-                                </h4>
-                                <p
-                                  className="mt-1 text-[11px] leading-relaxed line-clamp-2"
-                                  style={{ color: secondaryText }}
-                                >
-                                  {preview.desc}
-                                </p>
-                              </div>
+                              <div
+                                className="my-2.5 h-px w-full"
+                                style={{
+                                  background: `linear-gradient(90deg, transparent, ${preview.accentColor}40, transparent)`,
+                                }}
+                              />
+
+                              <p
+                                className="text-[11px] leading-relaxed text-right line-clamp-2"
+                                style={{ color: secondaryText }}
+                              >
+                                {preview.desc}
+                              </p>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -2280,7 +2319,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
 
               {/* ===================================================
-                  CENTER BRAND - EXTENDED HERO LOGO
+                  CENTER BRAND - EXTENDED HERO LOGO (NO SHADOW)
               =================================================== */}
               <div className="relative mx-12 lg:mx-3 shrink-0 flex items-center justify-center select-none overflow-visible">
                 <motion.button
@@ -2445,7 +2484,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           )}
                         </motion.button>
 
-                        {/* بطاقة المعاينة التفاعلية الأنيقة */}
+                        {/* بطاقة الكراكتر التفاعلية */}
                         <AnimatePresence>
                           {isHovered && preview && (
                             <motion.div
@@ -2460,11 +2499,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 right-1/2
                                 translate-x-1/2
                                 z-[500]
-                                w-64
+                                w-[250px]
                                 overflow-hidden
-                                rounded-2xl
+                                rounded-3xl
                                 border shadow-2xl
                                 backdrop-blur-2xl
+                                p-4
                               "
                               style={{
                                 backgroundColor: isDark
@@ -2475,39 +2515,67 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   : 'rgba(154, 106, 53, 0.22)',
                               }}
                             >
-                              <div className="relative h-28 w-full overflow-hidden bg-black/10">
-                                <img
-                                  src={preview.image}
-                                  alt={preview.title}
-                                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                                <span
-                                  className="
-                                    absolute top-2.5 right-2.5
-                                    rounded-full px-2 py-0.5
-                                    text-[9px] font-black text-white shadow-sm
-                                  "
-                                  style={{ backgroundColor: '#9a6a35' }}
-                                >
-                                  {preview.badge}
-                                </span>
+                              <div className="flex items-center gap-3">
+                                <div className="relative shrink-0">
+                                  <div
+                                    className="h-14 w-14 rounded-full overflow-hidden border-2 p-0.5 shadow-md flex items-center justify-center"
+                                    style={{
+                                      borderColor: preview.accentColor,
+                                      backgroundColor: isDark
+                                        ? '#1a1816'
+                                        : '#f5f0e7',
+                                    }}
+                                  >
+                                    <img
+                                      src={preview.avatar}
+                                      className="h-full w-full object-cover rounded-full"
+                                    />
+                                  </div>
+                                  <span
+                                    className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2"
+                                    style={{
+                                      backgroundColor: preview.accentColor,
+                                      borderColor: isDark ? '#12100e' : '#fff',
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="min-w-0 flex-1 text-right">
+                                  <span
+                                    className="inline-block rounded-full px-2 py-0.5 text-[8px] font-black text-white"
+                                    style={{
+                                      backgroundColor: preview.accentColor,
+                                    }}
+                                  >
+                                    {preview.badge}
+                                  </span>
+                                  <p
+                                    className="mt-1 text-xs font-black truncate"
+                                    style={{ color: mainText }}
+                                  >
+                                  </p>
+                                  <p
+                                    className="text-[10px] font-bold opacity-75"
+                                    style={{ color: secondaryText }}
+                                  >
+                                    {preview.title}
+                                  </p>
+                                </div>
                               </div>
 
-                              <div className="p-3 text-right">
-                                <h4
-                                  className="text-xs font-black truncate"
-                                  style={{ color: mainText }}
-                                >
-                                  {preview.title}
-                                </h4>
-                                <p
-                                  className="mt-1 text-[11px] leading-relaxed line-clamp-2"
-                                  style={{ color: secondaryText }}
-                                >
-                                  {preview.desc}
-                                </p>
-                              </div>
+                              <div
+                                className="my-2.5 h-px w-full"
+                                style={{
+                                  background: `linear-gradient(90deg, transparent, ${preview.accentColor}40, transparent)`,
+                                }}
+                              />
+
+                              <p
+                                className="text-[11px] leading-relaxed text-right line-clamp-2"
+                                style={{ color: secondaryText }}
+                              >
+                                {preview.desc}
+                              </p>
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -2562,11 +2630,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           top-[52px]
                           left-0
                           z-[500]
-                          w-64
+                          w-[250px]
                           overflow-hidden
-                          rounded-2xl
+                          rounded-3xl
                           border shadow-2xl
                           backdrop-blur-2xl
+                          p-4
                         "
                         style={{
                           backgroundColor: isDark
@@ -2577,28 +2646,58 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             : 'rgba(154, 106, 53, 0.22)',
                         }}
                       >
-                        <div className="relative h-28 w-full overflow-hidden bg-black/10 flex items-center justify-center p-4">
-                          <img
-                            src={WAH_PORTALS_PREVIEW['about'].image}
-                            alt={WAH_PORTALS_PREVIEW['about'].title}
-                            className="h-full w-auto object-contain"
-                          />
+                        <div className="flex items-center gap-3">
+                          <div className="relative shrink-0">
+                            <div
+                              className="h-14 w-14 rounded-full overflow-hidden border-2 p-1 shadow-md flex items-center justify-center"
+                              style={{
+                                borderColor: WAH_PORTALS_PREVIEW['about'].accentColor,
+                                backgroundColor: isDark ? '#1a1816' : '#f5f0e7',
+                              }}
+                            >
+                              <img
+                                src={WAH_PORTALS_PREVIEW['about'].avatar}
+                                className="h-full w-auto object-contain"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="min-w-0 flex-1 text-right">
+                            <span
+                              className="inline-block rounded-full px-2 py-0.5 text-[8px] font-black text-white"
+                              style={{
+                                backgroundColor: WAH_PORTALS_PREVIEW['about'].accentColor,
+                              }}
+                            >
+                              {WAH_PORTALS_PREVIEW['about'].badge}
+                            </span>
+                            <p
+                              className="mt-1 text-xs font-black truncate"
+                              style={{ color: mainText }}
+                            >
+                            </p>
+                            <p
+                              className="text-[10px] font-bold opacity-75"
+                              style={{ color: secondaryText }}
+                            >
+                              {WAH_PORTALS_PREVIEW['about'].title}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="p-3 text-right">
-                          <h4
-                            className="text-xs font-black truncate"
-                            style={{ color: mainText }}
-                          >
-                            {WAH_PORTALS_PREVIEW['about'].title}
-                          </h4>
-                          <p
-                            className="mt-1 text-[11px] leading-relaxed line-clamp-2"
-                            style={{ color: secondaryText }}
-                          >
-                            {WAH_PORTALS_PREVIEW['about'].desc}
-                          </p>
-                        </div>
+                        <div
+                          className="my-2.5 h-px w-full"
+                          style={{
+                            background: `linear-gradient(90deg, transparent, ${WAH_PORTALS_PREVIEW['about'].accentColor}40, transparent)`,
+                          }}
+                        />
+
+                        <p
+                          className="text-[11px] leading-relaxed text-right line-clamp-2"
+                          style={{ color: secondaryText }}
+                        >
+                          {WAH_PORTALS_PREVIEW['about'].desc}
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -2633,7 +2732,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               />
             </div>
           </div>
-        </div>      </header>
+        </div>
+      </header>
 
       {/* SEARCH OVERLAY */}
       <AnimatePresence>
