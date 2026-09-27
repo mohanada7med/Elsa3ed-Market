@@ -376,7 +376,7 @@ export const EventsPage: React.FC = () => {
             <UncleWahHeroBanner
               doorTitle="ليالي الموالد ولمّة الفرح وعصيان التحطيب"
               doorBadge="باب مواسم وليالي الصعيد"
-              mascotSrc="/mascot/quiz.png"
+              mascotSrc="/mascot/events.png"
               mascotRole="عم وه في قلب الموالد"
               quote="عم وه حضر ليالي الموالد ولمّة الفرح ودقّة عصيان التحطيب وزغاريد المواسم ورجعلكم بالبهجة كلها.. اعرف مواعيد كل مولد وافرح معانا!"
               statsText={`${events.length} موسم وليلة`}

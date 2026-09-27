@@ -26,7 +26,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'سوق وه',
     role: 'تاجر الصنعة والبركة',
     badge: 'شغل يدوي 100%',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه وهو بيتمشى في أسواق وورش الصعيد.. لقى المنتجات الخطيرة دي! نقى لكم كل قطعة بحب وأمانة من إيد شيوخ الصنعة لداركم مباشرة!»',
       '«مفيش وسيط ولا تجار جملة، من إيد الأسطى لبيتك.. كل مليم يروح للصانع الصعيدي وأسرته!»',
@@ -36,7 +36,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'سوق وه',
     role: 'تاجر الصنعة والبركة',
     badge: 'شغل يدوي 100%',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه وهو بيتمشى في أسواق وورش الصعيد.. لقى المنتجات الخطيرة دي! نقى لكم كل قطعة بحب وأمانة من إيد شيوخ الصنعة لداركم مباشرة!»',
     ],
@@ -45,7 +45,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'أطلس الحِرف',
     role: 'حارس الصنعة وأسرارها',
     badge: 'خريطة الصنايعية',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه قسّم لكم كل حرفة وصنعة في باب لوحدها؛ من فخار قنا لخزف جرجيس ونسيج أخميم وخوص النوبة، عشان تلاقوا طلبكم على طول وما تتوهوش!»',
       '«الصعيد مليان كنوز، وكل قرية اتخصصت في سر صنعة بقالها مئات السنين!»',
@@ -55,7 +55,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'حكايات الصنعة',
     role: 'حارس الصنعة وأسرارها',
     badge: 'أصل الحكاية',
-    mascot: '/mascot/char.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه قعد مع شيوخ الصنعة في ورشهم، وعرف منهم سر الخامات البلدي وطريقة الشغل اليدوي من أول الطينة لحد ما تطلع تحفة في بيتك!»',
     ],
@@ -64,7 +64,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'آثار ومعالم الصعيد',
     role: 'حارس الآثار والعتيق',
     badge: 'تاريخ الأجداد',
-    mascot: '/mascot/char.png',
+    mascot: '/mascot/athar.png',
     stories: [
       '«عم وه لف وتعب وداس في كل سكة وجبل عشان يوصل للمعالم والآثار دي ويوثق تاريخها وحيطانها العتيقة من أقصى الشمال لأقصى الجنوب.. شاور على أي أثر واعرف حكايته!»',
       '«حيطان معابدنا وأديرتنا ومساجدنا مش طوب وحجر، دي أرواح وتاريخ عاش آلاف السنين!»',
@@ -74,7 +74,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'تفاصيل المعلم',
     role: 'حارس الآثار والعتيق',
     badge: 'أسرار المكان',
-    mascot: '/mascot/char.png',
+    mascot: '/mascot/athar.png',
     stories: [
       '«عم وه وقف تحت حيطان الأثر ده، وسأل الرواة والمؤرخين ووثق لكم تاريخه العظيم وسره اللي عمره آلاف السنين!»',
     ],
@@ -83,7 +83,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'خريطة الصعيد',
     role: 'دليل الأطلس ورحلة النيل',
     badge: 'شبر شبر',
-    mascot: '/mascot/welcoming.png',
+    mascot: '/mascot/saaed.png',
     stories: [
       '«عم وه مشي على ضفاف النيل ورسم لكم خريطة الصعيد شبر شبر، من بحري لحد أسوان والنوبة، عشان تلفوا في بلادنا براحتكم وما تتوهوش واصل!»',
       '«دوس على أي محافظة في الخريطة وشوف خيرها ومعالمها وناسها الطيبين!»',
@@ -93,7 +93,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'تفاصيل المحافظة',
     role: 'دليل الديار الصعيدية',
     badge: 'ديار الكرم',
-    mascot: '/mascot/welcoming.png',
+    mascot: '/mascot/saaed.png',
     stories: [
       '«عم وه نزل المحافظة دي، وداس في قراها ونجوعها وشرب الشاي في مضايف ناسها وجمع كل خيرها وتراثها في صفحة واحدة!»',
     ],
@@ -102,7 +102,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'طعم وسفرة الصعيد',
     role: 'سفرة عم وه وخير بيوتنا',
     badge: 'طبيخ بيوت بلدي',
-    mascot: '/mascot/welcoming.png',
+    mascot: '/mascot/foods.png',
     stories: [
       '«عم وه داغ خير البيوت الصعيدية، من عيش شمسي سخن وطواجن بلدي معسلة وفايش بحمص، وجاب لكم سر الأكلات الأصلية من أصحابها!»',
       '«النفس الصعيدي في الطبيخ ملوش مثيل، بالسمنة البلدي وتوابل الجنوب اللي تروق البال!»',
@@ -112,7 +112,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'تفاصيل الأكلة',
     role: 'سفرة عم وه وخير بيوتنا',
     badge: 'سر الطبخة',
-    mascot: '/mascot/welcoming.png',
+    mascot: '/mascot/foods.png',
     stories: [
       '«عم وه دخل مطابخ بيوتنا، وقعد مع أمهاتنا وجداتنا وعرف منهم سر الطبخة ونَفَس الطبيخ البلدي اللي يروق البال!»',
     ],
@@ -131,7 +131,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'سيرة القامة الصعيدية',
     role: 'في مضايف الأكابر',
     badge: 'أثر متيمحيش',
-    mascot: '/mascot/fav.png',
+    mascot: '/mascot/fan.png',
     stories: [
       '«عم وه جمع حكايات وشهادات الناس اللي عاشروا القامة دي، وسجل بصمته اللي هتفضل منورة في تاريخ الجنوب!»',
     ],
@@ -140,7 +140,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'مواسم وليالي الصعيد',
     role: 'في ليالي الموالد',
     badge: 'بهجة الجنوب',
-    mascot: '/mascot/quiz.png',
+    mascot: '/mascot/events.png',
     stories: [
       '«عم وه حضر ليالي الموالد ولمّة الفرح ودقّة عصيان التحطيب وزغاريد المواسم ورجعلكم بالبهجة والنفحات والبركة كلها!»',
       '«مواسم الصعيد فرحة مابتخلصش، من كسر القصب للموالد الشريفة.. اسمع صوت النغم وافرح معانا!»',
@@ -150,7 +150,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'تفاصيل الموسم والليالي',
     role: 'في ليالي الموالد',
     badge: 'نفحات وبركة',
-    mascot: '/mascot/quiz.png',
+    mascot: '/mascot/events.png',
     stories: [
       '«عم وه حضر الليلة دي بنفسه وسط الناس، وسجل مواعيدها وطقوسها وبهجتها عشان تشاركوا في فرحة أهلنا!»',
     ],
@@ -159,7 +159,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'ريلز وحكاوي وه',
     role: 'في قلب الحدث',
     badge: 'فيديوهات حية',
-    mascot: '/mascot/quiz.png',
+    mascot: '/mascot/reels.png',
     stories: [
       '«عم وه نزل بكاميرته في قلب الورش وأزقة الأسواق، وصور لكم حكاوي حية وسريعة تشوفوا وتسمعوا حس الصعيد الحقيقي بعينكم!»',
     ],
@@ -168,7 +168,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'شيوخ الصنعة والورش',
     role: 'بين شيوخ الصنعة',
     badge: 'ورش الصعايدة',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه خبط على بيبان ورش الصعيد دكان دكان، وقعد مع شيوخ الصنعة الحقيقيين وتأكد من أمانتهم وجودة شغلهم عشان تتعاملوا معاهم وإنتوا متطمنين 100%!»',
     ],
@@ -177,7 +177,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'ورشة ودكان الصانع',
     role: 'بين شيوخ الصنعة',
     badge: 'صنعة يد أصيلة',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه زار ورشة الأسطى ده بنفسه، وشاف سر الصنعة وخطوات الشغل اليدوي بعينه.. صنايعي شاطر وأمين على تراث أجداده!»',
     ],
@@ -205,7 +205,7 @@ const PAGE_STORIES: Record<string, PageStory> = {
     title: 'إتمام الطلب',
     role: 'ضامن الجودة والبركة',
     badge: 'أمان وضمان',
-    mascot: '/mascot/empty-cart.png',
+    mascot: '/mascot/pro.png',
     stories: [
       '«عم وه بيوصي الصنايعية يغلفوا حاجتك بحب وعناية، وهتوصلك لحد باب بيتك في أسرع وقت!»',
     ],

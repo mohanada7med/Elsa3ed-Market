@@ -618,7 +618,7 @@ export const PlacesHeritagePage: React.FC = () => {
         <UncleWahHeroBanner
           doorTitle="معالم وآثار بلادنا في الصعيد"
           doorBadge="باب الآثار والمعالم"
-          mascotSrc="/mascot/char.png"
+          mascotSrc="/mascot/athar.png"
           mascotRole="عم وه حارس الآثار والعتيق"
           quote="عم وه لف وتعب وداس في كل سكة وجبل عشان يوصل للأماكن دي ويوثق تاريخها وحيطانها العتيقة من أقصى الشمال لأقصى الجنوب.. شاور على أي أثر وتعرف على عظمته وأصله وحكايته!"
           statsText={`${places.length} مكان متوثق`}

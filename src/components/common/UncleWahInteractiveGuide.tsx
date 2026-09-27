@@ -24,7 +24,7 @@ interface ReactionData {
 const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   places: {
     // الجدية والوقار عند الحديث عن الآثار والمعالم العتيقة
-    primaryImg: '/mascot/char.png',
+    primaryImg: '/mascot/athar.png',
     secondaryImg: '/mascot/fav.png',
     role: 'عم وه حارس الآثار والعتيق',
     badge: 'وقار وتاريخ الأجداد',
@@ -37,7 +37,7 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   food: {
     // الفرح والشهية والبهجة عند الحديث عن الأكلات البلدي
-    primaryImg: '/mascot/welcoming.png',
+    primaryImg: '/mascot/foods.png',
     secondaryImg: '/mascot/fav.png',
     role: 'سفرة عم وه وخير بيوتنا',
     badge: 'لقمة هنية تروق البال',
@@ -50,8 +50,8 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   governorate: {
     // الترحاب الفياض وفخر الدليل المحلي بأهله
-    primaryImg: '/mascot/welcoming.png',
-    secondaryImg: '/mascot/char.png',
+    primaryImg: '/mascot/saaed.png',
+    secondaryImg: '/mascot/fav.png',
     role: 'دليل عم وه لديار الجنوب',
     badge: 'ديار الكرم والشهامة',
     quotes: [
@@ -63,8 +63,8 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   crafts: {
     // تاجر الصنعة الخبير المقدر لشغل اليد الحرفي
-    primaryImg: '/mascot/empty-cart.png',
-    secondaryImg: '/mascot/quiz.png',
+    primaryImg: '/mascot/pro.png',
+    secondaryImg: '/mascot/fav.png',
     role: 'عم وه تاجر الصنعة والبركة',
     badge: 'شغل يد يتوزن بالذهب',
     quotes: [
@@ -76,8 +76,8 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   people: {
     // هيبة ووقار المضايف عند الحديث عن الكبار
-    primaryImg: '/mascot/fav.png',
-    secondaryImg: '/mascot/char.png',
+    primaryImg: '/mascot/fan.png',
+    secondaryImg: '/mascot/fav.png',
     role: 'عم وه في مضايف الأكابر',
     badge: 'سيرة عطرة وناس علامة',
     quotes: [
@@ -88,8 +88,8 @@ const CONTEXT_REACTIONS: Record<UncleWahContextType, ReactionData> = {
   },
   events: {
     // البهجة والتحطيب والموالد
-    primaryImg: '/mascot/quiz.png',
-    secondaryImg: '/mascot/welcoming.png',
+    primaryImg: '/mascot/events.png',
+    secondaryImg: '/mascot/fav.png',
     role: 'عم وه في ليالي الموالد',
     badge: 'ليالي الفرح والتحطيب',
     quotes: [

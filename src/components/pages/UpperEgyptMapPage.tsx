@@ -442,7 +442,7 @@ export const UpperEgyptMapPage: React.FC = () => {
           <UncleWahHeroBanner
             doorTitle="خريطة بلاد ودكاكين ونيل الصعيد"
             doorBadge="باب خريطة الصعيد"
-            mascotSrc="/mascot/welcoming.png"
+            mascotSrc="/mascot/saaed.png"
             mascotRole="دليل عم وه للبلاد"
             quote="عم وه رسم لكم خريطة الصعيد شبر شبر من بحري لحد أسوان والنوبة عشان متتوهش في ديارنا.. دوس على أي محافظة وشوف حكاياتها وخيرها!"
             statsText={`${governorates.length} محافظة صعيدية`}

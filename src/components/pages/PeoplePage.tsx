@@ -384,7 +384,7 @@ export const PeoplePage: React.FC = () => {
         <UncleWahHeroBanner
           doorTitle="قامات ورجالة ورموز الصعيد"
           doorBadge="باب أعلام الصعيد"
-          mascotSrc="/mascot/fav.png"
+          mascotSrc="/mascot/fan.png"
           mascotRole="عم وه في مضايف الكبار"
           quote="عم وه قعد في مضايف الكبار وسمع حكايات شيوخ الصنعة والرواة والشعراء اللي سابوا علامة في تاريخ الجنوب.. اقرأ سيرتهم العطرة واعرف أصل الحكاية!"
           statsText={`${people.length} رمز متوثق`}

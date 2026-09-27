@@ -287,7 +287,7 @@ export const FoodHeritagePage: React.FC = () => {
         <UncleWahHeroBanner
           doorTitle="لقمة هنية من قلب بيوت الصعيد"
           doorBadge="باب طعم الصعيد"
-          mascotSrc="/mascot/welcoming.png"
+          mascotSrc="/mascot/foods.png"
           mascotRole="سفرة عم وه وخير الجنوب"
           quote="عم وه داغ خير البيوت الصعيدية.. من عيش شمسي سخن طالع من الفرن، وطواجن بلدي معسلة، لحد فايش بلبن الحمص وعسل القصب الصافي.. بالهنا والشفا على قلبكم!"
           statsText={`${foods.length} أكلة متوثقة`}

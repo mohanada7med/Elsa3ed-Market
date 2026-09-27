@@ -544,7 +544,7 @@ sm:leading-9
         <UncleWahHeroBanner
           doorTitle="سوق وه.. من إيد الصانع لدارك على طول"
           doorBadge="باب سوق وه"
-          mascotSrc="/mascot/empty-cart.png"
+          mascotSrc="/mascot/pro.png"
           mascotRole="عم وه تاجر الصنعة والبركة"
           quote="عم وه وهو بيتمشى في أسواق وورش الصعيد.. لقى المنتجات الخطيرة دي! كلها شغل إيد أصيل 100% من إيد شيوخ الصنعة لدارك، جمعتها لكم عشان تاخدوا الأصلي بسعر أمانة وبدون وسيط."
           statsText={`${approvedCount} قطعة أصيلة معروضة`}

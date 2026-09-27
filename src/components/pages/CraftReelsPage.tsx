@@ -485,10 +485,9 @@ export const CraftReelsPage: React.FC = () => {
         <UncleWahHeroBanner
           doorTitle="حكاوي وتجارب حية من ورش ودكاكين الصعيد"
           doorBadge="باب ريلز وه"
-          mascotSrc="/mascot/quiz.png"
+          mascotSrc="/mascot/reels.png"
           mascotRole="عم وه في قلب الحدث"
-          quote="عم وه صور لكم بكاميرته من قلب الورش وأزقة الأسواق حكاوي حية وسريعة تشوفوها بعينكم.. اتفرج على سر الصنعة واسمع حس الحرفيين!"
-          statsText={`${reels.length} حكاية مصورة`}
+          quote="عم وه بيعرف يصوّر، بس قرر إن الحكاية مش لازم تبقى حكايته لوحده.. فساب الكاميرا تفتح للناس الشاطرة في الصعيد، وكل واحد يحكيلنا حكايته وصنعته بطريقته." statsText={`${reels.length} حكاية مصورة`}
           actionText="شارك حكايتك"
           onAction={handleOpenUpload}
         />

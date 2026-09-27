@@ -39,7 +39,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'WAH Marketplace',
       accentColor: 'from-amber-800/80',
       mascot: {
-        src: '/mascot/empty-cart.png',
+        src: '/mascot/pro.png',
         role: 'عم وه التاجر الأمين',
         badge: 'ضمان إيد الصانع 100%',
         quote: '«نقيت لكم أنضف شغل يدوي من أصحاب الورش مباشرة؛ لا وسيط ولا لف.. متسعر بالحق ويوصل لحد دارك!»',
@@ -57,7 +57,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Live Reels',
       accentColor: 'from-orange-950/70',
       mascot: {
-        src: '/mascot/quiz.png',
+        src: '/mascot/reels.png',
         role: 'عم وه مصوّر الحكاوي',
         badge: 'صوت وصورة من قلب الحدث',
         quote: '«نزلت بكاميرتي في قلب الدكاكين والأزقة والأسواق.. شوفوا حس الصعيد الحقيقي والضحكة والجدعنة بعينكم!»',
@@ -75,7 +75,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Interactive Atlas',
       accentColor: 'from-amber-900/60',
       mascot: {
-        src: '/mascot/welcoming.png',
+        src: '/mascot/saaed.png',
         role: 'عم وه دليل الرحالة',
         badge: 'شبر شبر ع النيل',
         quote: '«مشيت على ضفاف النيل ورسمت لكم كل نجع وقرية ومحافظة.. دوس على أي بقعة في الخريطة ولف في بلادنا براحتك!»',
@@ -93,7 +93,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Architectural Heritage',
       accentColor: 'from-[#9a6a35]/70',
       mascot: {
-        src: '/mascot/char.png',
+        src: '/mascot/athar.png',
         role: 'عم وه حارس العتيق',
         badge: 'وقار 7000 سنة حضارة',
         quote: '«وقفت تحت حيطان المعابد والبيوت القديمة وسألت الرواة والمؤرخين.. وسجلت لكم سر أجدادنا وعزتهم التي لا تنكسر!»',
@@ -111,7 +111,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Figures of Upper Egypt',
       accentColor: 'from-[#744e26]/70',
       mascot: {
-        src: '/mascot/fav.png',
+        src: '/mascot/fan.png',
         role: 'عم وه راوي السير العطرة',
         badge: 'في مضايف الأكابر',
         quote: '«قعدت في مضايف شيوخ الصنعة والشعراء وأهل الكرم، وجمعت سيرتهم اللي تشرّف كل صعيدي وتفضل فخر لأولادنا!»',
@@ -129,7 +129,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Authentic Kitchen',
       accentColor: 'from-amber-950/70',
       mascot: {
-        src: '/mascot/welcoming.png',
+        src: '/mascot/foods.png',
         role: 'عم وه صاحب السفرة البلدي',
         badge: 'نَفَس بلدي بالسمنة الصافية',
         quote: '«دخلت مطابخ أهالينا ودوقت العيش الشمسي السخن وطواجن البامية بالسمن البلدي.. أكل صعيدي يروق البال ويغذي الروح!»',
@@ -147,7 +147,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
       nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70',
       mascot: {
-        src: '/mascot/quiz.png',
+        src: '/mascot/events.png',
         role: 'عم وه راعي البهجة والمواسم',
         badge: 'نفحات وبركة ولمة حبايب',
         quote: '«حضرت ليالي الذكر ودقة عصايا التحطيب وزغاريد الموالد.. جبت لكم بهجة مواسم الجنوب ونفحاتها اللي تشرح القلب!»',
@@ -252,18 +252,16 @@ export const WahEcosystemPortalSection: React.FC = () => {
               />
 
               <div
-                className={`absolute inset-0 transition-opacity duration-500 ${
-                  isActive
+                className={`absolute inset-0 transition-opacity duration-500 ${isActive
                     ? 'bg-gradient-to-t from-black via-black/55 to-black/35'
                     : 'bg-black/70 hover:bg-black/55'
-                }`}
+                  }`}
               />
 
               {/* الحالة المنكمشة: يظهر فيها رقم الباب وعنوانه وصورة مصغرة لعم وه في هذا الباب */}
               <div
-                className={`absolute inset-0 p-5 flex flex-col justify-between items-center transition-opacity duration-300 ${
-                  isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                }`}
+                className={`absolute inset-0 p-5 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                  }`}
               >
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="font-mono text-xs text-[#d5a56d] font-bold">
