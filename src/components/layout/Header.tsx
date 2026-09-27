@@ -23,7 +23,6 @@ import {
   ArrowLeft,
   Bell,
   Check,
-  UserPlus,
   Flame,
   Film,
   AlertTriangle,
@@ -84,10 +83,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     navigateToProduct,
     navigateToSeller,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
   } = useApp();
 
-  const isGuest = currentRole === 'guest' || !currentUser?.id || currentUser.id === 'guest' || currentUser.id === 'guest-visitor';
+  const isGuest =
+    currentRole === 'guest' ||
+    !currentUser?.id ||
+    currentUser.id === 'guest' ||
+    currentUser.id === 'guest-visitor';
   const displayCount = isGuest ? 0 : unreadNotificationsCount;
   const userNotifications = isGuest ? [] : notifications;
 
@@ -116,7 +119,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       setActivePage,
       navigateToOrder,
       navigateToProduct,
-      navigateToSeller
+      navigateToSeller,
     });
   };
 
@@ -172,7 +175,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
               transition={{ duration: 0.18 }}
               className="absolute left-0 top-[calc(100%+8px)] z-[500] w-[320px] sm:w-[380px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[1.75rem] border shadow-2xl backdrop-blur-3xl"
               style={{
-                backgroundColor: isDark ? 'rgba(21, 21, 19, 0.98)' : 'rgba(255, 255, 255, 0.98)',
+                backgroundColor: isDark
+                  ? 'rgba(21, 21, 19, 0.98)'
+                  : 'rgba(255, 255, 255, 0.98)',
                 borderColor,
                 color: mainText,
               }}
@@ -209,7 +214,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 {isGuest ? (
                   <div className="px-5 py-10 text-center">
                     <Bell size={28} className="mx-auto opacity-30" />
-                    <p className="mt-3 text-sm font-semibold" style={{ color: mainText }}>
+                    <p
+                      className="mt-3 text-sm font-semibold"
+                      style={{ color: mainText }}
+                    >
                       سجل دخول عشان تشوف إشعاراتك
                     </p>
                     <button
@@ -284,10 +292,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 ) : (
                   <div className="px-5 py-10 text-center">
                     <Bell size={28} className="mx-auto opacity-30" />
-                    <p className="mt-3 text-sm font-semibold" style={{ color: mainText }}>
+                    <p
+                      className="mt-3 text-sm font-semibold"
+                      style={{ color: mainText }}
+                    >
                       مفيش إشعارات
                     </p>
-                    <p className="mt-1 text-xs" style={{ color: secondaryText }}>
+                    <p
+                      className="mt-1 text-xs"
+                      style={{ color: secondaryText }}
+                    >
                       هتظهر هنا أي تحديثات جديدة لطلباتك وحسابك
                     </p>
                   </div>
@@ -328,24 +342,27 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     </div>
   );
 };
-
 /* =========================================================
    WAH PORTALS PREVIEW INFO (FOR HOVER CARDS)
    ========================================================= */
-const WAH_PORTALS_PREVIEW: Record<
-  string,
-  { title: string; desc: string; image: string; badge: string }
-> = {
+export interface PortalPreviewItem {
+  title: string;
+  desc: string;
+  image: string;
+  badge: string;
+}
+
+const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
   map: {
     title: 'خريطة الصعيد التفاعلية',
-    desc: 'اكتشف محافظات وقرى الصعيد وتراث كل بلد على النيل.',
+    desc: 'اكتشف محافظات وقرى الصعيد وتراث كل بلد على ضفاف النيل.',
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
     badge: 'الخريطة الحية',
   },
   places: {
     title: 'آثار ومعالم الصعيد',
-    desc: 'معابد الكرنك ودندرة وإدفو وقصور المنيا وبيوت النوبة.',
+    desc: 'معابد الكرنك ودندرة وإدفو، قصور المنيا وبيوت غرب سهيل النوبية.',
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
     badge: 'معالم متوثقة',
@@ -393,7 +410,14 @@ const WAH_PORTALS_PREVIEW: Record<
     badge: 'حرف أصيلة',
   },
   quize: {
-    title: 'انت صعيدى ؟ (لعبة اللهجة)',
+    title: 'انت صعيدي؟ (لعبة اللهجة)',
+    desc: 'تحدي تفاعلي سريع يختبر معرفتك بأصالة الكلمات والمصطلحات الصعيدية.',
+    image:
+      'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
+    badge: 'تحدي ولعبة',
+  },
+  quiz: {
+    title: 'انت صعيدي؟ (لعبة اللهجة)',
     desc: 'تحدي تفاعلي سريع يختبر معرفتك بأصالة الكلمات والمصطلحات الصعيدية.',
     image:
       'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
@@ -444,7 +468,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
   const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
-  const isStaff = isSeller || isAdmin; // بائع أو مسؤول إدارة
+  const isStaff = isSeller || isAdmin;
 
   /* =========================================================
      CLOSE ACCOUNT DROPDOWN (CLICK OUTSIDE)
@@ -690,11 +714,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   /* =========================================================
      NAVIGATE
      ========================================================= */
-  const navigate = useCallback((page: string) => {
-    setActivePage(page as ActivePage);
-    setMobileMenuOpen(false);
-    setUserDropdownOpen(false);
-  }, [setActivePage]);
+  const navigate = useCallback(
+    (page: string) => {
+      setActivePage(page as ActivePage);
+      setMobileMenuOpen(false);
+      setUserDropdownOpen(false);
+    },
+    [setActivePage]
+  );
 
   const getAccountPage = useCallback((): ActivePage => {
     if (isSeller) {
@@ -730,7 +757,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         dir="rtl"
         className={`sticky top-0 z-[100] w-full overflow-visible backdrop-blur-2xl transition-colors duration-500 shadow-sm ${className}`}
         style={{
-          backgroundColor: isDark ? 'rgba(11, 11, 10, 0.9)' : 'rgba(238, 232, 220, 0.9)',
+          backgroundColor: isDark
+            ? 'rgba(11, 11, 10, 0.9)'
+            : 'rgba(238, 232, 220, 0.9)',
           color: mainText,
           borderBottom: `1px solid ${borderColor}`,
         }}
@@ -769,24 +798,18 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         </div>
 
         {/* MAIN ROW */}
-        {/* MAIN ROW */}
         <div className="relative mx-auto max-w-[1600px] px-2 sm:px-6 lg:px-12">
           <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
-
-            {/* =====================================================
-        START ACTIONS
-        MOBILE: MENU + THEME
-        DESKTOP: MAIN NAVIGATION
-    ===================================================== */}
+            {/* START ACTIONS */}
             <div
               id="header-start-actions"
               className="
-        absolute start-0 top-0 z-10
-        flex h-full items-center
-        px-1.5
-        sm:px-2
-        lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto
-      "
+                absolute start-0 top-0 z-10
+                flex h-full items-center
+                px-1.5
+                sm:px-2
+                lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto
+              "
             >
               {/* MOBILE MENU TOGGLE */}
               <button
@@ -796,14 +819,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 aria-label="فتح القائمة"
                 title="فتح القائمة"
                 className="
-          flex h-9 w-9 shrink-0
-          items-center justify-center
-          rounded-full
-          transition-all
-          active:scale-95
-          lg:hidden
-          cursor-pointer
-        "
+                  flex h-9 w-9 shrink-0
+                  items-center justify-center
+                  rounded-full
+                  transition-all
+                  active:scale-95
+                  lg:hidden
+                  cursor-pointer
+                "
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -820,17 +843,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 aria-label={isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
                 title={isDark ? 'تفعيل الوضع الفاتح' : 'الوضع الداكن'}
                 className="
-    flex h-9 w-9 shrink-0
-    items-center justify-center
-    rounded-full
-    transition-all
-    hover:scale-105
-    active:scale-95
-    ms-1
-    sm:ms-2
-    lg:hidden
-    cursor-pointer
-  "
+                  flex h-9 w-9 shrink-0
+                  items-center justify-center
+                  rounded-full
+                  transition-all
+                  hover:scale-105
+                  active:scale-95
+                  ms-1
+                  sm:ms-2
+                  lg:hidden
+                  cursor-pointer
+                "
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -843,7 +866,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
               </button>
 
-
               {/* MOBILE QUIZ */}
               <button
                 id="mobile-header-quiz-btn"
@@ -852,17 +874,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 aria-label="اختبار اللهجة الصعيدية"
                 title="اختبار اللهجة الصعيدية"
                 className="
-    flex h-9 w-9 shrink-0
-    items-center
-    justify-center
-    rounded-full
-    transition-all
-    hover:scale-105
-    active:scale-95
-    ms-1
-    lg:hidden
-    cursor-pointer
-  "
+                  flex h-9 w-9 shrink-0
+                  items-center
+                  justify-center
+                  rounded-full
+                  transition-all
+                  hover:scale-105
+                  active:scale-95
+                  ms-1
+                  lg:hidden
+                  cursor-pointer
+                "
                 style={{
                   backgroundColor: hoverBg,
                   color: mainText,
@@ -873,78 +895,64 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
               {/* DESKTOP NAV */}
               <div className="hidden items-center gap-6 lg:flex">
-
-                {/* HOME */}
                 <button
                   type="button"
                   onClick={() => navigate('home')}
                   className="
-            whitespace-nowrap
-            text-sm
-            font-black
-            transition-colors
-            cursor-pointer
-          "
+                    whitespace-nowrap
+                    text-sm
+                    font-black
+                    transition-colors
+                    cursor-pointer
+                  "
                   style={{
-                    color:
-                      activePage === 'home'
-                        ? '#9a6a35'
-                        : mainText,
+                    color: activePage === 'home' ? '#9a6a35' : mainText,
                   }}
                 >
                   الرئيسية
                 </button>
 
-                {/* PRODUCTS */}
                 <button
                   type="button"
                   onClick={() => navigate('products')}
                   className="
-            whitespace-nowrap
-            text-sm
-            font-black
-            transition-colors
-            cursor-pointer
-          "
+                    whitespace-nowrap
+                    text-sm
+                    font-black
+                    transition-colors
+                    cursor-pointer
+                  "
                   style={{
-                    color:
-                      activePage === 'products'
-                        ? '#9a6a35'
-                        : mainText,
+                    color: activePage === 'products' ? '#9a6a35' : mainText,
                   }}
                 >
                   المنتجات
                 </button>
 
-                {/* MAP */}
                 <button
                   type="button"
                   onClick={() => navigate('map')}
                   className="
-            flex items-center gap-1.5
-            whitespace-nowrap
-            text-sm
-            font-black
-            transition-colors
-            cursor-pointer
-          "
+                    flex items-center gap-1.5
+                    whitespace-nowrap
+                    text-sm
+                    font-black
+                    transition-colors
+                    cursor-pointer
+                  "
                   style={{
-                    color:
-                      activePage === 'map'
-                        ? '#9a6a35'
-                        : mainText,
+                    color: activePage === 'map' ? '#9a6a35' : mainText,
                   }}
                 >
                   محافظات الصعيد
-
                   <span
                     className="
-              rounded-full
-              px-2
-              py-0.5
-              text-[9px]
-              font-black
-            "
+                      rounded-full
+                      px-2
+                      py-0.5
+                      text-[9px]
+                      font-black
+                    "
                     style={{
                       backgroundColor: '#9a6a35',
                       color: '#fff',
@@ -956,109 +964,93 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
             </div>
 
-
             {/* =====================================================
-        CENTER LOGO
-        IMPORTANT:
-        ALWAYS EXACTLY IN THE CENTER OF THE HEADER
-    ===================================================== */}
+                CENTER LOGO (MOBILE & TABLET ONLY)
+                على الديسكتوب يمتد للـ Sub-bar في الأسفل
+            ===================================================== */}
             <div
               id="header-center-logo"
               className="
-        pointer-events-auto
-        absolute
-        left-1/2
-        top-1/2
-        z-20
-        flex
-        -translate-x-1/2
-        -translate-y-1/2
-        items-center
-        justify-center
-        select-none
-      "
+                pointer-events-auto
+                absolute
+                left-1/2
+                top-1/2
+                z-20
+                flex
+                -translate-x-1/2
+                -translate-y-1/2
+                items-center
+                justify-center
+                select-none
+                lg:hidden
+              "
             >
               <button
-                id="brand-logo"
+                id="brand-logo-mobile"
                 type="button"
                 onClick={() => navigate('home')}
                 aria-label="وه - الرئيسية"
                 className="
-          flex
-          items-center
-          justify-center
-          rounded-2xl
-          transition-transform
-          hover:scale-[1.02]
-          active:scale-95
-          cursor-pointer
-          focus:outline-none
-        "
+                  flex
+                  items-center
+                  justify-center
+                  rounded-2xl
+                  transition-transform
+                  hover:scale-[1.02]
+                  active:scale-95
+                  cursor-pointer
+                  focus:outline-none
+                "
               >
                 <img
                   src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
                   alt="وه"
                   draggable={false}
                   className="
-            block
-            h-[34px]
-            w-auto
-            max-w-[68px]
-            object-contain
-
-            sm:h-[52px]
-            sm:max-w-[105px]
-
-            lg:h-[68px]
-            lg:max-w-[140px]
-          "
+                    block
+                    h-[34px]
+                    w-auto
+                    max-w-[68px]
+                    object-contain
+                    sm:h-[50px]
+                    sm:max-w-[100px]
+                  "
                 />
               </button>
             </div>
 
-
-            {/* =====================================================
-        END ACTIONS
-        MOBILE:
-        SEARCH + FAVORITES + CART + USER
-
-        DESKTOP:
-        ALL ACTIONS
-    ===================================================== */}
+            {/* END ACTIONS */}
             <div
               id="header-end-actions"
               className="
-        absolute
-        end-0
-        top-0
-        z-10
-        flex
-        h-full
-        items-center
-        justify-end
-        px-1.5
-        sm:px-2
-        lg:static
-        lg:h-auto
-        lg:max-w-none
-        lg:px-0
-        lg:z-auto
-      "
+                absolute
+                end-0
+                top-0
+                z-10
+                flex
+                h-full
+                items-center
+                justify-end
+                px-1.5
+                sm:px-2
+                lg:static
+                lg:h-auto
+                lg:max-w-none
+                lg:px-0
+                lg:z-auto
+              "
             >
               <div
                 className="
-          flex
-          min-w-0
-          items-center
-          gap-0.5
-          sm:gap-1.5
-          lg:gap-2
-        "
+                  flex
+                  min-w-0
+                  items-center
+                  gap-0.5
+                  sm:gap-1.5
+                  lg:gap-2
+                "
               >
-
-                {/* =================================================
-            SEARCH
-        ================================================= */}
+                {/* SEARCH */}
                 <button
                   id="search-trigger-btn"
                   type="button"
@@ -1066,22 +1058,22 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   aria-label="بحث"
                   title="بحث"
                   className="
-            flex
-            h-8.5
-            w-8.5
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            transition-all
-            hover:scale-105
-            active:scale-95
-            sm:h-10
-            sm:w-10
-            lg:h-11
-            lg:w-11
-            cursor-pointer
-          "
+                    flex
+                    h-8.5
+                    w-8.5
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    transition-all
+                    hover:scale-105
+                    active:scale-95
+                    sm:h-10
+                    sm:w-10
+                    lg:h-11
+                    lg:w-11
+                    cursor-pointer
+                  "
                   style={{
                     backgroundColor: hoverBg,
                     color: mainText,
@@ -1093,33 +1085,28 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   />
                 </button>
 
-
-                {/* =================================================
-            THEME - DESKTOP ONLY
-        ================================================= */}
+                {/* THEME - DESKTOP */}
                 <button
                   id="header-theme-toggle-btn"
                   type="button"
                   onClick={toggleTheme}
                   aria-label={
-                    isDark
-                      ? 'تفعيل الوضع الفاتح'
-                      : 'تفعيل الوضع الداكن'
+                    isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'
                   }
                   className="
-            hidden
-            lg:flex
-            h-11
-            w-11
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            transition-all
-            hover:scale-105
-            active:scale-95
-            cursor-pointer
-          "
+                    hidden
+                    lg:flex
+                    h-11
+                    w-11
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    transition-all
+                    hover:scale-105
+                    active:scale-95
+                    cursor-pointer
+                  "
                   style={{
                     backgroundColor: hoverBg,
                     color: mainText,
@@ -1135,10 +1122,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   )}
                 </button>
 
-
-                {/* =================================================
-            FAVORITES
-        ================================================= */}
+                {/* FAVORITES */}
                 {!isStaff && (
                   <button
                     id="nav-favorites-btn"
@@ -1147,23 +1131,23 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     aria-label="المفضلة"
                     title="المفضلة"
                     className="
-              relative
-              flex
-              h-8.5
-              w-8.5
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              transition-all
-              hover:scale-105
-              active:scale-95
-              sm:h-10
-              sm:w-10
-              lg:h-11
-              lg:w-11
-              cursor-pointer
-            "
+                      relative
+                      flex
+                      h-8.5
+                      w-8.5
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-full
+                      transition-all
+                      hover:scale-105
+                      active:scale-95
+                      sm:h-10
+                      sm:w-10
+                      lg:h-11
+                      lg:w-11
+                      cursor-pointer
+                    "
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
@@ -1173,40 +1157,34 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       size={17}
                       className="sm:h-[18px] sm:w-[18px]"
                     />
-
                     {favorites.length > 0 && (
                       <span
                         className="
-                  absolute
-                  -right-0.5
-                  -top-0.5
-                  flex
-                  h-4
-                  min-w-4
-                  items-center
-                  justify-center
-                  rounded-full
-                  px-1
-                  text-[9px]
-                  font-bold
-                "
+                          absolute
+                          -right-0.5
+                          -top-0.5
+                          flex
+                          h-4
+                          min-w-4
+                          items-center
+                          justify-center
+                          rounded-full
+                          px-1
+                          text-[9px]
+                          font-bold
+                        "
                         style={{
                           backgroundColor: '#9a6a35',
                           color: '#fff',
                         }}
                       >
-                        {favorites.length > 99
-                          ? '99+'
-                          : favorites.length}
+                        {favorites.length > 99 ? '99+' : favorites.length}
                       </span>
                     )}
                   </button>
                 )}
 
-
-                {/* =================================================
-            CHAT - DESKTOP ONLY
-        ================================================= */}
+                {/* CHAT - DESKTOP */}
                 {isAuthenticated && (
                   <button
                     id="nav-chat-btn"
@@ -1215,60 +1193,54 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     aria-label="الرسائل"
                     title="الرسائل"
                     className="
-              relative
-              hidden
-              h-11
-              w-11
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              transition-all
-              hover:scale-105
-              active:scale-95
-              lg:flex
-              cursor-pointer
-            "
+                      relative
+                      hidden
+                      h-11
+                      w-11
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-full
+                      transition-all
+                      hover:scale-105
+                      active:scale-95
+                      lg:flex
+                      cursor-pointer
+                    "
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
                     }}
                   >
                     <MessageCircle size={18} />
-
                     {chatUnreadCount > 0 && (
                       <span
                         className="
-                  absolute
-                  -right-0.5
-                  -top-0.5
-                  flex
-                  h-4
-                  min-w-4
-                  items-center
-                  justify-center
-                  rounded-full
-                  px-1
-                  text-[9px]
-                  font-bold
-                "
+                          absolute
+                          -right-0.5
+                          -top-0.5
+                          flex
+                          h-4
+                          min-w-4
+                          items-center
+                          justify-center
+                          rounded-full
+                          px-1
+                          text-[9px]
+                          font-bold
+                        "
                         style={{
                           backgroundColor: '#9a6a35',
                           color: '#fff',
                         }}
                       >
-                        {chatUnreadCount > 99
-                          ? '99+'
-                          : chatUnreadCount}
+                        {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
                       </span>
                     )}
                   </button>
                 )}
 
-
-                {/* =================================================
-            NOTIFICATIONS - DESKTOP
-        ================================================= */}
+                {/* NOTIFICATIONS - DESKTOP */}
                 {isAuthenticated && (
                   <div className="hidden lg:block">
                     <NotificationCenter
@@ -1281,10 +1253,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   </div>
                 )}
 
-
-                {/* =================================================
-            CART
-        ================================================= */}
+                {/* CART */}
                 {!isStaff && (
                   <button
                     id="nav-cart-btn"
@@ -1293,23 +1262,23 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     aria-label="السلة"
                     title="السلة"
                     className="
-              relative
-              flex
-              h-8.5
-              w-8.5
-              shrink-0
-              items-center
-              justify-center
-              rounded-full
-              transition-all
-              hover:scale-105
-              active:scale-95
-              sm:h-10
-              sm:w-10
-              lg:h-11
-              lg:w-11
-              cursor-pointer
-            "
+                      relative
+                      flex
+                      h-8.5
+                      w-8.5
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-full
+                      transition-all
+                      hover:scale-105
+                      active:scale-95
+                      sm:h-10
+                      sm:w-10
+                      lg:h-11
+                      lg:w-11
+                      cursor-pointer
+                    "
                     style={{
                       backgroundColor: hoverBg,
                       color: mainText,
@@ -1319,167 +1288,149 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       size={17}
                       className="sm:h-[18px] sm:w-[18px]"
                     />
-
                     {cartCount > 0 && (
                       <span
                         className="
-                  absolute
-                  -right-0.5
-                  -top-0.5
-                  flex
-                  h-4
-                  min-w-4
-                  items-center
-                  justify-center
-                  rounded-full
-                  px-1
-                  text-[9px]
-                  font-bold
-                "
+                          absolute
+                          -right-0.5
+                          -top-0.5
+                          flex
+                          h-4
+                          min-w-4
+                          items-center
+                          justify-center
+                          rounded-full
+                          px-1
+                          text-[9px]
+                          font-bold
+                        "
                         style={{
                           backgroundColor: '#9a6a35',
                           color: '#fff',
                         }}
                       >
-                        {cartCount > 99
-                          ? '99+'
-                          : cartCount}
+                        {cartCount > 99 ? '99+' : cartCount}
                       </span>
                     )}
                   </button>
                 )}
 
-
-                {/* =================================================
-            USER
-        ================================================= */}
+                {/* USER */}
                 {isAuthenticated ? (
                   <div
                     ref={dropdownRef}
                     className="
-              relative
-              flex
-              shrink-0
-              items-center
-            "
+                      relative
+                      flex
+                      shrink-0
+                      items-center
+                    "
                   >
                     <button
                       id="user-menu-btn"
                       type="button"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setUserDropdownOpen(
-                          (prev) => !prev
-                        );
+                        setUserDropdownOpen((prev) => !prev);
                       }}
                       aria-expanded={userDropdownOpen}
                       aria-haspopup="menu"
                       aria-label="قائمة الحساب"
                       className="
-                group
-                flex
-                items-center
-                gap-2
-                rounded-full
-                border
-                p-1
-                sm:gap-2.5
-                sm:pe-3.5
-                sm:ps-1
-                transition-all
-                duration-300
-                cursor-pointer
-                select-none
-                hover:shadow-md
-                hover:scale-[1.02]
-                active:scale-95
-              "
+                        group
+                        flex
+                        items-center
+                        gap-2
+                        rounded-full
+                        border
+                        p-1
+                        sm:gap-2.5
+                        sm:pe-3.5
+                        sm:ps-1
+                        transition-all
+                        duration-300
+                        cursor-pointer
+                        select-none
+                        hover:shadow-md
+                        hover:scale-[1.02]
+                        active:scale-95
+                      "
                       style={{
-                        backgroundColor:
-                          userDropdownOpen
-                            ? isDark
-                              ? 'rgba(154, 106, 53, 0.18)'
-                              : 'rgba(154, 106, 53, 0.12)'
-                            : hoverBg,
-
-                        borderColor:
-                          userDropdownOpen
-                            ? '#9a6a35'
-                            : borderColor,
-
+                        backgroundColor: userDropdownOpen
+                          ? isDark
+                            ? 'rgba(154, 106, 53, 0.18)'
+                            : 'rgba(154, 106, 53, 0.12)'
+                          : hoverBg,
+                        borderColor: userDropdownOpen
+                          ? '#9a6a35'
+                          : borderColor,
                         color: mainText,
                       }}
                     >
-
-                      {/* PROFILE IMAGE */}
                       <div className="relative shrink-0">
                         <img
                           src={profileImage}
                           alt={displayName}
                           className="
-                    h-8.5
-                    w-8.5
-                    rounded-full
-                    object-cover
-                    ring-2
-                    ring-primary/40
-                    transition-transform
-                    duration-300
-                    group-hover:scale-105
-                    sm:h-9
-                    sm:w-9
-                    lg:h-9.5
-                    lg:w-9.5
-                  "
+                            h-8.5
+                            w-8.5
+                            rounded-full
+                            object-cover
+                            ring-2
+                            ring-primary/40
+                            transition-transform
+                            duration-300
+                            group-hover:scale-105
+                            sm:h-9
+                            sm:w-9
+                            lg:h-9.5
+                            lg:w-9.5
+                          "
                         />
-
                         <span
                           className="
-                    absolute
-                    bottom-0
-                    right-0
-                    h-2.5
-                    w-2.5
-                    rounded-full
-                    bg-emerald-500
-                    ring-2
-                    ring-white
-                    dark:ring-[#121210]
-                  "
+                            absolute
+                            bottom-0
+                            right-0
+                            h-2.5
+                            w-2.5
+                            rounded-full
+                            bg-emerald-500
+                            ring-2
+                            ring-white
+                            dark:ring-[#121210]
+                          "
                         />
                       </div>
 
-
-                      {/* USER TEXT - HIDDEN ON VERY SMALL MOBILE */}
                       <div
                         className="
-                  hidden
-                  sm:flex
-                  flex-col
-                  text-right
-                  leading-tight
-                "
+                          hidden
+                          sm:flex
+                          flex-col
+                          text-right
+                          leading-tight
+                        "
                       >
                         <span
                           className="
-                    max-w-[110px]
-                    truncate
-                    text-xs
-                    font-black
-                    transition-colors
-                    group-hover:text-primary
-                    lg:text-sm
-                  "
+                            max-w-[110px]
+                            truncate
+                            text-xs
+                            font-black
+                            transition-colors
+                            group-hover:text-primary
+                            lg:text-sm
+                          "
                         >
                           {displayName}
                         </span>
-
                         <span
                           className="
-                    text-[10px]
-                    font-semibold
-                    opacity-70
-                  "
+                            text-[10px]
+                            font-semibold
+                            opacity-70
+                          "
                           style={{
                             color: secondaryText,
                           }}
@@ -1492,51 +1443,39 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         </span>
                       </div>
 
-
-                      {/* CHEVRON */}
                       <ChevronDown
                         size={15}
                         className={`
-                  hidden
-                  sm:block
-                  text-primary
-                  transition-transform
-                  duration-300
-                  ease-out
-                  ${userDropdownOpen
-                            ? 'rotate-180'
-                            : ''
-                          }
-                `}
+                          hidden
+                          sm:block
+                          text-primary
+                          transition-transform
+                          duration-300
+                          ease-out
+                          ${userDropdownOpen ? 'rotate-180' : ''}
+                        `}
                       />
                     </button>
 
-
-                    {/* =================================================
-                USER DROPDOWN
-            ================================================= */}
+                    {/* USER DROPDOWN */}
                     <AnimatePresence>
                       {userDropdownOpen && (
                         <>
-                          {/* MOBILE BACKDROP */}
                           <motion.div
                             className="
-                      fixed
-                      inset-0
-                      z-[490]
-                      bg-black/25
-                      backdrop-blur-[2px]
-                      sm:hidden
-                    "
+                              fixed
+                              inset-0
+                              z-[490]
+                              bg-black/25
+                              backdrop-blur-[2px]
+                              sm:hidden
+                            "
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            onClick={() =>
-                              setUserDropdownOpen(false)
-                            }
+                            onClick={() => setUserDropdownOpen(false)}
                           />
 
-                          {/* DROPDOWN */}
                           <motion.div
                             id="user-dropdown-menu"
                             role="menu"
@@ -1567,95 +1506,88 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               borderColor,
                             }}
                             className="
-                      absolute
-                      left-0
-                      top-[calc(100%+10px)]
-                      z-[500]
-                      w-[280px]
-                      max-w-[calc(100vw-24px)]
-                      overflow-hidden
-                      rounded-[1.75rem]
-                      border
-                      shadow-2xl
-                      backdrop-blur-3xl
-                    "
+                              absolute
+                              left-0
+                              top-[calc(100%+10px)]
+                              z-[500]
+                              w-[280px]
+                              max-w-[calc(100vw-24px)]
+                              overflow-hidden
+                              rounded-[1.75rem]
+                              border
+                              shadow-2xl
+                              backdrop-blur-3xl
+                            "
                           >
-
-                            {/* USER INFO */}
                             <div
                               onClick={() => {
                                 setUserDropdownOpen(false);
                                 navigate(getAccountPage());
                               }}
                               className="
-                        group
-                        border-b
-                        p-4
-                        cursor-pointer
-                        transition-colors
-                        hover:bg-primary/5
-                      "
+                                group
+                                border-b
+                                p-4
+                                cursor-pointer
+                                transition-colors
+                                hover:bg-primary/5
+                              "
                               style={{
                                 borderColor,
                               }}
                             >
                               <div className="flex items-center gap-3.5">
-
                                 <div className="relative">
                                   <img
                                     src={profileImage}
                                     alt={displayName}
                                     className="
-                              h-11
-                              w-11
-                              rounded-full
-                              object-cover
-                              ring-2
-                              ring-primary/30
-                              shadow-sm
-                            "
+                                      h-11
+                                      w-11
+                                      rounded-full
+                                      object-cover
+                                      ring-2
+                                      ring-primary/30
+                                      shadow-sm
+                                    "
                                   />
-
                                   <span
                                     className="
-                              absolute
-                              bottom-0
-                              right-0
-                              h-3
-                              w-3
-                              rounded-full
-                              bg-emerald-500
-                              ring-2
-                              ring-white
-                              dark:ring-[#151513]
-                            "
+                                      absolute
+                                      bottom-0
+                                      right-0
+                                      h-3
+                                      w-3
+                                      rounded-full
+                                      bg-emerald-500
+                                      ring-2
+                                      ring-white
+                                      dark:ring-[#151513]
+                                    "
                                   />
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-
                                   <div className="flex items-center justify-between">
                                     <p className="truncate text-sm font-black">
                                       {displayName}
                                     </p>
-
                                     <ArrowLeft
                                       size={13}
                                       className="
-                                text-primary
-                                opacity-0
-                                transition-opacity
-                                group-hover:opacity-100
-                              "
+                                        text-primary
+                                        opacity-0
+                                        transition-opacity
+                                        group-hover:opacity-100
+                                      "
                                     />
                                   </div>
-
                                   <p
                                     className="
-                              mt-0.5
-                              text-xs
-                              font-semibold
-                            "
+                                      mt-0.5
+                                      text-xs
+                                      font-semibold
+                                    "
                                     style={{
                                       color: secondaryText,
                                     }}
@@ -1670,11 +1602,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               </div>
                             </div>
 
-
-                            {/* MENU ITEMS */}
                             <div className="space-y-0.5 p-2">
-
-                              {/* ACCOUNT */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1682,20 +1610,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   navigate(getAccountPage());
                                 }}
                                 className="
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-bold
-                          cursor-pointer
-                          transition-colors
-                          hover:bg-primary/10
-                          hover:text-primary
-                        "
+                                  flex
+                                  w-full
+                                  items-center
+                                  gap-3
+                                  rounded-xl
+                                  px-3.5
+                                  py-2.5
+                                  text-sm
+                                  font-bold
+                                  cursor-pointer
+                                  transition-colors
+                                  hover:bg-primary/10
+                                  hover:text-primary
+                                "
                                 style={{
                                   color: mainText,
                                 }}
@@ -1707,8 +1635,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 <span>حسابي</span>
                               </button>
 
-
-                              {/* SELLER DASHBOARD */}
                               {isSeller && (
                                 <button
                                   type="button"
@@ -1717,20 +1643,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     navigate('seller-dashboard');
                                   }}
                                   className="
-                            flex
-                            w-full
-                            items-center
-                            gap-3
-                            rounded-xl
-                            px-3.5
-                            py-2.5
-                            text-sm
-                            font-bold
-                            cursor-pointer
-                            transition-colors
-                            hover:bg-primary/10
-                            hover:text-primary
-                          "
+                                    flex
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3.5
+                                    py-2.5
+                                    text-sm
+                                    font-bold
+                                    cursor-pointer
+                                    transition-colors
+                                    hover:bg-primary/10
+                                    hover:text-primary
+                                  "
                                   style={{
                                     color: mainText,
                                   }}
@@ -1739,14 +1665,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     size={18}
                                     className="text-primary"
                                   />
-                                  <span>
-                                    لوحة الورشة
-                                  </span>
+                                  <span>لوحة الورشة</span>
                                 </button>
                               )}
 
-
-                              {/* ADMIN DASHBOARD */}
                               {isAdmin && (
                                 <button
                                   type="button"
@@ -1755,20 +1677,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     navigate('admin-dashboard');
                                   }}
                                   className="
-                            flex
-                            w-full
-                            items-center
-                            gap-3
-                            rounded-xl
-                            px-3.5
-                            py-2.5
-                            text-sm
-                            font-bold
-                            cursor-pointer
-                            transition-colors
-                            hover:bg-primary/10
-                            hover:text-primary
-                          "
+                                    flex
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3.5
+                                    py-2.5
+                                    text-sm
+                                    font-bold
+                                    cursor-pointer
+                                    transition-colors
+                                    hover:bg-primary/10
+                                    hover:text-primary
+                                  "
                                   style={{
                                     color: mainText,
                                   }}
@@ -1777,14 +1699,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     size={18}
                                     className="text-primary"
                                   />
-                                  <span>
-                                    لوحة الإدارة
-                                  </span>
+                                  <span>لوحة الإدارة</span>
                                 </button>
                               )}
 
-
-                              {/* MESSAGES */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1792,20 +1710,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   navigate('messages');
                                 }}
                                 className="
-                          flex
-                          w-full
-                          items-center
-                          justify-between
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-bold
-                          cursor-pointer
-                          transition-colors
-                          hover:bg-primary/10
-                          hover:text-primary
-                        "
+                                  flex
+                                  w-full
+                                  items-center
+                                  justify-between
+                                  rounded-xl
+                                  px-3.5
+                                  py-2.5
+                                  text-sm
+                                  font-bold
+                                  cursor-pointer
+                                  transition-colors
+                                  hover:bg-primary/10
+                                  hover:text-primary
+                                "
                                 style={{
                                   color: mainText,
                                 }}
@@ -1817,26 +1735,23 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   />
                                   <span>الرسائل</span>
                                 </div>
-
                                 {chatUnreadCount > 0 && (
                                   <span
                                     className="
-                              rounded-full
-                              bg-primary
-                              px-2
-                              py-0.5
-                              text-[10px]
-                              font-bold
-                              text-white
-                            "
+                                      rounded-full
+                                      bg-primary
+                                      px-2
+                                      py-0.5
+                                      text-[10px]
+                                      font-bold
+                                      text-white
+                                    "
                                   >
                                     {chatUnreadCount}
                                   </span>
                                 )}
                               </button>
 
-
-                              {/* ORDERS */}
                               {!isStaff && (
                                 <button
                                   type="button"
@@ -1845,20 +1760,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     navigate('orders');
                                   }}
                                   className="
-                            flex
-                            w-full
-                            items-center
-                            gap-3
-                            rounded-xl
-                            px-3.5
-                            py-2.5
-                            text-sm
-                            font-bold
-                            cursor-pointer
-                            transition-colors
-                            hover:bg-primary/10
-                            hover:text-primary
-                          "
+                                    flex
+                                    w-full
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-3.5
+                                    py-2.5
+                                    text-sm
+                                    font-bold
+                                    cursor-pointer
+                                    transition-colors
+                                    hover:bg-primary/10
+                                    hover:text-primary
+                                  "
                                   style={{
                                     color: mainText,
                                   }}
@@ -1867,14 +1782,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     size={18}
                                     className="text-primary"
                                   />
-                                  <span>
-                                    طلباتي ومشترياتي
-                                  </span>
+                                  <span>طلباتي ومشترياتي</span>
                                 </button>
                               )}
 
-
-                              {/* FAVORITES */}
                               {!isStaff && (
                                 <button
                                   type="button"
@@ -1883,20 +1794,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     navigate('favorites');
                                   }}
                                   className="
-                            flex
-                            w-full
-                            items-center
-                            justify-between
-                            rounded-xl
-                            px-3.5
-                            py-2.5
-                            text-sm
-                            font-bold
-                            cursor-pointer
-                            transition-colors
-                            hover:bg-primary/10
-                            hover:text-primary
-                          "
+                                    flex
+                                    w-full
+                                    items-center
+                                    justify-between
+                                    rounded-xl
+                                    px-3.5
+                                    py-2.5
+                                    text-sm
+                                    font-bold
+                                    cursor-pointer
+                                    transition-colors
+                                    hover:bg-primary/10
+                                    hover:text-primary
+                                  "
                                   style={{
                                     color: mainText,
                                   }}
@@ -1908,18 +1819,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     />
                                     <span>المفضلة</span>
                                   </div>
-
                                   {favorites.length > 0 && (
                                     <span
                                       className="
-                                rounded-full
-                                bg-primary
-                                px-2
-                                py-0.5
-                                text-[10px]
-                                font-bold
-                                text-white
-                              "
+                                        rounded-full
+                                        bg-primary
+                                        px-2
+                                        py-0.5
+                                        text-[10px]
+                                        font-bold
+                                        text-white
+                                      "
                                     >
                                       {favorites.length}
                                     </span>
@@ -1927,8 +1837,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 </button>
                               )}
 
-
-                              {/* QUIZ */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1936,20 +1844,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   navigate('quize');
                                 }}
                                 className="
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-bold
-                          cursor-pointer
-                          transition-colors
-                          hover:bg-[#b45f42]/10
-                          hover:text-[#b45f42]
-                        "
+                                  flex
+                                  w-full
+                                  items-center
+                                  gap-3
+                                  rounded-xl
+                                  px-3.5
+                                  py-2.5
+                                  text-sm
+                                  font-bold
+                                  cursor-pointer
+                                  transition-colors
+                                  hover:bg-[#b45f42]/10
+                                  hover:text-[#b45f42]
+                                "
                                 style={{
                                   color: mainText,
                                 }}
@@ -1958,13 +1866,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   size={18}
                                   className="text-[#b45f42]"
                                 />
-                                <span>
-                                  تحدي اللهجة الصعيدية
-                                </span>
+                                <span>تحدي اللهجة الصعيدية</span>
                               </button>
 
-
-                              {/* REPORT */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -1972,20 +1876,20 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   openReportModal();
                                 }}
                                 className="
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-bold
-                          cursor-pointer
-                          transition-colors
-                          hover:bg-amber-500/10
-                          dark:hover:text-amber-400
-                        "
+                                  flex
+                                  w-full
+                                  items-center
+                                  gap-3
+                                  rounded-xl
+                                  px-3.5
+                                  py-2.5
+                                  text-sm
+                                  font-bold
+                                  cursor-pointer
+                                  transition-colors
+                                  hover:bg-amber-500/10
+                                  dark:hover:text-amber-400
+                                "
                                 style={{
                                   color: mainText,
                                 }}
@@ -1994,13 +1898,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   size={18}
                                   className="text-amber-600"
                                 />
-                                <span>
-                                  تقديم بلاغ أو شكوى
-                                </span>
+                                <span>تقديم بلاغ أو شكوى</span>
                               </button>
 
-
-                              {/* DIVIDER */}
                               <div
                                 className="my-1.5 border-t"
                                 style={{
@@ -2008,8 +1908,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 }}
                               />
 
-
-                              {/* LOGOUT */}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2017,27 +1915,24 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   logout();
                                 }}
                                 className="
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-bold
-                          text-rose-500
-                          transition-colors
-                          hover:bg-rose-500/10
-                          cursor-pointer
-                        "
+                                  flex
+                                  w-full
+                                  items-center
+                                  gap-3
+                                  rounded-xl
+                                  px-3.5
+                                  py-2.5
+                                  text-sm
+                                  font-bold
+                                  text-rose-500
+                                  transition-colors
+                                  hover:bg-rose-500/10
+                                  cursor-pointer
+                                "
                               >
                                 <LogOut size={18} />
-                                <span>
-                                  اخرج من الحساب
-                                </span>
+                                <span>اخرج من الحساب</span>
                               </button>
-
                             </div>
                           </motion.div>
                         </>
@@ -2045,12 +1940,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     </AnimatePresence>
                   </div>
                 ) : (
-
-                  /* =================================================
-                     NOT AUTHENTICATED
-                  ================================================= */
                   <>
-                    {/* MOBILE LOGIN */}
                     <button
                       type="button"
                       onClick={() => {
@@ -2060,24 +1950,24 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       title="تسجيل الدخول / إنشاء حساب"
                       aria-label="تسجيل الدخول / إنشاء حساب"
                       className="
-                flex
-                h-8
-                shrink-0
-                items-center
-                gap-1
-                rounded-full
-                px-2.5
-                text-[11px]
-                font-black
-                text-white
-                shadow-xs
-                transition-all
-                hover:scale-105
-                active:scale-95
-                cursor-pointer
-                whitespace-nowrap
-                sm:hidden
-              "
+                        flex
+                        h-8
+                        shrink-0
+                        items-center
+                        gap-1
+                        rounded-full
+                        px-2.5
+                        text-[11px]
+                        font-black
+                        text-white
+                        shadow-xs
+                        transition-all
+                        hover:scale-105
+                        active:scale-95
+                        cursor-pointer
+                        whitespace-nowrap
+                        sm:hidden
+                      "
                       style={{
                         backgroundColor: '#9a6a35',
                       }}
@@ -2086,8 +1976,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       <span>دخول</span>
                     </button>
 
-
-                    {/* DESKTOP LOGIN */}
                     <button
                       type="button"
                       onClick={() => {
@@ -2095,24 +1983,24 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setIsAuthModalOpen(true);
                       }}
                       className="
-                hidden
-                sm:flex
-                h-9
-                lg:h-10
-                items-center
-                justify-center
-                rounded-full
-                px-3.5
-                sm:px-4
-                text-xs
-                sm:text-sm
-                font-bold
-                cursor-pointer
-                hover:opacity-80
-                transition-opacity
-                whitespace-nowrap
-                shrink-0
-              "
+                        hidden
+                        sm:flex
+                        h-9
+                        lg:h-10
+                        items-center
+                        justify-center
+                        rounded-full
+                        px-3.5
+                        sm:px-4
+                        text-xs
+                        sm:text-sm
+                        font-bold
+                        cursor-pointer
+                        hover:opacity-80
+                        transition-opacity
+                        whitespace-nowrap
+                        shrink-0
+                      "
                       style={{
                         color: mainText,
                         border: `1px solid ${borderColor}`,
@@ -2121,8 +2009,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       ادخل لحسابك
                     </button>
 
-
-                    {/* DESKTOP REGISTER */}
                     <button
                       type="button"
                       onClick={() => {
@@ -2130,24 +2016,24 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         setIsAuthModalOpen(true);
                       }}
                       className="
-                hidden
-                sm:flex
-                h-9
-                lg:h-10
-                items-center
-                justify-center
-                rounded-full
-                px-3.5
-                sm:px-5
-                text-xs
-                sm:text-sm
-                font-bold
-                cursor-pointer
-                hover:opacity-90
-                transition-opacity
-                whitespace-nowrap
-                shrink-0
-              "
+                        hidden
+                        sm:flex
+                        h-9
+                        lg:h-10
+                        items-center
+                        justify-center
+                        rounded-full
+                        px-3.5
+                        sm:px-5
+                        text-xs
+                        sm:text-sm
+                        font-bold
+                        cursor-pointer
+                        hover:opacity-90
+                        transition-opacity
+                        whitespace-nowrap
+                        shrink-0
+                      "
                       style={{
                         backgroundColor: '#9a6a35',
                         color: '#fff',
@@ -2162,218 +2048,592 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           </div>
         </div>
 
-        {/* SUB BAR - SLIM EXPANDABLE HERITAGE DOCK */}
+        {/* =========================================================
+            وَه — SIGNATURE HEADER
+            Minimal / Editorial / Heritage (Extended Logo Center)
+        ========================================================= */}
         <div
-          className="hidden border-t py-1.5 px-4 lg:block select-none relative overflow-visible"
-          style={{
-            borderColor,
-            backgroundColor: isDark ? 'rgba(16, 14, 12, 0.45)' : 'rgba(242, 237, 227, 0.55)',
-          }}
+          className="hidden lg:block relative z-[100] select-none"
+          onMouseLeave={() => setHoveredPortalId(null)}
         >
-          <div className="mx-auto flex max-w-[1600px] items-center justify-center">
-            <nav
-              onMouseLeave={() => setHoveredPortalId(null)}
-              className="inline-flex items-center gap-1.5 p-1 rounded-full border border-primary/20 bg-stone-500/[0.04] dark:bg-white/[0.03] backdrop-blur-md shadow-2xs relative overflow-visible"
-            >
-              {/* BRAND LEAD: أبواب وه */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-black text-primary select-none shrink-0 border-l border-foreground/15">
-                <Compass size={13} className="text-primary shrink-0 animate-spin-slow" />
-                <span className="tracking-wide">أبواب وه</span>
-              </div>
+          <div
+            className="relative border-t border-b overflow-visible"
+            style={{
+              borderColor: isDark
+                ? 'rgba(154,106,53,0.12)'
+                : 'rgba(154,106,53,0.14)',
+              backgroundColor: isDark ? '#12100e' : '#faf8f2',
+            }}
+          >
+            {/* DECORATIVE TOP GLOW */}
+            <div
+              className="absolute left-1/2 top-0 h-px w-40 -translate-x-1/2"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent, #9a6a35, transparent)',
+              }}
+            />
 
-              {/* WAH DOORS ITEMS (مقفولين ولما تقف عليهم تفتح اللي واقف عليها) */}
-              {roleNavLinks
-                .filter(
-                  (link: any) =>
-                    link.id !== 'home' &&
-                    link.id !== 'products' &&
-                    link.id !== 'cart' &&
-                    link.id !== 'orders' &&
-                    link.id !== 'about'
-                )
-                .map((link: any) => {
-                  const Icon = link.icon;
-                  const isActive = activePage === link.id;
-                  const isHovered = hoveredPortalId === link.id;
-                  const isExpanded = isHovered || (!hoveredPortalId && isActive);
-                  const preview = WAH_PORTALS_PREVIEW[link.id];
+            <div className="mx-auto flex h-[68px] max-w-[1450px] items-center px-8 overflow-visible">
 
-                  return (
-                    <div
-                      key={link.id}
-                      className="relative"
-                      onMouseEnter={() => setHoveredPortalId(link.id)}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigate(link.id);
-                          setHoveredPortalId(null);
-                        }}
-                        aria-label={link.label}
-                        className={`group relative flex shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${isExpanded
-                          ? 'px-3 py-1 gap-1.5'
-                          : 'h-7 w-7 p-0'
-                          } ${isActive
-                            ? 'bg-[#9a6a35] text-white shadow-xs font-black'
-                            : isHovered
-                              ? 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                              : 'text-foreground-secondary hover:text-[#9a6a35] hover:bg-black/5 dark:hover:bg-white/5'
-                          }`}
+              {/* RIGHT NAVIGATION */}
+              <div className="flex flex-1 items-center justify-end gap-1">
+                {roleNavLinks
+                  .filter(
+                    (link: any) =>
+                      link.id !== 'home' &&
+                      link.id !== 'products' &&
+                      link.id !== 'cart' &&
+                      link.id !== 'orders' &&
+                      link.id !== 'about'
+                  )
+                  .slice(
+                    0,
+                    Math.ceil(
+                      roleNavLinks.filter(
+                        (link: any) =>
+                          link.id !== 'home' &&
+                          link.id !== 'products' &&
+                          link.id !== 'cart' &&
+                          link.id !== 'orders' &&
+                          link.id !== 'about'
+                      ).length / 2
+                    )
+                  )
+                  .map((link: any) => {
+                    const Icon = link.icon;
+                    const isActive = activePage === link.id;
+                    const isHovered = hoveredPortalId === link.id;
+                    const preview = WAH_PORTALS_PREVIEW[link.id];
+
+                    return (
+                      <div
+                        key={link.id}
+                        className="relative"
+                        onMouseEnter={() => setHoveredPortalId(link.id)}
                       >
-                        {Icon && (
-                          <Icon
-                            size={13}
-                            className={`shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-[#9a6a35]'
-                              }`}
-                          />
-                        )}
-
-                        {/* LABEL THAT OPENS ONLY WHEN EXPANDED */}
-                        {isExpanded && (
+                        <motion.button
+                          type="button"
+                          onClick={() => {
+                            navigate(link.id);
+                            setHoveredPortalId(null);
+                          }}
+                          whileHover={{ y: -1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="
+                            group relative
+                            flex items-center gap-2
+                            rounded-full
+                            px-3.5 py-2
+                            cursor-pointer
+                            overflow-hidden
+                          "
+                          style={{
+                            color:
+                              isActive || isHovered
+                                ? '#9a6a35'
+                                : secondaryText,
+                          }}
+                        >
                           <motion.span
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: 'auto' }}
-                            exit={{ opacity: 0, width: 0 }}
-                            transition={{ duration: 0.15 }}
-                            className="whitespace-nowrap overflow-hidden"
+                            className="absolute inset-0 rounded-full"
+                            initial={false}
+                            animate={{
+                              opacity: isActive || isHovered ? 1 : 0,
+                              scale: isActive || isHovered ? 1 : 0.8,
+                            }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                              backgroundColor: isDark
+                                ? 'rgba(154,106,53,0.09)'
+                                : 'rgba(154,106,53,0.07)',
+                            }}
+                          />
+
+                          {Icon && (
+                            <motion.span
+                              className="relative z-10"
+                              animate={{
+                                rotate: isHovered ? [0, -7, 7, 0] : 0,
+                                scale: isHovered ? 1.08 : 1,
+                              }}
+                              transition={{ duration: 0.4 }}
+                            >
+                              <Icon
+                                size={14}
+                                strokeWidth={isActive ? 2.4 : 1.8}
+                              />
+                            </motion.span>
+                          )}
+
+                          <span
+                            className="
+                              relative z-10
+                              text-[10px]
+                              font-bold
+                              whitespace-nowrap
+                            "
                           >
                             {link.shortLabel || link.label}
-                          </motion.span>
-                        )}
-
-                        {link.isNew && isExpanded && (
-                          <span
-                            className={`rounded-full px-1.5 py-0.2 text-[8px] font-black ${isActive ? 'bg-white/25 text-white' : 'bg-[#9a6a35]/15 text-[#9a6a35]'
-                              }`}
-                          >
-                            جديد
                           </span>
-                        )}
-                      </button>
 
-                      {/* FLOATING PREVIEW CARD ON HOVER */}
-                      <AnimatePresence>
-                        {isHovered && preview && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                            transition={{ duration: 0.16, ease: 'easeOut' }}
-                            onClick={() => {
-                              navigate(link.id);
-                              setHoveredPortalId(null);
-                            }}
-                            className="absolute top-full right-1/2 translate-x-1/2 mt-2 w-64 p-3 rounded-2xl shadow-xl z-[150] cursor-pointer text-right border select-none"
-                            style={{
-                              backgroundColor: isDark ? 'rgba(20, 18, 16, 0.97)' : 'rgba(255, 253, 249, 0.98)',
-                              borderColor: isDark ? 'rgba(154, 106, 53, 0.35)' : 'rgba(154, 106, 53, 0.25)',
-                              boxShadow: '0 12px 32px -4px rgba(0, 0, 0, 0.35)',
-                              backdropFilter: 'blur(16px)',
-                            }}
-                          >
-                            <div className="flex items-center gap-2.5">
-                              <img
-                                src={preview.image}
-                                alt={preview.title}
-                                className="w-11 h-11 rounded-xl object-cover border border-primary/20 shrink-0"
-                              />
-                              <div className="min-w-0 flex-1">
-                                <span className="inline-block text-[9px] font-black text-primary px-1.5 py-0.2 rounded-md bg-primary/10 mb-0.5">
+                          {isActive && (
+                            <motion.span
+                              layoutId="wah-signature-active"
+                              className="
+                                relative z-10
+                                h-1 w-1
+                                rounded-full
+                                bg-[#9a6a35]
+                              "
+                            />
+                          )}
+
+                          {link.isNew && (
+                            <motion.span
+                              animate={{
+                                scale: [1, 1.35, 1],
+                              }}
+                              transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                              }}
+                              className="
+                                absolute right-1 top-1
+                                h-1.5 w-1.5
+                                rounded-full
+                                bg-[#9a6a35]
+                              "
+                            />
+                          )}
+                        </motion.button>
+
+                        {/* بطاقة المعاينة التفاعلية الأنيقة */}
+                        <AnimatePresence>
+                          {isHovered && preview && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 12, scale: 0.94 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 6, scale: 0.94 }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
+                              className="
+                                pointer-events-none
+                                absolute
+                                top-[52px]
+                                right-1/2
+                                translate-x-1/2
+                                z-[500]
+                                w-64
+                                overflow-hidden
+                                rounded-2xl
+                                border shadow-2xl
+                                backdrop-blur-2xl
+                              "
+                              style={{
+                                backgroundColor: isDark
+                                  ? 'rgba(18, 16, 14, 0.97)'
+                                  : 'rgba(255, 255, 255, 0.98)',
+                                borderColor: isDark
+                                  ? 'rgba(154, 106, 53, 0.35)'
+                                  : 'rgba(154, 106, 53, 0.22)',
+                              }}
+                            >
+                              <div className="relative h-28 w-full overflow-hidden bg-black/10">
+                                <img
+                                  src={preview.image}
+                                  alt={preview.title}
+                                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                                <span
+                                  className="
+                                    absolute top-2.5 right-2.5
+                                    rounded-full px-2 py-0.5
+                                    text-[9px] font-black text-white shadow-sm
+                                  "
+                                  style={{ backgroundColor: '#9a6a35' }}
+                                >
                                   {preview.badge}
                                 </span>
-                                <h5 className="text-xs font-black truncate" style={{ color: mainText }}>
-                                  {preview.title}
-                                </h5>
                               </div>
-                            </div>
-                            <p className="mt-2 text-[11px] leading-relaxed text-right line-clamp-2" style={{ color: secondaryText }}>
-                              {preview.desc}
-                            </p>
-                            <div className="mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-bold text-primary" style={{ borderColor }}>
-                              <span>دخول الباب</span>
-                              <ArrowLeft size={11} className="transition-transform group-hover:-translate-x-1" />
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
 
-              {/* SEPARATOR */}
-              <div className="h-3.5 w-px bg-foreground/15 mx-0.5 shrink-0" />
-
-              {/* ABOUT WAH - DISTINCT FEATURED BUTTON */}
-              <div
-                className="relative"
-                onMouseEnter={() => setHoveredPortalId('about')}
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate('about');
-                    setHoveredPortalId(null);
-                  }}
-                  className={`flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-150 cursor-pointer ${activePage === 'about'
-                    ? 'bg-[#9a6a35] text-white shadow-xs'
-                    : 'bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/25'
-                    }`}
-                >
-                  <Sparkles size={12} className="shrink-0" />
-                  <span>عن وه</span>
-                </button>
-
-                {/* ABOUT PREVIEW CARD */}
-                <AnimatePresence>
-                  {hoveredPortalId === 'about' && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 5, scale: 0.98 }}
-                      transition={{ duration: 0.16, ease: 'easeOut' }}
-                      onClick={() => {
-                        navigate('about');
-                        setHoveredPortalId(null);
-                      }}
-                      className="absolute top-full left-0 mt-2 w-64 p-3 rounded-2xl shadow-xl z-[150] cursor-pointer text-right border select-none"
-                      style={{
-                        backgroundColor: isDark ? 'rgba(20, 18, 16, 0.97)' : 'rgba(255, 253, 249, 0.98)',
-                        borderColor: isDark ? 'rgba(154, 106, 53, 0.35)' : 'rgba(154, 106, 53, 0.25)',
-                        boxShadow: '0 12px 32px -4px rgba(0, 0, 0, 0.35)',
-                        backdropFilter: 'blur(16px)',
-                      }}
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <img
-                          src={WAH_PORTALS_PREVIEW.about.image}
-                          alt={WAH_PORTALS_PREVIEW.about.title}
-                          className="w-11 h-11 rounded-xl object-contain bg-white/5 p-1 border border-primary/20 shrink-0"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <span className="inline-block text-[9px] font-black text-primary px-1.5 py-0.2 rounded-md bg-primary/10 mb-0.5">
-                            {WAH_PORTALS_PREVIEW.about.badge}
-                          </span>
-                          <h5 className="text-xs font-black truncate" style={{ color: mainText }}>
-                            {WAH_PORTALS_PREVIEW.about.title}
-                          </h5>
-                        </div>
+                              <div className="p-3 text-right">
+                                <h4
+                                  className="text-xs font-black truncate"
+                                  style={{ color: mainText }}
+                                >
+                                  {preview.title}
+                                </h4>
+                                <p
+                                  className="mt-1 text-[11px] leading-relaxed line-clamp-2"
+                                  style={{ color: secondaryText }}
+                                >
+                                  {preview.desc}
+                                </p>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                      <p className="mt-2 text-[11px] leading-relaxed text-right line-clamp-2" style={{ color: secondaryText }}>
-                        {WAH_PORTALS_PREVIEW.about.desc}
-                      </p>
-                      <div className="mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-bold text-primary" style={{ borderColor }}>
-                        <span>اقرأ الحكاية</span>
-                        <ArrowLeft size={11} />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    );
+                  })}
               </div>
-            </nav>
+
+              {/* ===================================================
+                  CENTER BRAND - EXTENDED HERO LOGO
+              =================================================== */}
+              <div className="relative mx-12 lg:mx-3 shrink-0 flex items-center justify-center select-none overflow-visible">
+                <motion.button
+                  type="button"
+                  onClick={() => navigate('home')}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  aria-label="منصة وه - الرئيسية"
+                  title="منصة وه - الرئيسية"
+                  className="
+                    group relative z-30
+                    flex flex-col items-center justify-center
+                    -translate-y-14 lg:-translate-y-16
+                    bg-transparent border-0 p-0
+                    cursor-pointer focus:outline-none overflow-visible
+                  "
+                >
+                  <img
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                    alt="وه"
+                    draggable={false}
+                    className="
+                      block
+                      h-5 w-auto max-w-[280px]
+                      lg:h-48 lg:max-w-[330px]
+                      object-contain
+                      transition-transform duration-300
+                      group-hover:scale-103
+                    "
+                  />
+                </motion.button>
+              </div>
+
+              {/* LEFT NAVIGATION */}
+              <div className="flex flex-1 items-center justify-start gap-1">
+                {roleNavLinks
+                  .filter(
+                    (link: any) =>
+                      link.id !== 'home' &&
+                      link.id !== 'products' &&
+                      link.id !== 'cart' &&
+                      link.id !== 'orders' &&
+                      link.id !== 'about'
+                  )
+                  .slice(
+                    Math.ceil(
+                      roleNavLinks.filter(
+                        (link: any) =>
+                          link.id !== 'home' &&
+                          link.id !== 'products' &&
+                          link.id !== 'cart' &&
+                          link.id !== 'orders' &&
+                          link.id !== 'about'
+                      ).length / 2
+                    )
+                  )
+                  .map((link: any) => {
+                    const Icon = link.icon;
+                    const isActive = activePage === link.id;
+                    const isHovered = hoveredPortalId === link.id;
+                    const preview = WAH_PORTALS_PREVIEW[link.id];
+
+                    return (
+                      <div
+                        key={link.id}
+                        className="relative"
+                        onMouseEnter={() => setHoveredPortalId(link.id)}
+                      >
+                        <motion.button
+                          type="button"
+                          onClick={() => {
+                            navigate(link.id);
+                            setHoveredPortalId(null);
+                          }}
+                          whileHover={{ y: -1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="
+                            group relative
+                            flex items-center gap-2
+                            rounded-full
+                            px-3.5 py-2
+                            cursor-pointer
+                            overflow-hidden
+                          "
+                          style={{
+                            color:
+                              isActive || isHovered
+                                ? '#9a6a35'
+                                : secondaryText,
+                          }}
+                        >
+                          <motion.span
+                            className="absolute inset-0 rounded-full"
+                            initial={false}
+                            animate={{
+                              opacity: isActive || isHovered ? 1 : 0,
+                              scale: isActive || isHovered ? 1 : 0.8,
+                            }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                              backgroundColor: isDark
+                                ? 'rgba(154,106,53,0.09)'
+                                : 'rgba(154,106,53,0.07)',
+                            }}
+                          />
+
+                          {Icon && (
+                            <motion.span
+                              className="relative z-10"
+                              animate={{
+                                rotate: isHovered ? [0, -7, 7, 0] : 0,
+                                scale: isHovered ? 1.08 : 1,
+                              }}
+                              transition={{ duration: 0.4 }}
+                            >
+                              <Icon
+                                size={14}
+                                strokeWidth={isActive ? 2.4 : 1.8}
+                              />
+                            </motion.span>
+                          )}
+
+                          <span
+                            className="
+                              relative z-10
+                              text-[10px]
+                              font-bold
+                              whitespace-nowrap
+                            "
+                          >
+                            {link.shortLabel || link.label}
+                          </span>
+
+                          {isActive && (
+                            <motion.span
+                              layoutId="wah-signature-active-left"
+                              className="
+                                relative z-10
+                                h-1 w-1
+                                rounded-full
+                                bg-[#9a6a35]
+                              "
+                            />
+                          )}
+
+                          {link.isNew && (
+                            <motion.span
+                              animate={{
+                                scale: [1, 1.35, 1],
+                              }}
+                              transition={{
+                                duration: 1.5,
+                                repeat: Infinity,
+                              }}
+                              className="
+                                absolute left-1 top-1
+                                h-1.5 w-1.5
+                                rounded-full
+                                bg-[#9a6a35]
+                              "
+                            />
+                          )}
+                        </motion.button>
+
+                        {/* بطاقة المعاينة التفاعلية الأنيقة */}
+                        <AnimatePresence>
+                          {isHovered && preview && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 12, scale: 0.94 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 6, scale: 0.94 }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
+                              className="
+                                pointer-events-none
+                                absolute
+                                top-[52px]
+                                right-1/2
+                                translate-x-1/2
+                                z-[500]
+                                w-64
+                                overflow-hidden
+                                rounded-2xl
+                                border shadow-2xl
+                                backdrop-blur-2xl
+                              "
+                              style={{
+                                backgroundColor: isDark
+                                  ? 'rgba(18, 16, 14, 0.97)'
+                                  : 'rgba(255, 255, 255, 0.98)',
+                                borderColor: isDark
+                                  ? 'rgba(154, 106, 53, 0.35)'
+                                  : 'rgba(154, 106, 53, 0.22)',
+                              }}
+                            >
+                              <div className="relative h-28 w-full overflow-hidden bg-black/10">
+                                <img
+                                  src={preview.image}
+                                  alt={preview.title}
+                                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                                <span
+                                  className="
+                                    absolute top-2.5 right-2.5
+                                    rounded-full px-2 py-0.5
+                                    text-[9px] font-black text-white shadow-sm
+                                  "
+                                  style={{ backgroundColor: '#9a6a35' }}
+                                >
+                                  {preview.badge}
+                                </span>
+                              </div>
+
+                              <div className="p-3 text-right">
+                                <h4
+                                  className="text-xs font-black truncate"
+                                  style={{ color: mainText }}
+                                >
+                                  {preview.title}
+                                </h4>
+                                <p
+                                  className="mt-1 text-[11px] leading-relaxed line-clamp-2"
+                                  style={{ color: secondaryText }}
+                                >
+                                  {preview.desc}
+                                </p>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+
+                {/* ABOUT */}
+                <div
+                  className="relative"
+                  onMouseEnter={() => setHoveredPortalId('about')}
+                >
+                  <motion.button
+                    type="button"
+                    onClick={() => {
+                      navigate('about');
+                      setHoveredPortalId(null);
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.94 }}
+                    className="
+                      relative
+                      ml-2
+                      flex items-center gap-1.5
+                      rounded-full
+                      px-3 py-2
+                      border
+                      cursor-pointer
+                    "
+                    style={{
+                      color: '#9a6a35',
+                      borderColor: 'rgba(154,106,53,0.20)',
+                      backgroundColor: isDark
+                        ? 'rgba(154,106,53,0.06)'
+                        : 'rgba(154,106,53,0.05)',
+                    }}
+                  >
+                    <Sparkles size={12} />
+                    <span className="text-[9px] font-black">عن وَه</span>
+                  </motion.button>
+
+                  <AnimatePresence>
+                    {hoveredPortalId === 'about' && WAH_PORTALS_PREVIEW['about'] && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 12, scale: 0.94 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.94 }}
+                        transition={{ duration: 0.18, ease: 'easeOut' }}
+                        className="
+                          pointer-events-none
+                          absolute
+                          top-[52px]
+                          left-0
+                          z-[500]
+                          w-64
+                          overflow-hidden
+                          rounded-2xl
+                          border shadow-2xl
+                          backdrop-blur-2xl
+                        "
+                        style={{
+                          backgroundColor: isDark
+                            ? 'rgba(18, 16, 14, 0.97)'
+                            : 'rgba(255, 255, 255, 0.98)',
+                          borderColor: isDark
+                            ? 'rgba(154, 106, 53, 0.35)'
+                            : 'rgba(154, 106, 53, 0.22)',
+                        }}
+                      >
+                        <div className="relative h-28 w-full overflow-hidden bg-black/10 flex items-center justify-center p-4">
+                          <img
+                            src={WAH_PORTALS_PREVIEW['about'].image}
+                            alt={WAH_PORTALS_PREVIEW['about'].title}
+                            className="h-full w-auto object-contain"
+                          />
+                        </div>
+
+                        <div className="p-3 text-right">
+                          <h4
+                            className="text-xs font-black truncate"
+                            style={{ color: mainText }}
+                          >
+                            {WAH_PORTALS_PREVIEW['about'].title}
+                          </h4>
+                          <p
+                            className="mt-1 text-[11px] leading-relaxed line-clamp-2"
+                            style={{ color: secondaryText }}
+                          >
+                            {WAH_PORTALS_PREVIEW['about'].desc}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            </div>
+
+            {/* BOTTOM LINE */}
+            <div className="relative h-px w-full overflow-hidden">
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundColor: isDark
+                    ? 'rgba(255,255,255,0.04)'
+                    : 'rgba(0,0,0,0.04)',
+                }}
+              />
+              <motion.div
+                animate={{
+                  x: ['-100%', '100%'],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: 'linear',
+                }}
+                className="absolute h-full w-32"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent, #9a6a35, transparent)',
+                }}
+              />
+            </div>
           </div>
-        </div>
-      </header>
+        </div>      </header>
 
       {/* SEARCH OVERLAY */}
       <AnimatePresence>
@@ -2397,8 +2657,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold" style={{ color: '#9a6a35' }}>وه</p>
-                  <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">بتدور على إيه؟</h2>
+                  <p className="text-xs font-bold" style={{ color: '#9a6a35' }}>
+                    وه
+                  </p>
+                  <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">
+                    بتدور على إيه؟
+                  </h2>
                 </div>
                 <button
                   type="button"
@@ -2513,7 +2777,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               style={{
                 backgroundColor: isDark ? '#0b0b0a' : '#eee8dc',
                 color: mainText,
-                paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)',
+                paddingBottom:
+                  'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)',
               }}
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -2554,7 +2819,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
 
               <div className="p-4 sm:p-5">
-                {/* USER CARD IN MOBILE MENU */}
                 {isAuthenticated ? (
                   <div
                     onClick={() => {
@@ -2577,12 +2841,18 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
-                        <p className="truncate text-sm font-black" style={{ color: mainText }}>
+                        <p
+                          className="truncate text-sm font-black"
+                          style={{ color: mainText }}
+                        >
                           {displayName}
                         </p>
                         <ArrowLeft size={14} className="text-primary" />
                       </div>
-                      <p className="mt-0.5 text-xs font-semibold" style={{ color: secondaryText }}>
+                      <p
+                        className="mt-0.5 text-xs font-semibold"
+                        style={{ color: secondaryText }}
+                      >
                         {currentRole === 'admin'
                           ? 'إدارة وه'
                           : isSeller
@@ -2625,15 +2895,17 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   </div>
                 )}
 
-                {/* BANNER FOR QUIZ IN MOBILE MENU */}
+                {/* QUIZ BANNER */}
                 <div
                   onClick={() => navigate('quize')}
                   className="mb-4 flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer transition-all hover:scale-[1.01]"
                   style={{
-                    backgroundColor: activePage === 'quize'
-                      ? 'rgba(180, 95, 66, 0.15)'
-                      : hoverBg,
-                    borderColor: activePage === 'quize' ? '#b45f42' : borderColor,
+                    backgroundColor:
+                      activePage === 'quize'
+                        ? 'rgba(180, 95, 66, 0.15)'
+                        : hoverBg,
+                    borderColor:
+                      activePage === 'quize' ? '#b45f42' : borderColor,
                   }}
                 >
                   <div className="flex items-center gap-3">
@@ -2642,10 +2914,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-primary dark:text-primary-hover">فاهم كلام الصعايدة؟</span>
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-primary text-white">تحدي</span>
+                        <span className="text-sm font-black text-primary dark:text-primary-hover">
+                          فاهم كلام الصعايدة؟
+                        </span>
+                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-primary text-white">
+                          تحدي
+                        </span>
                       </div>
-                      <p className="text-[11px] text-[#76675b] dark:text-[#b3a59a] mt-0.5">اختبر نفسك في 10 أسئلة صعيدية</p>
+                      <p className="text-[11px] text-[#76675b] dark:text-[#b3a59a] mt-0.5">
+                        اختبر نفسك في 10 أسئلة صعيدية
+                      </p>
                     </div>
                   </div>
                   <ArrowLeft size={16} className="text-[#b45f42]" />
@@ -2673,11 +2951,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         }}
                       >
                         {Icon && <Icon size={19} className="shrink-0" />}
-                        <span className="flex-1 text-sm font-bold">{link.label}</span>
+                        <span className="flex-1 text-sm font-bold">
+                          {link.label}
+                        </span>
                         {link.isNew && (
                           <span
                             className="rounded-full px-2 py-0.5 text-[9px] font-bold"
-                            style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                            style={{
+                              backgroundColor: '#9a6a35',
+                              color: '#fff',
+                            }}
                           >
                             جديد
                           </span>
@@ -2688,10 +2971,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   })}
                 </div>
 
-                {/* MOBILE ACCOUNT SHORTCUTS */}
+                {/* ACCOUNT SHORTCUTS */}
                 {isAuthenticated && (
-                  <div className="my-5 border-t pt-4" style={{ borderColor }}>
-                    <p className="mb-2 px-3 text-xs font-bold" style={{ color: secondaryText }}>
+                  <div
+                    className="my-5 border-t pt-4"
+                    style={{ borderColor }}
+                  >
+                    <p
+                      className="mb-2 px-3 text-xs font-bold"
+                      style={{ color: secondaryText }}
+                    >
                       حاجات تهمك في حسابك
                     </p>
 
@@ -2732,7 +3021,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    {/* المفضلة (مخفية للبائع والأدمن) */}
                     {!isStaff && (
                       <button
                         type="button"
@@ -2745,7 +3033,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         {favorites.length > 0 && (
                           <span
                             className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                            style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                            style={{
+                              backgroundColor: '#9a6a35',
+                              color: '#fff',
+                            }}
                           >
                             {favorites.length}
                           </span>
@@ -2753,7 +3044,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       </button>
                     )}
 
-                    {/* طلباتي (مخفية للبائع والأدمن) */}
                     {!isStaff && (
                       <button
                         type="button"
@@ -2777,7 +3067,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       {chatUnreadCount > 0 && (
                         <span
                           className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
-                          style={{ backgroundColor: '#9a6a35', color: '#fff' }}
+                          style={{
+                            backgroundColor: '#9a6a35',
+                            color: '#fff',
+                          }}
                         >
                           {chatUnreadCount}
                         </span>
@@ -2808,7 +3101,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     </div>
                     <div>
                       <p className="text-sm font-bold">اتعرف على وه</p>
-                      <p className="mt-1 text-[11px]" style={{ color: secondaryText }}>
+                      <p
+                        className="mt-1 text-[11px]"
+                        style={{ color: secondaryText }}
+                      >
                         من الصعيد... لكل مصر
                       </p>
                     </div>
@@ -2827,7 +3123,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:bg-rose-500/10 transition-colors"
                     style={{
                       color: '#9a6a35',
-                      backgroundColor: isDark ? 'rgba(154,106,53,0.10)' : 'rgba(154,106,53,0.06)',
+                      backgroundColor: isDark
+                        ? 'rgba(154,106,53,0.10)'
+                        : 'rgba(154,106,53,0.06)',
                     }}
                   >
                     <LogOut size={17} />
@@ -2836,8 +3134,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
 
                 {/* FOOTER */}
-                <div className="mt-6 border-t pt-5 text-center" style={{ borderColor }}>
-                  <p className="text-[11px] font-bold" style={{ color: secondaryText }}>
+                <div
+                  className="mt-6 border-t pt-5 text-center"
+                  style={{ borderColor }}
+                >
+                  <p
+                    className="text-[11px] font-bold"
+                    style={{ color: secondaryText }}
+                  >
                     وه — حكاية الصعيد في إيدك
                   </p>
                 </div>
