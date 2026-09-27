@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Sparkles, ArrowUpLeft, Compass, MessageCircle, Crown } from 'lucide-react';
+import {
+  Sparkles,
+  ArrowUpLeft,
+  Compass,
+  Crown,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface PortalMascot {
@@ -17,7 +22,14 @@ interface Portal {
   tagline: string;
   desc: string;
   badge: string;
-  page: 'products' | 'reels' | 'map' | 'places' | 'people' | 'food' | 'events';
+  page:
+  | 'products'
+  | 'reels'
+  | 'map'
+  | 'places'
+  | 'people'
+  | 'food'
+  | 'events';
   image: string;
   nameEn: string;
   accentColor: string;
@@ -35,17 +47,20 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'سوق مليان خير الصعيد وشغل الورش الأصيل 100%، اشترِ اللي يعجبك والدفع أمان وشحن واصل لحد باب بيتك.',
       badge: 'دكان وه',
       page: 'products',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790754/6d17f117-649a-4a79-b565-3f3eef139000.png',
       nameEn: 'WAH Marketplace',
       accentColor: 'from-amber-800/80',
       mascot: {
         src: '/mascot/pro.png',
         role: 'عم وه التاجر الأمين',
-        badge: 'ضمان إيد الصانع 100%',
-        quote: '«نقيت لكم أنضف شغل يدوي من أصحاب الورش مباشرة؛ لا وسيط ولا لف.. متسعر بالحق ويوصل لحد دارك!»',
-        reactionNote: 'حامل قفة وسلة خيرات الصعيد',
+        badge: 'ضمان إيد الصانع',
+        quote:
+          'عم وه بيقولك: دي بضاعة من إيد صاحبها.. من الورشة لحد دارك.',
+        reactionNote: 'من إيد الصانع لدارك',
       },
     },
+
     {
       id: 'reels',
       title: 'ريلز وحكاوي حية',
@@ -53,17 +68,20 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'فيديوهات قصيرة وخفيفة تاخدك في ثواني جوة حيطان الورش، والأسواق، ووسط الناس في الشارع الصعيدي.',
       badge: 'ريلز من قلب الصعيد',
       page: 'reels',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788789051/%D9%81%D8%AE%D8%A7%D8%B1%D8%B1%D8%B1%D8%B1.jpg',
       nameEn: 'Live Reels',
       accentColor: 'from-orange-950/70',
       mascot: {
         src: '/mascot/reels.png',
-        role: 'عم وه مصوّر الحكاوي',
-        badge: 'صوت وصورة من قلب الحدث',
-        quote: '«نزلت بكاميرتي في قلب الدكاكين والأزقة والأسواق.. شوفوا حس الصعيد الحقيقي والضحكة والجدعنة بعينكم!»',
-        reactionNote: 'متحمس يوثق بالفيديو والصوت',
+        role: 'عم وه صاحب العين المبدعه',
+        badge: 'حكايات من قلب الصعيد',
+        quote:
+          'عم وه خدك معاه.. شوف الحكاية بعينك واسمع صوت الصعيد.',
+        reactionNote: 'شوف الحكاية بعينك',
       },
     },
+
     {
       id: 'map',
       title: 'لفة على النيل والبلاد',
@@ -71,35 +89,43 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'لف في بلادنا براحتك من أول بحري الصعيد لحد أسوان وبلاد النوبة، دوس على الخريطة وشوف كل حتة.',
       badge: 'الخريطة الحية',
       page: 'map',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png',
       nameEn: 'Interactive Atlas',
       accentColor: 'from-amber-900/60',
       mascot: {
         src: '/mascot/saaed.png',
-        role: 'عم وه دليل الرحالة',
-        badge: 'شبر شبر ع النيل',
-        quote: '«مشيت على ضفاف النيل ورسمت لكم كل نجع وقرية ومحافظة.. دوس على أي بقعة في الخريطة ولف في بلادنا براحتك!»',
-        reactionNote: 'فاتح دراعاته يرحب بالمسافرين',
+        role: 'عم وه دليل البلاد',
+        badge: 'لفة في بلادنا',
+        quote:
+          'عم وه يقولك: تعالى ألفّفك في بلادنا.. بلد بلد ونجع نجع.',
+        reactionNote: 'تعالى ألفّفك',
       },
     },
+
     {
       id: 'places',
       title: 'آثار ومعالم بلدنا',
       tagline: 'حيطان عتيقة وحكاوي من سنين',
       desc: 'من عظمة الكرنك ودندرة وإدفو لحد الأديرة القديمة، وقصور المنيا، وبيوت النوبة الملونة على البحر.',
-      badge: wahStats?.placesCount ? `${wahStats.placesCount} مكان متوثق` : 'أماكن متوثقة',
+      badge: wahStats?.placesCount
+        ? `${wahStats.placesCount} مكان متوثق`
+        : 'أماكن متوثقة',
       page: 'places',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788715371/WAH/heritage-places/karnak-temples/img_2332_1788715371753_8g8m.jpg',
       nameEn: 'Architectural Heritage',
       accentColor: 'from-[#9a6a35]/70',
       mascot: {
         src: '/mascot/athar.png',
-        role: 'عم وه حارس العتيق',
-        badge: 'وقار 7000 سنة حضارة',
-        quote: '«وقفت تحت حيطان المعابد والبيوت القديمة وسألت الرواة والمؤرخين.. وسجلت لكم سر أجدادنا وعزتهم التي لا تنكسر!»',
-        reactionNote: 'واقف بالهيبة والعصا حارساً للآثار',
+        role: 'عم وه حارس الحكاية',
+        badge: 'حكاية من زمان',
+        quote:
+          'عم وه واقف يحكيلك.. كل حجر هنا وراه حكاية تستاهل تتسمع.',
+        reactionNote: 'كل حجر وراه حكاية',
       },
     },
+
     {
       id: 'people',
       title: 'أعلام ورموز الصعيد',
@@ -107,17 +133,20 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'اتعرف على قامات الصعيد؛ شيوخ الصنعة اللي صانوا التراث، رواة السير، وكبار الأدباء والشعراء اللي شرفوا بلدهم.',
       badge: 'ناس ليها علامة',
       page: 'people',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790532/8460cc50-45f5-4452-8f78-993668390750.png',
       nameEn: 'Figures of Upper Egypt',
       accentColor: 'from-[#744e26]/70',
       mascot: {
         src: '/mascot/fan.png',
-        role: 'عم وه راوي السير العطرة',
-        badge: 'في مضايف الأكابر',
-        quote: '«قعدت في مضايف شيوخ الصنعة والشعراء وأهل الكرم، وجمعت سيرتهم اللي تشرّف كل صعيدي وتفضل فخر لأولادنا!»',
-        reactionNote: 'مبتسم بفخر في مضايف الكبار',
+        role: 'عم وه راوي السير',
+        badge: 'ناس ليها سيرة',
+        quote:
+          'عم وه يعرفك على ناس ليها سيرة.. ناس سابت علامة في بلدها.',
+        reactionNote: 'ناس ليها سيرة',
       },
     },
+
     {
       id: 'food',
       title: 'لقمة هنية من قلب بيوتنا',
@@ -125,17 +154,20 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'طعم العيش الشمسي السخن، فايش بلبن الحمص، ويكة صعيدي مفروكة، كشك مقدوح بالسمن، وخير عسل القصب الصافي.',
       badge: 'أكل بيوت بلدي',
       page: 'food',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790638/05ef9181-0c18-4290-8a57-b2d054054e7f.png',
       nameEn: 'Authentic Kitchen',
       accentColor: 'from-amber-950/70',
       mascot: {
         src: '/mascot/foods.png',
-        role: 'عم وه صاحب السفرة البلدي',
-        badge: 'نَفَس بلدي بالسمنة الصافية',
-        quote: '«دخلت مطابخ أهالينا ودوقت العيش الشمسي السخن وطواجن البامية بالسمن البلدي.. أكل صعيدي يروق البال ويغذي الروح!»',
-        reactionNote: 'متهلل بالخير واللقمة الهنية',
+        role: 'عم وه صاحب السفرة',
+        badge: 'لقمة من ريحة البيت',
+        quote:
+          'عم وه يقولك: دي مش مجرد أكلة.. دي ريحة بيت ولمة وأصل.',
+        reactionNote: 'لقمة من ريحة البيت',
       },
     },
+
     {
       id: 'events',
       title: 'ليالي الموالد ولمّة الفرح',
@@ -143,20 +175,24 @@ export const WahEcosystemPortalSection: React.FC = () => {
       desc: 'فرحة كسر القصب، زحمة ونفحات سيدي عبد الرحيم القنائي، حلقات التحطيب في الأقصر، وشمس أبو سمبل لما تشرق.',
       badge: 'مواسم وليالي',
       page: 'events',
-      image: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
+      image:
+        'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_800/v1788790617/145b481b-d989-4d5b-82cf-26bbb0b5d6eb.png',
       nameEn: 'Seasons & Events',
       accentColor: 'from-[#5a3e1b]/70',
       mascot: {
         src: '/mascot/events.png',
-        role: 'عم وه راعي البهجة والمواسم',
-        badge: 'نفحات وبركة ولمة حبايب',
-        quote: '«حضرت ليالي الذكر ودقة عصايا التحطيب وزغاريد الموالد.. جبت لكم بهجة مواسم الجنوب ونفحاتها اللي تشرح القلب!»',
-        reactionNote: 'مستمتع بدقة التحطيب والإنشاد',
+        role: 'عم وه صاحب اللمة',
+        badge: 'فرحة ولمّة',
+        quote:
+          'عم وه أخدك على اللمة.. موالد وفرحة وحكايات بتتكرر كل سنة.',
+        reactionNote: 'تعالى على اللمة',
       },
     },
   ];
 
-  const [activeId, setActiveId] = useState<string>(portals[0]?.id || '');
+  const [activeId, setActiveId] = useState<string>(
+    portals[0]?.id || ''
+  );
 
   return (
     <section
@@ -174,45 +210,65 @@ export const WahEcosystemPortalSection: React.FC = () => {
         overflow-x-clip
       "
     >
-      {/* الرأس التحريري */}
+      {/* ======================================== */}
+      {/* HEADER */}
+      {/* ======================================== */}
+
       <div className="relative z-10 mb-12 sm:mb-16 text-foreground select-none">
         <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
           <div>
-            {/* الشارة العلوية */}
             <div className="mb-6 flex items-center gap-3 text-[10px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/10">
-                <Compass size={14} className="animate-spin-slow text-accent" />
+                <Compass
+                  size={14}
+                  className="animate-spin-slow text-accent"
+                />
               </span>
+
               DISCOVER / أبواب ودليل «وه» السبعة
             </div>
+
             <br />
-            {/* العنوان التايبوغرافي المتجاوب */}
+
             <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
               أبواب
               <br />
+
               <span className="ps-22 mr-3 sm:mr-8 lg:mr-20 text-primary dark:text-primary-hover">
                 وه
               </span>
             </h1>
-            {/* الشرح والمؤشر الجانبي */}
+
             <div className="mt-8 grid max-w-3xl gap-6 sm:grid-cols-[80px_1fr] items-start">
               <div className="hidden sm:block">
                 <div className="text-[10px] font-black tracking-[0.2em] text-foreground-disabled">
                   هتلاقى ايه
                 </div>
+
                 <div className="mt-3 h-px w-10 bg-accent" />
               </div>
 
               <div className="space-y-3">
                 <p className="max-w-2xl text-sm font-medium leading-7 text-foreground-secondary sm:text-base sm:leading-8">
-                  كل خير الصعيد متجمع في <strong className="text-foreground font-black">7 أبواب تراثية رئيسية</strong>.
-                  في كل باب، هتلاقي <strong className="text-primary font-black">«عم وه»</strong> متقمص دوراً أصيلاً وموثقاً حكايته بيده:
-                  من تاجر الصنعة الأمين، لدليل النيل والرحالة، لحارس العتيق وراعي بهجة الموالد!
+                  كل خير الصعيد متجمع في{' '}
+                  <strong className="text-foreground font-black">
+                    7 أبواب تراثية رئيسية
+                  </strong>
+                  . في كل باب، هتلاقي{' '}
+                  <strong className="text-primary font-black">
+                    «عم وه»
+                  </strong>{' '}
+                  متقمص دوراً أصيلاً وموثقاً حكايته بيده:
+                  من تاجر الصنعة الأمين، لدليل النيل والرحالة،
+                  لحارس العتيق وراعي بهجة الموالد!
                 </p>
 
                 <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-bold text-primary">
                   <Crown size={13} className="shrink-0" />
-                  <span>«عم وه» مرافقك في الأبواب السبعة بشخصيات وأدوار فريدة</span>
+
+                  <span>
+                    «عم وه» مرافقك في الأبواب السبعة بشخصيات وأدوار فريدة
+                  </span>
                 </div>
               </div>
             </div>
@@ -220,7 +276,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
         </div>
       </div>
 
-      {/* شاشة سطح المكتب: أكورديون أفقي متمدد سينمائي بحضور مميز لعم وه في كل باب */}
+      {/* ======================================== */}
+      {/* DESKTOP */}
+      {/* ======================================== */}
+
       <div className="hidden lg:flex gap-3 h-[520px] w-full">
         {portals.map((portal, idx) => {
           const isActive = activeId === portal.id;
@@ -241,134 +300,371 @@ export const WahEcosystemPortalSection: React.FC = () => {
               animate={{
                 flex: isActive ? 4.5 : 1,
               }}
-              transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
-              className="relative h-full rounded-3xl overflow-hidden cursor-pointer shadow-lg select-none group border border-white/10 bg-black"
+              transition={{
+                duration: 0.55,
+                ease: [0.32, 0.72, 0, 1],
+              }}
+              className="
+                relative
+                h-full
+                rounded-3xl
+                overflow-hidden
+                cursor-pointer
+                shadow-lg
+                select-none
+                group
+                border border-white/10
+                bg-black
+              "
             >
               <img
                 src={portal.image}
                 alt={portal.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-85"
+                className="
+                  absolute inset-0
+                  w-full h-full
+                  object-cover
+                  transition-transform
+                  duration-700
+                  ease-out
+                  group-hover:scale-105
+                  opacity-85
+                "
                 loading="lazy"
               />
 
               <div
                 className={`absolute inset-0 transition-opacity duration-500 ${isActive
-                    ? 'bg-gradient-to-t from-black via-black/55 to-black/35'
-                    : 'bg-black/70 hover:bg-black/55'
+                  ? 'bg-gradient-to-t from-black via-black/55 to-black/35'
+                  : 'bg-black/70 hover:bg-black/55'
                   }`}
               />
 
-              {/* الحالة المنكمشة: يظهر فيها رقم الباب وعنوانه وصورة مصغرة لعم وه في هذا الباب */}
+              {/* CLOSED CARD */}
+
               <div
-                className={`absolute inset-0 p-5 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                className={`absolute inset-0 p-5 flex flex-col justify-between items-center transition-opacity duration-300 ${isActive
+                  ? 'opacity-0 pointer-events-none'
+                  : 'opacity-100'
                   }`}
               >
                 <div className="flex flex-col items-center gap-1.5">
                   <span className="font-mono text-xs text-[#d5a56d] font-bold">
                     0{idx + 1}
                   </span>
-                  {/* عم وه مصغر في الحالة المنكمشة */}
+
                   <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 p-0.5 flex items-center justify-center overflow-hidden">
                     <img
                       src={portal.mascot.src}
                       alt={portal.mascot.role}
-                      style={{ imageRendering: 'crisp-edges' }}
-                      className="w-full h-full object-contain -scale-x-100"
+                      style={{
+                        imageRendering: 'crisp-edges',
+                      }}
+                      className="
+                        w-full
+                        h-full
+                        object-contain
+                        -scale-x-100
+                      "
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col items-center gap-2">
-                  <h3 className="text-white font-bold text-base font-heritage tracking-wide [writing-mode:vertical-rl] rotate-180 select-none">
+                  <h3 className="
+                    text-white
+                    font-bold
+                    text-base
+                    font-heritage
+                    tracking-wide
+                    [writing-mode:vertical-rl]
+                    rotate-180
+                    select-none
+                  ">
                     {portal.title}
                   </h3>
-                  <span className="text-[10px] font-mono text-primary [writing-mode:vertical-rl] rotate-180 opacity-70">
+
+                  <span className="
+                    text-[10px]
+                    font-mono
+                    text-primary
+                    [writing-mode:vertical-rl]
+                    rotate-180
+                    opacity-70
+                  ">
                     {portal.mascot.role}
                   </span>
                 </div>
 
-                <div className="w-2.5 h-2.5 rounded-full bg-primary/70 animate-pulse" />
+                <div className="
+                  w-2.5
+                  h-2.5
+                  rounded-full
+                  bg-primary/70
+                  animate-pulse
+                " />
               </div>
 
-              {/* الحالة المفتوحة: تفاصيل الباب + عم وه بشخصيته ودوره واقتباسه المميز */}
+              {/* OPEN CARD */}
+
               <AnimatePresence>
                 {isActive && (
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35, delay: 0.12 }}
-                    className="absolute inset-0 p-7 lg:p-8 flex flex-col justify-between z-10"
+                    initial={{
+                      opacity: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 0.35,
+                      delay: 0.12,
+                    }}
+                    className="
+                      absolute
+                      inset-0
+                      p-7
+                      lg:p-8
+                      flex
+                      flex-col
+                      justify-between
+                      z-10
+                    "
                   >
-                    {/* شريط الرأس في الباب المفتوح */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-xs px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-[#d5a56d] font-bold border border-white/10">
+                    <div className="
+                      flex
+                      items-center
+                      justify-between
+                    ">
+                      <div className="
+                        flex
+                        items-center
+                        gap-2.5
+                      ">
+                        <span className="
+                          font-mono
+                          text-xs
+                          px-2.5
+                          py-1
+                          rounded-full
+                          bg-black/50
+                          backdrop-blur-md
+                          text-[#d5a56d]
+                          font-bold
+                          border border-white/10
+                        ">
                           باب 0{idx + 1}
                         </span>
 
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold backdrop-blur-md shadow-md">
+                        <span className="
+                          inline-flex
+                          items-center
+                          gap-1.5
+                          px-3
+                          py-1
+                          rounded-full
+                          bg-primary
+                          text-white
+                          text-xs
+                          font-bold
+                          backdrop-blur-md
+                          shadow-md
+                        ">
                           <Sparkles className="w-3.5 h-3.5" />
-                          <span>{portal.badge}</span>
+
+                          <span>
+                            {portal.badge}
+                          </span>
                         </span>
 
-                        {/* شارة دور عم وه في هذا الباب */}
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/40 text-xs font-bold backdrop-blur-md">
-                          <span>{portal.mascot.role}</span>
+                        <span className="
+                          inline-flex
+                          items-center
+                          gap-1
+                          px-3
+                          py-1
+                          rounded-full
+                          bg-amber-500/20
+                          text-amber-200
+                          border border-amber-500/40
+                          text-xs
+                          font-bold
+                          backdrop-blur-md
+                        ">
+                          <span>
+                            {portal.mascot.role}
+                          </span>
                         </span>
                       </div>
 
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:bg-primary transition-colors shadow-lg">
+                      <div className="
+                        w-10
+                        h-10
+                        rounded-full
+                        bg-white/20
+                        backdrop-blur-md
+                        border border-white/30
+                        flex
+                        items-center
+                        justify-center
+                        text-white
+                        group-hover:bg-primary
+                        transition-colors
+                        shadow-lg
+                      ">
                         <ArrowUpLeft className="w-5 h-5" />
                       </div>
                     </div>
 
-                    {/* المحتوى الرئيسي: نصوص الباب + مجسم عم وه مع بالون الحكاية */}
-                    <div className="grid grid-cols-[1fr_auto] items-end gap-6">
-                      {/* النصوص */}
-                      <div className="max-w-xl text-right space-y-3">
-                        <span className="text-xs uppercase tracking-widest text-primary-hover font-black block">
+                    <div className="
+                      grid
+                      grid-cols-[1fr_auto]
+                      items-end
+                      gap-6
+                    ">
+                      <div className="
+                        max-w-xl
+                        text-right
+                        space-y-3
+                      ">
+                        <span className="
+                          text-xs
+                          uppercase
+                          tracking-widest
+                          text-primary-hover
+                          font-black
+                          block
+                        ">
                           {portal.nameEn}
                         </span>
 
-                        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white font-heritage leading-tight">
+                        <h3 className="
+                          text-2xl
+                          sm:text-3xl
+                          lg:text-4xl
+                          font-black
+                          text-white
+                          font-heritage
+                          leading-tight
+                        ">
                           {portal.title}
                         </h3>
 
-                        <p className="text-xs sm:text-sm text-white/85 leading-relaxed line-clamp-2">
+                        <p className="
+                          text-xs
+                          sm:text-sm
+                          text-white/85
+                          leading-relaxed
+                          line-clamp-2
+                        ">
                           {portal.desc}
                         </p>
 
-                        {/* كلام وحكاية عم وه الخاصة بهذا الباب */}
-                        <div className="rounded-2xl bg-black/60 border border-primary/40 p-3.5 backdrop-blur-md space-y-1.5">
-                          <div className="flex items-center justify-between text-[11px] font-black text-amber-300">
-                            <span className="flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-amber-400" />
+                        <div className="
+                          rounded-2xl
+                          bg-black/60
+                          border border-primary/40
+                          p-3.5
+                          backdrop-blur-md
+                          space-y-1.5
+                        ">
+                          <div className="
+                            flex
+                            items-center
+                            justify-between
+                            text-[11px]
+                            font-black
+                            text-amber-300
+                          ">
+                            <span className="
+                              flex
+                              items-center
+                              gap-1.5
+                            ">
+                              <span className="
+                                w-2
+                                h-2
+                                rounded-full
+                                bg-amber-400
+                              " />
+
                               «عم وه»: {portal.mascot.role}
                             </span>
-                            <span className="text-[10px] text-white/50 font-normal">
+
+                            <span className="
+                              text-[10px]
+                              text-white/50
+                              font-normal
+                            ">
                               {portal.mascot.badge}
                             </span>
                           </div>
-                          <p className="text-xs font-medium text-white/95 leading-relaxed">
+
+                          <p className="
+                            text-xs
+                            font-medium
+                            text-white/95
+                            leading-relaxed
+                          ">
                             {portal.mascot.quote}
                           </p>
                         </div>
 
-                        <div className="pt-2 border-t border-white/20 flex items-center justify-between text-xs text-[#d5a56d]">
-                          <span className="italic">{portal.tagline}</span>
-                          <span className="font-bold text-white hover:text-primary transition-colors flex items-center gap-1">
+                        <div className="
+                          pt-2
+                          border-t
+                          border-white/20
+                          flex
+                          items-center
+                          justify-between
+                          text-xs
+                          text-[#d5a56d]
+                        ">
+                          <span className="italic">
+                            {portal.tagline}
+                          </span>
+
+                          <span className="
+                            font-bold
+                            text-white
+                            flex
+                            items-center
+                            gap-1
+                          ">
                             افتح الباب الآن ←
                           </span>
                         </div>
                       </div>
 
-                      {/* مجسم عم وه المخصص لهذا الباب */}
-                      <div className="relative shrink-0 flex flex-col items-center">
-                        <div className="absolute -inset-2 rounded-full bg-primary/20 blur-xl animate-pulse pointer-events-none" />
+                      <div className="
+                        relative
+                        shrink-0
+                        flex
+                        flex-col
+                        items-center
+                      ">
+                        <div className="
+                          absolute
+                          -inset-2
+                          rounded-full
+                          bg-primary/20
+                          blur-xl
+                          animate-pulse
+                          pointer-events-none
+                        " />
+
                         <motion.div
-                          animate={{ y: [0, -6, 0] }}
-                          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                          animate={{
+                            y: [0, -6, 0],
+                          }}
+                          transition={{
+                            duration: 3.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                          }}
                           className="relative z-10"
                         >
                           <img
@@ -377,12 +673,38 @@ export const WahEcosystemPortalSection: React.FC = () => {
                             style={{
                               imageRendering: 'crisp-edges',
                             }}
-                            className="h-44 sm:h-52 w-auto object-contain drop-shadow-[0_14px_25px_rgba(0,0,0,0.5)] select-none"
+                            className="
+                              h-44
+                              sm:h-52
+                              w-auto
+                              object-contain
+                              drop-shadow-[0_14px_25px_rgba(0,0,0,0.5)]
+                              select-none
+                            "
                           />
                         </motion.div>
-                        {/* ظل أرضي */}
-                        <div className="w-24 h-2 rounded-[100%] bg-black/60 blur-xs -mt-1" />
-                        <span className="mt-1 text-[9px] font-bold text-amber-300/80 bg-black/50 px-2 py-0.5 rounded-full border border-white/10 backdrop-blur-xs">
+
+                        <div className="
+                          w-24
+                          h-2
+                          rounded-[100%]
+                          bg-black/60
+                          blur-xs
+                          -mt-1
+                        " />
+
+                        <span className="
+                          mt-1
+                          text-[9px]
+                          font-bold
+                          text-amber-300/80
+                          bg-black/50
+                          px-2
+                          py-0.5
+                          rounded-full
+                          border border-white/10
+                          backdrop-blur-xs
+                        ">
                           {portal.mascot.reactionNote}
                         </span>
                       </div>
@@ -395,119 +717,340 @@ export const WahEcosystemPortalSection: React.FC = () => {
         })}
       </div>
 
-      {/* شاشات الموبايل والتابلت: كروت تجميع حركي تفاعلي مميز تبرز عم وه بكل باب */}
-      <div className="flex flex-col gap-6 sm:grid sm:grid-cols-2 lg:hidden">
-        {portals.map((portal, idx) => {
-          return (
-            <motion.div
-              key={portal.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setActivePage(portal.page)}
-              initial={{
-                opacity: 0,
-                y: 20,
-                scale: 0.97,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{
-                duration: 0.5,
-                ease: [0.16, 1, 0.3, 1],
-                delay: 0.04,
-              }}
-              whileTap={{ scale: 0.98 }}
-              className="
-                group relative min-h-[420px] w-full rounded-4xl overflow-hidden
-                border border-white/15
-                bg-black shadow-[0_12px_35px_rgba(0,0,0,0.22)]
-                cursor-pointer select-none flex flex-col justify-between p-5
-              "
-            >
-              {/* صورة خلفية الباب */}
+      {/* ======================================== */}
+      {/* MOBILE + TABLET */}
+      {/* ======================================== */}
+
+      <div className="
+        flex
+        flex-col
+        gap-5
+        sm:grid
+        sm:grid-cols-2
+        lg:hidden
+      ">
+        {portals.map((portal, idx) => (
+          <motion.div
+            key={portal.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => setActivePage(portal.page)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setActivePage(portal.page);
+              }
+            }}
+            initial={{
+              opacity: 0,
+              y: 18,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            viewport={{
+              once: true,
+              margin: '-40px',
+            }}
+            transition={{
+              duration: 0.5,
+              ease: [0.16, 1, 0.3, 1],
+              delay: idx * 0.03,
+            }}
+            whileTap={{
+              scale: 0.985,
+            }}
+            className="
+              group
+              relative
+              w-full
+              overflow-hidden
+              rounded-[28px]
+              bg-black
+              border border-white/10
+              shadow-[0_12px_35px_rgba(0,0,0,0.2)]
+              cursor-pointer
+              select-none
+            "
+          >
+            {/* ================================= */}
+            {/* IMAGE */}
+            {/* ================================= */}
+
+            <div className="
+              relative
+              h-[270px]
+              overflow-hidden
+            ">
               <img
                 src={portal.image}
                 alt={portal.title}
-                className="
-                  absolute inset-0 h-full w-full object-cover
-                  opacity-80 transition-transform duration-700 ease-out
-                  group-hover:scale-105 group-active:scale-100
-                "
                 loading="lazy"
                 decoding="async"
+                className="
+                  absolute
+                  inset-0
+                  h-full
+                  w-full
+                  object-cover
+                  opacity-90
+                  transition-transform
+                  duration-700
+                  ease-out
+                  group-hover:scale-105
+                "
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
+              {/* Main overlay */}
+
+              <div className="
+                absolute
+                inset-0
+                bg-gradient-to-t
+                from-black
+                via-black/20
+                to-black/10
+              " />
+
+              {/* Accent */}
+
               <div
-                className={`absolute inset-0 bg-gradient-to-b ${portal.accentColor} to-transparent opacity-40 mix-blend-overlay`}
+                className={`
+                  absolute
+                  inset-0
+                  bg-gradient-to-b
+                  ${portal.accentColor}
+                  to-transparent
+                  opacity-30
+                `}
               />
 
-              {/* الجزء العلوي: الرقم والبادج وشارة عم وه */}
-              <div className="relative z-10 flex items-center justify-between gap-2">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="font-mono text-xs font-black tracking-wider text-[#d5a56d] bg-black/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/15">
-                    0{idx + 1}
-                  </span>
-                  <span className="text-[10px] font-bold bg-primary text-white px-2.5 py-0.5 rounded-full shadow-md backdrop-blur-md">
-                    {portal.badge}
-                  </span>
-                </div>
+              {/* ================================= */}
+              {/* TOP */}
+              {/* ================================= */}
 
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white transition-all group-hover:bg-primary group-active:scale-90 shrink-0">
-                  <ArrowUpLeft className="h-4 w-4" />
-                </div>
-              </div>
-
-              {/* مجسم عم وه بارز في منتصف الكارت مع حركته المميزة لهذا الباب */}
-              <div className="relative z-10 my-2 flex items-center justify-between gap-3 bg-black/50 border border-white/15 rounded-2xl p-3 backdrop-blur-md">
-                <div className="flex-1 text-right space-y-1">
-                  <div className="inline-flex items-center gap-1 text-[10px] font-black text-amber-300">
-                    <span>👑 {portal.mascot.role}</span>
-                  </div>
-                  <p className="text-[11px] font-medium text-white/90 leading-relaxed line-clamp-2">
-                    {portal.mascot.quote}
-                  </p>
-                </div>
-
-                <div className="shrink-0 relative">
-                  <img
-                    src={portal.mascot.src}
-                    alt={portal.mascot.role}
-                    style={{ imageRendering: 'crisp-edges' }}
-                    className="h-20 w-auto object-contain drop-shadow-md select-none -scale-x-100"
-                  />
-                  <div className="w-12 h-1.5 rounded-[100%] bg-black/70 blur-xs mx-auto" />
-                </div>
-              </div>
-
-              {/* الجزء السفلي: تفاصيل البوابة والنصوص */}
-              <div className="relative z-10 text-right space-y-2">
-                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-[#d5a56d] block">
-                  {portal.nameEn}
+              <div className="
+                absolute
+                top-4
+                left-4
+                right-4
+                z-10
+                flex
+                items-center
+                justify-between
+              ">
+                <span className="
+                  rounded-full
+                  border border-white/15
+                  bg-black/50
+                  px-2.5
+                  py-1
+                  text-[10px]
+                  font-black
+                  text-[#d5a56d]
+                  backdrop-blur-md
+                ">
+                  0{idx + 1}
                 </span>
 
-                <h3 className="text-xl font-black text-white font-heritage tracking-tight leading-tight">
-                  {portal.title}
-                </h3>
-
-                <p className="text-xs text-white/80 leading-relaxed line-clamp-2">
-                  {portal.desc}
-                </p>
-
-                <div className="pt-2 border-t border-white/15 flex items-center justify-between text-[11px] text-[#d5a56d]">
-                  <span className="italic truncate max-w-[80%]">{portal.tagline}</span>
-                  <span className="font-bold text-white flex items-center gap-1">
-                    ادخل الباب ←
-                  </span>
-                </div>
+                <span className="
+                  rounded-full
+                  bg-primary
+                  px-3
+                  py-1
+                  text-[9px]
+                  font-black
+                  text-white
+                  shadow-lg
+                ">
+                  {portal.badge}
+                </span>
               </div>
-            </motion.div>
-          );
-        })}
+
+              {/* ================================= */}
+              {/* عم وه خارج من الصورة */}
+              {/* ================================= */}
+
+              <motion.div
+                className="
+                  absolute
+                  bottom-[-5px]
+                  left-4
+                  z-20
+                "
+                animate={{
+                  y: [0, -3, 0],
+                }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              >
+                {/* Glow */}
+
+                <div className="
+                  absolute
+                  bottom-3
+                  left-1/2
+                  -translate-x-1/2
+                  h-16
+                  w-16
+                  rounded-full
+                  bg-primary/30
+                  blur-2xl
+                " />
+
+                {/* Mascot */}
+
+                <img
+                  src={portal.mascot.src}
+                  alt={portal.mascot.role}
+                  style={{
+                    imageRendering: 'crisp-edges',
+                  }}
+                  className="
+                    relative
+                    h-[118px]
+                    w-auto
+                    object-contain
+                    select-none
+                    -scale-x-100
+                    drop-shadow-[0_10px_15px_rgba(0,0,0,0.65)]
+                  "
+                />
+              </motion.div>
+
+              {/* ================================= */}
+              {/* ROLE */}
+              {/* ================================= */}
+
+              <div className="
+                absolute
+                bottom-4
+                left-[92px]
+                z-20
+                rounded-full
+                border border-white/15
+                bg-black/60
+                px-2.5
+                py-1
+                backdrop-blur-md
+              ">
+                <span className="
+                  text-[8px]
+                  font-black
+                  text-amber-300
+                ">
+                  {portal.mascot.role}
+                </span>
+              </div>
+            </div>
+
+            {/* ================================= */}
+            {/* CONTENT */}
+            {/* ================================= */}
+
+            <div className="
+              relative
+              bg-black
+              px-5
+              pb-5
+              pt-4
+              text-right
+            ">
+              {/* Accent line */}
+
+              <div className="
+                absolute
+                top-0
+                right-5
+                h-[2px]
+                w-10
+                rounded-full
+                bg-primary
+              " />
+
+              {/* English */}
+
+              <span className="
+                block
+                text-[8px]
+                font-black
+                uppercase
+                tracking-[0.25em]
+                text-[#d5a56d]
+                mb-1.5
+              ">
+                {portal.nameEn}
+              </span>
+
+              {/* Title */}
+
+              <h3 className="
+                text-[21px]
+                font-black
+                leading-tight
+                tracking-tight
+                text-white
+                font-heritage
+              ">
+                {portal.title}
+              </h3>
+
+              {/* عم وه sentence */}
+
+              <p className="
+                mt-2
+                max-w-[90%]
+                text-[11px]
+                font-medium
+                leading-[1.7]
+                text-white/60
+              ">
+                {portal.mascot.quote
+                  .replace(/^عم وه[^:]*:\s*/i, '')
+                  .replace(/^عم وه\s*/i, '')}
+              </p>
+
+              {/* Bottom */}
+
+              <div className="
+                mt-4
+                flex
+                items-center
+                justify-between
+                border-t
+                border-white/10
+                pt-3
+              ">
+                <span className="
+                  text-[10px]
+                  italic
+                  text-[#d5a56d]
+                ">
+                  {portal.mascot.reactionNote}
+                </span>
+
+                <span className="
+                  flex
+                  items-center
+                  gap-1
+                  text-[10px]
+                  font-black
+                  text-white
+                  transition-colors
+                  group-hover:text-primary
+                ">
+                  ادخل الباب
+
+                  <ArrowUpLeft className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
