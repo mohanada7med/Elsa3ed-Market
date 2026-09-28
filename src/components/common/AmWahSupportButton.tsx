@@ -37,6 +37,7 @@ export const AmWahSupportButton: React.FC = () => {
     openChatWithAdmin,
     setIsAuthModalOpen,
     setAuthModalTab,
+    setPostLoginRedirect,
     addToast,
   } = useApp();
 
@@ -86,6 +87,7 @@ export const AmWahSupportButton: React.FC = () => {
     const finalMsg = (promptText || userMsg).trim();
 
     if (!isAuthenticated) {
+      setPostLoginRedirect('messages');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
       addToast(
@@ -116,6 +118,7 @@ export const AmWahSupportButton: React.FC = () => {
 
   const handleGoToFullChat = () => {
     if (!isAuthenticated) {
+      setPostLoginRedirect('messages');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
       addToast(
@@ -364,6 +367,7 @@ export const AmWahSupportButton: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
+                      setPostLoginRedirect('messages');
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                       setIsOpen(false);

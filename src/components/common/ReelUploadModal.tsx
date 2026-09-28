@@ -59,7 +59,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   currentUser,
   allSellers = []
 }) => {
-  const { setIsAuthModalOpen, setAuthModalTab, setActivePage } = useApp();
+  const { setIsAuthModalOpen, setAuthModalTab, setPostLoginRedirect, setActivePage } = useApp();
 
   const [mobileTab, setMobileTab] = useState<'form' | 'preview'>('form');
   const [sourceType, setSourceType] = useState<'upload' | 'url' | 'preset'>('upload');
@@ -106,7 +106,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Authorization Check: Only seller and admin can upload
-  const isUnauthorized = !currentUser || (currentUser.role !== 'seller' && currentUser.role !== 'admin');
+  const isGuestUser = !currentUser || currentUser.role === 'guest' || currentUser.id === 'guest-visitor';
+  const isUnauthorized = isGuestUser || (currentUser.role !== 'seller' && currentUser.role !== 'admin');
 
   // Sync when product selection changes
   useEffect(() => {
@@ -352,19 +353,20 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 رفع مقاطع الفيديو مخصص للحرفيين وأصحاب الورش فقط
               </h3>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 leading-relaxed">
-                {!currentUser
+                {isGuestUser
                   ? 'عفواً، لا يمكنك رفع ونشر مقاطع الفيديو بدون تسجيل الدخول بحساب بائع أو حرفي معتمد في سوق الصعيد.'
                   : 'حسابك الحالي مسجل كـ "مشتري". لنشر مقاطع كواليس ورشتك وربط منتجاتك بفيديوهات تفاعلية، يرجى التقديم لفتح ورشة بائع.'}
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-              {!currentUser ? (
+              {isGuestUser ? (
                 <>
                   <button
                     type="button"
                     onClick={() => {
                       onClose();
+                      setPostLoginRedirect('reels');
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
@@ -377,6 +379,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                     type="button"
                     onClick={() => {
                       onClose();
+                      setPostLoginRedirect('reels');
                       setAuthModalTab('register');
                       setIsAuthModalOpen(true);
                     }}

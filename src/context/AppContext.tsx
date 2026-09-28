@@ -148,6 +148,8 @@ interface AppContextType {
   setIsAuthModalOpen: (open: boolean) => void;
   authModalTab: 'login' | 'register';
   setAuthModalTab: (tab: 'login' | 'register') => void;
+  postLoginRedirect: ActivePage | null;
+  setPostLoginRedirect: (page: ActivePage | null) => void;
 
   // Data & Entities
   products: Product[];
@@ -986,6 +988,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
+  const [postLoginRedirect, setPostLoginRedirect] = useState<ActivePage | null>(null);
 
   // Master Data - Initialized to empty state and fetched directly from real MongoDB Database
   const [products, setProducts] = useState<Product[]>([]);
@@ -1697,6 +1700,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     initialMessage?: string;
   }) => {
     if (!isAuthenticated || !currentUser?.id) {
+      setPostLoginRedirect('messages');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
       addToast('تسجيل الدخول مطلوب', 'يرجى تسجيل الدخول للتواصل مع إدارة المنصة والدعم الفني', 'info');
@@ -1765,6 +1769,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAuthState('AUTHENTICATED');
       setIsAuthModalOpen(false);
       addToast('تسجيل الدخول', `مرحباً بك يا ${data.user.username || data.user.name} في وه!`, 'success');
+
+      // توجيه المستخدم بعد تسجيل الدخول:
+      // 1. لو كان داخل من خلال صفحة أو إجراء محدد (زي إتمام الشراء في السلة checkout أو الرسائل أو الحساب)
+      if (postLoginRedirect) {
+        const targetPage = postLoginRedirect;
+        setPostLoginRedirect(null);
+        setActivePage(targetPage);
+      } else if (activePage && activePage !== 'home') {
+        // 2. لو كان مسجل دخول وهو فاتح صفحة معينة (زي السلة أو المعرض أو صفحة منتج)
+        // يكمل على الصفحة المطلوبة اللي هو فيها وما تضيعش عليه
+        if (data.user.role === 'seller' && data.user.sellerStatus === 'approved' && (activePage === 'seller-dashboard' || activePage === 'seller-products')) {
+          setActivePage('seller-dashboard');
+        } else {
+          setActivePage(activePage);
+        }
+      } else {
+        // 3. لو بيسجل عادي في الطبيعي (من الصفحة الرئيسية) يروح على الصفحة الرئيسية
+        setActivePage('home');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -1815,7 +1839,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActivePage('seller-dashboard');
       } else if (isPendingSeller) {
         setActivePage('buyer-account');
+      } else if (postLoginRedirect) {
+        const targetPage = postLoginRedirect;
+        setPostLoginRedirect(null);
+        setActivePage(targetPage);
+      } else if (activePage && activePage !== 'home') {
+        setActivePage(activePage);
+      } else {
+        setActivePage('home');
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -1832,13 +1865,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setUnreadNotificationsCount(0);
       notificationService.clearMemory();
       setChatUnreadCount(0);
-      // If the user is on a protected page, navigate to public homepage
-      setActivePage((prev) => {
-        if (['buyer-account', 'seller-dashboard', 'admin-dashboard', 'checkout', 'favorites'].includes(prev)) {
-          return 'home';
-        }
-        return prev;
-      });
+      setPostLoginRedirect(null);
+      setIsAuthModalOpen(false);
+      setIsCartDrawerOpen(false);
+      // أول لما حد يعمل تسجيل خروج يرجع على طول على الصفحة الرئيسية فوراً
+      setActivePage('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       addToast('تسجيل الخروج', 'تم تسجيل الخروج بنجاح. أهلاً بك دائماً في وه.', 'info');
     }
   };
@@ -3082,6 +3114,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsAuthModalOpen,
         authModalTab,
         setAuthModalTab,
+        postLoginRedirect,
+        setPostLoginRedirect,
 
         products,
         sellerProducts,

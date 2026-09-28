@@ -86,7 +86,7 @@ type GovernorateSubTab =
   | 'pending_review';
 
 export const CulturalCmsAdminPage: React.FC = () => {
-  const { setActivePage, addToast, currentUser, isAuthenticated, currentRole, setIsAuthModalOpen, setAuthModalTab } = useApp();
+  const { setActivePage, addToast, currentUser, isAuthenticated, currentRole, setIsAuthModalOpen, setAuthModalTab, setPostLoginRedirect } = useApp();
 
   const [selectedGovId, setSelectedGovId] = useState<string | null>(null);
   const [activeSubTab, setActiveSubTab] = useState<GovernorateSubTab>('overview');
@@ -267,6 +267,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
           <button
             type="button"
             onClick={() => {
+              setPostLoginRedirect('admin-cultural-cms');
               setAuthModalTab('login');
               setIsAuthModalOpen(true);
             }}

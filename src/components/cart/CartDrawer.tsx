@@ -23,7 +23,10 @@ export const CartDrawer: React.FC = () => {
     setActivePage,
     navigateToProduct,
     currentRole,
-    isAuthenticated
+    isAuthenticated,
+    setIsAuthModalOpen,
+    setAuthModalTab,
+    setPostLoginRedirect
   } = useApp();
 
   const [couponInput, setCouponInput] = useState('');
@@ -82,6 +85,12 @@ export const CartDrawer: React.FC = () => {
 
   const proceedToCheckout = () => {
     setIsCartDrawerOpen(false);
+    if (!isAuthenticated) {
+      setPostLoginRedirect('checkout');
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      return;
+    }
     setActivePage('checkout');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

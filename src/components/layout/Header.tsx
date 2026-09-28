@@ -84,6 +84,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     navigateToSeller,
     setIsAuthModalOpen,
     setAuthModalTab,
+    setPostLoginRedirect,
   } = useApp();
 
   const isGuest =
@@ -131,6 +132,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         aria-label="الإشعارات"
         onClick={() => {
           if (isGuest) {
+            setPostLoginRedirect('notifications');
             setAuthModalTab('login');
             setIsAuthModalOpen(true);
             return;
@@ -224,6 +226,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                       type="button"
                       onClick={() => {
                         setOpen(false);
+                        setPostLoginRedirect('notifications');
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -462,6 +465,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     logout,
     setIsAuthModalOpen,
     setAuthModalTab,
+    setPostLoginRedirect,
     setShowIntroVideo,
     theme,
     toggleTheme,
@@ -1955,6 +1959,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (activePage !== 'home') {
+                          setPostLoginRedirect(activePage);
+                        } else {
+                          setPostLoginRedirect(null);
+                        }
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -1990,6 +1999,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (activePage !== 'home') {
+                          setPostLoginRedirect(activePage);
+                        } else {
+                          setPostLoginRedirect(null);
+                        }
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -2023,6 +2037,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (activePage !== 'home') {
+                          setPostLoginRedirect(activePage);
+                        } else {
+                          setPostLoginRedirect(null);
+                        }
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}
@@ -2974,6 +2993,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       type="button"
                       onClick={() => {
                         setMobileMenuOpen(false);
+                        if (activePage !== 'home') {
+                          setPostLoginRedirect(activePage);
+                        } else {
+                          setPostLoginRedirect(null);
+                        }
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -2989,6 +3013,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       type="button"
                       onClick={() => {
                         setMobileMenuOpen(false);
+                        if (activePage !== 'home') {
+                          setPostLoginRedirect(activePage);
+                        } else {
+                          setPostLoginRedirect(null);
+                        }
                         setAuthModalTab('register');
                         setIsAuthModalOpen(true);
                       }}

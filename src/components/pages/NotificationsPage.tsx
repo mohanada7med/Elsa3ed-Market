@@ -11,7 +11,8 @@ export const NotificationsPage: React.FC = () => {
     setActivePage,
     unreadNotificationsCount,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    setPostLoginRedirect
   } = useApp();
 
   const isGuest = !isAuthenticated || currentRole === 'guest' || currentUser?.id === 'guest' || currentUser?.id === 'guest-visitor';
@@ -96,6 +97,7 @@ export const NotificationsPage: React.FC = () => {
                 type="button"
                 id="notifications-guest-login-btn"
                 onClick={() => {
+                  setPostLoginRedirect('notifications');
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
@@ -108,6 +110,7 @@ export const NotificationsPage: React.FC = () => {
                 type="button"
                 id="notifications-guest-register-btn"
                 onClick={() => {
+                  setPostLoginRedirect('notifications');
                   setAuthModalTab('register');
                   setIsAuthModalOpen(true);
                 }}

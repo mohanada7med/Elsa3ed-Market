@@ -31,11 +31,13 @@ export const MobileBottomBar: React.FC = () => {
     currentUser,
     setIsAuthModalOpen,
     setAuthModalTab,
+    setPostLoginRedirect,
     chatUnreadCount
   } = useApp();
 
   const handleAccountClick = () => {
     if (!isAuthenticated) {
+      setPostLoginRedirect('buyer-account');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
     } else if (currentRole === 'seller' || currentUser?.role === 'seller') {

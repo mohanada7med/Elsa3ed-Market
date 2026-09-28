@@ -41,7 +41,8 @@ export const CartPage: React.FC = () => {
     currentRole,
     isAuthenticated,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    setPostLoginRedirect
   } = useApp();
 
   const [couponInput, setCouponInput] = useState('');
@@ -70,6 +71,7 @@ export const CartPage: React.FC = () => {
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
+      setPostLoginRedirect('checkout');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
       return;

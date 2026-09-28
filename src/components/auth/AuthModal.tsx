@@ -58,6 +58,7 @@ export const AuthModal: React.FC = () => {
     login,
     register,
     addToast,
+    setPostLoginRedirect,
   } = useApp();
 
   const [roleType, setRoleType] =
@@ -254,6 +255,7 @@ export const AuthModal: React.FC = () => {
 
     setIsForgotSuccessModalOpen(false);
     setIsAuthModalOpen(false);
+    setPostLoginRedirect(null);
 
     setForgotPassword(false);
     setError('');

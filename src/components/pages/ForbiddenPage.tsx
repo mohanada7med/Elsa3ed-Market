@@ -8,7 +8,7 @@ interface ForbiddenPageProps {
 }
 
 export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) => {
-  const { setActivePage, setIsAuthModalOpen, currentRole, activePage } = useApp();
+  const { setActivePage, setIsAuthModalOpen, setPostLoginRedirect, currentRole, activePage } = useApp();
 
   const isShoppingRoute = activePage === 'cart' || activePage === 'checkout' || activePage === 'favorites';
 
@@ -68,7 +68,10 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
             <button
               type="button"
               id="forbidden-login-btn"
-              onClick={() => setIsAuthModalOpen(true)}
+              onClick={() => {
+                setPostLoginRedirect(activePage);
+                setIsAuthModalOpen(true);
+              }}
               className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <LogIn className="w-4 h-4" aria-hidden="true" />

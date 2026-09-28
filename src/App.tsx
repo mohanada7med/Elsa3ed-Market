@@ -156,7 +156,8 @@ const MainContent: React.FC = () => {
     currentUser,
     currentRole,
     setIsAuthModalOpen,
-    setAuthModalTab
+    setAuthModalTab,
+    setPostLoginRedirect
   } = useApp();
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
@@ -389,6 +390,7 @@ const MainContent: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
+                          setPostLoginRedirect('checkout');
                           setAuthModalTab('login');
                           setIsAuthModalOpen(true);
                         }}
@@ -445,6 +447,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        setPostLoginRedirect('messages');
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -472,6 +475,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        setPostLoginRedirect('buyer-account');
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -563,6 +567,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        setPostLoginRedirect('seller-dashboard');
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
@@ -577,6 +582,7 @@ const MainContent: React.FC = () => {
                           if (isAuthenticated) {
                             setActivePage('buyer-account');
                           } else {
+                            setPostLoginRedirect('buyer-account');
                             setAuthModalTab('register');
                             setIsAuthModalOpen(true);
                           }
@@ -608,6 +614,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        setPostLoginRedirect('admin-dashboard');
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}

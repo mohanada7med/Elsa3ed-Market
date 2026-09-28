@@ -37,6 +37,7 @@ export const Footer: React.FC = () => {
     currentUser,
     setIsAuthModalOpen,
     setAuthModalTab,
+    setPostLoginRedirect,
     addToast
   } = useApp();
 
@@ -57,6 +58,7 @@ export const Footer: React.FC = () => {
     }
 
     if (!isAuthenticated || currentRole === 'guest' || !currentUser?.id) {
+      setPostLoginRedirect('buyer-account');
       setAuthModalTab('register');
       setIsAuthModalOpen(true);
       addToast(
