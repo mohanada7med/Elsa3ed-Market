@@ -1706,8 +1706,12 @@ export const api = {
   },
 
   async getPublicPaymentConfig(): Promise<{
-    instaPayAccount: string;
-    vodafoneCashNumber: string;
+    isFawaterakActive: boolean;
+    isCashOnDeliveryActive: boolean;
+    fawaterakEnv?: 'staging' | 'live';
+    hasFawaterakKey?: boolean;
+    instaPayAccount?: string;
+    vodafoneCashNumber?: string;
     instaPayInstructions?: string;
     vodafoneCashInstructions?: string;
   }> {
@@ -1721,6 +1725,10 @@ export const api = {
       console.warn('Failed to fetch public payment config, using fallback defaults', e);
     }
     return {
+      isFawaterakActive: true,
+      isCashOnDeliveryActive: true,
+      fawaterakEnv: 'staging',
+      hasFawaterakKey: false,
       instaPayAccount: 'elsa3ed@instapay',
       vodafoneCashNumber: '01158969931',
       instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تم التحويل".',
@@ -1742,10 +1750,17 @@ export const api = {
   async updateAdminPaymentConfig(
     user: { id?: string; role?: string },
     payload: {
+      fawaterakApiKey?: string;
+      fawaterakVendorKey?: string;
+      fawaterakEnv?: 'staging' | 'live';
+      isFawaterakActive?: boolean;
+      isCashOnDeliveryActive?: boolean;
       instaPayAccount?: string;
       vodafoneCashNumber?: string;
       instaPayInstructions?: string;
       vodafoneCashInstructions?: string;
+      isInstaPayActive?: boolean;
+      isVodafoneCashActive?: boolean;
     }
   ): Promise<any> {
     const res = await fetch(`${API_BASE}/admin/settings/payment`, {
@@ -1756,6 +1771,32 @@ export const api = {
     const json: ApiResponse<any> = await res.json();
     if (!json.success || !json.data) {
       throw new Error(json.error || 'فشل في تحديث إعدادات الدفع');
+    }
+    return json.data;
+  },
+
+  async initiateFawaterakPayment(
+    orderId: string,
+    user?: { id?: string; role?: string }
+  ): Promise<{
+    success: boolean;
+    invoiceUrl: string;
+    invoiceId?: string | number;
+    invoiceKey?: string;
+    isMock?: boolean;
+    message?: string;
+  }> {
+    const res = await fetch(`${API_BASE}/payments/fawaterak/initiate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders(user)
+      },
+      body: JSON.stringify({ orderId })
+    });
+    const json: ApiResponse<any> = await res.json();
+    if (!json.success || !json.data) {
+      throw new Error(json.error || 'تعذر بدء الدفع الإلكتروني عبر فاتورتك');
     }
     return json.data;
   },

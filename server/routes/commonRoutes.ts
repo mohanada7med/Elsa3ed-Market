@@ -140,10 +140,16 @@ router.get(['/payment-config', '/payment/config'], async (_req: Request, res: Re
     res.json({
       success: true,
       data: {
+        isFawaterakActive: config.isFawaterakActive !== false,
+        isCashOnDeliveryActive: config.isCashOnDeliveryActive !== false,
+        fawaterakEnv: config.fawaterakEnv || 'staging',
+        hasFawaterakKey: Boolean(config.fawaterakApiKey || process.env.FAWATERAK_API_KEY),
         instaPayAccount: config.instaPayAccount,
         vodafoneCashNumber: config.vodafoneCashNumber,
         instaPayInstructions: config.instaPayInstructions,
         vodafoneCashInstructions: config.vodafoneCashInstructions,
+        isInstaPayActive: Boolean(config.isInstaPayActive),
+        isVodafoneCashActive: Boolean(config.isVodafoneCashActive),
         updatedAt: config.updatedAt
       }
     });

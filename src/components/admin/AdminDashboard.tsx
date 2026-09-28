@@ -390,30 +390,36 @@ export const AdminDashboard: React.FC = () => {
   const [isSubmittingCraftStory, setIsSubmittingCraftStory] = useState(false);
 
   // Orders Payment Filtering & Verification State
-  const [orderPaymentFilter, setOrderPaymentFilter] = useState<'all' | 'pending_verification' | 'paid' | 'payment_rejected' | 'cod'>('all');
+  const [orderPaymentFilter, setOrderPaymentFilter] = useState<'all' | 'online' | 'pending_verification' | 'paid' | 'payment_rejected' | 'cod'>('all');
   const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
   const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
 
   // Payment Accounts Configuration State
+  // Payment Gateway (Fawaterak) & Payment Methods Configuration State
   const [adminPaymentSettings, setAdminPaymentSettings] = useState<{
-    instaPayAccount: string;
-    vodafoneCashNumber: string;
+    fawaterakApiKey: string;
+    fawaterakVendorKey: string;
+    fawaterakEnv: 'staging' | 'live';
+    isFawaterakActive: boolean;
+    isCashOnDeliveryActive: boolean;
+    instaPayAccount?: string;
+    vodafoneCashNumber?: string;
     instaPayInstructions?: string;
     vodafoneCashInstructions?: string;
-    isInstaPayActive: boolean;
-    isVodafoneCashActive: boolean;
-    isCashOnDeliveryActive: boolean;
   }>({
+    fawaterakApiKey: '',
+    fawaterakVendorKey: '',
+    fawaterakEnv: 'staging',
+    isFawaterakActive: true,
+    isCashOnDeliveryActive: true,
     instaPayAccount: 'elsa3ed@instapay',
     vodafoneCashNumber: '01158969931',
-    instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تأكيد الطلب".',
-    vodafoneCashInstructions: 'قم بتحويل المبلغ إلى رقم فودافون كاش الموضح أعلاه واضغط على "تأكيد الطلب".',
-    isInstaPayActive: true,
-    isVodafoneCashActive: true,
-    isCashOnDeliveryActive: true
+    instaPayInstructions: '',
+    vodafoneCashInstructions: ''
   });
   const [isLoadingPaymentSettings, setIsLoadingPaymentSettings] = useState(false);
   const [isSavingPaymentSettings, setIsSavingPaymentSettings] = useState(false);
+  const [copiedWebhook, setCopiedWebhook] = useState(false);
 
   const fetchAdminPaymentSettings = async () => {
     setIsLoadingPaymentSettings(true);
@@ -421,13 +427,15 @@ export const AdminDashboard: React.FC = () => {
       const cfg = await api.getAdminPaymentConfig(currentUser);
       if (cfg) {
         setAdminPaymentSettings({
-          instaPayAccount: cfg.instaPayAccount || 'elsa3ed@instapay',
-          vodafoneCashNumber: cfg.vodafoneCashNumber || '01158969931',
+          fawaterakApiKey: cfg.fawaterakApiKey || '',
+          fawaterakVendorKey: cfg.fawaterakVendorKey || '',
+          fawaterakEnv: cfg.fawaterakEnv || 'staging',
+          isFawaterakActive: cfg.isFawaterakActive !== false,
+          isCashOnDeliveryActive: cfg.isCashOnDeliveryActive !== false,
+          instaPayAccount: cfg.instaPayAccount || '',
+          vodafoneCashNumber: cfg.vodafoneCashNumber || '',
           instaPayInstructions: cfg.instaPayInstructions || '',
-          vodafoneCashInstructions: cfg.vodafoneCashInstructions || '',
-          isInstaPayActive: cfg.isInstaPayActive ?? true,
-          isVodafoneCashActive: cfg.isVodafoneCashActive ?? true,
-          isCashOnDeliveryActive: cfg.isCashOnDeliveryActive ?? true
+          vodafoneCashInstructions: cfg.vodafoneCashInstructions || ''
         });
       }
     } catch (err: any) {
@@ -4087,6 +4095,7 @@ export const AdminDashboard: React.FC = () => {
                 <span className="text-gray-500 font-bold ml-1">فلترة حسب طريقة الدفع:</span>
                 {[
                   { id: 'all', label: 'كل الأوردرات' },
+                  { id: 'online', label: '💳 بوابة الدفع (فاتورتك)' },
                   { id: 'pending_verification', label: '⚠️ مستنيين تأكيد التحويل' },
                   { id: 'paid', label: '✅ الدفع اتأكد' },
                   { id: 'payment_rejected', label: '❌ تحويلات اترفضت' },
@@ -4124,10 +4133,11 @@ export const AdminDashboard: React.FC = () => {
                     {orders
                       .filter((ord) => {
                         if (orderPaymentFilter === 'all') return true;
+                        if (orderPaymentFilter === 'online') return ord.paymentMethod === 'online_gateway' || ord.paymentMethod === 'credit_card';
                         if (orderPaymentFilter === 'pending_verification') return ord.paymentStatus === 'payment_pending_verification';
                         if (orderPaymentFilter === 'paid') return ord.paymentStatus === 'paid';
                         if (orderPaymentFilter === 'payment_rejected') return ord.paymentStatus === 'payment_rejected';
-                        if (orderPaymentFilter === 'cod') return ord.paymentMethod === 'cod';
+                        if (orderPaymentFilter === 'cod') return ord.paymentMethod === 'cod' || ord.paymentMethod === 'cash_on_delivery';
                         return true;
                       })
                       .map((ord) => {
@@ -4144,7 +4154,12 @@ export const AdminDashboard: React.FC = () => {
                               </span>
                             </td>
                             <td className="py-3 px-4 font-bold">
-                              {ord.paymentMethod === 'vodafone_cash' ? (
+                              {ord.paymentMethod === 'online_gateway' || ord.paymentMethod === 'credit_card' ? (
+                                <span className="text-sky-700 dark:text-sky-400 flex items-center gap-1 font-bold">
+                                  <CreditCard className="w-3.5 h-3.5 text-sky-600" />
+                                  فاتورتك (إلكتروني)
+                                </span>
+                              ) : ord.paymentMethod === 'vodafone_cash' ? (
                                 <span className="text-red-700 flex items-center gap-1">
                                   <Wallet className="w-3.5 h-3.5" />
                                   فودافون كاش
@@ -4154,12 +4169,10 @@ export const AdminDashboard: React.FC = () => {
                                   <CreditCard className="w-3.5 h-3.5" />
                                   إنستاباي
                                 </span>
-                              ) : ord.paymentMethod === 'credit_card' ? (
-                                <span className="text-amber-800">كارت بنكي</span>
                               ) : (
                                 <span className="text-emerald-700 flex items-center gap-1">
                                   <Truck className="w-3.5 h-3.5" />
-                                  وقت الاستلام
+                                  عند الاستلام
                                 </span>
                               )}
                             </td>
@@ -4289,10 +4302,10 @@ export const AdminDashboard: React.FC = () => {
                 <div>
                   <h3 className="font-bold text-base sm:text-lg text-espresso dark:text-cream flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary dark:text-primary-hover" />
-                    <span>إعدادات طرق الدفع وحسابات المنصة (إنستاباي وفودافون كاش)</span>
+                    <span>إعدادات بوابة الدفع (فاتورتك Fawaterak) وطرق الدفع</span>
                   </h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-1">
-                    ظبط حسابات ورقم المحفظة اللي الزباين هيبعتوا عليها الفلوس في صفحة الدفع.
+                    إدارة الربط المباشر مع بوابة فاتورتك الإلكترونية وتفعيل الدفع عند الاستلام للعملاء.
                   </p>
                 </div>
                 <RefreshDataButton
@@ -4302,119 +4315,158 @@ export const AdminDashboard: React.FC = () => {
               </div>
 
               <form onSubmit={handleSaveAdminPaymentSettings} className="space-y-6 max-w-2xl">
-                {/* InstaPay Section */}
-                <div className="p-5 rounded-2xl border border-blue-200 bg-blue-50/30 space-y-4">
-                  <div className="flex items-center justify-between border-b border-blue-100 pb-2">
-                    <h4 className="font-bold text-sm text-blue-950 flex items-center gap-2">
-                      <CreditCard className="w-4 h-4 text-blue-600" />
-                      <span>حساب إنستاباي (InstaPay)</span>
-                    </h4>
-                    <label className="flex items-center gap-2 text-xs font-bold text-blue-900 cursor-pointer">
+                {/* Fawaterak Gateway Section */}
+                <div className="p-5 sm:p-6 rounded-2xl border border-sky-200 dark:border-sky-800/40 bg-sky-50/40 dark:bg-sky-950/20 space-y-5">
+                  <div className="flex items-center justify-between border-b border-sky-100 dark:border-sky-900/40 pb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-black text-xs shadow-sm">
+                        FW
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-sky-950 dark:text-sky-200">
+                          بوابة دفع فاتورتك (Fawaterak Gateway)
+                        </h4>
+                        <p className="text-[11px] text-sky-800/70 dark:text-sky-400">
+                          فيزا، ماستركارد، ميزة، محافظ الهاتف، إنستاباي، فوري كود
+                        </p>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-bold text-sky-900 dark:text-sky-200 cursor-pointer">
                       <input
                         type="checkbox"
-                        checked={adminPaymentSettings.isInstaPayActive}
-                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isInstaPayActive: e.target.checked })}
-                        className="w-4 h-4 text-blue-600 rounded"
+                        checked={adminPaymentSettings.isFawaterakActive}
+                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isFawaterakActive: e.target.checked })}
+                        className="w-4 h-4 text-sky-600 rounded"
                       />
-                      <span>شغال في الدفع</span>
+                      <span>مفعلة للزبائن</span>
                     </label>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      عنوان إنستاباي للمنصة (IPA):
+                  {/* Environment Switcher */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      بيئة التشغيل (Environment):
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <label className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminPaymentSettings.fawaterakEnv === 'staging'
+                        ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200'
+                        : 'border-black/10 dark:border-white/10 hover:bg-black/[0.02]'
+                        }`}>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="fawaterakEnv"
+                            value="staging"
+                            checked={adminPaymentSettings.fawaterakEnv === 'staging'}
+                            onChange={() => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakEnv: 'staging' })}
+                          />
+                          <span>تجريبي (Staging / Sandbox)</span>
+                        </div>
+                        <span className="text-[10px] text-amber-600 font-mono">staging.fawaterk.com</span>
+                      </label>
+
+                      <label className={`flex-1 p-3 rounded-xl border cursor-pointer transition text-xs font-bold flex items-center justify-between ${adminPaymentSettings.fawaterakEnv === 'live'
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-900 dark:text-emerald-200'
+                        : 'border-black/10 dark:border-white/10 hover:bg-black/[0.02]'
+                        }`}>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="radio"
+                            name="fawaterakEnv"
+                            value="live"
+                            checked={adminPaymentSettings.fawaterakEnv === 'live'}
+                            onChange={() => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakEnv: 'live' })}
+                          />
+                          <span>حي / إنتاجي (Production Live)</span>
+                        </div>
+                        <span className="text-[10px] text-emerald-600 font-mono">app.fawaterk.com</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* API Key */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      مفتاح الـ API الخاص بفاتورتك (API Key / Bearer Token):
                     </label>
                     <input
-                      type="text"
-                      required
-                      value={adminPaymentSettings.instaPayAccount}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayAccount: e.target.value })}
-                      placeholder="مثال: wah@instapay"
-                      className="w-full px-3.5 py-2.5 bg-white border border-blue-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-blue-500"
+                      type="password"
+                      value={adminPaymentSettings.fawaterakApiKey}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakApiKey: e.target.value })}
+                      placeholder="الصق هنا الـ API Key من لوحة تحكم فاتورتك"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-espresso-800 border border-sky-200 dark:border-sky-800 rounded-xl text-xs font-mono text-gray-900 dark:text-cream outline-none focus:border-sky-500"
+                      dir="ltr"
+                    />
+                    <p className="text-[10px] text-gray-500">
+                      تحصل عليه من لوحة فاتورتك: Integrations &gt; API Keys.
+                    </p>
+                  </div>
+
+                  {/* Vendor Key */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-gray-300">
+                      مفتاح التاجر السري للـ Webhook (Vendor Key):
+                    </label>
+                    <input
+                      type="password"
+                      value={adminPaymentSettings.fawaterakVendorKey}
+                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, fawaterakVendorKey: e.target.value })}
+                      placeholder="Vendor Key للتحقق الأمني من الـ HashKey"
+                      className="w-full px-3.5 py-2.5 bg-white dark:bg-espresso-800 border border-sky-200 dark:border-sky-800 rounded-xl text-xs font-mono text-gray-900 dark:text-cream outline-none focus:border-sky-500"
                       dir="ltr"
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      تعليمات للزبون لما يختار إنستاباي:
-                    </label>
-                    <textarea
-                      value={adminPaymentSettings.instaPayInstructions || ''}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, instaPayInstructions: e.target.value })}
-                      placeholder="اكتب التعليمات اللي تظهر للزبون..."
-                      rows={2}
-                      className="w-full px-3.5 py-2 bg-white border border-blue-200 rounded-xl text-xs text-gray-800 outline-none focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {/* Vodafone Cash Section */}
-                <div className="p-5 rounded-2xl border border-red-200 bg-red-50/30 space-y-4">
-                  <div className="flex items-center justify-between border-b border-red-100 pb-2">
-                    <h4 className="font-bold text-sm text-red-950 flex items-center gap-2">
-                      <Wallet className="w-4 h-4 text-red-600" />
-                      <span>محفظة فودافون كاش</span>
-                    </h4>
-                    <label className="flex items-center gap-2 text-xs font-bold text-red-900 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={adminPaymentSettings.isVodafoneCashActive}
-                        onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isVodafoneCashActive: e.target.checked })}
-                        className="w-4 h-4 text-red-600 rounded"
-                      />
-                      <span>شغال في الدفع</span>
-                    </label>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      رقم محفظة فودافون كاش المعتمد:
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={adminPaymentSettings.vodafoneCashNumber}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashNumber: e.target.value })}
-                      placeholder="مثال: 01158969931"
-                      className="w-full px-3.5 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-mono text-gray-900 outline-none focus:border-red-500"
-                      dir="ltr"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      تعليمات للزبون لما يختار فودافون كاش:
-                    </label>
-                    <textarea
-                      value={adminPaymentSettings.vodafoneCashInstructions || ''}
-                      onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, vodafoneCashInstructions: e.target.value })}
-                      placeholder="اكتب التعليمات اللي تظهر للزبون..."
-                      rows={2}
-                      className="w-full px-3.5 py-2 bg-white border border-red-200 rounded-xl text-xs text-gray-800 outline-none focus:border-red-500"
-                    />
+                  {/* Webhook URL Box */}
+                  <div className="p-3.5 bg-white dark:bg-espresso-800 rounded-xl border border-sky-200 dark:border-sky-800/60 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-sky-900 dark:text-sky-300">
+                        رابط الـ Webhook المعتمد لمنصتك:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = `${window.location.origin}/api/payments/fawaterak/webhook`;
+                          navigator.clipboard.writeText(url);
+                          setCopiedWebhook(true);
+                          addToast('تم النسخ', 'تم نسخ رابط الـ Webhook بنجاح', 'success');
+                          setTimeout(() => setCopiedWebhook(false), 2500);
+                        }}
+                        className="px-2.5 py-1 bg-sky-100 hover:bg-sky-200 dark:bg-sky-900/50 text-sky-800 dark:text-sky-200 rounded-lg text-[10px] font-bold flex items-center gap-1 transition"
+                      >
+                        {copiedWebhook ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                        <span>{copiedWebhook ? 'تم النسخ' : 'نسخ الرابط'}</span>
+                      </button>
+                    </div>
+                    <code className="block text-[11px] font-mono text-gray-600 dark:text-gray-300 select-all break-all" dir="ltr">
+                      {typeof window !== 'undefined' ? `${window.location.origin}/api/payments/fawaterak/webhook` : '/api/payments/fawaterak/webhook'}
+                    </code>
+                    <p className="text-[10px] text-gray-500">
+                      الصق هذا الرابط في لوحة تحكم فاتورتك (Fawaterk Dashboard &gt; Webhook URL) لتحديث حالة الطلبات إلى "مدفوع" فوراً وبشكل تلقائي.
+                    </p>
                   </div>
                 </div>
 
                 {/* Cash on Delivery Section */}
-                <div className="p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 space-y-3">
+                <div className="p-5 sm:p-6 rounded-2xl border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-sm text-emerald-950 flex items-center gap-2">
+                    <h4 className="font-bold text-sm text-emerald-950 dark:text-emerald-200 flex items-center gap-2">
                       <Truck className="w-4 h-4 text-emerald-600" />
-                      <span>الدفع كاش وقت الاستلام (COD)</span>
+                      <span>الدفع نقداً عند الاستلام (COD)</span>
                     </h4>
-                    <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
+                    <label className="flex items-center gap-2 text-xs font-bold text-emerald-900 dark:text-emerald-200 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={adminPaymentSettings.isCashOnDeliveryActive}
                         onChange={(e) => setAdminPaymentSettings({ ...adminPaymentSettings, isCashOnDeliveryActive: e.target.checked })}
                         className="w-4 h-4 text-emerald-600 rounded"
                       />
-                      <span>شغال في الدفع</span>
+                      <span>مفعل للزبائن</span>
                     </label>
                   </div>
-                  <p className="text-xs text-emerald-800">
-                    تشغيل خيار دفع الفلوس كاش في إيد مندوب الشحن أول ما الأوردر يوصل.
+                  <p className="text-xs text-emerald-800 dark:text-emerald-300">
+                    إتاحة خيار دفع ثمن الأوردر نقداً لمندوب الشحن عند استلام الطرد وفحصه.
                   </p>
                 </div>
 
@@ -4428,7 +4480,7 @@ export const AdminDashboard: React.FC = () => {
                   ) : (
                     <>
                       <Check className="w-4 h-4" />
-                      <span>حفظ وتطبيق إعدادات الدفع</span>
+                      <span>حفظ وتطبيق إعدادات بوابة الدفع</span>
                     </>
                   )}
                 </button>

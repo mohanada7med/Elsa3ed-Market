@@ -453,7 +453,7 @@ export const CartPage: React.FC = () => {
                   onClick={handleCheckout}
                   className="w-full py-3.5 sm:py-4 px-6 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
                 >
-                  <span>كمّل واطلب وادفع دلوقتي</span>
+                  <span>متابعة إتمام الطلب</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
 

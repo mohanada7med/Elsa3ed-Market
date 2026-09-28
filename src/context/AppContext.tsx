@@ -347,43 +347,46 @@ export const GUEST_USER: UserProfile = {
 export const normalizeOrder = (ord: any): Order => {
   if (!ord) return ord;
   const items = Array.isArray(ord.items)
-    ? ord.items.map((it: any) => {
-      const product = it.product
-        ? {
-          ...it.product,
-          id: it.product.id || it.productId || 'prod-item',
-          images: Array.isArray(it.product.images) && it.product.images.length > 0
-            ? it.product.images
-            : [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
-        }
-        : {
-          id: it.productId || 'prod-item',
-          title: it.productTitle || 'منتج تراثي أصيل',
-          price: it.unitPrice || 0,
-          originalPrice: it.unitPrice || 0,
-          images: [it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
-          sellerId: it.sellerId || '',
-          sellerName: it.sellerName || 'ورشة الصعيد التراثية',
-          sellerGovernorate: it.sellerGovernorate || 'قنا',
-          categoryId: 'cat-pottery',
-          categoryName: 'الفخار والخزف',
-          inStock: true,
-          stockCount: 10,
-          rating: 5,
-          reviewCount: 1,
-          isHandmade: true,
-          heritageGovernorate: it.sellerGovernorate || 'قنا',
-          approvalStatus: 'approved' as const,
-          description: it.productTitle || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
-        };
+    ? ord.items
+        .filter(Boolean)
+        .map((it: any) => {
+          const rawProduct = it.product;
+          const product = rawProduct && typeof rawProduct === 'object'
+            ? {
+                ...rawProduct,
+                id: rawProduct.id || it.productId || 'prod-item',
+                images: Array.isArray(rawProduct.images) && rawProduct.images.length > 0
+                  ? rawProduct.images
+                  : [rawProduct.image || it.productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80']
+              }
+            : {
+                id: it.productId || 'prod-item',
+                title: it.productTitle || it.title || 'منتج تراثي أصيل',
+                price: it.unitPrice || it.price || 0,
+                originalPrice: it.unitPrice || it.price || 0,
+                images: [it.productImage || it.image || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80'],
+                sellerId: it.sellerId || '',
+                sellerName: it.sellerName || 'ورشة الصعيد التراثية',
+                sellerGovernorate: it.sellerGovernorate || 'قنا',
+                categoryId: 'cat-pottery',
+                categoryName: 'الفخار والخزف',
+                inStock: true,
+                stockCount: 10,
+                rating: 5,
+                reviewCount: 1,
+                isHandmade: true,
+                heritageGovernorate: it.sellerGovernorate || 'قنا',
+                approvalStatus: 'approved' as const,
+                description: it.productTitle || it.title || 'منتج تراثي مصنوع يدوياً في صعيد مصر'
+              };
 
-      return {
-        product,
-        quantity: it.quantity || 1,
-        selectedColor: it.selectedColor,
-        customNote: it.customNote
-      };
-    })
+          return {
+            product,
+            quantity: it.quantity || 1,
+            selectedColor: it.selectedColor,
+            customNote: it.customNote
+          };
+        })
     : [];
 
   return {
@@ -404,8 +407,10 @@ export const normalizeOrder = (ord: any): Order => {
     },
     items,
     status: ord.status || 'pending',
-    paymentMethod: ord.paymentMethod || 'vodafone_cash',
+    paymentMethod: ord.paymentMethod || 'online_gateway',
     paymentStatus: ord.paymentStatus || 'pending',
+    paymentReference: ord.paymentReference,
+    paymentUrl: ord.paymentUrl,
     subtotal: ord.subtotal || 0,
     shippingFee: ord.shippingFee ?? 45,
     discountAmount: ord.discountAmount || 0,

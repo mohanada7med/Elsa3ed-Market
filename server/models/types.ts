@@ -189,6 +189,7 @@ export interface OrderDocument {
   paymentStatus: PaymentStatus;
   paymentReference?: string;
   paymentReceiptUrl?: string;
+  paymentUrl?: string;
   subtotal: number;
   shippingFee: number;
   discountAmount: number;
@@ -513,10 +514,17 @@ export interface AdminPayoutSummary {
 
 export interface PaymentConfigDocument {
   id: string;
-  instaPayAccount: string;
-  vodafoneCashNumber: string;
+  fawaterakApiKey?: string;
+  fawaterakVendorKey?: string;
+  fawaterakEnv?: 'staging' | 'live';
+  isFawaterakActive?: boolean;
+  isCashOnDeliveryActive?: boolean;
+  instaPayAccount?: string;
+  vodafoneCashNumber?: string;
   instaPayInstructions?: string;
   vodafoneCashInstructions?: string;
+  isInstaPayActive?: boolean;
+  isVodafoneCashActive?: boolean;
   updatedAt: string;
   updatedBy?: string;
 }

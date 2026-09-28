@@ -321,7 +321,7 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* الشريط السفلي الحقوق والدفع */}
+        {/* الشريط السفلي الحقوق والضمان */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-5 text-center md:text-right">
           <p className="text-xs text-white/60 font-medium tracking-wide">
             كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
@@ -335,18 +335,17 @@ export const Footer: React.FC = () => {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-white/50 ml-1 font-medium hidden sm:inline">طرق الدفع المتاحة:</span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <Wallet className="w-3.5 h-3.5 text-primary-hover" />
-              إنستاباي والمحافظ الإلكترونية
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              حرف يدوية أصيلة 100%
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <CreditCard className="w-3.5 h-3.5 text-emerald-400" />
-              البطاقات البنكية وميزة
+              <Truck className="w-3.5 h-3.5 text-primary-hover" />
+              شحن وتغليف آمن للمحافظات
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
               <Store className="w-3.5 h-3.5 text-primary-hover" />
-              الدفع عند الاستلام
+              دعم مباشر لشيوخ الصنعة
             </span>
           </div>
 

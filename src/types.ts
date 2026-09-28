@@ -180,6 +180,7 @@ export interface Order {
   paymentStatus: PaymentStatus;
   paymentReference?: string;
   paymentReceiptUrl?: string;
+  paymentUrl?: string;
   subtotal: number;
   shippingFee: number;
   discountAmount: number;

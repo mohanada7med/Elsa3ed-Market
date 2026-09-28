@@ -1627,29 +1627,40 @@ router.get('/settings/payment', async (_req: AuthenticatedRequest, res: Response
   }
 });
 
-// PUT /api/admin/settings/payment - Update platform payment accounts configuration
+// PUT /api/admin/settings/payment - Update platform payment gateway & accounts configuration
 router.put('/settings/payment', async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { instaPayAccount, vodafoneCashNumber, instaPayInstructions, vodafoneCashInstructions } = req.body;
-
-    if (!instaPayAccount && !vodafoneCashNumber) {
-      return res.status(400).json({
-        success: false,
-        error: 'يجب توفير حساب إنستاباي أو رقم فودافون كاش على الأقل',
-        code: 'VALIDATION_ERROR'
-      });
-    }
-
-    const updated = await updatePaymentConfig(req.user!, {
+    const {
+      fawaterakApiKey,
+      fawaterakVendorKey,
+      fawaterakEnv,
+      isFawaterakActive,
+      isCashOnDeliveryActive,
       instaPayAccount,
       vodafoneCashNumber,
       instaPayInstructions,
-      vodafoneCashInstructions
+      vodafoneCashInstructions,
+      isInstaPayActive,
+      isVodafoneCashActive
+    } = req.body;
+
+    const updated = await updatePaymentConfig(req.user!, {
+      fawaterakApiKey,
+      fawaterakVendorKey,
+      fawaterakEnv,
+      isFawaterakActive,
+      isCashOnDeliveryActive,
+      instaPayAccount,
+      vodafoneCashNumber,
+      instaPayInstructions,
+      vodafoneCashInstructions,
+      isInstaPayActive,
+      isVodafoneCashActive
     });
 
     res.json({
       success: true,
-      message: 'تم تحديث إعدادات حسابات الدفع بنجاح',
+      message: 'تم تحديث إعدادات بوابة الدفع وطرق السداد بنجاح',
       data: updated
     });
   } catch (error) {

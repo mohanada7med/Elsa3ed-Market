@@ -211,17 +211,25 @@ export const OrdersTrackingPage: React.FC = () => {
 
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex -space-x-2 space-x-reverse overflow-hidden">
-                        {ord.items.slice(0, 3).map((it, idx) => (
-                          <img
-                            key={idx}
-                            src={it.product.images?.[0] || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=100&q=80'}
-                            alt=""
-                            className="inline-block w-8 h-8 rounded-lg object-cover ring-2 ring-white dark:ring-[#151513]"
-                          />
-                        ))}
+                        {(ord.items || []).filter(Boolean).slice(0, 3).map((it: any, idx: number) => {
+                          const itemImg =
+                            it?.product?.images?.[0] ||
+                            it?.productImage ||
+                            it?.images?.[0] ||
+                            it?.image ||
+                            'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=100&q=80';
+                          return (
+                            <img
+                              key={idx}
+                              src={itemImg}
+                              alt=""
+                              className="inline-block w-8 h-8 rounded-lg object-cover ring-2 ring-white dark:ring-[#151513]"
+                            />
+                          );
+                        })}
                       </div>
                       <span className="text-xs text-espresso/70 dark:text-cream/70 font-medium">
-                        {ord.items.length} منتجات • {ord.total} ج.م
+                        {(ord.items || []).length} منتجات • {ord.total} ج.م
                       </span>
                     </div>
 
@@ -344,14 +352,19 @@ export const OrdersTrackingPage: React.FC = () => {
                 <div className="space-y-3 pt-2">
                   <h4 className="text-xs font-bold text-espresso dark:text-cream">القطع المطلوبة في الشحنة:</h4>
                   <div className="divide-y divide-black/5 dark:divide-white/5">
-                    {(currentSelected.items || []).map((it, idx) => {
-                      const prodId = it.product?.id || (it as any).productId || `item-${idx}`;
-                      const title = it.product?.title || (it as any).productTitle || 'منتج تراثي أصيل';
-                      const img = it.product?.images?.[0] || (it as any).productImage || 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=100&q=80';
-                      const sellerName = it.product?.sellerName || (it as any).sellerName || 'ورشة الصعيد';
-                      const sellerGov = it.product?.sellerGovernorate || (it as any).sellerGovernorate || 'قنا';
-                      const price = it.product?.price || (it as any).unitPrice || 0;
-                      const qty = it.quantity || 1;
+                    {(currentSelected.items || []).filter(Boolean).map((it: any, idx: number) => {
+                      const prodId = it?.product?.id || it?.productId || `item-${idx}`;
+                      const title = it?.product?.title || it?.productTitle || it?.title || 'منتج تراثي أصيل';
+                      const img =
+                        it?.product?.images?.[0] ||
+                        it?.productImage ||
+                        it?.images?.[0] ||
+                        it?.image ||
+                        'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=100&q=80';
+                      const sellerName = it?.product?.sellerName || it?.sellerName || 'ورشة الصعيد';
+                      const sellerGov = it?.product?.sellerGovernorate || it?.sellerGovernorate || 'قنا';
+                      const price = it?.product?.price || it?.unitPrice || it?.price || 0;
+                      const qty = it?.quantity || 1;
 
                       return (
                         <div key={prodId} className="py-2.5 flex items-center justify-between text-xs">

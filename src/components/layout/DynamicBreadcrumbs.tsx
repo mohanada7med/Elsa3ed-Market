@@ -285,7 +285,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
       });
       items.push({
         id: 'checkout',
-        label: 'إتمام الطلب والدفع الآمن',
+        label: 'إتمام وتأكيد الطلب',
         url: `${origin}/checkout`,
         isCurrent: true
       });

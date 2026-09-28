@@ -393,12 +393,12 @@ export const CartDrawer: React.FC = () => {
                   <div className="flex items-center justify-center gap-3 text-[11px] text-espresso/60 dark:text-cream/60">
                     <div className="flex items-center gap-1">
                       <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>دفع آمن</span>
+                      <span>ضمان جودة الحرفة</span>
                     </div>
                     <span>•</span>
                     <div className="flex items-center gap-1">
                       <Truck className="w-3.5 h-3.5 text-amber-700 dark:text-amber-500" />
-                      <span>فودافون كاش / انستاباي / استلام</span>
+                      <span>شحن وتوصيل لكافة المحافظات</span>
                     </div>
                   </div>
                 </div>

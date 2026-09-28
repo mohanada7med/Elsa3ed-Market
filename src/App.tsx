@@ -213,8 +213,8 @@ const MainContent: React.FC = () => {
         break;
       case 'checkout':
         updatePageSEO({
-          title: 'إتمام الطلب والدفع الآمن',
-          description: 'بوابة الدفع والشحن الآمن لطلبات سوق وه.'
+          title: 'إتمام وتأكيد الطلب',
+          description: 'تأكيد وشحن طلبات سوق وه الحرفية مباشرة من ورش الصعيد.'
         });
         break;
       case 'orders':

@@ -84,10 +84,17 @@ class MemoryStore {
   payouts: import('../models/types.ts').PayoutDocument[] = [];
   paymentConfig: import('../models/types.ts').PaymentConfigDocument = {
     id: 'platform_payment_config',
+    fawaterakApiKey: process.env.FAWATERAK_API_KEY || '',
+    fawaterakVendorKey: process.env.FAWATERAK_VENDOR_KEY || '',
+    fawaterakEnv: 'staging',
+    isFawaterakActive: true,
+    isCashOnDeliveryActive: true,
     instaPayAccount: 'elsa3ed@instapay',
     vodafoneCashNumber: '01158969931',
     instaPayInstructions: 'قم بالتحويل عبر تطبيق إنستاباي إلى المعرف الموضح أعلاه واضغط على "تم التحويل".',
     vodafoneCashInstructions: 'قم بتحويل المبلغ إلى رقم فودافون كاش الموضح أعلاه واضغط على "تم التحويل".',
+    isInstaPayActive: false,
+    isVodafoneCashActive: false,
     updatedAt: new Date().toISOString(),
     updatedBy: 'النظام'
   };
