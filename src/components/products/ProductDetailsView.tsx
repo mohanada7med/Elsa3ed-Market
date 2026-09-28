@@ -36,6 +36,7 @@ import {
   BadgeCheck,
   Layers3,
   Info,
+  X,
 } from 'lucide-react';
 
 import { getWhatsAppUrl } from '../common/WhatsAppButton';
@@ -53,6 +54,7 @@ export const ProductDetailsView: React.FC = () => {
     reviews,
     addReview,
     addToast,
+    currentUser,
     currentRole,
     isAuthenticated,
     openChatWithArtisan,
@@ -77,6 +79,7 @@ export const ProductDetailsView: React.FC = () => {
   const [newRating, setNewRating] = useState(5);
   const [newComment, setNewComment] = useState('');
   const [relatedFilter, setRelatedFilter] = useState<'all' | 'artisan' | 'category' | 'governorate'>('all');
+  const isOwner = currentRole === 'seller' && (currentUser?.sellerId === product?.sellerId || currentUser?.id === product?.sellerId);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1321,134 +1324,45 @@ export const ProductDetailsView: React.FC = () => {
             </div>
 
             {/* Actions */}
-
             <div className="mt-6">
-              {currentRole === 'buyer' ||
-                !isAuthenticated ? (
+              {/* 1. لو مشتري أو غير مسجل */}
+              {currentRole === 'buyer' || !isAuthenticated ? (
                 <>
                   <div className="flex gap-3">
                     {/* Quantity */}
-
-                    <div
-                      className="
-                        flex
-                        h-14
-                        shrink-0
-                        items-center
-                        rounded-2xl
-                        border
-                        border-black/10
-                        bg-black/[0.025]
-                        p-1
-                        dark:border-white/10
-                        dark:bg-cream/[0.025]
-                      "
-                    >
+                    <div className="flex h-14 shrink-0 items-center rounded-2xl border border-black/10 bg-black/[0.025] p-1 dark:border-white/10 dark:bg-cream/[0.025]">
                       <button
                         type="button"
-                        onClick={() =>
-                          setQuantity(
-                            Math.max(1, quantity - 1)
-                          )
-                        }
-                        className="
-                          flex
-                          h-12
-                          w-10
-                          items-center
-                          justify-center
-                          rounded-xl
-                          transition
-                          hover:bg-black/5
-                          dark:hover:bg-white/10
-                          cursor-pointer
-                        "
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="flex h-12 w-10 cursor-pointer items-center justify-center rounded-xl transition hover:bg-black/5 dark:hover:bg-white/10"
                       >
                         <Minus size={15} />
                       </button>
-
-                      <span className="w-8 text-center text-sm font-black">
-                        {quantity}
-                      </span>
-
+                      <span className="w-8 text-center text-sm font-black">{quantity}</span>
                       <button
                         type="button"
-                        disabled={
-                          quantity >= stockCount
-                        }
-                        onClick={() =>
-                          setQuantity(
-                            Math.min(
-                              stockCount || 99,
-                              quantity + 1
-                            )
-                          )
-                        }
-                        className="
-                          flex
-                          h-12
-                          w-10
-                          items-center
-                          justify-center
-                          rounded-xl
-                          transition
-                          hover:bg-black/5
-                          disabled:opacity-30
-                          dark:hover:bg-white/10
-                          cursor-pointer
-                        "
+                        disabled={quantity >= stockCount}
+                        onClick={() => setQuantity(Math.min(stockCount || 99, quantity + 1))}
+                        className="flex h-12 w-10 cursor-pointer items-center justify-center rounded-xl transition hover:bg-black/5 disabled:opacity-30 dark:hover:bg-white/10"
                       >
                         <Plus size={15} />
                       </button>
                     </div>
 
                     {/* Cart */}
-
                     <button
                       type="button"
                       disabled={!product.inStock}
-                      onClick={() =>
-                        addToCart(product, quantity)
-                      }
-                      className="
-                        flex
-                        min-h-14
-                        flex-1
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-2xl
-                        bg-espresso
-                        px-4
-                        text-xs
-                        font-black
-                        text-white
-                        shadow-lg
-                        transition
-                        hover:-translate-y-0.5
-                        hover:bg-primary
-                        disabled:cursor-not-allowed
-                        disabled:opacity-40
-                        dark:bg-cream
-                        dark:text-black
-                        dark:hover:bg-primary-hover
-                        cursor-pointer
-                      "
+                      onClick={() => addToCart(product, quantity)}
+                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-espresso px-4 text-xs font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-40 dark:bg-cream dark:text-black dark:hover:bg-primary-hover"
                     >
                       <ShoppingBag size={18} />
-
-                      <span>
-                        حط في السلة
-                      </span>
-
-                      <span className="hidden sm:inline">
-                        • {totalPrice} ج.م
-                      </span>
+                      <span>حط في السلة</span>
+                      <span className="hidden sm:inline">• {totalPrice} ج.م</span>
                     </button>
                   </div>
 
                   {/* Chat */}
-
                   <button
                     type="button"
                     onClick={() =>
@@ -1457,142 +1371,43 @@ export const ProductDetailsView: React.FC = () => {
                         initialMessage: `السلام عليكم، أود الاستفسار من إدارة المنصة حول عمل "${product.title}" المعروض على سوق وه.`,
                       })
                     }
-                    className="
-                      mt-3
-                      flex
-                      min-h-12
-                      w-full
-                      items-center
-                      justify-center
-                      gap-2
-                      rounded-2xl
-                      border
-                      border-primary/20
-                      bg-primary/5
-                      px-4
-                      text-xs
-                      font-bold
-                      text-[#7b542b]
-                      transition
-                      hover:bg-primary/10
-                      dark:border-[#d5a56d]/20
-                      dark:bg-[#d5a56d]/5
-                      dark:text-primary-hover
-                      dark:hover:bg-primary-hover/10
-                      cursor-pointer
-                    "
+                    className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#d5a56d]/20 dark:bg-[#d5a56d]/5 dark:text-primary-hover dark:hover:bg-primary-hover/10"
                   >
                     <MessageSquare size={16} />
                     استفسار لإدارة المنصة حول هذا المنتج
                   </button>
                 </>
-              ) : currentRole === 'seller' ? (
-                <div
-                  className="
-                    rounded-2xl
-                    border
-                    border-amber-500/20
-                    bg-amber-500/5
-                    p-4
-                  "
-                >
+              ) : isOwner ? (
+                /* 2. لو بائع وهو صاحب هذا المنتج حصراً */
+                <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
                   <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-primary-hover">
                     <Store size={16} />
-                    أنت مسجل كبائع وحرفي
+                    أنت صاحب هذا العمل والورشة
                   </div>
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <button
                       type="button"
-                      onClick={() =>
-                        setActivePage('seller-products')
-                      }
-                      className="
-                        flex
-                        min-h-11
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-xl
-                        bg-amber-700
-                        px-4
-                        text-xs
-                        font-bold
-                        text-white
-                        hover:bg-amber-800
-                        cursor-pointer
-                      "
+                      onClick={() => setActivePage('seller-products')}
+                      className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-amber-700 px-4 text-xs font-bold text-white hover:bg-amber-800"
                     >
-                      <Edit size={15} />
                       تعديل المنتج
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setActivePage('seller-inventory')
-                      }
-                      className="
-                        flex
-                        min-h-11
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-xl
-                        border
-                        border-amber-500/30
-                        bg-white
-                        px-4
-                        text-xs
-                        font-bold
-                        text-amber-800
-                        hover:bg-amber-50
-                        dark:bg-[#1a1512]
-                        dark:text-primary-hover
-                        cursor-pointer
-                      "
-                    >
-                      <Boxes size={15} />
-                      المخزون
                     </button>
                   </div>
                 </div>
-              ) : (
-                <div
-                  className="
-                    rounded-2xl
-                    border
-                    border-purple-500/20
-                    bg-purple-500/5
-                    p-4
-                  "
-                >
+              ) : currentRole === 'admin' ? (
+                /* 3. لو أدمن المنصة فقط */
+                <div className="rounded-2xl border border-purple-500/20 bg-purple-500/5 p-4">
                   <div className="flex items-center gap-2 text-xs font-bold text-purple-800 dark:text-purple-200">
                     <Settings size={16} />
-                    إدارة المنتج
+                    إدارة المنتج (لوحة الإدارة)
                   </div>
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <button
                       type="button"
-                      onClick={() =>
-                        setActivePage('admin-products')
-                      }
-                      className="
-                        flex
-                        min-h-11
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-xl
-                        bg-purple-700
-                        px-4
-                        text-xs
-                        font-bold
-                        text-white
-                        hover:bg-purple-800
-                        cursor-pointer
-                      "
+                      onClick={() => setActivePage('admin-products')}
+                      className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-purple-700 px-4 text-xs font-bold text-white hover:bg-purple-800"
                     >
                       <Settings size={15} />
                       إدارة المنتج
@@ -1600,37 +1415,29 @@ export const ProductDetailsView: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        setActivePage('admin-dashboard')
-                      }
-                      className="
-                        flex
-                        min-h-11
-                        items-center
-                        justify-center
-                        gap-2
-                        rounded-xl
-                        border
-                        border-purple-500/30
-                        bg-white
-                        px-4
-                        text-xs
-                        font-bold
-                        text-purple-800
-                        hover:bg-purple-50
-                        dark:bg-[#17121a]
-                        dark:text-purple-200
-                        cursor-pointer
-                      "
+                      onClick={() => setActivePage('admin-dashboard')}
+                      className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-white px-4 text-xs font-bold text-purple-800 hover:bg-purple-50 dark:bg-[#17121a] dark:text-purple-200"
                     >
                       <ShieldCheck size={15} />
                       المراجعة
                     </button>
                   </div>
                 </div>
+              ) : (
+                /* 4. لو بائع مسجل ولكن المنتج لورشة/بائع آخر (تظهر له خيارات الشراء والاستفسار كأي متصفح) */
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    disabled={!product.inStock}
+                    onClick={() => addToCart(product, quantity)}
+                    className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-espresso px-4 text-xs font-black text-white shadow-lg transition hover:bg-primary dark:bg-cream dark:text-black"
+                  >
+                    <ShoppingBag size={18} />
+                    <span>شراء القطعة ({totalPrice} ج.م)</span>
+                  </button>
+                </div>
               )}
             </div>
-
             {/* Trust */}
 
             <div

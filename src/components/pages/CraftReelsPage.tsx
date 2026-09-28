@@ -3,7 +3,6 @@ import { useApp } from '../../context/AppContext.tsx';
 import { CraftReel, Governorate } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
-import { ReelFeed } from '../public/reels/ReelFeed.tsx';
 import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import {
   Film,
@@ -20,8 +19,6 @@ import {
   X,
   Lock,
   Trash2,
-  Grid,
-  Tv,
   Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -47,7 +44,6 @@ export const CraftReelsPage: React.FC = () => {
 
   const [reels, setReels] = useState<CraftReel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('grid');
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
   const [selectedContentType, setSelectedContentType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -120,33 +116,6 @@ export const CraftReelsPage: React.FC = () => {
       } catch { }
     }
   }, [reels]);
-
-  // Lock parent document scrolling when viewing reels in feed mode on mobile
-  useEffect(() => {
-    if (viewMode !== 'feed') return;
-
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    if (!isMobile) return;
-
-    const originalOverflow = document.body.style.overflow;
-    const originalPosition = document.body.style.position;
-    const originalTop = document.body.style.top;
-    const originalWidth = document.body.style.width;
-    const scrollY = window.scrollY || window.pageYOffset || 0;
-
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.position = originalPosition;
-      document.body.style.top = originalTop;
-      document.body.style.width = originalWidth;
-      window.scrollTo(0, scrollY);
-    };
-  }, [viewMode]);
 
   const governoratesList = [
     'الفيوم',
@@ -632,33 +601,6 @@ export const CraftReelsPage: React.FC = () => {
                 ))}
               </select>
             </div>
-
-            {/* View Mode Toggle */}
-            <div className="flex items-center p-1 bg-black/[0.035] dark:bg-cream/[0.04] rounded-xl shrink-0">
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'grid'
-                  ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
-                  : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-                  }`}
-              >
-                <Grid size={15} />
-                <span>الشبكة</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode('feed')}
-                className={`px-4 h-10 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${viewMode === 'feed'
-                  ? 'bg-primary text-white shadow-md'
-                  : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-                  }`}
-              >
-                <Tv size={15} />
-                <span>مشاهدة ريلز</span>
-              </button>
-            </div>
           </div>
 
           {/* Content Categories Pills */}
@@ -688,34 +630,6 @@ export const CraftReelsPage: React.FC = () => {
             <p className="text-sm font-bold text-black/60 dark:text-white/60">
               جارٍ تحميل حكايات الصعيد الأصيلة...
             </p>
-          </div>
-        ) : viewMode === 'feed' ? (
-          <div className="w-full flex justify-center sm:py-4">
-            <div className="fixed inset-0 z-40 bg-black sm:relative sm:inset-auto sm:z-auto sm:max-w-[420px] sm:h-[min(94dvh,860px)] sm:rounded-3xl overflow-hidden shadow-2xl border-0 sm:border sm:border-white/10">
-              {/* Mobile Top Floating Switch to Grid button */}
-              <div className="sm:hidden absolute top-3 right-3 z-50 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setViewMode('grid')}
-                  className="px-3 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-bold flex items-center gap-1.5 shadow-lg active:scale-95 cursor-pointer"
-                >
-                  <Grid className="w-3.5 h-3.5" />
-                  <span>عرض الشبكة</span>
-                </button>
-              </div>
-
-              <ReelFeed
-                reels={filteredReels.length > 0 ? filteredReels : reels}
-                initialReelId={selectedReelId || undefined}
-                onSelectProduct={(pId) => navigateToProduct(pId)}
-                onSelectSeller={(sId) => navigateToSeller(sId)}
-                onDeleteReel={(deletedId) => {
-                  setReels((prev) => prev.filter((r) => r.id !== deletedId));
-                }}
-                showCloseButton={false}
-                hasBottomNav={false}
-              />
-            </div>
           </div>
         ) : (
           <div>

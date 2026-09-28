@@ -183,8 +183,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
             dir="rtl"
             onClick={phase === 'loading_pillars' ? handleSkip : undefined}
             className={`fixed inset-0 z-[99999] flex h-[100dvh] w-screen max-w-full items-center justify-center overflow-hidden overscroll-none touch-none bg-[#f8f4ec] dark:bg-espresso-900 text-espresso dark:text-cream select-none transform-gpu transition-[opacity,transform] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${isExiting
-                    ? 'opacity-0 scale-[0.98] pointer-events-none'
-                    : 'opacity-100 scale-100'
+                ? 'opacity-0 scale-[0.98] pointer-events-none'
+                : 'opacity-100 scale-100'
                 } ${phase === 'loading_pillars' ? 'cursor-pointer' : ''}`}
         >
             {/* زر التخطي في أقصى أعلى الشاشة من فوق */}
@@ -213,8 +213,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                 {/* وسم الصعيد */}
                 <div
                     className={`mb-4 sm:mb-6 flex items-center gap-3 text-[11px] sm:text-xs font-bold tracking-[0.25em] text-[#80633f]/75 dark:text-[#c7a781] transform-gpu transition-all duration-400 ease-out ${phase === 'idle'
-                            ? 'opacity-100 translate-y-0'
-                            : 'opacity-0 -translate-y-3 pointer-events-none'
+                        ? 'opacity-100 translate-y-0'
+                        : 'opacity-0 -translate-y-3 pointer-events-none'
                         }`}
                 >
                     <span className="h-px w-6 sm:w-8 bg-primary/40" />
@@ -243,10 +243,10 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                         disabled={phase !== 'idle'}
                         aria-label="شعار وه"
                         className={`relative flex items-center justify-center rounded-full border border-[#c28b4d]/35 bg-[#fffdf8]/95 dark:bg-cream/10 backdrop-blur-md shadow-lg transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                ? 'h-32 w-32 sm:h-36 sm:w-36 cursor-pointer hover:scale-105 active:scale-95'
-                                : phase === 'welcoming'
-                                    ? 'h-24 w-24 sm:h-28 sm:w-28 cursor-default shadow-md'
-                                    : 'h-16 w-16 sm:h-20 sm:w-20 cursor-default shadow-sm'
+                            ? 'h-32 w-32 sm:h-36 sm:w-36 cursor-pointer hover:scale-105 active:scale-95'
+                            : phase === 'welcoming'
+                                ? 'h-24 w-24 sm:h-28 sm:w-28 cursor-default shadow-md'
+                                : 'h-16 w-16 sm:h-20 sm:w-20 cursor-default shadow-sm'
                             }`}
                     >
                         <img
@@ -258,10 +258,10 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                 setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png');
                             }}
                             className={`object-contain select-none transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                    ? 'h-20 w-20 sm:h-24 sm:w-24 drop-shadow'
-                                    : phase === 'welcoming'
-                                        ? 'h-14 w-14 sm:h-16 sm:w-16'
-                                        : 'h-10 w-10 sm:h-12 sm:w-12'
+                                ? 'h-20 w-20 sm:h-24 sm:w-24 drop-shadow'
+                                : phase === 'welcoming'
+                                    ? 'h-14 w-14 sm:h-16 sm:w-16'
+                                    : 'h-10 w-10 sm:h-12 sm:w-12'
                                 }`}
                         />
                     </button>
@@ -272,8 +272,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     {/* المرحلة الأولى: idle */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center transform-gpu transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
-                                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                                : 'opacity-0 translate-y-2 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 pointer-events-auto'
+                            : 'opacity-0 translate-y-2 pointer-events-none'
                             }`}
                     >
                         <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl">
@@ -287,8 +287,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     {/* المرحلة الثانية: welcoming */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center transform-gpu transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'welcoming'
-                                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
-                                : 'opacity-0 scale-95 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                            : 'opacity-0 scale-95 pointer-events-none'
                             }`}
                     >
                         <img
@@ -316,8 +316,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                     {/* المرحلة الثالثة: loading_pillars */}
                     <div
                         className={`col-start-1 row-start-1 flex flex-col items-center text-center w-full transform-gpu transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'loading_pillars'
-                                ? 'opacity-100 translate-y-0 pointer-events-auto'
-                                : 'opacity-0 translate-y-2 pointer-events-none'
+                            ? 'opacity-100 translate-y-0 pointer-events-auto'
+                            : 'opacity-0 translate-y-2 pointer-events-none'
                             }`}
                     >
                         <div className="grid grid-cols-1 place-items-center w-full min-h-[86px]">
@@ -329,8 +329,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                     <div
                                         key={idx}
                                         className={`col-start-1 row-start-1 flex flex-col items-center justify-center w-full transform-gpu transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${isActive
-                                                ? 'opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto'
-                                                : 'opacity-0 translate-y-2 scale-[0.98] blur-[1px] pointer-events-none'
+                                            ? 'opacity-100 translate-y-0 scale-100 blur-0 pointer-events-auto'
+                                            : 'opacity-0 translate-y-2 scale-[0.98] blur-[1px] pointer-events-none'
                                             }`}
                                     >
                                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/12 text-[#805423] dark:text-primary-hover border border-primary/20 text-xs font-bold mb-2 shadow-sm">
@@ -352,10 +352,10 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                 <span
                                     key={idx}
                                     className={`h-1.5 rounded-full transform-gpu transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${pillarIndex === idx
-                                            ? 'w-6 sm:w-7 bg-primary'
-                                            : pillarIndex > idx
-                                                ? 'w-2 bg-primary/60'
-                                                : 'w-1.5 bg-black/15 dark:bg-cream/20'
+                                        ? 'w-6 sm:w-7 bg-primary'
+                                        : pillarIndex > idx
+                                            ? 'w-2 bg-primary/60'
+                                            : 'w-1.5 bg-black/15 dark:bg-cream/20'
                                         }`}
                                 />
                             ))}

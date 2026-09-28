@@ -360,6 +360,7 @@
 
 /* iOS Safari form input auto-zoom prevention */
 @media (max-width: 640px) {
+
   input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):not([type="range"]),
   select,
   textarea {
@@ -882,12 +883,14 @@
   aspect-ratio: 3 / 4;
   min-height: 480px;
 }
+
 @media (min-width: 640px) {
   .wah-cinematic-card {
     aspect-ratio: 4 / 5;
     min-height: 500px;
   }
 }
+
 .wah-cinematic-gradient {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 0%, rgba(12, 10, 8, 0.82) 42%, rgba(18, 14, 10, 0.35) 70%, transparent 100%);
-}
+}
