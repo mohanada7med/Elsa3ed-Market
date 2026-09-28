@@ -578,28 +578,55 @@ export const CraftReelsPage: React.FC = () => {
                 value={selectedGovernorate}
                 onChange={(e) => setSelectedGovernorate(e.target.value)}
                 className="
-                  h-12 w-full
-                  appearance-none
-                  rounded-xl
-                  border border-transparent
-                  bg-black/[0.035]
-                  px-4
-                  text-sm font-bold
-                  outline-none
-                  transition-all
-                  focus:border-primary/40
-                  dark:bg-cream/[0.04]
-                  dark:focus:bg-white/[0.06]
-                  cursor-pointer
-                "
+      h-12 w-full
+      appearance-none
+      rounded-xl
+      border border-black/10
+      bg-black/[0.035]
+      pe-10 ps-4
+      text-sm font-bold
+      text-espresso
+      outline-none
+      transition-all
+      cursor-pointer
+      hover:border-primary/30
+      focus:border-primary/60
+      focus:ring-2 focus:ring-primary/10
+      dark:border-white/10
+      dark:bg-white/[0.05]
+      dark:text-cream
+      dark:hover:border-[#d5a56d]/30
+      dark:focus:border-[#d5a56d]/60
+      dark:focus:ring-[#d5a56d]/10
+    "
               >
-                <option value="all">كل محافظات الصعيد</option>
+                <option
+                  value="all"
+                  className="bg-cream text-espresso dark:bg-espresso-900 dark:text-cream"
+                >
+                  كل محافظات الصعيد
+                </option>
                 {governoratesList.map((gov) => (
-                  <option key={gov} value={gov}>
+                  <option
+                    key={gov}
+                    value={gov}
+                    className="bg-cream text-espresso dark:bg-espresso-900 dark:text-cream"
+                  >
                     {gov}
                   </option>
                 ))}
               </select>
+            </div>
+            {/* أيقونة السهم المنسدل متوافقة مع RTL والنمطين */}
+            <div className="pointer-events-none absolute inset-y-0 start-auto end-3.5 flex items-center text-black/40 dark:text-white/40">
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
           </div>
 
