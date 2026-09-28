@@ -937,7 +937,7 @@ export const GovernorateDetailPage: React.FC = () => {
 
               <button
                 onClick={() => setActivePage('market')}
-                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#241E1A] transition hover:-translate-y-1 hover:bg-[#d5a56d] hover:text-white"
+                className="group inline-flex w-fit items-center gap-3 rounded-full bg-white px-7 py-4 text-sm font-black text-[#241E1A] transition hover:-translate-y-1 hover:bg-[#d5a56d] hover:text-white dark:text-white dark:hover:bg-[#d5a56d] "
               >
                 <Store className="h-4 w-4" />
                 ادخل السوق
