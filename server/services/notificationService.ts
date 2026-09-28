@@ -27,7 +27,12 @@ export async function getUserNotifications(
     try {
       const notifs = await db
         .collection('notifications')
-        .find({ userId: { $in: userIds } })
+        .find({
+          $or: [
+            { userId: { $in: userIds } },
+            { recipientId: { $in: userIds } }
+          ]
+        })
         .sort({ createdAt: -1 })
         .limit(Math.min(Math.max(1, limit), 100))
         .toArray();
@@ -37,7 +42,7 @@ export async function getUserNotifications(
     }
   }
 
-  return memoryNotifications.filter((n) => userIds.includes(n.userId)).slice(0, limit);
+  return memoryNotifications.filter((n) => userIds.includes(n.userId) || (n.recipientId && userIds.includes(n.recipientId))).slice(0, limit);
 }
 
 /**
@@ -55,7 +60,10 @@ export async function getUnreadNotificationsCount(userId: string, sellerId?: str
   if (isMongo && db) {
     try {
       const count = await db.collection('notifications').countDocuments({
-        userId: { $in: userIds },
+        $or: [
+          { userId: { $in: userIds } },
+          { recipientId: { $in: userIds } }
+        ],
         isRead: false
       });
       return count;
@@ -64,14 +72,15 @@ export async function getUnreadNotificationsCount(userId: string, sellerId?: str
     }
   }
 
-  return memoryNotifications.filter((n) => userIds.includes(n.userId) && !n.isRead).length;
+  return memoryNotifications.filter((n) => (userIds.includes(n.userId) || (n.recipientId && userIds.includes(n.recipientId))) && !n.isRead).length;
 }
 
 /**
  * Create a persistent, real notification linked to a business event in the database.
  */
 export async function createNotification(params: {
-  userId: string;
+  userId?: string;
+  recipientId?: string;
   title: string;
   message: string;
   type?:
@@ -89,14 +98,18 @@ export async function createNotification(params: {
   | 'system'
   | 'order'
   | 'product'
-  | 'promotion';
+  | 'promotion'
+  | 'chat_message'
+  | 'system_alert';
   link?: string;
   metadata?: any;
   recipientRole?: 'admin' | 'seller' | 'buyer' | 'all';
 }): Promise<NotificationDocument> {
+  const targetUserId = params.userId || params.recipientId || '';
   const doc: NotificationDocument = {
     id: `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    userId: params.userId,
+    userId: targetUserId,
+    recipientId: params.recipientId || targetUserId,
     title: params.title.trim(),
     message: params.message.trim(),
     type: (params.type || 'system') as any,

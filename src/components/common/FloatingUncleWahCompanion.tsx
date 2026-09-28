@@ -503,28 +503,10 @@ export const FloatingUncleWahCompanion: React.FC = () => {
             <div className="relative z-10 mt-3 flex items-start gap-3">
 
               {/* =========================
-                  MASCOT (Floating animation on hover & idle)
+                  MASCOT (GPU-accelerated smooth hover)
               ========================== */}
-              <motion.div
-                animate={{
-                  y: [0, -4, 0],
-                }}
-                transition={{
-                  repeat: Infinity,
-                  duration: 3.2,
-                  ease: 'easeInOut',
-                }}
-                whileHover={{
-                  scale: 1.14,
-                  y: [-2, -8, -3],
-                  rotate: [-2, 2.5, -2],
-                  transition: {
-                    repeat: Infinity,
-                    duration: 1.4,
-                    ease: 'easeInOut',
-                  },
-                }}
-                className="shrink-0 relative cursor-pointer"
+              <div
+                className="shrink-0 relative cursor-pointer transform-gpu transition-transform duration-300 hover:scale-110 active:scale-95 will-change-transform"
               >
                 <AnimatePresence mode="wait">
                   <motion.img
@@ -559,7 +541,7 @@ export const FloatingUncleWahCompanion: React.FC = () => {
                     className="h-20 sm:h-24 w-auto object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.25)] select-none"
                   />
                 </AnimatePresence>
-              </motion.div>
+              </div>
 
               {/* =========================
                   DIALOGUE
@@ -604,13 +586,28 @@ export const FloatingUncleWahCompanion: React.FC = () => {
                 باب: {activeStory.title}
               </span>
 
-              <button
-                type="button"
-                onClick={handleNextStory}
-                className="font-black text-primary hover:underline cursor-pointer"
-              >
-                اسمع كلام تاني ←
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('play-wah-intro'));
+                    }
+                  }}
+                  className="font-bold text-amber-700 dark:text-amber-400 hover:underline cursor-pointer"
+                >
+                  شاشة البداية ↺
+                </button>
+                <span className="text-border-subtle">|</span>
+                <button
+                  type="button"
+                  onClick={handleNextStory}
+                  className="font-black text-primary hover:underline cursor-pointer"
+                >
+                  اسمع كلام تاني ←
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -666,28 +663,10 @@ export const FloatingUncleWahCompanion: React.FC = () => {
             className="flex items-center gap-1.5 sm:gap-2.5"
           >
             {/* =========================
-                MASCOT AVATAR (Float Animation on Hover & Idle)
+                MASCOT AVATAR (GPU-accelerated hover & touch feedback)
             ========================== */}
-            <motion.div
-              className="relative z-10 -my-1 sm:-my-2 shrink-0"
-              animate={{
-                y: [0, -3.5, 0],
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 3,
-                ease: 'easeInOut',
-              }}
-              whileHover={{
-                y: [-3, -8, -3],
-                rotate: [0, -3, 3, 0],
-                scale: 1.16,
-                transition: {
-                  repeat: Infinity,
-                  duration: 1.4,
-                  ease: 'easeInOut',
-                },
-              }}
+            <div
+              className="relative z-10 -my-1 sm:-my-2 shrink-0 transform-gpu transition-transform duration-300 group-hover:scale-110 active:scale-95 will-change-transform"
             >
               <img
                 src={currentStory.image}
@@ -706,7 +685,7 @@ export const FloatingUncleWahCompanion: React.FC = () => {
               <span className="sm:hidden absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white shadow-md border border-surface sm:border-2">
                 <Sparkles size={8} />
               </span>
-            </motion.div>
+            </div>
 
             {/* =========================
                 TEXT PILL

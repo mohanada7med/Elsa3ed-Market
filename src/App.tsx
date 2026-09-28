@@ -54,44 +54,79 @@ import { ProductDetailsView } from './components/products/ProductDetailsView';
 import { CategoriesPage } from './components/pages/CategoriesPage';
 import { CraftsPage } from './components/pages/CraftsPage';
 import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
-import { CheckoutPage } from './components/pages/CheckoutPage';
 import { FavoritesPage } from './components/pages/FavoritesPage';
-import { BuyerAccountPage } from './components/pages/BuyerAccountPage';
 import { AboutSection } from './components/public/AboutSection';
 import { CartPage } from './components/pages/CartPage';
-import { ChatView } from './components/chat/ChatView';
 import { ForbiddenPage } from './components/pages/ForbiddenPage';
-
-// WAH Upper Egypt Digital Platform Pages
-import { GovernorateDetailPage } from './components/pages/GovernorateDetailPage';
-import { PlacesHeritagePage } from './components/pages/PlacesHeritagePage';
-import { PlaceDetailPage } from './components/pages/PlaceDetailPage';
-import { PeoplePage } from './components/pages/PeoplePage';
-import { PersonDetailPage } from './components/pages/PersonDetailPage';
-import { FoodHeritagePage } from './components/pages/FoodHeritagePage';
-import { FoodDetailPage } from './components/pages/FoodDetailPage';
-import { EventsPage } from './components/pages/EventsPage';
-import { EventDetailPage } from './components/pages/EventDetailPage';
-import { GlobalSearchResultsPage } from './components/pages/GlobalSearchResultsPage';
-import { NotificationsPage } from './components/pages/NotificationsPage';
-import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
-
+import { ResetPasswordPage } from './components/pages/ResetPasswordPage';
 import { AmWahSupportButton } from './components/common/AmWahSupportButton';
 
-// Dynamic code-splitting for heavy non-public dashboard and heavy standalone page bundles
+// High-performance code-splitting: Heavy non-home views loaded on-demand
+const CheckoutPage = lazyWithRetry(() =>
+  import('./components/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
+);
+const BuyerAccountPage = lazyWithRetry(() =>
+  import('./components/pages/BuyerAccountPage').then((m) => ({ default: m.BuyerAccountPage }))
+);
+const ChatView = lazyWithRetry(() =>
+  import('./components/chat/ChatView').then((m) => ({ default: m.ChatView }))
+);
+const GovernorateDetailPage = lazyWithRetry(() =>
+  import('./components/pages/GovernorateDetailPage').then((m) => ({ default: m.GovernorateDetailPage }))
+);
+const PlacesHeritagePage = lazyWithRetry(() =>
+  import('./components/pages/PlacesHeritagePage').then((m) => ({ default: m.PlacesHeritagePage }))
+);
+const PlaceDetailPage = lazyWithRetry(() =>
+  import('./components/pages/PlaceDetailPage').then((m) => ({ default: m.PlaceDetailPage }))
+);
+const PeoplePage = lazyWithRetry(() =>
+  import('./components/pages/PeoplePage').then((m) => ({ default: m.PeoplePage }))
+);
+const PersonDetailPage = lazyWithRetry(() =>
+  import('./components/pages/PersonDetailPage').then((m) => ({ default: m.PersonDetailPage }))
+);
+const FoodHeritagePage = lazyWithRetry(() =>
+  import('./components/pages/FoodHeritagePage').then((m) => ({ default: m.FoodHeritagePage }))
+);
+const FoodDetailPage = lazyWithRetry(() =>
+  import('./components/pages/FoodDetailPage').then((m) => ({ default: m.FoodDetailPage }))
+);
+const EventsPage = lazyWithRetry(() =>
+  import('./components/pages/EventsPage').then((m) => ({ default: m.EventsPage }))
+);
+const EventDetailPage = lazyWithRetry(() =>
+  import('./components/pages/EventDetailPage').then((m) => ({ default: m.EventDetailPage }))
+);
+const GlobalSearchResultsPage = lazyWithRetry(() =>
+  import('./components/pages/GlobalSearchResultsPage').then((m) => ({ default: m.GlobalSearchResultsPage }))
+);
+const NotificationsPage = lazyWithRetry(() =>
+  import('./components/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
+);
+const WholesalePage = lazyWithRetry(() =>
+  import('./components/pages/WholesalePage').then((m) => ({ default: m.WholesalePage }))
+);
+const UpperEgyptMapPage = lazyWithRetry(() =>
+  import('./components/pages/UpperEgyptMapPage').then((m) => ({ default: m.UpperEgyptMapPage }))
+);
+const CraftReelsPage = lazyWithRetry(() =>
+  import('./components/pages/CraftReelsPage').then((m) => ({ default: m.CraftReelsPage }))
+);
+const DialectDictionaryPage = lazyWithRetry(() =>
+  import('./components/pages/quize').then((m) => ({ default: m.DialectDictionaryPage }))
+);
+const OrdersTrackingPage = lazyWithRetry(() =>
+  import('./components/pages/OrdersTrackingPage').then((m) => ({ default: m.OrdersTrackingPage }))
+);
+
 const SellerDashboard = lazyWithRetry(() =>
   import('./components/seller/SellerDashboard').then((m) => ({ default: m.SellerDashboard }))
 );
 const AdminDashboard = lazyWithRetry(() =>
   import('./components/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard }))
 );
-import { WholesalePage } from './components/pages/WholesalePage';
-import { UpperEgyptMapPage } from './components/pages/UpperEgyptMapPage';
-import { CraftReelsPage } from './components/pages/CraftReelsPage';
-import { DialectDictionaryPage } from './components/pages/quize';
-import { OrdersTrackingPage } from './components/pages/OrdersTrackingPage';
-
 const CulturalCmsAdminPage = lazyWithRetry(() =>
   import('./components/pages/CulturalCmsAdminPage').then((m) => ({ default: m.CulturalCmsAdminPage }))
 );

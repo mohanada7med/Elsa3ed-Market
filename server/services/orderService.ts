@@ -12,7 +12,7 @@ import type { AuthenticatedUser } from '../middleware/auth.ts';
 import { getCart, clearCart } from './cartService.ts';
 import { incrementCouponUsage } from './discountService.ts';
 import { addAuditLog } from './auditService.ts';
-import { createNotification } from './notificationService.ts';
+import { createNotification, resolveSellerUserId } from './notificationService.ts';
 
 export interface CreateOrderInput {
   shippingAddress: OrderAddressDocument;
@@ -248,27 +248,29 @@ export async function createOrder(
     // Notify Buyer
     await createNotification({
       userId: buyer.id,
+      recipientId: buyer.id,
       title: `تم استلام طلبك التراثي #${orderNumber}`,
       message: `شكراً لتسوقك من سوق الصعيد! تم تسجيل طلبك رقم #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م بنجاح وجاري متابعة التجهيز.`,
       type: 'new_order',
       link: 'orders',
+      recipientRole: 'buyer',
       metadata: { orderId: orderDocument.id, orderNumber }
     });
 
     // Notify relevant sellers
     for (const sId of distinctSellerIds) {
-      let sellerUserId = sId;
-      if (isMongo && db) {
-        const sDoc = await db.collection('sellers').findOne({ id: sId });
-        if (sDoc?.userId) sellerUserId = sDoc.userId;
-      }
+      let sellerUserId = await resolveSellerUserId(sId);
+      if (!sellerUserId) sellerUserId = sId;
+
       await createNotification({
         userId: sellerUserId,
+        recipientId: sId,
         title: `طلب شراء جديد لمنتجات ورشتك #${orderNumber}`,
         message: `لديك طلب شراء جديد يتضمن منتجات من ورشتك بالطلب رقم #${orderNumber}. يرجى مراجعة وتجهيز المنتجات.`,
         type: 'new_order',
         link: 'seller-orders',
-        metadata: { orderId: orderDocument.id, orderNumber }
+        recipientRole: 'seller',
+        metadata: { orderId: orderDocument.id, orderNumber, sellerId: sId }
       });
     }
 
@@ -283,10 +285,12 @@ export async function createOrder(
     for (const adminId of adminUserIds) {
       await createNotification({
         userId: adminId,
+        recipientId: adminId,
         title: `طلب شراء جديد #${orderNumber}`,
         message: `تم إنشاء طلب شراء جديد #${orderNumber} بقيمة ${orderDocument.total.toLocaleString('ar-EG')} ج.م من المشتري ${buyer.name}.`,
         type: 'new_order',
         link: 'admin-orders',
+        recipientRole: 'admin',
         metadata: { orderId: orderDocument.id, orderNumber }
       });
     }
@@ -487,26 +491,28 @@ export async function cancelBuyerOrder(
   try {
     await createNotification({
       userId: buyerId,
+      recipientId: buyerId,
       title: `تم إلغاء الطلب #${order.orderNumber}`,
       message: `تم إلغاء طلبك رقم #${order.orderNumber} بنجاح واستعادة المنتجات.`,
       type: 'order_status',
       link: 'orders',
+      recipientRole: 'buyer',
       metadata: { orderId: order.id, orderNumber: order.orderNumber }
     });
 
     for (const sId of order.sellerIds || []) {
-      let sellerUserId = sId;
-      if (isMongo && db) {
-        const sDoc = await db.collection('sellers').findOne({ $or: [{ id: sId }, { userId: sId }] });
-        if (sDoc?.userId) sellerUserId = sDoc.userId;
-      }
+      let sellerUserId = await resolveSellerUserId(sId);
+      if (!sellerUserId) sellerUserId = sId;
+
       await createNotification({
         userId: sellerUserId,
+        recipientId: sId,
         title: `إلغاء طلب شراء #${order.orderNumber}`,
         message: `قام العميل بإلغاء الطلب رقم #${order.orderNumber}. تم استرجاع كميات المخزون لمنتجات ورشتك تلقائياً.`,
         type: 'order_status',
         link: 'seller-orders',
-        metadata: { orderId: order.id, orderNumber: order.orderNumber }
+        recipientRole: 'seller',
+        metadata: { orderId: order.id, orderNumber: order.orderNumber, sellerId: sId }
       });
     }
   } catch (notifErr) {
@@ -648,10 +654,12 @@ export async function updateSellerOrderStatus(
     const statusLabel = statusLabels[newStatus] || newStatus;
     await createNotification({
       userId: order.buyerId,
+      recipientId: order.buyerId,
       title: `تحديث حالة طلبك #${order.orderNumber}`,
       message: `حالة طلبك الآن: "${statusLabel}". ${note ? `ملاحظة الورشة: ${note}` : ''}`.trim(),
       type: 'order_status',
       link: 'orders',
+      recipientRole: 'buyer',
       metadata: { orderId: order.id, orderNumber: order.orderNumber, status: newStatus }
     });
   } catch (notifErr) {
@@ -838,27 +846,29 @@ export async function updateAdminOrderStatus(
     }
     await createNotification({
       userId: order.buyerId,
+      recipientId: order.buyerId,
       title: `تحديث على طلبك #${order.orderNumber}`,
       message: notifMsg,
       type: 'order_status',
       link: 'orders',
+      recipientRole: 'buyer',
       metadata: { orderId: order.id, orderNumber: order.orderNumber, status: order.status, trackingNumber }
     });
 
     if (order.status === 'cancelled') {
       for (const sId of order.sellerIds || []) {
-        let sellerUserId = sId;
-        if (isMongo && db) {
-          const sDoc = await db.collection('sellers').findOne({ $or: [{ id: sId }, { userId: sId }] });
-          if (sDoc?.userId) sellerUserId = sDoc.userId;
-        }
+        let sellerUserId = await resolveSellerUserId(sId);
+        if (!sellerUserId) sellerUserId = sId;
+
         await createNotification({
           userId: sellerUserId,
+          recipientId: sId,
           title: `إلغاء طلب الشراء #${order.orderNumber}`,
           message: `تم إلغاء الطلب #${order.orderNumber} بواسطة إدارة المنصة واسترجاع كميات المخزون لمنتجات ورشتك تلقائياً.`,
           type: 'order_status',
           link: 'seller-orders',
-          metadata: { orderId: order.id, orderNumber: order.orderNumber }
+          recipientRole: 'seller',
+          metadata: { orderId: order.id, orderNumber: order.orderNumber, sellerId: sId }
         });
       }
     }
@@ -958,10 +968,13 @@ export async function adminVerifyOrderPayment(
   let methodLabel = order.paymentMethod === 'vodafone_cash' ? 'فودافون كاش' : order.paymentMethod === 'instapay' ? 'InstaPay' : 'التحويل';
   await createNotification({
     userId: order.buyerId,
+    recipientId: order.buyerId,
     title: 'تم تأكيد استلام دفعتك بنجاح',
     message: `تم تأكيد استلام دفعتك للطلب #${order.orderNumber} بقيمة ${order.total.toLocaleString('ar-EG')} ج.م عبر ${methodLabel}، وجاري تجهيز الشحنة من الورش.`,
     type: 'system',
-    link: 'buyer-orders'
+    link: 'buyer-orders',
+    recipientRole: 'buyer',
+    metadata: { orderId: order.id, orderNumber: order.orderNumber }
   });
 
   // Audit log
@@ -1040,10 +1053,13 @@ export async function adminRejectOrderPayment(
   // Notify customer
   await createNotification({
     userId: order.buyerId,
+    recipientId: order.buyerId,
     title: 'تنبيه بخصوص تحويل قيمة الطلب',
     message: `تعذر تأكيد تحويل الدفع للطلب #${order.orderNumber}. السبب: ${rejectReason}. يرجى مراجعة إدارة المنصة.`,
     type: 'system',
-    link: 'buyer-orders'
+    link: 'buyer-orders',
+    recipientRole: 'buyer',
+    metadata: { orderId: order.id, orderNumber: order.orderNumber }
   });
 
   // Audit log

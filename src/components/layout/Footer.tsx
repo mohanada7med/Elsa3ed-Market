@@ -257,6 +257,18 @@ export const Footer: React.FC = () => {
                   <Film className="w-3.5 h-3.5" />
                   <span>فيلم وه التوثيقي</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('play-wah-intro'));
+                    }
+                  }}
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-primary-hover hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>بداية وه (WahIntro)</span>
+                </button>
               </div>
             </div>
 

@@ -41,7 +41,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
     const [phase, setPhase] = useState<IntroPhase>(initialPhase);
     const [pillarIndex, setPillarIndex] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
-    const [logoSrc, setLogoSrc] = useState('https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png');
+    const [logoSrc, setLogoSrc] = useState('/mascot/logo.png');
 
     useEffect(() => {
         setPhase(initialPhase);

@@ -326,6 +326,7 @@ export interface FavoriteDocument {
 export interface NotificationDocument {
   id: string;
   userId: string;
+  recipientId?: string;
   title: string;
   message: string;
   type:
