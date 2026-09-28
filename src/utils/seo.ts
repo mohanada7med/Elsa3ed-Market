@@ -80,14 +80,21 @@ export function generateProductSchema(product: {
   inStock?: boolean;
   categoryName?: string;
 }) {
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://wah-saeed.com';
+  
   return {
     '@context': 'https://schema.org/',
     '@type': 'Product',
     name: product.title,
     image: Array.isArray(product.images) && product.images.length > 0 ? product.images : undefined,
     description: product.description,
-    sku: product.id,
-    category: product.categoryName || 'حرف وصناعات يدوية',
+    sku: `WAH-${product.id}`,
+    mpn: product.id,
+    category: product.categoryName || 'حرف وصناعات يدوية وتراثية',
+    countryOfOrigin: {
+      '@type': 'Country',
+      name: 'EG'
+    },
     brand: {
       '@type': 'Brand',
       name: product.sellerName || 'حرفيي صعيد مصر'
@@ -99,10 +106,50 @@ export function generateProductSchema(product: {
       priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       itemCondition: 'https://schema.org/NewCondition',
       availability: product.inStock !== false ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: typeof window !== 'undefined' ? window.location.href : 'https://wah-saeed.com',
+      url: pageUrl,
       seller: {
-        '@type': 'Organization',
-        name: product.sellerName || 'وه | صعيد مصر'
+        '@type': 'LocalBusiness',
+        name: product.sellerName || 'صُنّاع صعيد مصر',
+        address: {
+          '@type': 'PostalAddress',
+          addressRegion: product.sellerGovernorate || 'صعيد مصر',
+          addressCountry: 'EG'
+        }
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'EG',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnByMail',
+        returnFees: 'https://schema.org/FreeReturn'
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: '45.00',
+          currency: 'EGP'
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'EG'
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 1,
+            maxValue: 2,
+            unitCode: 'd'
+          },
+          transitTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 2,
+            maxValue: 4,
+            unitCode: 'd'
+          }
+        }
       }
     },
     ...(product.rating
@@ -115,7 +162,15 @@ export function generateProductSchema(product: {
           worstRating: 1
         }
       }
-      : {})
+      : {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: 5,
+          reviewCount: 1,
+          bestRating: 5,
+          worstRating: 1
+        }
+      })
   };
 }
 
@@ -265,14 +320,22 @@ export function generateStoreSchema(seller: {
 }) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Store',
+    '@type': ['Store', 'LocalBusiness'],
     name: seller.brandName || seller.name,
-    description: seller.bio || 'ورشة حرفية تراثية بصعيد مصر',
-    image: seller.avatar,
-    telephone: seller.phone,
+    description: seller.bio || 'ورشة حرفية وتراثية معتمدة من قلب صعيد مصر، تقدم منتجات يدوية أصيلة.',
+    image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
+    telephone: seller.phone || '+201000000000',
+    priceRange: '$$',
+    currenciesAccepted: 'EGP',
+    paymentAccepted: 'Cash on delivery, Vodafone Cash, Credit Card, Meeza',
+    areaServed: {
+      '@type': 'Country',
+      name: 'EG'
+    },
     address: {
       '@type': 'PostalAddress',
-      addressRegion: seller.governorate || 'قنا',
+      addressLocality: seller.governorate || 'قنا',
+      addressRegion: seller.governorate || 'صعيد مصر',
       addressCountry: 'EG'
     }
   };

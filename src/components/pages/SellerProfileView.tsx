@@ -21,6 +21,7 @@ import {
   WandSparkles,
 } from 'lucide-react';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
+import { updatePageSEO, generateStoreSchema } from '../../utils/seo';
 
 export const SellerProfileView: React.FC = () => {
   const {
@@ -135,6 +136,28 @@ export const SellerProfileView: React.FC = () => {
   }, []);
 
   const seller = matchedSeller || directSeller;
+
+  useEffect(() => {
+    if (!seller) return;
+    const sellerName = seller.brandName || seller.name || 'حرفي من الصعيد';
+    const sellerBio = seller.bio || `ورشة ومنتجات ${sellerName} الحرفية في ${seller.governorate || 'صعيد مصر'}. صناعة يدوية وتراثية 100%.`;
+    
+    updatePageSEO({
+      title: `${sellerName} — ورشة وصانع بصعيد مصر`,
+      description: sellerBio.slice(0, 160),
+      image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
+      type: 'website',
+      schema: generateStoreSchema({
+        id: seller.id || seller.userId || 'artisan',
+        name: seller.name || sellerName,
+        brandName: seller.brandName || sellerName,
+        bio: sellerBio,
+        avatar: seller.avatar,
+        governorate: seller.governorate || 'صعيد مصر',
+        phone: seller.phone
+      })
+    });
+  }, [seller]);
 
   if (isLoadingDirect || (!seller && sellers.length === 0)) {
     return (

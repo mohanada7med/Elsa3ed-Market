@@ -4,6 +4,7 @@ import { Product } from '../../types';
 import { Heart, ShoppingBag, Star, Sparkles, MapPin, Eye, Settings } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
+import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 
 interface ProductCardProps {
   product: Product;
@@ -57,7 +58,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       {/* Product Image & Badges */}
       <div className="relative aspect-square w-full overflow-hidden bg-black/5 dark:bg-cream/5">
         <img
-          src={primaryImage}
+          src={getOptimizedImageUrl(primaryImage, { width: 600, crop: 'fill' })}
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"

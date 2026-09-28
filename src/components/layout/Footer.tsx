@@ -24,8 +24,7 @@ import {
   Utensils,
   Calendar,
   ShoppingBag,
-  ExternalLink,
-  ChevronLeft
+  ChevronLeft,
 } from 'lucide-react';
 import { WAHPattern } from '../../design-system/WAHPattern';
 

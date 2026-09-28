@@ -265,3 +265,100 @@ export async function captureVideoFrame(
     };
   });
 }
+
+const imageUrlCache = new Map<string, string>();
+
+export interface ImageOptimizationOptions {
+  width?: number;
+  height?: number;
+  crop?: 'limit' | 'fill' | 'scale' | 'thumb' | 'fit';
+  quality?: 'auto' | 'auto:eco' | 'auto:good' | 'auto:best';
+  format?: 'auto' | 'webp' | 'avif' | 'jpg';
+}
+
+/**
+ * Optimizes an image URL via Cloudinary's intelligent delivery features (f_auto, q_auto, responsive sizing).
+ * - Transforms Cloudinary URLs with f_auto,q_auto and optimal bounding dimensions.
+ * - Handles Unsplash URLs by adding format=auto&q=80&w=width.
+ * - Safely returns untouched for local files (/mascot/...) and data URIs.
+ */
+export function getOptimizedImageUrl(
+  url?: string | null,
+  options?: ImageOptimizationOptions
+): string {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Local assets or data URLs are served directly
+  if (trimmed.startsWith('/') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+
+  const width = options?.width;
+  const height = options?.height;
+  const crop = options?.crop || (width && height ? 'fill' : 'limit');
+  const quality = options?.quality || 'auto';
+  const format = options?.format || 'auto';
+
+  const cacheKey = `${trimmed}_${width || 0}_${height || 0}_${crop}_${quality}_${format}`;
+  const cached = imageUrlCache.get(cacheKey);
+  if (cached) return cached;
+
+  // Cloudinary image optimization
+  if (trimmed.includes('res.cloudinary.com')) {
+    const uploadIndex = trimmed.indexOf('/image/upload/');
+    const rawUploadIndex = uploadIndex !== -1 ? uploadIndex : trimmed.indexOf('/upload/');
+
+    if (rawUploadIndex !== -1) {
+      const isImageUpload = uploadIndex !== -1;
+      const delimiter = isImageUpload ? '/image/upload/' : '/upload/';
+      const prefix = trimmed.substring(0, rawUploadIndex + delimiter.length);
+      let suffix = trimmed.substring(rawUploadIndex + delimiter.length);
+
+      // Clean existing f_auto, q_auto, or sizing transformations if at start of suffix
+      if (suffix.startsWith('f_auto') || suffix.includes('/f_auto') || suffix.includes('q_auto')) {
+        const firstSlash = suffix.indexOf('/');
+        if (firstSlash !== -1 && (suffix.startsWith('f_auto') || suffix.startsWith('w_') || suffix.startsWith('q_'))) {
+          suffix = suffix.substring(firstSlash + 1);
+        }
+      }
+
+      const transforms: string[] = [`f_${format}`, `q_${quality}`];
+      if (width && width > 0) {
+        transforms.push(`w_${width}`);
+      }
+      if (height && height > 0) {
+        transforms.push(`h_${height}`);
+      }
+      if (width || height) {
+        transforms.push(`c_${crop}`);
+      }
+
+      const transformStr = transforms.join(',');
+      const result = `${prefix}${transformStr}/${suffix}`;
+      imageUrlCache.set(cacheKey, result);
+      return result;
+    }
+  }
+
+  // Unsplash image optimization
+  if (trimmed.includes('images.unsplash.com')) {
+    try {
+      const urlObj = new URL(trimmed);
+      urlObj.searchParams.set('auto', 'format');
+      urlObj.searchParams.set('q', quality === 'auto:eco' ? '70' : '80');
+      if (width) urlObj.searchParams.set('w', width.toString());
+      if (height) urlObj.searchParams.set('h', height.toString());
+      urlObj.searchParams.set('fit', crop === 'fill' ? 'crop' : 'max');
+      const result = urlObj.toString();
+      imageUrlCache.set(cacheKey, result);
+      return result;
+    } catch {
+      return trimmed;
+    }
+  }
+
+  imageUrlCache.set(cacheKey, trimmed);
+  return trimmed;
+}

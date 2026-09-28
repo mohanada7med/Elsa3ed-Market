@@ -8,12 +8,29 @@ const App = dynamic(() => import('../src/App'), {
   ssr: false,
 });
 
+const SESSION_KEY = 'elsa3ed_wah_session_visited';
+
 export default function ClientApp() {
   const [mounted, setMounted] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [introPhase, setIntroPhase] = useState<'idle' | 'loading_pillars'>('idle');
 
   useEffect(() => {
+    try {
+      const hasVisited = sessionStorage.getItem(SESSION_KEY);
+      if (hasVisited) {
+        // عند كل ريفرش (Refresh) في نفس السيشن: يظهر الجزء الثاني مباشرة (ركائز المنصة)
+        setIntroPhase('loading_pillars');
+      } else {
+        // أول مرة يفتح فيها الموقع أو في سيشن جديدة: يظهر الجزء الأول (دوس على وه)
+        setIntroPhase('idle');
+        sessionStorage.setItem(SESSION_KEY, 'true');
+      }
+    } catch {
+      // في حال تعذر الوصول لـ sessionStorage
+      setIntroPhase('idle');
+    }
+
     setMounted(true);
 
     const handleOpenIntro = () => {

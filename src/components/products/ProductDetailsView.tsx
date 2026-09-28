@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ProductCard } from './ProductCard';
 import { updatePageSEO, generateProductSchema } from '../../utils/seo';
+import { getOptimizedImageUrl } from '../../utils/cloudinaryMedia';
 
 import {
   Heart,
@@ -655,10 +656,10 @@ export const ProductDetailsView: React.FC = () => {
               "
             >
               <img
-                src={
-                  productImages[selectedImageIndex] ||
-                  productImages[0]
-                }
+                src={getOptimizedImageUrl(
+                  productImages[selectedImageIndex] || productImages[0],
+                  { width: 1200, crop: 'limit' }
+                )}
                 alt={product.title}
                 className="
                   h-full
@@ -879,7 +880,7 @@ export const ProductDetailsView: React.FC = () => {
                     `}
                   >
                     <img
-                      src={img}
+                      src={getOptimizedImageUrl(img, { width: 200, crop: 'fill' })}
                       alt={`صورة ${idx + 1}`}
                       className="h-full w-full object-cover"
                     />

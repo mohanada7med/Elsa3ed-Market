@@ -366,30 +366,33 @@ export const UpperEgyptMapPage: React.FC = () => {
             <div className="mt-1 text-sm font-black">رحلة الصعيد</div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1 rounded-xl sm:rounded-2xl border border-black/10 bg-white/50 p-1 backdrop-blur-xl dark:border-white/10 dark:bg-cream/[0.05] shadow-lg">
-            <button
-              type="button"
-              onClick={() => setDisplayMode('voyage')}
-              className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'voyage'
-                ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-                }`}
-            >
-              <Ship size={15} className="shrink-0" />
-              <span>مركب النيل</span>
-            </button>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
 
-            <button
-              type="button"
-              onClick={() => setDisplayMode('grid')}
-              className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'grid'
-                ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
-                : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
-                }`}
-            >
-              <LayoutGrid size={15} className="shrink-0" />
-              <span>كل المحافظات</span>
-            </button>
+            <div className="flex items-center gap-1 rounded-xl sm:rounded-2xl border border-black/10 bg-white/50 p-1 backdrop-blur-xl dark:border-white/10 dark:bg-cream/[0.05] shadow-lg">
+              <button
+                type="button"
+                onClick={() => setDisplayMode('voyage')}
+                className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'voyage'
+                  ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                <Ship size={15} className="shrink-0" />
+                <span>مركب النيل</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDisplayMode('grid')}
+                className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'grid'
+                  ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
+                  : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
+                  }`}
+              >
+                <LayoutGrid size={15} className="shrink-0" />
+                <span>كل المحافظات</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -475,6 +478,8 @@ export const UpperEgyptMapPage: React.FC = () => {
                 </div>
               </div>
             </div>
+
+
 
             {/* البحث */}
             <div className="mb-8 rounded-3xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-espresso-900/90 p-3 sm:p-4 backdrop-blur-2xl shadow-xl">
@@ -938,6 +943,8 @@ export const UpperEgyptMapPage: React.FC = () => {
           </div>
         )}
       </main>
+
+
 
       {/* الفوتر */}
       <footer className="border-t border-black/10 dark:border-white/10 py-12 text-center">

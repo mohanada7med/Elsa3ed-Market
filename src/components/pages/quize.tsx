@@ -1196,6 +1196,7 @@ export const DialectDictionaryPage: React.FC = () => {
           </div>
         </footer>
       )}
+
     </WrapperTag>
   );
 };

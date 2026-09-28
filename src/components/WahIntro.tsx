@@ -45,6 +45,8 @@ export const WahIntro: React.FC<WahIntroProps> = ({
 
     useEffect(() => {
         setPhase(initialPhase);
+        setPillarIndex(0);
+        setIsExiting(false);
     }, [initialPhase]);
 
     // قفل الاسكرول في الصفحة طالما الإنترو معروض
@@ -76,11 +78,16 @@ export const WahIntro: React.FC<WahIntroProps> = ({
         timersRef.current = [];
     }, []);
 
-    const stepDuration = initialPhase === 'loading_pillars' ? 500 : 1500;
+    const stepDuration = initialPhase === 'loading_pillars' ? 600 : 1400;
 
     const handleComplete = useCallback(() => {
         if (isExiting) return;
         setIsExiting(true);
+        try {
+            sessionStorage.setItem(SESSION_KEY, 'true');
+        } catch {
+            // Ignore
+        }
         onBeforeFinish?.();
 
         // تظل الموسيقى تعمل وتستمر في الخلفية دون خفض الصوت أو إيقافها
