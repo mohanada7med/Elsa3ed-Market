@@ -34,6 +34,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { FavoritesPage } from '../pages/FavoritesPage';
 
 /* =========================================================
    TYPES
@@ -863,16 +864,16 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               {!isStaff && (
                 <button
                   type="button"
-                  onClick={() => setIsCartDrawerOpen(true)}
-                  aria-label="السلة"
-                  title="السلة"
+                  onClick={() => navigate('favorites')}
+                  aria-label="الحاجات اللي عجبتك"
+                  title="الحاجات اللي عجبتك"
                   className="relative flex h-8.5 w-8.5 sm:h-9.5 sm:w-9.5 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer"
                   style={{
                     backgroundColor: hoverBg,
                     color: mainText,
                   }}
                 >
-                  <ShoppingBag size={16} />
+                  <Heart size={16} />
                   {cartCount > 0 && (
                     <span
                       className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 sm:h-4 sm:min-w-4 items-center justify-center rounded-full px-1 text-[8px] sm:text-[9px] font-bold"
