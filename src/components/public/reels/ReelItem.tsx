@@ -25,8 +25,7 @@ import {
   VolumeX,
   Volume2,
   ChevronUp,
-  ChevronDown,
-  Disc3
+  ChevronDown
 } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'motion/react';
@@ -819,32 +818,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
                 gap-2
               ">
 
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.86 }}
-                  onClick={onToggleMute}
-                  className="
-                    w-10
-                    h-10
-                    rounded-full
-                    flex
-                    items-center
-                    justify-center
-                    bg-black/45
-                    backdrop-blur-xl
-                    border
-                    border-white/10
-                    text-white
-                    shadow-lg
-                  "
-                >
-                  {isMuted ? (
-                    <VolumeX className="w-4 h-4" />
-                  ) : (
-                    <Volume2 className="w-4 h-4" />
-                  )}
-                </motion.button>
-
                 {showCloseButton && onClose && (
                   <motion.button
                     type="button"
@@ -1325,67 +1298,60 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         </div>
 
         {/* ===================================================
-            FLOATING DISC
+            FLOATING SOUND TOGGLE BUTTON (UNDER TOP CORNER BUTTON)
         =================================================== */}
 
-        <AnimatePresence>
-          {isPlaying && (
-            <motion.div
-              initial={{
-                opacity: 0,
-                scale: 0.6,
-                rotate: -30
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                rotate: 0
-              }}
-              exit={{
-                opacity: 0,
-                scale: 0.6
-              }}
-              className="
-                absolute
-                top-20
-                left-4
-                z-25
-                pointer-events-none
-              "
-            >
-              <motion.div
-                animate={{
-                  rotate: 360
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: 'linear'
-                }}
-                className="
-                  w-9
-                  h-9
-                  rounded-full
-                  bg-gradient-to-br
-                  from-[#2d241f]
-                  to-[#0b0806]
-                  border
-                  border-white/15
-                  flex
-                  items-center
-                  justify-center
-                  shadow-xl
-                "
-              >
-                <Disc3 className="
-                  w-4
-                  h-4
-                  text-[#e0a35e]
-                " />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{
+            opacity: showControls ? 1 : 0.85,
+            scale: 1
+          }}
+          transition={{ duration: 0.25 }}
+          className="
+            absolute
+            top-[calc(max(calc(env(safe-area-inset-top,0px)+14px),2.75rem)+2.75rem)]
+            sm:top-16
+            left-3.5
+            sm:left-6
+            z-35
+            pointer-events-auto
+          "
+        >
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.84 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleMute();
+            }}
+            className={`
+              w-10
+              h-10
+              rounded-full
+              flex
+              items-center
+              justify-center
+              backdrop-blur-xl
+              border
+              shadow-xl
+              transition-all
+              cursor-pointer
+              ${isMuted
+                ? 'bg-black/75 hover:bg-black/90 border-amber-400/50 text-amber-300 shadow-amber-900/30 ring-1 ring-amber-400/30'
+                : 'bg-black/55 hover:bg-black/80 border-white/20 text-white shadow-black/40'
+              }
+            `}
+            title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
+            aria-label={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
+          >
+            {isMuted ? (
+              <VolumeX className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Volume2 className="w-5 h-5 text-white" />
+            )}
+          </motion.button>
+        </motion.div>
 
         {/* ===================================================
             BOTTOM CONTENT
