@@ -97,7 +97,7 @@ export const ProductDetailsView: React.FC = () => {
       product.images.length > 0
       ? product.images
       : [
-        'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
+        'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
       ];
 
   const productTags = Array.isArray(product?.tags) ? product.tags : [];

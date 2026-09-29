@@ -26,7 +26,6 @@ import {
   ShoppingBag,
   ChevronLeft,
 } from 'lucide-react';
-import { WAHPattern } from '../../design-system/WAHPattern';
 
 export const Footer: React.FC = () => {
   const {
@@ -135,25 +134,33 @@ export const Footer: React.FC = () => {
         select-none pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
-      {/* Upper Egyptian Architectural Decorative Frieze Band */}
-      <div className="w-full border-b border-[#C99444]/20 opacity-80">
-        <WAHPattern
-          type="geometry"
-          className="w-full h-4 text-[#C99444]"
-        />
-      </div>
+
+      {/* Authentic WAH Architectural Frieze Ribbon */}
+      <div
+        className="w-full h-3.5 sm:h-4 overflow-hidden opacity-75 border-b border-[#C99444]/30"
+        style={{
+          backgroundImage: "url('/pattern/pat1.svg')",
+          backgroundSize: '16px 100%',
+          backgroundRepeat: 'repeat-x'
+        }}
+        aria-hidden="true"
+      />
 
       {/* خلفية جمالية متحفية فاخرة */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-[#C99444]/10 blur-[150px]" />
         <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-[#E66A2E]/10 blur-[140px]" />
 
-        <div className="absolute inset-0 opacity-[0.04]">
-          <WAHPattern
-            type="geometry"
-            className="w-full h-full text-[#C99444]"
-          />
-        </div>
+        {/* Authentic WAH Heritage Icons Ambient Wallpaper */}
+        <div
+          className="absolute inset-0 opacity-[0.045] mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '480px auto',
+            backgroundPosition: 'center top'
+          }}
+        />
       </div>
 
       <div className="relative z-10 max-w-[1720px] mx-auto px-6 sm:px-10 lg:px-16 py-16">
@@ -203,7 +210,7 @@ export const Footer: React.FC = () => {
           {/* 1. هوية المنصة والنبذة التأسيسية */}
           <div className="lg:col-span-3 space-y-5">
             <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
               alt="شعار منصة وه"
               width={150}
               className="brightness-125"
@@ -372,15 +379,16 @@ export const Footer: React.FC = () => {
 
       </div>
 
-      {/* الشريط السفلي الموشى بالباترن */}
-      <div className="relative h-2 bg-gradient-to-r from-[#3B1E0E] via-[#6B3A1F] to-[#C99444]">
-        <div className="absolute inset-0 opacity-40">
-          <WAHPattern
-            type="geometry"
-            className="w-full h-full text-white"
-          />
-        </div>
-      </div>
+      {/* الشريط السفلي الأصيل المزين بنقش وه */}
+      <div
+        className="relative h-2.5 w-full overflow-hidden opacity-90 border-t border-[#C99444]/20"
+        style={{
+          backgroundImage: "url('/pattern/pat1.svg')",
+          backgroundSize: '14px 100%',
+          backgroundRepeat: 'repeat-x'
+        }}
+        aria-hidden="true"
+      />
     </footer>
   );
 };

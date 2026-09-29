@@ -255,7 +255,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             loading="eager"
                             decoding="async"
                             onError={() => {
-                                setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png');
+                                setLogoSrc('https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png');
                             }}
                             className={`object-contain select-none transform-gpu transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${phase === 'idle'
                                 ? 'h-20 w-20 sm:h-24 sm:w-24 drop-shadow'

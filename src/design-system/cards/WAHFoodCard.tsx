@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { MapPin, Utensils, Sparkles, Clock } from 'lucide-react';
-import { WAHPattern } from '../WAHPattern';
 
 interface WAHFoodCardProps {
   id?: string;
@@ -62,7 +61,16 @@ export const WAHFoodCard: React.FC<WAHFoodCardProps> = ({
       </div>
 
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-espresso-900/90">
-        <WAHPattern type="pottery" opacity={0.03} />
+        {/* Subtle authentic heritage pattern texture */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.035] dark:opacity-[0.05] mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '340px auto'
+          }}
+          aria-hidden="true"
+        />
         <div className="relative z-10 space-y-1.5">
           <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
             {title}

@@ -612,7 +612,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const profileImage =
     currentUser?.profileImage?.secureUrl ||
     (currentUser as any)?.avatar ||
-    'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png';
+    'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png';
 
   const isDark = theme === 'dark';
   const mainText = isDark ? '#FFF9EE' : '#3B1E0E';
@@ -1151,7 +1151,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="group flex flex-col items-center justify-center focus:outline-none cursor-pointer transition-transform active:scale-95"
             >
               <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
                 alt="وه"
                 draggable={false}
                 className="
@@ -1267,7 +1267,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   className="group relative z-30 flex flex-col items-center justify-center -translate-y-12 bg-transparent border-0 p-0 cursor-pointer focus:outline-none overflow-visible"
                 >
                   <img
-                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                    src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
                     alt="وه"
                     draggable={false}
                     className="block h-50 w-auto max-w-[280px] object-contain transition-transform duration-300 group-hover:scale-103"
@@ -1469,7 +1469,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <div className="flex items-center justify-between border-b pb-4 mb-4" style={{ borderColor }}>
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
                   alt="وه"
                   className="h-12 w-auto"
                 />

@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Calendar, MapPin, Sparkles } from 'lucide-react';
-import { WAHPattern } from '../WAHPattern';
 
 interface WAHEventCardProps {
   id?: string;
@@ -60,7 +59,6 @@ export const WAHEventCard: React.FC<WAHEventCardProps> = ({
       </div>
 
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-espresso-900/90">
-        <WAHPattern type="geometry" opacity={0.03} />
         <div className="relative z-10 space-y-1.5">
           <h3 className="font-bold text-espresso dark:text-cream text-base group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors line-clamp-1">
             {title}

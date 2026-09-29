@@ -15,7 +15,6 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 
 export interface GovernorateExplorerItem {
   name: Governorate;
@@ -268,14 +267,17 @@ export const GovernorateExplorer: React.FC = () => {
         dark:text-cream
       "
     >
-      {/* Decorative Pattern */}
-      <div className="absolute inset-0 overflow-hidden opacity-[0.5] rounded-[45px] pointer-events-none">
-        <NubianGeometricPattern
-          variant="tapestry"
-          color="#6B3A1F"
-          className="absolute inset-0 opacity-[0.05]"
-        />
-      </div>
+      {/* Authentic WAH Brand Background Pattern */}
+      <div
+        className="absolute inset-0 overflow-hidden opacity-[0.045] dark:opacity-[0.065] rounded-[45px] pointer-events-none mix-blend-multiply dark:mix-blend-screen"
+        style={{
+          backgroundImage: "url('/pattern/pat2.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: '500px auto',
+          backgroundPosition: 'center top'
+        }}
+        aria-hidden="true"
+      />
 
       {/* ================= HEADER ================= */}
       <div className="relative z-10 text-center mb-10 sm:mb-12">

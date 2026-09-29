@@ -1,5 +1,4 @@
 import React from 'react';
-import { WAHPattern } from './WAHPattern';
 import { WAHButton } from './WAHButton';
 import { PatternType } from './tokens';
 import { renderIcon } from './renderIcon';
@@ -31,7 +30,17 @@ export const WAHEmptyState: React.FC<WAHEmptyStateProps> = ({
     <div
       className={`relative min-h-[300px] sm:min-h-[360px] flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-[2rem] border border-black/10 dark:border-white/10 bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl shadow-lg overflow-hidden ${className}`}
     >
-      <WAHPattern type={pattern} opacity={0.05} />
+      {/* Authentic WAH Brand Background Pattern */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.045] mix-blend-multiply dark:mix-blend-screen"
+        style={{
+          backgroundImage: "url('/pattern/pat2.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: '400px auto',
+          backgroundPosition: 'center'
+        }}
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 max-w-md mx-auto space-y-4">
         {mascotSrc ? (

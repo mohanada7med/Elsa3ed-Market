@@ -29,7 +29,6 @@ import {
   Target,
 } from 'lucide-react';
 
-import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 interface QuizQuestion {
@@ -700,9 +699,17 @@ export const DialectDictionaryPage: React.FC = () => {
     >
       {/* خلفية مخففة جداً للموبايل لتقليل إجهاد كارت الشاشة */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="opacity-40">
-          <NubianGeometricPattern opacity={0.03} />
-        </div>
+        {/* Authentic WAH Heritage Background Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.035] dark:opacity-[0.055] mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '500px auto',
+            backgroundPosition: 'center'
+          }}
+          aria-hidden="true"
+        />
         {/* إخفاء الحلقات الضخمة في الشاشات الصغيرة */}
         <div className="hidden sm:block absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.05] dark:border-[#d6aa72]/[0.04]" />
         <div className="hidden sm:block absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.04] dark:border-[#d6aa72]/[0.03]" />

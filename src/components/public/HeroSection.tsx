@@ -27,13 +27,11 @@ export const HeroSection: React.FC = () => {
         duration-500
       "
     >
-      {/* Subtle WAH Brand Pattern Texture Overlay */}
+      {/* Authentic WAH Brand Pattern Texture Overlay */}
       <WAHBrandPattern
-        variant="geometric-stripes"
-        opacity={0.03}
-        className="hidden lg:block z-[2] mix-blend-multiply dark:mix-blend-screen"
-        color="#C99444"
-        secondaryColor="#6B3A1F"
+        variant="heritage-icons"
+        opacity={0.06}
+        className="z-0 mix-blend-multiply dark:mix-blend-screen"
       />
       {/* ========================================================= */}
       {/* 📱 Mobile Layout (< lg)                                   */}

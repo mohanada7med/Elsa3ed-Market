@@ -26,7 +26,6 @@ import {
   X,
 } from 'lucide-react';
 
-import { NubianGeometricPattern } from '../common/NubianGeometricPattern';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
 import {
   HeritagePlace,
@@ -345,10 +344,17 @@ export const GovernorateDetailPage: React.FC = () => {
             {/* Decorative museum line */}
             <div className="absolute bottom-8 right-8 top-8 hidden w-px bg-white/15 lg:block" />
 
-            {/* Pattern */}
-            <div className="pointer-events-none absolute left-0 top-0 opacity-20">
-              <NubianGeometricPattern />
-            </div>
+            {/* Authentic WAH Heritage Pattern */}
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen"
+              style={{
+                backgroundImage: "url('/pattern/pat2.png')",
+                backgroundRepeat: 'repeat',
+                backgroundSize: '460px auto',
+                backgroundPosition: 'left top'
+              }}
+              aria-hidden="true"
+            />
 
             {/* Content */}
             <div className="relative z-10 flex min-h-[620px] flex-col justify-between p-6 sm:p-10 lg:min-h-[680px] lg:w-[57%] lg:p-16">

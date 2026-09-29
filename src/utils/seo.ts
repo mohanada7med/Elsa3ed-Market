@@ -81,7 +81,7 @@ export function generateProductSchema(product: {
   categoryName?: string;
 }) {
   const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://wah-saeed.com';
-  
+
   return {
     '@context': 'https://schema.org/',
     '@type': 'Product',
@@ -254,7 +254,7 @@ export function generateArticleSchema(article: {
       name: 'وه | WAH',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png'
+        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png'
       }
     },
     datePublished: article.datePublished || new Date().toISOString()
@@ -323,7 +323,7 @@ export function generateStoreSchema(seller: {
     '@type': ['Store', 'LocalBusiness'],
     name: seller.brandName || seller.name,
     description: seller.bio || 'ورشة حرفية وتراثية معتمدة من قلب صعيد مصر، تقدم منتجات يدوية أصيلة.',
-    image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png',
+    image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
     telephone: seller.phone || '+201000000000',
     priceRange: '$$',
     currenciesAccepted: 'EGP',

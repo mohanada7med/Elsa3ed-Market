@@ -144,14 +144,14 @@ export const HeritageGeometricMarker: React.FC<HeritageGeometricMarkerProps> = (
     type === 'place'
       ? 'place'
       : type === 'craft' || type === 'artisan'
-      ? 'craft'
-      : type === 'food'
-      ? 'food'
-      : type === 'governorate'
-      ? 'governorate'
-      : type === 'story'
-      ? 'story'
-      : 'default';
+        ? 'craft'
+        : type === 'food'
+          ? 'food'
+          : type === 'governorate'
+            ? 'governorate'
+            : type === 'story'
+              ? 'story'
+              : 'default';
 
   const palette = GEOMETRIC_PALETTES[normalizedType] || GEOMETRIC_PALETTES.default;
   const activeShape = customShape || palette.shape;
@@ -195,8 +195,8 @@ export const HeritageGeometricMarker: React.FC<HeritageGeometricMarkerProps> = (
         transform: isSelected
           ? 'scale(1.24) translateY(-10px)'
           : isHovered
-          ? 'scale(1.14) translateY(-6px)'
-          : 'scale(1) translateY(0px)',
+            ? 'scale(1.14) translateY(-6px)'
+            : 'scale(1) translateY(0px)',
         transformOrigin: 'bottom center',
         transition: 'transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1), filter 300ms ease',
         zIndex: isSelected ? 45 : isHovered ? 40 : 15
@@ -247,8 +247,8 @@ export const HeritageGeometricMarker: React.FC<HeritageGeometricMarkerProps> = (
           filter: isSelected
             ? `drop-shadow(0 8px 12px ${palette.glowColor}) drop-shadow(0 2px 4px rgba(0,0,0,0.4))`
             : isHovered
-            ? 'drop-shadow(0 6px 10px rgba(0,0,0,0.32))'
-            : 'drop-shadow(0 3px 6px rgba(0,0,0,0.24))'
+              ? 'drop-shadow(0 6px 10px rgba(0,0,0,0.32))'
+              : 'drop-shadow(0 3px 6px rgba(0,0,0,0.24))'
         }}
       >
         <svg

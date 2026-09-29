@@ -434,20 +434,40 @@
   }
 }
 
-/* Geometric Balance theme utilities and crisp structured cards */
+/* Authentic WAH Brand Heritage Patterns */
 .bg-heritage-pattern {
   background-color: var(--wah-background, #FFF9EE);
-  background-image: radial-gradient(var(--wah-accent, #C99444) 0.75px, transparent 0.75px), radial-gradient(var(--wah-border-strong, #6B3A1F) 0.75px, var(--wah-background, #FFF9EE) 0.75px);
-  background-size: 28px 28px;
-  background-position: 0 0, 14px 14px;
+  background-image: url('/pattern/pat2.png');
+  background-repeat: repeat;
+  background-size: 500px auto;
+  background-blend-mode: multiply;
   transition: background-color 0.25s ease;
 }
 
 .dark .bg-heritage-pattern {
   background-color: var(--wah-background, #1B1009);
-  background-image: radial-gradient(var(--wah-accent, #C99444) 0.75px, transparent 0.75px), radial-gradient(var(--wah-border, #6B3A1F) 0.75px, var(--wah-background, #1B1009) 0.75px);
-  background-size: 28px 28px;
-  background-position: 0 0, 14px 14px;
+  background-image: url('/pattern/pat2.png');
+  background-repeat: repeat;
+  background-size: 500px auto;
+  background-blend-mode: screen;
+}
+
+.bg-pattern-stripes {
+  background-image: url('/pattern/pat3.png');
+  background-repeat: repeat;
+  background-size: 460px auto;
+}
+
+.bg-pattern-icons {
+  background-image: url('/pattern/pat2.png');
+  background-repeat: repeat;
+  background-size: 500px auto;
+}
+
+.bg-frieze-ribbon {
+  background-image: url('/pattern/pat1.svg');
+  background-repeat: repeat-x;
+  background-size: 20px 100%;
 }
 
 .geometric-card {

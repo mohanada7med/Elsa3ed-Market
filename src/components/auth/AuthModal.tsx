@@ -950,7 +950,7 @@ export const AuthModal: React.FC = () => {
               "
             >
               <img
-                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
                 alt="WAH"
                 className="
                   h-full

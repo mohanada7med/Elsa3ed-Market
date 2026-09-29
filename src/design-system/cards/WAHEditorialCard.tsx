@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { MapPin, ArrowLeft, Clock, Sparkles } from 'lucide-react';
 import { WAHBadge } from '../WAHBadge';
-import { WAHPattern } from '../WAHPattern';
 
 interface WAHEditorialCardProps {
   id?: string;
@@ -90,7 +89,16 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
 
       {/* Editorial Content */}
       <div className="p-5 flex-1 flex flex-col justify-between relative bg-white/75 dark:bg-espresso-900/90">
-        <WAHPattern type="geometry" opacity={0.02} />
+        {/* Subtle authentic heritage pattern texture */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.045] mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '360px auto'
+          }}
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 space-y-2">
           {subtitle && (
