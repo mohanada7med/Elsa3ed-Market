@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '480px',
+      },
       colors: {
         // =========================================================================
         // 1. OFFICIAL WAH BRAND DESIGN SYSTEM TOKENS
