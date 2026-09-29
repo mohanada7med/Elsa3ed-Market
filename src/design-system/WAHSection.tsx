@@ -41,8 +41,8 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
     <section
       id={id}
       className={`relative py-12 sm:py-16 lg:py-20 overflow-hidden ${bgSurface
-          ? 'bg-black/5 dark:bg-cream/5 border-y border-black/10 dark:border-white/10'
-          : ''
+        ? 'bg-black/5 dark:bg-cream/5 border-y border-black/10 dark:border-white/10'
+        : ''
         } ${className}`}
     >
       {pattern && (

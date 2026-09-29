@@ -343,8 +343,8 @@ export const EventAndSeasonEditorModal: React.FC<EventAndSeasonEditorModalProps>
                 {isEditing
                   ? `تعديل: ${title || 'الليلة أو الموسم'}`
                   : itemType === 'season'
-                  ? 'توثيق موسم زراعي وحصاد جديد'
-                  : 'توثيق ليلة أو مولد صعيدي جديد'}
+                    ? 'توثيق موسم زراعي وحصاد جديد'
+                    : 'توثيق ليلة أو مولد صعيدي جديد'}
               </h3>
             </div>
           </div>

@@ -412,8 +412,8 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
             type="button"
             onClick={() => setSelectedCategory('all')}
             className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer ${selectedCategory === 'all'
-                ? 'bg-primary text-cream font-bold'
-                : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
+              ? 'bg-primary text-cream font-bold'
+              : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
               }`}
           >
             الكل ({events.length})
@@ -426,8 +426,8 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                 type="button"
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1 rounded-full shrink-0 font-medium transition-all cursor-pointer flex items-center gap-1 ${selectedCategory === cat.id
-                    ? 'bg-primary text-cream font-bold'
-                    : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
+                  ? 'bg-primary text-cream font-bold'
+                  : 'bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-cream/10 text-black/70 dark:text-white/70'
                   }`}
               >
                 <span>{cat.icon}</span>
@@ -1025,8 +1025,8 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('basic')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'basic'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Compass className="w-3.5 h-3.5" />
@@ -1037,8 +1037,8 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('dialect_content')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'dialect_content'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Flame className="w-3.5 h-3.5" />
@@ -1049,8 +1049,8 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('media')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'media'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Video className="w-3.5 h-3.5" />
@@ -1064,8 +1064,8 @@ export const EventEditorModal: React.FC<EventEditorModalProps> = ({
             type="button"
             onClick={() => setActiveTab('preview')}
             className={`py-3.5 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${activeTab === 'preview'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
             <Eye className="w-3.5 h-3.5" />

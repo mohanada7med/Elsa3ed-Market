@@ -373,11 +373,10 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 key={rf.id}
                 type="button"
                 onClick={() => setRoleFilter(rf.id as any)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${
-                  roleFilter === rf.id
-                    ? 'bg-primary text-white'
-                    : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70'
-                }`}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors shrink-0 cursor-pointer ${roleFilter === rf.id
+                  ? 'bg-primary text-white'
+                  : 'bg-black/5 dark:bg-white/5 hover:bg-black/10 text-black/70 dark:text-white/70'
+                  }`}
               >
                 {rf.label}
               </button>
@@ -402,11 +401,10 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
               key={st.id}
               type="button"
               onClick={() => setStatusFilter(st.id as any)}
-              className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                statusFilter === st.id
-                  ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover'
-                  : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-              }`}
+              className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${statusFilter === st.id
+                ? 'border-primary bg-primary/15 text-primary dark:text-primary-hover'
+                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+                }`}
             >
               {st.label}
             </button>
@@ -437,11 +435,10 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
             return (
               <div
                 key={ticket.id}
-                className={`p-5 rounded-3xl border transition-all bg-white/80 dark:bg-espresso-900/90 shadow-sm backdrop-blur-xl space-y-4 ${
-                  ticket.status === 'pending'
-                    ? 'border-amber-500/40 dark:border-amber-500/30 ring-1 ring-amber-500/20'
-                    : 'border-black/10 dark:border-white/10'
-                }`}
+                className={`p-5 rounded-3xl border transition-all bg-white/80 dark:bg-espresso-900/90 shadow-sm backdrop-blur-xl space-y-4 ${ticket.status === 'pending'
+                  ? 'border-amber-500/40 dark:border-amber-500/30 ring-1 ring-amber-500/20'
+                  : 'border-black/10 dark:border-white/10'
+                  }`}
               >
                 {/* Top Row: Meta Info & Status Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 dark:border-white/5 pb-3">

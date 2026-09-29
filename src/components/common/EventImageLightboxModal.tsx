@@ -155,7 +155,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
       } else if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
       }
-    } catch {}
+    } catch { }
   };
 
   if (!mounted || !isOpen || images.length === 0 || typeof document === 'undefined') {
@@ -319,10 +319,9 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
                     className={`
                       relative shrink-0 h-14 w-14 sm:h-16 sm:w-16 rounded-xl overflow-hidden
                       border transition-all duration-300 cursor-pointer
-                      ${
-                        isActive
-                          ? 'border-primary ring-2 ring-primary ring-offset-2 ring-offset-black scale-105 shadow-lg shadow-primary/30'
-                          : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/50'
+                      ${isActive
+                        ? 'border-primary ring-2 ring-primary ring-offset-2 ring-offset-black scale-105 shadow-lg shadow-primary/30'
+                        : 'border-white/20 opacity-50 hover:opacity-100 hover:border-white/50'
                       }
                     `}
                   >

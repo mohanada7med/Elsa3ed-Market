@@ -1481,10 +1481,10 @@ export const CulturalCmsAdminPage: React.FC = () => {
                                 {eventItem.category === 'moulid'
                                   ? 'مولد وليلة ذكر'
                                   : eventItem.category === 'harvest'
-                                  ? 'موسم زراعي'
-                                  : eventItem.category === 'cultural_night'
-                                  ? 'فروسية ومرماح'
-                                  : 'احتفال تراثي'}
+                                    ? 'موسم زراعي'
+                                    : eventItem.category === 'cultural_night'
+                                      ? 'فروسية ومرماح'
+                                      : 'احتفال تراثي'}
                               </span>
                             )}
                           </div>
@@ -2081,15 +2081,15 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
     Array.isArray(editingItem?.rituals)
       ? editingItem.rituals.join('\n')
       : Array.isArray(editingItem?.relatedStories)
-      ? editingItem.relatedStories.join('\n')
-      : ''
+        ? editingItem.relatedStories.join('\n')
+        : ''
   );
   const [famousFoodsText, setFamousFoodsText] = useState(
     Array.isArray(editingItem?.famousFoods)
       ? editingItem.famousFoods.join('\n')
       : Array.isArray(editingItem?.relatedFoods)
-      ? editingItem.relatedFoods.join('\n')
-      : ''
+        ? editingItem.relatedFoods.join('\n')
+        : ''
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);

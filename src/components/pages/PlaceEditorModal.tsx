@@ -281,11 +281,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('basic')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'basic'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'basic'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <Compass className="w-3.5 h-3.5" />
             <span>1. البيانات والموقع</span>
@@ -294,11 +293,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('content')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'content'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'content'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <FileText className="w-3.5 h-3.5" />
             <span>2. التوثيق والتاريخ</span>
@@ -307,11 +305,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('visit')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'visit'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'visit'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <Ticket className="w-3.5 h-3.5" />
             <span>3. التذاكر والزيارة</span>
@@ -320,11 +317,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('media')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'media'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'media'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <Video className="w-3.5 h-3.5" />
             <span>4. الصور والفيديوهات</span>
@@ -336,11 +332,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('preview')}
-            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
-              activeTab === 'preview'
-                ? 'border-primary text-primary font-black'
-                : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
-            }`}
+            className={`py-3 px-4 border-b-2 transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === 'preview'
+              ? 'border-primary text-primary font-black'
+              : 'border-transparent text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
+              }`}
           >
             <Eye className="w-3.5 h-3.5" />
             <span>5. معاينة حية</span>

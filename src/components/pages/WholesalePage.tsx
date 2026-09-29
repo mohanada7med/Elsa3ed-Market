@@ -461,8 +461,8 @@ export const WholesalePage: React.FC = () => {
                           type="button"
                           onClick={() => toggleCategory(cat)}
                           className={`text-xs px-3.5 py-1.5 rounded-xl border transition-all cursor-pointer ${isSelected
-                              ? 'bg-primary text-white border-primary font-bold shadow-xs'
-                              : 'bg-black/5 dark:bg-cream/5 text-espresso/80 dark:text-cream/80 border-black/10 dark:border-white/10 hover:border-primary'
+                            ? 'bg-primary text-white border-primary font-bold shadow-xs'
+                            : 'bg-black/5 dark:bg-cream/5 text-espresso/80 dark:text-cream/80 border-black/10 dark:border-white/10 hover:border-primary'
                             }`}
                         >
                           {isSelected && '✓ '}

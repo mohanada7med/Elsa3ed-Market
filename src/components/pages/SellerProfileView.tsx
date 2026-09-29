@@ -141,7 +141,7 @@ export const SellerProfileView: React.FC = () => {
     if (!seller) return;
     const sellerName = seller.brandName || seller.name || 'حرفي من الصعيد';
     const sellerBio = seller.bio || `ورشة ومنتجات ${sellerName} الحرفية في ${seller.governorate || 'صعيد مصر'}. صناعة يدوية وتراثية 100%.`;
-    
+
     updatePageSEO({
       title: `${sellerName} — ورشة وصانع بصعيد مصر`,
       description: sellerBio.slice(0, 160),

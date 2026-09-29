@@ -181,8 +181,8 @@ export const OrdersTrackingPage: React.FC = () => {
                       navigateToOrder(ord.id);
                     }}
                     className={`p-4 rounded-[1.5rem] border cursor-pointer transition-all duration-200 ${isSelected
-                        ? 'bg-white/95 dark:bg-espresso-900/95 border-primary shadow-lg ring-1 ring-primary'
-                        : 'bg-white/75 dark:bg-espresso-900/90 border-black/10 dark:border-white/10 hover:border-primary/50'
+                      ? 'bg-white/95 dark:bg-espresso-900/95 border-primary shadow-lg ring-1 ring-primary'
+                      : 'bg-white/75 dark:bg-espresso-900/90 border-black/10 dark:border-white/10 hover:border-primary/50'
                       } ${isCancelled ? 'opacity-75' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -191,16 +191,16 @@ export const OrdersTrackingPage: React.FC = () => {
                       </span>
                       <span
                         className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${ord.status === 'delivered'
-                            ? 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20'
-                            : ord.status === 'shipped'
-                              ? 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20'
-                              : ord.status === 'processing'
-                                ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
-                                : ord.status === 'confirmed'
-                                  ? 'bg-primary/15 text-primary dark:text-primary-hover border border-primary/30'
-                                  : ord.status === 'cancelled'
-                                    ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300 border border-rose-500/20'
-                                    : 'bg-black/5 text-espresso dark:bg-cream/10 dark:text-cream'
+                          ? 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20'
+                          : ord.status === 'shipped'
+                            ? 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20'
+                            : ord.status === 'processing'
+                              ? 'bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/20'
+                              : ord.status === 'confirmed'
+                                ? 'bg-primary/15 text-primary dark:text-primary-hover border border-primary/30'
+                                : ord.status === 'cancelled'
+                                  ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300 border border-rose-500/20'
+                                  : 'bg-black/5 text-espresso dark:bg-cream/10 dark:text-cream'
                           }`}
                       >
                         {ord.status === 'cancelled'
@@ -293,8 +293,8 @@ export const OrdersTrackingPage: React.FC = () => {
                           <div key={step.status} className="relative flex items-start gap-3">
                             <div
                               className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 z-10 -mr-6.5 ${isPastOrCurrent
-                                  ? 'bg-primary text-white ring-4 ring-primary/20'
-                                  : 'bg-black/10 dark:bg-cream/10 text-stone-400'
+                                ? 'bg-primary text-white ring-4 ring-primary/20'
+                                : 'bg-black/10 dark:bg-cream/10 text-stone-400'
                                 }`}
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -303,10 +303,10 @@ export const OrdersTrackingPage: React.FC = () => {
                             <div className="flex-1">
                               <h5
                                 className={`text-xs font-bold ${isCurrent
-                                    ? 'text-primary dark:text-primary-hover'
-                                    : isPastOrCurrent
-                                      ? 'text-espresso dark:text-cream'
-                                      : 'text-espresso/40 dark:text-cream/40'
+                                  ? 'text-primary dark:text-primary-hover'
+                                  : isPastOrCurrent
+                                    ? 'text-espresso dark:text-cream'
+                                    : 'text-espresso/40 dark:text-cream/40'
                                   }`}
                               >
                                 {step.label}

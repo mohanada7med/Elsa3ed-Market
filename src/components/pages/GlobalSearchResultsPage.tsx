@@ -186,8 +186,8 @@ export const GlobalSearchResultsPage: React.FC = () => {
                   key={type}
                   onClick={() => setActiveTypeFilter(type)}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTypeFilter === type
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-white/75 dark:bg-espresso-900/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-primary'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-white/75 dark:bg-espresso-900/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-primary'
                     }`}
                 >
                   {sample?.typeLabel || type} ({typesCount[type]})

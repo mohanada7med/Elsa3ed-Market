@@ -175,11 +175,10 @@ export const QuickEventTextEditModal: React.FC<QuickEventTextEditModalProps> = (
               key={tab.id}
               type="button"
               onClick={() => setActiveSection(tab.id as any)}
-              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 text-xs ${
-                activeSection === tab.id
-                  ? 'bg-primary text-black dark:text-espresso font-black shadow-xs'
-                  : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
-              }`}
+              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 text-xs ${activeSection === tab.id
+                ? 'bg-primary text-black dark:text-espresso font-black shadow-xs'
+                : 'bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10'
+                }`}
             >
               {tab.label}
             </button>
