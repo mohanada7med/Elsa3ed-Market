@@ -156,9 +156,24 @@ export default {
         'wah-border-strong': 'var(--wah-border-strong)',
       },
       fontFamily: {
-        heritage: ["'Amiri'", "'Cairo'", 'serif'],
-        sans: ["'Cairo'", 'system-ui', '-apple-system', 'sans-serif'],
+        shin: ["'SHIN Stout Bold'", "sans-serif"],
+        eskorte: ["'Eskorte'", "sans-serif"],
+        effra: ["'Effra Arbc Family'", "sans-serif"],
+
+        heritage: [
+          "'Eskorte'",
+          "'SHIN Stout Bold'",
+          "'Effra Arbc Family'",
+        ],
+
+        sans: [
+          "'Effra Arbc Family'",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
       },
+
       borderRadius: {
         'wah-editorial': '1.5rem 0.5rem 1.5rem 0.5rem',
         'wah-editorial-reverse': '0.5rem 1.5rem 0.5rem 1.5rem',
