@@ -520,6 +520,14 @@ export interface CraftReel {
   isPinned?: boolean;
   createdAt: string;
   comments?: CraftReelComment[];
+  isLiked?: boolean;
+}
+
+export interface ReelLike {
+  id?: string;
+  userId: string;
+  reelId: string;
+  createdAt: string;
 }
 
 export interface Conversation {

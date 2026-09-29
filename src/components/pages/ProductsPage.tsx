@@ -80,7 +80,6 @@ export const ProductsPage: React.FC = () => {
             rounded-full
             border
             border-primary/[0.05]
-
             dark:border-[#C99444]/[0.05]
           "
         />
@@ -94,7 +93,6 @@ export const ProductsPage: React.FC = () => {
             w-2
             rounded-full
             bg-primary/30
-
             dark:bg-[#C99444]/30
           "
         />
@@ -361,29 +359,22 @@ export const ProductsPage: React.FC = () => {
 
                 <p
                   className="
-    max-w-2xl
-    text-sm
-    font-medium
-    leading-8
-    text-black/55
-
-dark:text-white/55
-
-sm:text-base
-sm:leading-9
-
-"
-
+                    max-w-2xl
+                    text-sm
+                    font-medium
+                    leading-8
+                    text-black/55
+                    dark:text-white/55
+                    sm:text-base
+                    sm:leading-9
+                  "
                 >
-
                   حاجات أصلية بتحكي عن المكان،
                   وصنعة اتنقلت من جيل لجيل.
                   شوف الفخار والكليم والتلي
                   والخوص وكل حاجة معمولة بإيد
                   ناس من قلب الصعيد.
-
                 </p>
-
               </div>
             </div>
 
@@ -392,18 +383,12 @@ sm:leading-9
             <div className="relative">
               <div
                 className="
-                  relative
-                  overflow-hidden
+                  relative overflow-hidden
                   rounded-[2rem]
-                  border
-                  border-black/[0.08]
-                  bg-[#e8e0d2]
+                  border border-border-subtle
+                  bg-surface
                   p-7
-
-                  dark:border-white/[0.08]
-                  dark:bg-[#121210]
-
-                  sm:p-8
+                  shadow-lg
                 "
               >
                 {/* corner decoration */}
@@ -418,7 +403,6 @@ sm:leading-9
                     rounded-full
                     border
                     border-primary/15
-
                     dark:border-[#C99444]/10
                   "
                 />

@@ -318,14 +318,10 @@ export const EventsPage: React.FC = () => {
                     className="
                   relative overflow-hidden
                   rounded-[2rem]
-                  border border-black/10
-                  bg-white/75
+                  border border-border-subtle
+                  bg-surface
                   p-7
-                  shadow-xl
-                  backdrop-blur-2xl
-                  dark:border-white/10
-                  dark:bg-espresso-900/90
-                  dark:shadow-black/30
+                  shadow-lg
                 "
                   >
                     <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />

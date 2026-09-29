@@ -529,6 +529,13 @@ export interface PaymentConfigDocument {
   updatedBy?: string;
 }
 
+export interface ReelLikeDocument {
+  id?: string;
+  userId: string;
+  reelId: string;
+  createdAt: string;
+}
+
 export interface CraftReelCommentDocument {
   id: string;
   userName: string;
@@ -586,6 +593,7 @@ export interface CraftReelDocument {
   createdAt: string;
   updatedAt?: string;
   comments?: CraftReelCommentDocument[];
+  isLiked?: boolean;
 }
 
 export interface ConversationDocument {

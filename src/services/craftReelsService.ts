@@ -536,122 +536,127 @@ export const craftReelsService = {
 
   /*
    * ============================================================
-   * LIKES
+   * LIKES (AUTHENTICATED & USER-SCOPED)
    * ============================================================
    */
 
-  getUserLikedReels(): string[] {
-    if (
-      typeof window === 'undefined'
-    ) {
+  getUserLikedReels(userId?: string): string[] {
+    if (typeof window === 'undefined' || !userId || userId === 'guest-visitor') {
       return [];
     }
 
     try {
-      const stored =
-        localStorage.getItem(
-          REEL_LIKES_KEY
-        );
-
-      return stored
-        ? JSON.parse(stored)
-        : [];
+      const stored = localStorage.getItem(`${REEL_LIKES_KEY}_${userId}`);
+      if (!stored) {
+        return [];
+      }
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
   },
 
-  toggleLikeReel(
-    reelId: string
-  ): {
-    isLiked: boolean;
-    newLikesCount: number;
-  } {
-    const reels =
-      this.getReels();
-
-    const likedReelIds =
-      this.getUserLikedReels();
-
-    const isCurrentlyLiked =
-      likedReelIds.includes(
-        reelId
-      );
-
-    let updatedLikedIds:
-      string[];
-
-    let newLikesCount = 0;
-
-    if (
-      isCurrentlyLiked
-    ) {
-      updatedLikedIds =
-        likedReelIds.filter(
-          (id) =>
-            id !== reelId
-        );
-    } else {
-      updatedLikedIds = [
-        ...likedReelIds,
-        reelId,
-      ];
+  async fetchUserLikedReels(
+    user?: { id?: string; role?: string; sellerId?: string } | null
+  ): Promise<string[]> {
+    if (!user || !user.id || user.id === 'guest-visitor' || user.role === 'guest') {
+      return [];
     }
 
     try {
-      localStorage.setItem(
-        REEL_LIKES_KEY,
-        JSON.stringify(
-          updatedLikedIds
-        )
-      );
+      const likedIds = await api.getUserLikedReels(user);
+      if (typeof window !== 'undefined' && Array.isArray(likedIds)) {
+        localStorage.setItem(`${REEL_LIKES_KEY}_${user.id}`, JSON.stringify(likedIds));
+      }
+      return likedIds;
+    } catch (error) {
+      console.warn('[CraftReels] Failed to fetch user liked reels from DB:', error);
+      return this.getUserLikedReels(user.id);
+    }
+  },
+
+  isReelLikedByUser(reelId: string, userId?: string): boolean {
+    if (!userId) return false;
+    return this.getUserLikedReels(userId).includes(reelId);
+  },
+
+  async toggleLikeReel(
+    reelId: string,
+    user: { id?: string; role?: string; sellerId?: string }
+  ): Promise<{
+    isLiked: boolean;
+    newLikesCount: number;
+  }> {
+    if (!user || !user.id || user.id === 'guest-visitor' || user.role === 'guest') {
+      const err = new Error('سجّل دخولك الأول عشان تقدر تعمل لايك وتتفاعل مع الفيديوهات');
+      (err as any).code = 'UNAUTHORIZED';
+      throw err;
+    }
+
+    const userId = user.id;
+    const currentLikes = this.getUserLikedReels(userId);
+    const isCurrentlyLiked = currentLikes.includes(reelId);
+    const nextIsLiked = !isCurrentlyLiked;
+
+    // Optimistic local update
+    const updatedLikedIds = nextIsLiked
+      ? [...currentLikes.filter((id) => id !== reelId), reelId]
+      : currentLikes.filter((id) => id !== reelId);
+
+    try {
+      localStorage.setItem(`${REEL_LIKES_KEY}_${userId}`, JSON.stringify(updatedLikedIds));
     } catch { }
 
-    const updatedReels =
-      reels.map((reel) => {
-        if (
-          reel.id !== reelId
-        ) {
+    const reels = this.getReels();
+    const updatedReels = reels.map((reel) => {
+      if (reel.id !== reelId) {
+        return reel;
+      }
+      const count = Math.max(0, (reel.likesCount || 0) + (nextIsLiked ? 1 : -1));
+      return {
+        ...reel,
+        likesCount: count,
+        isLiked: nextIsLiked
+      };
+    });
+    this.saveReels(updatedReels);
+
+    try {
+      const res = await api.likeReel(reelId, nextIsLiked, user);
+
+      // Sync back with verified server count and state
+      const verifiedReels = this.getReels().map((reel) => {
+        if (reel.id !== reelId) {
           return reel;
         }
-
-        const count =
-          isCurrentlyLiked
-            ? Math.max(
-              0,
-              reel.likesCount - 1
-            )
-            : reel.likesCount + 1;
-
-        newLikesCount =
-          count;
-
         return {
           ...reel,
-          likesCount:
-            count,
+          likesCount: res.likesCount,
+          isLiked: res.isLiked
         };
       });
+      this.saveReels(verifiedReels);
 
-    this.saveReels(
-      updatedReels
-    );
+      const verifiedLikedIds = res.isLiked
+        ? Array.from(new Set([...this.getUserLikedReels(userId), reelId]))
+        : this.getUserLikedReels(userId).filter((id) => id !== reelId);
+      try {
+        localStorage.setItem(`${REEL_LIKES_KEY}_${userId}`, JSON.stringify(verifiedLikedIds));
+      } catch { }
 
-    api.likeReel(
-      reelId,
-      !isCurrentlyLiked
-    ).catch((error) => {
-      console.warn(
-        '[CraftReels] Like API failed:',
-        error
-      );
-    });
-
-    return {
-      isLiked:
-        !isCurrentlyLiked,
-      newLikesCount,
-    };
+      return {
+        isLiked: res.isLiked,
+        newLikesCount: res.likesCount
+      };
+    } catch (error) {
+      // Rollback optimistic state if server failed
+      try {
+        localStorage.setItem(`${REEL_LIKES_KEY}_${userId}`, JSON.stringify(currentLikes));
+      } catch { }
+      this.saveReels(reels);
+      throw error;
+    }
   },
 
   /*

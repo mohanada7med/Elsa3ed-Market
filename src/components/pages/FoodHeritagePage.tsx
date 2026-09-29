@@ -235,7 +235,7 @@ export const FoodHeritagePage: React.FC = () => {
           </div>
 
           <div className="relative">
-            <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-[#e8e0d2] p-7 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border-subtle bg-surface p-7 shadow-lg">
               <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full border border-primary/15 dark:border-[#C99444]/10" />
 
               <div className="relative">

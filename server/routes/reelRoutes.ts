@@ -286,9 +286,33 @@ router.get('/', async (req, res: Response) => {
       uniqueReels.push(r);
     }
 
+    let userLikedSet = new Set<string>();
+    const authReq = req as AuthenticatedRequest;
+    if (authReq.user?.id) {
+      const currentUserId = authReq.user.id;
+      if (isMongo && db) {
+        try {
+          const userLikes = await db.collection('reel_likes').find({ userId: currentUserId }).toArray();
+          userLikes.forEach((l: any) => userLikedSet.add(String(l.reelId)));
+        } catch { }
+      } else {
+        (memoryDb.reelLikes || [])
+          .filter((l) => l.userId === currentUserId)
+          .forEach((l) => userLikedSet.add(String(l.reelId)));
+      }
+    }
+
+    const data = uniqueReels.map((r) => {
+      const normalized = normalizeReelMedia(r);
+      return {
+        ...normalized,
+        isLiked: userLikedSet.has(String(r.id))
+      };
+    });
+
     return res.json({
       success: true,
-      data: uniqueReels.map(normalizeReelMedia),
+      data,
       count: uniqueReels.length
     });
   } catch (err: any) {
@@ -568,6 +592,36 @@ router.post('/delete-asset', requireAuth, async (req: AuthenticatedRequest, res:
   }
 });
 
+// GET /api/reels/user-likes - Get IDs of reels liked by the authenticated user
+router.get('/user-likes', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const { db, isMongo } = await getDatabase();
+    let likedReelIds: string[] = [];
+
+    if (isMongo && db) {
+      const likes = await db.collection('reel_likes').find({ userId }).toArray();
+      likedReelIds = likes.map((l: any) => String(l.reelId));
+    } else {
+      likedReelIds = (memoryDb.reelLikes || [])
+        .filter((l) => l.userId === userId)
+        .map((l) => String(l.reelId));
+    }
+
+    return res.json({
+      success: true,
+      likedReelIds
+    });
+  } catch (err: any) {
+    Logger.error('[Reels] Error fetching user likes:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'حدث خطأ أثناء جلب تفاعلات المستخدم',
+      likedReelIds: []
+    });
+  }
+});
+
 // GET /api/reels/:id - Get single reel
 router.get('/:id', async (req, res: Response) => {
   try {
@@ -590,9 +644,26 @@ router.get('/:id', async (req, res: Response) => {
       });
     }
 
+    let isLiked = false;
+    const authReq = req as AuthenticatedRequest;
+    if (authReq.user?.id) {
+      const currentUserId = authReq.user.id;
+      if (isMongo && db) {
+        const existing = await db.collection('reel_likes').findOne({ userId: currentUserId, reelId: id });
+        isLiked = Boolean(existing);
+      } else {
+        isLiked = (memoryDb.reelLikes || []).some(
+          (l) => l.userId === currentUserId && l.reelId === id
+        );
+      }
+    }
+
     return res.json({
       success: true,
-      data: normalizeReelMedia(reel)
+      data: {
+        ...normalizeReelMedia(reel),
+        isLiked
+      }
     });
   } catch (err: any) {
     Logger.error('[Reels] Error getting reel by id:', err);
@@ -1122,29 +1193,120 @@ router.post('/audit-videos', requireAuth, async (req: AuthenticatedRequest, res:
   }
 });
 
-// POST /api/reels/:id/like - Like / Unlike Reel
-router.post('/:id/like', async (req, res: Response) => {
+// POST /api/reels/:id/like - Like / Unlike Reel (Strictly requires authentication)
+router.post('/:id/like', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id } = req.params;
-    const { isLiked } = req.body; // boolean
-    const increment = isLiked === false ? -1 : 1;
-
+    const { id: reelId } = req.params;
+    const userId = req.user!.id;
+    const { isLiked: explicitIsLiked } = req.body;
     const { db, isMongo } = await getDatabase();
+
+    let currentlyLiked = false;
+
+    // 1. Check existing like state
     if (isMongo && db) {
-      await db.collection('reels').updateOne({ id }, { $inc: { likesCount: increment } });
+      const existing = await db.collection('reel_likes').findOne({ userId, reelId });
+      currentlyLiked = Boolean(existing);
+    } else {
+      currentlyLiked = (memoryDb.reelLikes || []).some(
+        (l) => l.userId === userId && l.reelId === reelId
+      );
     }
 
-    const reel = memoryDb.reels.find((r) => r.id === id);
-    if (reel) {
-      reel.likesCount = Math.max(0, reel.likesCount + increment);
+    // Determine target like state
+    const shouldBeLiked = typeof explicitIsLiked === 'boolean' ? explicitIsLiked : !currentlyLiked;
+
+    let newLikesCount = 0;
+
+    if (shouldBeLiked && !currentlyLiked) {
+      // ADD LIKE
+      if (isMongo && db) {
+        await db.collection('reel_likes').updateOne(
+          { userId, reelId },
+          { $setOnInsert: { userId, reelId, createdAt: new Date().toISOString() } },
+          { upsert: true }
+        );
+        await db.collection('reels').updateOne(
+          { id: reelId },
+          { $inc: { likesCount: 1 } }
+        );
+        await db.collection('wah_heritage_places').updateOne(
+          { id: reelId },
+          { $inc: { likesCount: 1 } }
+        );
+
+        const doc = await db.collection('reels').findOne({ id: reelId }) ||
+                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        newLikesCount = doc?.likesCount || 1;
+      }
+
+      // MemoryDb Sync
+      if (!memoryDb.reelLikes) memoryDb.reelLikes = [];
+      if (!memoryDb.reelLikes.some((l) => l.userId === userId && l.reelId === reelId)) {
+        memoryDb.reelLikes.push({ userId, reelId, createdAt: new Date().toISOString() });
+      }
+      const memReel = memoryDb.reels.find((r) => r.id === reelId);
+      if (memReel) {
+        memReel.likesCount = (memReel.likesCount || 0) + 1;
+        if (!isMongo) newLikesCount = memReel.likesCount;
+      } else if (!isMongo) {
+        newLikesCount = Math.max(1, newLikesCount);
+      }
+    } else if (!shouldBeLiked && currentlyLiked) {
+      // REMOVE LIKE
+      if (isMongo && db) {
+        await db.collection('reel_likes').deleteOne({ userId, reelId });
+        await db.collection('reels').updateOne(
+          { id: reelId, likesCount: { $gt: 0 } },
+          { $inc: { likesCount: -1 } }
+        );
+        await db.collection('wah_heritage_places').updateOne(
+          { id: reelId, likesCount: { $gt: 0 } },
+          { $inc: { likesCount: -1 } }
+        );
+
+        const doc = await db.collection('reels').findOne({ id: reelId }) ||
+                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        newLikesCount = Math.max(0, doc?.likesCount || 0);
+      }
+
+      // MemoryDb Sync
+      if (memoryDb.reelLikes) {
+        memoryDb.reelLikes = memoryDb.reelLikes.filter(
+          (l) => !(l.userId === userId && l.reelId === reelId)
+        );
+      }
+      const memReel = memoryDb.reels.find((r) => r.id === reelId);
+      if (memReel) {
+        memReel.likesCount = Math.max(0, (memReel.likesCount || 0) - 1);
+        if (!isMongo) newLikesCount = memReel.likesCount;
+      } else if (!isMongo) {
+        newLikesCount = Math.max(0, newLikesCount);
+      }
+    } else {
+      // No-op / Idempotent
+      if (isMongo && db) {
+        const doc = await db.collection('reels').findOne({ id: reelId }) ||
+                    await db.collection('wah_heritage_places').findOne({ id: reelId });
+        newLikesCount = Math.max(0, doc?.likesCount || 0);
+      } else {
+        const memReel = memoryDb.reels.find((r) => r.id === reelId);
+        newLikesCount = Math.max(0, memReel?.likesCount || 0);
+      }
     }
 
     return res.json({
       success: true,
-      likesCount: reel?.likesCount || 0
+      isLiked: shouldBeLiked,
+      likesCount: Math.max(0, newLikesCount)
     });
   } catch (err: any) {
-    return res.status(500).json({ success: false, error: 'Failed to update like' });
+    Logger.error('[Reels] Failed to update like:', err);
+    return res.status(500).json({
+      success: false,
+      error: 'فشل في تحديث الإعجاب، يرجى المحاولة مرة أخرى',
+      code: 'SERVER_ERROR'
+    });
   }
 });
 

@@ -562,12 +562,10 @@ export const PlacesHeritagePage: React.FC = () => {
                 className="
                   relative overflow-hidden
                   rounded-[2rem]
-                  border border-black/10
-                  bg-white/50
+                  border border-border-subtle
+                  bg-surface
                   p-7
-                  backdrop-blur-xl
-                  dark:border-primary/30
-                  dark:bg-cream/[0.035]
+                  shadow-lg
                 "
               >
                 <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full border border-primary/20" />

@@ -335,8 +335,8 @@ const MainContent: React.FC = () => {
   return (
     <main className="min-h-screen flex flex-col justify-between bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] transition-colors duration-500">
       <div>
-        <Header />
-        <DynamicBreadcrumbs />
+        {activePage !== 'reels' && <Header />}
+        {activePage !== 'reels' && <DynamicBreadcrumbs />}
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -685,16 +685,16 @@ const MainContent: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      <Footer />
+      {activePage !== 'reels' && <Footer />}
 
       {/* Floating Uncle Wah Technical Support Concierge (عم وه - الدعم الفني) */}
-      <AmWahSupportButton />
+      {activePage !== 'reels' && <AmWahSupportButton />}
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomBar />
 
       {/* Floating Uncle Wah Interactive Guide across All Pages */}
-      <FloatingUncleWahCompanion />
+      {activePage !== 'reels' && <FloatingUncleWahCompanion />}
 
       {/* Global Modals & Drawers */}
       {(currentRole === 'buyer' || !isAuthenticated) && <CartDrawer />}

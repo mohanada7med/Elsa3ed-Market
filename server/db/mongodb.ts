@@ -65,6 +65,7 @@ class MemoryStore {
   stockMovements: StockMovementDocument[] = [];
   craftStories: CraftStoryDocument[] = [];
   reels: CraftReelDocument[] = [];
+  reelLikes: Array<{ userId: string; reelId: string; createdAt: string }> = [];
   conversations: ConversationDocument[] = [];
   messages: MessageDocument[] = [];
   passwordResets: import('../models/types.ts').PasswordResetRequestDocument[] = [];
@@ -337,6 +338,9 @@ async function seedMongoDatabase(database: Db) {
       database.collection('reels').createIndex({ id: 1 }, { unique: true }),
       database.collection('reels').createIndex({ sellerId: 1, createdAt: -1 }),
       database.collection('reels').createIndex({ isFeatured: 1, createdAt: -1 }),
+      database.collection('reel_likes').createIndex({ userId: 1, reelId: 1 }, { unique: true }),
+      database.collection('reel_likes').createIndex({ reelId: 1 }),
+      database.collection('reel_likes').createIndex({ userId: 1 }),
       // Live Chat
       database.collection('conversations').createIndex({ id: 1 }, { unique: true }),
       database.collection('conversations').createIndex({ buyerId: 1, updatedAt: -1 }),

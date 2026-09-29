@@ -222,7 +222,7 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-5 space-y-4">
             <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage pb-2 border-b border-white/10 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span>أبواب ودليل منصة وه</span>
+              <span className="text-white">أبواب ودليل منصة وه</span>
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
               {appPortals.map((portal) => (

@@ -3650,14 +3650,42 @@ export const api = {
     return json.deletedCount || ids.length;
   },
 
-  async likeReel(id: string, isLiked: boolean): Promise<number> {
+  async likeReel(
+    id: string,
+    isLiked?: boolean,
+    user?: { id?: string; role?: string; sellerId?: string }
+  ): Promise<{ isLiked: boolean; likesCount: number }> {
     const res = await fetch(`${API_BASE}/reels/${id}/like`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isLiked })
+      credentials: 'include',
+      headers: getAuthHeaders(user),
+      body: JSON.stringify(typeof isLiked === 'boolean' ? { isLiked } : {})
     });
-    const json = await res.json();
-    return json.likesCount || 0;
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.success) {
+      const err = new Error(json.error || 'فشل في تحديث الإعجاب');
+      (err as any).code = json.code || (res.status === 401 ? 'UNAUTHORIZED' : 'ERROR');
+      throw err;
+    }
+    return {
+      isLiked: Boolean(json.isLiked),
+      likesCount: Number(json.likesCount || 0)
+    };
+  },
+
+  async getUserLikedReels(user?: { id?: string; role?: string; sellerId?: string }): Promise<string[]> {
+    try {
+      const res = await fetch(`${API_BASE}/reels/user-likes`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: getAuthHeaders(user)
+      });
+      if (!res.ok) return [];
+      const json = await res.json().catch(() => ({}));
+      return Array.isArray(json.likedReelIds) ? json.likedReelIds : [];
+    } catch {
+      return [];
+    }
   },
 
   async incrementReelView(id: string): Promise<number> {

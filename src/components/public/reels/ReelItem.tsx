@@ -60,7 +60,13 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   totalReels,
   hasBottomNav = false
 }) => {
-  const { currentUser, addToast } = useApp();
+  const {
+    currentUser,
+    isAuthenticated,
+    setIsAuthModalOpen,
+    setAuthModalTab,
+    addToast
+  } = useApp();
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayIcon, setShowPlayIcon] = useState(false);
@@ -180,12 +186,19 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   ------------------------------------------------------- */
 
   useEffect(() => {
-    const userLikes =
-      craftReelsService.getUserLikedReels();
+    if (currentUser?.id && currentUser.id !== 'guest-visitor' && currentUser.role !== 'guest') {
+      const userLikes = craftReelsService.getUserLikedReels(currentUser.id);
+      setIsLiked(userLikes.includes(reel.id) || Boolean((reel as any).isLiked));
 
-    setIsLiked(userLikes.includes(reel.id));
+      // Asynchronously fetch fresh likes from server for this user
+      craftReelsService.fetchUserLikedReels(currentUser).then((freshLikes) => {
+        setIsLiked(freshLikes.includes(reel.id));
+      }).catch(() => { });
+    } else {
+      setIsLiked(false);
+    }
     setLikesCount(reel.likesCount || 0);
-  }, [reel.id, reel.likesCount]);
+  }, [reel.id, reel.likesCount, currentUser?.id, currentUser?.role]);
 
   /* -------------------------------------------------------
      AUDIO
@@ -387,19 +400,54 @@ export const ReelItem: React.FC<ReelItemProps> = ({
      LIKE
   ------------------------------------------------------- */
 
-  const handleLike = () => {
-    const res =
-      craftReelsService.toggleLikeReel(reel.id);
+  const handleLike = async () => {
+    if (!isAuthenticated || !currentUser || currentUser.id === 'guest-visitor' || currentUser.role === 'guest') {
+      addToast(
+        'تسجيل الدخول مطلوب',
+        'سجّل دخولك الأول أو أنشئ حساب عشان تقدر تعمل لايك وتتفاعل مع حكايات وفيديوهات الصعيد',
+        'info'
+      );
+      setAuthModalTab('login');
+      setIsAuthModalOpen(true);
+      return;
+    }
 
-    setIsLiked(res.isLiked);
-    setLikesCount(res.newLikesCount);
+    const prevLiked = isLiked;
+    const prevCount = likesCount;
+    const nextLiked = !prevLiked;
+    const nextCount = Math.max(0, prevCount + (nextLiked ? 1 : -1));
 
-    if (res.isLiked) {
+    // Optimistic UI update
+    setIsLiked(nextLiked);
+    setLikesCount(nextCount);
+
+    if (nextLiked) {
       setShowHeartBurst(true);
-
       setTimeout(() => {
         setShowHeartBurst(false);
       }, 900);
+    }
+
+    try {
+      const res = await craftReelsService.toggleLikeReel(reel.id, currentUser);
+      setIsLiked(res.isLiked);
+      setLikesCount(res.newLikesCount);
+    } catch (err: any) {
+      // Revert optimistic state
+      setIsLiked(prevLiked);
+      setLikesCount(prevCount);
+
+      if (err?.code === 'UNAUTHORIZED') {
+        addToast(
+          'تسجيل الدخول مطلوب',
+          'سجّل دخولك الأول أو أنشئ حساب عشان تقدر تعمل لايك وتتفاعل مع حكايات وفيديوهات الصعيد',
+          'info'
+        );
+        setAuthModalTab('login');
+        setIsAuthModalOpen(true);
+      } else {
+        addToast('تعذر حفظ الإعجاب', err?.message || 'حدث خطأ أثناء حفظ الإعجاب، حاول مجدداً', 'error');
+      }
     }
   };
 
@@ -416,6 +464,17 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     lastTapRef.current = now;
 
     if (timeDiff < 300) {
+      if (!isAuthenticated || !currentUser || currentUser.id === 'guest-visitor' || currentUser.role === 'guest') {
+        addToast(
+          'تسجيل الدخول مطلوب',
+          'سجّل دخولك الأول أو أنشئ حساب عشان تقدر تعمل لايك وتتفاعل مع حكايات وفيديوهات الصعيد',
+          'info'
+        );
+        setAuthModalTab('login');
+        setIsAuthModalOpen(true);
+        return;
+      }
+
       if (!isLiked) {
         handleLike();
       } else {
@@ -627,7 +686,8 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
         <div className="
           absolute
-          top-0
+          top-[env(safe-area-inset-top,0px)]
+          sm:top-0
           inset-x-0
           z-40
           h-[3px]
@@ -648,146 +708,121 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         </div>
 
         {/* ===================================================
-            TOP HEADER
+            TOP HEADER (MODAL VIEWER)
         =================================================== */}
 
-        <motion.div
-          initial={{
-            opacity: 0,
-            y: -15
-          }}
-          animate={{
-            opacity: showControls ? 1 : 0,
-            y: showControls ? 0 : -15
-          }}
-          transition={{
-            duration: 0.3
-          }}
-          className="
-            absolute
-            top-0
-            inset-x-0
-            z-30
-            px-4
-            pt-5
-            pb-14
-            bg-gradient-to-b
-            from-black/75
-            via-black/25
-            to-transparent
-            pointer-events-none
-          "
-        >
+        {showCloseButton && (
+          <motion.div
+            initial={{
+              opacity: 0,
+              y: -15
+            }}
+            animate={{
+              opacity: showControls ? 1 : 0,
+              y: showControls ? 0 : -15
+            }}
+            transition={{
+              duration: 0.3
+            }}
+            className="
+              absolute
+              top-0
+              inset-x-0
+              z-30
+              px-4
+              pt-[max(calc(env(safe-area-inset-top,0px)+14px),2.75rem)]
+              sm:pt-5
+              pb-14
+              bg-gradient-to-b
+              from-black/75
+              via-black/25
+              to-transparent
+              pointer-events-none
+            "
+          >
 
-          <div className="
-            flex
-            items-center
-            justify-between
-            gap-3
-            pointer-events-auto
-          ">
-
-            {/* LEFT */}
             <div className="
               flex
               items-center
-              gap-2
+              justify-between
+              gap-3
+              pointer-events-auto
             ">
 
-              {typeof reelIndex === 'number' &&
-                typeof totalReels === 'number' && (
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="
-                      px-3
-                      py-1.5
-                      rounded-full
-                      bg-black/45
-                      backdrop-blur-xl
-                      border
-                      border-white/10
-                      text-white
-                      text-[10px]
-                      font-bold
-                    "
-                  >
-                    {String(reelIndex + 1).padStart(2, '0')}
-                    <span className="mx-1 text-white/30">
-                      /
-                    </span>
-                    {String(totalReels).padStart(2, '0')}
-                  </motion.div>
-                )}
-
+              {/* LEFT */}
               <div className="
-                hidden
-                sm:flex
+                flex
                 items-center
                 gap-2
-                px-3
-                py-1.5
-                rounded-full
-                bg-white/[0.07]
-                backdrop-blur-xl
-                border
-                border-white/10
-                text-white
               ">
-                <Sparkles className="
-                  w-3.5
-                  h-3.5
-                  text-[#e4aa68]
-                " />
 
-                <span className="
-                  text-[10px]
-                  font-bold
-                ">
-                  ريلز وه
-                </span>
-              </div>
+                {typeof reelIndex === 'number' &&
+                  typeof totalReels === 'number' && (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="
+                        px-3
+                        py-1.5
+                        rounded-full
+                        bg-black/45
+                        backdrop-blur-xl
+                        border
+                        border-white/10
+                        text-white
+                        text-[10px]
+                        font-bold
+                      "
+                    >
+                      {String(reelIndex + 1).padStart(2, '0')}
+                      <span className="mx-1 text-white/30">
+                        /
+                      </span>
+                      {String(totalReels).padStart(2, '0')}
+                    </motion.div>
+                  )}
 
-            </div>
-
-            {/* RIGHT */}
-            <div className="
-              flex
-              items-center
-              gap-2
-            ">
-
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.86 }}
-                onClick={onToggleMute}
-                className="
-                  w-10
-                  h-10
-                  rounded-full
-                  flex
+                <div className="
+                  hidden
+                  sm:flex
                   items-center
-                  justify-center
-                  bg-black/45
+                  gap-2
+                  px-3
+                  py-1.5
+                  rounded-full
+                  bg-white/[0.07]
                   backdrop-blur-xl
                   border
                   border-white/10
                   text-white
-                  shadow-lg
-                "
-              >
-                {isMuted ? (
-                  <VolumeX className="w-4 h-4" />
-                ) : (
-                  <Volume2 className="w-4 h-4" />
-                )}
-              </motion.button>
+                ">
+                  <Sparkles className="
+                    w-3.5
+                    h-3.5
+                    text-[#e4aa68]
+                  " />
 
-              {showCloseButton && onClose && (
+                  <span className="
+                    text-[10px]
+                    font-bold
+                  ">
+                    ريلز وه
+                  </span>
+                </div>
+
+              </div>
+
+              {/* RIGHT */}
+              <div className="
+                flex
+                items-center
+                gap-2
+              ">
+
                 <motion.button
                   type="button"
                   whileTap={{ scale: 0.86 }}
-                  onClick={onClose}
+                  onClick={onToggleMute}
                   className="
                     w-10
                     h-10
@@ -800,17 +835,45 @@ export const ReelItem: React.FC<ReelItemProps> = ({
                     border
                     border-white/10
                     text-white
+                    shadow-lg
                   "
                 >
-                  <X className="w-4 h-4" />
+                  {isMuted ? (
+                    <VolumeX className="w-4 h-4" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
                 </motion.button>
-              )}
+
+                {showCloseButton && onClose && (
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.86 }}
+                    onClick={onClose}
+                    className="
+                      w-10
+                      h-10
+                      rounded-full
+                      flex
+                      items-center
+                      justify-center
+                      bg-black/45
+                      backdrop-blur-xl
+                      border
+                      border-white/10
+                      text-white
+                    "
+                  >
+                    <X className="w-4 h-4" />
+                  </motion.button>
+                )}
+
+              </div>
 
             </div>
 
-          </div>
-
-        </motion.div>
+          </motion.div>
+        )}
 
         {/* ===================================================
             VIDEO

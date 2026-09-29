@@ -55,7 +55,7 @@ export const MobileBottomBar: React.FC = () => {
     (currentRole === 'seller' && activePage === 'seller-dashboard') ||
     (currentRole === 'admin' && activePage === 'admin-dashboard');
 
-  if (activePage === 'product-details' || activePage === 'checkout') {
+  if (activePage === 'product-details' || activePage === 'checkout' || activePage === 'reels') {
     return null;
   }
 

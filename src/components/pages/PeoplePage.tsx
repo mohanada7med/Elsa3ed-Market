@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { div } from 'motion/react-client';
 
 export const PeoplePage: React.FC = () => {
   const { navigateToPerson, setActivePage } = useApp();
