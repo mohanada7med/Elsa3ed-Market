@@ -814,102 +814,51 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
         {/* MAIN ROW */}
         <div className="relative mx-auto max-w-[1600px] px-2 sm:px-6 lg:px-12">
-          <div className="relative flex h-16 items-center justify-between sm:h-[78px] lg:h-[94px]">
+          {/* =====================================================
+              1. MOBILE MAIN HEADER (ONLY THE BIG LOGO)
+              الهيدر الأساسي في الموبايل: اللوجو فقط ويكون كبير زى الكمبيوتر
+          ===================================================== */}
+          <div className="flex lg:hidden items-center justify-center py-3 sm:py-4 w-full select-none">
+            <button
+              id="brand-logo-mobile"
+              type="button"
+              onClick={() => navigate('home')}
+              aria-label="منصة وه - الرئيسية"
+              title="منصة وه - الرئيسية"
+              className="
+                flex items-center justify-center
+                focus:outline-none cursor-pointer
+                transition-transform active:scale-95
+              "
+            >
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
+                alt="وه"
+                draggable={false}
+                className="
+                  block
+                  h-16 w-auto max-w-[240px]
+                  sm:h-20 sm:max-w-[300px]
+                  object-contain
+                  drop-shadow-sm
+                  transition-transform duration-300
+                  hover:scale-102
+                "
+              />
+            </button>
+          </div>
+
+          {/* =====================================================
+              2. DESKTOP MAIN ROW (NAV + ACTIONS)
+          ===================================================== */}
+          <div className="hidden lg:flex relative h-[94px] items-center justify-between">
             {/* START ACTIONS */}
             <div
               id="header-start-actions"
-              className="
-                absolute start-0 top-0 z-10
-                flex h-full items-center
-                px-1.5
-                sm:px-2
-                lg:static lg:h-auto lg:max-w-none lg:px-0 lg:z-auto
-              "
+              className="flex items-center gap-6"
             >
-              {/* MOBILE MENU TOGGLE */}
-              <button
-                id="mobile-menu-toggle"
-                type="button"
-                onClick={() => setMobileMenuOpen(true)}
-                aria-label="فتح القائمة"
-                title="فتح القائمة"
-                className="
-                  flex h-9 w-9 shrink-0
-                  items-center justify-center
-                  rounded-full
-                  transition-all
-                  active:scale-95
-                  lg:hidden
-                  cursor-pointer
-                "
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <Menu size={20} />
-              </button>
-
-              {/* MOBILE THEME TOGGLE */}
-              <button
-                id="mobile-header-theme-toggle-btn"
-                type="button"
-                onClick={toggleTheme}
-                aria-label={isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
-                title={isDark ? 'تفعيل الوضع الفاتح' : 'الوضع الداكن'}
-                className="
-                  flex h-9 w-9 shrink-0
-                  items-center justify-center
-                  rounded-full
-                  transition-all
-                  hover:scale-105
-                  active:scale-95
-                  ms-1
-                  sm:ms-2
-                  lg:hidden
-                  cursor-pointer
-                "
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                {isDark ? (
-                  <Sun size={18} className="text-primary-hover" />
-                ) : (
-                  <Moon size={18} />
-                )}
-              </button>
-
-              {/* MOBILE QUIZ */}
-              <button
-                id="mobile-header-quiz-btn"
-                type="button"
-                onClick={() => navigate('quize')}
-                aria-label="اختبار اللهجة الصعيدية"
-                title="اختبار اللهجة الصعيدية"
-                className="
-                  flex h-9 w-9 shrink-0
-                  items-center
-                  justify-center
-                  rounded-full
-                  transition-all
-                  hover:scale-105
-                  active:scale-95
-                  ms-1
-                  lg:hidden
-                  cursor-pointer
-                "
-                style={{
-                  backgroundColor: hoverBg,
-                  color: mainText,
-                }}
-              >
-                <Flame size={18} />
-              </button>
-
               {/* DESKTOP NAV */}
-              <div className="hidden items-center gap-6 lg:flex">
+              <div className="flex items-center gap-6">
                 <button
                   type="button"
                   onClick={() => navigate('home')}
@@ -979,81 +928,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               </div>
             </div>
 
-            {/* =====================================================
-                CENTER LOGO (MOBILE & TABLET ONLY)
-                على الديسكتوب يمتد للـ Sub-bar في الأسفل
-            ===================================================== */}
-            <div
-              id="header-center-logo"
-              className="
-                pointer-events-auto
-                absolute
-                left-1/2
-                top-1/2
-                z-20
-                flex
-                -translate-x-1/2
-                -translate-y-1/2
-                items-center
-                justify-center
-                select-none
-                lg:hidden
-              "
-            >
-              <button
-                id="brand-logo-mobile"
-                type="button"
-                onClick={() => navigate('home')}
-                aria-label="وه - الرئيسية"
-                className="
-                  flex
-                  items-center
-                  justify-center
-                  rounded-2xl
-                  transition-transform
-                  hover:scale-[1.02]
-                  active:scale-95
-                  cursor-pointer
-                  focus:outline-none
-                "
-              >
-                <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790463189/logo.png"
-                  alt="وه"
-                  draggable={false}
-                  className="
-                    block
-                    h-[34px]
-                    w-auto
-                    max-w-[68px]
-                    object-contain
-                    sm:h-[50px]
-                    sm:max-w-[100px]
-                  "
-                />
-              </button>
-            </div>
-
             {/* END ACTIONS */}
             <div
               id="header-end-actions"
-              className="
-                absolute
-                end-0
-                top-0
-                z-10
-                flex
-                h-full
-                items-center
-                justify-end
-                px-1.5
-                sm:px-2
-                lg:static
-                lg:h-auto
-                lg:max-w-none
-                lg:px-0
-                lg:z-auto
-              "
+              className="flex items-center justify-end"
             >
               <div
                 className="
@@ -2075,6 +1953,254 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* =========================================================
+            📱 MOBILE SUB-BAR (الـ Sub بار في الموبايل — زي بتاع الكمبيوتر)
+        ========================================================= */}
+        <div
+          className="block lg:hidden border-t select-none relative z-50 backdrop-blur-xl"
+          style={{
+            borderColor: isDark ? 'rgba(107, 58, 31, 0.4)' : 'rgba(224, 199, 155, 0.5)',
+            backgroundColor: isDark ? 'rgba(27, 16, 9, 0.98)' : 'rgba(255, 249, 238, 0.98)',
+          }}
+        >
+          {/* DECORATIVE TOP GLOW */}
+          <div
+            className="absolute left-1/2 top-0 h-px w-40 -translate-x-1/2 pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, transparent, #C99444, transparent)',
+            }}
+          />
+
+          {/* ROW 1: QUICK ACTIONS BAR (Menu, Quiz, Search, Favorites, Cart, Theme, User) */}
+          <div className="flex items-center justify-between px-3 py-1.5 border-b border-black/5 dark:border-white/5">
+            {/* START: MENU TOGGLE & QUIZ */}
+            <div className="flex items-center gap-1.5">
+              <button
+                id="mobile-menu-toggle"
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="فتح القائمة"
+                title="فتح القائمة"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all active:scale-95 cursor-pointer text-xs font-bold"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <Menu size={16} />
+                <span>القائمة</span>
+              </button>
+
+              <button
+                id="mobile-header-quiz-btn"
+                type="button"
+                onClick={() => navigate('quize')}
+                aria-label="اختبار اللهجة الصعيدية"
+                title="اختبار اللهجة الصعيدية"
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <Flame size={16} className="text-[#E66A2E]" />
+              </button>
+            </div>
+
+            {/* END: SEARCH, FAVORITES, CART, THEME, USER */}
+            <div className="flex items-center gap-1">
+              <button
+                id="search-trigger-btn-mobile"
+                type="button"
+                onClick={() => setSearchOverlayOpen(true)}
+                aria-label="بحث"
+                title="بحث"
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                <Search size={16} />
+              </button>
+
+              {!isStaff && (
+                <button
+                  id="nav-favorites-btn-mobile"
+                  type="button"
+                  onClick={() => navigate('favorites')}
+                  aria-label="المفضلة"
+                  title="المفضلة"
+                  className="relative flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <Heart size={16} />
+                  {favorites.length > 0 && (
+                    <span
+                      className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                      style={{
+                        backgroundColor: '#E66A2E',
+                        color: '#FFF9EE',
+                      }}
+                    >
+                      {favorites.length > 99 ? '99+' : favorites.length}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {!isStaff && (
+                <button
+                  id="nav-cart-btn-mobile"
+                  type="button"
+                  onClick={() => setIsCartDrawerOpen(true)}
+                  aria-label="السلة"
+                  title="السلة"
+                  className="relative flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <ShoppingBag size={16} />
+                  {cartCount > 0 && (
+                    <span
+                      className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
+                      style={{
+                        backgroundColor: '#E66A2E',
+                        color: '#FFF9EE',
+                      }}
+                    >
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              <button
+                id="mobile-header-theme-toggle-btn"
+                type="button"
+                onClick={toggleTheme}
+                aria-label={isDark ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+                title={isDark ? 'تفعيل الوضع الفاتح' : 'الوضع الداكن'}
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer"
+                style={{
+                  backgroundColor: hoverBg,
+                  color: mainText,
+                }}
+              >
+                {isDark ? (
+                  <Sun size={16} className="text-primary-hover" />
+                ) : (
+                  <Moon size={16} />
+                )}
+              </button>
+
+              {isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={() => navigate(getAccountPage())}
+                  aria-label="حسابي"
+                  title="حسابي"
+                  className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden border border-primary/30 transition-all active:scale-95 cursor-pointer ms-0.5"
+                >
+                  <img
+                    src={profileImage}
+                    alt={displayName}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthModalTab('login');
+                    setIsAuthModalOpen(true);
+                  }}
+                  aria-label="تسجيل الدخول"
+                  title="تسجيل الدخول"
+                  className="flex h-8 w-8 items-center justify-center rounded-full transition-all active:scale-95 cursor-pointer ms-0.5"
+                  style={{
+                    backgroundColor: hoverBg,
+                    color: mainText,
+                  }}
+                >
+                  <UserCircle size={17} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ROW 2: HERITAGE PORTALS SCROLLABLE STRIP (Sub بار زى بتاع الكمبيوتر بالضبط) */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar px-3 py-2 scroll-smooth">
+            {roleNavLinks
+              .filter(
+                (link: any) =>
+                  link.id !== 'cart' &&
+                  link.id !== 'orders' &&
+                  link.id !== 'about'
+              )
+              .map((link: any) => {
+                const Icon = link.icon;
+                const isActive = activePage === link.id;
+
+                return (
+                  <motion.button
+                    key={`mob-sub-${link.id}`}
+                    type="button"
+                    onClick={() => navigate(link.id)}
+                    whileTap={{ scale: 0.94 }}
+                    className="
+                      group relative flex items-center gap-1.5
+                      rounded-full px-3 py-1.5 text-xs font-bold
+                      whitespace-nowrap shrink-0 transition-colors
+                      cursor-pointer
+                    "
+                    style={{
+                      backgroundColor: isActive
+                        ? (isDark ? 'rgba(201,148,68,0.18)' : 'rgba(107,58,31,0.1)')
+                        : (isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'),
+                      color: isActive
+                        ? (isDark ? '#C99444' : '#6B3A1F')
+                        : secondaryText,
+                      border: isActive
+                        ? `1px solid ${isDark ? '#C99444' : '#6B3A1F'}`
+                        : `1px solid transparent`,
+                    }}
+                  >
+                    {Icon && (
+                      <Icon
+                        size={14}
+                        strokeWidth={isActive ? 2.5 : 1.8}
+                        className={isActive ? (isDark ? 'text-[#C99444]' : 'text-[#6B3A1F]') : ''}
+                      />
+                    )}
+                    <span>{link.shortLabel || link.label}</span>
+
+                    {isActive && (
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C99444]" />
+                    )}
+
+                    {link.isNew && (
+                      <span
+                        className="rounded-full px-1.5 py-0.2 text-[8px] font-black"
+                        style={{
+                          backgroundColor: '#E66A2E',
+                          color: '#FFF9EE',
+                        }}
+                      >
+                        جديد
+                      </span>
+                    )}
+                  </motion.button>
+                );
+              })}
           </div>
         </div>
 
