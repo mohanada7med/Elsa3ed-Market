@@ -913,15 +913,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               }}
             >
               محافظات الصعيد
-              <span
-                className="rounded-full px-2 py-0.5 text-[9px] font-black"
-                style={{
-                  backgroundColor: '#E66A2E',
-                  color: '#FFF9EE',
-                }}
-              >
-                جديد
-              </span>
+
             </button>
           </div>
 

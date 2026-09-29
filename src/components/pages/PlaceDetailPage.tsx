@@ -402,17 +402,6 @@ export const PlaceDetailPage: React.FC = () => {
           </div>
         </div>
       </header>
-
-      {/* UNCLE WAH INTERACTIVE GUIDE */}
-      <div className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-4 pb-2">
-        <UncleWahInteractiveGuide
-          context="places"
-          title={place.title}
-          locationName={place.governorateName || place.governorateId}
-          customQuote={`«يا مرحب بيك في ${place.title}! حيطان التاريخ وعزة أجدادنا.. لفيت وتعبت ودست في كل شبر عشان أوثق لكم عظمة المعلم ده، اتأمل تفاصيله!»`}
-        />
-      </div>
-
       {/* =========================================================
           HERO (بالمحافظة على شكل الصورة المطلوبة تماماً)
       ========================================================= */}
