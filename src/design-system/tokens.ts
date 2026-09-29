@@ -1,64 +1,67 @@
 /**
  * WAH | وه Design System Tokens
  * Authentic Upper Egypt Cultural Aesthetics + Modern Minimalist Product Architecture
+ * Official WAH Brand Color Palette
  */
 
 export const WAH_TOKENS = {
   colors: {
     light: {
       // Core Brand & Palette
-      primary: '#9a6a35', // Warm Caramel (Brand Accent)
-      primaryHover: '#7d5427',
-      primaryActive: '#623f1a',
-      primaryLight: 'rgba(154, 106, 53, 0.12)',
-      secondary: '#FFEDD8', // Soft Warm Sand / Muted Peach
-      secondaryHover: '#FAE1C3',
-      secondaryLight: 'rgba(255, 237, 216, 0.50)',
-      cream: '#FFF6EB', // Clean Cream / Warm Off-white
-      espresso: '#2b241c', // Deep Espresso / Charcoal Brown
-      accent: '#9a6a35',
-      accentHover: '#7d5427',
-      accentLight: 'rgba(154, 106, 53, 0.12)',
+      primary: '#6B3A1F', // Medium Brown (Primary Buttons & UI)
+      primaryHover: '#3B1E0E', // Dark Brown
+      primaryActive: '#26160D',
+      primaryLight: 'rgba(107, 58, 31, 0.12)',
+      secondary: '#8C6F53', // Brown Gray (Secondary text, metadata)
+      secondaryHover: '#6B3A1F',
+      secondaryLight: 'rgba(140, 111, 83, 0.15)',
+      cream: '#F8EBD7', // Cream (Cards & Surfaces)
+      espresso: '#3B1E0E', // Dark Brown (Main headings, logo, primary text, footer)
+      accent: '#C99444', // Golden (Brand Accent, highlights, active states)
+      accentHover: '#E66A2E', // Orange
+      accentLight: 'rgba(201, 148, 68, 0.15)',
+      cta: '#E66A2E', // Orange (CTA buttons)
+      ctaHover: '#C99444',
 
       // Semantic Backgrounds & Surfaces
-      background: '#FFF6EB', // Clean Cream Base Background
-      backgroundSecondary: '#F7EFE4',
-      backgroundTertiary: '#EEDEC8',
-      surface: 'rgba(255, 255, 255, 0.85)', // Glassmorphic white surface
-      surfaceHover: 'rgba(255, 255, 255, 0.95)',
-      surfaceActive: '#ffffff',
-      surfaceSubtle: 'rgba(43, 36, 28, 0.04)',
-      surfaceMuted: 'rgba(43, 36, 28, 0.08)',
+      background: '#FFF9EE', // Main Light Background
+      backgroundSecondary: '#F8EBD7',
+      backgroundTertiary: '#E0C79B',
+      surface: '#F8EBD7', // Cream Cards & Surfaces
+      surfaceHover: '#FFF9EE',
+      surfaceActive: '#E0C79B',
+      surfaceSubtle: 'rgba(107, 58, 31, 0.05)',
+      surfaceMuted: 'rgba(107, 58, 31, 0.08)',
 
       // Semantic Foregrounds / Typography (High contrast & readability)
-      foreground: '#2b241c', // Deep Espresso primary text
-      foregroundSecondary: 'rgba(43, 36, 28, 0.75)',
-      foregroundMuted: 'rgba(43, 36, 28, 0.55)',
-      foregroundDisabled: 'rgba(43, 36, 28, 0.35)',
+      foreground: '#3B1E0E', // Dark Brown primary text
+      foregroundSecondary: '#8C6F53', // Brown Gray secondary text
+      foregroundMuted: '#8C6F53',
+      foregroundDisabled: '#D6C6B1', // Secondary Neutral disabled
 
       // Legacy Aliases
-      text: '#2b241c',
-      textMuted: 'rgba(43, 36, 28, 0.55)',
-      textSubtle: 'rgba(43, 36, 28, 0.35)',
+      text: '#3B1E0E',
+      textMuted: '#8C6F53',
+      textSubtle: '#D6C6B1',
 
       // Semantic Borders
-      border: 'rgba(154, 106, 53, 0.30)', // #9a6a35/30 border
-      borderSubtle: 'rgba(43, 36, 28, 0.08)',
-      borderHover: 'rgba(154, 106, 53, 0.45)',
-      borderStrong: 'rgba(154, 106, 53, 0.40)',
+      border: '#E0C79B', // Light Beige borders
+      borderSubtle: 'rgba(224, 199, 155, 0.50)',
+      borderHover: '#C99444',
+      borderStrong: '#6B3A1F',
 
       // Forms & Inputs
-      inputBackground: 'rgba(255, 255, 255, 0.90)',
-      inputBorder: 'rgba(154, 106, 53, 0.25)',
-      inputPlaceholder: 'rgba(43, 36, 28, 0.40)',
+      inputBackground: 'rgba(255, 249, 238, 0.95)',
+      inputBorder: '#E0C79B',
+      inputPlaceholder: '#8C6F53',
 
       // Cards
-      cardBackground: 'rgba(255, 255, 255, 0.85)',
-      cardBorder: 'rgba(154, 106, 53, 0.30)',
+      cardBackground: '#F8EBD7',
+      cardBorder: '#E0C79B',
 
       // Overlays & Shadows
-      overlay: 'rgba(43, 36, 28, 0.60)',
-      shadow: 'rgba(154, 106, 53, 0.10)',
+      overlay: 'rgba(59, 30, 14, 0.65)',
+      shadow: 'rgba(59, 30, 14, 0.08)',
 
       // Status Colors (WCAG AA Compliant)
       success: '#286644', // Fertile Nile Agriculture Green
@@ -68,58 +71,60 @@ export const WAH_TOKENS = {
     },
     dark: {
       // Core Brand & Palette
-      primary: '#9a6a35', // Warm Caramel
-      primaryHover: '#b88248',
-      primaryActive: '#cca36e',
-      primaryLight: 'rgba(154, 106, 53, 0.25)',
-      secondary: '#FFEDD8', // Soft Warm Sand
-      secondaryHover: '#ffffff',
-      secondaryLight: 'rgba(255, 237, 216, 0.15)',
-      cream: '#FFF6EB',
-      espresso: '#2b241c',
-      accent: '#9a6a35',
-      accentHover: '#b88248',
-      accentLight: 'rgba(154, 106, 53, 0.25)',
+      primary: '#6B3A1F', // Medium Brown
+      primaryHover: '#3B1E0E',
+      primaryActive: '#4A2715',
+      primaryLight: 'rgba(107, 58, 31, 0.25)',
+      secondary: '#D6C6B1', // Secondary Neutral
+      secondaryHover: '#FFF9EE',
+      secondaryLight: 'rgba(214, 198, 177, 0.15)',
+      cream: '#F8EBD7',
+      espresso: '#3B1E0E',
+      accent: '#C99444', // Golden
+      accentHover: '#E66A2E',
+      accentLight: 'rgba(201, 148, 68, 0.25)',
+      cta: '#E66A2E',
+      ctaHover: '#C99444',
 
       // Semantic Backgrounds & Surfaces
-      background: '#1e1914', // Deep warm tone derived from #2b241c
-      backgroundSecondary: '#251f19',
-      backgroundTertiary: '#2b241c',
-      surface: 'rgba(43, 36, 28, 0.85)', // Elevated espresso layers
-      surfaceHover: 'rgba(56, 47, 37, 0.95)',
-      surfaceActive: '#3a3127',
-      surfaceSubtle: 'rgba(255, 246, 235, 0.05)',
-      surfaceMuted: 'rgba(255, 246, 235, 0.08)',
+      background: '#1B1009', // Main Dark Background
+      backgroundSecondary: '#26160D', // Secondary Background
+      backgroundTertiary: '#3B1E0E',
+      surface: '#3B1E0E', // Dark Mode Cards / Surfaces
+      surfaceHover: '#4A2715', // Elevated Surface
+      surfaceActive: '#6B3A1F',
+      surfaceSubtle: 'rgba(255, 249, 238, 0.05)',
+      surfaceMuted: 'rgba(255, 249, 238, 0.08)',
 
       // Semantic Foregrounds / Typography (Legible warm tones)
-      foreground: '#FFF6EB', // Clean Cream text
-      foregroundSecondary: '#FFEDD8', // Soft Warm Sand secondary text
-      foregroundMuted: 'rgba(255, 237, 216, 0.65)',
-      foregroundDisabled: 'rgba(255, 237, 216, 0.40)',
+      foreground: '#FFF9EE', // Cream / Off-white text
+      foregroundSecondary: '#D6C6B1', // Secondary Neutral text
+      foregroundMuted: '#8C6F53', // Brown Gray muted text
+      foregroundDisabled: 'rgba(214, 198, 177, 0.40)',
 
       // Legacy Aliases
-      text: '#FFF6EB',
-      textMuted: 'rgba(255, 237, 216, 0.65)',
-      textSubtle: 'rgba(255, 237, 216, 0.40)',
+      text: '#FFF9EE',
+      textMuted: '#8C6F53',
+      textSubtle: 'rgba(214, 198, 177, 0.40)',
 
       // Semantic Borders
-      border: 'rgba(154, 106, 53, 0.40)', // #9a6a35/40 border
-      borderSubtle: 'rgba(255, 246, 235, 0.10)',
-      borderHover: 'rgba(154, 106, 53, 0.60)',
-      borderStrong: 'rgba(154, 106, 53, 0.50)',
+      border: '#6B3A1F', // Medium Brown borders
+      borderSubtle: 'rgba(107, 58, 31, 0.45)',
+      borderHover: '#C99444',
+      borderStrong: '#C99444',
 
       // Forms & Inputs
-      inputBackground: 'rgba(43, 36, 28, 0.60)',
-      inputBorder: 'rgba(154, 106, 53, 0.40)',
-      inputPlaceholder: 'rgba(255, 237, 216, 0.40)',
+      inputBackground: '#26160D',
+      inputBorder: '#6B3A1F',
+      inputPlaceholder: 'rgba(214, 198, 177, 0.50)',
 
       // Cards
-      cardBackground: 'rgba(43, 36, 28, 0.85)',
-      cardBorder: 'rgba(154, 106, 53, 0.40)',
+      cardBackground: '#3B1E0E',
+      cardBorder: '#6B3A1F',
 
       // Overlays & Shadows
-      overlay: 'rgba(0, 0, 0, 0.75)',
-      shadow: 'rgba(0, 0, 0, 0.60)',
+      overlay: 'rgba(0, 0, 0, 0.80)',
+      shadow: 'rgba(0, 0, 0, 0.70)',
 
       // Status Colors (WCAG AA Compliant on Dark)
       success: '#489E6E',
@@ -129,8 +134,11 @@ export const WAH_TOKENS = {
     }
   },
   typography: {
-    fontHeritage: "'Amiri', 'Cairo', serif",
-    fontBody: "'Cairo', system-ui, -apple-system, sans-serif",
+    wahDisplay: "'SHIN Stout Bold', 'SHIN Stout', 'Cairo', system-ui, sans-serif",
+    wahHeading: "'Eskorte Arabic', 'Eskorte', 'Amiri', serif",
+    wahBody: "'Effra Arabic', 'Effra', 'Cairo', system-ui, sans-serif",
+    fontHeritage: "'Eskorte Arabic', 'Amiri', serif",
+    fontBody: "'Effra Arabic', 'Cairo', system-ui, sans-serif",
   },
   radius: {
     sm: '0.5rem', // 8px
@@ -142,13 +150,13 @@ export const WAH_TOKENS = {
     editorialReverse: '0.5rem 1.5rem 0.5rem 1.5rem',
   },
   shadows: {
-    soft: '0 2px 8px -2px rgba(36, 30, 26, 0.05)',
-    card: '0 6px 20px -4px rgba(36, 30, 26, 0.07)',
-    cardHover: '0 12px 30px -6px rgba(36, 30, 26, 0.12)',
-    terracottaGlow: '0 8px 24px -4px rgba(154, 106, 53, 0.25)',
+    soft: '0 2px 8px -2px rgba(59, 30, 14, 0.06)',
+    card: '0 6px 20px -4px rgba(59, 30, 14, 0.08)',
+    cardHover: '0 12px 30px -6px rgba(59, 30, 14, 0.12)',
+    terracottaGlow: '0 8px 24px -4px rgba(201, 148, 68, 0.20)',
+    ctaGlow: '0 8px 24px -4px rgba(230, 106, 46, 0.30)',
   }
 } as const;
 
 export type SemanticThemeColor = keyof typeof WAH_TOKENS.colors.light;
-export type PatternType = 'kilim' | 'pottery' | 'nile' | 'palm' | 'architecture' | 'geometry';
-
+export type PatternType = 'kilim' | 'pottery' | 'nile' | 'palm' | 'architecture' | 'geometry' | 'heritage' | 'stripes';

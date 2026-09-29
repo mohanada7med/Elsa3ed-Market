@@ -90,7 +90,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 id="error-reload-btn"
                 type="button"
                 onClick={this.handleReload}
-                className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
+                className="flex items-center justify-center gap-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] px-5 py-3 rounded-xl font-black transition-all shadow-md cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>إعادة تحميل الصفحة</span>

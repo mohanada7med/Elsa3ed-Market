@@ -227,8 +227,8 @@ export const EventDetailPage: React.FC = () => {
               border-primary/20
               bg-primary/5
 
-              dark:border-[#d6aa72]/20
-              dark:bg-[#d6aa72]/5
+              dark:border-[#C99444]/20
+              dark:bg-[#C99444]/5
             "
           >
             <CalendarDays
@@ -444,7 +444,7 @@ export const EventDetailPage: React.FC = () => {
             border
             border-primary/[0.06]
 
-            dark:border-[#d6aa72]/[0.07]
+            dark:border-[#C99444]/[0.07]
           "
         />
 
@@ -459,7 +459,7 @@ export const EventDetailPage: React.FC = () => {
             border
             border-primary/[0.05]
 
-            dark:border-[#d6aa72]/[0.06]
+            dark:border-[#C99444]/[0.06]
           "
         />
       </div>
@@ -855,7 +855,7 @@ export const EventDetailPage: React.FC = () => {
                   <span
                     className="
                       rounded-full
-                      bg-[#d6aa72]
+                      bg-[#C99444]
                       px-3
                       py-1.5
                       text-[9px]
@@ -1010,7 +1010,7 @@ export const EventDetailPage: React.FC = () => {
                   bg-primary/10
                   text-primary
 
-                  dark:bg-[#d6aa72]/10
+                  dark:bg-[#C99444]/10
                   dark:text-primary-hover
                 "
               >
@@ -1067,7 +1067,7 @@ export const EventDetailPage: React.FC = () => {
                   bg-primary/10
                   text-primary
 
-                  dark:bg-[#d6aa72]/10
+                  dark:bg-[#C99444]/10
                   dark:text-primary-hover
                 "
               >
@@ -1118,7 +1118,7 @@ export const EventDetailPage: React.FC = () => {
                   bg-primary/10
                   text-primary
 
-                  dark:bg-[#d6aa72]/10
+                  dark:bg-[#C99444]/10
                   dark:text-primary-hover
                 "
               >
@@ -1209,7 +1209,7 @@ export const EventDetailPage: React.FC = () => {
                     w-12
                     bg-primary
 
-                    dark:bg-[#d6aa72]
+                    dark:bg-[#C99444]
                   "
                 />
 
@@ -1252,7 +1252,7 @@ export const EventDetailPage: React.FC = () => {
                     bg-[#201c17]
                     text-white
 
-                    dark:bg-[#d6aa72]
+                    dark:bg-[#C99444]
                     dark:text-black
                   "
                 >
@@ -1322,7 +1322,7 @@ export const EventDetailPage: React.FC = () => {
                         key={rIdx}
                         className="flex items-start gap-3 rounded-2xl border border-black/10 bg-black/[0.02] p-4 dark:border-white/10 dark:bg-white/[0.03]"
                       >
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-black text-xs font-black">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary text-[#FFF9EE] text-xs font-black">
                           ✓
                         </span>
                         <span className="text-sm font-bold leading-relaxed text-black/80 dark:text-white/85">
@@ -1352,7 +1352,7 @@ export const EventDetailPage: React.FC = () => {
                         key={fIdx}
                         className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/[0.04] p-4 dark:border-primary/20 dark:bg-primary/[0.08]"
                       >
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-black font-bold">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary text-[#FFF9EE] font-bold">
                           🥣
                         </span>
                         <span className="text-sm font-black text-espresso dark:text-cream">
@@ -1476,7 +1476,7 @@ export const EventDetailPage: React.FC = () => {
                           {/* Cover Image Badge */}
                           {isCover && (
                             <div className="absolute top-3 right-3 z-10">
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-black text-[10px] font-black shadow-lg backdrop-blur-md border border-white/20">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-[#FFF9EE] text-[10px] font-black shadow-lg backdrop-blur-md border border-white/20">
                                 <Sparkles size={11} />
                                 <span>صورة الغلاف</span>
                               </span>
@@ -1511,8 +1511,8 @@ export const EventDetailPage: React.FC = () => {
               py-12
               text-center
 
-              dark:border-[#d6aa72]/15
-              dark:bg-[#d6aa72]/[0.045]
+              dark:border-[#C99444]/15
+              dark:bg-[#C99444]/[0.045]
 
               sm:px-12
               sm:py-16
@@ -1529,7 +1529,7 @@ export const EventDetailPage: React.FC = () => {
                 border
                 border-primary/10
 
-                dark:border-[#d6aa72]/10
+                dark:border-[#C99444]/10
               "
             />
 
@@ -1544,7 +1544,7 @@ export const EventDetailPage: React.FC = () => {
                 border
                 border-primary/10
 
-                dark:border-[#d6aa72]/10
+                dark:border-[#C99444]/10
               "
             />
 

@@ -84,7 +84,7 @@ export const ForceChangePasswordModal: React.FC = () => {
 
         {/* Header Badge & Title */}
         <div className="flex items-center gap-4 border-b border-black/10 dark:border-white/10 pb-5">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#9a6a35]/20 to-[#9a6a35]/5 border border-primary/20 flex items-center justify-center shrink-0 shadow-inner">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6B3A1F]/20 to-[#6B3A1F]/5 border border-primary/20 flex items-center justify-center shrink-0 shadow-inner">
             <KeyRound className="w-7 h-7 text-primary" />
           </div>
           <div>
@@ -215,7 +215,7 @@ export const ForceChangePasswordModal: React.FC = () => {
               type="submit"
               disabled={isSubmitting}
               id="submit-force-change-pwd-btn"
-              className="w-full sm:w-auto px-6 py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-60 font-black rounded-2xl shadow-lg shadow-black/5 transition-all flex items-center justify-center gap-2 cursor-pointer order-1 sm:order-2 active:scale-95"
+              className="w-full sm:w-auto px-6 py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] disabled:opacity-60 font-black rounded-2xl shadow-lg shadow-black/5 transition-all flex items-center justify-center gap-2 cursor-pointer order-1 sm:order-2 active:scale-95"
             >
               {isSubmitting ? (
                 <>

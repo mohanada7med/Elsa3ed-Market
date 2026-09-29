@@ -101,7 +101,7 @@ export const NotificationsPage: React.FC = () => {
                   setAuthModalTab('login');
                   setIsAuthModalOpen(true);
                 }}
-                className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
                 <span>تسجيل الدخول الآن</span>

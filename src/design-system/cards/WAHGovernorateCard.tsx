@@ -50,7 +50,7 @@ export const WAHGovernorateCard: React.FC<WAHGovernorateCardProps> = ({
 
       {/* Governorate Info */}
       <div className="w-full space-y-1">
-        <h3 className="font-bold text-espresso dark:text-cream text-sm group-hover:text-primary dark:group-hover:text-[#d5a56d] transition-colors">
+        <h3 className="font-bold text-espresso dark:text-cream text-sm group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
           محافظة {name}
         </h3>
         <p className="text-[11px] font-bold text-primary dark:text-primary-hover leading-snug">
@@ -62,7 +62,7 @@ export const WAHGovernorateCard: React.FC<WAHGovernorateCardProps> = ({
       </div>
 
       {/* Verified Artisans & Products Count */}
-      <div className="mt-3 pt-2.5 border-t border-black/10 dark:border-white/10 w-full text-[10px] text-black/60 dark:text-white/60 font-medium flex items-center justify-between gap-1 group-hover:text-primary dark:group-hover:text-[#d5a56d] transition-colors">
+      <div className="mt-3 pt-2.5 border-t border-black/10 dark:border-white/10 w-full text-[10px] text-black/60 dark:text-white/60 font-medium flex items-center justify-between gap-1 group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
         <span className="font-bold truncate">
           {sellersCount > 0 ? `${sellersCount} حرفي` : 'ورش قيد التوثيق'}
         </span>

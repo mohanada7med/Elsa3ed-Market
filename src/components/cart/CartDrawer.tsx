@@ -230,7 +230,7 @@ export const CartDrawer: React.FC = () => {
                               setIsCartDrawerOpen(false);
                               navigateToProduct(prodId);
                             }}
-                            className="text-xs font-bold text-espresso dark:text-cream line-clamp-2 cursor-pointer hover:text-primary dark:hover:text-[#d5a56d] leading-snug"
+                            className="text-xs font-bold text-espresso dark:text-cream line-clamp-2 cursor-pointer hover:text-primary dark:hover:text-[#C99444] leading-snug"
                           >
                             {title}
                           </h4>

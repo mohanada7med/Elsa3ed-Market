@@ -537,7 +537,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
       className="w-full h-[100dvh] md:h-[calc(100vh-2rem)] md:max-w-7xl md:mx-auto md:p-3 flex flex-col font-sans select-none text-stone-850 dark:text-stone-100"
       dir="rtl"
     >
-      <div className="w-full h-full bg-[#fdfbf7] dark:bg-[#17120e] border border-amber-900/15 dark:border-amber-900/40 md:rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden relative transition-colors duration-200">
+      <div className="w-full h-full bg-[#FFF9EE] dark:bg-[#1B1009] border border-amber-900/15 dark:border-amber-900/40 md:rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden relative transition-colors duration-200">
 
         {/* الشريط الجانبي لقائمة المحادثات */}
         <aside
@@ -762,7 +762,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
         </aside>
 
         {/* مساحة عرض المحادثة المفتوحة */}
-        <main className={`flex-1 min-w-0 flex flex-col bg-[#faf7f2] dark:bg-[#17120e] h-full transition-colors duration-200 ${!selectedConv ? 'hidden md:flex' : 'flex'}`}>
+        <main className={`flex-1 min-w-0 flex flex-col bg-[#faf7f2] dark:bg-[#1B1009] h-full transition-colors duration-200 ${!selectedConv ? 'hidden md:flex' : 'flex'}`}>
           {selectedConv ? (
             <>
               <div className="px-3 py-2.5 sm:px-4 sm:py-3 border-b border-amber-900/10 dark:border-amber-900/30 flex items-center justify-between bg-[#f2e9dc]/90 dark:bg-[#211a14]/95 backdrop-blur-md shrink-0">
@@ -993,7 +993,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
               )}
 
               {/* حاوية الرسائل */}
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-[#faf7f2] dark:bg-[#17120e]">
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-[#faf7f2] dark:bg-[#1B1009]">
                 <div className="w-full px-3 py-4 sm:px-5 sm:py-5 space-y-3">
 
                   {isLoadingMessages ? (
@@ -1221,7 +1221,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex items-end gap-2 bg-white dark:bg-[#17120e] border border-amber-900/15 dark:border-amber-800/40 focus-within:border-amber-600 dark:focus-within:border-amber-500 rounded-2xl p-1.5 transition shadow-2xs"
+                  className="flex items-end gap-2 bg-white dark:bg-[#1B1009] border border-amber-900/15 dark:border-amber-800/40 focus-within:border-amber-600 dark:focus-within:border-amber-500 rounded-2xl p-1.5 transition shadow-2xs"
                 >
                   <textarea
                     ref={inputRef}
@@ -1240,7 +1240,7 @@ export const ChatView: React.FC<ChatViewProps> = ({ isSellerMode = false }) => {
                   <button
                     type="submit"
                     disabled={(selectedConv.status === 'blocked' && !isAdmin) || !inputText.trim() || isSending}
-                    className="w-10 h-10 bg-gradient-to-tr from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 disabled:opacity-30 disabled:cursor-not-allowed text-white dark:text-[#17120e] font-black rounded-xl transition cursor-pointer flex items-center justify-center shrink-0 active:scale-90 shadow-sm"
+                    className="w-10 h-10 bg-gradient-to-tr from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 disabled:opacity-30 disabled:cursor-not-allowed text-white dark:text-[#1B1009] font-black rounded-xl transition cursor-pointer flex items-center justify-center shrink-0 active:scale-90 shadow-sm"
                     title="إرسال"
                   >
                     <ArrowUp className="w-5 h-5 stroke-[2.5]" />

@@ -271,7 +271,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               setAuthModalTab('login');
               setIsAuthModalOpen(true);
             }}
-            className="w-full py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+            className="w-full py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
           >
             تسجيل الدخول الإداري
           </button>
@@ -428,7 +428,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
       {!selectedGovId && (
         <div className="space-y-8 animate-fadeIn">
           {/* Header banner */}
-          <div className="rounded-[2rem] bg-espresso text-white dark:bg-cream dark:text-black p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-black/10 dark:border-white/10 backdrop-blur-xl">
+          <div className="rounded-[2rem] bg-[#6B3A1F] text-[#FFF9EE] p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 border border-black/10 dark:border-white/10 backdrop-blur-xl">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider">
                 <Landmark className="w-4 h-4" />
@@ -450,7 +450,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   setEditingItem(null);
                   setIsEditModalOpen(true);
                 }}
-                className="flex items-center gap-2 px-5 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-5 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>توثيق محافظة جديدة</span>
@@ -575,7 +575,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedGovId(gov.id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                     >
                       <span>دخول لوحة إدارة {gov.name}</span>
                       <ChevronLeft className="w-4 h-4" />
@@ -640,7 +640,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsActionCenterOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة محتوى سريع</span>
@@ -749,7 +749,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setInternalSearch('');
                   }}
                   className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${isActive
-                      ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                      ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                       : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                 >
@@ -762,7 +762,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
 
           {/* Bulk Actions Floating Bar (Active when items are selected) */}
           {selectedIds.length > 0 && (
-            <div className="bg-espresso text-white dark:bg-cream dark:text-black p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
+            <div className="bg-[#6B3A1F] text-[#FFF9EE] p-3 sm:p-4 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-3 animate-slideUp">
               <div className="flex items-center gap-2 text-xs font-bold">
                 <CheckSquare className="w-4 h-4 text-primary" />
                 <span>تم تحديد {selectedIds.length} عنصر</span>
@@ -840,7 +840,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setEditingItem(null);
                     setIsEditModalOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>إضافة عنصر في هذا القسم</span>
@@ -866,7 +866,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setEditingItem(activeGov);
                     setIsEditModalOpen(true);
                   }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   <Edit className="w-4 h-4" />
                   <span>تحرير الحقول</span>
@@ -1875,7 +1875,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
               type="button"
               disabled={isLinking || crafts.length === 0 || people.length === 0}
               onClick={handleLinkCraftArtisan}
-              className="w-full py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
+              className="w-full py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer disabled:opacity-50"
             >
               {isLinking ? 'جاري الربط...' : 'تثبيت الرابط في قاعدة البيانات'}
             </button>
@@ -3111,7 +3111,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ في MongoDB'}</span>

@@ -159,7 +159,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               <button
                 type="button"
                 onClick={handleOpenLogin}
-                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#855928] text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all"
+                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#3B1E0E] text-white font-bold shadow-lg shadow-[#6B3A1F]/25 transition-all"
               >
                 <span>تسجيل الدخول الآن</span>
                 <ArrowLeft size={18} />
@@ -194,7 +194,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
                 <button
                   type="button"
                   onClick={handleRequestNewLink}
-                  className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 rounded-2xl bg-primary hover:bg-[#855928] text-white font-bold shadow-md shadow-[#9a6a35]/20 transition-all"
+                  className="w-full flex items-center justify-center gap-2 min-h-[48px] px-6 rounded-2xl bg-primary hover:bg-[#3B1E0E] text-white font-bold shadow-md shadow-[#6B3A1F]/20 transition-all"
                 >
                   <span>طلب رابط جديد</span>
                   <ArrowLeft size={18} />
@@ -296,7 +296,7 @@ export const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ initialTok
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#855928] disabled:opacity-60 text-white font-bold shadow-lg shadow-[#9a6a35]/25 transition-all mt-6 cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 min-h-[50px] px-6 rounded-2xl bg-primary hover:bg-[#3B1E0E] disabled:opacity-60 text-white font-bold shadow-lg shadow-[#6B3A1F]/25 transition-all mt-6 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>

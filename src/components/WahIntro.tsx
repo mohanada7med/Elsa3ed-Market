@@ -276,7 +276,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             : 'opacity-0 translate-y-2 pointer-events-none'
                             }`}
                     >
-                        <p className="text-2xl font-black tracking-tight text-[#3d3328] dark:text-[#ede4d8] sm:text-3xl">
+                        <p className="text-2xl font-black tracking-tight text-[#3B1E0E] dark:text-[#FFF9EE] sm:text-3xl">
                             دوس على <span className="text-primary">وه</span>
                         </p>
                         <p className="mt-1.5 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988]">
@@ -302,7 +302,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             <span className="h-px w-6 bg-primary/40" />
                         </div>
 
-                        <h1 className="text-2xl font-black text-[#3d3328] dark:text-[#ede4d8] sm:text-4xl">
+                        <h1 className="text-2xl font-black text-[#3B1E0E] dark:text-[#FFF9EE] sm:text-4xl">
                             نورت بيتك
                         </h1>
                         <h2 className="mt-0.5 text-xl font-black text-primary sm:text-3xl">
@@ -338,7 +338,7 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                                             <span>{pillar.title}</span>
                                         </div>
 
-                                        <p className="text-xs sm:text-sm font-medium text-[#3d3328]/85 dark:text-[#ede4d8]/85 leading-relaxed px-2">
+                                        <p className="text-xs sm:text-sm font-medium text-[#3B1E0E]/85 dark:text-[#FFF9EE]/85 leading-relaxed px-2">
                                             {pillar.subtitle}
                                         </p>
                                     </div>

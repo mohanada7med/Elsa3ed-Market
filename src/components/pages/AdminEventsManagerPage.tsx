@@ -522,7 +522,7 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
                         if (allImgs.length === 0 && event.coverImage) allImgs.push(event.coverImage);
                         openLightbox(allImgs, 0, event.coverImage, event.title);
                       }}
-                      className="px-2.5 py-1 rounded-full bg-black/60 hover:bg-primary hover:text-black backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 border border-white/10 transition-all cursor-pointer shadow-sm"
+                      className="px-2.5 py-1 rounded-full bg-black/60 hover:bg-primary hover:text-[#FFF9EE] backdrop-blur-md text-white text-[10px] font-bold flex items-center gap-1 border border-white/10 transition-all cursor-pointer shadow-sm"
                       title="فتح صور الفعالية بحجم كامل"
                     >
                       <Maximize2 className="w-3 h-3" />

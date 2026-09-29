@@ -272,7 +272,7 @@ export const GovernorateExplorer: React.FC = () => {
       <div className="absolute inset-0 overflow-hidden opacity-[0.5] rounded-[45px] pointer-events-none">
         <NubianGeometricPattern
           variant="tapestry"
-          color="#9a6a35"
+          color="#6B3A1F"
           className="absolute inset-0 opacity-[0.05]"
         />
       </div>
@@ -365,7 +365,7 @@ export const GovernorateExplorer: React.FC = () => {
                   shrink-0 px-4 h-12 rounded-xl text-xs font-bold
                   transition-all duration-200 cursor-pointer
                   ${active
-                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10'
                   }
                 `}
@@ -504,7 +504,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(gov)}
-                    className="h-11 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer"
+                    className="h-11 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] font-bold text-xs flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer"
                   >
                     استكشف
                     <ArrowUpLeft className="w-4 h-4" />
@@ -543,7 +543,7 @@ export const GovernorateExplorer: React.FC = () => {
               setSearchQuery('');
               setSelectedRegion('all');
             }}
-            className="mt-5 px-6 h-11 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs hover:bg-primary transition-colors cursor-pointer"
+            className="mt-5 px-6 h-11 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] font-bold text-xs hover:bg-primary transition-colors cursor-pointer"
           >
             عرض كل المحافظات
           </button>
@@ -684,7 +684,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleExplore(previewGov)}
-                    className="h-12 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black font-bold flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer text-xs"
+                    className="h-12 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] font-bold flex items-center justify-center gap-2 hover:bg-primary dark:hover:bg-primary-hover transition-all cursor-pointer text-xs"
                   >
                     اكتشف المحافظة
                     <ArrowUpLeft className="w-5 h-5" />

@@ -85,7 +85,7 @@ export const CraftsPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -104,8 +104,8 @@ export const CraftsPage: React.FC = () => {
       <div className="bg-espresso text-cream rounded-[2rem] p-6 sm:p-12 shadow-xl relative overflow-hidden border border-black/10 dark:border-white/10">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-[#d5a56d] border border-primary/30 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5 text-[#d5a56d]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-[#C99444] border border-primary/30 text-xs font-bold">
+            <Sparkles className="w-3.5 h-3.5 text-[#C99444]" />
             <span>صَنعة أهالينا وخير أرضنا</span>
           </div>
 
@@ -142,7 +142,7 @@ export const CraftsPage: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="دوّر في أطلس الحرف بالاسم، المادة، القرية أو المحافظة..."
-              className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-[1rem] text-xs sm:text-sm text-espresso dark:text-cream placeholder-[#211d18]/40 dark:placeholder-[#f5f0e7]/40 focus:outline-none focus:border-primary transition-colors"
+              className="w-full pl-3 pr-10 py-3 bg-black/5 dark:bg-cream/5 border border-black/10 dark:border-white/10 rounded-[1rem] text-xs sm:text-sm text-espresso dark:text-cream placeholder-[#3B1E0E]/40 dark:placeholder-[#FFF9EE]/40 focus:outline-none focus:border-primary transition-colors"
             />
             {searchQuery && (
               <button
@@ -282,12 +282,12 @@ export const CraftsPage: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
 
                       <div className="absolute bottom-3 right-3 text-white">
-                        <span className="text-[11px] text-[#d5a56d] font-bold block">الموطن التراثي:</span>
+                        <span className="text-[11px] text-[#C99444] font-bold block">الموطن التراثي:</span>
                         <span className="font-bold text-sm">{fullLocation || story.governorate}</span>
                       </div>
 
                       {story.historyAge && (
-                        <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/60 backdrop-blur-xs rounded-lg text-[#d5a56d] text-[10px] font-bold border border-white/10">
+                        <div className="absolute top-3 right-3 px-2.5 py-1 bg-black/60 backdrop-blur-xs rounded-lg text-[#C99444] text-[10px] font-bold border border-white/10">
                           {story.historyAge}
                         </div>
                       )}
@@ -414,7 +414,7 @@ export const CraftsPage: React.FC = () => {
                           }
                           setActivePage('products');
                         }}
-                        className="w-full sm:w-auto px-6 py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-black rounded-[1.25rem] shadow-lg inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
+                        className="w-full sm:w-auto px-6 py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-black rounded-[1.25rem] shadow-lg inline-flex items-center justify-center gap-2 transition-all hover:scale-[1.01] min-h-[44px] cursor-pointer"
                       >
                         <span>شوف منتجات وقطع {story.title.split('(')[0]}</span>
                         <ArrowLeft className="w-3.5 h-3.5" />

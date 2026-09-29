@@ -313,9 +313,9 @@ export const ProductDetailsView: React.FC = () => {
               rounded-full
               border-4
               border-primary/20
-              border-t-[#9a6a35]
-              dark:border-[#d5a56d]/20
-              dark:border-t-[#d5a56d]
+              border-t-[#6B3A1F]
+              dark:border-[#C99444]/20
+              dark:border-t-[#C99444]
             "
           />
 
@@ -369,7 +369,7 @@ export const ProductDetailsView: React.FC = () => {
               rounded-2xl
               bg-primary/10
               text-primary
-              dark:bg-[#d5a56d]/10
+              dark:bg-[#C99444]/10
               dark:text-primary-hover
             "
           >
@@ -402,8 +402,7 @@ export const ProductDetailsView: React.FC = () => {
               transition
               hover:-translate-y-0.5
               hover:bg-primary
-              dark:bg-cream
-              dark:text-black
+              dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
               dark:hover:bg-primary-hover
               cursor-pointer
             "
@@ -445,7 +444,7 @@ export const ProductDetailsView: React.FC = () => {
             rounded-full
             border
             border-primary/10
-            dark:border-[#d5a56d]/10
+            dark:border-[#C99444]/10
           "
         />
 
@@ -459,7 +458,7 @@ export const ProductDetailsView: React.FC = () => {
             rounded-full
             border
             border-primary/5
-            dark:border-[#d5a56d]/5
+            dark:border-[#C99444]/5
           "
         />
       </div>
@@ -508,7 +507,7 @@ export const ProductDetailsView: React.FC = () => {
                 shrink-0
                 transition
                 hover:text-primary
-                dark:hover:text-[#d5a56d]
+                dark:hover:text-[#C99444]
                 cursor-pointer
               "
             >
@@ -527,7 +526,7 @@ export const ProductDetailsView: React.FC = () => {
                 shrink-0
                 transition
                 hover:text-primary
-                dark:hover:text-[#d5a56d]
+                dark:hover:text-[#C99444]
                 cursor-pointer
               "
             >
@@ -708,7 +707,7 @@ export const ProductDetailsView: React.FC = () => {
                     <span
                       className="
                         rounded-full
-                        bg-[#d5a56d]
+                        bg-[#C99444]
                         px-3
                         py-1
                         text-[9px]
@@ -877,7 +876,7 @@ export const ProductDetailsView: React.FC = () => {
                       sm:h-16
                       sm:w-16
                       ${selectedImageIndex === idx
-                        ? 'border-[#d5a56d] scale-105'
+                        ? 'border-[#C99444] scale-105'
                         : 'border-white/30 opacity-60 hover:opacity-100'
                       }
                     `}
@@ -1021,7 +1020,7 @@ export const ProductDetailsView: React.FC = () => {
                     rounded-2xl
                     bg-primary/10
                     text-primary
-                    dark:bg-[#d5a56d]/10
+                    dark:bg-[#C99444]/10
                     dark:text-primary-hover
                   "
                 >
@@ -1080,7 +1079,7 @@ export const ProductDetailsView: React.FC = () => {
                   transition
                   hover:text-primary
                   dark:text-white/30
-                  dark:hover:text-[#d5a56d]
+                  dark:hover:text-[#C99444]
                   cursor-pointer
                 "
                 title="نسخ كود المنتج"
@@ -1354,7 +1353,7 @@ export const ProductDetailsView: React.FC = () => {
                       type="button"
                       disabled={!product.inStock}
                       onClick={() => addToCart(product, quantity)}
-                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-espresso px-4 text-xs font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-40 dark:bg-cream dark:text-black dark:hover:bg-primary-hover"
+                      className="flex min-h-14 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#6B3A1F] px-4 text-xs font-black text-[#FFF9EE] shadow-lg transition hover:-translate-y-0.5 hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715]"
                     >
                       <ShoppingBag size={18} />
                       <span>حط في السلة</span>
@@ -1371,7 +1370,7 @@ export const ProductDetailsView: React.FC = () => {
                         initialMessage: `السلام عليكم، أود الاستفسار من إدارة المنصة حول عمل "${product.title}" المعروض على سوق وه.`,
                       })
                     }
-                    className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#d5a56d]/20 dark:bg-[#d5a56d]/5 dark:text-primary-hover dark:hover:bg-primary-hover/10"
+                    className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 text-xs font-bold text-[#7b542b] transition hover:bg-primary/10 dark:border-[#C99444]/20 dark:bg-[#C99444]/5 dark:text-primary-hover dark:hover:bg-primary-hover/10"
                   >
                     <MessageSquare size={16} />
                     استفسار لإدارة المنصة حول هذا المنتج
@@ -1430,7 +1429,7 @@ export const ProductDetailsView: React.FC = () => {
                     type="button"
                     disabled={!product.inStock}
                     onClick={() => addToCart(product, quantity)}
-                    className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-espresso px-4 text-xs font-black text-white shadow-lg transition hover:bg-primary dark:bg-cream dark:text-black"
+                    className="flex min-h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#6B3A1F] px-4 text-xs font-black text-[#FFF9EE] shadow-lg transition hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715]"
                   >
                     <ShoppingBag size={18} />
                     <span>شراء القطعة ({totalPrice} ج.م)</span>
@@ -1512,7 +1511,7 @@ export const ProductDetailsView: React.FC = () => {
             border-primary/20
             bg-espresso
             text-white
-            dark:border-[#d5a56d]/20
+            dark:border-[#C99444]/20
           "
         >
           <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center lg:p-10">
@@ -1525,7 +1524,7 @@ export const ProductDetailsView: React.FC = () => {
                   text-[9px]
                   font-black
                   tracking-[0.25em]
-                  text-[#d5a56d]
+                  text-[#C99444]
                 "
               >
                 <Building2 size={14} />
@@ -1557,7 +1556,7 @@ export const ProductDetailsView: React.FC = () => {
                   justify-center
                   gap-2
                   rounded-xl
-                  bg-[#d5a56d]
+                  bg-[#C99444]
                   px-6
                   text-xs
                   font-black
@@ -1655,7 +1654,7 @@ export const ProductDetailsView: React.FC = () => {
                     cursor-pointer
                     sm:px-7
                     ${activeTab === key
-                      ? 'border-b-2 border-primary text-primary dark:border-[#d5a56d] dark:text-primary-hover'
+                      ? 'border-b-2 border-primary text-primary dark:border-[#C99444] dark:text-primary-hover'
                       : 'text-black/40 hover:text-black dark:text-white/40 dark:hover:text-white'
                     }
                   `}
@@ -1758,7 +1757,7 @@ export const ProductDetailsView: React.FC = () => {
                       dark:bg-[#0d0d0c]
                     "
                   >
-                    <div className="flex items-center gap-2 text-[#d5a56d]">
+                    <div className="flex items-center gap-2 text-[#C99444]">
                       <Gem size={17} />
                       <span className="text-xs font-black">
                         هوية القطعة
@@ -1911,7 +1910,7 @@ export const ProductDetailsView: React.FC = () => {
                               rounded-xl
                               bg-primary/10
                               text-primary
-                              dark:bg-[#d5a56d]/10
+                              dark:bg-[#C99444]/10
                               dark:text-primary-hover
                             "
                           >
@@ -1950,7 +1949,7 @@ export const ProductDetailsView: React.FC = () => {
                       dark:bg-[#0d0d0c]
                     "
                   >
-                    <div className="text-[9px] font-black tracking-[0.2em] text-[#d5a56d]">
+                    <div className="text-[9px] font-black tracking-[0.2em] text-[#C99444]">
                       CUSTOMER REVIEWS
                     </div>
 
@@ -2177,8 +2176,7 @@ export const ProductDetailsView: React.FC = () => {
                           text-white
                           transition
                           hover:bg-primary
-                          dark:bg-cream
-                          dark:text-black
+                          dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
                           dark:hover:bg-primary-hover
                           cursor-pointer
                         "
@@ -2352,15 +2350,15 @@ export const ProductDetailsView: React.FC = () => {
                 type="button"
                 onClick={() => setRelatedFilter('all')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'all'
-                  ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                  : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                  ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
+                  : 'bg-black/5 text-[#8C6F53] hover:bg-black/10 dark:bg-[#26160D] dark:text-[#D6C6B1] dark:hover:bg-[#3B1E0E]'
                   }`}
               >
                 <span>كل الحكاية</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'all'
-                    ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                    : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                    ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
+                    : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                     }`}
                 >
                   {allStoryProducts.length}
@@ -2372,16 +2370,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('artisan')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'artisan'
-                    ? 'bg-primary text-white shadow-md dark:bg-primary-hover dark:text-black'
-                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-primary text-white shadow-md dark:bg-[#C99444] dark:text-[#1B1009]'
+                    : 'bg-black/5 text-[#8C6F53] hover:bg-black/10 dark:bg-[#26160D] dark:text-[#D6C6B1] dark:hover:bg-[#3B1E0E]'
                     }`}
                 >
                   <Store size={14} />
                   <span>من ورشة {product.sellerName || 'الحرفي'}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'artisan'
-                      ? 'bg-white/25 text-white dark:text-black'
-                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/25 text-white dark:bg-black/20 dark:text-[#1B1009]'
+                      : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
                     {relatedArtisanProducts.length}
@@ -2394,16 +2392,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('category')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'category'
-                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
+                    : 'bg-black/5 text-[#8C6F53] hover:bg-black/10 dark:bg-[#26160D] dark:text-[#D6C6B1] dark:hover:bg-[#3B1E0E]'
                     }`}
                 >
                   <Layers3 size={14} />
                   <span>من نفس الحرفة</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'category'
-                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
+                      : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
                     {relatedCategoryProducts.length}
@@ -2416,16 +2414,16 @@ export const ProductDetailsView: React.FC = () => {
                   type="button"
                   onClick={() => setRelatedFilter('governorate')}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${relatedFilter === 'governorate'
-                    ? 'bg-espresso text-white shadow-md dark:bg-cream dark:text-espresso'
-                    : 'bg-black/5 text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
+                    : 'bg-black/5 text-[#8C6F53] hover:bg-black/10 dark:bg-[#26160D] dark:text-[#D6C6B1] dark:hover:bg-[#3B1E0E]'
                     }`}
                 >
                   <MapPin size={14} />
                   <span>من أرض {product.sellerGovernorate}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${relatedFilter === 'governorate'
-                      ? 'bg-white/20 dark:bg-black/20 text-white dark:text-espresso'
-                      : 'bg-black/10 dark:bg-white/10 text-black/60 dark:text-white/60'
+                      ? 'bg-white/20 text-[#FFF9EE] dark:bg-white/20 dark:text-[#FFF9EE]'
+                      : 'bg-black/10 text-[#8C6F53] dark:bg-white/10 dark:text-[#D6C6B1]'
                       }`}
                   >
                     {relatedGovernorateProducts.length}
@@ -2458,7 +2456,7 @@ export const ProductDetailsView: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => navigateToSeller(product.sellerId || product.sellerName || '')}
-                    className="inline-flex items-center gap-2 rounded-xl bg-espresso px-4 py-2.5 text-xs font-bold text-white transition hover:bg-primary dark:bg-cream dark:text-black dark:hover:bg-primary-hover cursor-pointer shrink-0 shadow-sm"
+                    className="inline-flex items-center gap-2 rounded-xl bg-espresso px-4 py-2.5 text-xs font-bold text-white transition hover:bg-primary dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-primary-hover cursor-pointer shrink-0 shadow-sm"
                   >
                     <span>زيارة ورشة الحرفي</span>
                     <ArrowUpLeft size={14} />

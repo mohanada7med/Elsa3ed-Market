@@ -478,7 +478,7 @@ export const CraftReelsPage: React.FC = () => {
                 <br />
                 <div
                   className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${isSelected
-                    ? 'bg-gradient-to-tr from-[#9a6a35] via-amber-500 to-rose-500 ring-2 ring-primary/40 scale-105'
+                    ? 'bg-gradient-to-tr from-[#6B3A1F] via-amber-500 to-rose-500 ring-2 ring-primary/40 scale-105'
                     : 'bg-black/10 dark:bg-cream/10 group-hover:bg-primary/40'
                     }`}
                 >
@@ -596,9 +596,9 @@ export const CraftReelsPage: React.FC = () => {
       dark:border-white/10
       dark:bg-white/[0.05]
       dark:text-cream
-      dark:hover:border-[#d5a56d]/30
-      dark:focus:border-[#d5a56d]/60
-      dark:focus:ring-[#d5a56d]/10
+      dark:hover:border-[#C99444]/30
+      dark:focus:border-[#C99444]/60
+      dark:focus:ring-[#C99444]/10
     "
               >
                 <option
@@ -752,7 +752,7 @@ export const CraftReelsPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={(e) => handleQuickAdd(e, reel)}
-                              className="p-1.5 bg-primary hover:bg-[#744e26] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
+                              className="p-1.5 bg-primary hover:bg-[#3B1E0E] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
                               title="شراء فوري للمنتج"
                             >
                               <ShoppingBag className="w-3.5 h-3.5" />
@@ -780,7 +780,7 @@ export const CraftReelsPage: React.FC = () => {
                     setSelectedContentType('all');
                     setSearchQuery('');
                   }}
-                  className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] text-xs font-bold rounded-xl cursor-pointer"
                 >
                   إعادة تعيين الفلاتر
                 </button>
@@ -809,7 +809,7 @@ export const CraftReelsPage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#C99444]">
                   UPPER EGYPT STORIES
                 </div>
                 <h2
@@ -824,7 +824,7 @@ export const CraftReelsPage: React.FC = () => {
                 >
                   الصعيد مش مكان...
                   <br />
-                  <span className="text-[#d5a56d]">دي حكايات بتتعايش.</span>
+                  <span className="text-[#C99444]">دي حكايات بتتعايش.</span>
                 </h2>
               </div>
 
@@ -837,7 +837,7 @@ export const CraftReelsPage: React.FC = () => {
                   className="inline-flex w-fit items-center gap-2
              rounded-full bg-espresso px-3 py-2
              font-bold text-white shadow-lg transition-all
-             hover:bg-primary dark:bg-cream dark:text-black
+             hover:bg-primary dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
              dark:hover:bg-primary dark:hover:text-white
              cursor-pointer text-sm"
                 >
@@ -924,7 +924,7 @@ export const CraftReelsPage: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <LogIn className="w-4 h-4" />
                       <span>تسجيل الدخول كبائع</span>
@@ -950,7 +950,7 @@ export const CraftReelsPage: React.FC = () => {
                         setPermissionAlert((prev) => ({ ...prev, isOpen: false }));
                         setActivePage('sellers');
                       }}
-                      className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Store className="w-4 h-4" />
                       <span>التقديم لفتح ورشة بائع</span>

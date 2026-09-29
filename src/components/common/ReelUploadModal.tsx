@@ -309,12 +309,12 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="relative w-full max-w-5xl bg-white dark:bg-[#261E19] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden my-2 sm:my-6 max-h-[94vh] flex flex-col"
+        className="relative w-full max-w-5xl bg-white dark:bg-[#26160D] rounded-2xl sm:rounded-3xl shadow-2xl border border-black/10 dark:border-white/10 overflow-hidden my-2 sm:my-6 max-h-[94vh] flex flex-col"
       >
         {/* Header */}
-        <div className="p-4 sm:p-6 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-black/5 via-white/80 to-black/5 dark:from-[#151513] dark:via-[#1c1c19] dark:to-[#151513] shrink-0">
+        <div className="p-4 sm:p-6 border-b border-black/10 dark:border-white/10 flex items-center justify-between bg-gradient-to-r from-black/5 via-white/80 to-black/5 dark:from-[#1B1009] dark:via-[#26160D] dark:to-[#1B1009] shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-[#E07A5F] shadow-inner shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary dark:text-[#E66A2E] shadow-inner shrink-0">
               <Film className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
@@ -326,7 +326,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                   Upper Egypt Stories
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mt-0.5 line-clamp-1 sm:line-clamp-none">
+              <p className="text-[11px] sm:text-xs text-black/60 dark:text-white/60 dark:text-[#D6C6B1] mt-0.5 line-clamp-1 sm:line-clamp-none">
                 شارك معالم الصعيد، تراثه، أسواقه، أكلاته، أو حكايات ناسه وحرفه مع الجميع
               </p>
             </div>
@@ -349,10 +349,10 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
             </div>
 
             <div className="max-w-lg space-y-2">
-              <h3 className="text-lg sm:text-2xl font-black text-[#2D2A26] dark:text-[#FAF6F2] font-heritage">
+              <h3 className="text-lg sm:text-2xl font-black text-[#3B1E0E] dark:text-[#FFF9EE] font-heritage">
                 رفع مقاطع الفيديو مخصص للحرفيين وأصحاب الورش فقط
               </h3>
-              <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 leading-relaxed">
+              <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1] leading-relaxed">
                 {isGuestUser
                   ? 'عفواً، لا يمكنك رفع ونشر مقاطع الفيديو بدون تسجيل الدخول بحساب بائع أو حرفي معتمد في سوق الصعيد.'
                   : 'حسابك الحالي مسجل كـ "مشتري". لنشر مقاطع كواليس ورشتك وربط منتجاتك بفيديوهات تفاعلية، يرجى التقديم لفتح ورشة بائع.'}
@@ -370,7 +370,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       setAuthModalTab('login');
                       setIsAuthModalOpen(true);
                     }}
-                    className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
+                    className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
                   >
                     <LogIn className="w-4 h-4" />
                     <span>تسجيل الدخول كبائع</span>
@@ -397,7 +397,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                       onClose();
                       setActivePage('sellers');
                     }}
-                    className="w-full py-3 px-4 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
+                    className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs sm:text-sm font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer min-h-[44px] transition-all"
                   >
                     <Store className="w-4 h-4" />
                     <span>التقديم لفتح ورشة بائع</span>
@@ -421,8 +421,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('form')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'form'
-                    ? 'bg-white dark:bg-[#261E19] text-primary dark:text-[#E07A5F] shadow-xs'
-                    : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
+                    ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                    : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
                 <Layers className="w-3.5 h-3.5" />
@@ -432,8 +432,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 type="button"
                 onClick={() => setMobileTab('preview')}
                 className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer min-h-[40px] ${mobileTab === 'preview'
-                    ? 'bg-white dark:bg-[#261E19] text-primary dark:text-[#E07A5F] shadow-xs'
-                    : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50'
+                    ? 'bg-white dark:bg-[#26160D] text-primary dark:text-[#E66A2E] shadow-xs'
+                    : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1]'
                   }`}
               >
                 <Eye className="w-3.5 h-3.5" />
@@ -465,8 +465,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('upload')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'upload'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E07A5F] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1A1614]'
+                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <Upload className="w-4 h-4" />
@@ -477,8 +477,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('url')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'url'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E07A5F] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1A1614]'
+                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <LinkIcon className="w-4 h-4" />
@@ -489,8 +489,8 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                         type="button"
                         onClick={() => setSourceType('preset')}
                         className={`py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border text-[11px] sm:text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer min-h-[44px] justify-center ${sourceType === 'preset'
-                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E07A5F] shadow-xs'
-                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1A1614]'
+                            ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E] shadow-xs'
+                            : 'border-black/10 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#26160D]'
                           }`}
                       >
                         <Sparkles className="w-4 h-4 text-amber-500" />
@@ -574,7 +574,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             type="button"
                             onClick={() => handleSelectPreset(preset)}
                             className={`p-2.5 rounded-2xl border text-right transition-all flex items-center gap-2 cursor-pointer ${videoUrl === preset.videoUrl
-                                ? 'border-primary bg-primary/10 text-primary dark:text-[#E07A5F]'
+                                ? 'border-primary bg-primary/10 text-primary dark:text-[#E66A2E]'
                                 : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 text-espresso dark:text-cream hover:border-primary/50'
                               }`}
                           >
@@ -736,7 +736,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             value={productTitle}
                             onChange={(e) => setProductTitle(e.target.value)}
                             placeholder="مثال: طاجن فخار قناوي حراري مزجج"
-                            className="w-full px-3 py-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
+                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs text-espresso dark:text-cream outline-none focus:border-primary"
                           />
                         </div>
 
@@ -748,7 +748,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             type="number"
                             value={productPrice}
                             onChange={(e) => setProductPrice(Number(e.target.value))}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary"
+                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs font-bold text-primary outline-none focus:border-primary"
                           />
                         </div>
 
@@ -760,7 +760,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                             type="number"
                             value={productOriginalPrice}
                             onChange={(e) => setProductOriginalPrice(Number(e.target.value))}
-                            className="w-full px-3 py-2 bg-white dark:bg-[#261E19] border border-black/10 dark:border-white/10 rounded-xl text-xs text-gray-500 outline-none focus:border-primary"
+                            className="w-full px-3 py-2 bg-white dark:bg-[#26160D] border border-black/10 dark:border-white/10 rounded-xl text-xs text-gray-500 outline-none focus:border-primary"
                           />
                         </div>
                       </div>
@@ -771,7 +771,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 {/* Right Column: Live Interactive 9:16 Feed Preview Mockup */}
                 <div className={`lg:col-span-5 flex flex-col items-center justify-start space-y-4 ${mobileTab === 'form' ? 'hidden lg:flex' : 'flex'}`}>
                   <div className="w-full flex items-center justify-between">
-                    <span className="text-xs font-bold text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-black/60 dark:text-white/60 dark:text-[#D6C6B1] flex items-center gap-1.5">
                       <Eye className="w-4 h-4 text-primary" />
                       معاينة مباشرة كما ستظهر للجمهور:
                     </span>
@@ -873,7 +873,7 @@ export const ReelUploadModal: React.FC<ReelUploadModalProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#9a6a35] to-[#7d5427] hover:from-[#7d5427] hover:to-[#623f1a] text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer min-h-[44px]"
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#6B3A1F] to-[#3B1E0E] hover:from-[#3B1E0E] hover:to-[#26160D] text-white text-xs sm:text-sm font-bold shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer min-h-[44px]"
                 >
                   {isSubmitting ? (
                     <>

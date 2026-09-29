@@ -665,7 +665,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           <label className="block text-xs sm:text-sm font-bold text-espresso dark:text-cream">
             {label}
             {multiple && (
-              <span className="text-[11px] font-normal text-black/50 dark:text-white/50 dark:text-black/50 dark:text-white/50 mr-1.5">
+              <span className="text-[11px] font-normal text-black/50 dark:text-white/50 dark:text-[#D6C6B1] mr-1.5">
                 ({currentItems.length} من {maxFiles} {mediaCategory === 'video' ? 'فيديوهات' : 'وسائط'})
               </span>
             )}
@@ -750,7 +750,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           onClick={() => setActiveMode('device')}
           className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${activeMode === 'device'
             ? 'bg-white dark:bg-[#2C241F] text-primary dark:text-primary-hover shadow-xs'
-            : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-espresso'
+            : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1] hover:text-espresso'
             }`}
         >
           <Upload className="w-4 h-4 shrink-0" />
@@ -762,7 +762,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
           onClick={() => setActiveMode('url')}
           className={`flex-1 min-h-[44px] px-3 py-2 rounded-lg text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${activeMode === 'url'
             ? 'bg-white dark:bg-[#2C241F] text-primary dark:text-primary-hover shadow-xs'
-            : 'text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 hover:text-espresso'
+            : 'text-black/60 dark:text-white/60 dark:text-[#D6C6B1] hover:text-espresso'
             }`}
         >
           <LinkIcon className="w-4 h-4 shrink-0" />
@@ -824,7 +824,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                   if (isAdmin && !disabled && !isUploading) fileInputRef.current?.click();
                 }}
                 disabled={disabled || !isAdmin || isUploading}
-                className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
               >
                 {mediaCategory === 'video' ? (
                   <>
@@ -847,7 +847,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* STAGING AREA: Local Previews with Real Progress & Retry */}
       {stagedFiles.length > 0 && (
-        <div className="mb-4 p-3 sm:p-5 rounded-2xl border-2 border-primary bg-[#FFFBF7] dark:bg-[#261E1A] shadow-md space-y-3.5">
+        <div className="mb-4 p-3 sm:p-5 rounded-2xl border-2 border-primary bg-[#FFF9EE] dark:bg-[#261E1A] shadow-md space-y-3.5">
           {/* Header with counter and cancel */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-black/10 dark:border-white/10 dark:border-[#3D332A]">
             <div className="space-y-0.5">
@@ -961,7 +961,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 </div>
 
                 {/* Status indicator and Retry */}
-                <div className="pt-1.5 border-t border-[#F0EAE1] dark:border-[#2C2420] flex items-center justify-between gap-2">
+                <div className="pt-1.5 border-t border-[#E0C79B]/40 dark:border-[#6B3A1F]/50 flex items-center justify-between gap-2">
                   <div className="text-[11px] font-bold">
                     {sf.status === 'pending' && (
                       <span className="text-black/50 dark:text-white/50 flex items-center gap-1">
@@ -1031,7 +1031,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
               type="button"
               onClick={executeStagedUpload}
               disabled={isUploading}
-              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto min-h-[44px] px-6 py-2.5 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer disabled:opacity-50"
             >
               {isUploading ? (
                 <>
@@ -1051,7 +1051,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* REPLACEMENT STAGING MODAL: Preview Before Replace */}
       {stagedReplacement && stagedReplacement.localPreviewUrl && (
-        <div className="mb-4 p-4 rounded-2xl border-2 border-primary bg-[#FFFBF7] dark:bg-[#261E1A] shadow-lg space-y-3">
+        <div className="mb-4 p-4 rounded-2xl border-2 border-primary bg-[#FFF9EE] dark:bg-[#261E1A] shadow-lg space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10 dark:border-[#3D332A]">
             <span className="text-xs sm:text-sm font-bold text-primary dark:text-primary-hover flex items-center gap-1.5">
               <RefreshCw className="w-4 h-4" />
@@ -1164,7 +1164,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
 
       {/* Alt Text Input (for SEO & Accessibility) */}
       <div className="mb-3">
-        <label className="block text-[11px] sm:text-xs font-semibold text-black/60 dark:text-white/60 dark:text-black/50 dark:text-white/50 mb-1">
+        <label className="block text-[11px] sm:text-xs font-semibold text-black/60 dark:text-white/60 dark:text-[#D6C6B1] mb-1">
           النص البديل المعبر (Alt Text) للتوثيق ومحركات البحث
         </label>
         <div className="relative">
@@ -1313,7 +1313,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 <div
                   key={img.item?.id || `${img.url}-${idx}`}
                   className={`relative rounded-2xl overflow-hidden border transition-all ${isPrimary
-                    ? 'border-primary shadow-xs dark:border-[#d5a56d]/60 bg-[#FFFBF7] dark:bg-black/5 dark:bg-cream/5'
+                    ? 'border-primary shadow-xs dark:border-[#C99444]/60 bg-[#FFF9EE] dark:bg-black/5 dark:bg-cream/5'
                     : 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-cream/5 dark:bg-black/5 dark:bg-cream/5'
                     } p-3 flex flex-col justify-between gap-2.5`}
                 >
@@ -1475,7 +1475,7 @@ export const AdminMediaUploader: React.FC<AdminMediaUploaderProps> = ({
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-sm text-espresso dark:text-[#FAF6F2]">
+                <h4 className="font-bold text-sm text-espresso dark:text-[#FFF9EE]">
                   تأكيد حذف الوسيط
                 </h4>
                 <p className="text-[11px] text-black/60 dark:text-white/60">

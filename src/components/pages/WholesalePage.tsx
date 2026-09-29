@@ -98,7 +98,7 @@ export const WholesalePage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -109,18 +109,18 @@ export const WholesalePage: React.FC = () => {
       {/* Hero Section */}
       <div className="relative rounded-[2rem] overflow-hidden bg-espresso text-cream p-6 sm:p-12 border border-black/10 dark:border-white/10 shadow-xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#d5a56d]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#C99444]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-[#d5a56d] border border-primary/30 text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-[#C99444] border border-primary/30 text-xs font-bold">
               <Building2 className="w-4 h-4" />
               <span>قطاع الأعمال، الفنادق، والبازارات السياحية</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif leading-tight tracking-tight text-white">
               توريدات الحرف الصعيدية الأصيلة <br />
-              <span className="text-[#d5a56d]">بأسعار الورش المباشرة</span>
+              <span className="text-[#C99444]">بأسعار الورش المباشرة</span>
             </h1>
 
             <p className="text-sm sm:text-base text-cream/80 leading-relaxed max-w-2xl font-light">
@@ -130,7 +130,7 @@ export const WholesalePage: React.FC = () => {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#quotation-form"
-                className="px-7 py-3.5 rounded-[1.25rem] bg-primary hover:bg-primary-hover text-white font-black text-sm shadow-lg shadow-[#9a6a35]/30 transition-all hover:scale-105 flex items-center gap-2"
+                className="px-7 py-3.5 rounded-[1.25rem] bg-primary hover:bg-primary-hover text-white font-black text-sm shadow-lg shadow-[#6B3A1F]/30 transition-all hover:scale-105 flex items-center gap-2"
               >
                 <FileText className="w-4 h-4" />
                 <span>طلب عرض أسعار فوري</span>
@@ -150,7 +150,7 @@ export const WholesalePage: React.FC = () => {
 
           <div className="lg:col-span-5 grid grid-cols-2 gap-3.5">
             <div className="bg-white/5 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/10 text-center space-y-2">
-              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-[#d5a56d] flex items-center justify-center mx-auto">
+              <div className="w-10 h-10 rounded-xl bg-amber-400/20 text-[#C99444] flex items-center justify-center mx-auto">
                 <TrendingDown className="w-5 h-5" />
               </div>
               <p className="text-xl sm:text-2xl font-black text-white">خصم حتى 40%</p>
@@ -334,7 +334,7 @@ export const WholesalePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-black rounded-xl transition-colors cursor-pointer"
+                  className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-black rounded-xl transition-colors cursor-pointer"
                 >
                   إرسال طلب إضافي
                 </button>
@@ -489,7 +489,7 @@ export const WholesalePage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 px-6 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-50 font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[50px]"
+                  className="w-full py-4 px-6 rounded-[1.25rem] bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] disabled:opacity-50 font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[50px]"
                 >
                   <Send className="w-4 h-4" />
                   <span>{isSubmitting ? 'جاري التجهيز...' : 'إرسال طلب عرض السعر ومتابعته عبر واتساب'}</span>

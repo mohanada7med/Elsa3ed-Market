@@ -16,17 +16,17 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-cream dark:bg-espresso-900 flex items-center justify-center p-4" dir="rtl">
-      <div className="max-w-md w-full bg-white/80 dark:bg-espresso-900/90 backdrop-blur-xl rounded-3xl shadow-xl border border-black/10 dark:border-white/10 p-8 text-center">
-        <div className="w-16 h-16 bg-primary/15 text-primary dark:text-primary-hover rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
+    <div className="min-h-screen bg-[#FFF9EE] dark:bg-[#1B1009] flex items-center justify-center p-4" dir="rtl">
+      <div className="max-w-md w-full bg-[#F8EBD7] dark:bg-[#3B1E0E] backdrop-blur-xl rounded-3xl shadow-xl border border-[#E0C79B] dark:border-[#6B3A1F] p-8 text-center">
+        <div className="w-16 h-16 bg-primary/15 text-primary dark:text-[#C99444] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-primary/20">
           <AlertTriangle className="w-8 h-8" aria-hidden="true" />
         </div>
 
-        <h1 className="text-2xl font-bold text-espresso dark:text-cream mb-2 font-serif">
+        <h1 className="text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] mb-2 font-serif">
           عذراً، حدث خطأ غير متوقع
         </h1>
 
-        <p className="text-black/60 dark:text-white/60 text-sm mb-6 leading-relaxed">
+        <p className="text-[#8C6F53] dark:text-[#D6C6B1] text-sm mb-6 leading-relaxed">
           واجهت المنصة مشكلة مؤقتة أثناء معالجة الصفحة. لقد تم تسجيل هذا الخطأ لحله في أقرب وقت.
         </p>
 
@@ -35,7 +35,7 @@ export default function ErrorPage({
             id="app-error-reload-btn"
             type="button"
             onClick={() => reset()}
-            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold transition-colors shadow-sm cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#6B3A1F] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-[#FFF9EE] px-5 py-2.5 rounded-xl font-bold transition-colors shadow-sm cursor-pointer"
           >
             <RefreshCw className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>إعادة تحميل الصفحة</span>
@@ -44,7 +44,7 @@ export default function ErrorPage({
           <Link
             id="app-error-home-btn"
             href="/"
-            className="flex items-center justify-center gap-2 bg-black/5 dark:bg-cream/5 hover:bg-black/10 dark:hover:bg-white/10 text-espresso dark:text-cream px-5 py-2.5 rounded-xl font-bold transition-colors border border-black/10 dark:border-white/10 cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#FFF9EE] dark:bg-[#26160D] hover:bg-[#F8EBD7] dark:hover:bg-[#4A2715] text-[#3B1E0E] dark:text-[#FFF9EE] px-5 py-2.5 rounded-xl font-bold transition-colors border border-[#E0C79B] dark:border-[#6B3A1F] cursor-pointer"
           >
             <Home className="w-4 h-4 shrink-0" aria-hidden="true" />
             <span>العودة للرئيسية</span>

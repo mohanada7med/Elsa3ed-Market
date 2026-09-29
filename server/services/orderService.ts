@@ -443,7 +443,7 @@ export async function cancelBuyerOrder(
     throw new Error('الطلب غير موجود');
   }
 
-  if (order.status !== 'pending' && order.status !== 'review') {
+  if (order.status !== 'pending' && order.status !== 'review' && order.status !== 'confirmed') {
     throw new Error('لا يمكن إلغاء الطلب بعد أن بدأ الحرفي بتجهيزه أو شحنه');
   }
 

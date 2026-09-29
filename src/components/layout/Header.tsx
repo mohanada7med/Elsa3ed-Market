@@ -141,7 +141,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         }}
         className="relative flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full transition-all hover:scale-105 active:scale-95 sm:h-10 sm:w-10 lg:h-11 lg:w-11 cursor-pointer"
         style={{
-          backgroundColor: open ? '#9a6a35' : hoverBg,
+          backgroundColor: open ? '#E66A2E' : hoverBg,
           color: open ? '#fff' : mainText,
         }}
       >
@@ -150,7 +150,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           <span
             className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold"
             style={{
-              backgroundColor: '#9a6a35',
+              backgroundColor: '#E66A2E',
               color: '#fff',
             }}
           >
@@ -193,7 +193,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                   {displayCount > 0 && (
                     <span
                       className="rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
-                      style={{ backgroundColor: '#9a6a35' }}
+                      style={{ backgroundColor: '#E66A2E' }}
                     >
                       {displayCount} جديد
                     </span>
@@ -204,7 +204,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     type="button"
                     onClick={() => markAllNotificationsAsRead()}
                     className="flex items-center gap-1 text-xs font-semibold cursor-pointer hover:underline"
-                    style={{ color: '#9a6a35' }}
+                    style={{ color: '#C99444' }}
                   >
                     <Check size={13} />
                     <span>تحديد الكل كمقروء</span>
@@ -248,8 +248,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                           borderColor,
                           backgroundColor: isUnread
                             ? isDark
-                              ? 'rgba(154,106,53,0.12)'
-                              : 'rgba(154,106,53,0.06)'
+                              ? 'rgba(201,148,68,0.15)'
+                              : 'rgba(201,148,68,0.06)'
                             : 'transparent',
                         }}
                       >
@@ -257,9 +257,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                           className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
                           style={{
                             backgroundColor: isDark
-                              ? 'rgba(154,106,53,0.16)'
-                              : 'rgba(154,106,53,0.10)',
-                            color: '#9a6a35',
+                              ? 'rgba(201,148,68,0.18)'
+                              : 'rgba(201,148,68,0.10)',
+                            color: '#C99444',
                           }}
                         >
                           <Bell size={16} />
@@ -272,7 +272,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                             {isUnread && (
                               <span
                                 className="mt-1 h-2 w-2 shrink-0 rounded-full"
-                                style={{ backgroundColor: '#9a6a35' }}
+                                style={{ backgroundColor: '#E66A2E' }}
                               />
                             )}
                           </div>
@@ -322,7 +322,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     setOpen(false);
                     setActivePage('notifications');
                   }}
-                  className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-primary text-white hover:bg-[#744e26]"
+                  className="flex-1 rounded-xl py-2 text-xs font-bold text-center transition-colors cursor-pointer bg-primary text-white hover:bg-[#3B1E0E]"
                 >
                   شوف كل الإشعارات
                 </button>
@@ -363,7 +363,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'تعالى نمشي مع عم وه في خريطة الصعيد ونكتشف كل محافظة وقرية ومكان له حكاية.',
     avatar: '/mascot/saaed.png',
     badge: 'جولة عم وه',
-    accentColor: '#9a6a35',
+    accentColor: '#C99444',
   },
 
   places: {
@@ -371,7 +371,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'جولة بين المعابد والمقابر والبيوت والأماكن القديمة اللي لسه بتحكي حكايات أهلها.',
     avatar: '/mascot/make.png',
     badge: 'جولة عم وه',
-    accentColor: '#b45f42',
+    accentColor: '#E66A2E',
   },
 
   people: {
@@ -379,7 +379,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'نتعرف مع عم وه على شخصيات وناس من الصعيد، وكل واحد منهم وراه حكاية تستاهل تتحكي.',
     avatar: '/mascot/fan.png',
     badge: 'جولة عم وه',
-    accentColor: '#9a6a35',
+    accentColor: '#C99444',
   },
 
   food: {
@@ -387,7 +387,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'جولة مع عم وه في أكلات الصعيد ووصفاته وحكايات الأكل اللي اتنقلت من جيل لجيل.',
     avatar: '/mascot/foods.png',
     badge: 'جولة عم وه',
-    accentColor: '#d6aa72',
+    accentColor: '#C99444',
   },
 
   events: {
@@ -395,7 +395,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'نلف مع عم وه في الموالد والمواسم والاحتفالات والعادات اللي بتجمع أهل الصعيد.',
     avatar: '/mascot/events.png',
     badge: 'جولة عم وه',
-    accentColor: '#b45f42',
+    accentColor: '#E66A2E',
   },
 
   reels: {
@@ -403,7 +403,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'حكايات قصيرة من قلب الصعيد، أماكن وناس وحرف بنشوفها مع عم وه بطريقة مختلفة.',
     avatar: '/mascot/reels.png',
     badge: 'حكايات عم وه',
-    accentColor: '#9a6a35',
+    accentColor: '#C99444',
   },
 
   sellers: {
@@ -411,7 +411,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'جولة بين ورش وحرفيي الصعيد، نشوف الصنعة وهي بتتعمل ونسمع حكاية كل صاحب حرفة.',
     avatar: '/mascot/pro.png',
     badge: 'جولة عم وه',
-    accentColor: '#9a6a35',
+    accentColor: '#C99444',
   },
 
   categories: {
@@ -419,7 +419,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'تعالى مع عم وه نتعرف على حرف الصعيد وخاماته، من الفخار والتلي للنسيج والجريد.',
     avatar: '/mascot/fav.png',
     badge: 'جولة عم وه',
-    accentColor: '#d6aa72',
+    accentColor: '#C99444',
   },
 
   quize: {
@@ -427,7 +427,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'فاكر إنك صعيدي أصيل؟ عم وه هيختبرك في اللهجة والكلمات والأمثال ومعانيها.',
     avatar: '/mascot/quiz.png',
     badge: 'تحدي عم وه',
-    accentColor: '#b45f42',
+    accentColor: '#E66A2E',
   },
 
   quiz: {
@@ -435,7 +435,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'فاكر إنك صعيدي أصيل؟ عم وه هيختبرك في اللهجة والكلمات والأمثال ومعانيها.',
     avatar: '/mascot/quiz.png',
     badge: 'تحدي عم وه',
-    accentColor: '#b45f42',
+    accentColor: '#E66A2E',
   },
 
   about: {
@@ -443,7 +443,7 @@ const WAH_PORTALS_PREVIEW: Record<string, PortalPreviewItem> = {
     desc: 'اقعد مع عم وه واعرف حكاية وَه، وليه بنوثق تراث الصعيد وحكاياته ونوصلها لكل الناس.',
     avatar: '/mascot/logo.png',
     badge: 'حكاية عم وه',
-    accentColor: '#9a6a35',
+    accentColor: '#C99444',
   },
 };
 /* =========================================================
@@ -761,10 +761,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
      COLORS
      ========================================================= */
   const isDark = theme === 'dark';
-  const mainText = isDark ? '#f5f0e7' : '#211d18';
-  const secondaryText = isDark ? '#b3a59a' : '#76675b';
-  const borderColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.10)';
-  const hoverBg = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.05)';
+  const mainText = isDark ? '#FFF9EE' : '#3B1E0E';
+  const secondaryText = isDark ? '#D6C6B1' : '#8C6F53';
+  const borderColor = isDark ? '#6B3A1F' : '#E0C79B';
+  const hoverBg = isDark ? 'rgba(74, 39, 21, 0.45)' : 'rgba(248, 235, 215, 0.7)';
 
   return (
     <>
@@ -773,8 +773,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         className={`sticky top-0 z-[100] w-full overflow-visible backdrop-blur-2xl transition-colors duration-500 shadow-sm ${className}`}
         style={{
           backgroundColor: isDark
-            ? 'rgba(11, 11, 10, 0.9)'
-            : 'rgba(238, 232, 220, 0.9)',
+            ? 'rgba(27, 16, 9, 0.95)'
+            : 'rgba(255, 249, 238, 0.95)',
           color: mainText,
           borderBottom: `1px solid ${borderColor}`,
         }}
@@ -921,7 +921,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     cursor-pointer
                   "
                   style={{
-                    color: activePage === 'home' ? '#9a6a35' : mainText,
+                    color: activePage === 'home' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
                   }}
                 >
                   الرئيسية
@@ -938,7 +938,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     cursor-pointer
                   "
                   style={{
-                    color: activePage === 'products' ? '#9a6a35' : mainText,
+                    color: activePage === 'products' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
                   }}
                 >
                   المنتجات
@@ -956,7 +956,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     cursor-pointer
                   "
                   style={{
-                    color: activePage === 'map' ? '#9a6a35' : mainText,
+                    color: activePage === 'map' ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
                   }}
                 >
                   محافظات الصعيد
@@ -969,8 +969,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       font-black
                     "
                     style={{
-                      backgroundColor: '#9a6a35',
-                      color: '#fff',
+                      backgroundColor: '#E66A2E',
+                      color: '#FFF9EE',
                     }}
                   >
                     جديد
@@ -1189,8 +1189,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           font-bold
                         "
                         style={{
-                          backgroundColor: '#9a6a35',
-                          color: '#fff',
+                          backgroundColor: '#E66A2E',
+                          color: '#FFF9EE',
                         }}
                       >
                         {favorites.length > 99 ? '99+' : favorites.length}
@@ -1245,8 +1245,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           font-bold
                         "
                         style={{
-                          backgroundColor: '#9a6a35',
-                          color: '#fff',
+                          backgroundColor: '#E66A2E',
+                          color: '#FFF9EE',
                         }}
                       >
                         {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
@@ -1320,8 +1320,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           font-bold
                         "
                         style={{
-                          backgroundColor: '#9a6a35',
-                          color: '#fff',
+                          backgroundColor: '#E66A2E',
+                          color: '#FFF9EE',
                         }}
                       >
                         {cartCount > 99 ? '99+' : cartCount}
@@ -1373,11 +1373,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       style={{
                         backgroundColor: userDropdownOpen
                           ? isDark
-                            ? 'rgba(154, 106, 53, 0.18)'
-                            : 'rgba(154, 106, 53, 0.12)'
+                            ? 'rgba(201, 148, 68, 0.20)'
+                            : 'rgba(201, 148, 68, 0.12)'
                           : hoverBg,
                         borderColor: userDropdownOpen
-                          ? '#9a6a35'
+                          ? '#C99444'
                           : borderColor,
                         color: mainText,
                       }}
@@ -1413,7 +1413,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             bg-emerald-500
                             ring-2
                             ring-white
-                            dark:ring-[#121210]
+                            dark:ring-[#1B1009]
                           "
                         />
                       </div>
@@ -1577,7 +1577,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                       bg-emerald-500
                                       ring-2
                                       ring-white
-                                      dark:ring-[#151513]
+                                      dark:ring-[#1B1009]
                                     "
                                   />
                                 </div>
@@ -1870,8 +1870,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                   font-bold
                                   cursor-pointer
                                   transition-colors
-                                  hover:bg-[#b45f42]/10
-                                  hover:text-[#b45f42]
+                                  hover:bg-[#E66A2E]/10
+                                  hover:text-[#E66A2E]
                                 "
                                 style={{
                                   color: mainText,
@@ -1879,7 +1879,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               >
                                 <Flame
                                   size={18}
-                                  className="text-[#b45f42]"
+                                  className="text-[#E66A2E]"
                                 />
                                 <span>تحدي اللهجة الصعيدية</span>
                               </button>
@@ -1989,7 +1989,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         sm:hidden
                       "
                       style={{
-                        backgroundColor: '#9a6a35',
+                        backgroundColor: '#6B3A1F',
                       }}
                     >
                       <UserCircle size={15} />
@@ -2065,8 +2065,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         shrink-0
                       "
                       style={{
-                        backgroundColor: '#9a6a35',
-                        color: '#fff',
+                        backgroundColor: '#6B3A1F',
+                        color: '#FFF9EE',
                       }}
                     >
                       اعمل حساب جديد
@@ -2090,9 +2090,9 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             className="relative border-t border-b overflow-visible"
             style={{
               borderColor: isDark
-                ? 'rgba(154,106,53,0.12)'
-                : 'rgba(154,106,53,0.14)',
-              backgroundColor: isDark ? '#12100e' : '#faf8f2',
+                ? 'rgba(107, 58, 31, 0.3)'
+                : 'rgba(224, 199, 155, 0.4)',
+              backgroundColor: isDark ? '#1B1009' : '#FFF9EE',
             }}
           >
             {/* DECORATIVE TOP GLOW */}
@@ -2100,7 +2100,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               className="absolute left-1/2 top-0 h-px w-40 -translate-x-1/2"
               style={{
                 background:
-                  'linear-gradient(90deg, transparent, #9a6a35, transparent)',
+                  'linear-gradient(90deg, transparent, #C99444, transparent)',
               }}
             />
 
@@ -2160,7 +2160,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           style={{
                             color:
                               isActive || isHovered
-                                ? '#9a6a35'
+                                ? (isDark ? '#C99444' : '#6B3A1F')
                                 : secondaryText,
                           }}
                         >
@@ -2174,8 +2174,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             transition={{ duration: 0.2 }}
                             style={{
                               backgroundColor: isDark
-                                ? 'rgba(154,106,53,0.09)'
-                                : 'rgba(154,106,53,0.07)',
+                                ? 'rgba(201,148,68,0.12)'
+                                : 'rgba(107,58,31,0.07)',
                             }}
                           />
 
@@ -2213,7 +2213,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 relative z-10
                                 h-1 w-1
                                 rounded-full
-                                bg-[#9a6a35]
+                                bg-[#C99444]
                               "
                             />
                           )}
@@ -2231,7 +2231,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 absolute right-1 top-1
                                 h-1.5 w-1.5
                                 rounded-full
-                                bg-[#9a6a35]
+                                bg-[#C99444]
                               "
                             />
                           )}
@@ -2261,11 +2261,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               "
                               style={{
                                 backgroundColor: isDark
-                                  ? 'rgba(18, 16, 14, 0.97)'
-                                  : 'rgba(255, 255, 255, 0.98)',
+                                  ? 'rgba(59, 30, 14, 0.98)'
+                                  : 'rgba(248, 235, 215, 0.98)',
                                 borderColor: isDark
-                                  ? 'rgba(154, 106, 53, 0.35)'
-                                  : 'rgba(154, 106, 53, 0.22)',
+                                  ? 'rgba(107, 58, 31, 0.4)'
+                                  : 'rgba(224, 199, 155, 0.4)',
                               }}
                             >
                               <div className="flex items-center gap-3">
@@ -2288,7 +2288,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2"
                                     style={{
                                       backgroundColor: preview.accentColor,
-                                      borderColor: isDark ? '#12100e' : '#fff',
+                                      borderColor: isDark ? '#1B1009' : '#FFF9EE',
                                     }}
                                   />
                                 </div>
@@ -2426,7 +2426,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           style={{
                             color:
                               isActive || isHovered
-                                ? '#9a6a35'
+                                ? (isDark ? '#C99444' : '#6B3A1F')
                                 : secondaryText,
                           }}
                         >
@@ -2440,8 +2440,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                             transition={{ duration: 0.2 }}
                             style={{
                               backgroundColor: isDark
-                                ? 'rgba(154,106,53,0.09)'
-                                : 'rgba(154,106,53,0.07)',
+                                ? 'rgba(201,148,68,0.12)'
+                                : 'rgba(107,58,31,0.07)',
                             }}
                           />
 
@@ -2479,7 +2479,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 relative z-10
                                 h-1 w-1
                                 rounded-full
-                                bg-[#9a6a35]
+                                bg-[#C99444]
                               "
                             />
                           )}
@@ -2497,7 +2497,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                 absolute left-1 top-1
                                 h-1.5 w-1.5
                                 rounded-full
-                                bg-[#9a6a35]
+                                bg-[#C99444]
                               "
                             />
                           )}
@@ -2527,11 +2527,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               "
                               style={{
                                 backgroundColor: isDark
-                                  ? 'rgba(18, 16, 14, 0.97)'
-                                  : 'rgba(255, 255, 255, 0.98)',
+                                  ? 'rgba(59, 30, 14, 0.98)'
+                                  : 'rgba(248, 235, 215, 0.98)',
                                 borderColor: isDark
-                                  ? 'rgba(154, 106, 53, 0.35)'
-                                  : 'rgba(154, 106, 53, 0.22)',
+                                  ? 'rgba(107, 58, 31, 0.4)'
+                                  : 'rgba(224, 199, 155, 0.4)',
                               }}
                             >
                               <div className="flex items-center gap-3">
@@ -2554,7 +2554,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                                     className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2"
                                     style={{
                                       backgroundColor: preview.accentColor,
-                                      borderColor: isDark ? '#12100e' : '#fff',
+                                      borderColor: isDark ? '#1B1009' : '#FFF9EE',
                                     }}
                                   />
                                 </div>
@@ -2625,10 +2625,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       cursor-pointer
                     "
                     style={{
-                      color: '#9a6a35',
+                      color: '#C99444',
                       borderColor: 'rgba(154,106,53,0.20)',
                       backgroundColor: isDark
-                        ? 'rgba(154,106,53,0.06)'
+                        ? 'rgba(201,148,68,0.06)'
                         : 'rgba(154,106,53,0.05)',
                     }}
                   >
@@ -2658,11 +2658,11 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         "
                         style={{
                           backgroundColor: isDark
-                            ? 'rgba(18, 16, 14, 0.97)'
-                            : 'rgba(255, 255, 255, 0.98)',
+                            ? 'rgba(59, 30, 14, 0.98)'
+                            : 'rgba(248, 235, 215, 0.98)',
                           borderColor: isDark
-                            ? 'rgba(154, 106, 53, 0.35)'
-                            : 'rgba(154, 106, 53, 0.22)',
+                            ? 'rgba(107, 58, 31, 0.4)'
+                            : 'rgba(224, 199, 155, 0.4)',
                         }}
                       >
                         <div className="flex items-center gap-3">
@@ -2671,7 +2671,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                               className="h-14 w-14 rounded-full overflow-hidden border-2 p-1 shadow-md flex items-center justify-center"
                               style={{
                                 borderColor: WAH_PORTALS_PREVIEW['about'].accentColor,
-                                backgroundColor: isDark ? '#1a1816' : '#f5f0e7',
+                                backgroundColor: isDark ? '#26160D' : '#FFF9EE',
                               }}
                             >
                               <img
@@ -2753,7 +2753,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 className="absolute top-0 h-full w-80"
                 style={{
                   background:
-                    'linear-gradient(90deg, transparent 0%, #9a6a35 50%, transparent 100%)',
+                    'linear-gradient(90deg, transparent 0%, #C99444 50%, transparent 100%)',
                 }}
               />
             </div>
@@ -2768,8 +2768,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             className="fixed inset-0 z-[600] flex items-start justify-center overflow-y-auto px-4 pt-16 sm:pt-24 lg:pt-28 backdrop-blur-md"
             style={{
               backgroundColor: isDark
-                ? 'rgba(11, 11, 10, 0.85)'
-                : 'rgba(238, 232, 220, 0.85)',
+                ? 'rgba(27, 16, 9, 0.92)'
+                : 'rgba(255, 249, 238, 0.92)',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -2783,7 +2783,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             >
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold" style={{ color: '#9a6a35' }}>
+                  <p className="text-xs font-bold" style={{ color: '#C99444' }}>
                     وه
                   </p>
                   <h2 className="mt-1 text-xl font-bold sm:text-2xl font-serif">
@@ -2809,8 +2809,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   className="flex items-center gap-3 rounded-[1.5rem] border px-4 shadow-xl backdrop-blur-2xl"
                   style={{
                     backgroundColor: isDark
-                      ? 'rgba(21, 21, 19, 0.9)'
-                      : 'rgba(255, 255, 255, 0.9)',
+                      ? 'rgba(59, 30, 14, 0.95)'
+                      : 'rgba(248, 235, 215, 0.95)',
                     borderColor,
                   }}
                 >
@@ -2832,8 +2832,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     type="submit"
                     className="hidden h-10 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold sm:flex cursor-pointer hover:opacity-90 transition-opacity"
                     style={{
-                      backgroundColor: '#9a6a35',
-                      color: '#fff',
+                      backgroundColor: '#6B3A1F',
+                      color: '#FFF9EE',
                     }}
                   >
                     دوّر
@@ -2901,7 +2901,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
               dir="rtl"
               className="fixed bottom-0 right-0 top-0 z-[710] w-[88vw] max-w-[360px] overflow-y-auto overscroll-contain lg:hidden shadow-2xl"
               style={{
-                backgroundColor: isDark ? '#0b0b0a' : '#eee8dc',
+                backgroundColor: isDark ? '#1B1009' : '#FFF9EE',
                 color: mainText,
                 paddingBottom:
                   'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)',
@@ -2919,8 +2919,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                 className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b px-4 sm:h-20 backdrop-blur-2xl"
                 style={{
                   backgroundColor: isDark
-                    ? 'rgba(11, 11, 10, 0.9)'
-                    : 'rgba(238, 232, 220, 0.9)',
+                    ? 'rgba(27, 16, 9, 0.95)'
+                    : 'rgba(255, 249, 238, 0.95)',
                   borderColor,
                 }}
               >
@@ -2963,7 +2963,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         alt={displayName}
                         className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/30"
                       />
-                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#121210]" />
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#1B1009]" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between">
@@ -3023,7 +3023,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                       }}
                       className="flex-1 rounded-xl py-3 text-center text-xs font-bold text-white transition-opacity cursor-pointer"
                       style={{
-                        backgroundColor: '#9a6a35',
+                        backgroundColor: '#6B3A1F',
                       }}
                     >
                       اعمل حساب جديد
@@ -3038,14 +3038,14 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   style={{
                     backgroundColor:
                       activePage === 'quize'
-                        ? 'rgba(180, 95, 66, 0.15)'
+                        ? 'rgba(230, 106, 46, 0.15)'
                         : hoverBg,
                     borderColor:
-                      activePage === 'quize' ? '#b45f42' : borderColor,
+                      activePage === 'quize' ? '#E66A2E' : borderColor,
                   }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#d6aa72]/15 flex items-center justify-center text-primary dark:text-primary-hover">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 dark:bg-[#C99444]/15 flex items-center justify-center text-primary dark:text-primary-hover">
                       <Flame size={20} />
                     </div>
                     <div>
@@ -3057,12 +3057,12 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           تحدي
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#76675b] dark:text-[#b3a59a] mt-0.5">
+                      <p className="text-[11px] text-[#8C6F53] dark:text-[#D6C6B1] mt-0.5">
                         اختبر نفسك في 10 أسئلة صعيدية
                       </p>
                     </div>
                   </div>
-                  <ArrowLeft size={16} className="text-[#b45f42]" />
+                  <ArrowLeft size={16} className="text-[#E66A2E]" />
                 </div>
 
                 {/* NAVIGATION */}
@@ -3080,10 +3080,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         style={{
                           backgroundColor: isActive
                             ? isDark
-                              ? 'rgba(154,106,53,0.18)'
-                              : 'rgba(154,106,53,0.09)'
+                              ? 'rgba(201,148,68,0.18)'
+                              : 'rgba(201,148,68,0.09)'
                             : 'transparent',
-                          color: isActive ? '#9a6a35' : mainText,
+                          color: isActive ? (isDark ? '#C99444' : '#6B3A1F') : mainText,
                         }}
                       >
                         {Icon && <Icon size={19} className="shrink-0" />}
@@ -3094,8 +3094,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           <span
                             className="rounded-full px-2 py-0.5 text-[9px] font-bold"
                             style={{
-                              backgroundColor: '#9a6a35',
-                              color: '#fff',
+                              backgroundColor: '#E66A2E',
+                              color: '#FFF9EE',
                             }}
                           >
                             جديد
@@ -3170,8 +3170,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                           <span
                             className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
                             style={{
-                              backgroundColor: '#9a6a35',
-                              color: '#fff',
+                              backgroundColor: '#E66A2E',
+                              color: '#FFF9EE',
                             }}
                           >
                             {favorites.length}
@@ -3204,8 +3204,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                         <span
                           className="mr-auto rounded-full px-2 py-0.5 text-[10px] font-bold"
                           style={{
-                            backgroundColor: '#9a6a35',
-                            color: '#fff',
+                            backgroundColor: '#E66A2E',
+                            color: '#FFF9EE',
                           }}
                         >
                           {chatUnreadCount}
@@ -3229,8 +3229,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     <div
                       className="flex h-10 w-10 items-center justify-center rounded-full"
                       style={{
-                        backgroundColor: 'rgba(154,106,53,0.12)',
-                        color: '#9a6a35',
+                        backgroundColor: 'rgba(201,148,68,0.15)',
+                        color: '#C99444',
                       }}
                     >
                       <Film size={18} />
@@ -3258,10 +3258,10 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                     }}
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold cursor-pointer hover:bg-rose-500/10 transition-colors"
                     style={{
-                      color: '#9a6a35',
+                      color: '#C99444',
                       backgroundColor: isDark
-                        ? 'rgba(154,106,53,0.10)'
-                        : 'rgba(154,106,53,0.06)',
+                        ? 'rgba(201,148,68,0.10)'
+                        : 'rgba(201,148,68,0.06)',
                     }}
                   >
                     <LogOut size={17} />

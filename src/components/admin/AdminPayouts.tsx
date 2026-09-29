@@ -336,15 +336,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
   return (
     <div id="admin-payouts-container" className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-6 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1E1917] p-6 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">إدارة طلبات صرف المستحقات</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-[#FFF9EE]">إدارة طلبات صرف المستحقات</h1>
             <span className="text-xs bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full font-medium">
               المالية اليدوية
             </span>
           </div>
-          <p className="text-sm text-gray-500 dark:text-[#A89C90]">
+          <p className="text-sm text-gray-500 dark:text-[#D6C6B1]">
             مراجعة طلبات صرف مستحقات الحرفيين والبائعين، وتنفيذ التحويلات اليدوية، وتسجيل أرقام الحوالات
           </p>
         </div>
@@ -376,15 +376,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       {/* KPI Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Pending Card */}
-        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
+        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 dark:text-[#A89C90]">طلبات قيد الانتظار</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-[#D6C6B1]">طلبات قيد الانتظار</span>
             <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-primary-hover flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">
+            <div className="text-2xl font-bold text-gray-900 dark:text-[#FFF9EE]">
               {summary ? `${summary.totalPendingAmount.toLocaleString('ar-EG')} ج.م` : '—'}
             </div>
             <div className="flex items-center gap-1.5 mt-1 text-xs text-amber-700 dark:text-primary-hover font-medium">
@@ -395,15 +395,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
         </div>
 
         {/* Processing Card */}
-        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
+        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 dark:text-[#A89C90]">جاري التحويل والتنفيذ</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-[#D6C6B1]">جاري التحويل والتنفيذ</span>
             <div className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
               <RefreshCw className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">
+            <div className="text-2xl font-bold text-gray-900 dark:text-[#FFF9EE]">
               {summary ? `${summary.totalApprovedProcessingAmount.toLocaleString('ar-EG')} ج.م` : '—'}
             </div>
             <div className="flex items-center gap-1.5 mt-1 text-xs text-indigo-700 dark:text-indigo-400 font-medium">
@@ -414,9 +414,9 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
         </div>
 
         {/* Paid Card */}
-        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
+        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 dark:text-[#A89C90]">إجمالي المبالغ المصروفة</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-[#D6C6B1]">إجمالي المبالغ المصروفة</span>
             <div className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
@@ -433,15 +433,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
         </div>
 
         {/* Rejected Card */}
-        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs">
+        <div className="bg-white dark:bg-[#1E1917] p-5 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-gray-500 dark:text-[#A89C90]">الطلبات المرفوضة</span>
+            <span className="text-xs font-medium text-gray-500 dark:text-[#D6C6B1]">الطلبات المرفوضة</span>
             <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
               <XCircle className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
-            <div className="text-2xl font-bold text-gray-900 dark:text-[#FAF6F2]">
+            <div className="text-2xl font-bold text-gray-900 dark:text-[#FFF9EE]">
               {summary?.totalRejectedCount || 0}
             </div>
             <p className="text-xs text-gray-400 dark:text-stone-400 mt-1">طلبات تم رفضها مع توضيح السبب</p>
@@ -450,7 +450,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white dark:bg-[#1E1917] p-4 rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#1E1917] p-4 rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         {/* Status Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
           {[
@@ -466,7 +466,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 text-xs font-medium rounded-xl transition cursor-pointer ${statusFilter === tab.id
                 ? 'bg-amber-600 text-white shadow-xs'
-                : 'bg-gray-50 dark:bg-[#110E0C] border border-gray-100 dark:border-[#352B24] text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#2C2420]'
+                : 'bg-gray-50 dark:bg-[#1B1009] border border-gray-100 dark:border-[#6B3A1F] text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#3B1E0E]'
                 }`}
             >
               {tab.label}
@@ -481,11 +481,11 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             placeholder="بحث برقم الطلب، اسم البائع، الحساب..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-xs text-gray-900 dark:text-[#FAF6F2] focus:bg-white dark:focus:bg-[#161210] focus:ring-2 focus:ring-amber-500 focus:outline-hidden transition"
+            className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-xs text-gray-900 dark:text-[#FFF9EE] focus:bg-white dark:focus:bg-[#26160D] focus:ring-2 focus:ring-amber-500 focus:outline-hidden transition"
           />
           <button
             type="submit"
-            className="absolute left-2.5 top-2.5 text-gray-400 dark:text-stone-400 hover:text-gray-600 dark:hover:text-[#FAF6F2] cursor-pointer"
+            className="absolute left-2.5 top-2.5 text-gray-400 dark:text-stone-400 hover:text-gray-600 dark:hover:text-[#FFF9EE] cursor-pointer"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -493,19 +493,19 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       </div>
 
       {/* Main Payouts Table */}
-      <div className="bg-white dark:bg-[#1E1917] rounded-2xl border border-gray-100 dark:border-[#352B24] shadow-xs overflow-hidden">
+      <div className="bg-white dark:bg-[#1E1917] rounded-2xl border border-gray-100 dark:border-[#6B3A1F] shadow-xs overflow-hidden">
         {loading ? (
           <div className="p-12 text-center">
             <RefreshCw className="w-8 h-8 text-amber-600 animate-spin mx-auto mb-3" />
-            <p className="text-sm text-gray-500 dark:text-[#A89C90]">جاري تحميل طلبات صرف المستحقات...</p>
+            <p className="text-sm text-gray-500 dark:text-[#D6C6B1]">جاري تحميل طلبات صرف المستحقات...</p>
           </div>
         ) : payouts.length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-gray-50 dark:bg-[#110E0C] border border-gray-100 dark:border-[#352B24] text-gray-400 dark:text-stone-400 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-16 h-16 bg-gray-50 dark:bg-[#1B1009] border border-gray-100 dark:border-[#6B3A1F] text-gray-400 dark:text-stone-400 rounded-full flex items-center justify-center mx-auto mb-3">
               <Wallet className="w-8 h-8" />
             </div>
-            <h3 className="text-base font-bold text-gray-900 dark:text-[#FAF6F2] mb-1">لا توجد طلبات صرف تطابق المعايير</h3>
-            <p className="text-xs text-gray-500 dark:text-[#A89C90]">
+            <h3 className="text-base font-bold text-gray-900 dark:text-[#FFF9EE] mb-1">لا توجد طلبات صرف تطابق المعايير</h3>
+            <p className="text-xs text-gray-500 dark:text-[#D6C6B1]">
               لم يتم العثور على أي طلبات في هذه الحالة أو بكلمة البحث المدخلة
             </p>
           </div>
@@ -513,7 +513,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
           <div className="wah-table-container overflow-x-auto rounded-2xl border border-gray-100 dark:border-stone-800">
             <table className="w-full text-right border-collapse">
               <thead>
-                <tr className="bg-gray-50/75 dark:bg-[#161210] text-gray-500 dark:text-[#A89C90] text-xs font-medium border-b border-gray-100 dark:border-[#352B24]">
+                <tr className="bg-gray-50/75 dark:bg-[#26160D] text-gray-500 dark:text-[#D6C6B1] text-xs font-medium border-b border-gray-100 dark:border-[#6B3A1F]">
                   <th className="py-3.5 px-4">رقم الطلب</th>
                   <th className="py-3.5 px-4">الحرفي / الورشة</th>
                   <th className="py-3.5 px-4">المبلغ المطلوب</th>
@@ -523,7 +523,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   <th className="py-3.5 px-4 text-center">الإجراءات</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-[#2C2420] text-sm">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#3B1E0E] text-sm">
                 {payouts.map((payout) => (
                   <tr key={payout.id} className="hover:bg-gray-50/50 dark:hover:bg-[#26201B]/50 transition">
                     <td className="py-3.5 px-4">
@@ -532,29 +532,29 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-gray-900 dark:text-[#FAF6F2] text-xs">
+                      <div className="font-bold text-gray-900 dark:text-[#FFF9EE] text-xs">
                         {payout.sellerBrandName || payout.sellerName}
                       </div>
-                      <div className="text-[11px] text-gray-500 dark:text-[#A89C90] flex items-center gap-1 mt-0.5">
+                      <div className="text-[11px] text-gray-500 dark:text-[#D6C6B1] flex items-center gap-1 mt-0.5">
                         <MapPin className="w-3 h-3 text-gray-400 dark:text-stone-400" />
                         <span>{payout.sellerGovernorate || 'الصعيد'}</span>
                       </div>
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="font-extrabold text-gray-900 dark:text-[#FAF6F2] text-sm">
+                      <span className="font-extrabold text-gray-900 dark:text-[#FFF9EE] text-sm">
                         {payout.requestedAmount.toLocaleString('ar-EG')} ج.م
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-800 dark:text-[#FAF6F2] font-medium">
+                      <div className="flex items-center gap-1.5 text-xs text-gray-800 dark:text-[#FFF9EE] font-medium">
                         {getMethodIcon(payout.paymentMethod)}
                         <span>{getMethodLabel(payout.paymentMethod)}</span>
                       </div>
-                      <span className="font-mono text-xs text-gray-500 dark:text-[#A89C90] block">
+                      <span className="font-mono text-xs text-gray-500 dark:text-[#D6C6B1] block">
                         {payout.paymentDetailsSnapshot?.accountNumber}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-xs text-gray-500 dark:text-[#A89C90]">
+                    <td className="py-3.5 px-4 text-xs text-gray-500 dark:text-[#D6C6B1]">
                       {new Date(payout.requestedAt || payout.createdAt).toLocaleDateString('ar-EG', {
                         year: 'numeric',
                         month: 'short',
@@ -570,7 +570,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                         <button
                           onClick={() => handleOpenDetails(payout.id)}
                           title="عرض ومراجعة الطلب"
-                          className="p-1.5 text-gray-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-primary-hover bg-gray-50 dark:bg-[#161210] hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition border border-gray-200 dark:border-[#352B24] cursor-pointer"
+                          className="p-1.5 text-gray-600 dark:text-stone-300 hover:text-amber-700 dark:hover:text-primary-hover bg-gray-50 dark:bg-[#26160D] hover:bg-amber-50 dark:hover:bg-amber-950/40 rounded-lg transition border border-gray-200 dark:border-[#6B3A1F] cursor-pointer"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -621,9 +621,9 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       {/* Modal: Full Payout Review & Seller Balance Details */}
       {selectedPayoutId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl border border-gray-100 dark:border-[#352B24] space-y-5">
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#352B24] pb-3">
-              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FAF6F2] text-lg">
+          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-xl border border-gray-100 dark:border-[#6B3A1F] space-y-5">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#6B3A1F] pb-3">
+              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FFF9EE] text-lg">
                 <FileText className="w-5 h-5 text-amber-600" />
                 <span>مراجعة طلب الصرف #{selectedPayoutId}</span>
               </div>
@@ -632,7 +632,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   setSelectedPayoutId(null);
                   setPayoutDetails(null);
                 }}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FAF6F2] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2C2420] transition cursor-pointer"
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FFF9EE] rounded-lg hover:bg-gray-100 dark:hover:bg-[#3B1E0E] transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -641,15 +641,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
             {detailsLoading ? (
               <div className="py-12 text-center">
                 <RefreshCw className="w-8 h-8 text-amber-600 animate-spin mx-auto mb-2" />
-                <p className="text-xs text-gray-500 dark:text-[#A89C90]">جاري جلب تفاصيل الحرفي والبيانات المالية...</p>
+                <p className="text-xs text-gray-500 dark:text-[#D6C6B1]">جاري جلب تفاصيل الحرفي والبيانات المالية...</p>
               </div>
             ) : payoutDetails ? (
               <div className="space-y-5">
                 {/* Status & Amount Highlight */}
-                <div className="p-4 bg-gray-50 dark:bg-[#161210] rounded-xl border border-gray-200 dark:border-[#352B24] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="p-4 bg-gray-50 dark:bg-[#26160D] rounded-xl border border-gray-200 dark:border-[#6B3A1F] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
-                    <span className="text-xs text-gray-500 dark:text-[#A89C90] block">المبلغ المطلوب:</span>
-                    <span className="text-2xl font-black text-gray-900 dark:text-[#FAF6F2]">
+                    <span className="text-xs text-gray-500 dark:text-[#D6C6B1] block">المبلغ المطلوب:</span>
+                    <span className="text-2xl font-black text-gray-900 dark:text-[#FFF9EE]">
                       {payoutDetails.payout.requestedAmount.toLocaleString('ar-EG')} ج.م
                     </span>
                   </div>
@@ -667,19 +667,19 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                     </span>
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                    <div className="p-2.5 bg-white dark:bg-[#110E0C] rounded-lg border border-amber-100 dark:border-amber-900/40">
+                    <div className="p-2.5 bg-white dark:bg-[#1B1009] rounded-lg border border-amber-100 dark:border-amber-900/40">
                       <span className="text-gray-400 dark:text-stone-400 block">إجمالي الأرباح التاريخية:</span>
-                      <span className="font-bold text-gray-900 dark:text-[#FAF6F2] text-sm">
+                      <span className="font-bold text-gray-900 dark:text-[#FFF9EE] text-sm">
                         {payoutDetails.totalSellerEarnings.toLocaleString('ar-EG')} ج.م
                       </span>
                     </div>
-                    <div className="p-2.5 bg-white dark:bg-[#110E0C] rounded-lg border border-amber-100 dark:border-amber-900/40">
+                    <div className="p-2.5 bg-white dark:bg-[#1B1009] rounded-lg border border-amber-100 dark:border-amber-900/40">
                       <span className="text-gray-400 dark:text-stone-400 block">الرصيد المتاح الحالي:</span>
                       <span className="font-bold text-emerald-700 dark:text-emerald-400 text-sm">
                         {payoutDetails.currentAvailableBalance.toLocaleString('ar-EG')} ج.م
                       </span>
                     </div>
-                    <div className="p-2.5 bg-white dark:bg-[#110E0C] rounded-lg border border-amber-100 dark:border-amber-900/40 col-span-2 sm:col-span-1">
+                    <div className="p-2.5 bg-white dark:bg-[#1B1009] rounded-lg border border-amber-100 dark:border-amber-900/40 col-span-2 sm:col-span-1">
                       <span className="text-gray-400 dark:text-stone-400 block">الرصيد لحظة الطلب:</span>
                       <span className="font-bold text-gray-700 dark:text-stone-300 text-sm">
                         {payoutDetails.payout.sellerBalanceAtRequest
@@ -692,14 +692,14 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
 
                 {/* Seller Info & Payment Destination Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div className="p-4 bg-gray-50 dark:bg-[#161210] rounded-xl border border-gray-200 dark:border-[#352B24] space-y-2">
-                    <h4 className="font-bold text-gray-900 dark:text-[#FAF6F2] flex items-center gap-1.5">
+                  <div className="p-4 bg-gray-50 dark:bg-[#26160D] rounded-xl border border-gray-200 dark:border-[#6B3A1F] space-y-2">
+                    <h4 className="font-bold text-gray-900 dark:text-[#FFF9EE] flex items-center gap-1.5">
                       <User className="w-4 h-4 text-amber-600" />
                       <span>بيانات الحرفي والورشة</span>
                     </h4>
                     <div>
                       <span className="text-gray-400 dark:text-stone-400 block">اسم الورشة / الحرفي:</span>
-                      <span className="font-bold text-gray-800 dark:text-[#FAF6F2]">
+                      <span className="font-bold text-gray-800 dark:text-[#FFF9EE]">
                         {payoutDetails.seller?.brandName || payoutDetails.payout.sellerBrandName || payoutDetails.seller?.name}
                       </span>
                     </div>
@@ -717,21 +717,21 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-50 dark:bg-[#161210] rounded-xl border border-gray-200 dark:border-[#352B24] space-y-2">
-                    <h4 className="font-bold text-gray-900 dark:text-[#FAF6F2] flex items-center gap-1.5">
+                  <div className="p-4 bg-gray-50 dark:bg-[#26160D] rounded-xl border border-gray-200 dark:border-[#6B3A1F] space-y-2">
+                    <h4 className="font-bold text-gray-900 dark:text-[#FFF9EE] flex items-center gap-1.5">
                       <Wallet className="w-4 h-4 text-amber-600" />
                       <span>بيانات تحويل المستحقات</span>
                     </h4>
                     <div>
                       <span className="text-gray-400 dark:text-stone-400 block">وسيلة الاستلام:</span>
-                      <div className="font-bold text-gray-800 dark:text-[#FAF6F2] flex items-center gap-1.5 mt-0.5">
+                      <div className="font-bold text-gray-800 dark:text-[#FFF9EE] flex items-center gap-1.5 mt-0.5">
                         {getMethodIcon(payoutDetails.payout.paymentMethod)}
                         <span>{getMethodLabel(payoutDetails.payout.paymentMethod)}</span>
                       </div>
                     </div>
                     <div>
                       <span className="text-gray-400 dark:text-stone-400 block">رقم الحساب / المحفظة:</span>
-                      <span className="font-bold font-mono text-sm bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-gray-200 dark:border-[#352B24] text-gray-900 dark:text-[#FAF6F2] inline-block mt-0.5">
+                      <span className="font-bold font-mono text-sm bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-gray-200 dark:border-[#6B3A1F] text-gray-900 dark:text-[#FFF9EE] inline-block mt-0.5">
                         {payoutDetails.payout.paymentDetailsSnapshot?.accountNumber}
                       </span>
                     </div>
@@ -746,9 +746,9 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
 
                 {/* Seller Notes if present */}
                 {payoutDetails.payout.sellerNotes && (
-                  <div className="p-3 bg-gray-50 dark:bg-[#161210] rounded-xl border border-gray-200 dark:border-[#352B24] text-xs">
+                  <div className="p-3 bg-gray-50 dark:bg-[#26160D] rounded-xl border border-gray-200 dark:border-[#6B3A1F] text-xs">
                     <span className="text-gray-400 dark:text-stone-400 block mb-1">ملاحظات الحرفي:</span>
-                    <p className="text-gray-800 dark:text-[#FAF6F2]">{payoutDetails.payout.sellerNotes}</p>
+                    <p className="text-gray-800 dark:text-[#FFF9EE]">{payoutDetails.payout.sellerNotes}</p>
                   </div>
                 )}
 
@@ -768,7 +768,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       </div>
                       <div>
                         <span className="text-emerald-700 dark:text-emerald-300 block">رقم المعاملة / الحوالة:</span>
-                        <span className="font-mono font-bold bg-white dark:bg-[#110E0C] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block text-emerald-950 dark:text-emerald-100">
+                        <span className="font-mono font-bold bg-white dark:bg-[#1B1009] px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 inline-block text-emerald-950 dark:text-emerald-100">
                           {payoutDetails.payout.transactionReference}
                         </span>
                       </div>
@@ -797,7 +797,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                       <span>سبب الرفض المسجل:</span>
                     </div>
-                    <p className="text-xs bg-white dark:bg-[#110E0C] p-2.5 rounded-lg border border-rose-200 dark:border-rose-800 font-medium mt-1 text-rose-950 dark:text-rose-100">
+                    <p className="text-xs bg-white dark:bg-[#1B1009] p-2.5 rounded-lg border border-rose-200 dark:border-rose-800 font-medium mt-1 text-rose-950 dark:text-rose-100">
                       {payoutDetails.payout.rejectionReason}
                     </p>
                   </div>
@@ -810,7 +810,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       <History className="w-3.5 h-3.5 text-gray-400 dark:text-stone-400" />
                       <span>سجل طلبات الصرف السابقة لهذا الحرفي ({payoutDetails.sellerPreviousPayouts.length})</span>
                     </h4>
-                    <div className="max-h-36 overflow-y-auto divide-y divide-gray-100 dark:divide-[#2C2420] border border-gray-100 dark:border-[#352B24] rounded-xl text-xs">
+                    <div className="max-h-36 overflow-y-auto divide-y divide-gray-100 dark:divide-[#3B1E0E] border border-gray-100 dark:border-[#6B3A1F] rounded-xl text-xs">
                       {payoutDetails.sellerPreviousPayouts.map((prev) => (
                         <div key={prev.id} className="p-2.5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-[#26201B]/50 transition">
                           <div>
@@ -820,7 +820,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                             </span>
                           </div>
                           <div className="text-left flex items-center gap-2">
-                            <span className="font-bold text-gray-900 dark:text-[#FAF6F2]">
+                            <span className="font-bold text-gray-900 dark:text-[#FFF9EE]">
                               {prev.requestedAmount.toLocaleString('ar-EG')} ج.م
                             </span>
                             {getStatusBadge(prev.status)}
@@ -832,7 +832,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 )}
 
                 {/* Workflow Actions */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-[#352B24]">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-[#6B3A1F]">
                   <div className="flex items-center gap-2">
                     {payoutDetails.payout.status === 'pending' && (
                       <>
@@ -880,7 +880,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                       setSelectedPayoutId(null);
                       setPayoutDetails(null);
                     }}
-                    className="px-4 py-2 bg-gray-100 dark:bg-[#2C2420] hover:bg-gray-200 dark:hover:bg-[#352B24] text-gray-700 dark:text-stone-300 text-xs font-medium rounded-xl transition cursor-pointer"
+                    className="px-4 py-2 bg-gray-100 dark:bg-[#3B1E0E] hover:bg-gray-200 dark:hover:bg-[#6B3A1F] text-gray-700 dark:text-stone-300 text-xs font-medium rounded-xl transition cursor-pointer"
                   >
                     إغلاق
                   </button>
@@ -894,15 +894,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       {/* Modal: Confirm Paid (Manual Transfer Record) */}
       {isPaidModalOpen && targetPayoutForPaid && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-lg w-full p-6 shadow-xl border border-gray-100 dark:border-[#352B24] space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#352B24] pb-3">
-              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FAF6F2] text-base">
+          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-lg w-full p-6 shadow-xl border border-gray-100 dark:border-[#6B3A1F] space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#6B3A1F] pb-3">
+              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FFF9EE] text-base">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                 <span>تأكيد التحويل المالي وصرف المستحقات</span>
               </div>
               <button
                 onClick={() => setIsPaidModalOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FAF6F2] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2C2420] transition cursor-pointer"
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FFF9EE] rounded-lg hover:bg-gray-100 dark:hover:bg-[#3B1E0E] transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -923,7 +923,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
               </div>
               <div className="text-[11px] text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
                 <span>الوسيلة: {getMethodLabel(targetPayoutForPaid.paymentMethod)}</span>
-                <span className="font-mono bg-white dark:bg-[#110E0C] px-1.5 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-200">
+                <span className="font-mono bg-white dark:bg-[#1B1009] px-1.5 py-0.5 rounded border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-200">
                   {targetPayoutForPaid.paymentDetailsSnapshot?.accountNumber}
                 </span>
               </div>
@@ -943,7 +943,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   onChange={(e) =>
                     setPaidForm({ ...paidForm, transactionReference: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                 />
                 <p className="text-[10px] text-gray-400 dark:text-stone-400 mt-1">
                   سيتم إرسال هذا الرقم للحرفي في الإشعار ليكون دليلاً على إتمام الحوالة.
@@ -964,7 +964,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                         paymentMethod: e.target.value as PayoutMethod
                       })
                     }
-                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] font-medium focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition cursor-pointer"
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] font-medium focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition cursor-pointer"
                   >
                     <option value="vodafone_cash">فودافون كاش</option>
                     <option value="instapay">إنستاباي InstaPay</option>
@@ -986,7 +986,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                     onChange={(e) =>
                       setPaidForm({ ...paidForm, paidAmount: e.target.value })
                     }
-                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                    className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] font-bold focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                   />
                 </div>
               </div>
@@ -1002,7 +1002,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   onChange={(e) =>
                     setPaidForm({ ...paidForm, paymentDate: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                 />
               </div>
 
@@ -1018,7 +1018,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   onChange={(e) =>
                     setPaidForm({ ...paidForm, adminNote: e.target.value })
                   }
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                 />
               </div>
 
@@ -1035,7 +1035,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 <button
                   type="button"
                   onClick={() => setIsPaidModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#2C2420] rounded-xl transition cursor-pointer"
+                  className="px-4 py-2 text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#3B1E0E] rounded-xl transition cursor-pointer"
                 >
                   إلغاء
                 </button>
@@ -1065,15 +1065,15 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
       {/* Modal: Reject Payout */}
       {isRejectModalOpen && targetPayoutForReject && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-100 dark:border-[#352B24] space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#352B24] pb-3">
-              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FAF6F2] text-base">
+          <div className="bg-white dark:bg-[#1E1917] rounded-2xl max-w-md w-full p-6 shadow-xl border border-gray-100 dark:border-[#6B3A1F] space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#6B3A1F] pb-3">
+              <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-[#FFF9EE] text-base">
                 <XCircle className="w-5 h-5 text-rose-600 dark:text-rose-400" />
                 <span>رفض طلب صرف المستحقات</span>
               </div>
               <button
                 onClick={() => setIsRejectModalOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FAF6F2] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2C2420] transition cursor-pointer"
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-[#FFF9EE] rounded-lg hover:bg-gray-100 dark:hover:bg-[#3B1E0E] transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1086,9 +1086,9 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
               </div>
             )}
 
-            <div className="p-3 bg-gray-50 dark:bg-[#161210] border border-gray-100 dark:border-[#352B24] rounded-xl text-xs">
+            <div className="p-3 bg-gray-50 dark:bg-[#26160D] border border-gray-100 dark:border-[#6B3A1F] rounded-xl text-xs">
               <span className="text-gray-400 dark:text-stone-400 block">الطلب:</span>
-              <span className="font-bold text-gray-900 dark:text-[#FAF6F2]">
+              <span className="font-bold text-gray-900 dark:text-[#FFF9EE]">
                 #{targetPayoutForReject.id} بمبلغ {targetPayoutForReject.requestedAmount.toLocaleString('ar-EG')} ج.م
               </span>
             </div>
@@ -1104,7 +1104,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                   placeholder="يرجى كتابة سبب الرفض بوضوح (مثلاً: رقم الحساب غير صحيح، أو تعذر إتمام التحويل عبر المحفظة...)"
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#110E0C] border border-gray-200 dark:border-[#352B24] rounded-xl text-gray-900 dark:text-[#FAF6F2] focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-[#161210] focus:outline-hidden transition"
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-[#1B1009] border border-gray-200 dark:border-[#6B3A1F] rounded-xl text-gray-900 dark:text-[#FFF9EE] focus:ring-2 focus:ring-rose-500 focus:bg-white dark:focus:bg-[#26160D] focus:outline-hidden transition"
                 />
                 <p className="text-[10px] text-gray-400 dark:text-stone-400 mt-1">
                   سيتم إرسال هذا السبب مباشرة إلى الحرفي في الإشعار ليتسنى له تصحيح البيانات.
@@ -1115,7 +1115,7 @@ export const AdminPayouts: React.FC<AdminPayoutsProps> = ({ user }) => {
                 <button
                   type="button"
                   onClick={() => setIsRejectModalOpen(false)}
-                  className="px-4 py-2 text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#2C2420] rounded-xl transition cursor-pointer"
+                  className="px-4 py-2 text-gray-600 dark:text-stone-300 hover:bg-gray-100 dark:hover:bg-[#3B1E0E] rounded-xl transition cursor-pointer"
                 >
                   إلغاء
                 </button>

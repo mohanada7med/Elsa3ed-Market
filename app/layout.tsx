@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#9a6a35',
+  themeColor: '#3B1E0E',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -103,7 +103,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-cream dark:bg-espresso-900 text-espresso dark:text-cream antialiased selection:bg-primary/20 selection:text-primary">
+      <body className="bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] antialiased selection:bg-[#C99444]/30 selection:text-[#3B1E0E] dark:selection:text-[#FFF9EE]">
         {children}
       </body>
     </html>

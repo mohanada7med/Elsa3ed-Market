@@ -29,7 +29,7 @@ export const NotFoundPage: React.FC = () => {
             id="not-found-home-btn"
             type="button"
             onClick={() => setActivePage('home')}
-            className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg cursor-pointer text-sm"
+            className="flex items-center justify-center gap-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg cursor-pointer text-sm"
           >
             <Home className="w-5 h-5" aria-hidden="true" />
             <span>ارجع للرئيسية</span>

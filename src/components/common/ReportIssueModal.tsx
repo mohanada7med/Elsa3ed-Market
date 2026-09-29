@@ -545,7 +545,7 @@ export const ReportIssueModal: React.FC = () => {
                   id="submit-report-btn"
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 rounded-xl text-xs font-black bg-primary hover:bg-[#855b2d] text-white shadow-lg shadow-[#9a6a35]/20 flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl text-xs font-black bg-primary hover:bg-[#3B1E0E] text-white shadow-lg shadow-[#6B3A1F]/20 flex items-center gap-2 disabled:opacity-50 transition-all cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -597,7 +597,7 @@ export const ReportIssueModal: React.FC = () => {
                   </p>
                   <button
                     onClick={() => setActiveTab('new')}
-                    className="px-4 py-2 rounded-xl text-xs font-black bg-primary text-white hover:bg-[#855b2d]"
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-primary text-white hover:bg-[#3B1E0E]"
                   >
                     تقديم بلاغ الآن
                   </button>

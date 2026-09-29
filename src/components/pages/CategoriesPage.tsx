@@ -40,7 +40,7 @@ export const CategoriesPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('home')}
-            className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+            className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
           >
             الرئيسية
           </button>
@@ -92,8 +92,8 @@ export const CategoriesPage: React.FC = () => {
       <div className="relative rounded-[2rem] p-6 sm:p-12 bg-espresso text-cream overflow-hidden shadow-xl border border-black/10 dark:border-white/10">
         <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
         <div className="relative z-10 max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[#d5a56d] text-xs font-bold">
-            <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-[#C99444] text-xs font-bold">
+            <Compass className="w-3.5 h-3.5 text-[#C99444]" />
             <span>حرف وفنون صعيد مصر</span>
           </div>
           <h1 className="text-2xl sm:text-5xl font-black font-serif leading-tight">
@@ -124,7 +124,7 @@ export const CategoriesPage: React.FC = () => {
                     onClick={() => navigateToCategory(cat.id)}
                     className={`group relative p-5 rounded-[1.5rem] border transition-all duration-300 cursor-pointer flex items-center justify-between ${isSelected
                       ? 'bg-white/95 dark:bg-espresso-900/95 border-primary dark:border-primary shadow-lg ring-1 ring-primary/30'
-                      : 'bg-white/50 dark:bg-espresso-900/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#151513]/80'
+                      : 'bg-white/50 dark:bg-espresso-900/50 border-black/10 dark:border-white/10 hover:bg-white/80 dark:hover:bg-[#1B1009]/80'
                       }`}
                   >
                     <div className="flex items-center gap-4">
@@ -187,7 +187,7 @@ export const CategoriesPage: React.FC = () => {
 
                   <div className="relative z-10 flex items-center justify-between pointer-events-none">
                     {selectedCategory.featuredGovernorate && (
-                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-[#d5a56d] text-xs font-bold">
+                      <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/20 text-[#C99444] text-xs font-bold">
                         <MapPin className="w-3.5 h-3.5 text-primary" />
                         <span>محافظة {selectedCategory.featuredGovernorate}</span>
                       </span>
@@ -209,8 +209,8 @@ export const CategoriesPage: React.FC = () => {
                     </p>
 
                     {selectedCategory.heritageNote && (
-                      <div className="p-4 rounded-2xl bg-black/50 backdrop-blur-md border border-white/15 inline-flex items-start gap-3 text-xs sm:text-sm text-[#d5a56d]">
-                        <Sparkles className="w-4 h-4 text-[#d5a56d] shrink-0 mt-0.5" />
+                      <div className="p-4 rounded-2xl bg-black/50 backdrop-blur-md border border-white/15 inline-flex items-start gap-3 text-xs sm:text-sm text-[#C99444]">
+                        <Sparkles className="w-4 h-4 text-[#C99444] shrink-0 mt-0.5" />
                         <span className="italic">{selectedCategory.heritageNote}</span>
                       </div>
                     )}
@@ -219,7 +219,7 @@ export const CategoriesPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => navigateToCategory(selectedCategory.id)}
-                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                        className="group inline-flex items-center gap-3 px-7 py-4 rounded-[1.25rem] bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-black text-sm shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02]"
                       >
                         <span>شوف شغل وحرفيين {selectedCategory.name}</span>
                         <ArrowUpLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1" />
@@ -321,7 +321,7 @@ export const CategoriesPage: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
                             {cat.featuredGovernorate && (
-                              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md border border-white/20 text-[#d5a56d] text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
+                              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-md border border-white/20 text-[#C99444] text-[11px] font-bold px-3 py-1 rounded-full flex items-center gap-1.5 shadow-sm">
                                 <MapPin className="w-3 h-3 text-primary" />
                                 <span>{cat.featuredGovernorate}</span>
                               </div>
@@ -329,8 +329,8 @@ export const CategoriesPage: React.FC = () => {
 
                             {/* شارة التوجيه بالأسفل */}
                             <div className="absolute bottom-3 inset-x-3.5 flex items-center justify-between text-white">
-                              <span className="text-xs font-semibold text-[#d5a56d]/90 flex items-center gap-1">
-                                <Compass className="w-3.5 h-3.5 text-[#d5a56d]" />
+                              <span className="text-xs font-semibold text-[#C99444]/90 flex items-center gap-1">
+                                <Compass className="w-3.5 h-3.5 text-[#C99444]" />
                                 <span>دوس على الصورة عشان تشوف المنتجات</span>
                               </span>
                               <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -355,7 +355,7 @@ export const CategoriesPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => navigateToCategory(cat.id)}
-                            className="w-full py-3.5 rounded-[1.25rem] bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
+                            className="w-full py-3.5 rounded-[1.25rem] bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-black text-xs flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all cursor-pointer"
                           >
                             <span>شوف كل منتجات {cat.name}</span>
                             <ArrowUpLeft className="w-4 h-4" />
@@ -391,7 +391,7 @@ export const CategoriesPage: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
 
               <div className="absolute top-5 inset-x-5 flex items-center justify-between z-10">
-                <span className="font-mono text-xs text-[#d5a56d] bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 font-bold">
+                <span className="font-mono text-xs text-[#C99444] bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10 font-bold">
                   0{idx + 1}
                 </span>
                 {cat.featuredGovernorate && (
@@ -402,7 +402,7 @@ export const CategoriesPage: React.FC = () => {
               </div>
 
               <div className="relative z-10 space-y-2 text-right">
-                <span className="text-[10px] uppercase tracking-widest text-[#d5a56d] font-bold block">
+                <span className="text-[10px] uppercase tracking-widest text-[#C99444] font-bold block">
                   {cat.nameEn}
                 </span>
                 <h3 className="text-2xl font-black font-serif text-white">{cat.name}</h3>
@@ -410,7 +410,7 @@ export const CategoriesPage: React.FC = () => {
                   {cat.description}
                 </p>
 
-                <div className="pt-3 border-t border-white/15 flex items-center justify-between text-xs text-[#d5a56d] font-bold">
+                <div className="pt-3 border-t border-white/15 flex items-center justify-between text-xs text-[#C99444] font-bold">
                   <span>شوف المنتجات</span>
                   <ArrowUpLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 group-hover:-translate-y-1" />
                 </div>

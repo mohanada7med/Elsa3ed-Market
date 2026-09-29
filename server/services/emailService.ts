@@ -6,14 +6,15 @@
  * RTL Arabic / Egyptian Arabic
  *
  * Uses the official WAH Design System tokens:
- * Primary: #9a6a35
- * Secondary: #211d18
- * Background: #eee8dc
- * Background Secondary: #e4ddd1
- * Surface: rgba(255, 255, 255, 0.75)
- * Foreground: #211d18
- * Foreground Secondary: #4a4137
- * Foreground Muted: #6e6255
+ * Dark Brown: #3B1E0E
+ * Medium Brown: #6B3A1F
+ * Golden: #C99444
+ * Orange: #E66A2E
+ * Cream: #F8EBD7
+ * Light Beige: #E0C79B
+ * Main Background: #FFF9EE
+ * Secondary Neutral: #D6C6B1
+ * Brown Gray: #8C6F53
  */
 
 import dotenv from 'dotenv';
@@ -46,33 +47,34 @@ export interface PasswordResetEmailParams {
  */
 const WAH_EMAIL = {
   colors: {
-    primary: '#9a6a35',
-    primaryHover: '#7d5427',
-    primaryActive: '#623f1a',
-    primaryLight: '#f6ede3',
+    primary: '#6B3A1F',
+    primaryHover: '#3B1E0E',
+    primaryActive: '#3B1E0E',
+    primaryLight: '#F8EBD7',
 
-    secondary: '#211d18',
-    secondaryHover: '#362f27',
+    secondary: '#3B1E0E',
+    secondaryHover: '#6B3A1F',
 
-    background: '#eee8dc',
-    backgroundSecondary: '#e4ddd1',
-    backgroundTertiary: '#dad2c4',
+    background: '#FFF9EE',
+    backgroundSecondary: '#F8EBD7',
+    backgroundTertiary: '#E0C79B',
 
-    surface: 'rgba(255, 255, 255, 0.75)',
-    surfaceHover: 'rgba(255, 255, 255, 0.85)',
+    surface: '#F8EBD7',
+    surfaceHover: '#FFF9EE',
 
-    foreground: '#211d18',
-    foregroundSecondary: '#4a4137',
-    foregroundMuted: '#6e6255',
+    foreground: '#3B1E0E',
+    foregroundSecondary: '#8C6F53',
+    foregroundMuted: '#D6C6B1',
 
-    border: 'rgba(0, 0, 0, 0.1)',
-    borderSubtle: 'rgba(0, 0, 0, 0.06)',
+    border: '#E0C79B',
+    borderSubtle: 'rgba(224, 199, 155, 0.5)',
 
-    warning: '#C4751B',
+    warning: '#E66A2E',
+    accent: '#C99444',
 
-    shadow: 'rgba(154, 106, 53, 0.1)',
+    shadow: 'rgba(59, 30, 14, 0.08)',
     terracottaGlow:
-      'rgba(154, 106, 53, 0.25)'
+      'rgba(201, 148, 68, 0.25)'
   },
 
   radius: {
@@ -312,13 +314,13 @@ export function buildPasswordResetEmailTemplate(
       min-height: 100%;
       margin: 0 !important;
       padding: 0 !important;
-      background-color: #eee8dc;
+      background-color: #FFF9EE;
     }
 
     body {
       direction: rtl;
       text-align: right;
-      color: #211d18;
+      color: #3B1E0E;
 
       font-family:
         Tahoma,
@@ -352,7 +354,7 @@ export function buildPasswordResetEmailTemplate(
 
       padding: 40px 16px;
 
-      background-color: #eee8dc;
+      background-color: #FFF9EE;
     }
 
     .email-container {
@@ -367,7 +369,7 @@ export function buildPasswordResetEmailTemplate(
        ======================================================== */
 
     .header {
-      background-color: #9a6a35;
+      background-color: #6B3A1F;
 
       border-radius:
         24px 24px 0 0;
@@ -469,7 +471,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 20px;
 
-      color: #211d18;
+      color: #3B1E0E;
 
       font-size: 27px;
       font-weight: 900;
@@ -478,14 +480,14 @@ export function buildPasswordResetEmailTemplate(
     }
 
     .hello-name {
-      color: #9a6a35;
+      color: #6B3A1F;
     }
 
     .paragraph {
       margin:
         0 0 14px;
 
-      color: #4a4137;
+      color: #8C6F53;
 
       font-size: 15px;
 
@@ -493,7 +495,7 @@ export function buildPasswordResetEmailTemplate(
     }
 
     .paragraph strong {
-      color: #9a6a35;
+      color: #6B3A1F;
     }
 
     /* ========================================================
@@ -522,7 +524,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 8px;
 
-      color: #211d18;
+      color: #3B1E0E;
 
       font-size: 17px;
       font-weight: 900;
@@ -534,7 +536,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 23px;
 
-      color: #6e6255;
+      color: #8C6F53;
 
       font-size: 12px;
 
@@ -547,10 +549,10 @@ export function buildPasswordResetEmailTemplate(
       padding:
         17px 40px;
 
-      background-color: #9a6a35;
+      background-color: #6B3A1F;
 
       border:
-        1px solid #9a6a35;
+        1px solid #6B3A1F;
 
       border-radius: 12px;
 
@@ -572,7 +574,7 @@ export function buildPasswordResetEmailTemplate(
 
       margin-top: 12px;
 
-      color: #6e6255;
+      color: #8C6F53;
 
       font-size: 11px;
 
@@ -597,7 +599,7 @@ export function buildPasswordResetEmailTemplate(
         rgba(0, 0, 0, 0.06);
 
       border-right:
-        5px solid #9a6a35;
+        5px solid #6B3A1F;
 
       border-radius: 12px;
 
@@ -610,7 +612,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 8px;
 
-      color: #9a6a35;
+      color: #6B3A1F;
 
       font-size: 14px;
 
@@ -622,7 +624,7 @@ export function buildPasswordResetEmailTemplate(
     .security-text {
       margin: 0;
 
-      color: #4a4137;
+      color: #8C6F53;
 
       font-size: 13px;
 
@@ -630,7 +632,7 @@ export function buildPasswordResetEmailTemplate(
     }
 
     .expiry {
-      color: #9a6a35;
+      color: #6B3A1F;
 
       font-weight: 900;
     }
@@ -659,7 +661,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 8px;
 
-      color: #211d18;
+      color: #3B1E0E;
 
       font-size: 14px;
 
@@ -672,7 +674,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         0 0 12px;
 
-      color: #6e6255;
+      color: #8C6F53;
 
       font-size: 12px;
 
@@ -686,7 +688,7 @@ export function buildPasswordResetEmailTemplate(
 
       padding: 14px;
 
-      background-color: #eee8dc;
+      background-color: #FFF9EE;
 
       border:
         1px solid
@@ -694,7 +696,7 @@ export function buildPasswordResetEmailTemplate(
 
       border-radius: 8px;
 
-      color: #4a4137;
+      color: #8C6F53;
 
       font-size: 11px;
 
@@ -721,7 +723,7 @@ export function buildPasswordResetEmailTemplate(
       padding:
         18px 20px;
 
-      background-color: #eee8dc;
+      background-color: #FFF9EE;
 
       border:
         1px solid
@@ -733,7 +735,7 @@ export function buildPasswordResetEmailTemplate(
     .ignore-text {
       margin: 0;
 
-      color: #6e6255;
+      color: #8C6F53;
 
       font-size: 12px;
 
@@ -745,7 +747,7 @@ export function buildPasswordResetEmailTemplate(
        ======================================================== */
 
     .footer {
-      background-color: #211d18;
+      background-color: #3B1E0E;
 
       border-radius:
         0 0 24px 24px;
@@ -774,7 +776,7 @@ export function buildPasswordResetEmailTemplate(
       margin:
         10px auto 0;
 
-      color: #e4ddd1;
+      color: #F8EBD7;
 
       font-size: 11px;
 
@@ -789,13 +791,13 @@ export function buildPasswordResetEmailTemplate(
       margin:
         18px auto;
 
-      background-color: #9a6a35;
+      background-color: #6B3A1F;
     }
 
     .copyright {
       margin: 0;
 
-      color: #6e6255;
+      color: #8C6F53;
 
       font-size: 10px;
 
@@ -872,7 +874,7 @@ export function buildPasswordResetEmailTemplate(
     margin:0;
     padding:0;
     width:100%;
-    background-color:#eee8dc;
+    background-color:#FFF9EE;
     direction:rtl;
     text-align:right;
   "
@@ -975,7 +977,7 @@ export function buildPasswordResetEmailTemplate(
             class="button"
             style="
               display:inline-block;
-              background-color:#9a6a35;
+              background-color:#6B3A1F;
               color:#ffffff;
               padding:17px 40px;
               border-radius:12px;

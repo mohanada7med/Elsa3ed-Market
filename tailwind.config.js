@@ -11,66 +11,104 @@ export default {
     extend: {
       colors: {
         // =========================================================================
-        // 1. CORE BRAND PRIMITIVES
+        // 1. OFFICIAL WAH BRAND DESIGN SYSTEM TOKENS
         // =========================================================================
+        wah: {
+          dark: '#3B1E0E',       // Dark Brown: Headings, primary text, logo, nav, footer, dark elements
+          brown: '#6B3A1F',      // Medium Brown: Primary buttons, active nav, dark card bg, important UI
+          gold: '#C99444',       // Golden: Main brand accent, indicators, lines, highlights, selected
+          orange: '#E66A2E',     // Orange: Main CTA buttons, notifications, badges, highlights
+          cream: '#F8EBD7',      // Cream: Cards, secondary sections, soft surfaces, containers
+          beige: '#E0C79B',      // Light Beige: Borders, dividers, subtle outlines
+          background: '#FFF9EE', // Main Light page background
+          muted: '#D6C6B1',      // Secondary Neutral: Muted UI, disabled elements, subtle borders
+          secondary: '#8C6F53',  // Brown Gray: Secondary text, metadata, categories, dates, locations
+        },
+        wahDark: {
+          background: '#1B1009', // Main Dark background
+          surface: '#26160D',    // Secondary Dark background
+          card: '#3B1E0E',       // Dark mode cards / surfaces
+          elevated: '#4A2715',   // Elevated surfaces
+        },
+
+        // Core Brand Utilities mapped to official WAH palette
         primary: {
-          DEFAULT: '#9a6a35',     // Warm Caramel (Accent/Brand)
-          hover: '#7d5427',
-          active: '#623f1a',
-          light: 'rgba(154, 106, 53, 0.12)',
-          50: '#faf6f0',
-          100: '#f3e8d7',
-          200: '#e5cfae',
-          300: '#d3b080',
-          400: '#ba8d52',
-          500: '#9a6a35',
-          600: '#7d5427',
-          700: '#623f1a',
-          800: '#4d3115',
-          900: '#38230e',
+          DEFAULT: '#6B3A1F',    // Medium Brown (Primary UI & Buttons)
+          hover: 'var(--primary-hover, #3B1E0E)',      // Dark Brown in Light, Golden in Dark
+          active: 'var(--primary-active, #26160D)',
+          light: 'var(--primary-light, rgba(107, 58, 31, 0.12))',
+          50: '#FFF9EE',
+          100: '#F8EBD7',
+          200: '#E0C79B',
+          300: '#D6C6B1',
+          400: '#C99444',
+          500: '#8C6F53',
+          600: '#6B3A1F',
+          700: '#4A2715',
+          800: '#3B1E0E',
+          900: '#1B1009',
         },
         secondary: {
-          DEFAULT: '#FFEDD8',     // Soft Warm Sand / Muted Peach
-          hover: '#FAE1C3',
-          light: 'rgba(255, 237, 216, 0.50)',
-          50: '#fffaf5',
-          100: '#FFEDD8',
-          200: '#fcdbb8',
-          300: '#f7c191',
+          DEFAULT: '#8C6F53',    // Brown Gray
+          hover: '#6B3A1F',
+          light: 'rgba(140, 111, 83, 0.15)',
+          50: '#FFF9EE',
+          100: '#F8EBD7',
+          200: '#E0C79B',
+          300: '#D6C6B1',
         },
         cream: {
-          DEFAULT: '#FFF6EB',     // Clean Cream / Warm Off-white
-          50: '#fffdfa',
-          100: '#FFF6EB',
-          200: '#F7EFE4',
-          300: '#EEDEC8',
+          DEFAULT: '#F8EBD7',    // Cream Cards & Surfaces
+          50: '#FFF9EE',         // Light Mode Page Background
+          100: '#F8EBD7',
+          200: '#E0C79B',
+          300: '#D6C6B1',
         },
         espresso: {
-          DEFAULT: '#2b241c',     // Deep Espresso / Charcoal Brown
-          50: '#4a3e30',
-          100: '#3a3127',
-          200: '#2b241c',
-          900: '#1e1914',         // Base Dark Canvas
-          950: '#120f0c',
+          DEFAULT: '#3B1E0E',    // Dark Brown
+          50: '#F8EBD7',
+          100: '#E0C79B',
+          200: '#D6C6B1',
+          300: '#8C6F53',
+          400: '#6B3A1F',
+          500: '#4A2715',
+          600: '#3B1E0E',
+          700: '#26160D',
+          800: '#1B1009',
+          900: '#1B1009',        // Dark Mode Base Canvas
+          950: '#120904',
         },
         caramel: {
-          DEFAULT: '#9a6a35',
-          hover: '#7d5427',
-          active: '#623f1a',
+          DEFAULT: '#C99444',    // Golden Accent
+          hover: '#E66A2E',
+          active: '#6B3A1F',
+        },
+        gold: {
+          DEFAULT: '#C99444',    // Golden Accent
+          hover: '#E66A2E',
+          light: 'rgba(201, 148, 68, 0.15)',
+        },
+        orange: {
+          DEFAULT: '#E66A2E',    // Orange CTA
+          hover: '#C99444',
+          light: 'rgba(230, 106, 46, 0.15)',
         },
         sand: {
-          DEFAULT: '#FFEDD8',
-          hover: '#FAE1C3',
+          DEFAULT: '#E0C79B',    // Light Beige
+          hover: '#D6C6B1',
         },
 
         // Brand Namespace
         brand: {
-          primary: '#9a6a35',
-          secondary: '#FFEDD8',
-          cream: '#FFF6EB',
-          espresso: '#2b241c',
-          caramel: '#9a6a35',
-          sand: '#FFEDD8',
+          primary: '#6B3A1F',
+          secondary: '#8C6F53',
+          cream: '#F8EBD7',
+          espresso: '#3B1E0E',
+          gold: '#C99444',
+          orange: '#E66A2E',
+          beige: '#E0C79B',
+          background: '#FFF9EE',
+          darkBg: '#1B1009',
         },
 
         // =========================================================================
@@ -105,6 +143,10 @@ export default {
           DEFAULT: 'var(--accent)',
           hover: 'var(--accent-hover)',
           light: 'var(--accent-light)',
+        },
+        cta: {
+          DEFAULT: 'var(--cta, #E66A2E)',
+          hover: 'var(--cta-hover, #C99444)',
         },
 
         // Status Feedback Colors (WCAG AA Compliant)
@@ -179,10 +221,11 @@ export default {
         'wah-editorial-reverse': '0.5rem 1.5rem 0.5rem 1.5rem',
       },
       boxShadow: {
-        'wah-soft': '0 2px 8px -2px rgba(43, 36, 28, 0.05)',
-        'wah-card': '0 6px 20px -4px rgba(43, 36, 28, 0.07)',
-        'wah-hover': '0 12px 30px -6px rgba(43, 36, 28, 0.12)',
-        'caramel-glow': '0 8px 24px -4px rgba(154, 106, 53, 0.25)',
+        'wah-soft': '0 2px 8px -2px rgba(59, 30, 14, 0.06)',
+        'wah-card': '0 6px 20px -4px rgba(59, 30, 14, 0.08)',
+        'wah-hover': '0 12px 30px -6px rgba(59, 30, 14, 0.12)',
+        'warm-glow': '0 8px 24px -4px rgba(201, 148, 68, 0.20)',
+        'cta-glow': '0 8px 24px -4px rgba(230, 106, 46, 0.30)',
       },
     },
   },

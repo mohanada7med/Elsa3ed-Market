@@ -341,7 +341,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
       dir="rtl"
       className={`relative w-full overflow-hidden rounded-3xl border border-primary/20 bg-primary/[0.03] p-4 text-black/85 dark:text-white/85 sm:p-7 md:p-8 ${className}`}
     >
-      {/* Background accents matching #9a6a35 */}
+      {/* Background accents matching #C99444 */}
       <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
 
@@ -777,7 +777,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                         setLightboxIndex(tIdx);
                       }}
                       className={`relative h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-xl border-2 transition-all cursor-pointer ${isActive
-                        ? 'border-primary scale-105 shadow-lg shadow-[#9a6a35]/60 brightness-105'
+                        ? 'border-primary scale-105 shadow-lg shadow-[#C99444]/60 brightness-105'
                         : 'border-white/20 opacity-60 hover:opacity-100'
                         }`}
                     >

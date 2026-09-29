@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
+import { WAHBrandPattern } from '../common/WAHBrandPattern';
 
 export const HeroSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
@@ -26,6 +27,14 @@ export const HeroSection: React.FC = () => {
         duration-500
       "
     >
+      {/* Subtle WAH Brand Pattern Texture Overlay */}
+      <WAHBrandPattern
+        variant="geometric-stripes"
+        opacity={0.03}
+        className="hidden lg:block z-[2] mix-blend-multiply dark:mix-blend-screen"
+        color="#C99444"
+        secondaryColor="#6B3A1F"
+      />
       {/* ========================================================= */}
       {/* 📱 Mobile Layout (< lg)                                   */}
       {/* ========================================================= */}

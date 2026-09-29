@@ -12,3 +12,5 @@ export * from './cards/WAHGovernorateCard';
 export * from './cards/WAHFoodCard';
 export * from './cards/WAHEventCard';
 export * from './renderIcon';
+export * from '../components/common/WAHBrandPattern';
+export * from '../components/common/WAHBrandElements';

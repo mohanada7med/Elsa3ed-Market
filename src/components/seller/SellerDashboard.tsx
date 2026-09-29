@@ -1014,7 +1014,7 @@ export const SellerDashboard: React.FC = () => {
         <div className="max-w-4xl mx-auto space-y-6">
           {sellerStatus === 'pending' && (
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
-              <div className="rounded-t-[2rem] bg-espresso text-white dark:bg-cream dark:text-black p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
+              <div className="rounded-t-[2rem] bg-[#6B3A1F] text-[#FFF9EE] p-8 text-center sm:text-right relative overflow-hidden border-b border-black/10 dark:border-white/10">
                 <div className="absolute top-0 left-0 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
                 <div className="flex flex-col sm:flex-row items-center gap-5 relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary shrink-0 shadow-inner">
@@ -1111,7 +1111,7 @@ export const SellerDashboard: React.FC = () => {
                     id="refresh-seller-status-btn"
                     onClick={fetchSellerReviewStatus}
                     disabled={isCheckingStatus}
-                    className="w-full sm:w-auto px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+                    className="w-full sm:w-auto px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <RefreshCw className={`w-4 h-4 ${isCheckingStatus ? 'animate-spin' : ''}`} />
                     <span>{isCheckingStatus ? 'جاري التحقق...' : 'تحديث حالة الطلب الآن'}</span>
@@ -1164,7 +1164,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={fetchSellerReviewStatus}
-                    className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>إعادة التحقق من الحالة</span>
@@ -1185,7 +1185,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 shadow-2xl backdrop-blur-xl overflow-hidden">
               <div className="bg-gradient-to-r from-amber-600 to-orange-600 p-8 text-white flex items-center gap-5">
                 <div className="w-16 h-16 rounded-2xl bg-white/20 border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
-                  <ShieldAlert className="w-8 h-8 text-[#d5a56d]" />
+                  <ShieldAlert className="w-8 h-8 text-[#C99444]" />
                 </div>
                 <div>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/40 text-orange-100 text-xs font-bold mb-2 border border-orange-400/30">
@@ -1216,7 +1216,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={fetchSellerReviewStatus}
-                    className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>إعادة التحقق من الحالة</span>
@@ -1277,7 +1277,7 @@ export const SellerDashboard: React.FC = () => {
                   type="button"
                   id="seller-cover-settings-btn"
                   onClick={() => setActiveTab('settings')}
-                  className="text-[11px] text-[#d5a56d] hover:text-white underline mr-2 flex items-center gap-1 font-bold cursor-pointer"
+                  className="text-[11px] text-[#C99444] hover:text-white underline mr-2 flex items-center gap-1 font-bold cursor-pointer"
                 >
                   <Camera className="w-3.5 h-3.5" />
                   <span>تعديل صورة الغلاف والشعار</span>
@@ -1359,7 +1359,7 @@ export const SellerDashboard: React.FC = () => {
               onClick={() => setActiveTab('settings')}
               className="px-3.5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl backdrop-blur-md flex items-center gap-1.5 transition-all cursor-pointer"
             >
-              <Palette className="w-3.5 h-3.5 text-[#d5a56d]" />
+              <Palette className="w-3.5 h-3.5 text-[#C99444]" />
               <span className="hidden sm:inline">غلاف الورشة</span>
             </button>
 
@@ -1367,7 +1367,7 @@ export const SellerDashboard: React.FC = () => {
               type="button"
               id="seller-add-product-btn"
               onClick={openAddProductModal}
-              className="px-4 py-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
+              className="px-4 py-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>إضافة منتج جديد</span>
@@ -1476,7 +1476,7 @@ export const SellerDashboard: React.FC = () => {
               <button
                 type="button"
                 onClick={openAddProductModal}
-                className="w-full py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+                className="w-full py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
               >
                 <Plus className="w-4 h-4" />
                 <span>إضافة قطعة جديدة</span>
@@ -1527,7 +1527,7 @@ export const SellerDashboard: React.FC = () => {
                           {item.badge}
                         </span>
                       )}
-                      <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 border-solid border-l-[#211d18] dark:border-l-white border-l-4 border-y-transparent border-y-4 border-r-0" />
+                      <div className="absolute top-1/2 -translate-y-1/2 -right-1.5 border-solid border-l-[#3B1E0E] dark:border-l-white border-l-4 border-y-transparent border-y-4 border-r-0" />
                     </div>
                   </div>
                 );
@@ -1634,7 +1634,7 @@ export const SellerDashboard: React.FC = () => {
                     onClick={() => handleSelectTab(item.id)}
                     className={`p-4 rounded-2xl border transition-all text-right flex items-start justify-between cursor-pointer group shadow-2xs ${isActive
                       ? 'bg-primary text-white border-primary shadow-md ring-2 ring-primary/30'
-                      : 'bg-white dark:bg-[#161513] hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10'
+                      : 'bg-white dark:bg-[#26160D] hover:bg-black/5 dark:hover:bg-white/5 border-black/10 dark:border-white/10'
                       }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
@@ -1690,8 +1690,8 @@ export const SellerDashboard: React.FC = () => {
               <div
                 onClick={() => handleSelectTab('products')}
                 className={`md:col-span-2 rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'products'
-                  ? 'bg-gradient-to-br from-[#9a6a35] to-[#734c1f] text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  ? 'bg-gradient-to-br from-[#6B3A1F] to-[#3B1E0E] text-white border-primary ring-2 ring-primary/30'
+                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
                   }`}
               >
                 <div className="flex items-start justify-between">
@@ -1738,7 +1738,7 @@ export const SellerDashboard: React.FC = () => {
                 onClick={() => handleSelectTab('orders')}
                 className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'orders'
                   ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
                   }`}
               >
                 <div className="flex items-start justify-between">
@@ -1765,7 +1765,7 @@ export const SellerDashboard: React.FC = () => {
                 onClick={() => handleSelectTab('inventory')}
                 className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'inventory'
                   ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
                   }`}
               >
                 <div className="flex items-start justify-between">
@@ -1792,7 +1792,7 @@ export const SellerDashboard: React.FC = () => {
                 onClick={() => handleSelectTab('payouts')}
                 className={`rounded-3xl p-5 border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${activeTab === 'payouts'
                   ? 'bg-primary text-white border-primary ring-2 ring-primary/30'
-                  : 'bg-white dark:bg-[#161513] border-black/10 dark:border-white/10 hover:border-primary/50'
+                  : 'bg-white dark:bg-[#26160D] border-black/10 dark:border-white/10 hover:border-primary/50'
                   }`}
               >
                 <div className="flex items-start justify-between">
@@ -1824,7 +1824,7 @@ export const SellerDashboard: React.FC = () => {
                 type="button"
                 id="seller-primary-add-card"
                 onClick={openAddProductModal}
-                className="p-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-2xl shadow-sm transition-all text-right flex items-center justify-between group cursor-pointer"
+                className="p-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-2xl shadow-sm transition-all text-right flex items-center justify-between group cursor-pointer"
               >
                 <div>
                   <span className="text-xs font-bold block">إضافة منتج</span>
@@ -2002,7 +2002,7 @@ export const SellerDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveTab('inventory')}
-                    className="px-4 py-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
+                    className="px-4 py-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] rounded-xl text-xs font-bold shrink-0 self-start sm:self-auto cursor-pointer transition-colors shadow-sm"
                   >
                     تحديث الجرد والمخزون
                   </button>
@@ -2031,7 +2031,7 @@ export const SellerDashboard: React.FC = () => {
                     type="button"
                     id="seller-tab-add-product"
                     onClick={openAddProductModal}
-                    className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
+                    className="px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     <span>إضافة قطعة جديدة</span>
@@ -2048,7 +2048,7 @@ export const SellerDashboard: React.FC = () => {
                     <button
                       type="button"
                       onClick={openAddProductModal}
-                      className="mt-4 px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
+                      className="mt-4 px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md cursor-pointer transition-colors"
                     >
                       إضافة منتج الآن
                     </button>
@@ -2250,7 +2250,7 @@ export const SellerDashboard: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => openStockModal(prod)}
-                              className="px-4 py-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
+                              className="px-4 py-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5 ml-auto min-h-[36px] cursor-pointer transition-colors"
                             >
                               <Boxes className="w-3.5 h-3.5" />
                               <span>تعديل الرصيد</span>
@@ -2426,7 +2426,7 @@ export const SellerDashboard: React.FC = () => {
                         type="button"
                         onClick={() => setCoverPickerTab('presets')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'presets'
-                          ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                          ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-espresso dark:hover:text-cream'
                           }`}
                       >
@@ -2438,7 +2438,7 @@ export const SellerDashboard: React.FC = () => {
                         type="button"
                         onClick={() => setCoverPickerTab('upload')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'upload'
-                          ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                          ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-espresso dark:hover:text-cream'
                           }`}
                       >
@@ -2450,7 +2450,7 @@ export const SellerDashboard: React.FC = () => {
                         type="button"
                         onClick={() => setCoverPickerTab('url')}
                         className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${coverPickerTab === 'url'
-                          ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                          ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                           : 'text-black/60 dark:text-white/60 hover:text-espresso dark:hover:text-cream'
                           }`}
                       >
@@ -2613,7 +2613,7 @@ export const SellerDashboard: React.FC = () => {
                           />
                           <button
                             type="submit"
-                            className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                            className="px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl transition-colors cursor-pointer"
                           >
                             تطبيق
                           </button>
@@ -2687,7 +2687,7 @@ export const SellerDashboard: React.FC = () => {
                       <button
                         type="submit"
                         disabled={isSavingProfile}
-                        className="px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
+                        className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all"
                       >
                         {isSavingProfile ? (
                           <>
@@ -2758,7 +2758,7 @@ export const SellerDashboard: React.FC = () => {
           {/* TAB 7: REELS */}
           {activeTab === 'reels' && (
             <div className="space-y-8 animate-in fade-in">
-              <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2e261f] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="relative rounded-[2rem] bg-gradient-to-r from-[#3B1E0E] via-[#4A2715] to-[#3B1E0E] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
                   <h2 className="text-xl sm:text-3xl font-black font-serif">فيديوهات ورشة الصنعة القصيرة</h2>
                   <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي لورشتك فقط</p>
@@ -3068,7 +3068,7 @@ export const SellerDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingStock}
-                  className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl cursor-pointer"
                 >
                   {isUpdatingStock ? 'جاري التحديث...' : 'حفظ الرصيد الجديد'}
                 </button>
@@ -3316,7 +3316,7 @@ export const SellerDashboard: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting || isUploadingImages}
-                  className="px-7 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-2xl shadow-md cursor-pointer"
+                  className="px-7 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-2xl shadow-md cursor-pointer"
                 >
                   {isSubmitting ? 'جاري الحفظ...' : editingProduct ? 'حفظ التعديلات' : 'إرسال للمراجعة'}
                 </button>
@@ -3353,7 +3353,7 @@ export const SellerDashboard: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-md cursor-pointer"
+                  className="px-6 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-md cursor-pointer"
                 >
                   تأكيد التحويل
                 </button>

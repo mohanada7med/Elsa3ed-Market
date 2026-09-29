@@ -98,7 +98,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => navigateToProduct(product.id)}
-            className="p-2.5 rounded-xl bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#20201d] text-espresso dark:text-cream hover:text-primary dark:hover:text-[#d5a56d] border border-black/10 dark:border-white/10 backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer"
+            className="p-2.5 rounded-xl bg-white/90 dark:bg-espresso-900/90 hover:bg-white dark:hover:bg-[#4A2715] text-espresso dark:text-cream hover:text-primary dark:hover:text-[#C99444] border border-black/10 dark:border-white/10 backdrop-blur-md transition-all shadow-xs opacity-0 group-hover:opacity-100 hidden sm:flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer"
             title={`معاينة ${product.title}`}
             aria-label={`معاينة ${product.title}`}
           >
@@ -127,7 +127,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
               id={`seller-link-${product.sellerId}`}
               onClick={() => navigateToSeller(product.sellerId)}
               aria-label={`زيارة ورشة ${product.sellerName}`}
-              className="text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#d5a56d] transition-colors truncate text-right cursor-pointer"
+              className="text-xs font-bold text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#C99444] transition-colors truncate text-right cursor-pointer"
             >
               {product.sellerName}
             </button>
@@ -158,7 +158,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
                 navigateToProduct(product.id);
               }
             }}
-            className="font-bold text-espresso dark:text-cream text-sm leading-snug hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer line-clamp-2 mb-2"
+            className="font-bold text-espresso dark:text-cream text-sm leading-snug hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer line-clamp-2 mb-2"
           >
             {product.title}
           </h3>
@@ -194,7 +194,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
                 addToCart(product, 1);
               }}
               disabled={!product.inStock}
-              className="p-2.5 rounded-xl bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
+              className="p-2.5 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#4A2715] disabled:opacity-40 shadow-xs transition-colors flex items-center justify-center shrink-0 min-h-[44px] min-w-[44px] cursor-pointer"
               title={`إضافة ${product.title} إلى السلة`}
               aria-label={`إضافة ${product.title} إلى السلة`}
             >

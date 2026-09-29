@@ -58,7 +58,7 @@ export const PersonDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#060608] text-stone-900 dark:text-white flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-500">
+      <div className="min-h-screen bg-[#FFF9EE] dark:bg-[#1B1009] text-stone-900 dark:text-white flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-500">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent" />
         <div className="relative text-center z-10 space-y-4">
           <div className="w-16 h-16 border-2 border-amber-600/30 border-t-amber-600 dark:border-t-amber-500 rounded-full animate-spin mx-auto" />
@@ -72,7 +72,7 @@ export const PersonDetailPage: React.FC = () => {
 
   if (!person) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#060608] text-stone-900 dark:text-white flex items-center justify-center p-6 text-center transition-colors duration-500">
+      <div className="min-h-screen bg-[#FFF9EE] dark:bg-[#1B1009] text-stone-900 dark:text-white flex items-center justify-center p-6 text-center transition-colors duration-500">
         <div className="max-w-md">
           <h2 className="text-3xl font-serif font-black mb-3 text-stone-800 dark:text-amber-100">سيرة لم تكتمل</h2>
           <p className="text-xs text-stone-500 dark:text-white/50 mb-8 font-light">تعذّر الوصول إلى ملف الشخصية في سجلات التراث الصعيدي</p>
@@ -110,7 +110,7 @@ export const PersonDetailPage: React.FC = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-[#FDFBF7] dark:bg-[#070709] text-stone-800 dark:text-[#E5E2DC] selection:bg-amber-600 selection:text-white font-sans antialiased relative overflow-x-hidden transition-colors duration-500"
+      className="min-h-screen bg-[#FFF9EE] dark:bg-[#1B1009] text-stone-800 dark:text-[#FFF9EE] selection:bg-amber-600 selection:text-white font-sans antialiased relative overflow-x-hidden transition-colors duration-500"
     >
       {/* 1. Cinematic Noise & Film Vignette */}
       <div
@@ -165,7 +165,7 @@ export const PersonDetailPage: React.FC = () => {
       {/* =====================================================
           CINEMATIC HERO (Widescreen Spotlight - Always Dramatic)
       ===================================================== */}
-      <section className="relative min-h-[90vh] flex items-end justify-center overflow-hidden pb-20 pt-16 bg-[#070709] text-white">
+      <section className="relative min-h-[90vh] flex items-end justify-center overflow-hidden pb-20 pt-16 bg-[#1B1009] text-white">
 
         {/* Background Image & Dramatic Light */}
         <div className="absolute inset-0 z-0">
@@ -175,8 +175,8 @@ export const PersonDetailPage: React.FC = () => {
             className="h-full w-full object-cover object-center filter contrast-125 brightness-[0.7] saturate-[0.85] scale-100 transition-transform duration-[4000ms] hover:scale-105"
           />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/75 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-transparent to-[#070709]/80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1B1009] via-[#1B1009]/75 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1B1009] via-transparent to-[#1B1009]/80" />
           <div className="absolute -top-40 right-0 h-[650px] w-[650px] rounded-full bg-amber-600/20 blur-[160px] pointer-events-none" />
         </div>
 

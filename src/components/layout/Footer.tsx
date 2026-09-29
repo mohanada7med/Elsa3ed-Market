@@ -128,22 +128,30 @@ export const Footer: React.FC = () => {
       dir="rtl"
       className="
         relative overflow-hidden
-        bg-[#090807]
-        text-[#f4efe6]
+        bg-[#3B1E0E]
+        text-[#FFF9EE]
         transition-colors duration-500
-        border-t border-primary/30
+        border-t border-[#C99444]/30
         select-none pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] lg:pb-0
       "
     >
+      {/* Upper Egyptian Architectural Decorative Frieze Band */}
+      <div className="w-full border-b border-[#C99444]/20 opacity-80">
+        <WAHPattern
+          type="geometry"
+          className="w-full h-4 text-[#C99444]"
+        />
+      </div>
+
       {/* خلفية جمالية متحفية فاخرة */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[150px]" />
-        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/15 blur-[140px]" />
+        <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-[#C99444]/10 blur-[150px]" />
+        <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-[#E66A2E]/10 blur-[140px]" />
 
-        <div className="absolute inset-0 opacity-[0.025]">
+        <div className="absolute inset-0 opacity-[0.04]">
           <WAHPattern
             type="geometry"
-            className="w-full h-full text-white"
+            className="w-full h-full text-[#C99444]"
           />
         </div>
       </div>
@@ -170,7 +178,7 @@ export const Footer: React.FC = () => {
                 type="button"
                 id="footer-workshop-register-btn"
                 onClick={handleWorkshopRegister}
-                className="px-7 py-4 rounded-2xl bg-primary text-white hover:bg-[#83582a] text-xs sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#d6aa72]/30 active:scale-95"
+                className="px-7 py-4 rounded-2xl bg-primary text-white hover:bg-[#C99444] text-xs sm:text-sm font-extrabold transition-all duration-200 shadow-2xl flex items-center gap-2.5 cursor-pointer border border-[#C99444]/30 active:scale-95"
               >
                 <span>سجّل ورشتك معانا</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -301,7 +309,7 @@ export const Footer: React.FC = () => {
                   aria-label="الاشتراك في النشرة"
                   className="
                     absolute left-1.5 top-1.5 w-9 h-9
-                    rounded-lg bg-primary text-white hover:bg-[#83582a]
+                    rounded-lg bg-primary text-white hover:bg-[#C99444]
                     flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md font-bold active:scale-95
                   "
                 >
@@ -365,7 +373,7 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* الشريط السفلي الموشى بالباترن */}
-      <div className="relative h-2 bg-gradient-to-r from-[#5a3a18] via-[#9a6a35] to-[#744e26]">
+      <div className="relative h-2 bg-gradient-to-r from-[#3B1E0E] via-[#6B3A1F] to-[#C99444]">
         <div className="absolute inset-0 opacity-40">
           <WAHPattern
             type="geometry"

@@ -132,7 +132,7 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
       <div
         className={`
           absolute right-[7px] top-8 z-10 flex h-6 w-6 items-center justify-center rounded-full
-          border-4 border-[#eee8dc] bg-primary dark:border-[#0b0b0a] md:right-1/2 md:-mr-3
+          border-4 border-[#FFF9EE] bg-primary dark:border-[#1B1009] md:right-1/2 md:-mr-3
           transition-all duration-700 delay-300
           ${isInView ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}
         `}
@@ -776,8 +776,7 @@ export const PlacesHeritagePage: React.FC = () => {
                 bg-espresso
                 px-5
                 text-white
-                dark:bg-cream
-                dark:text-black
+                dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
               "
             >
               <div className="flex items-center gap-2">
@@ -865,7 +864,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   w-px
                   bg-gradient-to-b
                   from-transparent
-                  via-[#9a6a35]/30
+                  via-[#C99444]/30
                   to-transparent
                   md:right-1/2
                 "
@@ -894,7 +893,7 @@ export const PlacesHeritagePage: React.FC = () => {
                       text-xs font-bold text-white
                       shadow-lg transition-all
                       hover:bg-primary
-                      dark:bg-cream dark:text-black
+                      dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
                       dark:hover:bg-primary dark:hover:text-white
                       cursor-pointer
                     "
@@ -930,7 +929,7 @@ export const PlacesHeritagePage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#C99444]">
                   CONTINUE EXPLORING
                 </div>
                 <h2
@@ -958,7 +957,7 @@ export const PlacesHeritagePage: React.FC = () => {
                   className="inline-flex w-fit items-center gap-2
              rounded-full bg-espresso px-3 py-2
              font-bold text-white shadow-lg transition-all
-             hover:bg-primary dark:bg-cream dark:text-black
+             hover:bg-primary dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
              dark:hover:bg-primary dark:hover:text-white
              cursor-pointer text-sm"
                 >

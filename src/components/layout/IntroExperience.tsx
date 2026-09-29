@@ -283,7 +283,7 @@ export const IntroExperience: React.FC = () => {
                 className="h-full rounded-full bg-primary relative transition-all"
                 style={{ width: `${progress}%` }}
               >
-                <span className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-[0_0_10px_#9a6a35]" />
+                <span className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full shadow-[0_0_10px_#C99444]" />
               </div>
             </div>
 

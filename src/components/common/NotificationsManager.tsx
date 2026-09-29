@@ -327,12 +327,12 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in" dir="rtl">
       {/* Header Banner */}
-      <div className="relative rounded-[2rem] bg-gradient-to-r from-[#211d18] via-[#2d251e] to-[#211d18] text-white p-6 sm:p-8 overflow-hidden shadow-2xl border border-black/10 dark:border-white/10">
+      <div className="relative rounded-[2rem] bg-gradient-to-r from-[#1B1009] via-[#26160D] to-[#1B1009] text-white p-6 sm:p-8 overflow-hidden shadow-2xl border border-black/10 dark:border-white/10">
         <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#d5a56d] text-xs font-bold border border-white/15">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-xs text-[#C99444] text-xs font-bold border border-white/15">
               <Bell className="w-4 h-4 text-primary" />
               <span>
                 {viewMode === 'admin'
@@ -438,7 +438,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   await requestBrowserNotificationPermission();
                   setIsRequestingPermission(false);
                 }}
-                className="px-5 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
+                className="px-5 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] disabled:opacity-50 rounded-xl text-xs font-black transition-all flex items-center gap-2 shadow-md cursor-pointer"
               >
                 <Radio className="w-4 h-4 animate-pulse" />
                 <span>{isRequestingPermission ? 'جارٍ طلب الإذن من المتصفح...' : 'السماح بالإشعارات الفورية'}</span>
@@ -627,7 +627,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
             id="admin-notifs-inbox-tab"
             onClick={() => setAdminSubTab('inbox')}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'inbox'
-              ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+              ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -648,7 +648,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
               fetchBroadcastHistory();
             }}
             className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${adminSubTab === 'broadcasts'
-              ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+              ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
               : 'text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white'
               }`}
           >
@@ -862,7 +862,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('all')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'all'
-                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
@@ -882,7 +882,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   type="button"
                   onClick={() => setFilterRead('read')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap cursor-pointer ${filterRead === 'read'
-                    ? 'bg-espresso text-white dark:bg-cream dark:text-black shadow-md'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
                     : 'bg-black/5 dark:bg-cream/5 text-black/70 dark:text-white/70 hover:bg-black/10'
                     }`}
                 >
@@ -1074,7 +1074,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                               });
                             }
                           }}
-                          className="px-4 py-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                          className="px-4 py-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-black rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
                         >
                           <span>الانتقال والتفاصيل</span>
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -1179,7 +1179,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'all'
-                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      ? 'bg-[#6B3A1F] text-[#FFF9EE] border-transparent shadow-md'
                       : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
@@ -1194,7 +1194,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       if (availableUsers.length === 0) fetchUsers();
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'user'
-                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      ? 'bg-[#6B3A1F] text-[#FFF9EE] border-transparent shadow-md'
                       : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
@@ -1210,7 +1210,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'buyers'
-                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      ? 'bg-[#6B3A1F] text-[#FFF9EE] border-transparent shadow-md'
                       : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
@@ -1226,7 +1226,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                       setSelectedTargetUser(null);
                     }}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1.5 ${broadcastTargetType === 'sellers'
-                      ? 'bg-espresso text-white dark:bg-cream dark:text-black border-transparent shadow-md'
+                      ? 'bg-[#6B3A1F] text-[#FFF9EE] border-transparent shadow-md'
                       : 'bg-black/5 dark:bg-cream/5 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/10'
                       }`}
                   >
@@ -1461,7 +1461,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   <button
                     type="submit"
                     disabled={isSendingBroadcast || !broadcastTitle.trim() || !broadcastMessage.trim()}
-                    className="px-6 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] disabled:opacity-50 font-black rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
                   >
                     {isSendingBroadcast ? (
                       <>

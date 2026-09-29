@@ -373,7 +373,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 type="button"
                 onClick={() => setDisplayMode('voyage')}
                 className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'voyage'
-                  ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
+                  ? 'bg-espresso text-white shadow-lg dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
                   : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
               >
@@ -385,7 +385,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 type="button"
                 onClick={() => setDisplayMode('grid')}
                 className={`flex h-8 sm:h-10 items-center justify-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl px-2 sm:px-4 text-[10px] sm:text-xs font-black transition-all cursor-pointer ${displayMode === 'grid'
-                  ? 'bg-espresso text-white shadow-lg dark:bg-cream dark:text-black'
+                  ? 'bg-espresso text-white shadow-lg dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
                   : 'text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
               >
@@ -557,10 +557,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                         </div>
 
                         <div className="absolute inset-x-0 bottom-0 p-6">
-                          <h3 className="text-3xl font-black text-white group-hover:text-[#d5a56d] transition-colors">
+                          <h3 className="text-3xl font-black text-white group-hover:text-[#C99444] transition-colors">
                             {gov.name}
                           </h3>
-                          <p className="mt-1 text-xs font-bold text-[#d5a56d]">{gov.nickname}</p>
+                          <p className="mt-1 text-xs font-bold text-[#C99444]">{gov.nickname}</p>
                           <p className="mt-2 line-clamp-2 text-xs text-white/75">{gov.shortIntro}</p>
 
                           {active && (
@@ -606,7 +606,7 @@ export const UpperEgyptMapPage: React.FC = () => {
 
                 <button
                   onClick={nextGovernorate}
-                  className="flex items-center gap-2 rounded-xl bg-espresso dark:bg-cream text-white dark:text-black px-4 py-2.5 text-xs font-bold shadow-md hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer"
+                  className="flex items-center gap-2 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] px-4 py-2.5 text-xs font-bold shadow-md hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer"
                 >
                   <span>المحطة اللي بعدها</span>
                   <ChevronLeft size={16} />
@@ -656,7 +656,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                     </h1>
 
                     {selectedGov?.nickname && (
-                      <p className="text-lg sm:text-2xl font-bold text-[#d5a56d]">{selectedGov.nickname}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-[#C99444]">{selectedGov.nickname}</p>
                     )}
 
                     {selectedGov?.shortIntro && (
@@ -720,7 +720,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               <div className="rounded-[2.5rem] border border-black/10 dark:border-white/10 bg-espresso text-white p-8 sm:p-12 text-center relative overflow-hidden shadow-xl">
                 <div className="absolute -right-20 -top-20 h-60 w-60 rounded-full border-[30px] border-white/5" />
                 <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-                  <span className="text-xs font-bold tracking-[0.3em] text-[#d5a56d]">حكاية المكان وتاريخه</span>
+                  <span className="text-xs font-bold tracking-[0.3em] text-[#C99444]">حكاية المكان وتاريخه</span>
                   <p className="text-sm sm:text-base text-white/80 leading-relaxed font-medium">
                     {folkloreStory}
                   </p>
@@ -741,7 +741,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 {selectedGov?.slug && (
                   <button
                     onClick={() => navigateToGovernorate(selectedGov.slug)}
-                    className="flex items-center gap-2 rounded-xl bg-espresso dark:bg-cream text-white dark:text-black px-5 py-3 text-xs font-bold shadow-lg hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer w-fit"
+                    className="flex items-center gap-2 rounded-xl bg-[#6B3A1F] text-[#FFF9EE] px-5 py-3 text-xs font-bold shadow-lg hover:bg-primary dark:hover:bg-primary-hover transition-colors cursor-pointer w-fit"
                   >
                     <span>افتح ملف المحافظة كامل</span>
                     <ArrowLeft size={16} />
@@ -796,11 +796,11 @@ export const UpperEgyptMapPage: React.FC = () => {
                               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
                               <div className="absolute inset-x-0 bottom-0 p-6 space-y-1">
                                 {place.typeLabel && (
-                                  <span className="text-[10px] font-bold tracking-widest text-[#d5a56d]">
+                                  <span className="text-[10px] font-bold tracking-widest text-[#C99444]">
                                     {place.typeLabel}
                                   </span>
                                 )}
-                                <h5 className="text-xl font-black group-hover:text-[#d5a56d] transition-colors">{place.title}</h5>
+                                <h5 className="text-xl font-black group-hover:text-[#C99444] transition-colors">{place.title}</h5>
                                 {place.shortDescription && (
                                   <p className="text-xs text-white/75 line-clamp-2">{place.shortDescription}</p>
                                 )}
@@ -875,7 +875,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                                 onClick={() => handleAddProduct(product)}
                                 className={`mt-4 w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-bold text-white transition-colors cursor-pointer ${added
                                   ? 'bg-emerald-600'
-                                  : 'bg-espresso dark:bg-cream dark:text-black hover:bg-primary'
+                                  : 'bg-espresso dark:bg-[#6B3A1F] dark:text-[#FFF9EE] hover:bg-primary'
                                   }`}
                               >
                                 {added ? <Check size={14} /> : <ShoppingBag size={14} />}

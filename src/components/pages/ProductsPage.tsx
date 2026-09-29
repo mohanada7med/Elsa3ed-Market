@@ -66,7 +66,7 @@ export const ProductsPage: React.FC = () => {
             border
             border-primary/[0.07]
 
-            dark:border-[#d6aa72]/[0.06]
+            dark:border-[#C99444]/[0.06]
           "
         />
 
@@ -81,7 +81,7 @@ export const ProductsPage: React.FC = () => {
             border
             border-primary/[0.05]
 
-            dark:border-[#d6aa72]/[0.05]
+            dark:border-[#C99444]/[0.05]
           "
         />
 
@@ -95,7 +95,7 @@ export const ProductsPage: React.FC = () => {
             rounded-full
             bg-primary/30
 
-            dark:bg-[#d6aa72]/30
+            dark:bg-[#C99444]/30
           "
         />
       </div>
@@ -285,7 +285,7 @@ export const ProductsPage: React.FC = () => {
                     rounded-full
                     bg-primary/10
 
-                    dark:bg-[#d6aa72]/10
+                    dark:bg-[#C99444]/10
                   "
                 >
                   <Sparkles size={13} />
@@ -354,7 +354,7 @@ export const ProductsPage: React.FC = () => {
                       w-12
                       bg-primary
 
-                      dark:bg-[#d6aa72]
+                      dark:bg-[#C99444]
                     "
                   />
                 </div>
@@ -419,7 +419,7 @@ sm:leading-9
                     border
                     border-primary/15
 
-                    dark:border-[#d6aa72]/10
+                    dark:border-[#C99444]/10
                   "
                 />
 
@@ -686,7 +686,7 @@ sm:leading-9
 
                   placeholder:text-white/30
 
-                  focus:border-[#d6aa72]/50
+                  focus:border-[#C99444]/50
                   focus:bg-white/[0.1]
 
                   sm:h-16
@@ -743,7 +743,7 @@ sm:leading-9
                 justify-center
                 gap-3
                 rounded-2xl
-                bg-[#d6aa72]
+                bg-[#C99444]
                 px-6
                 text-black
 
@@ -1017,7 +1017,7 @@ sm:leading-9
                   w-16
                   bg-primary
 
-                  dark:bg-[#d6aa72]
+                  dark:bg-[#C99444]
                 "
               />
 

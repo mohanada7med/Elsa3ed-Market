@@ -300,7 +300,7 @@ export const BuyerAccountPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
             {/* User Avatar with Cloudinary Integration */}
             <div className="relative group shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#6B3A1F] text-[#FFF9EE] flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
                 {isUploadingImage || isRemovingImage ? (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
                     <Loader2 className="w-6 h-6 animate-spin mb-1" />
@@ -325,7 +325,7 @@ export const BuyerAccountPage: React.FC = () => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingImage || isRemovingImage}
                 title="تغيير الصورة"
-                className="absolute -bottom-1 -left-1 p-2 bg-espresso hover:bg-primary text-white dark:bg-cream dark:text-black dark:hover:bg-primary-hover rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
+                className="absolute -bottom-1 -left-1 p-2 bg-espresso hover:bg-primary text-white dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-primary-hover rounded-xl shadow-md transition-transform hover:scale-105 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -519,7 +519,7 @@ export const BuyerAccountPage: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
+              className="w-full sm:w-auto px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-bold rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors min-h-[44px] cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>حفظ التعديلات</span>
@@ -545,7 +545,7 @@ export const BuyerAccountPage: React.FC = () => {
                 type="button"
                 id="go-to-admin-dashboard-btn"
                 onClick={() => setActivePage('admin-dashboard')}
-                className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
                 <span>الانتقال للوحة تحكم الإدارة</span>
@@ -569,7 +569,7 @@ export const BuyerAccountPage: React.FC = () => {
                     type="button"
                     id="go-to-seller-dashboard-btn"
                     onClick={() => setActivePage('seller-dashboard')}
-                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Store className="w-4 h-4" />
                     <span>ادخل للوحة البائع الحرفي</span>
@@ -621,7 +621,7 @@ export const BuyerAccountPage: React.FC = () => {
                     type="button"
                     id="reapply-seller-btn"
                     onClick={() => setIsApplyModalOpen(true)}
-                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Store className="w-4 h-4" />
                     <span>عدّل وقدّم الطلب تاني</span>
@@ -642,7 +642,7 @@ export const BuyerAccountPage: React.FC = () => {
                     type="button"
                     id="open-apply-seller-modal-btn"
                     onClick={() => setIsApplyModalOpen(true)}
-                    className="w-full py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="w-full py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <Store className="w-4 h-4" />
                     <span>قدّم طلب عشان تفتح ورشتك كبائع</span>
@@ -865,7 +865,7 @@ export const BuyerAccountPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmittingApply}
-                  className="px-6 py-2.5 bg-primary hover:bg-[#744e26] text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="px-6 py-2.5 bg-primary hover:bg-[#3B1E0E] text-white font-bold text-xs rounded-xl shadow-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   {isSubmittingApply ? (
                     <>

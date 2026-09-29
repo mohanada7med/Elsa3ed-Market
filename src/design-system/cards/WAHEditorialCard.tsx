@@ -99,7 +99,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
             </p>
           )}
 
-          <h3 className="text-base sm:text-lg font-black font-serif text-espresso dark:text-cream leading-snug group-hover:text-primary dark:group-hover:text-[#d5a56d] transition-colors">
+          <h3 className="text-base sm:text-lg font-black font-serif text-espresso dark:text-cream leading-snug group-hover:text-primary dark:group-hover:text-[#C99444] transition-colors">
             {title}
           </h3>
 
@@ -111,7 +111,7 @@ export const WAHEditorialCard: React.FC<WAHEditorialCardProps> = ({
         </div>
 
         {/* Action Link Footer */}
-        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover group-hover:text-[#7d5427] dark:group-hover:text-[#b88248] relative z-10">
+        <div className="pt-4 mt-4 border-t border-black/10 dark:border-white/10 flex items-center justify-between text-xs font-bold text-primary dark:text-primary-hover group-hover:text-[#3B1E0E] dark:group-hover:text-[#C99444] relative z-10">
           <span>اكتشف المزيد</span>
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
         </div>

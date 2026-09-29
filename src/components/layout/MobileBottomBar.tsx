@@ -73,14 +73,14 @@ export const MobileBottomBar: React.FC = () => {
           max-w-md
           mx-auto
           rounded-[2rem]
-          bg-white/80
-          dark:bg-espresso-900/90
+          bg-[#FFF9EE]/90
+          dark:bg-[#1B1009]/95
           backdrop-blur-2xl
           border
-          border-black/10
-          dark:border-white/10
-          shadow-[0_16px_40px_rgba(0,0,0,0.12)]
-          dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)]
+          border-[#E0C79B]
+          dark:border-[#6B3A1F]
+          shadow-[0_16px_40px_rgba(59,30,14,0.10)]
+          dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)]
           p-1.5
           flex
           items-center
@@ -136,10 +136,10 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('seller-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <Store className="w-5 h-5 text-primary" />
+              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <Store className="w-5 h-5 text-[#C99444]" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-primary">الورشة</span>
+              <span className="text-[9px] font-black mt-0.5 text-primary dark:text-[#C99444]">الورشة</span>
             </button>
 
             {/* 4. طلبات الورشة */}
@@ -232,8 +232,8 @@ export const MobileBottomBar: React.FC = () => {
               onClick={() => setActivePage('admin-dashboard' as any)}
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
             >
-              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <ShieldAlert className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <ShieldAlert className="w-5 h-5 text-purple-400" />
               </div>
               <span className="text-[9px] font-black mt-0.5 text-purple-600 dark:text-purple-400">الإدارة</span>
             </button>
@@ -324,10 +324,10 @@ export const MobileBottomBar: React.FC = () => {
               className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
               aria-label="لفة في الصعيد"
             >
-              <div className="w-12 h-12 rounded-full bg-espresso text-white dark:bg-cream dark:text-black flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <MapPin className="w-5 h-5 text-primary" />
+              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
+                <MapPin className="w-5 h-5 text-[#C99444]" />
               </div>
-              <span className="text-[9px] font-black mt-0.5 text-primary">الصعيد</span>
+              <span className="text-[9px] font-black mt-0.5 text-primary dark:text-[#C99444]">الصعيد</span>
             </button>
 
             {/* 4. سلة المشتريات */}

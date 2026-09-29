@@ -156,9 +156,9 @@ export const FoodHeritagePage: React.FC = () => {
     >
       {/* Decorative Background Rings */}
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#d6aa72]/[0.06]" />
-        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#d6aa72]/[0.05]" />
-        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-primary/30 dark:bg-[#d6aa72]/30" />
+        <div className="absolute -right-[260px] top-[18%] h-[600px] w-[600px] rounded-full border border-primary/[0.07] dark:border-[#C99444]/[0.06]" />
+        <div className="absolute -left-[300px] top-[55%] h-[700px] w-[700px] rounded-full border border-primary/[0.05] dark:border-[#C99444]/[0.05]" />
+        <div className="absolute right-[15%] top-[42%] h-2 w-2 rounded-full bg-primary/30 dark:bg-[#C99444]/30" />
       </div>
 
       {/* Navigation */}
@@ -186,7 +186,7 @@ export const FoodHeritagePage: React.FC = () => {
               className="group flex min-h-[34px] cursor-pointer items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[10px] font-bold transition-colors hover:bg-espresso hover:text-white dark:border-white/10 dark:hover:bg-white dark:hover:text-black sm:px-3.5 sm:py-1.5 sm:text-xs"
               title="يختار لك أكلة صعيدية عشوائية"
             >
-              <Shuffle size={12} className="text-primary dark:text-[#d6aa72]" />
+              <Shuffle size={12} className="text-primary dark:text-[#C99444]" />
               <span>أكلة على البركة!</span>
             </button>
 
@@ -207,7 +207,7 @@ export const FoodHeritagePage: React.FC = () => {
         <div className="grid gap-14 lg:grid-cols-[1fr_420px] lg:items-end lg:gap-20">
           <div>
             <div className="mb-7 flex items-center gap-3 text-[9px] font-black tracking-[0.28em] text-primary dark:text-primary-hover">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#d6aa72]/10">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-[#C99444]/10">
                 <Sparkles size={13} />
               </span>
               UPPER EGYPT CUISINE / TRADITIONS
@@ -226,7 +226,7 @@ export const FoodHeritagePage: React.FC = () => {
                 <div className="text-[9px] font-black tracking-[0.2em] text-black/35 dark:text-white/30">
                   01
                 </div>
-                <div className="mt-3 h-px w-12 bg-primary dark:bg-[#d6aa72]" />
+                <div className="mt-3 h-px w-12 bg-primary dark:bg-[#C99444]" />
               </div>
               <p className="max-w-2xl text-sm font-medium leading-8 text-black/55 sm:text-base sm:leading-9 dark:text-white/55">
                 أكلات الصعيد مش مجرد وجبة، دي حكاية موروثة في قعر الطواجن ودفا الأفران البلدي؛ من خبيز العيش الشمسي والفايش، للويكا المفروكة والكشك، لحد عصارات القصب في قلب النيل.
@@ -236,7 +236,7 @@ export const FoodHeritagePage: React.FC = () => {
 
           <div className="relative">
             <div className="relative overflow-hidden rounded-[2rem] border border-black/[0.08] bg-[#e8e0d2] p-7 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8">
-              <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full border border-primary/15 dark:border-[#d6aa72]/10" />
+              <div className="pointer-events-none absolute -left-20 -top-20 h-48 w-48 rounded-full border border-primary/15 dark:border-[#C99444]/10" />
 
               <div className="relative">
                 <div className="mb-12 flex items-center justify-between">
@@ -271,7 +271,7 @@ export const FoodHeritagePage: React.FC = () => {
                 </div>
 
                 <div className="mt-10 flex items-center gap-3 border-t border-black/10 pt-5 dark:border-white/10">
-                  <div className="h-2 w-2 rounded-full bg-primary dark:bg-[#d6aa72]" />
+                  <div className="h-2 w-2 rounded-full bg-primary dark:bg-[#C99444]" />
                   <span className="text-[10px] font-bold">
                     من قعر الطاجن ودفا الفرن البلدي
                   </span>
@@ -321,7 +321,7 @@ export const FoodHeritagePage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="عيش شمسي، ويكا، فايش، كشك، بصارة..."
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/[0.07] px-5 pl-12 text-sm font-medium text-white outline-none transition-all placeholder:text-white/30 focus:border-[#d6aa72]/50 focus:bg-white/[0.1] sm:h-16 sm:px-6 sm:pl-14"
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/[0.07] px-5 pl-12 text-sm font-medium text-white outline-none transition-all placeholder:text-white/30 focus:border-[#C99444]/50 focus:bg-white/[0.1] sm:h-16 sm:px-6 sm:pl-14"
               />
               {searchQuery ? (
                 <button
@@ -340,7 +340,7 @@ export const FoodHeritagePage: React.FC = () => {
               <button
                 onClick={() => setActiveLayout('bento')}
                 className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${activeLayout === 'bento'
-                  ? 'bg-[#d6aa72] text-black shadow-md'
+                  ? 'bg-[#C99444] text-black shadow-md'
                   : 'text-white/70 hover:text-white'
                   }`}
                 title="عرض بينتو تفاعلي"
@@ -351,7 +351,7 @@ export const FoodHeritagePage: React.FC = () => {
               <button
                 onClick={() => setActiveLayout('reel')}
                 className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${activeLayout === 'reel'
-                  ? 'bg-[#d6aa72] text-black shadow-md'
+                  ? 'bg-[#C99444] text-black shadow-md'
                   : 'text-white/70 hover:text-white'
                   }`}
                 title="شريط سينمائي متتابع"
@@ -362,7 +362,7 @@ export const FoodHeritagePage: React.FC = () => {
               <button
                 onClick={() => setActiveLayout('compact')}
                 className={`flex cursor-pointer items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${activeLayout === 'compact'
-                  ? 'bg-[#d6aa72] text-black shadow-md'
+                  ? 'bg-[#C99444] text-black shadow-md'
                   : 'text-white/70 hover:text-white'
                   }`}
                 title="عرض مدمج وسريع"
@@ -385,7 +385,7 @@ export const FoodHeritagePage: React.FC = () => {
             <button
               onClick={() => setSelectedGovernorate('all')}
               className={`shrink-0 rounded-full px-3.5 py-1 text-xs font-bold transition-all ${selectedGovernorate === 'all'
-                ? 'bg-espresso text-white shadow-sm dark:bg-cream dark:text-black'
+                ? 'bg-espresso text-white shadow-sm dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
                 : 'bg-black/5 text-black/60 hover:bg-black/10 dark:bg-white/5 dark:text-white/60'
                 }`}
             >
@@ -396,7 +396,7 @@ export const FoodHeritagePage: React.FC = () => {
                 key={gov}
                 onClick={() => setSelectedGovernorate(gov)}
                 className={`shrink-0 rounded-full px-3.5 py-1 text-xs font-bold transition-all ${selectedGovernorate === gov
-                  ? 'bg-espresso text-white shadow-sm dark:bg-cream dark:text-black'
+                  ? 'bg-espresso text-white shadow-sm dark:bg-[#6B3A1F] dark:text-[#FFF9EE]'
                   : 'bg-black/5 text-black/60 hover:bg-black/10 dark:bg-white/5 dark:text-white/60'
                   }`}
               >
@@ -470,14 +470,14 @@ export const FoodHeritagePage: React.FC = () => {
                     <div className="absolute right-5 top-5 flex items-center gap-2">
                       {food.governorateName && (
                         <span className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3.5 py-1 text-[11px] font-bold text-white backdrop-blur-md">
-                          <MapPin size={11} className="text-[#d6aa72]" />
+                          <MapPin size={11} className="text-[#C99444]" />
                           {food.governorateName}
                         </span>
                       )}
                     </div>
 
                     <div className="absolute left-5 top-5">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition-all group-hover:rotate-45 group-hover:bg-[#d6aa72] group-hover:text-black">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition-all group-hover:rotate-45 group-hover:bg-[#C99444] group-hover:text-black">
                         <ArrowUpLeft size={16} />
                       </span>
                     </div>
@@ -485,7 +485,7 @@ export const FoodHeritagePage: React.FC = () => {
                     <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
                       <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-white/70">
                         {food.prepTime && (
-                          <span className="flex items-center gap-1 text-[#d6aa72]">
+                          <span className="flex items-center gap-1 text-[#C99444]">
                             <Clock size={12} />
                             {food.prepTime}
                           </span>
@@ -494,7 +494,7 @@ export const FoodHeritagePage: React.FC = () => {
                         <span>{food.category || 'تراث بلدي'}</span>
                       </div>
 
-                      <h3 className="text-3xl font-black transition-colors group-hover:text-[#d6aa72]">
+                      <h3 className="text-3xl font-black transition-colors group-hover:text-[#C99444]">
                         {title}
                       </h3>
 
@@ -513,7 +513,7 @@ export const FoodHeritagePage: React.FC = () => {
                             </span>
                           ))}
                           {food.ingredients.length > 4 && (
-                            <span className="rounded-lg bg-white/20 px-2 py-1 text-[10px] font-bold text-[#d6aa72]">
+                            <span className="rounded-lg bg-white/20 px-2 py-1 text-[10px] font-bold text-[#C99444]">
                               +{food.ingredients.length - 4}
                             </span>
                           )}
@@ -575,7 +575,7 @@ export const FoodHeritagePage: React.FC = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-                      <div className="absolute right-5 top-5 rounded-full bg-black/60 px-3.5 py-1 text-xs font-bold text-[#d6aa72] backdrop-blur-md">
+                      <div className="absolute right-5 top-5 rounded-full bg-black/60 px-3.5 py-1 text-xs font-bold text-[#C99444] backdrop-blur-md">
                         {food.governorateName || 'الصعيد الجواني'}
                       </div>
 
@@ -583,14 +583,14 @@ export const FoodHeritagePage: React.FC = () => {
                         <div className="select-none text-3xl font-black text-white/20">
                           #{String(idx + 1).padStart(2, '0')}
                         </div>
-                        <h4 className="mt-1 text-2xl font-black transition-colors group-hover:text-[#d6aa72]">
+                        <h4 className="mt-1 text-2xl font-black transition-colors group-hover:text-[#C99444]">
                           {title}
                         </h4>
                         <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-white/70">
                           {food.description}
                         </p>
                         <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-                          <span className="text-xs font-bold text-[#d6aa72]">
+                          <span className="text-xs font-bold text-[#C99444]">
                             تصفح السر والوصفة
                           </span>
                           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black transition-transform group-hover:-translate-x-1">

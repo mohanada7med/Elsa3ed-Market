@@ -49,7 +49,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-seller-dashboard-btn"
               onClick={() => setActivePage('seller-dashboard')}
-              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Store className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الورشة</span>
@@ -59,7 +59,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
               type="button"
               id="forbidden-admin-dashboard-btn"
               onClick={() => setActivePage('admin-dashboard')}
-              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <Shield className="w-4 h-4" aria-hidden="true" />
               <span>روح على لوحة الإدارة</span>
@@ -72,7 +72,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
                 setPostLoginRedirect(activePage);
                 setIsAuthModalOpen(true);
               }}
-              className="flex items-center justify-center gap-2 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] px-6 py-3.5 rounded-[1.25rem] font-black transition-all shadow-lg text-sm cursor-pointer"
             >
               <LogIn className="w-4 h-4" aria-hidden="true" />
               <span>ادخل بحساب مشتري</span>

@@ -190,7 +190,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
             </span>
 
             {isCurrentCover && (
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-black text-xs font-black shadow-md backdrop-blur-md">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary text-[#FFF9EE] text-xs font-black shadow-md backdrop-blur-md">
                 <Sparkles size={12} />
                 <span>صورة الغلاف الرسمية</span>
               </span>
@@ -207,7 +207,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
           <button
             type="button"
             onClick={() => handleDownload(currentImage)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-black border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-[#FFF9EE] border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
             title="تحميل الصورة عالية الدقة"
           >
             <Download size={16} />
@@ -216,7 +216,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
           <button
             type="button"
             onClick={() => handleShare(currentImage)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-black border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-[#FFF9EE] border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
             title="مشاركة الصورة"
           >
             <Share2 size={16} />
@@ -226,7 +226,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
             href={currentImage}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-black border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-primary hover:text-[#FFF9EE] border border-white/15 transition-all cursor-pointer backdrop-blur-md active:scale-95"
             title="فتح الرابط الأصلي في نافذة جديدة"
           >
             <ExternalLink size={16} />
@@ -256,7 +256,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
               e.stopPropagation();
               handlePrev();
             }}
-            className="absolute right-4 sm:right-8 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 hover:bg-primary hover:text-black border border-white/20 text-white backdrop-blur-xl transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-2xl"
+            className="absolute right-4 sm:right-8 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 hover:bg-primary hover:text-[#FFF9EE] border border-white/20 text-white backdrop-blur-xl transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-2xl"
             title="الصورة السابقة (سهم يمين)"
           >
             <ChevronRight size={24} />
@@ -287,7 +287,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
               e.stopPropagation();
               handleNext();
             }}
-            className="absolute left-4 sm:left-8 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 hover:bg-primary hover:text-black border border-white/20 text-white backdrop-blur-xl transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-2xl"
+            className="absolute left-4 sm:left-8 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-black/60 hover:bg-primary hover:text-[#FFF9EE] border border-white/20 text-white backdrop-blur-xl transition-all hover:scale-110 active:scale-95 cursor-pointer shadow-2xl"
             title="الصورة التالية (سهم يسار)"
           >
             <ChevronLeft size={24} />
@@ -333,7 +333,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
                       loading="lazy"
                     />
                     {isCoverThumb && (
-                      <span className="absolute bottom-0 inset-x-0 bg-primary/90 text-black text-[8px] font-black text-center py-0.5 leading-none">
+                      <span className="absolute bottom-0 inset-x-0 bg-primary/90 text-[#FFF9EE] text-[8px] font-black text-center py-0.5 leading-none">
                         غلاف
                       </span>
                     )}

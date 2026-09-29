@@ -449,9 +449,9 @@ export const PlaceDetailPage: React.FC = () => {
           className="
             absolute inset-0
             bg-gradient-to-l
-            from-[#0b0b0a]/95
-            via-[#0b0b0a]/50
-            to-[#0b0b0a]/15
+            from-[#1B1009]/95
+            via-[#1B1009]/50
+            to-[#1B1009]/15
           "
         />
 
@@ -459,8 +459,8 @@ export const PlaceDetailPage: React.FC = () => {
           className="
             absolute inset-0
             bg-gradient-to-t
-            from-[#0b0b0a]
-            via-[#0b0b0a]/45
+            from-[#1B1009]
+            via-[#1B1009]/45
             to-transparent
           "
         />
@@ -1440,7 +1440,7 @@ export const PlaceDetailPage: React.FC = () => {
 
             <div className="relative z-10 grid gap-10 lg:grid-cols-[1fr_400px] lg:items-end">
               <div>
-                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#d5a56d]">
+                <div className="mb-5 text-[10px] font-bold tracking-[0.3em] text-[#C99444]">
                   KEEP EXPLORING
                 </div>
                 <h2
@@ -1455,7 +1455,7 @@ export const PlaceDetailPage: React.FC = () => {
                 >
                   الحكاية لسه
                   <br />
-                  <span className="text-[#d5a56d]">مخلصتش.</span>
+                  <span className="text-[#C99444]">مخلصتش.</span>
                 </h2>
               </div>
 

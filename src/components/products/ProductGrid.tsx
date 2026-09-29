@@ -330,15 +330,7 @@ const ProductCard: React.FC<{
         rounded-[1.75rem]
         border
         border-black/[0.07]
-        bg-[#f9f5ed]
-        transition-all
-        duration-500
-
-        hover:-translate-y-2
-        hover:shadow-[0_30px_80px_rgba(38,29,19,0.14)]
-
-        dark:border-white/[0.08]
-        dark:bg-[#11110f]
+        bg-[#F8EBD7] transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_30px_80px_rgba(59,30,14,0.14)] dark:border-[#6B3A1F] dark:bg-[#3B1E0E]
         dark:hover:shadow-black/40
       "
       >
@@ -416,7 +408,7 @@ const ProductCard: React.FC<{
                 items-center
                 gap-1.5
                 rounded-full
-                bg-[#d6aa72]
+                bg-[#C99444]
                 px-3
                 py-1.5
                 text-[9px]
@@ -545,7 +537,7 @@ const ProductCard: React.FC<{
 
             group-hover:opacity-100
 
-            hover:bg-[#d6aa72]
+            hover:bg-[#C99444]
 
             dark:bg-black/75
             dark:text-white
@@ -669,9 +661,7 @@ const ProductCard: React.FC<{
                   <span
                     className="
                     text-[9px]
-                    text-black/30
-
-                    dark:text-white/25
+                    text-[#8C6F53] dark:text-[#D6C6B1]
                   "
                   >
                     ({reviews})
@@ -719,9 +709,7 @@ const ProductCard: React.FC<{
                   gap-2
                   text-[10px]
                   font-bold
-                  text-black/40
-
-                  dark:text-white/35
+                  text-[#8C6F53] dark:text-[#D6C6B1]
                 "
                 >
                   <Store
@@ -759,9 +747,7 @@ const ProductCard: React.FC<{
                   gap-2
                   text-[10px]
                   font-medium
-                  text-black/35
-
-                  dark:text-white/30
+                  text-[#8C6F53] dark:text-[#D6C6B1]
                 "
                 >
                   <MapPin
@@ -805,9 +791,7 @@ const ProductCard: React.FC<{
                 text-[8px]
                 font-black
                 tracking-[0.15em]
-                text-black/30
-
-                dark:text-white/25
+                text-[#8C6F53] dark:text-[#D6C6B1]
               "
               >
                 السعر
@@ -838,9 +822,7 @@ const ProductCard: React.FC<{
                   className="
                   text-[9px]
                   font-bold
-                  text-black/35
-
-                  dark:text-white/30
+                  text-[#8C6F53] dark:text-[#D6C6B1]
                 "
                 >
                   جنيه
@@ -885,20 +867,7 @@ const ProductCard: React.FC<{
               items-center
               justify-center
               rounded-2xl
-              bg-espresso
-              text-white
-              transition-all
-
-              hover:scale-105
-              hover:bg-primary
-
-              disabled:cursor-not-allowed
-              disabled:opacity-40
-
-              dark:bg-cream
-              dark:text-black
-
-              dark:hover:bg-[#d6aa72]
+              bg-[#6B3A1F] text-[#FFF9EE] transition-all hover:scale-105 hover:bg-[#3B1E0E] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#C99444]
 
               cursor-pointer
             "
@@ -925,7 +894,7 @@ const ProductCard: React.FC<{
                 className={
                   outOfStock
                     ? 'text-red-500'
-                    : 'text-black/30 dark:text-white/25'
+                    : 'text-[#8C6F53] dark:text-[#D6C6B1]'
                 }
               >
                 {outOfStock
@@ -950,9 +919,7 @@ const ProductCard: React.FC<{
               items-center
               gap-1
               whitespace-nowrap
-              text-black/25
-
-              dark:text-white/20
+              text-[#8C6F53]/70 dark:text-[#D6C6B1]/70
             "
             >
               <Truck size={11} />
@@ -1323,9 +1290,7 @@ const QuickView: React.FC<{
                     <span
                       className="
                       text-[10px]
-                      text-black/35
-
-                      dark:text-white/30
+                      text-[#8C6F53] dark:text-[#D6C6B1]
                     "
                     >
                       البائع
@@ -1344,9 +1309,7 @@ const QuickView: React.FC<{
                     <span
                       className="
                       text-[10px]
-                      text-black/35
-
-                      dark:text-white/30
+                      text-[#8C6F53] dark:text-[#D6C6B1]
                     "
                     >
                       المكان
@@ -1365,9 +1328,7 @@ const QuickView: React.FC<{
                     <span
                       className="
                       text-[10px]
-                      text-black/35
-
-                      dark:text-white/30
+                      text-[#8C6F53] dark:text-[#D6C6B1]
                     "
                     >
                       الخامة
@@ -1384,9 +1345,7 @@ const QuickView: React.FC<{
                     <span
                       className="
                       text-[10px]
-                      text-black/35
-
-                      dark:text-white/30
+                      text-[#8C6F53] dark:text-[#D6C6B1]
                     "
                     >
                       المخزون
@@ -1419,18 +1378,7 @@ const QuickView: React.FC<{
                 justify-center
                 gap-3
                 rounded-2xl
-                bg-espresso
-                text-xs
-                font-black
-                text-white
-                transition
-
-                hover:bg-primary
-
-                dark:bg-cream
-                dark:text-black
-
-                dark:hover:bg-[#d6aa72]
+                bg-[#6B3A1F] text-xs font-black text-[#FFF9EE] transition hover:bg-[#3B1E0E] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] dark:hover:bg-[#C99444]
 
                 cursor-pointer
               "
@@ -1693,7 +1641,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             bg-primary/10
             text-primary
 
-            dark:bg-[#d6aa72]/10
+            dark:bg-[#C99444]/10
             dark:text-primary-hover
           "
         >
@@ -1716,9 +1664,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             max-w-md
             text-sm
             leading-7
-            text-black/40
-
-            dark:text-white/35
+            text-[#8C6F53] dark:text-[#D6C6B1]
           "
         >
           أول ما المنتجات تكون متاحة،
@@ -1819,11 +1765,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
               items-center
               justify-center
               rounded-xl
-              bg-espresso
-              text-white
-
-              dark:bg-cream
-              dark:text-black
+              bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE]
             "
           >
             <ShoppingBag size={15} />
@@ -1839,9 +1781,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
                 mt-1
                 text-[9px]
                 font-medium
-                text-black/35
-
-                dark:text-white/30
+                text-[#8C6F53] dark:text-[#D6C6B1]
               "
             >
               {visibleProducts.length} قطعة
@@ -1857,9 +1797,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ customProducts, limit 
             gap-2
             text-[9px]
             font-bold
-            text-black/30
-
-            dark:text-white/25
+            text-[#8C6F53] dark:text-[#D6C6B1]
           "
         >
           <Sparkles

@@ -677,7 +677,7 @@ export const EventsPage: React.FC = () => {
                       className={`
                     flex shrink-0 items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold transition-all cursor-pointer
                     ${isActive
-                          ? 'bg-primary text-black shadow-md'
+                          ? 'bg-primary text-[#FFF9EE] shadow-md'
                           : 'bg-black/[0.04] text-black/70 hover:bg-black/10 dark:bg-white/5 dark:text-white/70 dark:hover:bg-white/10'
                         }
                   `}
@@ -877,7 +877,7 @@ export const EventsPage: React.FC = () => {
                               className="
                             flex h-6 w-6 items-center justify-center
                             rounded-full border border-white/20
-                            bg-black/40 hover:bg-primary hover:text-black
+                            bg-black/40 hover:bg-primary hover:text-[#FFF9EE]
                             text-white
                             backdrop-blur-md transition-all
                             hover:scale-110 active:scale-95 cursor-pointer shadow-xs
@@ -895,7 +895,7 @@ export const EventsPage: React.FC = () => {
                               <span>{event.governorateName}</span>
                             </div>
 
-                            <div className="flex items-center gap-1 bg-primary/90 text-black px-2.5 py-1 rounded-full font-black text-[11px]">
+                            <div className="flex items-center gap-1 bg-primary/90 text-[#FFF9EE] px-2.5 py-1 rounded-full font-black text-[11px]">
                               <Clock size={11} />
                               <span>{event.dateText || event.eventDate}</span>
                             </div>

@@ -84,7 +84,7 @@ export const OrdersTrackingPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setActivePage('home')}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الرئيسية
         </button>
@@ -95,7 +95,7 @@ export const OrdersTrackingPage: React.FC = () => {
             setSelectedOrder(null);
             setActivePage('orders');
           }}
-          className="hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer"
+          className="hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer"
         >
           الطلبات
         </button>
@@ -112,8 +112,8 @@ export const OrdersTrackingPage: React.FC = () => {
       {/* Page Header */}
       <div className="bg-espresso rounded-[2rem] p-6 sm:p-10 text-cream shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-black/10 dark:border-white/10 relative overflow-hidden">
         <div className="space-y-2 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-[#d5a56d] border border-primary/30 text-xs font-bold">
-            <Truck className="w-3.5 h-3.5 text-[#d5a56d]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-[#C99444] border border-primary/30 text-xs font-bold">
+            <Truck className="w-3.5 h-3.5 text-[#C99444]" />
             <span>تتبع شحنتك خطوة بخطوة من الصعيد</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black font-serif">
@@ -155,7 +155,7 @@ export const OrdersTrackingPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="px-7 py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover text-xs font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all hover:scale-[1.02]"
+            className="px-7 py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] text-xs font-black rounded-[1.25rem] shadow-lg cursor-pointer transition-all hover:scale-[1.02]"
           >
             استكشف سوق وه
           </button>
@@ -223,7 +223,7 @@ export const OrdersTrackingPage: React.FC = () => {
                               key={idx}
                               src={itemImg}
                               alt=""
-                              className="inline-block w-8 h-8 rounded-lg object-cover ring-2 ring-white dark:ring-[#151513]"
+                              className="inline-block w-8 h-8 rounded-lg object-cover ring-2 ring-white dark:ring-[#1B1009]"
                             />
                           );
                         })}

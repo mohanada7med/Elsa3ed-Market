@@ -139,7 +139,7 @@ const AdminEventsManagerPage = lazyWithRetry(() =>
 
 const LazySectionFallback: React.FC = () => (
   <div className="min-h-[380px] flex flex-col items-center justify-center p-8 text-center" dir="rtl">
-    <div className="w-10 h-10 border-3 border-primary/20 border-t-[#9a6a35] rounded-full animate-spin mb-3" />
+    <div className="w-10 h-10 border-3 border-primary/20 border-t-[#C99444] rounded-full animate-spin mb-3" />
     <p className="text-xs font-bold text-primary">وَه | جاري فتح الصفحة...</p>
   </div>
 );
@@ -333,7 +333,7 @@ const MainContent: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col justify-between bg-cream dark:bg-espresso-900 text-espresso dark:text-cream transition-colors duration-500">
+    <main className="min-h-screen flex flex-col justify-between bg-[#FFF9EE] dark:bg-[#1B1009] text-[#3B1E0E] dark:text-[#FFF9EE] transition-colors duration-500">
       <div>
         <Header />
         <DynamicBreadcrumbs />
@@ -394,7 +394,7 @@ const MainContent: React.FC = () => {
                           setAuthModalTab('login');
                           setIsAuthModalOpen(true);
                         }}
-                        className="w-full py-3 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
+                        className="w-full py-3 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-xs transition-all cursor-pointer"
                       >
                         تسجيل الدخول للمتابعة
                       </button>
@@ -479,7 +479,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الآن
                     </button>
@@ -510,7 +510,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-primary hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                      className="px-5 py-3 bg-primary hover:bg-[#3B1E0E] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
                     >
                       متابعة حالة الطلب في حسابي
                     </button>
@@ -541,7 +541,7 @@ const MainContent: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setActivePage('buyer-account')}
-                      className="px-5 py-3 bg-primary hover:bg-[#744e26] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                      className="px-5 py-3 bg-primary hover:bg-[#3B1E0E] text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
                     >
                       تعديل وإعادة تقديم الطلب
                     </button>
@@ -571,7 +571,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل دخول البائع
                     </button>
@@ -618,7 +618,7 @@ const MainContent: React.FC = () => {
                         setAuthModalTab('login');
                         setIsAuthModalOpen(true);
                       }}
-                      className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
+                      className="w-full py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold rounded-xl shadow-md text-sm transition-all cursor-pointer"
                     >
                       تسجيل الدخول الإداري
                     </button>

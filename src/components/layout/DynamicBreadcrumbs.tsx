@@ -659,7 +659,7 @@ export const DynamicBreadcrumbs: React.FC = () => {
                     itemProp="name"
                     aria-current="page"
                     title={item.label}
-                    className="font-bold text-primary dark:text-[#d5a56d] truncate max-w-[180px] sm:max-w-[320px] md:max-w-[480px]"
+                    className="font-bold text-primary dark:text-[#C99444] truncate max-w-[180px] sm:max-w-[320px] md:max-w-[480px]"
                   >
                     {item.label}
                   </span>
@@ -668,13 +668,13 @@ export const DynamicBreadcrumbs: React.FC = () => {
                     type="button"
                     itemProp="item"
                     onClick={item.onClick}
-                    className="flex items-center gap-1.5 text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#d5a56d] transition-colors cursor-pointer py-1 font-medium hover:underline underline-offset-4 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-sm"
+                    className="flex items-center gap-1.5 text-black/60 dark:text-white/60 hover:text-primary dark:hover:text-[#C99444] transition-colors cursor-pointer py-1 font-medium hover:underline underline-offset-4 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-primary rounded-sm"
                   >
                     {isRoot && (
                       <Home
                         size={13}
                         aria-hidden="true"
-                        className="shrink-0 -mt-0.5 text-primary/80 dark:text-[#d5a56d]/80"
+                        className="shrink-0 -mt-0.5 text-primary/80 dark:text-[#C99444]/80"
                       />
                     )}
                     <span itemProp="name">{item.label}</span>

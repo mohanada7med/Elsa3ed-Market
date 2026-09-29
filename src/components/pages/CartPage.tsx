@@ -198,7 +198,7 @@ export const CartPage: React.FC = () => {
                   setActivePage('products');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="w-full sm:w-auto px-8 py-3.5 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm rounded-xl shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>اتفرج على منتجات سوق وه</span>
@@ -388,7 +388,7 @@ export const CartPage: React.FC = () => {
                       <button
                         type="submit"
                         disabled={isApplyingCoupon || !couponInput.trim()}
-                        className="px-4 py-2.5 bg-espresso text-white dark:bg-cream dark:text-black disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-primary dark:hover:bg-primary-hover"
+                        className="px-4 py-2.5 bg-[#6B3A1F] text-[#FFF9EE] disabled:opacity-50 text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 hover:bg-primary dark:hover:bg-primary-hover"
                       >
                         {isApplyingCoupon ? 'جاري الفحص...' : 'تطبيق'}
                       </button>
@@ -451,7 +451,7 @@ export const CartPage: React.FC = () => {
                   type="button"
                   id="cart-checkout-btn"
                   onClick={handleCheckout}
-                  className="w-full py-3.5 sm:py-4 px-6 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
+                  className="w-full py-3.5 sm:py-4 px-6 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm sm:text-base rounded-xl shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2 text-center"
                 >
                   <span>متابعة إتمام الطلب</span>
                   <ArrowLeft className="w-4 h-4" />

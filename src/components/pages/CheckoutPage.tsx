@@ -81,7 +81,7 @@ export const CheckoutPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActivePage('products')}
-            className="w-full py-4 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm rounded-2xl shadow-lg transition duration-200 cursor-pointer"
+            className="w-full py-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm rounded-2xl shadow-lg transition duration-200 cursor-pointer"
           >
             تصفح منتجات سوق وه
           </button>
@@ -138,7 +138,7 @@ export const CheckoutPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setActivePage('orders')}
-                  className="w-full py-3.5 bg-espresso text-white dark:bg-cream dark:text-black font-bold text-xs rounded-xl shadow-lg hover:bg-primary transition cursor-pointer"
+                  className="w-full py-3.5 bg-[#6B3A1F] text-[#FFF9EE] font-bold text-xs rounded-xl shadow-lg hover:bg-primary transition cursor-pointer"
                 >
                   متابعة شحنتي
                 </button>
@@ -158,7 +158,7 @@ export const CheckoutPage: React.FC = () => {
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-[#FDFBF7] dark:bg-espresso-950 py-8 px-4 sm:px-6 lg:px-12">
+    <div dir="rtl" className="min-h-screen bg-[#FFF9EE] dark:bg-espresso-950 py-8 px-4 sm:px-6 lg:px-12">
       <div className="max-w-[1360px] mx-auto space-y-8">
 
         {/* --- CHECKOUT HEADER & STEPPER --- */}
@@ -252,7 +252,7 @@ export const CheckoutPage: React.FC = () => {
                       className="
                         w-full px-4 py-3
                         bg-white dark:bg-[#1c1713]
-                        text-[#241e1a] dark:text-[#f7efe5]
+                        text-[#3B1E0E] dark:text-[#FFF9EE]
                         border border-[#d8d0c8] dark:border-white/10
                         rounded-2xl text-sm
                         focus:outline-none focus:ring-2 focus:ring-primary/20
@@ -329,7 +329,7 @@ export const CheckoutPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-10 py-4 bg-espresso text-white dark:bg-cream dark:text-black hover:bg-primary dark:hover:bg-primary-hover font-bold text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 transition duration-200 disabled:opacity-50 cursor-pointer"
+                    className="w-full sm:w-auto px-10 py-4 bg-[#6B3A1F] text-[#FFF9EE] hover:bg-[#3B1E0E] dark:hover:bg-[#C99444] font-bold text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 transition duration-200 disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <span>جاري تأكيد وتسجيل طلبك...</span>
@@ -365,7 +365,7 @@ export const CheckoutPage: React.FC = () => {
                       <ShoppingBag className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-black text-base text-[#241e1a] dark:text-[#f7eee5]">
+                      <h3 className="font-black text-base text-[#3B1E0E] dark:text-[#FFF9EE]">
                         ملخص طلبيتك
                       </h3>
                       <p className="text-[11px] text-[#8f8379] dark:text-white/40 mt-0.5">
@@ -411,7 +411,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-bold text-[#241e1a] dark:text-[#f7eee5] truncate">
+                            <p className="text-xs font-bold text-[#3B1E0E] dark:text-[#FFF9EE] truncate">
                               {title}
                             </p>
                             <p className="text-[10px] text-[#978b81] dark:text-white/40 mt-1">
@@ -420,7 +420,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
 
                           <div className="text-left shrink-0">
-                            <span className="text-xs font-black font-mono text-[#241e1a] dark:text-[#f7eee5]">
+                            <span className="text-xs font-black font-mono text-[#3B1E0E] dark:text-[#FFF9EE]">
                               {price * qty}
                             </span>
                             <span className="block text-[9px] text-[#9c9188] dark:text-white/30">ج.م</span>
@@ -462,7 +462,7 @@ export const CheckoutPage: React.FC = () => {
                 </div>
 
                 {/* Total */}
-                <div className="rounded-2xl bg-[#241e1a] p-4 text-white relative overflow-hidden">
+                <div className="rounded-2xl bg-[#3B1E0E] p-4 text-white relative overflow-hidden">
                   <div className="relative flex items-center justify-between">
                     <div>
                       <p className="text-[10px] text-white/45 mb-1">الإجمالي النهائي</p>

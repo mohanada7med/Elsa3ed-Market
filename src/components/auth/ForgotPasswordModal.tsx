@@ -372,7 +372,7 @@ export default function ForgotPasswordModal({
               gap-2
               bg-primary
               hover:bg-primary-hover
-              active:bg-[#623f1a]
+              active:bg-[#26160D]
               text-white
               font-extrabold
               py-3.5

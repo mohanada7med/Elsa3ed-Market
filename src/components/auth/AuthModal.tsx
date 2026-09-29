@@ -723,7 +723,7 @@ export const AuthModal: React.FC = () => {
     dark:text-cream
     dark:placeholder:text-white/30
     dark:focus:border-primary
-    dark:focus:bg-[#151513]
+    dark:focus:bg-[#26160D]
     dark:focus:ring-primary/10
   `;
 
