@@ -141,12 +141,12 @@ export const HeroSection: React.FC = () => {
             },
           }}
           className="
-            pointer-events-none
-            absolute
-            bottom-[40%]
-            left-[48px]
-            z-[5]
-          "
+  pointer-events-none
+  absolute
+  bottom-[48%]
+  left-[24px]
+  z-[5]
+"
         >
           {/* الإضاءة خلف الشخصية */}
 
