@@ -448,7 +448,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     cartCount,
     setIsCartDrawerOpen,
     favorites,
-    addToast,
     searchQuery,
     setSearchQuery,
     isAuthenticated,
@@ -600,16 +599,8 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   );
 
   const handleFavoritesClick = useCallback(() => {
-    if (favorites.length === 0) {
-      addToast(
-        'الصفحة غير متاحة',
-        'لا توجد عناصر مفضلة حتى الآن ❤️',
-        'info'
-      );
-    } else {
-      navigate('favorites');
-    }
-  }, [favorites.length, addToast, navigate]);
+    navigate('favorites');
+  }, [navigate]);
 
   const getAccountPage = useCallback((): ActivePage => {
     if (isSeller) return 'seller-account';
@@ -846,7 +837,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
     );
   };
 
-
   return (
     <>
       <header
@@ -863,7 +853,6 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
         {/* =========================================================
             1. TOP BAR (البار العلوي الرفيع)
             ========================================================= */}
-        {/* البار العلوي: يظهر في الكمبيوتر فقط (lg) ومخفي على الموبايل */}
         <div className="hidden lg:block border-b" style={{ borderColor }}>
           <div className="mx-auto flex h-9 max-w-[1600px] items-center justify-between px-6 lg:px-12">
             <div
@@ -1347,7 +1336,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           <div
             className="flex h-11 sm:h-12 items-center justify-between px-3 sm:px-6 relative overflow-visible shadow-xs backdrop-blur-md"
             style={{
-              backgroundColor: isDark ? '#26160D' : '#F8EBD7', // wahDark.surface في الداكن و wah.cream في الفاتح
+              backgroundColor: isDark ? '#26160D' : '#F8EBD7',
               borderBottom: `1px solid ${isDark ? 'rgba(201, 148, 68, 0.25)' : '#E0C79B'}`,
             }}
           >

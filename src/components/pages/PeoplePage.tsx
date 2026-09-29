@@ -353,7 +353,7 @@ export const PeoplePage: React.FC = () => {
                         {people.length}
                       </div>
                       <div className="mt-2 text-xs text-foreground-secondary font-bold">
-                        علم ورمز موثق بالداتا بيز
+                   علم ورمز موثق
                       </div>
                     </div>
 

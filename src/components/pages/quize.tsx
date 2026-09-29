@@ -822,7 +822,14 @@ export const DialectDictionaryPage: React.FC = () => {
 
               {/* بطاقة معلومات الاختبار */}
               <div className="relative">
-                <div className="relative overflow-hidden rounded-3xl border border-black/[0.08] bg-[#e8e0d2] p-6 dark:border-white/[0.08] dark:bg-[#121210] sm:p-8">
+                <div className="
+                  relative overflow-hidden
+                  rounded-[2rem]
+                  border border-border-subtle
+                  bg-surface
+                  p-7
+                  shadow-lg
+                ">
                   <div className="relative">
                     <div className="mb-8 flex items-center justify-between">
                       <div className="text-[8px] font-black tracking-[0.3em] text-black/40 dark:text-white/40">

@@ -106,6 +106,13 @@ export const CraftReelsSection: React.FC = () => {
     const video = videoRef.current;
     if (!video || !currentReel) return;
 
+    if (isModalOpen || selectedReelId) {
+      try {
+        video.pause();
+      } catch (_) { }
+      return;
+    }
+
     video.muted = isMuted;
     video.currentTime = 0;
 
@@ -122,7 +129,7 @@ export const CraftReelsSection: React.FC = () => {
     return () => {
       active = false;
     };
-  }, [activeIndex, currentReel?.id, isMuted]);
+  }, [activeIndex, currentReel?.id, isMuted, isModalOpen, selectedReelId]);
 
   /* ================= MEDIA GETTERS ================= */
   const getVideo = (reel: CraftReel) =>
@@ -202,6 +209,11 @@ export const CraftReelsSection: React.FC = () => {
 
     addToast('تمت الإضافة', `أُضيف "${reel.productTitle || reel.title}" للحقيبة`, 'success');
   };
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedReelId(null);
+  }, []);
 
   /* ================= RESPONSIVE STACK MATH ================= */
   const getPositionOffset = (index: number) => {
@@ -683,23 +695,18 @@ export const CraftReelsSection: React.FC = () => {
       </div>
 
       {/* Modal View */}
-      <AnimatePresence>
-        {selectedReelId && (
-          <CraftReelsModal
-            reels={reels}
-            initialReelId={selectedReelId}
-            hasBottomNav={true}
-            isOpen={isModalOpen}
-            onClose={() => {
-              setIsModalOpen(false);
-              setSelectedReelId(null);
-            }}
-            onDeleteReel={(deletedId) => {
-              setReels((prev) => prev.filter((r) => r.id !== deletedId));
-            }}
-          />
-        )}
-      </AnimatePresence>
+      {selectedReelId && (
+        <CraftReelsModal
+          reels={reels}
+          initialReelId={selectedReelId}
+          hasBottomNav={true}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onDeleteReel={(deletedId) => {
+            setReels((prev) => prev.filter((r) => r.id !== deletedId));
+          }}
+        />
+      )}
     </section>
   );
 };

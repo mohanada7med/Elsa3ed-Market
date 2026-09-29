@@ -134,6 +134,26 @@ export const CraftReelsPage: React.FC = () => {
     }
   }, [reels.length]);
 
+  // Clean scroll management for immersive feed view mode
+  useEffect(() => {
+    if (viewMode === 'feed') {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev === 'hidden' ? '' : (prev || '');
+        document.documentElement.style.overflow = '';
+      };
+    }
+  }, [viewMode]);
+
+  // Safety unmount cleanup
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
+
   const governoratesList = [
     'الفيوم',
     'بني سويف',

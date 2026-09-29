@@ -229,9 +229,18 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   };
 
   useEffect(() => {
+    const video = videoRef.current;
     return () => {
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
+      }
+      if (video) {
+        try {
+          video.pause();
+          video.currentTime = 0;
+          video.removeAttribute('src');
+          video.load();
+        } catch (_) {}
       }
     };
   }, []);
@@ -244,6 +253,8 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     const video = videoRef.current;
 
     if (!video) return;
+
+    let isCancelled = false;
 
     if (isActive) {
       setHasVideoError(false);
@@ -259,32 +270,36 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         try {
           await video.play();
 
+          if (isCancelled) return;
+
           setIsPlaying(true);
           setIsVideoLoading(false);
           setShowAudioPrompt(false);
 
           setTimeout(() => {
-            setIsEntering(false);
+            if (!isCancelled) setIsEntering(false);
           }, 450);
 
         } catch (err: any) {
-          if (err?.name === 'AbortError') return;
+          if (isCancelled || err?.name === 'AbortError') return;
 
           video.muted = true;
-          setShowAudioPrompt(true);
+          if (!isCancelled) setShowAudioPrompt(true);
 
           try {
             await video.play();
+
+            if (isCancelled) return;
 
             setIsPlaying(true);
             setIsVideoLoading(false);
 
             setTimeout(() => {
-              setIsEntering(false);
+              if (!isCancelled) setIsEntering(false);
             }, 450);
 
           } catch (muteErr: any) {
-            if (muteErr?.name === 'AbortError') return;
+            if (isCancelled || muteErr?.name === 'AbortError') return;
 
             setIsVideoLoading(false);
             setIsPlaying(false);
@@ -296,8 +311,10 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       void executePlay();
 
     } else {
-      video.pause();
-      video.currentTime = 0;
+      try {
+        video.pause();
+        video.currentTime = 0;
+      } catch (_) {}
 
       setIsPlaying(false);
       setIsVideoLoading(false);
@@ -310,6 +327,13 @@ export const ReelItem: React.FC<ReelItemProps> = ({
         progressBarRef.current.style.width = '0%';
       }
     }
+
+    return () => {
+      isCancelled = true;
+      try {
+        video.pause();
+      } catch (_) {}
+    };
   }, [
     isActive,
     isMuted,
