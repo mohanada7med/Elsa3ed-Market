@@ -36,7 +36,9 @@ import {
   AlertOctagon,
   GraduationCap,
   SlidersHorizontal,
-  Edit
+  Edit,
+  Camera,
+  UploadCloud
 } from 'lucide-react';
 import { PlaceEditorModal } from './PlaceEditorModal';
 import { UncleWahInteractiveGuide } from '../common/UncleWahInteractiveGuide';
@@ -65,6 +67,7 @@ export const PlaceDetailPage: React.FC = () => {
   const [place, setPlace] = useState<HeritagePlace | null>(() => cachedPlace || null);
   const [isLoading, setIsLoading] = useState(() => !cachedPlace);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editorInitialTab, setEditorInitialTab] = useState<'basic' | 'content' | 'visit' | 'media' | 'preview'>('basic');
 
   useEffect(() => {
     let isMounted = true;
@@ -328,32 +331,64 @@ export const PlaceDetailPage: React.FC = () => {
 
           <div className="flex items-center gap-2">
             {isAdmin && (
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="
-                  h-10 px-3.5 sm:px-4
-                  rounded-full
-                  bg-primary
-                  hover:bg-primary-hover
-                  text-white
-                  text-xs
-                  font-bold
-                  flex items-center gap-2
-                  transition-all
-                  cursor-pointer
-                  shadow-sm
-                  hover:scale-105 active:scale-95
-                "
-                title="تعديل تفاصيل ومعلومات وميديا المعلم التراثي في نفس الصفحة"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
-                <span className="hidden sm:inline">تعديل وميديا المعلم</span>
-                <span className="sm:hidden">تعديل</span>
-                <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[9px] font-mono">
-                  أدمن
-                </span>
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditorInitialTab('basic');
+                    setIsEditModalOpen(true);
+                  }}
+                  className="
+                    h-10 px-3.5 sm:px-4
+                    rounded-full
+                    bg-primary
+                    hover:bg-primary-hover
+                    text-white
+                    text-xs
+                    font-bold
+                    flex items-center gap-2
+                    transition-all
+                    cursor-pointer
+                    shadow-sm
+                    hover:scale-105 active:scale-95
+                  "
+                  title="تعديل تفاصيل ومعلومات المعلم التراثي في نفس الصفحة"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">تعديل المعلم</span>
+                  <span className="sm:hidden">تعديل</span>
+                  <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[9px] font-mono">
+                    أدمن
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditorInitialTab('media');
+                    setIsEditModalOpen(true);
+                  }}
+                  className="
+                    h-10 px-3.5 sm:px-4
+                    rounded-full
+                    bg-gradient-to-r from-amber-600 to-primary
+                    hover:from-amber-500 hover:to-primary-hover
+                    text-white
+                    text-xs
+                    font-bold
+                    flex items-center gap-2
+                    transition-all
+                    cursor-pointer
+                    shadow-sm
+                    hover:scale-105 active:scale-95
+                  "
+                  title="إدارة وتعديل ورفع صور ومعرض المعلم التراثي"
+                >
+                  <Camera className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">صور ومعرض المكان</span>
+                  <span className="sm:hidden">المعرض</span>
+                </button>
+              </>
             )}
 
             {isAdmin && (
@@ -860,6 +895,37 @@ export const PlaceDetailPage: React.FC = () => {
                 ذاكرة <span className="text-primary">بصرية</span>
               </h2>
             </div>
+
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditorInitialTab('media');
+                  setIsEditModalOpen(true);
+                }}
+                className="
+                  inline-flex items-center gap-2.5
+                  px-5 py-3
+                  rounded-2xl
+                  bg-gradient-to-r from-primary to-amber-600
+                  hover:from-primary-hover hover:to-amber-500
+                  text-white
+                  text-xs sm:text-sm
+                  font-black
+                  shadow-lg shadow-primary/25
+                  transition-all
+                  cursor-pointer
+                  hover:scale-105 active:scale-95
+                "
+                title="إضافة وتعديل صور المعرض وسحب وإفلات ملفات من جهازك"
+              >
+                <UploadCloud className="w-4 h-4 shrink-0" />
+                <span>إضافة وتعديل صور المعرض (سحب وإفلات ورفع سريع)</span>
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-mono">
+                  أدمن
+                </span>
+              </button>
+            )}
           </div>
 
           <div className="relative group p-4 sm:p-6 lg:p-8 rounded-[3rem] bg-gradient-to-b from-black/[0.04] via-black/[0.01] to-transparent dark:from-white/[0.04] dark:via-white/[0.01] dark:to-transparent border border-black/10 dark:border-white/10 backdrop-blur-2xl">
@@ -1470,6 +1536,7 @@ export const PlaceDetailPage: React.FC = () => {
       {isEditModalOpen && (
         <PlaceEditorModal
           isOpen={isEditModalOpen}
+          initialTab={editorInitialTab}
           onClose={() => setIsEditModalOpen(false)}
           place={place}
           onSaved={(updatedPlace) => {

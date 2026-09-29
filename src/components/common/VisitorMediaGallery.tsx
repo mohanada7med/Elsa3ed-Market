@@ -387,11 +387,29 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
           {isAdmin && (
             <button
               type="button"
-              onClick={() => setAdminModalOpen(true)}
-              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary transition hover:bg-primary hover:text-white cursor-pointer"
-              title="إدارة وسائط الأرشيف"
+              onClick={() => {
+                setAdminTab('images');
+                setAdminModalOpen(true);
+              }}
+              className="
+                flex items-center gap-1.5
+                rounded-2xl
+                border border-primary/30
+                bg-primary/10
+                hover:bg-primary hover:text-white
+                text-primary
+                px-3.5 py-2
+                text-xs font-black
+                transition-all
+                cursor-pointer
+                shadow-sm
+                hover:scale-105 active:scale-95
+              "
+              title="إدارة وسائط الأرشيف ورفع صور جديدة"
             >
-              <Settings2 className="h-5 w-5" />
+              <Plus className="h-3.5 w-3.5" />
+              <span>إضافة صور (أدمن)</span>
+              <Settings2 className="h-3.5 w-3.5 opacity-60" />
             </button>
           )}
         </div>

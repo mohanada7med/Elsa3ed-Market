@@ -1,5 +1,6 @@
 import { HeritagePlaceDoc } from '../models/types';
 import { GovernorateDoc } from '../models/types';
+import { NEW_AUTHENTIC_PLACES } from './newAuthenticPlacesData';
 import dotenv from 'dotenv';
 dotenv.config();
 import { MongoClient } from 'mongodb';
@@ -1639,5 +1640,6 @@ export const ADDITIONAL_HERITAGE_PLACES: HeritagePlaceDoc[] = [
         researchDate: '2026-09-01',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
-    }
+    },
+    ...NEW_AUTHENTIC_PLACES
 ];

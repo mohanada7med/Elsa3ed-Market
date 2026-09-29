@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { wahApi } from '../../services/api';
+import { wahApi, adminMediaApi } from '../../services/api';
 import { HeritagePlace, VerificationStatus } from '../../types';
 import {
   X,
@@ -20,7 +20,16 @@ import {
   FileText,
   Sparkles,
   Layers,
-  Check
+  Check,
+  Upload,
+  Star,
+  Loader2,
+  AlertCircle,
+  ExternalLink,
+  ChevronRight,
+  ChevronLeft,
+  Copy,
+  Sliders
 } from 'lucide-react';
 
 export interface PlaceEditorModalProps {
@@ -28,6 +37,7 @@ export interface PlaceEditorModalProps {
   onClose: () => void;
   place: HeritagePlace | null;
   onSaved: (updatedPlace: HeritagePlace) => void;
+  initialTab?: 'basic' | 'content' | 'visit' | 'media' | 'preview';
 }
 
 const UPPER_EGYPT_GOVERNORATES = [
@@ -63,11 +73,31 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
   onClose,
   place,
   onSaved,
+  initialTab = 'basic',
 }) => {
   const { currentUser, addToast } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'visit' | 'media' | 'preview'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'content' | 'visit' | 'media' | 'preview'>(
+    initialTab || 'basic'
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [isOpen, initialTab]);
+
+  // Upload refs & states
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatusText, setUploadStatusText] = useState('');
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [bulkUrlsInput, setBulkUrlsInput] = useState('');
+  const [previewModalUrl, setPreviewModalUrl] = useState<string | null>(null);
 
   // Form State
   const [title, setTitle] = useState(place?.title || '');
@@ -129,12 +159,160 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
 
   const handleAddGalleryImage = () => {
     if (!newGalleryInput.trim()) return;
-    setGallery((prev) => [...prev, newGalleryInput.trim()]);
+    setGallery((prev) => Array.from(new Set([...prev, newGalleryInput.trim()])));
     setNewGalleryInput('');
+    addToast('تمت الإضافة', 'تمت إضافة الصورة إلى المعرض', 'success');
   };
 
   const handleRemoveGalleryImage = (index: number) => {
     setGallery((prev) => prev.filter((_, idx) => idx !== index));
+  };
+
+  const handleMoveImage = (index: number, direction: 'prev' | 'next') => {
+    const targetIdx = direction === 'prev' ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= gallery.length) return;
+    const nextGallery = [...gallery];
+    const temp = nextGallery[index];
+    nextGallery[index] = nextGallery[targetIdx];
+    nextGallery[targetIdx] = temp;
+    setGallery(nextGallery);
+  };
+
+  const handleFilesUpload = async (files: FileList | File[]) => {
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    setUploadProgress(0);
+    const authUser = {
+      id: currentUser?.id || 'admin',
+      role: currentUser?.role || 'admin',
+    };
+
+    const targetSlug =
+      place?.slug ||
+      title
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\u0621-\u064A]+/g, '-')
+        .replace(/^-+|-+$/g, '') ||
+      'heritage-place';
+
+    const uploadedUrls: string[] = [];
+    const fileList = Array.from(files);
+
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      setUploadStatusText(`جاري رفع الصورة ${i + 1} من ${fileList.length} (${file.name})...`);
+      setUploadProgress(0);
+      try {
+        const result = await adminMediaApi.uploadAdminMedia(
+          authUser,
+          {
+            file,
+            entityType: 'heritage-places',
+            entitySlug: targetSlug,
+            entityId: place?.id || targetSlug,
+            caption: title.trim() || place?.title || 'معلم تراثي',
+            alt: title.trim() || place?.title || 'معلم تراثي',
+            isPrimary: false,
+            addToGallery: true,
+          },
+          (percent) => {
+            setUploadProgress(percent);
+          }
+        );
+        const url = result?.secureUrl || result?.url;
+        if (url) {
+          uploadedUrls.push(url.trim());
+        }
+      } catch (err: any) {
+        addToast('خطأ في رفع الملف', err.message || `تعذر رفع ${file.name}`, 'error');
+      }
+    }
+
+    if (uploadedUrls.length > 0) {
+      setGallery((prev) => Array.from(new Set([...prev, ...uploadedUrls])));
+      if (!coverImage || coverImage.includes('unsplash.com')) {
+        setCoverImage(uploadedUrls[0]);
+      }
+      addToast('تم الرفع بنجاح', `تمت إضافة ${uploadedUrls.length} صورة إلى معرض المعلم`, 'success');
+    }
+
+    setIsUploading(false);
+    setUploadProgress(0);
+    setUploadStatusText('');
+  };
+
+  const handleCoverUpload = async (file: File) => {
+    if (!file) return;
+    setIsUploading(true);
+    setUploadProgress(0);
+    setUploadStatusText('جاري رفع وتعيين صورة الغلاف الرئيسية...');
+    const authUser = {
+      id: currentUser?.id || 'admin',
+      role: currentUser?.role || 'admin',
+    };
+
+    const targetSlug =
+      place?.slug ||
+      title
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\u0621-\u064A]+/g, '-')
+        .replace(/^-+|-+$/g, '') ||
+      'heritage-place';
+
+    try {
+      const result = await adminMediaApi.uploadAdminMedia(
+        authUser,
+        {
+          file,
+          entityType: 'heritage-places',
+          entitySlug: targetSlug,
+          entityId: place?.id || targetSlug,
+          caption: title.trim() || place?.title || 'معلم تراثي',
+          alt: title.trim() || place?.title || 'معلم تراثي',
+          isPrimary: true,
+          addToGallery: true,
+        },
+        (percent) => {
+          setUploadProgress(percent);
+        }
+      );
+      const url = result?.secureUrl || result?.url;
+      if (url) {
+        const cleanUrl = url.trim();
+        setCoverImage(cleanUrl);
+        setGallery((prev) => Array.from(new Set([cleanUrl, ...prev])));
+        addToast('تم التحديث', 'تم رفع وتعيين صورة الغلاف بنجاح', 'success');
+      }
+    } catch (err: any) {
+      addToast('خطأ في الرفع', err.message || 'فشل رفع صورة الغلاف', 'error');
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+      setUploadStatusText('');
+    }
+  };
+
+  const handleAddBulkUrls = () => {
+    if (!bulkUrlsInput.trim()) return;
+    const lines = bulkUrlsInput
+      .split('\n')
+      .map((s) => s.trim())
+      .filter((s) => s.startsWith('http://') || s.startsWith('https://'));
+
+    if (lines.length === 0) {
+      addToast('روابط غير صحيحة', 'يرجى إدخال روابط تبدأ بـ http أو https', 'warning');
+      return;
+    }
+
+    setGallery((prev) => Array.from(new Set([...prev, ...lines])));
+    if (!coverImage || coverImage.includes('unsplash.com')) {
+      setCoverImage(lines[0]);
+    }
+    setBulkUrlsInput('');
+    setShowBulkModal(false);
+    addToast('تمت الإضافة', `تمت إضافة ${lines.length} رابط بنجاح`, 'success');
   };
 
   const handleAddVideo = () => {
@@ -671,98 +849,419 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
           {/* TAB 4: MEDIA (PHOTOS & VIDEOS) */}
           {activeTab === 'media' && (
             <div className="space-y-6 animate-in fade-in duration-200">
-              {/* Cover Image */}
-              <div className="p-4 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-primary">
-                  <ImageIcon className="w-4 h-4" />
-                  <span>الصورة الرئيسية للغلاف (Hero Cover Image)</span>
+              {/* Cover Image Section */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 text-xs font-black text-primary">
+                    <ImageIcon className="w-4 h-4" />
+                    <span>الصورة الرئيسية للغلاف (Hero Cover Image)</span>
+                  </div>
+                  <span className="text-[11px] font-bold text-black/50 dark:text-white/50">
+                    تظهر كبانر رئيسي في أعلى صفحة المعلم وفي الكروت
+                  </span>
                 </div>
+
+                {/* Hidden File Input for Cover */}
                 <input
-                  type="url"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                  type="file"
+                  ref={coverFileInputRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleCoverUpload(e.target.files[0]);
+                    }
+                  }}
                 />
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <input
+                    type="url"
+                    value={coverImage}
+                    onChange={(e) => setCoverImage(e.target.value)}
+                    placeholder="أدخل رابط صورة الغلاف أو ارفعها من جهازك..."
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => coverFileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-black flex items-center justify-center gap-1.5 hover:bg-primary-hover transition-all cursor-pointer shadow-sm shrink-0 disabled:opacity-50"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>رفع غلاف من الجهاز</span>
+                  </button>
+                </div>
+
                 {coverImage && (
-                  <div className="relative h-44 w-full rounded-2xl overflow-hidden border border-black/10 dark:border-white/10">
+                  <div className="relative h-48 sm:h-56 w-full rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-inner group">
                     <img
                       src={coverImage}
                       alt="Cover Preview"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
                         (e.target as any).src = 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-3">
-                      <span className="text-white text-xs font-bold">معاينة الغلاف الحي</span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 flex flex-col justify-between p-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-white text-[10px] font-black shadow">
+                          <Star className="w-3 h-3 fill-white" /> الغلاف الرئيسي المعتمد
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setPreviewModalUrl(coverImage)}
+                          className="p-1.5 rounded-xl bg-black/60 text-white hover:bg-primary transition cursor-pointer"
+                          title="معاينة بالحجم الكامل"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between text-white/90 text-xs font-bold">
+                        <span className="truncate max-w-[80%] font-mono text-[10px] opacity-75">{coverImage}</span>
+                        <button
+                          type="button"
+                          onClick={() => coverFileInputRef.current?.click()}
+                          className="px-3 py-1 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-md text-[11px] font-bold text-white transition cursor-pointer"
+                        >
+                          تغيير الصورة
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Gallery Images */}
-              <div className="p-4 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold text-primary">
-                    <Layers className="w-4 h-4" />
-                    <span>معرض صور المعلم التراثي ({gallery.length} صور)</span>
+              {/* Gallery Images Section */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+                {/* Header Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 dark:border-white/10 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-black text-primary">معرض صور المعلم التراثي</span>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-black">
+                      {gallery.length} صور
+                    </span>
+                  </div>
+
+                  {/* Top Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowBulkModal(!showBulkModal)}
+                      className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 text-black/80 dark:text-white/80"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>{showBulkModal ? 'إخفاء لصق الروابط' : 'لصق روابط متعددة'}</span>
+                    </button>
+                    {gallery.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm('هل تريد فعلاً إفراغ المعرض وحذف كل الصور؟')) {
+                            setGallery([]);
+                            addToast('تم الإفراغ', 'تم إفراغ المعرض', 'warning');
+                          }
+                        }}
+                        className="px-2.5 py-1.5 rounded-xl text-red-500 hover:bg-red-500/10 text-xs font-bold transition-all cursor-pointer"
+                        title="إفراغ كل صور المعرض"
+                      >
+                        مسح الكل
+                      </button>
+                    )}
                   </div>
                 </div>
 
+                {/* Hidden File Input for Multiple Gallery Upload */}
+                <input
+                  type="file"
+                  ref={galleryFileInputRef}
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      handleFilesUpload(e.target.files);
+                    }
+                  }}
+                />
+
+                {/* Fast Upload Drop Zone */}
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(true);
+                  }}
+                  onDragLeave={() => setIsDragOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                      handleFilesUpload(e.dataTransfer.files);
+                    }
+                  }}
+                  onClick={() => {
+                    if (!isUploading) galleryFileInputRef.current?.click();
+                  }}
+                  className={`
+                    relative p-6 rounded-2xl border-2 border-dashed text-center transition-all duration-300 cursor-pointer
+                    flex flex-col items-center justify-center gap-2.5
+                    ${isDragOver
+                      ? 'border-primary bg-primary/10 scale-[1.01]'
+                      : 'border-primary/30 hover:border-primary/70 bg-primary/[0.02] hover:bg-primary/[0.05]'
+                    }
+                    ${isUploading ? 'pointer-events-none opacity-80' : ''}
+                  `}
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner">
+                    {isUploading ? (
+                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                    ) : (
+                      <Upload className="w-6 h-6 text-primary" />
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-black text-black/85 dark:text-white/85">
+                      {isUploading
+                        ? uploadStatusText || 'جاري رفع الصور إلى السحابة...'
+                        : 'اسحب وأفلت الصور هنا مباشرة، أو انقر للاختيار من جهازك'}
+                    </p>
+                    <p className="text-[11px] font-bold text-black/50 dark:text-white/50 mt-1">
+                      يدعم اختيار صور متعددة دفعة واحدة (JPG, PNG, WebP) ويتم حفظها سحابياً فوراً
+                    </p>
+                  </div>
+
+                  {!isUploading && (
+                    <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs font-black shadow-sm mt-1">
+                      <Plus className="w-4 h-4" />
+                      <span>اختيار صور من الكمبيوتر أو الهاتف</span>
+                    </div>
+                  )}
+
+                  {/* Upload Progress Bar */}
+                  {isUploading && (
+                    <div className="w-full max-w-md mx-auto mt-2 space-y-1">
+                      <div className="w-full h-2 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-all duration-300"
+                          style={{ width: `${Math.max(uploadProgress, 20)}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-primary">
+                        {uploadProgress > 0 ? `${uploadProgress}%` : 'جاري التحميل...'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bulk URL Mode */}
+                {showBulkModal && (
+                  <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2 animate-in fade-in duration-200">
+                    <label className="block text-xs font-black text-primary">
+                      لصق روابط صور متعددة (رابط في كل سطر)
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={bulkUrlsInput}
+                      onChange={(e) => setBulkUrlsInput(e.target.value)}
+                      placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"
+                      className="w-full px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white dark:bg-black/40 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    />
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowBulkModal(false)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-bold text-black/60 hover:text-black dark:text-white/60 cursor-pointer"
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleAddBulkUrls}
+                        className="px-4 py-1.5 rounded-lg bg-primary text-white text-xs font-black hover:bg-primary-hover transition cursor-pointer"
+                      >
+                        إضافة الروابط للمعرض
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Single URL Quick Add */}
                 <div className="flex items-center gap-2">
                   <input
                     type="url"
                     value={newGalleryInput}
                     onChange={(e) => setNewGalleryInput(e.target.value)}
-                    placeholder="أدخل رابط صورة تراثية جديدة..."
-                    className="flex-1 px-4 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddGalleryImage();
+                      }
+                    }}
+                    placeholder="أو اكتب أو الصق رابط صورة سريع هنا واضغط إضافة..."
+                    className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                   <button
                     type="button"
                     onClick={handleAddGalleryImage}
-                    className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold flex items-center gap-1 cursor-pointer hover:bg-primary-hover transition-all"
+                    className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-black flex items-center gap-1.5 cursor-pointer hover:bg-primary-hover transition-all shrink-0 shadow-sm"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>إضافة</span>
+                    <span>إضافة الرابط</span>
                   </button>
                 </div>
 
-                {gallery.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2">
-                    {gallery.map((imgUrl, idx) => (
-                      <div
-                        key={idx}
-                        className="group relative h-24 rounded-xl overflow-hidden border border-black/10 dark:border-white/10"
-                      >
-                        <img
-                          src={imgUrl}
-                          alt={`معرض ${idx + 1}`}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveGalleryImage(idx)}
-                          className="absolute top-1.5 left-1.5 p-1 rounded-lg bg-black/70 text-rose-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                          title="حذف الصورة"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
+                {/* Gallery Cards Grid */}
+                {gallery.length > 0 ? (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-black/60 dark:text-white/60">
+                      <span>الصور الحالية بالمعرض (يمكنك تعيين أي صورة كغلاف بنقرة واحدة أو إعادة ترتيبها)</span>
+                      <span className="font-mono text-primary">{gallery.length} صور</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                      {gallery.map((imgUrl, idx) => {
+                        const isCover =
+                          coverImage === imgUrl ||
+                          coverImage.split('?')[0] === imgUrl.split('?')[0];
+
+                        return (
+                          <div
+                            key={`${imgUrl}-${idx}`}
+                            className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 shadow-sm flex flex-col ${
+                              isCover
+                                ? 'border-primary ring-2 ring-primary/40 bg-primary/5'
+                                : 'border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03] hover:border-primary/50 hover:shadow-md'
+                            }`}
+                          >
+                            {/* Thumbnail Canvas */}
+                            <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/10">
+                              <img
+                                src={imgUrl}
+                                alt={`معرض ${idx + 1}`}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                onError={(e) => {
+                                  (e.target as any).src = 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600';
+                                }}
+                              />
+
+                              {/* Cover Badge */}
+                              {isCover && (
+                                <div className="absolute top-2 right-2 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-white text-[10px] font-black shadow-md z-10">
+                                  <Star className="w-3 h-3 fill-white" />
+                                  <span>الغلاف الرئيسي</span>
+                                </div>
+                              )}
+
+                              {/* Hover Action Overlay */}
+                              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2 z-20">
+                                <div className="flex items-center justify-between">
+                                  <button
+                                    type="button"
+                                    onClick={() => setPreviewModalUrl(imgUrl)}
+                                    className="p-1.5 rounded-xl bg-white/20 hover:bg-white/40 text-white transition cursor-pointer"
+                                    title="معاينة بالحجم الكامل"
+                                  >
+                                    <Eye className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveGalleryImage(idx)}
+                                    className="p-1.5 rounded-xl bg-red-600/80 hover:bg-red-600 text-white transition cursor-pointer"
+                                    title="حذف الصورة من المعرض"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+
+                                <div className="flex items-center justify-between gap-1">
+                                  {/* Reorder Buttons */}
+                                  <div className="flex items-center gap-1">
+                                    {idx > 0 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleMoveImage(idx, 'prev')}
+                                        className="p-1 rounded-lg bg-white/20 hover:bg-white/40 text-white cursor-pointer"
+                                        title="تقديم الصورة للأمام"
+                                      >
+                                        <ChevronRight className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                    {idx < gallery.length - 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleMoveImage(idx, 'next')}
+                                        className="p-1 rounded-lg bg-white/20 hover:bg-white/40 text-white cursor-pointer"
+                                        title="تأخير الصورة للخلف"
+                                      >
+                                        <ChevronLeft className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  {/* Set as Cover */}
+                                  {!isCover && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setCoverImage(imgUrl);
+                                        addToast('تم التعيين', 'تم تعيين هذه الصورة كغلاف رئيسي للمعلم بنجاح', 'success');
+                                      }}
+                                      className="px-2.5 py-1 rounded-lg bg-primary hover:bg-primary-hover text-white text-[10px] font-black flex items-center gap-1 cursor-pointer transition shadow"
+                                      title="اجعلها صورة الغلاف الرئيسية"
+                                    >
+                                      <Star className="w-3 h-3" />
+                                      <span>اجعلها غلاف</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Card Footer */}
+                            <div className="p-2.5 flex items-center justify-between border-t border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02]">
+                              <span className="text-[11px] font-black text-black/70 dark:text-white/70">
+                                توثيق #{idx + 1}
+                              </span>
+                              {isCover ? (
+                                <span className="text-[10px] font-black text-primary flex items-center gap-0.5">
+                                  <Star className="w-2.5 h-2.5 fill-primary" /> الغلاف
+                                </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCoverImage(imgUrl);
+                                    addToast('تم التعيين', 'تم تعيين الصورة كغلاف', 'success');
+                                  }}
+                                  className="text-[10px] font-bold text-black/50 hover:text-primary transition cursor-pointer"
+                                >
+                                  تعيين كغلاف
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-8 rounded-2xl border border-dashed border-black/15 dark:border-white/15 text-center text-black/50 dark:text-white/50 text-xs">
+                    لا توجد صور في المعرض حالياً. استخدم زر الرفع أعلاه لإضافة صور المكان.
                   </div>
                 )}
               </div>
 
-              {/* Videos */}
-              <div className="p-4 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-3">
-                <div className="flex items-center gap-2 text-xs font-bold text-primary">
+              {/* Videos Section */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10 space-y-4">
+                <div className="flex items-center gap-2 text-xs font-black text-primary">
                   <Video className="w-4 h-4" />
                   <span>الفيديوهات التوثيقية واليوتيوب</span>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-black/60 dark:text-white/60 mb-1">
+                  <label className="block text-[11px] font-bold text-black/70 dark:text-white/70 mb-1.5">
                     رابط الفيديو التوثيقي الرئيسي
                   </label>
                   <input
@@ -775,7 +1274,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-black/60 dark:text-white/60 mb-1">
+                  <label className="block text-[11px] font-bold text-black/70 dark:text-white/70 mb-1.5">
                     إضافة مقطع فيديو إضافي
                   </label>
                   <div className="flex items-center gap-2">
@@ -784,15 +1283,15 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                       value={newVideoInput}
                       onChange={(e) => setNewVideoInput(e.target.value)}
                       placeholder="رابط يوتيوب أو فيديو توثيقي آخر..."
-                      className="flex-1 px-4 py-2 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-black/15 dark:border-white/15 bg-white/70 dark:bg-black/30 text-xs font-mono focus:ring-2 focus:ring-primary focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleAddVideo}
-                      className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold flex items-center gap-1 cursor-pointer hover:bg-primary-hover transition-all"
+                      className="px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-black flex items-center gap-1 cursor-pointer hover:bg-primary-hover transition-all shrink-0"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>إضافة</span>
+                      <span>إضافة فيديو</span>
                     </button>
                   </div>
                 </div>
@@ -802,13 +1301,14 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     {additionalVideos.map((vid, idx) => (
                       <div
                         key={idx}
-                        className="flex items-center justify-between gap-2 p-2 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-mono"
+                        className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-black/[0.03] dark:bg-white/[0.03] text-xs font-mono border border-black/5 dark:border-white/5"
                       >
                         <span className="truncate max-w-[80%]">{vid}</span>
                         <button
                           type="button"
                           onClick={() => handleRemoveVideo(idx)}
                           className="text-rose-500 hover:text-rose-700 p-1 cursor-pointer"
+                          title="حذف الفيديو"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -817,6 +1317,53 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Instant Full-Screen Preview Lightbox Modal */}
+              {previewModalUrl && (
+                <div
+                  className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200"
+                  onClick={() => setPreviewModalUrl(null)}
+                >
+                  <div
+                    className="relative max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl bg-black"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={previewModalUrl}
+                      alt="معاينة"
+                      className="w-full h-full max-h-[80vh] object-contain"
+                    />
+                    <div className="p-4 bg-[#181614] flex items-center justify-between gap-3 text-white border-t border-white/10">
+                      <span className="font-mono text-xs truncate max-w-[70%] text-white/70">
+                        {previewModalUrl}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        {coverImage !== previewModalUrl && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCoverImage(previewModalUrl);
+                              addToast('تم التعيين', 'تم تعيين الصورة كغلاف', 'success');
+                              setPreviewModalUrl(null);
+                            }}
+                            className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Star className="w-3.5 h-3.5" />
+                            <span>اجعلها الغلاف</span>
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setPreviewModalUrl(null)}
+                          className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold cursor-pointer"
+                        >
+                          إغلاق
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

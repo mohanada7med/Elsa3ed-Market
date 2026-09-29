@@ -13,6 +13,7 @@ import {
   X,
   ChevronDown,
   SlidersHorizontal,
+  Camera,
 } from 'lucide-react';
 import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
@@ -100,7 +101,7 @@ interface PlaceTimelineCardProps {
   index: number;
   onNavigate: (slug: string) => void;
   isAdmin?: boolean;
-  onEdit?: (place: HeritagePlace) => void;
+  onEdit?: (place: HeritagePlace, tab?: 'basic' | 'content' | 'visit' | 'media' | 'preview') => void;
 }
 
 const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
@@ -285,30 +286,57 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
           </button>
 
           {isAdmin && onEdit && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(place);
-              }}
-              className="
-                flex items-center gap-1.5
-                px-3.5 py-1.5
-                rounded-full
-                bg-primary
-                hover:bg-primary-hover
-                text-white
-                text-xs font-bold
-                transition-all
-                shadow-sm
-                cursor-pointer
-                hover:scale-105 active:scale-95
-              "
-              title={`تعديل بيانات وميديا ${place.title}`}
-            >
-              <SlidersHorizontal size={12} />
-              <span>تعديل وميديا المعلم</span>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(place, 'basic');
+                }}
+                className="
+                  flex items-center gap-1.5
+                  px-3.5 py-1.5
+                  rounded-full
+                  bg-primary
+                  hover:bg-primary-hover
+                  text-white
+                  text-xs font-bold
+                  transition-all
+                  shadow-sm
+                  cursor-pointer
+                  hover:scale-105 active:scale-95
+                "
+                title={`تعديل تفاصيل ومعلومات ${place.title}`}
+              >
+                <SlidersHorizontal size={12} />
+                <span>تعديل المعلم</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(place, 'media');
+                }}
+                className="
+                  flex items-center gap-1.5
+                  px-3.5 py-1.5
+                  rounded-full
+                  bg-gradient-to-r from-amber-600 to-primary
+                  hover:from-amber-500 hover:to-primary-hover
+                  text-white
+                  text-xs font-bold
+                  transition-all
+                  shadow-sm
+                  cursor-pointer
+                  hover:scale-105 active:scale-95
+                "
+                title={`إدارة ورفع وتعديل صور معرض ${place.title}`}
+              >
+                <Camera size={12} />
+                <span>صور المعرض</span>
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -320,6 +348,7 @@ export const PlacesHeritagePage: React.FC = () => {
   const { navigateToPlace, setActivePage, currentUser, currentRole } = useApp();
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
   const [editingPlace, setEditingPlace] = useState<HeritagePlace | null>(null);
+  const [editorInitialTab, setEditorInitialTab] = useState<'basic' | 'content' | 'visit' | 'media' | 'preview'>('basic');
 
   const cachedPlaces = wahApi.getCachedPlaces();
   const hasValidCache = Boolean(cachedPlaces && cachedPlaces.length > 0);
@@ -875,7 +904,10 @@ export const PlacesHeritagePage: React.FC = () => {
                   index={index}
                   onNavigate={navigateToPlace}
                   isAdmin={isAdmin}
-                  onEdit={(p) => setEditingPlace(p)}
+                  onEdit={(p, tab) => {
+                    setEditorInitialTab(tab || 'basic');
+                    setEditingPlace(p);
+                  }}
                 />
               ))}
 
@@ -987,6 +1019,7 @@ export const PlacesHeritagePage: React.FC = () => {
       {editingPlace && (
         <PlaceEditorModal
           isOpen={!!editingPlace}
+          initialTab={editorInitialTab}
           onClose={() => setEditingPlace(null)}
           place={editingPlace}
           onSaved={(updatedPlace) => {
