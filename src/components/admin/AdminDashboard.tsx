@@ -2538,10 +2538,10 @@ export const AdminDashboard: React.FC = () => {
           {activeTab === 'overview' && (
             <div className="space-y-6">
               {/* Overview Top Header with Refresh Button */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-espresso dark:bg-[#1B1009]  p-5 rounded-3xl border border-[#E0C79B] dark:border-[#6B3A1F] shadow-xs">
                 <div>
-                  <h2 className="font-black text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">نظرة عامة على شغل المنصة</h2>
-                  <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">
+                  <h2 className="font-black text-lg text-white dark:text-primary-hover">نظرة عامة على شغل المنصة</h2>
+                  <p className="text-xs text-white dark:text-white mt-0.5">
                     متابعة حية للمبيعات، ورش الصعيد، طابور الاعتماد وشحنات المحافظات
                   </p>
                 </div>

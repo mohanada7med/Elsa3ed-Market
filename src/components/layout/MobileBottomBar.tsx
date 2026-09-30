@@ -4,9 +4,7 @@ import {
   Compass,
   ShoppingBag,
   Layers,
-  Heart,
   User,
-  Film,
   Store,
   ShieldAlert,
   LogIn,
@@ -14,10 +12,19 @@ import {
   ClipboardList,
   MessageSquare,
   MapPin,
-  Flame,
-  Sparkles
+  House,
+  Settings,
 } from 'lucide-react';
 import { motion } from 'motion/react';
+
+interface TabItem {
+  id: string;
+  label: string;
+  icon: React.ElementType;
+  isActive: boolean;
+  onClick: () => void;
+  badge?: number;
+}
 
 export const MobileBottomBar: React.FC = () => {
   const {
@@ -25,14 +32,13 @@ export const MobileBottomBar: React.FC = () => {
     setActivePage,
     cartCount,
     setIsCartDrawerOpen,
-    favorites,
     isAuthenticated,
     currentRole,
     currentUser,
     setIsAuthModalOpen,
     setAuthModalTab,
     setPostLoginRedirect,
-    chatUnreadCount
+    chatUnreadCount,
   } = useApp();
 
   const handleAccountClick = () => {
@@ -40,349 +46,885 @@ export const MobileBottomBar: React.FC = () => {
       setPostLoginRedirect('buyer-account');
       setAuthModalTab('login');
       setIsAuthModalOpen(true);
-    } else if (currentRole === 'seller' || currentUser?.role === 'seller') {
-      setActivePage('seller-account');
-    } else if (currentRole === 'admin' || currentUser?.role === 'admin') {
-      setActivePage('admin-dashboard');
-    } else {
-      setActivePage('buyer-account');
+      return;
     }
+
+    if (
+      currentRole === 'seller' ||
+      currentUser?.role === 'seller'
+    ) {
+      setActivePage('seller-account');
+      return;
+    }
+
+    if (
+      currentRole === 'admin' ||
+      currentUser?.role === 'admin'
+    ) {
+      setActivePage('admin-dashboard');
+      return;
+    }
+
+    setActivePage('buyer-account');
   };
 
   const isAccountActive =
     activePage === 'buyer-account' ||
     activePage === 'seller-account' ||
-    (currentRole === 'seller' && activePage === 'seller-dashboard') ||
-    (currentRole === 'admin' && activePage === 'admin-dashboard');
+    (currentRole === 'seller' &&
+      activePage === 'seller-dashboard') ||
+    (currentRole === 'admin' &&
+      activePage === 'admin-dashboard');
 
-  if (activePage === 'product-details' || activePage === 'checkout' || activePage === 'reels') {
+  if (
+    activePage === 'product-details' ||
+    activePage === 'checkout' ||
+    activePage === 'reels'
+  ) {
     return null;
   }
+
+  let leftItems: TabItem[] = [];
+  let rightItems: TabItem[] = [];
+  let centerItem: TabItem;
+
+  /*
+   * ============================================================
+   * SELLER
+   * ============================================================
+   */
+
+  if (
+    isAuthenticated &&
+    (currentRole === 'seller' || currentUser?.role === 'seller')
+  ) {
+    leftItems = [
+      {
+        id: 'home',
+        label: 'الرئيسية',
+        icon: Compass,
+        isActive: activePage === 'home',
+        onClick: () => setActivePage('home' as any),
+      },
+      {
+        id: 'seller-products',
+        label: 'منتجاتي',
+        icon: Package,
+        isActive: activePage === 'seller-products',
+        onClick: () =>
+          setActivePage('seller-products' as any),
+      },
+    ];
+
+    centerItem = {
+      id: 'seller-dashboard',
+      label: 'لوحة التحكم',
+      icon: Settings,
+      isActive: activePage === 'seller-dashboard',
+      onClick: () =>
+        setActivePage('seller-dashboard' as any),
+    };
+
+    rightItems = [
+      {
+        id: 'seller-orders',
+        label: 'الطلبات',
+        icon: ClipboardList,
+        isActive: activePage === 'seller-orders',
+        onClick: () =>
+          setActivePage('seller-orders' as any),
+      },
+      {
+        id: 'seller-messages',
+        label: 'المحادثات',
+        icon: MessageSquare,
+        isActive:
+          activePage === 'messages' ||
+          activePage === 'seller-messages',
+        onClick: () =>
+          setActivePage('messages' as any),
+        badge: chatUnreadCount,
+      },
+    ];
+  }
+
+  /*
+   * ============================================================
+   * ADMIN
+   * ============================================================
+   */
+
+  else if (
+    isAuthenticated &&
+    (currentRole === 'admin' || currentUser?.role === 'admin')
+  ) {
+    leftItems = [
+      {
+        id: 'home',
+        label: 'الرئيسية',
+        icon: Compass,
+        isActive: activePage === 'home',
+        onClick: () => setActivePage('home' as any),
+      },
+      {
+        id: 'admin-products',
+        label: 'المنتجات',
+        icon: Package,
+        isActive: activePage === 'admin-products',
+        onClick: () =>
+          setActivePage('admin-products' as any),
+      },
+    ];
+
+    centerItem = {
+      id: 'admin-dashboard',
+      label: 'لوحة التحكم',
+      icon: Settings,
+      isActive: activePage === 'admin-dashboard',
+      onClick: () =>
+        setActivePage('admin-dashboard' as any),
+    };
+
+    rightItems = [
+      {
+        id: 'admin-orders',
+        label: 'الطلبات',
+        icon: ClipboardList,
+        isActive: activePage === 'admin-orders',
+        onClick: () =>
+          setActivePage('admin-orders' as any),
+      },
+      {
+        id: 'admin-sellers',
+        label: 'الورش',
+        icon: Store,
+        isActive: activePage === 'admin-sellers',
+        onClick: () =>
+          setActivePage('admin-sellers' as any),
+      },
+    ];
+  }
+
+  /*
+   * ============================================================
+   * GUEST / BUYER
+   * ============================================================
+   */
+
+  else {
+    leftItems = [
+      {
+        id: 'home',
+        label: 'الرئيسية',
+        icon: Compass,
+        isActive: activePage === 'home',
+        onClick: () => setActivePage('home' as any),
+      },
+      {
+        id: 'products',
+        label: 'المقتنيات',
+        icon: Layers,
+        isActive: activePage === 'products',
+        onClick: () =>
+          setActivePage('products' as any),
+      },
+    ];
+
+    centerItem = {
+      id: 'map',
+      label: 'لفة في الصعيد',
+      icon: MapPin,
+      isActive: activePage === 'map',
+      onClick: () =>
+        setActivePage('map' as any),
+    };
+
+    rightItems = [
+      {
+        id: 'cart',
+        label: 'السلة',
+        icon: ShoppingBag,
+        isActive: activePage === 'cart',
+        onClick: () =>
+          setIsCartDrawerOpen(true),
+        badge: cartCount,
+      },
+      {
+        id: 'account',
+        label: !isAuthenticated
+          ? 'دخول'
+          : 'حسابي',
+        icon: !isAuthenticated
+          ? LogIn
+          : User,
+        isActive: isAccountActive,
+        onClick: handleAccountClick,
+      },
+    ];
+  }
+
+  /*
+   * ============================================================
+   * GLASS TAB
+   * ============================================================
+   */
+
+  const renderTab = (item: TabItem) => {
+    const Icon = item.icon;
+
+    return (
+      <motion.button
+        key={item.id}
+        type="button"
+        onClick={item.onClick}
+        whileTap={{
+          scale: 0.82,
+        }}
+        className="
+          relative
+          flex-1
+          h-full
+          flex
+          flex-col
+          items-center
+          justify-center
+          gap-[3px]
+          select-none
+          outline-none
+          touch-manipulation
+          group
+        "
+        aria-label={item.label}
+      >
+        {/* ACTIVE GLASS */}
+        <motion.div
+          initial={false}
+          animate={{
+            opacity: item.isActive ? 1 : 0,
+            scale: item.isActive ? 1 : 0.7,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 500,
+            damping: 30,
+          }}
+          className="
+            absolute
+            inset-[5px]
+            rounded-[18px]
+
+            bg-white/55
+            dark:bg-white/[0.075]
+
+            border
+            border-white/80
+            dark:border-white/[0.10]
+
+            backdrop-blur-xl
+
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]
+            dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+
+            pointer-events-none
+          "
+        />
+
+        {/* ACTIVE LIGHT */}
+        {item.isActive && (
+          <motion.div
+            layoutId="wahActiveLight"
+            transition={{
+              type: 'spring',
+              stiffness: 500,
+              damping: 32,
+            }}
+            className="
+              absolute
+              bottom-[5px]
+              left-1/2
+              -translate-x-1/2
+
+              w-5
+              h-[3px]
+
+              rounded-full
+
+              bg-[#C99444]
+
+              shadow-[0_0_12px_rgba(201,148,68,0.9)]
+            "
+          />
+        )}
+
+        {/* ICON */}
+        <motion.div
+          className="relative z-10"
+          animate={{
+            y: item.isActive ? -2 : 0,
+            scale: item.isActive ? 1.12 : 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 450,
+            damping: 24,
+          }}
+        >
+          <Icon
+            className={`
+              w-[19px]
+              h-[19px]
+
+              transition-colors
+              duration-200
+
+              ${item.isActive
+                ? 'text-[#8A4A23] dark:text-[#E8B96F]'
+                : 'text-stone-500 dark:text-white/50 group-hover:text-stone-800 dark:group-hover:text-white/80'
+              }
+            `}
+            strokeWidth={
+              item.isActive ? 2.35 : 1.8
+            }
+          />
+
+          {/* BADGE */}
+          {item.badge !== undefined &&
+            item.badge > 0 && (
+              <motion.span
+                initial={{
+                  scale: 0,
+                }}
+                animate={{
+                  scale: 1,
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 600,
+                  damping: 20,
+                }}
+                className="
+                  absolute
+                  -top-2
+                  -right-3
+
+                  min-w-[16px]
+                  h-[16px]
+
+                  px-1
+
+                  rounded-full
+
+                  flex
+                  items-center
+                  justify-center
+
+                  bg-[#B43B2F]
+                  text-white
+
+                  text-[8px]
+                  font-black
+
+                  border-2
+                  border-white/90
+                  dark:border-[#17100C]
+
+                  shadow-[0_3px_10px_rgba(0,0,0,0.2)]
+                "
+              >
+                {item.badge > 99
+                  ? '99+'
+                  : item.badge}
+              </motion.span>
+            )}
+        </motion.div>
+
+        {/* LABEL */}
+        <motion.span
+          animate={{
+            y: item.isActive ? -1 : 0,
+            opacity: item.isActive ? 1 : 0.7,
+          }}
+          className={`
+            relative
+            z-10
+
+            text-[9px]
+            leading-none
+            font-bold
+
+            transition-colors
+
+            ${item.isActive
+              ? 'text-[#8A4A23] dark:text-[#E8B96F] font-black'
+              : 'text-stone-500 dark:text-white/50'
+            }
+          `}
+        >
+          {item.label}
+        </motion.span>
+      </motion.button>
+    );
+  };
+
+  /*
+   * ============================================================
+   * CENTER GLASS BUTTON
+   * ============================================================
+   */
+
+  const CenterIcon = centerItem.icon;
 
   return (
     <div
       id="mobile-bottom-navigation"
       dir="rtl"
-      className="lg:hidden fixed bottom-3 inset-x-3 sm:inset-x-6 z-40 select-none pointer-events-none pb-[env(safe-area-inset-bottom)]"
+      className="
+        lg:hidden
+        fixed
+        bottom-0
+        inset-x-0
+        z-50
+
+        flex
+        justify-center
+
+        pointer-events-none
+
+        px-3
+        pb-[calc(10px+env(safe-area-inset-bottom))]
+      "
       role="navigation"
-      aria-label="شريط التنقل السريع للهواتف"
+      aria-label="التنقل الرئيسي"
     >
-      <nav
+      {/* AMBIENT LIGHT */}
+      <motion.div
+        animate={{
+          opacity: [0.15, 0.28, 0.15],
+          scale: [0.9, 1.08, 0.9],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
         className="
-          pointer-events-auto
-          max-w-md
-          mx-auto
-          rounded-[2rem]
-          bg-[#FFF9EE]/90
-          dark:bg-[#1B1009]/95
-          backdrop-blur-2xl
-          border
-          border-[#E0C79B]
-          dark:border-[#6B3A1F]
-          shadow-[0_16px_40px_rgba(59,30,14,0.10)]
-          dark:shadow-[0_20px_50px_rgba(0,0,0,0.7)]
-          p-1.5
+          absolute
+          bottom-3
+          left-1/2
+          -translate-x-1/2
+
+          w-56
+          h-16
+
+          bg-[#C99444]/20
+          dark:bg-[#C99444]/10
+
+          blur-3xl
+
+          pointer-events-none
+        "
+      />
+
+      <div
+        className="
+          relative
+
           flex
-          items-center
-          justify-between
-          transition-colors
-          duration-300
+          items-end
+          justify-center
+
+          gap-2
+
+          w-full
+          max-w-[440px]
         "
       >
-        {/* ==================== SELLER NAVIGATION ==================== */}
-        {isAuthenticated && currentRole === 'seller' ? (
-          <>
-            {/* 1. الرئيسية */}
-            <button
-              type="button"
-              onClick={() => setActivePage('home' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'home' && (
-                <motion.div
-                  layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                الرئيسية
-              </span>
-            </button>
+        {/* ====================================================
+            RIGHT GLASS ISLAND
+        ==================================================== */}
 
-            {/* 2. منتجات الورشة */}
-            <button
-              type="button"
-              onClick={() => setActivePage('seller-products' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'seller-products' && (
-                <motion.div
-                  layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Package className={`relative z-10 w-4 h-4 ${activePage === 'seller-products' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-products' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                منتجاتي
-              </span>
-            </button>
+        <motion.nav
+          initial={{
+            x: 25,
+            opacity: 0,
+          }}
+          animate={{
+            x: 0,
+            opacity: 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25,
+          }}
+          className="
+            pointer-events-auto
 
-            {/* 3. الزر المركزي المميز: لوحة الورشة */}
-            <button
-              type="button"
-              onClick={() => setActivePage('seller-dashboard' as any)}
-              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
-            >
-              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <Store className="w-5 h-5 text-[#C99444]" />
-              </div>
-              <span className="text-[9px] font-black mt-0.5 text-primary dark:text-[#C99444]">الورشة</span>
-            </button>
+            relative
+            flex-1
 
-            {/* 4. طلبات الورشة */}
-            <button
-              type="button"
-              onClick={() => setActivePage('seller-orders' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'seller-orders' && (
-                <motion.div
-                  layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'seller-orders' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'seller-orders' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                الطلبات
-              </span>
-            </button>
+            h-[62px]
 
-            {/* 5. الرسائل */}
-            <button
-              type="button"
-              onClick={() => setActivePage('messages' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {(activePage === 'messages' || activePage === 'seller-messages') && (
-                <motion.div
-                  layoutId="sellerActivePill"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <div className="relative">
-                <MessageSquare className={`relative z-10 w-4 h-4 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-                {chatUnreadCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20">
-                    {chatUnreadCount}
-                  </span>
-                )}
-              </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'messages' || activePage === 'seller-messages' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                المحادثات
-              </span>
-            </button>
-          </>
-        ) : isAuthenticated && currentRole === 'admin' ? (
-          /* ==================== ADMIN NAVIGATION ==================== */
-          <>
-            <button
-              type="button"
-              onClick={() => setActivePage('home' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'home' && (
-                <motion.div
-                  layoutId="adminActivePill"
-                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Compass className={`relative z-10 w-4 h-4 ${activePage === 'home' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'home' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
-                الرئيسية
-              </span>
-            </button>
+            px-1
 
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-products' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'admin-products' && (
-                <motion.div
-                  layoutId="adminActivePill"
-                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Package className={`relative z-10 w-4 h-4 ${activePage === 'admin-products' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-products' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
-                المنتجات
-              </span>
-            </button>
+            rounded-[25px]
 
-            {/* المركز: لوحة الإدارة */}
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-dashboard' as any)}
-              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
-            >
-              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-lg shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <ShieldAlert className="w-5 h-5 text-purple-400" />
-              </div>
-              <span className="text-[9px] font-black mt-0.5 text-purple-600 dark:text-purple-400">الإدارة</span>
-            </button>
+            flex
+            items-center
+            justify-around
 
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-orders' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'admin-orders' && (
-                <motion.div
-                  layoutId="adminActivePill"
-                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <ClipboardList className={`relative z-10 w-4 h-4 ${activePage === 'admin-orders' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-orders' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
-                الطلبات
-              </span>
-            </button>
+            overflow-hidden
 
-            <button
-              type="button"
-              onClick={() => setActivePage('admin-sellers' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-            >
-              {activePage === 'admin-sellers' && (
-                <motion.div
-                  layoutId="adminActivePill"
-                  className="absolute inset-0 rounded-2xl bg-purple-500/15 border border-purple-500/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Store className={`relative z-10 w-4 h-4 ${activePage === 'admin-sellers' ? 'text-purple-600 dark:text-purple-400' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 ${activePage === 'admin-sellers' ? 'text-purple-600 dark:text-purple-400' : 'text-black/65 dark:text-white/65'}`}>
-                الورش
-              </span>
-            </button>
-          </>
-        ) : (
-          /* ==================== BUYER & GUEST SHOPPING NAVIGATION ==================== */
-          <>
-            {/* 1. الرئيسية */}
-            <button
-              type="button"
-              onClick={() => setActivePage('home' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-              aria-label="الرئيسية"
-            >
-              {activePage === 'home' && (
-                <motion.div
-                  layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Compass className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'home' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'home' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                الرئيسية
-              </span>
-            </button>
+            bg-white/[0.58]
+            dark:bg-[#17100C]/[0.58]
 
-            {/* 2. المقتنيات والمعروضات */}
-            <button
-              type="button"
-              onClick={() => setActivePage('products' as any)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-              aria-label="المقتنيات"
-            >
-              {activePage === 'products' && (
-                <motion.div
-                  layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <Layers className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'products' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'products' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                المقتنيات
-              </span>
-            </button>
+            backdrop-blur-[28px]
+            backdrop-saturate-[170%]
 
-            {/* 3. الزر المركزي البارز: أطلس محافظات الصعيد */}
-            <button
-              type="button"
-              onClick={() => setActivePage('map' as any)}
-              className="relative -top-3 px-2 flex flex-col items-center justify-center cursor-pointer group"
-              aria-label="لفة في الصعيد"
-            >
-              <div className="w-12 h-12 rounded-full bg-[#6B3A1F] text-[#FFF9EE] dark:bg-[#6B3A1F] dark:text-[#FFF9EE] border border-[#E0C79B]/30 dark:border-[#C99444]/40 flex items-center justify-center shadow-xl shadow-black/20 group-hover:scale-105 active:scale-95 transition-all">
-                <MapPin className="w-5 h-5 text-[#C99444]" />
-              </div>
-              <span className="text-[9px] font-black mt-0.5 text-primary dark:text-[#C99444]">الصعيد</span>
-            </button>
+            border
+            border-white/75
+            dark:border-white/[0.11]
 
-            {/* 4. سلة المشتريات */}
-            <button
-              type="button"
-              onClick={() => setIsCartDrawerOpen(true)}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-              aria-label="سلة المقتنيات"
-            >
-              {activePage === 'cart' && (
-                <motion.div
-                  layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              <div className="relative">
-                <ShoppingBag className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${activePage === 'cart' ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-primary text-white text-[8px] font-black px-1 min-w-[14px] h-[14px] rounded-full flex items-center justify-center leading-none z-20 shadow-xs">
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </div>
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${activePage === 'cart' ? 'text-primary' : 'text-black/65 dark:text-white/65'}`}>
-                السلة
-              </span>
-            </button>
+            shadow-[0_14px_45px_rgba(50,28,14,0.14)]
+            dark:shadow-[0_14px_45px_rgba(0,0,0,0.60)]
+          "
+        >
+          {/* GLASS REFLECTION */}
+          <div
+            className="
+              absolute
+              top-0
+              left-[15%]
+              right-[15%]
 
-            {/* 5. الحساب / تسجيل الدخول */}
-            <button
-              type="button"
-              onClick={handleAccountClick}
-              className="relative flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-2xl min-h-[48px] cursor-pointer"
-              aria-label={isAuthenticated ? 'حسابي' : 'تسجيل الدخول'}
+              h-px
+
+              bg-gradient-to-r
+              from-transparent
+              via-white
+              to-transparent
+
+              dark:via-white/20
+            "
+          />
+
+          {leftItems.map(renderTab)}
+        </motion.nav>
+
+        {/* ====================================================
+            CENTER
+        ==================================================== */}
+
+        <div
+          className="
+            pointer-events-auto
+
+            relative
+
+            w-[66px]
+            h-[78px]
+
+            flex
+            items-start
+            justify-center
+          "
+        >
+          {/* OUTER GLOW */}
+          <motion.div
+            animate={{
+              scale: [1, 1.12, 1],
+              opacity: [0.22, 0.38, 0.22],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+            className="
+              absolute
+              top-[1px]
+
+              w-[64px]
+              h-[64px]
+
+              rounded-full
+
+              bg-[#C99444]
+
+              blur-2xl
+
+              pointer-events-none
+            "
+          />
+
+          {/* ROTATING GLASS RING */}
+          <motion.div
+            animate={{
+              rotate: 360,
+            }}
+            transition={{
+              duration: 14,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+            className="
+              absolute
+              top-[-3px]
+
+              w-[68px]
+              h-[68px]
+
+              rounded-full
+
+              border
+              border-dashed
+              border-[#C99444]/30
+
+              pointer-events-none
+            "
+          />
+
+          {/* CENTER BUTTON */}
+          <motion.button
+            type="button"
+            onClick={centerItem.onClick}
+            whileHover={{
+              scale: 1.07,
+            }}
+            whileTap={{
+              scale: 0.88,
+            }}
+            className="
+              relative
+              z-20
+
+              mt-[2px]
+
+              w-[58px]
+              h-[58px]
+
+              rounded-[21px]
+
+              rotate-45
+
+              flex
+              items-center
+              justify-center
+
+              overflow-hidden
+
+              bg-gradient-to-br
+              from-[#6E391D]
+              via-[#8B4B25]
+              to-[#5D2B17]
+
+              dark:from-[#8B4C25]
+              dark:via-[#6A3419]
+              dark:to-[#35170B]
+
+              border
+              border-white/60
+              dark:border-[#E4B86D]/25
+
+              shadow-[0_12px_35px_rgba(82,42,20,0.35)]
+              dark:shadow-[0_12px_35px_rgba(0,0,0,0.65)]
+
+              outline-none
+            "
+            aria-label={centerItem.label}
+          >
+            {/* GLASS SHINE */}
+            <motion.div
+              animate={{
+                x: ['-120%', '120%'],
+              }}
+              transition={{
+                duration: 3.5,
+                repeat: Infinity,
+                repeatDelay: 2,
+                ease: 'easeInOut',
+              }}
+              className="
+                absolute
+
+                top-[-30%]
+                left-[-20%]
+
+                w-[30%]
+                h-[170%]
+
+                rotate-[25deg]
+
+                bg-white/20
+
+                blur-md
+
+                pointer-events-none
+              "
+            />
+
+            {/* INNER BORDER */}
+            <div
+              className="
+                absolute
+                inset-[5px]
+
+                rounded-[17px]
+
+                border
+                border-white/15
+
+                pointer-events-none
+              "
+            />
+
+            {/* ICON */}
+            <motion.div
+              animate={{
+                rotate: centerItem.isActive
+                  ? [0, 5, -5, 0]
+                  : 0,
+                scale: centerItem.isActive
+                  ? [1, 1.08, 1]
+                  : 1,
+              }}
+              transition={{
+                duration: 2.2,
+                repeat: centerItem.isActive
+                  ? Infinity
+                  : 0,
+              }}
+              className="-rotate-45 relative z-10"
             >
-              {isAccountActive && (
-                <motion.div
-                  layoutId="mobileActiveTab"
-                  className="absolute inset-0 rounded-2xl bg-primary/15 dark:bg-primary/25 border border-primary/30"
-                  transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-                />
-              )}
-              {!isAuthenticated ? (
-                <LogIn className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              ) : (
-                <User className={`relative z-10 w-4 h-4 transition-transform active:scale-90 ${isAccountActive ? 'text-primary' : 'text-black/50 dark:text-white/50'}`} />
-              )}
-              <span className={`relative z-10 text-[10px] font-bold mt-1 tracking-tight ${isAccountActive ? 'text-primary' : 'text-black/65 dark:text-white/60'}`}>
-                {!isAuthenticated ? 'دخول' : 'حسابي'}
-              </span>
-            </button>
-          </>
-        )}
-      </nav>
+              <CenterIcon
+                className="
+                  w-[23px]
+                  h-[23px]
+
+                  text-[#F4D39C]
+                "
+                strokeWidth={2.2}
+              />
+            </motion.div>
+          </motion.button>
+
+          {/* CENTER LABEL */}
+          <motion.span
+            animate={{
+              y: centerItem.isActive
+                ? [0, -1, 0]
+                : 0,
+            }}
+            transition={{
+              duration: 2,
+              repeat: centerItem.isActive
+                ? Infinity
+                : 0,
+            }}
+            className="
+              absolute
+
+              -bottom-[2px]
+
+              px-2.5
+              py-[4px]
+
+              rounded-full
+
+              whitespace-nowrap
+
+              text-[8.5px]
+              font-black
+
+              text-[#8A4A23]
+              dark:text-[#E8B96F]
+
+              bg-white/60
+              dark:bg-white/[0.06]
+
+              border
+              border-white/70
+              dark:border-white/10
+
+              backdrop-blur-xl
+            "
+          >
+            {centerItem.label}
+          </motion.span>
+        </div>
+
+        {/* ====================================================
+            LEFT GLASS ISLAND
+        ==================================================== */}
+
+        <motion.nav
+          initial={{
+            x: -25,
+            opacity: 0,
+          }}
+          animate={{
+            x: 0,
+            opacity: 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 25,
+          }}
+          className="
+            pointer-events-auto
+
+            relative
+            flex-1
+
+            h-[62px]
+
+            px-1
+
+            rounded-[25px]
+
+            flex
+            items-center
+            justify-around
+
+            overflow-hidden
+
+            bg-white/[0.58]
+            dark:bg-[#17100C]/[0.58]
+
+            backdrop-blur-[28px]
+            backdrop-saturate-[170%]
+
+            border
+            border-white/75
+            dark:border-white/[0.11]
+
+            shadow-[0_14px_45px_rgba(50,28,14,0.14)]
+            dark:shadow-[0_14px_45px_rgba(0,0,0,0.60)]
+          "
+        >
+          {/* GLASS REFLECTION */}
+          <div
+            className="
+              absolute
+              top-0
+              left-[15%]
+              right-[15%]
+
+              h-px
+
+              bg-gradient-to-r
+              from-transparent
+              via-white
+              to-transparent
+
+              dark:via-white/20
+            "
+          />
+
+          {rightItems.map(renderTab)}
+        </motion.nav>
+      </div>
     </div>
   );
 };

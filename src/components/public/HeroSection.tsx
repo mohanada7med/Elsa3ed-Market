@@ -296,19 +296,21 @@ export const HeroSection: React.FC = () => {
           <div className="space-y-2 text-right">
             <span
               className="
-                inline-block
-                rounded-full
-                border
-                border-primary/20
-                bg-primary/10
-                px-2.5
-                py-0.5
-                text-[11px]
-                font-bold
-                text-accent
-                shadow-xs
-              "
-            >
+  inline-block
+  rounded-full
+  border
+  border-[#C99444]/40
+  bg-[#FDF6E9]/70
+  px-2.5
+  py-0.5
+  text-[11px]
+  font-bold
+  text-[#6B3A1F]
+  shadow-xs
+  dark:border-[#C99444]/30
+  dark:bg-[#26160D]/70
+  dark:text-[#C99444]
+">
               شغل يدوي · ريلز · حكاوي زمان
             </span>
 

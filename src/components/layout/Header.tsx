@@ -15,6 +15,7 @@ import {
   ChevronDown,
   LogOut,
   Package,
+  ClipboardList,
   LayoutDashboard,
   Sparkles,
   Play,
@@ -474,7 +475,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const isAdmin = currentRole === 'admin' || currentUser?.role === 'admin';
-  const isSeller = !isAdmin && (currentRole === 'seller' || currentUser?.role === 'seller');
+  const isSeller = currentRole === 'seller' || currentUser?.role === 'seller';
   const isStaff = isSeller || isAdmin;
 
   useEffect(() => {
@@ -528,24 +529,24 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
   };
 
   const roleNavLinks = useMemo(() => {
-    if (currentRole === 'seller') {
+    if (isSeller) {
       return [
         { id: 'seller-dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
         { id: 'seller-products', label: 'منتجاتي', icon: Package },
         { id: 'seller-inventory', label: 'المخزون', icon: Store },
-        { id: 'seller-orders', label: 'الطلبات', icon: ShoppingBag },
+        { id: 'seller-orders', label: 'الطلبات', icon: ClipboardList },
         { id: 'seller-analytics', label: 'الإحصائيات', icon: Sparkles },
         { id: 'seller-account', label: 'حسابي', icon: UserCircle },
       ];
     }
 
-    if (currentRole === 'admin') {
+    if (isAdmin) {
       return [
         { id: 'admin-dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
         { id: 'admin-buyers', label: 'المشترين', icon: UserCircle },
         { id: 'admin-products', label: 'المنتجات', icon: Package },
         { id: 'admin-sellers', label: 'البائعين', icon: Store },
-        { id: 'admin-orders', label: 'الطلبات', icon: ShoppingBag },
+        { id: 'admin-orders', label: 'الطلبات', icon: ClipboardList },
         { id: 'admin-reports', label: 'البلاغات والشكاوى', icon: AlertTriangle },
         { id: 'admin-audit-logs', label: 'سجل النشاط', icon: ShieldCheck },
       ];
@@ -1172,21 +1173,23 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* الجانب الأيسر */}
           <div className="flex items-center gap-1 sm:gap-1.5 z-20">
-            <button
-              type="button"
-              onClick={handleFavoritesClick}
-              aria-label="المفضلة"
-              title="المفضلة"
-              className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
-              style={{ backgroundColor: hoverBg, color: mainText }}
-            >
-              <Heart size={16} />
-              {favorites.length > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
-                  {favorites.length > 99 ? '99+' : favorites.length}
-                </span>
-              )}
-            </button>
+            {!isStaff && (
+              <button
+                type="button"
+                onClick={handleFavoritesClick}
+                aria-label="المفضلة"
+                title="المفضلة"
+                className="relative flex h-8.5 w-8.5 items-center justify-center rounded-full cursor-pointer active:scale-95"
+                style={{ backgroundColor: hoverBg, color: mainText }}
+              >
+                <Heart size={16} />
+                {favorites.length > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 text-[8px] font-bold bg-[#E66A2E] text-white">
+                    {favorites.length > 99 ? '99+' : favorites.length}
+                  </span>
+                )}
+              </button>
+            )}
 
             <button
               type="button"

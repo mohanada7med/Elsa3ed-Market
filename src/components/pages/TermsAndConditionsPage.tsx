@@ -60,7 +60,7 @@ export const TermsAndConditionsPage: React.FC = () => {
           </div>
 
           <h1 className="font-main text-3xl sm:text-5xl text-white tracking-tight leading-tight">
-            الشروط والأحكام وعهد الصنعة في <span className="text-[#C99444]">«وَه»</span>
+            الشروط والأحكام في <span className="text-[#C99444]">«وَه»</span>
           </h1>
 
           <p className="text-sm sm:text-base text-[#D6C6B1] max-w-2xl mx-auto leading-relaxed font-normal">
@@ -87,7 +87,7 @@ export const TermsAndConditionsPage: React.FC = () => {
           {/* Navigation Sidebar */}
           <aside className="lg:col-span-4">
             <div className="sticky top-24 p-5 rounded-2xl bg-white dark:bg-[#26160D] border border-[#C99444]/30 shadow-sm space-y-2">
-              <h3 className="font-main text-sm text-[#3B1E0E] dark:text-[#FFF9EE] pb-2 border-b border-black/10 dark:border-white/10 flex items-center gap-2">
+              <h3 className="font-cairo font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE] pb-2 border-b border-black/10 dark:border-white/10 flex items-center gap-2">
                 <FileCheck className="w-4 h-4 text-primary" />
                 <span>بنود ميثاق التعامل</span>
               </h3>
@@ -97,11 +97,10 @@ export const TermsAndConditionsPage: React.FC = () => {
                     key={item.id}
                     type="button"
                     onClick={() => scrollTo(item.id)}
-                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${
-                      activeSection === item.id
-                        ? 'bg-primary text-white shadow-xs'
-                        : 'text-[#8C6F53] dark:text-[#D6C6B1] hover:bg-black/5 dark:hover:bg-white/5'
-                    }`}
+                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${activeSection === item.id
+                      ? 'bg-primary text-white shadow-xs'
+                      : 'text-[#8C6F53] dark:text-[#D6C6B1] hover:bg-black/5 dark:hover:bg-white/5'
+                      }`}
                   >
                     <span>{item.title}</span>
                     <span className="text-[10px] opacity-70">0{idx + 1}</span>
@@ -128,7 +127,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="covenant" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Scale className="w-5 h-5 text-primary" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   1. عهد الصنعة ومقدمة الميثاق
                 </h2>
               </div>
@@ -141,7 +140,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="handicraft-nature" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Sparkles className="w-5 h-5 text-amber-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   2. طبيعة الحرف اليدوية وتفرد القطع
                 </h2>
               </div>
@@ -163,7 +162,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="orders-pricing" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <FileCheck className="w-5 h-5 text-emerald-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   3. الطلبات، الأسعار، وطرق الدفع
                 </h2>
               </div>
@@ -179,7 +178,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="shipping-delivery" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Truck className="w-5 h-5 text-blue-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   4. الشحن، التغليف، وحق المعاينة
                 </h2>
               </div>
@@ -188,11 +187,11 @@ export const TermsAndConditionsPage: React.FC = () => {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div className="p-3.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/5 dark:border-white/5 space-y-1">
-                  <h4 className="font-bold text-xs text-[#3B1E0E] dark:text-[#FFF9EE]">تغليف مصفح للكسر</h4>
+                  <h4 className="font-cairo font-bold text-xs text-[#3B1E0E] dark:text-[#FFF9EE]">تغليف مصفح للكسر</h4>
                   <p className="text-[11px] text-[#8C6F53] dark:text-[#D6C6B1]">تغليف فقاعي وصناديق مدعمة خاصة بالفخار والألاباستر والزجاج المعشق.</p>
                 </div>
                 <div className="p-3.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/5 dark:border-white/5 space-y-1">
-                  <h4 className="font-bold text-xs text-[#3B1E0E] dark:text-[#FFF9EE]">حق المعاينة قبل الاستلام</h4>
+                  <h4 className="font-cairo font-bold text-xs text-[#3B1E0E] dark:text-[#FFF9EE]">حق المعاينة قبل الاستلام</h4>
                   <p className="text-[11px] text-[#8C6F53] dark:text-[#D6C6B1]">يحق للمشتري فحص الطرد خارجياً وداخلياً بحضور مندوب التوصيل للتأكد من سلامته.</p>
                 </div>
               </div>
@@ -202,7 +201,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="returns-refunds" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <RotateCcw className="w-5 h-5 text-rose-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   5. سياسة الاستبدال، الاسترجاع، والتعويض
                 </h2>
               </div>
@@ -220,7 +219,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="artisan-rights" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Store className="w-5 h-5 text-amber-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   6. ميثاق حماية الورش والحرفيين
                 </h2>
               </div>
@@ -238,7 +237,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="intellectual-property" className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#26160D] border border-[#C99444]/20 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Award className="w-5 h-5 text-purple-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   7. الملكية الفكرية وتوثيق تراث الصعيد
                 </h2>
               </div>
@@ -254,7 +253,7 @@ export const TermsAndConditionsPage: React.FC = () => {
             <article id="governing-law" className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#C99444]/15 via-white dark:via-[#26160D] to-[#3B1E0E]/10 border border-[#C99444]/40 shadow-md space-y-4 scroll-mt-24">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                <h2 className="font-main text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-xl sm:text-2xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   8. القانون الحاكم والتحكيم العادل
                 </h2>
               </div>

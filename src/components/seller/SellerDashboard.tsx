@@ -10,6 +10,7 @@ import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import { ReelEditModal } from '../common/ReelEditModal.tsx';
 import { CraftReelsModal } from '../public/CraftReelsModal.tsx';
 import { ChatView } from '../chat/ChatView.tsx';
+import { DeleteAccountModal } from '../common/DeleteAccountModal.tsx';
 import {
   Store,
   Package,
@@ -295,6 +296,9 @@ export const SellerDashboard: React.FC = () => {
   }, [activePage]);
 
   const currentSeller = sellers.find((s) => s.id === currentUser.sellerId || s.id === currentUser.id);
+
+  // Delete Account Modal State
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] = useState(false);
 
   // Product Modal State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -2752,6 +2756,37 @@ export const SellerDashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* منطقة الخطر لحساب التاجر والورشة */}
+              <div className="bg-rose-500/5 dark:bg-rose-950/20 border border-rose-500/25 rounded-[2rem] p-6 sm:p-7 space-y-4 shadow-lg backdrop-blur-xl">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-rose-500/20 pb-3">
+                  <div className="flex items-center gap-2.5 text-rose-600 dark:text-rose-400 font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-rose-500/15 flex items-center justify-center border border-rose-500/20">
+                      <ShieldAlert className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold">منطقة الخطر — إغلاق الورشة وحذف الحساب نهائياً</h4>
+                      <span className="text-[10px] text-rose-700 dark:text-rose-300 font-bold">إجراء نهائي لا رجعة فيه</span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs text-rose-900/80 dark:text-rose-200/80 leading-relaxed font-medium">
+                  هل ترغب في إنهاء نشاط ورشتك ومغادرة منصة وه نهائياً؟ عند حذف الحساب، سيتم إزالة متجر الورشة وكافة منتجاتها المعروضة ومقاطع الريلز فوراً من قاعدة البيانات وحذف كافة بياناتك الشخصية وحق النسيان.
+                </p>
+
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    id="open-seller-delete-modal-btn"
+                    onClick={() => setIsDeleteAccountModalOpen(true)}
+                    className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer active:scale-95"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>حذف حساب الورشة نهائياً من المنصة</span>
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -3402,6 +3437,13 @@ export const SellerDashboard: React.FC = () => {
           }}
         />
       )}
+
+      {/* Delete Account Modal for Seller */}
+      <DeleteAccountModal
+        isOpen={isDeleteAccountModalOpen}
+        onClose={() => setIsDeleteAccountModalOpen(false)}
+        isSellerMode={true}
+      />
 
       {/* Mobile Navigation Drawer */}
       {isMobileNavOpen && (

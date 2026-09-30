@@ -150,11 +150,11 @@ export const HelpAndContactPage: React.FC = () => {
         <div className="relative max-w-5xl mx-auto text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C99444]/20 border border-[#C99444]/40 text-[#E0C79B] text-xs font-bold backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5 text-[#C99444]" />
-            <span>ديوان العون والمضايفة التراثي</span>
+            أهلاً بيك في وَه
           </div>
 
           <h1 className="font-main text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.2]">
-            مضايفة <span className="text-[#C99444]">وَه</span>.. بابنا مفتوح وواجب الضيافة واصل
+            <span className="text-[#C99444]">وَه</span>.. إنت بين أهلك وناسك
           </h1>
 
           <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#D6C6B1] leading-relaxed font-normal">
@@ -193,7 +193,7 @@ export const HelpAndContactPage: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <MessageSquare className="w-6 h-6" />
               </div>
-              <h3 className="font-main text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">واتساب الدعم السريع</h3>
+              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">واتساب الدعم السريع</h3>
               <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
                 تواصل مباشر وفوري مع فريق ديوان وه للرد على استفسارك ومتابعة طلبيتك.
               </p>
@@ -213,7 +213,7 @@ export const HelpAndContactPage: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary dark:text-primary-hover flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <Phone className="w-6 h-6" />
               </div>
-              <h3 className="font-main text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">اتصل بالديوان</h3>
+              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">اتصل بالدعم</h3>
               <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
                 متاحين يومياً من 9 صباحاً لحد 10 مساءً للرد على مكالماتكم الكريمة.
               </p>
@@ -233,7 +233,7 @@ export const HelpAndContactPage: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <Mail className="w-6 h-6" />
               </div>
-              <h3 className="font-main text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">البريد الرسمي</h3>
+              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">البريد الرسمي</h3>
               <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
                 لطلبات التوريد والمؤسسات، الشراكات الثقافية، والتقارير الرسمية.
               </p>
@@ -250,7 +250,7 @@ export const HelpAndContactPage: React.FC = () => {
               <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                 <MapPin className="w-6 h-6" />
               </div>
-              <h3 className="font-main text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">مراكز وه بالجنوب</h3>
+              <h3 className="font-cairo font-bold text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">مراكز وه بالجنوب</h3>
               <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] mt-1 leading-relaxed">
                 الأقصر (الكورنيش) • أسوان (غرب سهيل) • قنا (نقادة وقوص) • القاهرة (ديوان التوزيع).
               </p>
@@ -274,7 +274,7 @@ export const HelpAndContactPage: React.FC = () => {
                   <Send className="w-3 h-3" />
                   <span>رسالة لديوان وه</span>
                 </div>
-                <h2 className="font-main text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE]">
+                <h2 className="font-cairo font-bold text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE]">
                   اكتب رسالتك وطلبك
                 </h2>
                 <p className="text-xs text-[#8C6F53] dark:text-[#D6C6B1] leading-relaxed">
@@ -379,14 +379,14 @@ export const HelpAndContactPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 rounded-xl bg-primary hover:bg-[#B37A2B] text-white font-main text-base font-bold shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                  className="w-full py-3.5 rounded-xl bg-primary hover:bg-[#B37A2B] text-white font-cairo font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <span>جاري إرسال الرسالة للديوان...</span>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>إرسال الرسالة لديوان وه</span>
+                      <span>إرسال الرسالة لدعم وه</span>
                     </>
                   )}
                 </button>
@@ -400,7 +400,7 @@ export const HelpAndContactPage: React.FC = () => {
                   <Truck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-main text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">بتدور على شحنتك؟</h4>
+                  <h4 className="font-cairo font-bold text-sm text-[#3B1E0E] dark:text-[#FFF9EE]">بتدور على شحنتك؟</h4>
                   <p className="text-[11px] text-[#8C6F53] dark:text-[#D6C6B1]">
                     تابع مسار شحنتك خطوة بخطوة من الورشة لحد باب بيتك.
                   </p>
@@ -424,7 +424,7 @@ export const HelpAndContactPage: React.FC = () => {
                   <HelpCircle className="w-3.5 h-3.5" />
                   <span>إجابات سريعة وواضحة</span>
                 </div>
-                <h2 className="font-main text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE] mt-0.5">
+                <h2 className="font-cairo font-bold text-2xl sm:text-3xl text-[#3B1E0E] dark:text-[#FFF9EE] mt-0.5">
                   الأسئلة الشائعة من أهل البلد
                 </h2>
               </div>
@@ -442,11 +442,10 @@ export const HelpAndContactPage: React.FC = () => {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveFaqCategory(tab.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      activeFaqCategory === tab.id
-                        ? 'bg-[#3B1E0E] dark:bg-[#FFF9EE] text-[#FFF9EE] dark:text-[#3B1E0E] shadow-sm'
-                        : 'bg-black/[0.04] dark:bg-white/[0.04] text-[#8C6F53] dark:text-[#D6C6B1] hover:bg-black/10 dark:hover:bg-white/10'
-                    }`}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeFaqCategory === tab.id
+                      ? 'bg-[#3B1E0E] dark:bg-[#FFF9EE] text-[#FFF9EE] dark:text-[#3B1E0E] shadow-sm'
+                      : 'bg-black/[0.04] dark:bg-white/[0.04] text-[#8C6F53] dark:text-[#D6C6B1] hover:bg-black/10 dark:hover:bg-white/10'
+                      }`}
                   >
                     {tab.label}
                   </button>
@@ -461,11 +460,10 @@ export const HelpAndContactPage: React.FC = () => {
                 return (
                   <div
                     key={faq.id}
-                    className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                      isOpen
-                        ? 'bg-white dark:bg-[#26160D] border-[#C99444] shadow-md'
-                        : 'bg-white/70 dark:bg-white/[0.02] border-black/10 dark:border-white/10 hover:border-[#C99444]/60'
-                    }`}
+                    className={`rounded-2xl border transition-all duration-200 overflow-hidden ${isOpen
+                      ? 'bg-white dark:bg-[#26160D] border-[#C99444] shadow-md'
+                      : 'bg-white/70 dark:bg-white/[0.02] border-black/10 dark:border-white/10 hover:border-[#C99444]/60'
+                      }`}
                   >
                     <button
                       type="button"
@@ -477,7 +475,7 @@ export const HelpAndContactPage: React.FC = () => {
                           ؟
                         </span>
                         <div className="text-right">
-                          <h3 className="font-main text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">
+                          <h3 className="font-cairo font-bold text-base sm:text-lg text-[#3B1E0E] dark:text-[#FFF9EE]">
                             {faq.question}
                           </h3>
                           {faq.badge && (
@@ -488,9 +486,8 @@ export const HelpAndContactPage: React.FC = () => {
                         </div>
                       </div>
                       <ChevronDown
-                        className={`w-5 h-5 text-[#8C6F53] dark:text-[#D6C6B1] transition-transform duration-300 shrink-0 ${
-                          isOpen ? 'rotate-180 text-primary' : ''
-                        }`}
+                        className={`w-5 h-5 text-[#8C6F53] dark:text-[#D6C6B1] transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180 text-primary' : ''
+                          }`}
                       />
                     </button>
 

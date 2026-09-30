@@ -516,6 +516,23 @@ export const AuthModal: React.FC = () => {
       return;
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail) {
+      setError(
+        'من فضلك اكتب البريد الإلكتروني علشان تغير كلمه السر لو نسيتها.'
+      );
+      return;
+    }
+
+    const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      setError(
+        'من فضلك اكتب بريد إلكتروني صحيح (مثال: name@example.com).'
+      );
+      return;
+    }
+
     /*
       المحافظة اختيارية بشكل عام.
       لكن لو المستخدم اختار "أخرى"
@@ -557,8 +574,7 @@ export const AuthModal: React.FC = () => {
           normalizedPhone,
 
         email:
-          email.trim() ||
-          undefined,
+          normalizedEmail,
 
         /*
           هنا أهم تعديل:
@@ -2179,9 +2195,8 @@ export const AuthModal: React.FC = () => {
                         className={labelClass}
                       >
                         البريد الإلكتروني
-
-                        <span className="mr-1 text-[11px] sm:text-[12px] font-normal text-black/50 dark:text-white/50">
-                          اختياري
+                        <span className="mr-1 text-primary">
+                          *
                         </span>
                       </label>
 
@@ -2194,6 +2209,7 @@ export const AuthModal: React.FC = () => {
                         <input
                           id="register-email-input"
                           type="email"
+                          required
                           value={email}
                           onChange={(e) =>
                             setEmail(
@@ -2206,6 +2222,9 @@ export const AuthModal: React.FC = () => {
                           dir="ltr"
                         />
                       </div>
+                      <p className="mt-1.5 text-[11px] text-black/50 dark:text-white/50 leading-relaxed">
+                        مطلوب لإرسال كود استعادة كلمة المرور في حال نسيانها.
+                      </p>
                     </div>
 
                     {/* Password */}

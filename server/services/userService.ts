@@ -729,7 +729,29 @@ export async function deleteOwnAccount(
         }
       }
 
-      // Delete products, stock movements, and reels from MongoDB
+      // Clean up seller cover & logo from Cloudinary
+      if (sellerDoc?.coverImage) {
+        const coverPublicId = extractCloudinaryPublicId(sellerDoc.coverImage);
+        if (coverPublicId && coverPublicId.startsWith('WAH/')) {
+          try {
+            await storageService.delete(coverPublicId, { id: userId, role: 'seller' });
+          } catch (err) {
+            Logger.warn('[UserService] Failed deleting seller cover image during self-delete:', err);
+          }
+        }
+      }
+      if (sellerDoc?.logo || sellerDoc?.avatar) {
+        const logoPublicId = extractCloudinaryPublicId(sellerDoc.logo || sellerDoc.avatar);
+        if (logoPublicId && logoPublicId.startsWith('WAH/')) {
+          try {
+            await storageService.delete(logoPublicId, { id: userId, role: 'seller' });
+          } catch (err) {
+            Logger.warn('[UserService] Failed deleting seller logo during self-delete:', err);
+          }
+        }
+      }
+
+      // Delete products, stock movements, reels, stories, discounts, and applications from MongoDB
       if (isMongo && db) {
         await db.collection('products').deleteMany({
           $or: [{ sellerId }, { sellerId: userId }]
@@ -745,12 +767,46 @@ export async function deleteOwnAccount(
             $or: [{ sellerId }, { sellerId: userId }]
           });
         } catch { }
+        try {
+          await db.collection('craft_stories').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+        } catch { }
+        try {
+          await db.collection('discounts').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+          await db.collection('discount_coupons').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+        } catch { }
+        try {
+          await db.collection('seller_applications').deleteMany({
+            $or: [{ userId }, { sellerId }]
+          });
+        } catch { }
+        try {
+          await db.collection('reviews').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+        } catch { }
+        try {
+          await db.collection('payouts').deleteMany({
+            $or: [{ sellerId }, { sellerId: userId }]
+          });
+        } catch { }
+        try {
+          // Remove deleted seller's items from all carts
+          await db.collection('carts').updateMany({}, {
+            $pull: { items: { sellerId } }
+          } as any);
+        } catch { }
         await db.collection('sellers').deleteMany({
           $or: [{ id: sellerId }, { userId: userId }]
         });
       }
 
-      // Update memoryDb
+      // Update memoryDb for seller
       memoryDb.products = memoryDb.products.filter(
         (p) => p.sellerId !== sellerId && p.sellerId !== userId
       );
@@ -762,8 +818,23 @@ export async function deleteOwnAccount(
           (r: any) => r.sellerId !== sellerId && r.sellerId !== userId
         );
       }
+      memoryDb.reels = memoryDb.reels.filter(
+        (r) => r.sellerId !== sellerId && r.sellerId !== userId
+      );
       memoryDb.sellers = memoryDb.sellers.filter(
         (s: any) => s.id !== sellerId && s.userId !== userId
+      );
+      memoryDb.discounts = memoryDb.discounts.filter(
+        (d) => (d as any).sellerId !== sellerId && (d as any).sellerId !== userId
+      );
+      memoryDb.craftStories = memoryDb.craftStories.filter(
+        (cs) => (cs as any).sellerId !== sellerId && (cs as any).sellerId !== userId
+      );
+      memoryDb.reviews = memoryDb.reviews.filter(
+        (rv) => (rv as any).sellerId !== sellerId && (rv as any).sellerId !== userId
+      );
+      memoryDb.payouts = memoryDb.payouts.filter(
+        (p) => (p as any).sellerId !== sellerId && (p as any).sellerId !== userId
       );
 
       cacheService.invalidateSellers(sellerId);
@@ -771,11 +842,35 @@ export async function deleteOwnAccount(
     }
   }
 
-  // 5. Common Buyer Cleanup (Carts, Favorites, Notifications, Orders Anonymization)
+  // 5. Common Buyer & User Cleanup (Carts, Favorites, Notifications, Chats, Orders Anonymization, Users)
   if (isMongo && db) {
     await db.collection('carts').deleteMany({ buyerId: userId });
-    await db.collection('favorites').deleteMany({ buyerId: userId });
-    await db.collection('notifications').deleteMany({ userId });
+    await db.collection('favorites').deleteMany({ $or: [{ buyerId: userId }, { userId }] });
+    await db.collection('notifications').deleteMany({ $or: [{ userId }, { recipientId: userId }] });
+    try {
+      await db.collection('conversations').deleteMany({
+        $or: [{ buyerId: userId }, { 'participants.userId': userId }]
+      });
+      await db.collection('messages').deleteMany({
+        $or: [{ senderId: userId }, { receiverId: userId }]
+      });
+    } catch { }
+    try {
+      await db.collection('reports').deleteMany({
+        $or: [{ reporterId: userId }, { userId }]
+      });
+    } catch { }
+    try {
+      await db.collection('password_resets').deleteMany({
+        $or: [{ userId }, { email: userDoc.email }]
+      });
+    } catch { }
+    try {
+      await db.collection('reelLikes').deleteMany({ userId });
+    } catch { }
+    try {
+      await db.collection('seller_applications').deleteMany({ userId });
+    } catch { }
 
     // Anonymize orders for legal fulfillment integrity while wiping all personal identifiable data
     await db.collection('orders').updateMany(
@@ -792,11 +887,8 @@ export async function deleteOwnAccount(
       }
     );
 
-    // Anonymize reviews
-    await db.collection('reviews').updateMany(
-      { userId },
-      { $set: { userName: 'مستخدم محذوف' } }
-    );
+    // Completely delete reviews authored by this user
+    await db.collection('reviews').deleteMany({ userId });
 
     // Delete user doc completely from MongoDB
     await db.collection('users').deleteOne({ id: userId });
@@ -805,6 +897,11 @@ export async function deleteOwnAccount(
   // Sync memory store
   memoryDb.carts = memoryDb.carts.filter((c) => c.buyerId !== userId);
   memoryDb.users = memoryDb.users.filter((u) => u.id !== userId);
+  memoryDb.conversations = memoryDb.conversations.filter((c) => c.buyerId !== userId);
+  memoryDb.messages = memoryDb.messages.filter((m) => (m as any).senderId !== userId && (m as any).receiverId !== userId);
+  memoryDb.reviews = memoryDb.reviews.filter((r) => r.userId !== userId);
+  memoryDb.reports = memoryDb.reports.filter((rp) => (rp as any).reporterId !== userId && (rp as any).userId !== userId);
+  memoryDb.reelLikes = memoryDb.reelLikes.filter((rl) => rl.userId !== userId);
 
   // Invalidate user sessions
   invalidateAuthSession(userId);

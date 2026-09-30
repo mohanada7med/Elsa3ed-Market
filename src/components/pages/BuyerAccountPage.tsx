@@ -698,6 +698,33 @@ export const BuyerAccountPage: React.FC = () => {
               بياناتك وعناوين الشحن مشفرة ومحمية وفق أعلى معايير الأمان المعتمدة في منصة وه.
             </p>
           </div>
+
+          {/* Danger Zone: Delete Account */}
+          {!isAdmin && (
+            <div className="bg-white/75 dark:bg-espresso-900/90 p-5 rounded-[2rem] border border-rose-500/25 text-xs space-y-3 shadow-lg backdrop-blur-xl">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>منطقة الخطر</span>
+                </div>
+                <span className="text-[10px] text-rose-700 dark:text-rose-300 font-bold px-2 py-0.5 bg-rose-500/10 rounded-full border border-rose-500/20">
+                  إجراء لا رجعة فيه
+                </span>
+              </div>
+              <p className="text-[11px] text-black/60 dark:text-white/60 leading-relaxed font-medium">
+                هل ترغب في مغادرة المنصة ومسح كافة بياناتك؟ سيتم حذف حسابك نهائياً من قاعدة البيانات وإلغاء تنشيطه بالكامل.
+              </p>
+              <button
+                type="button"
+                id="open-delete-account-modal-btn"
+                onClick={() => setIsDeleteAccountModalOpen(true)}
+                className="w-full py-2.5 px-3 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 font-bold text-xs rounded-xl border border-rose-500/30 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>حذف حسابي نهائياً من المنصة</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -886,6 +913,13 @@ export const BuyerAccountPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Account Confirmation Modal */}
+      <DeleteAccountModal
+        isOpen={isDeleteAccountModalOpen}
+        onClose={() => setIsDeleteAccountModalOpen(false)}
+        isSellerMode={currentRole === 'seller' || currentUser.role === 'seller'}
+      />
     </div>
   );
 };

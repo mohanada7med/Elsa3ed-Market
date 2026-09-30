@@ -52,11 +52,18 @@ router.post('/register', async (req: Request, res: Response) => {
       });
     }
 
-    // Email is optional, but if provided it must be valid
-    if (email && typeof email === 'string' && email.trim() && !isValidEmail(email.trim())) {
+    // Email is required for password recovery and notifications
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال بريد إلكتروني صالح ومكتمل أو تركه فارغاً'
+        error: 'البريد الإلكتروني مطلوب لاستعادة كلمة المرور وتأمين الحساب'
+      });
+    }
+
+    if (!isValidEmail(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى إدخال بريد إلكتروني صالح ومكتمل'
       });
     }
 
@@ -144,10 +151,17 @@ router.post('/register/seller', async (req: Request, res: Response) => {
       });
     }
 
-    if (email && typeof email === 'string' && email.trim() && !isValidEmail(email.trim())) {
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({
         success: false,
-        error: 'يرجى إدخال بريد إلكتروني صالح أو تركه فارغاً'
+        error: 'البريد الإلكتروني للورشة مطلوب لاستعادة الحساب والإشعارات'
+      });
+    }
+
+    if (!isValidEmail(email.trim())) {
+      return res.status(400).json({
+        success: false,
+        error: 'يرجى إدخال بريد إلكتروني صالح'
       });
     }
 
