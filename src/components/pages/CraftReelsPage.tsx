@@ -1,4 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  memo,
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { useApp } from '../../context/AppContext.tsx';
 import { CraftReel, Governorate } from '../../types.ts';
 import { craftReelsService } from '../../services/craftReelsService.ts';
@@ -7,9 +15,7 @@ import { ReelUploadModal } from '../common/ReelUploadModal.tsx';
 import {
   Film,
   Play,
-  Sparkles,
   ShoppingBag,
-  Store,
   Flame,
   Search,
   MapPin,
@@ -20,13 +26,271 @@ import {
   Lock,
   Trash2,
   Loader2,
-  LayoutGrid,
-  ChevronDown
+  LayoutGrid
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getOptimizedVideoPoster } from '../../utils/cloudinaryMedia.ts';
 import FloatingDock from '../common/FloatingDock.tsx';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner.tsx';
+
+/* ------------------------------------------------------------------ */
+/* Constants (outside the component so they are created once)          */
+/* ------------------------------------------------------------------ */
+
+const PAGE_SIZE = 18;
+
+const GOVERNORATES = [
+  'أسوان',
+  'الأقصر',
+  'قنا',
+  'سوهاج',
+  'أسيوط',
+  'المنيا',
+  'بني سويف',
+  'الفيوم',
+  'الوادي الجديد',
+  'البحر الأحمر'
+];
+
+const CONTENT_TYPES = [
+  { id: 'all', label: 'كل الحكايات' },
+  { id: 'places', label: 'أماكن ومعالم' },
+  { id: 'crafts', label: 'حرف وصناعات' },
+  { id: 'heritage', label: 'تراث وآثار' },
+  { id: 'events', label: 'فعاليات ومهرجانات' },
+  { id: 'food', label: 'أكل صعيدي' },
+  { id: 'markets', label: 'أسواق' },
+  { id: 'people', label: 'حكايات الناس' },
+  { id: 'travel', label: 'رحلات وتجارب' },
+  { id: 'other', label: 'أخرى' }
+];
+
+const CONTENT_LABELS: Record<string, string> = Object.fromEntries(
+  CONTENT_TYPES.map((c) => [c.id, c.label])
+);
+
+/** Read URL / session params ONCE, instead of in 2 places. */
+function readInitialParams() {
+  if (typeof window === 'undefined') return { reelId: null as string | null, view: 'grid' as const };
+  const params = new URLSearchParams(window.location.search);
+  let reelId = params.get('reel') || params.get('reelId');
+  if (!reelId) {
+    try {
+      reelId = sessionStorage.getItem('wah_selected_reel_id');
+      if (reelId) sessionStorage.removeItem('wah_selected_reel_id');
+    } catch {
+      /* ignore */
+    }
+  }
+  const view = reelId || params.get('view') === 'feed' ? 'feed' : 'grid';
+  return { reelId, view: view as 'feed' | 'grid' };
+}
+
+/* ------------------------------------------------------------------ */
+/* Reel card: memoised so typing in search doesn't re-render every card */
+/* ------------------------------------------------------------------ */
+
+interface ReelCardProps {
+  reel: CraftReel;
+  featured: boolean;
+  isAdmin: boolean;
+  onOpen: (id: string) => void;
+  onAdd: (e: React.MouseEvent, reel: CraftReel) => void;
+  onDelete: (e: React.MouseEvent, reel: CraftReel) => void;
+}
+
+const ReelCard = memo(function ReelCard({
+  reel,
+  featured,
+  isAdmin,
+  onOpen,
+  onAdd,
+  onDelete
+}: ReelCardProps) {
+  const poster = useMemo(
+    () =>
+      getOptimizedVideoPoster(
+        reel.videoUrl,
+        reel.posterUrl || reel.productImage,
+        featured ? 640 : 340
+      ),
+    [reel.videoUrl, reel.posterUrl, reel.productImage, featured]
+  );
+
+  const category =
+    (reel.contentType && CONTENT_LABELS[reel.contentType]) || reel.craftType || 'حكاية';
+  const place = reel.location || reel.governorate;
+  const hasProduct = reel.productId && reel.productId !== 'none' && reel.productPrice;
+
+  return (
+    <article
+      onClick={() => onOpen(reel.id)}
+      className={`group relative cursor-pointer overflow-hidden rounded-2xl bg-espresso ${featured ? 'aspect-9/16 lg:col-span-2 lg:row-span-2 lg:aspect-auto' : 'aspect-9/16'
+        }`}
+      // Skip layout/paint work for cards that are off-screen
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 360px' }}
+    >
+      <img
+        src={poster}
+        alt={reel.title}
+        loading="lazy"
+        decoding="async"
+        className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+      />
+
+      {/* One gradient only, at the bottom, where the text lives */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+
+      {/* Top row */}
+      <div className="absolute inset-x-2.5 top-2.5 flex items-center justify-between">
+        <span className="rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white">
+          {reel.duration}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={(e) => onDelete(e, reel)}
+              className="rounded-md bg-rose-600 p-1 text-white"
+              title="حذف الفيديو بصلاحيات المدير"
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          )}
+          <span className="flex items-center gap-1 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-bold text-white">
+            <Flame className="h-3 w-3 text-amber-300" />
+            {reel.likesCount}
+          </span>
+        </div>
+      </div>
+
+      {/* Play hint: appears on hover only */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/55 text-white">
+          <Play className="h-5 w-5 fill-white" />
+        </span>
+      </div>
+
+      {/* Info */}
+      <div className="absolute inset-x-0 bottom-0 space-y-1.5 p-3">
+        <div className="flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
+          {place && (
+            <span className="inline-flex items-center gap-1 text-amber-300">
+              <MapPin size={11} />
+              {place}
+            </span>
+          )}
+          <span className="text-white/70">{category}</span>
+        </div>
+
+        <h3
+          className={`line-clamp-2 font-bold leading-snug text-white ${featured ? 'text-sm lg:text-xl' : 'text-xs'
+            }`}
+        >
+          {reel.title}
+        </h3>
+
+        {hasProduct && (
+          <div className="flex items-center justify-between border-t border-white/20 pt-2">
+            <span className="text-[11px] font-bold text-amber-300">{reel.productPrice} ج.م</span>
+            <button
+              type="button"
+              onClick={(e) => onAdd(e, reel)}
+              className="rounded-lg bg-primary p-1.5 text-white active:scale-90"
+              title="أضف للسلة"
+            >
+              <ShoppingBag className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
+      </div>
+    </article>
+  );
+});
+
+/* ------------------------------------------------------------------ */
+/* Permission modal (was duplicated twice in the old file)             */
+/* ------------------------------------------------------------------ */
+
+interface PermissionState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  type: 'unauthenticated' | 'buyer';
+}
+
+const PermissionModal: React.FC<{
+  state: PermissionState;
+  onClose: () => void;
+  onLogin: () => void;
+}> = ({ state, onClose, onLogin }) => (
+  <AnimatePresence>
+    {state.isOpen && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          className="w-full max-w-md space-y-5 rounded-3xl border border-black/10 bg-cream p-6 text-right shadow-2xl dark:border-white/10 dark:bg-espresso-900"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+              <Lock className="h-6 w-6" />
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full p-2 text-black/50 hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/5"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            <h3 className="text-lg font-black">{state.title}</h3>
+            <p className="text-sm leading-relaxed text-black/60 dark:text-white/60">
+              {state.message}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2.5 sm:flex-row">
+            {state.type === 'unauthenticated' ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onLogin}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6B3A1F] px-4 py-3 text-sm font-bold text-[#FFF9EE]"
+                >
+                  <LogIn className="h-4 w-4" />
+                  تسجيل الدخول
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-xl bg-black/5 px-4 py-3 text-xs font-bold text-black/70 dark:bg-white/5 dark:text-white/70"
+                >
+                  إلغاء
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full rounded-xl bg-[#6B3A1F] px-4 py-3 text-sm font-bold text-[#FFF9EE]"
+              >
+                فهمت
+              </button>
+            )}
+          </div>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
+);
+
+/* ------------------------------------------------------------------ */
+/* Page                                                                */
+/* ------------------------------------------------------------------ */
 
 export const CraftReelsPage: React.FC = () => {
   const {
@@ -45,86 +309,47 @@ export const CraftReelsPage: React.FC = () => {
     confirmModal
   } = useApp();
 
-  // View Mode: 'grid' (catalog view, default for fast browsing) or 'feed' (immersive full-screen)
-  const [viewMode, setViewMode] = useState<'feed' | 'grid'>(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const viewParam = params.get('view');
-      const targetReelId = params.get('reel') || params.get('reelId') || sessionStorage.getItem('wah_selected_reel_id');
-      if (targetReelId || viewParam === 'feed') return 'feed';
-      if (viewParam === 'grid') return 'grid';
-    }
-    return 'grid';
-  });
+  const initial = useRef(readInitialParams()).current;
+
+  const [viewMode, setViewMode] = useState<'feed' | 'grid'>(initial.view);
+  const [selectedReelId, setSelectedReelId] = useState<string | null>(initial.reelId);
 
   const [reels, setReels] = useState<CraftReel[]>(() => {
     const cached = craftReelsService.getReels();
-    return Array.isArray(cached) && cached.length > 0 ? cached : [];
+    return Array.isArray(cached) ? cached : [];
   });
-  const [isLoading, setIsLoading] = useState(() => {
-    const cached = craftReelsService.getReels();
-    return !cached || cached.length === 0;
-  });
-  const [visibleCount, setVisibleCount] = useState(18);
-  const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
-  const [selectedContentType, setSelectedContentType] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(reels.length === 0);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [selectedGovernorate, setSelectedGovernorate] = useState('all');
+  const [selectedContentType, setSelectedContentType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedReelId, setSelectedReelId] = useState<string | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
-  // Permission Restriction Modal State
-  const [permissionAlert, setPermissionAlert] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: 'unauthenticated' | 'buyer';
-  }>({
+  const [permissionAlert, setPermissionAlert] = useState<PermissionState>({
     isOpen: false,
     title: '',
     message: '',
     type: 'unauthenticated'
   });
 
-  const handleAdminDeleteReel = (e: React.MouseEvent, reel: CraftReel) => {
-    e.stopPropagation();
-    confirmModal({
-      title: 'حذف مقطع الحرفة',
-      message: `هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً من المنصة بصفتك مديراً؟`,
-      confirmText: 'نعم، حذف الفيديو',
-      danger: true,
-      onConfirm: async () => {
-        try {
-          await craftReelsService.deleteReelAsync(currentUser || { role: 'admin' }, reel.id);
-          setReels((prev) => prev.filter((r) => r.id !== reel.id));
-          addToast('تم حذف الفيديو بنجاح', `تم حذف فيديو "${reel.title}" من المنصة وقاعدة البيانات`, 'info');
-        } catch (err: any) {
-          addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
-        }
-      }
-    });
-  };
+  // Search is deferred so typing never blocks the UI
+  const deferredQuery = useDeferredValue(searchQuery);
 
-  const loadReelsFromDb = async () => {
-    if (reels.length === 0) {
-      setIsLoading(true);
-    }
+  /* ---------- data loading ---------- */
+
+  const loadReelsFromDb = useCallback(async () => {
     try {
       const dbReels = await craftReelsService.fetchReelsFromDb();
-      if (Array.isArray(dbReels) && dbReels.length > 0) {
-        setReels(dbReels);
-      }
+      if (Array.isArray(dbReels) && dbReels.length > 0) setReels(dbReels);
     } catch {
-      if (reels.length === 0) {
-        setReels(craftReelsService.getReels());
-      }
+      /* keep cached reels */
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadReelsFromDb();
-  }, []);
+  }, [loadReelsFromDb]);
 
   useEffect(() => {
     if (currentUser?.id && currentUser.id !== 'guest-visitor' && currentUser.role !== 'guest') {
@@ -132,178 +357,126 @@ export const CraftReelsPage: React.FC = () => {
     }
   }, [currentUser?.id, currentUser?.role]);
 
-  // Handle deep-link direct open or view mode query parameter on initial mount only
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
-    const viewParam = params.get('view');
-    const targetReelId =
-      params.get('reel') ||
-      params.get('reelId') ||
-      sessionStorage.getItem('wah_selected_reel_id');
+  /* ---------- body scroll lock (feed mode) ---------- */
 
-    if (targetReelId) {
-      setSelectedReelId(targetReelId);
-      setViewMode('feed');
-      try {
-        sessionStorage.removeItem('wah_selected_reel_id');
-      } catch { }
-    } else if (viewParam === 'feed') {
-      setViewMode('feed');
-    } else if (viewParam === 'grid') {
-      setViewMode('grid');
-    }
-  }, []);
-
-  // Clean scroll management for immersive feed view mode
   useEffect(() => {
-    if (viewMode === 'feed') {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = prev === 'hidden' ? '' : (prev || '');
-        document.documentElement.style.overflow = '';
-      };
-    }
+    if (viewMode !== 'feed') return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [viewMode]);
 
-  // Safety unmount cleanup
+  /* ---------- derived data (computed once per change, not per render) ---------- */
+
+  const governorateCounts = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const r of reels) m[r.governorate] = (m[r.governorate] || 0) + 1;
+    return m;
+  }, [reels]);
+
+  const searchIndex = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const r of reels) {
+      m.set(
+        r.id,
+        [
+          r.title,
+          r.description,
+          r.location,
+          r.governorate,
+          r.contentType,
+          r.craftType,
+          r.artisanName,
+          r.workshopName,
+          r.productTitle
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase()
+      );
+    }
+    return m;
+  }, [reels]);
+
+  const filteredReels = useMemo(() => {
+    const q = deferredQuery.trim().toLowerCase();
+    return reels.filter((r) => {
+      if (selectedGovernorate !== 'all' && r.governorate !== selectedGovernorate) return false;
+      if (
+        selectedContentType !== 'all' &&
+        r.contentType !== selectedContentType &&
+        !(!r.contentType && selectedContentType === 'crafts')
+      )
+        return false;
+      return !q || (searchIndex.get(r.id) || '').includes(q);
+    });
+  }, [reels, selectedGovernorate, selectedContentType, deferredQuery, searchIndex]);
+
   useEffect(() => {
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
+    setVisibleCount(PAGE_SIZE);
+  }, [selectedGovernorate, selectedContentType, deferredQuery]);
+
+  const hasMore = filteredReels.length > visibleCount;
+
+  /* ---------- infinite scroll ---------- */
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore || viewMode !== 'grid') return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setVisibleCount((c) => c + PAGE_SIZE);
+      },
+      { rootMargin: '600px' }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, viewMode, visibleCount]);
+
+  /* ---------- stable handlers (so memo(ReelCard) actually works) ---------- */
+
+  const latest = useRef({ addToCart, addToast, confirmModal, currentUser });
+  latest.current = { addToCart, addToast, confirmModal, currentUser };
+
+  const openReelInFeed = useCallback((id: string) => {
+    setSelectedReelId(id);
+    setViewMode('feed');
+    window.scrollTo({ top: 0 });
   }, []);
 
-  const governoratesList = [
-    'الفيوم',
-    'بني سويف',
-    'المنيا',
-    'أسيوط',
-    'سوهاج',
-    'قنا',
-    'الأقصر',
-    'أسوان',
-    'الوادي الجديد',
-    'البحر الأحمر'
-  ];
+  const backToGrid = useCallback(() => {
+    setSelectedReelId(null); // otherwise the feed re-opens on the old reel
+    setViewMode('grid');
+  }, []);
 
-  const contentTypesList = [
-    { id: 'all', label: 'كل الحكايات' },
-    { id: 'places', label: 'أماكن ومعالم' },
-    { id: 'crafts', label: 'حرف وصناعات' },
-    { id: 'heritage', label: 'تراث وآثار' },
-    { id: 'events', label: 'فعاليات ومهرجانات' },
-    { id: 'food', label: 'أكل صعيدي' },
-    { id: 'markets', label: 'أسواق' },
-    { id: 'people', label: 'حكايات الناس' },
-    { id: 'travel', label: 'رحلات وتجارب' },
-    { id: 'other', label: 'أخرى' }
-  ];
-
-  const governoratesDiscovery = [
-    {
-      name: 'all',
-      label: 'كل الصعيد',
-      tag: 'جميع الحكايات',
-      img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png'
-    },
-    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/aswan/cover.jpg' },
-    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/luxor/cover.jpg' },
-    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/qena/cover.jpg' },
-    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015790/WAH/provinces/sohag/cover.jpg' },
-    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015789/WAH/provinces/asyut/cover.jpg' },
-    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015793/WAH/provinces/minya/cover.jpg' },
-    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788699005/WAH/provinces/beni-suef/cover.jpg' },
-    { name: 'الوادي الجديد', label: 'الوادي الجديد', tag: 'سحر الطبيعة والعيون', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788715713/WAH/heritage-places/white-desert-farafra/img_2340_1788715713136_1exk.jpg' },
-    { name: 'البحر الأحمر', label: 'البحر الأحمر', tag: 'بوابة قوافل الصعيد وحصن القصير التاريخي', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1789125643/b615782b-1a99-4025-90b0-40d7f1696b9c.png' },
-    { name: 'الفيوم', label: 'الفيوم', tag: 'واحة الخضرة والمية العذبة', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1789125631/f7be86e1-059c-4bbe-9914-44b2e3ffe16e.png' }
-  ];
-
-  // Filtered Reels
-  const filteredReels = useMemo(() => {
-    return reels.filter((reel) => {
-      const matchGov =
-        selectedGovernorate === 'all' || reel.governorate === selectedGovernorate;
-
-      const matchContent =
-        selectedContentType === 'all' ||
-        reel.contentType === selectedContentType ||
-        (!reel.contentType && selectedContentType === 'crafts');
-
-      if (!searchQuery.trim()) {
-        return matchGov && matchContent;
+  const handleAdminDeleteReel = useCallback((e: React.MouseEvent, reel: CraftReel) => {
+    e.stopPropagation();
+    const { confirmModal, currentUser, addToast } = latest.current;
+    if (!currentUser || currentUser.role !== 'admin') return;
+    confirmModal({
+      title: 'حذف مقطع الحرفة',
+      message: `هل أنت متأكد من حذف مقطع "${reel.title}" نهائياً من المنصة؟`,
+      confirmText: 'نعم، حذف الفيديو',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await craftReelsService.deleteReelAsync(currentUser, reel.id);
+          setReels((prev) => prev.filter((r) => r.id !== reel.id));
+          addToast('تم حذف الفيديو بنجاح', `تم حذف فيديو "${reel.title}"`, 'info');
+        } catch (err: any) {
+          addToast('خطأ في الحذف', err?.message || 'فشل في حذف الفيديو', 'error');
+        }
       }
-
-      const q = searchQuery.toLowerCase().trim();
-      const matchSearch =
-        reel.title.toLowerCase().includes(q) ||
-        (reel.description && reel.description.toLowerCase().includes(q)) ||
-        (reel.location && reel.location.toLowerCase().includes(q)) ||
-        (reel.governorate && reel.governorate.toLowerCase().includes(q)) ||
-        (reel.contentType && reel.contentType.toLowerCase().includes(q)) ||
-        (reel.craftType && reel.craftType.toLowerCase().includes(q)) ||
-        (reel.artisanName && reel.artisanName.toLowerCase().includes(q)) ||
-        (reel.workshopName && reel.workshopName.toLowerCase().includes(q)) ||
-        (reel.productTitle && reel.productTitle.toLowerCase().includes(q));
-
-      return matchGov && matchContent && matchSearch;
     });
-  }, [reels, selectedGovernorate, selectedContentType, searchQuery]);
+  }, []);
 
-  // Reset pagination on filter change
-  useEffect(() => {
-    setVisibleCount(18);
-  }, [selectedGovernorate, selectedContentType, searchQuery]);
-
-  // Switch to feed starting at a specific reel
-  const openReelInFeed = (reelId: string) => {
-    setSelectedReelId(reelId);
-    setViewMode('feed');
-    if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  };
-
-  // Upload Permission Check
-  const handleOpenUpload = () => {
-    if (!isAuthenticated || !currentUser) {
-      setPermissionAlert({
-        isOpen: true,
-        title: 'تسجيل الدخول مطلوب لنشر الفيديوهات',
-        message:
-          'ميزة رفع ونشر حكايات الصعيد (وه Stories) متاحة للمستخدمين والبائعين المسجلين. يرجى تسجيل الدخول بحسابك أو إنشاء حساب جديد.',
-        type: 'unauthenticated'
-      });
-      return;
-    }
-
-    if (currentUser.role === 'buyer') {
-      setPermissionAlert({
-        isOpen: true,
-        title: 'خاص بالناشرين والشركاء والبائعين',
-        message:
-          'حسابك الحالي مسجل كـ "مشتري". لنشر حكايات الصعيد والمعالم والفعاليات والمنتجات، يرجى التقديم لتفعيل صلاحية النشر أو ترقية حسابك.',
-        type: 'buyer'
-      });
-      return;
-    }
-
-    setIsUploadModalOpen(true);
-  };
-
-  const handleReelUploaded = (newReel: CraftReel) => {
-    loadReelsFromDb();
-    addToast(
-      'تم نشر الفيديو بنجاح',
-      `تم حفظ مقطع "${newReel.title}" في قاعدة البيانات وإتاحته للجمهور`,
-      'success'
-    );
-  };
-
-  const handleQuickAdd = (e: React.MouseEvent, reel: CraftReel) => {
+  const handleQuickAdd = useCallback((e: React.MouseEvent, reel: CraftReel) => {
     e.stopPropagation();
     if (!reel.productId || !reel.productTitle || !reel.productPrice) return;
+    const { addToCart, addToast } = latest.current;
     addToCart(
       {
         id: reel.productId,
@@ -335,309 +508,288 @@ export const CraftReelsPage: React.FC = () => {
       1
     );
     addToast('أُضيف إلى السلة', `تمت إضافة "${reel.productTitle}" لسلة مشترياتك`, 'success');
+  }, []);
+
+  const handleOpenUpload = () => {
+    if (!isAuthenticated || !currentUser) {
+      setPermissionAlert({
+        isOpen: true,
+        title: 'سجّل الدخول لنشر حكايتك',
+        message:
+          'نشر حكايات الصعيد متاح للمستخدمين والبائعين المسجلين. سجّل الدخول أو أنشئ حساباً جديداً.',
+        type: 'unauthenticated'
+      });
+      return;
+    }
+    if (currentUser.role === 'buyer') {
+      setPermissionAlert({
+        isOpen: true,
+        title: 'النشر للشركاء والبائعين',
+        message:
+          'حسابك الحالي مسجل كـ "مشتري". قدّم على صلاحية النشر أو رقّ حسابك لتنشر حكايتك.',
+        type: 'buyer'
+      });
+      return;
+    }
+    setIsUploadModalOpen(true);
   };
 
-  /* =========================================================================
-     VIEW MODE 1: FULLSCREEN REELS FEED (TIKTOK / INSTAGRAM IMMERSIVE STYLE)
-     ========================================================================= */
+  const closePermission = () => setPermissionAlert((p) => ({ ...p, isOpen: false }));
+
+  const resetFilters = () => {
+    setSelectedGovernorate('all');
+    setSelectedContentType('all');
+    setSearchQuery('');
+  };
+
+  // Only start the feed on a reel that is actually in the filtered list
+  const feedInitialId =
+    selectedReelId && filteredReels.some((r) => r.id === selectedReelId)
+      ? selectedReelId
+      : undefined;
+
+  /* ---------- shared modals, rendered ONCE ---------- */
+
+  const modals = (
+    <>
+      <ReelUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onSuccess={(newReel: CraftReel) => {
+          loadReelsFromDb();
+          addToast('تم نشر الفيديو', `تم نشر "${newReel.title}" وأصبح متاحاً للجمهور`, 'success');
+        }}
+        sellerId={currentUser?.sellerId || currentUser?.id}
+        sellerName={currentUser?.name || 'ورشة الحرف التراثية'}
+        artisanName={currentUser?.name || 'حرفي صعيدي أصيل'}
+        artisanAvatar={currentUser?.avatar}
+        defaultGovernorate={(currentUser?.governorate as Governorate) || 'قنا'}
+        sellerProducts={sellerProducts}
+        currentUser={currentUser}
+        allSellers={sellers}
+      />
+      <PermissionModal
+        state={permissionAlert}
+        onClose={closePermission}
+        onLogin={() => {
+          closePermission();
+          setPostLoginRedirect('reels');
+          setAuthModalTab('login');
+          setIsAuthModalOpen(true);
+        }}
+      />
+    </>
+  );
+
+  /* ================================================================== */
+  /* FEED MODE                                                           */
+  /* ================================================================== */
+
   if (viewMode === 'feed') {
     return (
-      <div
-        id="reels-fullscreen-view"
-        dir="rtl"
-        className="fixed inset-0 z-50 bg-black flex flex-col justify-between overflow-hidden select-none"
-        style={{ height: '100dvh', maxHeight: '100dvh' }}
-      >
-        {/* Top Floating Glassmorphism Navigation Bar */}
-        <header className="absolute top-0 inset-x-0 z-50 flex items-center justify-between px-3 sm:px-6 pt-[max(calc(env(safe-area-inset-top,0px)+14px),2.75rem)] sm:pt-3.5 pb-3 bg-gradient-to-b from-black/95 via-black/55 to-transparent pointer-events-auto">
-          {/* Right: Home & Brand */}
-          <div className="flex items-center gap-2 sm:gap-3">
+      <>
+        <div
+          dir="rtl"
+          className="fixed inset-0 z-50 flex select-none flex-col overflow-hidden bg-black"
+          style={{ height: '100dvh' }}
+        >
+          <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between gap-2 bg-gradient-to-b from-black/90 to-transparent px-3 pb-6 pt-[max(calc(env(safe-area-inset-top,0px)+12px),2.5rem)] sm:px-6 sm:pt-3.5">
             <button
               type="button"
               onClick={() => setActivePage('home')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold backdrop-blur-md border border-white/20 transition-all cursor-pointer shadow-md"
+              className="flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-xs font-bold text-white"
+            >
+              <ArrowLeft size={14} />
+              <span className="hidden sm:inline">الرئيسية</span>
+            </button>
+
+            <select
+              value={selectedGovernorate}
+              onChange={(e) => setSelectedGovernorate(e.target.value)}
+              className="rounded-full border border-amber-400/30 bg-black/60 px-3 py-1.5 text-[11px] font-bold text-amber-300 outline-none"
+            >
+              <option value="all">كل الصعيد ({reels.length})</option>
+              {GOVERNORATES.map((g) => (
+                <option key={g} value={g} className="bg-[#1B1009] text-[#FFF9EE]">
+                  {g} ({governorateCounts[g] || 0})
+                </option>
+              ))}
+            </select>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={backToGrid}
+                className="flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-300"
+              >
+                <LayoutGrid size={14} />
+                <span className="hidden sm:inline">المعرض</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleOpenUpload}
+                className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-white"
+              >
+                <Plus size={14} />
+                <span className="hidden md:inline">نشر حكاية</span>
+              </button>
+            </div>
+          </header>
+
+          {isLoading ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-white">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <p className="text-xs font-bold text-white/70">جارٍ تجهيز الحكايات...</p>
+            </div>
+          ) : filteredReels.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-white">
+              <Film className="h-14 w-14 text-amber-500/60" />
+              <h3 className="text-lg font-bold">لا توجد حكايات في هذا التصنيف</h3>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="rounded-full bg-primary px-5 py-2.5 text-xs font-bold text-white"
+              >
+                عرض كل الحكايات ({reels.length})
+              </button>
+            </div>
+          ) : (
+            <ReelFeed
+              // remount when filters change so the feed resets cleanly
+              key={`${selectedGovernorate}-${selectedContentType}`}
+              reels={filteredReels}
+              initialReelId={feedInitialId}
+              onSelectProduct={navigateToProduct}
+              onSelectSeller={navigateToSeller}
+              onDeleteReel={(id) => setReels((prev) => prev.filter((r) => r.id !== id))}
+              onClose={backToGrid}
+              showCloseButton={false}
+              hasBottomNav={false}
+            />
+          )}
+        </div>
+        {modals}
+      </>
+    );
+  }
+
+  /* ================================================================== */
+  /* GRID MODE                                                           */
+  /* ================================================================== */
+
+  const isAdmin = currentUser?.role === 'admin';
+  const chipBase = 'shrink-0 cursor-pointer whitespace-nowrap rounded-full px-4 py-2 text-xs font-bold transition-colors';
+  const chipIdle = 'bg-black/[0.05] text-black/70 hover:bg-black/[0.09] dark:bg-white/[0.07] dark:text-white/70';
+  const chipOn = 'bg-espresso text-cream dark:bg-cream dark:text-espresso';
+
+  return (
+    <div
+      dir="rtl"
+      className="min-h-screen overflow-x-hidden bg-cream font-cairo text-espresso dark:bg-espresso-900 dark:text-cream"
+    >
+      <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
+
+      {/* Sticky toolbar: one solid bar instead of several glass panels */}
+      <div className="sticky top-0 z-30 border-b border-black/10 bg-cream/95 dark:border-white/10 dark:bg-espresso-900/95">
+        <div className="mx-auto max-w-[1600px] space-y-3 px-5 py-3 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setActivePage('home')}
+              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-black/5 px-3 py-2.5 text-xs font-bold dark:bg-white/10"
               title="الرجوع للرئيسية"
             >
               <ArrowLeft size={14} />
               <span className="hidden sm:inline">الرئيسية</span>
             </button>
 
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-black tracking-widest text-primary uppercase bg-primary/20 px-2 py-0.5 rounded-full border border-primary/30">
-                WAH
-              </span>
-              <span className="text-white text-xs font-black hidden md:inline">
-                وه Stories
-              </span>
-            </div>
-          </div>
-
-          {/* Center: Governorates filter & Category selector */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <select
-                value={selectedGovernorate}
-                onChange={(e) => setSelectedGovernorate(e.target.value)}
-                className="appearance-none bg-black/60 hover:bg-black/80 text-amber-300 text-[11px] font-bold py-1.5 pe-7 ps-3 rounded-full border border-amber-400/30 backdrop-blur-md outline-none cursor-pointer shadow-md"
-              >
-                <option value="all">كل الصعيد ({reels.length})</option>
-                {governoratesList.map((gov) => {
-                  const count = reels.filter((r) => r.governorate === gov).length;
-                  return (
-                    <option key={gov} value={gov} className="bg-[#1B1009] text-[#FFF9EE]">
-                      {gov} ({count})
-                    </option>
-                  );
-                })}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 start-auto end-2.5 flex items-center text-amber-300/70">
-                <ChevronDown size={12} />
-              </div>
-            </div>
-
-            {/* Quick Category filter pills */}
-            <div className="hidden lg:flex items-center gap-1 max-w-sm overflow-x-auto no-scrollbar">
-              {contentTypesList.slice(0, 5).map((cat) => (
+            <div className="relative min-w-0 flex-1">
+              <Search
+                size={16}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40"
+              />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ابحث عن مكان أو حرفة أو حكاية..."
+                className="h-11 w-full rounded-xl bg-black/[0.05] pl-10 pr-10 text-sm outline-none placeholder:text-black/35 focus:ring-2 focus:ring-primary/40 dark:bg-white/[0.07] dark:placeholder:text-white/30"
+              />
+              {searchQuery && (
                 <button
-                  key={`feed-cat-${cat.id}`}
                   type="button"
-                  onClick={() => setSelectedContentType(cat.id)}
-                  className={`px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    selectedContentType === cat.id
-                      ? 'bg-primary text-white shadow-md'
-                      : 'bg-white/10 hover:bg-white/20 text-white/80'
-                  }`}
+                  onClick={() => setSearchQuery('')}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 hover:bg-black/10 dark:hover:bg-white/10"
                 >
-                  {cat.label}
+                  <X size={14} />
                 </button>
-              ))}
+              )}
             </div>
-          </div>
-
-          {/* Left: View Mode Toggle & Upload */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setViewMode('grid')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold border border-amber-400/40 backdrop-blur-md transition-all shadow-md hover:scale-105 active:scale-95 cursor-pointer"
-              title="عرض شبكة المعرض"
-            >
-              <LayoutGrid size={14} />
-              <span className="hidden sm:inline">المعرض (Grid)</span>
-            </button>
 
             <button
               type="button"
-              onClick={handleOpenUpload}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary hover:bg-[#3B1E0E] text-white text-xs font-bold shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              title="نشر حكاية جديدة"
-            >
-              <Plus size={14} />
-              <span className="hidden md:inline">نشر حكاية</span>
-            </button>
-          </div>
-        </header>
-
-        {/* Center: Fullscreen Snap Reel Feed */}
-        {isLoading ? (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-white">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-xs font-bold text-white/70">جارٍ تجهيز حكايات وريلز الصعيد...</p>
-          </div>
-        ) : filteredReels.length === 0 ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-center p-8 gap-4 text-white">
-            <Film className="w-14 h-14 text-amber-500/60 animate-bounce" />
-            <h3 className="text-lg font-bold text-white">لا توجد حكايات في هذا التصنيف حالياً</h3>
-            <p className="text-xs text-white/60 max-w-xs">
-              اختر محافظة أخرى أو اضغط على الزر أدناه لعرض كل حكايات الصعيد
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedGovernorate('all');
-                setSelectedContentType('all');
-                setSearchQuery('');
-              }}
-              className="px-5 py-2.5 rounded-full bg-primary text-white text-xs font-bold hover:bg-[#3B1E0E] shadow-lg cursor-pointer transition-transform hover:scale-105"
-            >
-              عرض كل الفيديوهات ({reels.length})
-            </button>
-          </div>
-        ) : (
-          <ReelFeed
-            reels={filteredReels}
-            initialReelId={selectedReelId || undefined}
-            onSelectProduct={navigateToProduct}
-            onSelectSeller={navigateToSeller}
-            onDeleteReel={(deletedId) => setReels((prev) => prev.filter((r) => r.id !== deletedId))}
-            onClose={() => setViewMode('grid')}
-            showCloseButton={false}
-            hasBottomNav={false}
-          />
-        )}
-
-        {/* Upload Reel Modal */}
-        <ReelUploadModal
-          isOpen={isUploadModalOpen}
-          onClose={() => setIsUploadModalOpen(false)}
-          onSuccess={handleReelUploaded}
-          sellerId={currentUser?.sellerId || currentUser?.id}
-          sellerName={currentUser?.name || 'ورشة الحرف التراثية'}
-          artisanName={currentUser?.name || 'حرفي صعيدي أصيل'}
-          artisanAvatar={currentUser?.avatar}
-          defaultGovernorate={(currentUser?.governorate as Governorate) || 'قنا'}
-          sellerProducts={sellerProducts}
-          currentUser={currentUser}
-          allSellers={sellers}
-        />
-
-        {/* Permission Barrier Modal */}
-        <AnimatePresence>
-          {permissionAlert.isOpen && (
-            <div className="fixed inset-0 z-[100] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                className="w-full max-w-md bg-[#FFF9EE] dark:bg-[#1B1009] rounded-[2rem] p-6 shadow-2xl border border-black/10 dark:border-white/10 space-y-5 text-right backdrop-blur-2xl"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                    <Lock className="w-6 h-6" />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                    className="p-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-lg font-black">{permissionAlert.title}</h3>
-                  <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                    {permissionAlert.message}
-                  </p>
-                </div>
-
-                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                  {permissionAlert.type === 'unauthenticated' ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPermissionAlert((prev) => ({ ...prev, isOpen: false }));
-                          setPostLoginRedirect('reels');
-                          setAuthModalTab('login');
-                          setIsAuthModalOpen(true);
-                        }}
-                        className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <LogIn className="w-4 h-4" />
-                        <span>تسجيل الدخول للمتابعة</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                        className="w-full sm:w-auto py-3 px-4 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 text-xs font-bold rounded-xl cursor-pointer"
-                      >
-                        إلغاء
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                      className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md cursor-pointer"
-                    >
-                      فهمت ذلك
-                    </button>
-                  )}
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  }
-
-  /* =========================================================================
-     VIEW MODE 2: GRID / CATALOG VIEW
-     ========================================================================= */
-  return (
-    <div
-      dir="rtl"
-      className="
-        min-h-screen
-        overflow-x-hidden
-        bg-cream
-        text-espresso
-        dark:bg-espresso-900
-        dark:text-cream
-        font-cairo
-      "
-    >
-      <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
-
-      {/* GRID TOP BAR & SWITCHER (CLEAN, NO DUPLICATE HEADERS) */}
-      <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pt-6 pb-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-white/75 dark:bg-espresso-900/90 backdrop-blur-xl border border-black/10 dark:border-white/10 shadow-lg">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setActivePage('home')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-xs font-bold transition-all cursor-pointer"
-              title="الرجوع للرئيسية"
-            >
-              <ArrowLeft size={14} />
-              <span>الرئيسية</span>
-            </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <Sparkles size={13} className="text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-wider text-primary">وه Stories</span>
-              </div>
-              <h2 className="text-xs sm:text-sm font-main font-black text-espresso dark:text-cream">
-                معرض حكايات الصعيد ({filteredReels.length} فيديو)
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-            {/* Direct Switch to Fullscreen Feed with Glowing Effect */}
-            <button
-              type="button"
-              onClick={() => {
-                if (filteredReels.length > 0) {
-                  openReelInFeed(filteredReels[0].id);
-                } else {
-                  setViewMode('feed');
-                }
-              }}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#6B3A1F] via-[#D97724] to-[#B24C2B] text-white text-xs font-black shadow-lg shadow-amber-900/25 hover:shadow-xl hover:scale-102 active:scale-98 transition-all cursor-pointer animate-pulse"
-              title="مشاهدة الفيديوهات بالشاشة الكاملة مع التمرير الرأسي"
+              onClick={() =>
+                filteredReels.length > 0 ? openReelInFeed(filteredReels[0].id) : setViewMode('feed')
+              }
+              className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-black text-white"
+              title="مشاهدة بالشاشة الكاملة"
             >
               <Play size={14} className="fill-white" />
-              <span>شاهد بالشاشة الكاملة (Reels)</span>
+              <span className="hidden sm:inline">شاهد بالشاشة الكاملة</span>
             </button>
 
             <button
               type="button"
               onClick={handleOpenUpload}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-black/5 dark:bg-cream/10 hover:bg-black/10 text-xs font-bold transition-all cursor-pointer border border-black/10 dark:border-white/10"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-black/15 px-3 py-2.5 text-xs font-bold dark:border-white/15"
               title="نشر حكاية جديدة"
             >
               <Plus size={14} />
               <span className="hidden md:inline">نشر حكاية</span>
             </button>
           </div>
-        </div>
-      </section>
 
-      {/* UNCLE WAH HERO BANNER - MASTER OF REELS */}
-      <div className="relative z-20 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 my-4">
+          {/* Governorates: text chips with counts (replaces 11 round images) */}
+          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
+            <button
+              type="button"
+              onClick={() => setSelectedGovernorate('all')}
+              className={`${chipBase} ${selectedGovernorate === 'all' ? chipOn : chipIdle}`}
+            >
+              كل الصعيد ({reels.length})
+            </button>
+            {GOVERNORATES.map((g) => (
+              <button
+                key={g}
+                type="button"
+                onClick={() => setSelectedGovernorate(g)}
+                className={`${chipBase} ${selectedGovernorate === g ? chipOn : chipIdle}`}
+              >
+                {g} ({governorateCounts[g] || 0})
+              </button>
+            ))}
+          </div>
+
+          {/* Content types: underlined tabs so they read as a second level */}
+          <div className="no-scrollbar flex items-center gap-5 overflow-x-auto">
+            {CONTENT_TYPES.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedContentType(c.id)}
+                className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 pb-1.5 text-xs font-bold transition-colors ${selectedContentType === c.id
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-black/55 hover:text-black dark:text-white/55 dark:hover:text-white'
+                  }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto my-5 max-w-[1600px] px-5 sm:px-8 lg:px-12">
         <UncleWahHeroBanner
           doorTitle="حكاوي وتجارب حية من ورش ودكاكين الصعيد"
           doorBadge="باب ريلز وه"
@@ -650,426 +802,56 @@ export const CraftReelsPage: React.FC = () => {
         />
       </div>
 
-      {/* UPPER EGYPT DISCOVERY BAR */}
-      <section className="mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 pb-4">
-        <div className="flex items-center gap-4 overflow-x-auto no-scrollbar pb-2">
-          {governoratesDiscovery.map((gov) => {
-            const isSelected = selectedGovernorate === gov.name;
-            return (
-              <button
-                key={`story-gov-${gov.name}`}
-                type="button"
-                onClick={() => setSelectedGovernorate(gov.name)}
-                className="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-hidden cursor-pointer"
-              >
-                <div
-                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 transition-all duration-200 shadow-md group-hover:scale-105 ${
-                    isSelected
-                      ? 'bg-gradient-to-tr from-[#6B3A1F] via-amber-500 to-rose-500 ring-2 ring-primary/40 scale-105'
-                      : 'bg-black/10 dark:bg-cream/10 group-hover:bg-primary/40'
-                  }`}
-                >
-                  <div className="w-full h-full rounded-full overflow-hidden bg-black relative">
-                    <img
-                      src={gov.img}
-                      alt={gov.label}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/5 transition-colors" />
-                  </div>
-                </div>
-                <span
-                  className={`text-[11px] font-bold text-center max-w-[80px] truncate ${
-                    isSelected ? 'text-primary' : 'text-black dark:text-white'
-                  }`}
-                >
-                  {gov.label}
-                </span>
-                <span className="text-[9px] text-black/50 dark:text-white/50 -mt-1">
-                  {gov.tag}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* CONTROLS BAR: SEARCH & CATEGORIES */}
-      <section className="relative z-30 mx-auto max-w-[1600px] px-5 sm:px-8 lg:px-12 mb-8">
-        <div
-          className="
-            rounded-[1.5rem]
-            border border-black/10
-            bg-white/75
-            p-3.5
-            shadow-[0_20px_70px_rgba(0,0,0,0.08)]
-            backdrop-blur-2xl
-            dark:border-white/10
-            dark:bg-espresso-900/90
-            dark:shadow-black/30
-          "
-        >
-          <div className="flex flex-col gap-3 lg:flex-row items-center">
-            {/* Search Input */}
-            <div className="relative flex-1 w-full">
-              <Search
-                size={17}
-                className="
-                  absolute right-4 top-1/2
-                  -translate-y-1/2
-                  text-black/40
-                  dark:text-white/40
-                "
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ابحث عن مكان، فعالية، حكاية، أكل، حرف أو أي شيء في الصعيد..."
-                className="
-                  h-12 w-full
-                  rounded-xl
-                  border border-transparent
-                  bg-black/[0.035]
-                  pr-11 pl-10
-                  text-sm
-                  outline-none
-                  transition-all
-                  placeholder:text-black/35
-                  focus:border-primary/40
-                  focus:bg-transparent
-                  dark:bg-cream/[0.04]
-                  dark:placeholder:text-white/30
-                  dark:focus:bg-white/[0.06]
-                "
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="
-                    absolute left-3 top-1/2
-                    -translate-y-1/2
-                    rounded-full p-1.5
-                    hover:bg-black/10
-                    dark:hover:bg-white/10
-                    cursor-pointer
-                  "
-                >
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-
-            {/* Governorate Select */}
-            <div className="relative w-full lg:w-60">
-              <select
-                value={selectedGovernorate}
-                onChange={(e) => setSelectedGovernorate(e.target.value)}
-                className="
-                  h-12 w-full
-                  appearance-none
-                  rounded-xl
-                  border border-black/10
-                  bg-black/[0.035]
-                  pe-10 ps-4
-                  text-sm font-bold
-                  text-espresso
-                  outline-none
-                  transition-all
-                  cursor-pointer
-                  hover:border-primary/30
-                  focus:border-primary/60
-                  focus:ring-2 focus:ring-primary/10
-                  dark:border-white/10
-                  dark:bg-cream/[0.04]
-                  dark:text-cream
-                "
-              >
-                <option
-                  value="all"
-                  className="bg-cream text-espresso dark:bg-espresso-900 dark:text-cream"
-                >
-                  كل محافظات الصعيد ({reels.length})
-                </option>
-                {governoratesList.map((gov) => {
-                  const count = reels.filter((r) => r.governorate === gov).length;
-                  return (
-                    <option
-                      key={gov}
-                      value={gov}
-                      className="bg-cream text-espresso dark:bg-espresso-900 dark:text-cream"
-                    >
-                      {gov} ({count})
-                    </option>
-                  );
-                })}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 start-auto end-3.5 flex items-center text-black/40 dark:text-white/40">
-                <ChevronDown size={14} />
-              </div>
-            </div>
-          </div>
-
-          {/* Content Categories Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-3 mt-3 border-t border-black/10 dark:border-white/10">
-            {contentTypesList.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => setSelectedContentType(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
-                  selectedContentType === cat.id
-                    ? 'bg-primary text-white shadow-md'
-                    : 'bg-black/[0.04] dark:bg-cream/[0.05] text-black/70 dark:text-white/70 hover:bg-black/[0.08] dark:hover:bg-white/[0.1]'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* MAIN CONTENT AREA: VIDEO CARDS GRID */}
       <section className="mx-auto max-w-[1600px] px-5 pb-24 sm:px-8 lg:px-12">
+        <h2 className="mb-4 text-sm font-black">
+          {filteredReels.length} حكاية
+          {selectedGovernorate !== 'all' && ` من ${selectedGovernorate}`}
+        </h2>
+
         {isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-4 text-center">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="text-sm font-bold text-black/60 dark:text-white/60">
-              جارٍ تحميل حكايات الصعيد الأصيلة...
-            </p>
+          <div className="flex flex-col items-center gap-4 py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <p className="text-sm font-bold text-black/60 dark:text-white/60">جارٍ تحميل الحكايات...</p>
+          </div>
+        ) : filteredReels.length === 0 ? (
+          <div className="space-y-4 rounded-3xl border border-black/10 p-12 text-center dark:border-white/10">
+            <Film className="mx-auto h-12 w-12 text-black/30 dark:text-white/30" />
+            <h3 className="text-lg font-black">لا توجد حكايات مطابقة</h3>
+            <p className="text-xs text-black/60 dark:text-white/60">جرّب تصنيفاً آخر أو امسح الفلاتر.</p>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="rounded-xl bg-[#6B3A1F] px-6 py-3 text-xs font-bold text-[#FFF9EE]"
+            >
+              مسح الفلاتر
+            </button>
           </div>
         ) : (
-          <div>
-            {filteredReels.length > 0 ? (
-              <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-                  {filteredReels.slice(0, visibleCount).map((reel) => {
-                    const categoryLabel =
-                      contentTypesList.find((c) => c.id === reel.contentType)?.label ||
-                      reel.craftType ||
-                      'حكاية';
-                    const displayLoc = reel.location || reel.governorate;
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+              {filteredReels.slice(0, visibleCount).map((reel, i) => (
+                <ReelCard
+                  key={reel.id}
+                  reel={reel}
+                  featured={i === 0}
+                  isAdmin={isAdmin}
+                  onOpen={openReelInFeed}
+                  onAdd={handleQuickAdd}
+                  onDelete={handleAdminDeleteReel}
+                />
+              ))}
+            </div>
 
-                    return (
-                      <div
-                        key={reel.id}
-                        id={`reel-card-${reel.id}`}
-                        onClick={() => openReelInFeed(reel.id)}
-                        className="group relative aspect-9/16 rounded-[1.5rem] overflow-hidden bg-black cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-black/10 dark:border-white/10"
-                      >
-                        {/* Poster Image / Video Preview */}
-                        <img
-                          src={getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 340)}
-                          alt={reel.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
-                        />
-
-                      {/* Gradient Dark Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/50 group-hover:via-black/25 transition-colors" />
-
-                      {/* Top Badges */}
-                      <div className="absolute top-3 inset-x-3 flex items-center justify-between z-10">
-                        <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-white/20">
-                          {reel.duration}
-                        </span>
-
-                        <div className="flex items-center gap-1.5">
-                          {currentUser?.role === 'admin' && (
-                            <button
-                              type="button"
-                              onClick={(e) => handleAdminDeleteReel(e, reel)}
-                              className="p-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white border border-rose-400/50 shadow-md transition-transform hover:scale-110 active:scale-95 cursor-pointer"
-                              title="حذف الفيديو بصلاحيات المدير"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          )}
-                          <div className="flex items-center gap-1 bg-primary/85 backdrop-blur-md text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
-                            <Flame className="w-3 h-3 text-amber-300" />
-                            <span>{reel.likesCount}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Center Play Button Overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-lg">
-                          <Play className="w-5 h-5 fill-white mr-0.5" />
-                        </div>
-                      </div>
-
-                      {/* Bottom Information Card */}
-                      <div className="absolute bottom-0 inset-x-0 p-3 z-10 space-y-2">
-                        {/* Location & Category Badges */}
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {displayLoc && (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-300 bg-black/50 px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/10">
-                              <MapPin size={10} className="text-primary" />
-                              <span>{displayLoc}</span>
-                            </span>
-                          )}
-                          <span className="text-[9px] font-medium text-white/70 bg-white/15 px-2 py-0.5 rounded-full backdrop-blur-sm">
-                            {categoryLabel}
-                          </span>
-                        </div>
-
-                        {/* Story Title */}
-                        <h3 className="text-xs font-bold text-white line-clamp-2 leading-snug drop-shadow-md">
-                          {reel.title}
-                        </h3>
-
-                        {/* Product Quick Buy Bar */}
-                        {reel.productId && reel.productId !== 'none' && reel.productPrice && (
-                          <div className="pt-2 border-t border-white/20 flex items-center justify-between gap-1">
-                            <div className="min-w-0">
-                              <span className="text-[11px] text-amber-300 font-bold block truncate">
-                                {reel.productPrice} ج.م
-                              </span>
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={(e) => handleQuickAdd(e, reel)}
-                              className="p-1.5 bg-primary hover:bg-[#3B1E0E] text-white rounded-xl transition-transform active:scale-90 shadow-md cursor-pointer"
-                              title="شراء فوري للمنتج"
-                            >
-                              <ShoppingBag className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {filteredReels.length > visibleCount && (
-                <div className="mt-12 flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setVisibleCount((prev) => prev + 18)}
-                    className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-espresso text-cream dark:bg-cream dark:text-espresso font-main font-bold text-xs sm:text-sm hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
-                  >
-                    <span>عرض المزيد من الحكايات ({filteredReels.length - visibleCount} إضافية)</span>
-                  </button>
-                </div>
-              )}
-            </>
-            ) : (
-              <div className="bg-white/80 dark:bg-espresso-900/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
-                <Film className="w-12 h-12 text-black/30 dark:text-white/30 mx-auto" />
-                <h3 className="text-lg font-black">
-                  لا توجد حكايات مطابقة للبحث
-                </h3>
-                <p className="text-xs text-black/60 dark:text-white/60">
-                  جرب اختيار تصنيف آخر أو إعادة تعيين الفلاتر.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGovernorate('all');
-                    setSelectedContentType('all');
-                    setSearchQuery('');
-                  }}
-                  className="px-6 py-3 bg-[#6B3A1F] text-[#FFF9EE] text-xs font-bold rounded-xl cursor-pointer"
-                >
-                  إعادة تعيين الفلاتر
-                </button>
+            {hasMore && (
+              <div ref={sentinelRef} className="flex justify-center py-10">
+                <Loader2 className="h-6 w-6 animate-spin text-primary/60" />
               </div>
             )}
-          </div>
+          </>
         )}
       </section>
 
-      {/* Upload Reel Modal */}
-      <ReelUploadModal
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-        onSuccess={handleReelUploaded}
-        sellerId={currentUser?.sellerId || currentUser?.id}
-        sellerName={currentUser?.name || 'ورشة الحرف التراثية'}
-        artisanName={currentUser?.name || 'حرفي صعيدي أصيل'}
-        artisanAvatar={currentUser?.avatar}
-        defaultGovernorate={(currentUser?.governorate as Governorate) || 'قنا'}
-        sellerProducts={sellerProducts}
-        currentUser={currentUser}
-        allSellers={sellers}
-      />
-
-      {/* Permission Restriction Barrier Modal */}
-      <AnimatePresence>
-        {permissionAlert.isOpen && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="w-full max-w-md bg-white dark:bg-espresso-900 rounded-[2rem] p-6 shadow-2xl border border-black/10 dark:border-white/10 space-y-5 text-right backdrop-blur-2xl"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center text-primary">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                  className="p-2 text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white rounded-full hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-black">
-                  {permissionAlert.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 leading-relaxed">
-                  {permissionAlert.message}
-                </p>
-              </div>
-
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                {permissionAlert.type === 'unauthenticated' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPermissionAlert((prev) => ({ ...prev, isOpen: false }));
-                        setPostLoginRedirect('reels');
-                        setAuthModalTab('login');
-                        setIsAuthModalOpen(true);
-                      }}
-                      className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      <LogIn className="w-4 h-4" />
-                      <span>تسجيل الدخول كبائع</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                      className="w-full sm:w-auto py-3 px-4 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 text-xs font-bold rounded-xl cursor-pointer"
-                    >
-                      إلغاء
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setPermissionAlert((prev) => ({ ...prev, isOpen: false }))}
-                    className="w-full py-3 px-4 bg-[#6B3A1F] text-[#FFF9EE] text-xs sm:text-sm font-bold rounded-xl shadow-md cursor-pointer"
-                  >
-                    فهمت ذلك
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {modals}
     </div>
   );
 };

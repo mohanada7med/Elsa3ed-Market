@@ -78,15 +78,15 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   const [hasVideoError, setHasVideoError] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showAudioPrompt, setShowAudioPrompt] = useState(false);
 
   const [showControls, setShowControls] = useState(true);
-  const [isEntering, setIsEntering] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   const lastTapRef = useRef<number>(0);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const viewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isMobileScreen =
     typeof window !== 'undefined'
@@ -130,43 +130,55 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   useEffect(() => {
     if (!isActive) return;
 
-    const parsedDuration = reel.duration
-      ? reel.duration.startsWith('PT')
-        ? reel.duration
-        : `PT${parseInt(reel.duration, 10) || 30}S`
-      : 'PT30S';
+    if (seoTimerRef.current) {
+      clearTimeout(seoTimerRef.current);
+    }
 
-    const creator =
-      reel.artisanName ||
-      reel.workshopName ||
-      'حرفيي وه';
+    seoTimerRef.current = setTimeout(() => {
+      const parsedDuration = reel.duration
+        ? reel.duration.startsWith('PT')
+          ? reel.duration
+          : `PT${parseInt(reel.duration, 10) || 30}S`
+        : 'PT30S';
 
-    const videoSchema = generateVideoSchema({
-      title:
-        reel.title ||
-        'فيديو ورشة وحرفة يدوية - وه صعيد مصر',
+      const creator =
+        reel.artisanName ||
+        reel.workshopName ||
+        'حرفيي وه';
 
-      description:
-        reel.description ||
-        `فيديو يوثق حرفة يدوية وتراثية في صعيد مصر بصناعة ${creator}`,
+      const videoSchema = generateVideoSchema({
+        title:
+          reel.title ||
+          'فيديو ورشة وحرفة يدوية - وه صعيد مصر',
 
-      thumbnailUrl: safePosterUrl,
-      uploadDate:
-        reel.createdAt ||
-        new Date().toISOString(),
+        description:
+          reel.description ||
+          `فيديو يوثق حرفة يدوية وتراثية في صعيد مصر بصناعة ${creator}`,
 
-      contentUrl: safeVideoUrl,
-      duration: parsedDuration
-    });
+        thumbnailUrl: safePosterUrl,
+        uploadDate:
+          reel.createdAt ||
+          new Date().toISOString(),
 
-    updatePageSEO({
-      title: `${reel.title} | ريلز الحرفيين`,
-      description:
-        reel.description ||
-        'شاهد إبداع الحرفيين وورش العمل التراثية في صعيد مصر',
-      image: safePosterUrl,
-      schema: videoSchema
-    });
+        contentUrl: safeVideoUrl,
+        duration: parsedDuration
+      });
+
+      updatePageSEO({
+        title: `${reel.title} | ريلز الحرفيين`,
+        description:
+          reel.description ||
+          'شاهد إبداع الحرفيين وورش العمل التراثية في صعيد مصر',
+        image: safePosterUrl,
+        schema: videoSchema
+      });
+    }, 1200);
+
+    return () => {
+      if (seoTimerRef.current) {
+        clearTimeout(seoTimerRef.current);
+      }
+    };
   }, [
     isActive,
     reel.id,
@@ -224,17 +236,13 @@ export const ReelItem: React.FC<ReelItemProps> = ({
   };
 
   useEffect(() => {
-    const video = videoRef.current;
     return () => {
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
-      if (video) {
+      if (videoRef.current) {
         try {
-          video.pause();
-          video.currentTime = 0;
-          video.removeAttribute('src');
-          video.load();
+          videoRef.current.pause();
         } catch (_) {}
       }
     };
@@ -254,51 +262,56 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     if (isActive) {
       setHasVideoError(false);
       setIsVideoLoading(true);
-      setIsEntering(true);
       setShowControls(true);
 
-      craftReelsService.incrementViews(reel.id);
+      if (viewTimerRef.current) {
+        clearTimeout(viewTimerRef.current);
+      }
+      viewTimerRef.current = setTimeout(() => {
+        craftReelsService.incrementViews(reel.id);
+      }, 1500);
+
+      // Ensure src is bound directly on DOM element
+      if (!video.src || !video.src.includes(currentVideoSrc.split('?')[0])) {
+        video.src = currentVideoSrc;
+      }
 
       video.muted = isMuted;
+      video.defaultMuted = isMuted;
 
       const executePlay = async () => {
         try {
-          await video.play();
+          const p = video.play();
+          if (p !== undefined) {
+            await p;
+          }
 
           if (isCancelled) return;
 
           setIsPlaying(true);
           setIsVideoLoading(false);
-          setShowAudioPrompt(false);
-
-          setTimeout(() => {
-            if (!isCancelled) setIsEntering(false);
-          }, 450);
-
         } catch (err: any) {
           if (isCancelled || err?.name === 'AbortError') return;
 
+          // Autoplay fallback: force mute
           video.muted = true;
-          if (!isCancelled) setShowAudioPrompt(true);
+          video.defaultMuted = true;
 
           try {
-            await video.play();
+            const retryP = video.play();
+            if (retryP !== undefined) {
+              await retryP;
+            }
 
             if (isCancelled) return;
 
             setIsPlaying(true);
             setIsVideoLoading(false);
-
-            setTimeout(() => {
-              if (!isCancelled) setIsEntering(false);
-            }, 450);
-
           } catch (muteErr: any) {
             if (isCancelled || muteErr?.name === 'AbortError') return;
 
             setIsVideoLoading(false);
             setIsPlaying(false);
-            setIsEntering(false);
           }
         }
       };
@@ -306,17 +319,21 @@ export const ReelItem: React.FC<ReelItemProps> = ({
       void executePlay();
 
     } else {
+      if (viewTimerRef.current) {
+        clearTimeout(viewTimerRef.current);
+      }
+
       try {
         video.pause();
-        video.currentTime = 0;
+        if (video.readyState >= 1) {
+          video.currentTime = 0;
+        }
       } catch (_) {}
 
       setIsPlaying(false);
       setIsVideoLoading(false);
       setIsCommentsOpen(false);
-      setShowAudioPrompt(false);
       setShowControls(true);
-      setIsEntering(false);
 
       if (progressBarRef.current) {
         progressBarRef.current.style.width = '0%';
@@ -325,6 +342,9 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
     return () => {
       isCancelled = true;
+      if (viewTimerRef.current) {
+        clearTimeout(viewTimerRef.current);
+      }
       try {
         video.pause();
       } catch (_) {}
@@ -376,12 +396,25 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     revealControls();
 
     if (video.paused) {
+      video.muted = isMuted;
+      video.defaultMuted = isMuted;
       video
         .play()
-        .catch(() => { });
-
-      setIsPlaying(true);
-      setShowPlayIcon(false);
+        .then(() => {
+          setIsPlaying(true);
+          setShowPlayIcon(false);
+        })
+        .catch(() => {
+          video.muted = true;
+          video.defaultMuted = true;
+          video
+            .play()
+            .then(() => {
+              setIsPlaying(true);
+              setShowPlayIcon(false);
+            })
+            .catch(() => {});
+        });
     } else {
       video.pause();
 
@@ -620,10 +653,10 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     >
 
       {/* =====================================================
-          CINEMATIC BACKDROP
+          CINEMATIC BACKDROP (DESKTOP ONLY FOR AMBIENT LIGHTING)
       ===================================================== */}
 
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="hidden sm:block absolute inset-0 overflow-hidden pointer-events-none">
         <img
           src={safePosterUrl}
           alt=""
@@ -658,19 +691,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           DESKTOP CINEMATIC FRAME
       ===================================================== */}
 
-      <motion.div
-        initial={{
-          opacity: 0,
-          scale: 0.94
-        }}
-        animate={{
-          opacity: 1,
-          scale: 1
-        }}
-        transition={{
-          duration: 0.5,
-          ease: [0.22, 1, 0.36, 1]
-        }}
+      <div
         className="
           relative
           z-[2]
@@ -682,8 +703,8 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           overflow-hidden
           bg-black
           shadow-[0_30px_100px_rgba(0,0,0,0.55)]
-          ring-1
-          ring-white/10
+          sm:ring-1
+          sm:ring-white/10
         "
       >
 
@@ -871,45 +892,28 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           "
           onClick={handleVideoAreaClick}
           onMouseMove={revealControls}
-          onTouchStart={revealControls}
         >
 
-          {/* Poster */}
-
-          <AnimatePresence>
-            {(!isPlaying || isVideoLoading) && (
-              <motion.img
-                key={`poster-${reel.id}`}
-                src={safePosterUrl}
-                alt=""
-                initial={{
-                  opacity: 1,
-                  scale: 1.02
-                }}
-                animate={{
-                  opacity: isPlaying ? 0 : 1,
-                  scale: isPlaying ? 1 : 1.02
-                }}
-                exit={{
-                  opacity: 0
-                }}
-                transition={{
-                  duration: 0.45
-                }}
-                className="
-                  absolute
-                  inset-0
-                  z-[5]
-                  w-full
-                  h-full
-                  object-cover
-                  pointer-events-none
-                "
-                loading="eager"
-                decoding="async"
-              />
-            )}
-          </AnimatePresence>
+          {/* Poster: High-performance CSS transition instead of JS AnimatePresence */}
+          <img
+            key={`poster-${reel.id}`}
+            src={safePosterUrl}
+            alt=""
+            className={`
+              absolute
+              inset-0
+              z-[5]
+              w-full
+              h-full
+              object-cover
+              pointer-events-none
+              transition-opacity
+              duration-300
+              ${isPlaying ? 'opacity-0' : 'opacity-100'}
+            `}
+            loading="eager"
+            decoding="async"
+          />
 
           {/* VIDEO */}
 
@@ -917,13 +921,17 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             ref={videoRef}
             src={currentVideoSrc}
             poster={safePosterUrl}
-            preload={isActive ? 'metadata' : 'none'}
+            preload="auto"
             playsInline
-            webkit-playsinline="true"
             loop
             muted={isMuted}
             onCanPlay={() => {
               setIsVideoLoading(false);
+              if (isActive && videoRef.current && videoRef.current.paused) {
+                videoRef.current.play().then(() => {
+                  setIsPlaying(true);
+                }).catch(() => {});
+              }
             }}
             onWaiting={() => {
               setIsVideoLoading(true);
@@ -944,7 +952,9 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               duration-300
             "
             style={{
-              opacity: isPlaying ? 1 : 0.98
+              opacity: isPlaying ? 1 : 0.98,
+              transform: 'translateZ(0)',
+              willChange: 'transform'
             }}
           />
 
@@ -1298,14 +1308,14 @@ export const ReelItem: React.FC<ReelItemProps> = ({
               flex
               items-center
               justify-center
-              backdrop-blur-xl
+              sm:backdrop-blur-xl
               border
               shadow-xl
               transition-all
               cursor-pointer
               ${isMuted
                 ? 'bg-black/75 hover:bg-black/90 border-amber-400/50 text-amber-300 shadow-amber-900/30 ring-1 ring-amber-400/30'
-                : 'bg-black/55 hover:bg-black/80 border-white/20 text-white shadow-black/40'
+                : 'bg-black/65 hover:bg-black/80 border-white/20 text-white shadow-black/40'
               }
             `}
             title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
@@ -1463,24 +1473,26 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             </motion.div>
           )}
 
-      </motion.div>
+      </div>
 
       {/* =====================================================
-          COMMENTS
+          COMMENTS (ONLY MOUNTED WHEN USER OPENS DRAWER)
       ===================================================== */}
 
-      <ReelCommentsDrawer
-        reel={reel}
-        isOpen={isCommentsOpen}
-        onClose={() => setIsCommentsOpen(false)}
-        onCommentAdded={(newComm) => {
-          if (!reel.comments) {
-            reel.comments = [];
-          }
+      {isCommentsOpen && (
+        <ReelCommentsDrawer
+          reel={reel}
+          isOpen={isCommentsOpen}
+          onClose={() => setIsCommentsOpen(false)}
+          onCommentAdded={(newComm) => {
+            if (!reel.comments) {
+              reel.comments = [];
+            }
 
-          reel.comments.unshift(newComm);
-        }}
-      />
+            reel.comments.unshift(newComm);
+          }}
+        />
+      )}
 
       {/* =====================================================
           DELETE MODAL

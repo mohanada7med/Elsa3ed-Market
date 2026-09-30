@@ -73,7 +73,7 @@ export const ReelProductPill: React.FC<ReelProductPillProps> = ({
     <div
       onClick={handleOpenProduct}
       id={`reel-product-pill-${reel.id}`}
-      className="inline-flex items-center gap-2 p-1.5 pr-2 pl-2 bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/20 rounded-full shadow-lg transition-all duration-200 cursor-pointer group max-w-full"
+      className="inline-flex items-center gap-2 p-1.5 pr-2 pl-2 bg-black/75 hover:bg-black/90 sm:backdrop-blur-md border border-white/20 rounded-full shadow-lg transition-all duration-200 cursor-pointer group max-w-full"
       role="button"
       tabIndex={0}
       aria-label={`عرض منتج ${reel.productTitle}`}

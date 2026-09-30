@@ -29,13 +29,15 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
   const [activeReelId, setActiveReelId] = useState<string | null>(null);
 
   // المتصفحات تبدأ التشغيل التلقائي فوراً وبدون أي تأخير عندما يكون الصوت مكتوماً في البداية
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [reelsList, setReelsList] = useState<CraftReel[]>(reels);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const hasInitiallyScrolled = useRef<boolean>(false);
   const isScrollingRef = useRef<boolean>(false);
+  const activeIndexRef = useRef(activeIndex);
+  activeIndexRef.current = activeIndex;
 
   useEffect(() => {
     setReelsList(reels);
@@ -90,7 +92,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     return () => clearTimeout(timeoutId);
   }, [initialReelId, reelsList, scrollToIndex]);
 
-  // مراقبة الفيديو النشط بأداء أعلى
+  // مراقبة الفيديو النشط بأداء أعلى وبدون إعادة إنشاء مستمرة
   useEffect(() => {
     const container = containerRef.current;
     if (!container || reelsList.length === 0) return;
@@ -99,12 +101,12 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       (entries) => {
         if (isScrollingRef.current) return;
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
             const idxStr = entry.target.getAttribute('data-index');
             const reelId = entry.target.getAttribute('data-reel-id');
             if (idxStr !== null && reelId) {
               const idx = parseInt(idxStr, 10);
-              if (!isNaN(idx) && idx !== activeIndex) {
+              if (!isNaN(idx) && idx !== activeIndexRef.current) {
                 setActiveIndex(idx);
                 setActiveReelId(reelId);
               }
@@ -114,7 +116,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       },
       {
         root: container,
-        threshold: [0.6]
+        threshold: [0.5, 0.75]
       }
     );
 
@@ -125,7 +127,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
     return () => {
       observer.disconnect();
     };
-  }, [reelsList, activeIndex]);
+  }, [reelsList]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -195,7 +197,8 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
             scrollSnapType: 'y mandatory',
-            touchAction: 'pan-y'
+            touchAction: 'pan-y',
+            willChange: 'scroll-position'
           }}
         >
           {reelsList.map((reel, idx) => {
@@ -211,7 +214,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
                 }}
                 data-reel-id={reel.id}
                 data-index={idx}
-                className="reel-snap-item w-full h-full min-h-[100dvh] sm:min-h-full snap-start snap-always shrink-0 relative flex items-center justify-center bg-black overflow-hidden"
+                className="reel-snap-item w-full h-full snap-start snap-always shrink-0 relative flex items-center justify-center bg-black overflow-hidden"
                 style={{
                   height: '100%',
                   scrollSnapAlign: 'start',
