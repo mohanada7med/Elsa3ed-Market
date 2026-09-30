@@ -254,7 +254,7 @@ export function generateArticleSchema(article: {
       name: 'وه | WAH',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png'
+        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png'
       }
     },
     datePublished: article.datePublished || new Date().toISOString()
@@ -323,7 +323,7 @@ export function generateStoreSchema(seller: {
     '@type': ['Store', 'LocalBusiness'],
     name: seller.brandName || seller.name,
     description: seller.bio || 'ورشة حرفية وتراثية معتمدة من قلب صعيد مصر، تقدم منتجات يدوية أصيلة.',
-    image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
+    image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
     telephone: seller.phone || '+201000000000',
     priceRange: '$$',
     currenciesAccepted: 'EGP',

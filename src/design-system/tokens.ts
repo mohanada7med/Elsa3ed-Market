@@ -134,11 +134,13 @@ export const WAH_TOKENS = {
     }
   },
   typography: {
-    wahDisplay: "'SHIN Stout Bold', 'SHIN Stout', 'Cairo', system-ui, sans-serif",
-    wahHeading: "'Eskorte Arabic', 'Eskorte', 'Amiri', serif",
-    wahBody: "'Effra Arabic', 'Effra', 'Cairo', system-ui, sans-serif",
-    fontHeritage: "'Eskorte Arabic', 'Amiri', serif",
-    fontBody: "'Effra Arabic', 'Cairo', system-ui, sans-serif",
+    wahDisplay: "'MainFont', 'AdobeArabic', serif",
+    wahHeading: "'MainFont', 'AdobeArabic', serif",
+    wahBody: "'AdobeArabic', system-ui, sans-serif",
+    fontHeritage: "'MainFont', 'AdobeArabic', serif",
+    fontBody: "'AdobeArabic', system-ui, sans-serif",
+    fontMain: "'AdobeArabic', system-ui, sans-serif",
+    fontSecondary: "'MainFont', 'AdobeArabic', serif",
   },
   radius: {
     sm: '0.5rem', // 8px

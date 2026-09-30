@@ -356,6 +356,20 @@ export const CraftReelsSection: React.FC = () => {
       {/* Dynamic Glows */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[350px] sm:w-[700px] h-[300px] sm:h-[400px] bg-primary/10 rounded-full blur-[110px] sm:blur-[160px]" />
+
+        {/* Authentic WAH Brand Watermark (وه بيحكي) */}
+        <div
+          className="absolute inset-0 opacity-[0.04] mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '520px auto',
+            backgroundPosition: 'center',
+            maskImage: 'radial-gradient(ellipse at center, black 35%, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 35%, transparent 80%)'
+          }}
+          aria-hidden="true"
+        />
       </div>
 
       <div className="relative z-10 max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">

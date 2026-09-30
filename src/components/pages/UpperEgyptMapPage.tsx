@@ -28,7 +28,7 @@ import {
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
 
 const LOGO_URL =
-  'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png';
+  'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=1200&auto=format&fit=crop&q=80';

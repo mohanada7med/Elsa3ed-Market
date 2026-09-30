@@ -381,7 +381,6 @@ Allow: /sellers
 Allow: /heritage
 Allow: /places
 Allow: /food
-Allow: /crafts
 Allow: /stories
 Allow: /about
 

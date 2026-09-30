@@ -201,22 +201,58 @@ export default {
         'wah-border-strong': 'var(--wah-border-strong)',
       },
       fontFamily: {
-        shin: ["'SHIN Stout Bold'", "sans-serif"],
-        eskorte: ["'Eskorte'", "sans-serif"],
-        effra: ["'Effra Arbc Family'", "sans-serif"],
-
-        heritage: [
-          "'Eskorte'",
-          "'SHIN Stout Bold'",
-          "'Effra Arbc Family'",
-        ],
-
         sans: [
-          "'Effra Arbc Family'",
+          "'AdobeArabic'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
+        main: [
+          "''",
+          "system-ui",
+          "sans-serif",
+        ],
+        secondary: [
+          "''",
+          "'AdobeArabic'",
+          "serif",
+        ],
+        heritage: [
+          "''",
+          "'AdobeArabic'",
+          "serif",
+        ],
+        serif: [
+          "''",
+          "'AdobeArabic'",
+          "serif",
+        ],
+
+        // Legacy aliases
+        shin: ["'MainFont'", "sans-serif"],
+        eskorte: ["'MainFont'", "'AdobeArabic'", "serif"],
+        effra: ["'AdobeArabic'", "sans-serif"],
+      },
+
+      fontSize: {
+        // Small text
+        '2xs': ['1.15rem', { lineHeight: '2.1rem' }], // 18.4px
+        'xs': ['1.3rem', { lineHeight: '2.2rem' }],   // 20.8px
+
+        // Normal text
+        'sm': ['1.5rem', { lineHeight: '2.4rem' }],   // 24px
+        'base': ['1.7rem', { lineHeight: '2.6rem' }], // 27.2px
+
+        // Large body / supporting text
+        'lg': ['1.9rem', { lineHeight: '2.8rem' }],   // 30.4px
+        'xl': ['2.15rem', { lineHeight: '3.1rem' }],  // 34.4px
+
+        // Headings — unchanged
+        '2xl': ['1.85rem', { lineHeight: '2.45rem' }],
+        '3xl': ['2.25rem', { lineHeight: '2.8rem' }],
+        '4xl': ['2.85rem', { lineHeight: '3.2rem' }],
+        '5xl': ['3.75rem', { lineHeight: '1.15' }],
+        '6xl': ['4.75rem', { lineHeight: '1.1' }],
       },
 
       borderRadius: {

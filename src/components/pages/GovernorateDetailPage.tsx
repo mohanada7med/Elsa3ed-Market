@@ -48,6 +48,19 @@ const NILE_ORDER_MAP: Record<string, number> = {
   'new-valley': 8,
 };
 
+const GOVERNORATE_PATTERN_CONFIG: Record<string, { position: string; transform?: string; scale?: number }> = {
+  'أسوان': { position: '0px 0px', transform: 'none', scale: 440 },
+  'الأقصر': { position: '160px 80px', transform: 'scaleX(-1)', scale: 480 },
+  'قنا': { position: '80px 180px', transform: 'rotate(180deg)', scale: 460 },
+  'سوهاج': { position: '240px 60px', transform: 'scaleY(-1)', scale: 500 },
+  'أسيوط': { position: '120px 240px', transform: 'none', scale: 450 },
+  'المنيا': { position: '320px 140px', transform: 'scaleX(-1)', scale: 470 },
+  'بني سويف': { position: '40px 100px', transform: 'rotate(180deg)', scale: 460 },
+  'الفيوم': { position: '200px 220px', transform: 'none', scale: 490 },
+  'الوادي الجديد': { position: '280px 40px', transform: 'scaleY(-1)', scale: 520 },
+  'البحر الأحمر': { position: '60px 160px', transform: 'scaleX(-1)', scale: 450 },
+};
+
 export const GovernorateDetailPage: React.FC = () => {
   const {
     selectedGovernorateSlug,
@@ -344,17 +357,27 @@ export const GovernorateDetailPage: React.FC = () => {
             {/* Decorative museum line */}
             <div className="absolute bottom-8 right-8 top-8 hidden w-px bg-white/15 lg:block" />
 
-            {/* Authentic WAH Heritage Pattern */}
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-screen"
-              style={{
-                backgroundImage: "url('/pattern/pat2.png')",
-                backgroundRepeat: 'repeat',
-                backgroundSize: '460px auto',
-                backgroundPosition: 'left top'
-              }}
-              aria-hidden="true"
-            />
+            {/* Authentic WAH Heritage Pattern — بصمة فريدة لكل محافظة مع لغة بصرية موحدة */}
+            {(() => {
+              const govPattern = (governorate?.name && GOVERNORATE_PATTERN_CONFIG[governorate.name]) || {
+                position: '0px 0px',
+                transform: 'none',
+                scale: 460
+              };
+              return (
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.065] mix-blend-screen"
+                  style={{
+                    backgroundImage: "url('/pattern/pat2.png')",
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: `${govPattern.scale}px auto`,
+                    backgroundPosition: govPattern.position,
+                    transform: govPattern.transform
+                  }}
+                  aria-hidden="true"
+                />
+              );
+            })()}
 
             {/* Content */}
             <div className="relative z-10 flex min-h-[620px] flex-col justify-between p-6 sm:p-10 lg:min-h-[680px] lg:w-[57%] lg:p-16">

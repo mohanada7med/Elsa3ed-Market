@@ -232,13 +232,6 @@ export const DynamicBreadcrumbs: React.FC = () => {
         url: `${origin}/categories/${selectedCategoryId || ''}`,
         isCurrent: true
       });
-    } else if (activePage === 'crafts') {
-      items.push({
-        id: 'crafts',
-        label: 'قصص الحرفيين وموسوعة التراث',
-        url: `${origin}/crafts`,
-        isCurrent: true
-      });
     } else if (activePage === 'reels') {
       items.push({
         id: 'reels',

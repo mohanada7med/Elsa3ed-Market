@@ -145,7 +145,7 @@ export const SellerProfileView: React.FC = () => {
     updatePageSEO({
       title: `${sellerName} — ورشة وصانع بصعيد مصر`,
       description: sellerBio.slice(0, 160),
-      image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
+      image: seller.avatar || 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
       type: 'website',
       schema: generateStoreSchema({
         id: seller.id || seller.userId || 'artisan',

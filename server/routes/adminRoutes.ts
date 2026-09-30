@@ -26,12 +26,7 @@ import {
   updateCategory,
   deleteCategory
 } from '../services/categoryService.ts';
-import {
-  getAllCraftStories,
-  createCraftStory,
-  updateCraftStory,
-  deleteCraftStory
-} from '../services/craftStoryService.ts';
+
 import {
   getAdminReviews,
   moderateReview,
@@ -155,82 +150,6 @@ router.delete('/categories/:id', async (req: AuthenticatedRequest, res: Response
   }
 });
 
-// ==================== CRAFT STORIES CRUD (قصص الصنعة وأسرار الأجداد) ====================
-
-// GET /api/admin/craft-stories - List all craft stories including inactive
-router.get('/craft-stories', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const stories = await getAllCraftStories(true);
-    res.json({
-      success: true,
-      count: stories.length,
-      data: stories
-    });
-  } catch (error) {
-    console.error('Error fetching admin craft stories:', error);
-    res.status(500).json({
-      success: false,
-      error: 'فشل في جلب قصص الصنعة وأسرار الأجداد',
-      code: 'SERVER_ERROR'
-    });
-  }
-});
-
-// POST /api/admin/craft-stories - Create new craft story
-router.post('/craft-stories', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const created = await createCraftStory(req.user!, req.body);
-    res.status(201).json({
-      success: true,
-      message: 'تم إضافة قصة الصنعة التراثية بنجاح',
-      data: created
-    });
-  } catch (error: any) {
-    console.error('Error creating craft story:', error);
-    res.status(400).json({
-      success: false,
-      error: error.message || 'فشل في إضافة قصة الصنعة',
-      code: 'CRAFT_STORY_ERROR'
-    });
-  }
-});
-
-// PUT /api/admin/craft-stories/:id - Update craft story
-router.put('/craft-stories/:id', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const updated = await updateCraftStory(req.user!, req.params.id, req.body);
-    res.json({
-      success: true,
-      message: 'تم تحديث قصة الصنعة بنجاح',
-      data: updated
-    });
-  } catch (error: any) {
-    console.error('Error updating craft story:', error);
-    res.status(400).json({
-      success: false,
-      error: error.message || 'فشل في تحديث قصة الصنعة',
-      code: 'CRAFT_STORY_ERROR'
-    });
-  }
-});
-
-// DELETE /api/admin/craft-stories/:id - Delete craft story
-router.delete('/craft-stories/:id', async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    await deleteCraftStory(req.user!, req.params.id);
-    res.json({
-      success: true,
-      message: 'تم حذف قصة الصنعة بنجاح'
-    });
-  } catch (error: any) {
-    console.error('Error deleting craft story:', error);
-    res.status(400).json({
-      success: false,
-      error: error.message || 'فشل في حذف قصة الصنعة',
-      code: 'CRAFT_STORY_ERROR'
-    });
-  }
-});
 
 // ==================== REVIEWS MODERATION ====================
 

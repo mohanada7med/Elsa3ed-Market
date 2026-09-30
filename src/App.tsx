@@ -52,7 +52,6 @@ const lazyWithRetry = <T extends React.ComponentType<any>>(
 import { ProductsPage } from './components/pages/ProductsPage';
 import { ProductDetailsView } from './components/products/ProductDetailsView';
 import { CategoriesPage } from './components/pages/CategoriesPage';
-import { CraftsPage } from './components/pages/CraftsPage';
 import { SellersDirectoryPage } from './components/pages/SellersDirectoryPage';
 import { FavoritesPage } from './components/pages/FavoritesPage';
 import { AboutSection } from './components/public/AboutSection';
@@ -183,13 +182,6 @@ const MainContent: React.FC = () => {
           title: 'الأقسام والحرف التراثية',
           description: 'استكشف تصنيفات الحرف الصعيدية: الفخار والخزف، المنسوجات والكليم، المشغولات الخشبية، وخيرات الطبيعة.',
           schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'الأقسام والتصنيفات' }])
-        });
-        break;
-      case 'crafts':
-        updatePageSEO({
-          title: 'قصص الحرفيين وموسوعة التراث',
-          description: 'تعرف على حكايات الأسطوات وتاريخ صناعة الفخار القناوي وسجاد أخميم والفضة النوبية.',
-          schema: generateBreadcrumbSchema([{ name: 'الرئيسية' }, { name: 'قصص الحرفيين وموسوعة التراث' }])
         });
         break;
       case 'reels':
@@ -353,7 +345,6 @@ const MainContent: React.FC = () => {
               {(activePage === 'product-details' || activePage === 'product-detail') && <ProductDetailsView />}
               {activePage === 'categories' && <CategoriesPage />}
               {activePage === 'category-details' && <ProductsPage />}
-              {activePage === 'crafts' && <CraftsPage />}
               {activePage === 'reels' && (
                 <React.Suspense fallback={<LazySectionFallback />}>
                   <CraftReelsPage />

@@ -19,6 +19,7 @@ import { WAHEmptyState } from '../../design-system/WAHEmptyState';
 import { PlaceEditorModal } from './PlaceEditorModal';
 import FloatingDock from '../common/FloatingDock';
 import { UncleWahHeroBanner } from '../common/UncleWahHeroBanner';
+import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 const CATEGORY_MAP: Record<string, string[]> = {
   فرعوني: ['temple', 'tomb', 'pharaonic', 'فرعوني'],
@@ -173,6 +174,9 @@ const PlaceTimelineCard: React.FC<PlaceTimelineCardProps> = ({
             />
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
+
+            {/* ختم أثري وتراثي أصيل في ركن الكارت */}
+            <HeritageCornerStamp position="top-left" size={36} />
 
             <div className="absolute right-5 top-5 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-white/20 bg-black/20 px-3 py-1.5 text-[9px] font-black text-white backdrop-blur-md">

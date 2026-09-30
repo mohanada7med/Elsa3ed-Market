@@ -65,6 +65,10 @@ const nextConfig = {
           headers: staticAssetHeaders,
         },
         {
+          source: '/fonts/:path*',
+          headers: staticAssetHeaders,
+        },
+        {
           source: '/audio/:path*',
           headers: staticAssetHeaders,
         },
@@ -114,6 +118,10 @@ const nextConfig = {
       },
       {
         source: '/mascot/:path*',
+        headers: staticAssetHeaders,
+      },
+      {
+        source: '/fonts/:path*',
         headers: staticAssetHeaders,
       },
       {

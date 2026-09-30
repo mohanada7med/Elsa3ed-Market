@@ -10,10 +10,12 @@ import {
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
-import { WAHBrandPattern } from '../common/WAHBrandPattern';
+import { HOME_PATTERN_CONFIG, getHomePatternOpacity } from '../../config/homePatternConfig';
 
 export const HeroSection: React.FC = () => {
   const { setActivePage, wahStats } = useApp();
+  const heroConfig = HOME_PATTERN_CONFIG.hero;
+  const isPatternActive = HOME_PATTERN_CONFIG.globalEnabled && heroConfig.enabled;
 
   return (
     <section
@@ -27,12 +29,36 @@ export const HeroSection: React.FC = () => {
         duration-500
       "
     >
-      {/* Authentic WAH Brand Pattern Texture Overlay */}
-      <WAHBrandPattern
-        variant="heritage-icons"
-        opacity={0.06}
-        className="z-0 mix-blend-multiply dark:mix-blend-screen"
-      />
+      {/* Authentic WAH Brand Heritage Corner Watermarks — يتم التحكم بها من config/homePatternConfig.ts */}
+      {isPatternActive && heroConfig.topLeft.enabled && (
+        <div
+          className="absolute top-0 left-0 w-80 sm:w-[500px] h-80 sm:h-[500px] pointer-events-none select-none z-0 mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            opacity: getHomePatternOpacity(heroConfig.topLeft.opacity),
+            backgroundImage: `url('${heroConfig.topLeft.pattern}')`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: `${heroConfig.topLeft.scale}px auto`,
+            maskImage: 'radial-gradient(circle at 15% 15%, black 20%, transparent 75%)',
+            WebkitMaskImage: 'radial-gradient(circle at 15% 15%, black 20%, transparent 75%)'
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      {isPatternActive && heroConfig.bottomRight.enabled && (
+        <div
+          className="hidden lg:block absolute bottom-0 right-0 w-[420px] h-[420px] pointer-events-none select-none z-0 mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            opacity: getHomePatternOpacity(heroConfig.bottomRight.opacity),
+            backgroundImage: `url('${heroConfig.bottomRight.pattern}')`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: `${heroConfig.bottomRight.scale}px auto`,
+            maskImage: 'radial-gradient(circle at 90% 90%, black 20%, transparent 75%)',
+            WebkitMaskImage: 'radial-gradient(circle at 90% 90%, black 20%, transparent 75%)'
+          }}
+          aria-hidden="true"
+        />
+      )}
       {/* ========================================================= */}
       {/* 📱 Mobile Layout (< lg)                                   */}
       {/* ========================================================= */}

@@ -20,7 +20,6 @@ import cartRoutes from './routes/cartRoutes.ts';
 import orderRoutes from './routes/orderRoutes.ts';
 import commonRoutes from './routes/commonRoutes.ts';
 import categoryRoutes from './routes/categoryRoutes.ts';
-import craftStoryRoutes from './routes/craftStoryRoutes.ts';
 import uploadRoutes from './routes/uploadRoutes.ts';
 import seoRoutes from './routes/seoRoutes.ts';
 import reelRoutes from './routes/reelRoutes.ts';
@@ -132,7 +131,6 @@ export function createApp(): Express {
     { prefix: '/auth', router: authRoutes },
     { prefix: '/upload', router: uploadRoutes },
     { prefix: '/categories', router: categoryRoutes },
-    { prefix: '/craft-stories', router: craftStoryRoutes },
     { prefix: '/reels', router: reelRoutes },
     { prefix: '/chat', router: chatRoutes },
     { prefix: '/wah', router: wahContentRoutes },

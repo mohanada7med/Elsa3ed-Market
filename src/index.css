@@ -3,6 +3,59 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* =========================================================================
+   LOCAL BRAND FONTS
+   - Main Body Font: public/fonts/AdobeArabic-Regular.otf (الخط الرئيسي للموقع والنصوص)
+   - Secondary / Heading Font: public/fonts/mainfont.ttf (الخط الثاني للعناوين والتراث)
+   ========================================================================= */
+@font-face {
+  font-family: 'MainFont';
+  src: url('/fonts/mainfont.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MainFont';
+  src: url('/fonts/mainfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MainFont';
+  src: url('/fonts/mainfont.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AdobeArabic';
+  src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AdobeArabic';
+  src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AdobeArabic';
+  src: url('/fonts/AdobeArabic-Regular.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* =========================================================================
      OFFICIAL WAH BRAND DESIGN SYSTEM TOKENS
@@ -22,10 +75,12 @@
   --color-wahDark-card: #3B1E0E;
   --color-wahDark-elevated: #4A2715;
 
-  /* WAH Brand Identity Typography (Page 3 of PDF) */
-  --font-wah-display: 'SHIN Stout Bold', 'SHIN Stout', 'Cairo', system-ui, sans-serif;
-  --font-wah-heading: 'Eskorte Arabic', 'Eskorte', 'Amiri', serif;
-  --font-wah-body: 'Effra Arabic', 'Effra', 'Cairo', system-ui, sans-serif;
+  /* WAH Brand Identity Typography (Inverted: AdobeArabic for Body, MainFont for Headings) */
+  --font-wah-main: 'AdobeArabic', system-ui, -apple-system, sans-serif;
+  --font-wah-secondary: 'MainFont', 'AdobeArabic', serif;
+  --font-wah-display: 'MainFont', 'AdobeArabic', serif;
+  --font-wah-heading: 'MainFont', 'AdobeArabic', serif;
+  --font-wah-body: 'AdobeArabic', system-ui, sans-serif;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -276,7 +331,15 @@
   --wah-info: var(--info);
 }
 
-/* WAH Typography Hierarchy (PDF Page 3) */
+/* WAH Typography Hierarchy (Inverted) */
+.font-main {
+  font-family: 'AdobeArabic', system-ui, -apple-system, sans-serif;
+}
+
+.font-secondary {
+  font-family: 'MainFont', 'AdobeArabic', serif;
+}
+
 .font-wah-display {
   font-family: var(--font-wah-display);
   letter-spacing: -0.02em;
@@ -293,13 +356,18 @@
 
 @layer base {
 
+  html {
+    font-size: 112.5%;
+    /* ~18px base root */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
   html,
   body {
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
-    -webkit-tap-highlight-color: transparent;
-    -webkit-text-size-adjust: 100%;
   }
 
   :root {
@@ -312,11 +380,20 @@
   }
 
   body {
-    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'AdobeArabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 1.25rem;
+    /* ~22.5px base for normal body text */
+    line-height: 1.8;
+    letter-spacing: 0.01em;
     background-color: var(--background);
     color: var(--foreground);
     transition: background-color 0.25s ease, color 0.25s ease;
     accent-color: var(--accent);
+  }
+
+  p {
+    font-size: 1.25rem;
+    line-height: 1.8;
   }
 
   html.dark,
@@ -335,8 +412,10 @@
   h2,
   h3,
   h4,
-  .font-heritage {
-    font-family: 'Amiri', 'Cairo', serif;
+  .font-heritage,
+  .font-secondary {
+    font-family: 'foooont', 'AdobeArabic', serif;
+    letter-spacing: normal;
   }
 }
 
@@ -437,19 +516,11 @@
 /* Authentic WAH Brand Heritage Patterns */
 .bg-heritage-pattern {
   background-color: var(--wah-background, #FFF9EE);
-  background-image: url('/pattern/pat2.png');
-  background-repeat: repeat;
-  background-size: 500px auto;
-  background-blend-mode: multiply;
   transition: background-color 0.25s ease;
 }
 
 .dark .bg-heritage-pattern {
   background-color: var(--wah-background, #1B1009);
-  background-image: url('/pattern/pat2.png');
-  background-repeat: repeat;
-  background-size: 500px auto;
-  background-blend-mode: screen;
 }
 
 .bg-pattern-stripes {

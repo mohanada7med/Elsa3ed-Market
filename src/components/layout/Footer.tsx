@@ -151,14 +151,14 @@ export const Footer: React.FC = () => {
         <div className="absolute -top-32 right-1/4 w-[600px] h-[600px] rounded-full bg-[#C99444]/10 blur-[150px]" />
         <div className="absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-[#E66A2E]/10 blur-[140px]" />
 
-        {/* Authentic WAH Heritage Icons Ambient Wallpaper */}
+        {/* Authentic WAH Heritage Icons Ambient Wallpaper (أكبر شوية في الخلفية كختم ونقشة نهاية الموقع) */}
         <div
-          className="absolute inset-0 opacity-[0.045] mix-blend-screen"
+          className="absolute inset-0 opacity-[0.055] mix-blend-screen"
           style={{
             backgroundImage: "url('/pattern/pat2.png')",
             backgroundRepeat: 'repeat',
-            backgroundSize: '480px auto',
-            backgroundPosition: 'center top'
+            backgroundSize: '640px auto',
+            backgroundPosition: 'center'
           }}
         />
       </div>
@@ -207,14 +207,18 @@ export const Footer: React.FC = () => {
         {/* الهيكل الرئيسي للفوتر */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
-          {/* 1. هوية المنصة والنبذة التأسيسية */}
+          {/* 1. هوية المنصة والنبذة التأسيسية مع ختم نقشة وه وشخصية عم وه */}
           <div className="lg:col-span-3 space-y-5">
-            <img
-              src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
-              alt="شعار منصة وه"
-              width={150}
-              className="brightness-125"
-            />
+            <div className="flex items-center gap-4">
+
+
+              <img
+                src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
+                alt="شعار منصة وه"
+                width={130}
+                className="brightness-125"
+              />
+            </div>
             <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
               منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.
             </p>

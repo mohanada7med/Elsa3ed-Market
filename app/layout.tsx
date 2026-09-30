@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   description:
     'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب صناع المحتوى الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
   icons: {
-    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
-    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
+    icon: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
+    apple: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
   },
   openGraph: {
     title: 'وه | WAH — الحكاية ورا كل حاجة',
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
+        url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
         width: 800,
         height: 800,
         alt: 'وه | WAH',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'وه | WAH — الحكاية ورا كل حاجة',
     description:
       'منصة صعيد مصر الشاملة: سوق حرفي تجاري متكامل للتسوق المباشر، ريلز وتجارب صناع المحتوى الحية، وتوثيق وثائقي تفاعلي لمعالم وتراث محافظات الصعيد.',
-    images: ['https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png'],
+    images: ['https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png'],
   },
 };
 
@@ -47,15 +47,22 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png" type="image/png" />
-        <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png" type="image/png" />
+        <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap"
-          rel="stylesheet"
+          rel="preload"
+          href="/fonts/AdobeArabic-Regular.otf"
+          as="font"
+          type="font/otf"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/mainfont.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
         />
         <script
           type="application/ld+json"
@@ -70,7 +77,7 @@ export default function RootLayout({
                   url: 'https://wah-saeed.com',
                   logo: {
                     '@type': 'ImageObject',
-                    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png',
+                    url: 'https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png',
                     caption: 'منصة وه لتراث وحرف صعيد مصر'
                   },
                   description:

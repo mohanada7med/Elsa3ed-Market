@@ -205,7 +205,7 @@ export const AboutSection: React.FC = () => {
                 className="relative cursor-default"
               >
                 <img
-                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790718894/logowah.png"
+                  src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                   alt="وه - العالم الرقمي لصعيد مصر"
                   className="h-72 sm:h-88 lg:h-[430px] w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.22)]"
                   loading="lazy"
