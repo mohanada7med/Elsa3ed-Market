@@ -106,7 +106,7 @@ export const HOME_PATTERN_CONFIG: HomePatternSettings = {
     topLeft: {
       enabled: true,
       pattern: HOME_PATTERNS.icons,
-      opacity: 0.7,  // من 4% لـ 8%
+      opacity: 0.06,  // من 4% لـ 8%
       scale: 420,     // مقاس الباترن
     },
     bottomRight: {

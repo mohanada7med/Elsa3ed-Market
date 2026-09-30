@@ -168,7 +168,7 @@ export const WAHProductCard: React.FC<WAHProductCardProps> = ({
         <div className="pt-3 border-t border-black/10 dark:border-white/10 flex items-center justify-between gap-2 mt-auto">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-black text-primary dark:text-primary-hover">
+              <span className="text-base font-normal font-price text-primary dark:text-primary-hover tracking-wide">
                 {product.price} ج.م
               </span>
               {product.originalPrice && product.originalPrice > product.price && (

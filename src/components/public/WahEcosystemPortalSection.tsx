@@ -7,6 +7,7 @@ import {
   Crown,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 interface PortalMascot {
   src: string;
@@ -230,7 +231,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
             <br />
 
-            <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[8rem] font-black leading-[0.95] tracking-tight">
+            <h1 className="max-w-6xl text-5xl sm:text-7xl lg:text-[7rem] font-normal leading-[1.1] tracking-normal">
               أبواب
               <br />
 
@@ -438,7 +439,10 @@ export const WahEcosystemPortalSection: React.FC = () => {
                       flex
                       items-center
                       justify-between
+                      relative
                     ">
+                      {/* Heritage Hallmark Seal on Card "تراث" */}
+                      <HeritageCornerStamp position="top-left" size={28} badgeLabel="تراث" className="left-16 top-0" />
                       <div className="
                         flex
                         items-center

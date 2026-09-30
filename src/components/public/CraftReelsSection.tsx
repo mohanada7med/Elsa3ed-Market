@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 import {
   getOptimizedVideoPoster,
@@ -500,6 +501,9 @@ export const CraftReelsSection: React.FC = () => {
                   }}
                 >
                   <div className="relative w-full h-full bg-stone-900 overflow-hidden">
+                    {/* Heritage Hallmark Seal on Card "حكاية" */}
+                    <HeritageCornerStamp position="top-right" size={30} badgeLabel="حكاية" className="z-30 pointer-events-none" />
+
                     {/* Active Reel Display */}
                     {isCurrent ? (
                       <div className="relative w-full h-full bg-black">

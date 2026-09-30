@@ -64,6 +64,20 @@ export const SellersDirectoryPage: React.FC = () => {
         transition-colors duration-500
       "
     >
+      {/* Authentic WAH Brand Watermark (شيوخ الصنعة والورش الحرفية) */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-[0.035] dark:opacity-[0.05] mix-blend-multiply dark:mix-blend-screen"
+        style={{
+          backgroundImage: "url('/pattern/pat2.png')",
+          backgroundRepeat: 'repeat',
+          backgroundSize: '520px auto',
+          backgroundPosition: 'center',
+          maskImage: 'radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(ellipse at 50% 25%, black 40%, transparent 85%)'
+        }}
+        aria-hidden="true"
+      />
+
       {/* =========================================================
           PAGE CONTAINER
       ========================================================= */}

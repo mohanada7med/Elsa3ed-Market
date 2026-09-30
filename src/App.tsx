@@ -156,7 +156,7 @@ const MainContent: React.FC = () => {
     currentRole,
     setIsAuthModalOpen,
     setAuthModalTab,
-    setPostLoginRedirect
+    setPostLoginRedirect,
   } = useApp();
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);

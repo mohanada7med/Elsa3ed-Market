@@ -31,7 +31,9 @@ export const HeroSection: React.FC = () => {
     >
       {/* Authentic WAH Brand Heritage Corner Watermarks — يتم التحكم بها من config/homePatternConfig.ts */}
       {isPatternActive && heroConfig.topLeft.enabled && (
-        <div
+        <motion.div
+          animate={{ y: [0, -8, 0], x: [0, 4, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute top-0 left-0 w-80 sm:w-[500px] h-80 sm:h-[500px] pointer-events-none select-none z-0 mix-blend-multiply dark:mix-blend-screen"
           style={{
             opacity: getHomePatternOpacity(heroConfig.topLeft.opacity),
@@ -314,9 +316,9 @@ export const HeroSection: React.FC = () => {
               className="
                 font-heritage
                 text-5xl
-                font-black
-                leading-[1.05]
-                tracking-tight
+                font-normal
+                leading-[1.15]
+                tracking-normal
                 text-foreground
               "
             >
@@ -843,13 +845,13 @@ export const HeroSection: React.FC = () => {
               className="
                 max-w-4xl
                 font-heritage
-                text-[7.5rem]
-                font-black
-                leading-[0.9]
-                tracking-[-0.055em]
+                text-[6.5rem]
+                font-normal
+                leading-[1.1]
+                tracking-normal
                 text-foreground
                 drop-shadow-sm
-                xl:text-[8.5rem]
+                xl:text-[7.5rem]
               "
             >
               الصعيد{' '}

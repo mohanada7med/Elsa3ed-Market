@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Almarai:wght@300;400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Lalezar&family=Marhey:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
@@ -78,13 +78,13 @@
   --color-wahDark-card: #3B1E0E;
   --color-wahDark-elevated: #4A2715;
 
-  /* WAH Brand Identity Typography */
-  --font-wah-main: 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-secondary: 'Amiri', 'Cairo', serif;
-  --font-wah-display: 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-heading: 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-heritage: 'Amiri', 'Cairo', serif;
-  --font-wah-body: 'Cairo', system-ui, -apple-system, sans-serif;
+  /* WAH Brand Identity Typography - Lalezar as Primary & Alexandria as Secondary/Body */
+  --font-wah-main: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-secondary: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-display: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+  --font-wah-heading: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+  --font-wah-heritage: 'Lalezar', 'Alexandria', cursive, sans-serif;
+  --font-wah-body: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -335,17 +335,44 @@
   --wah-info: var(--info);
 }
 
-/* WAH Typography Hierarchy */
+/* WAH Typography Hierarchy - Lalezar as Primary Display & Heading Font */
 .font-main {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+.font-lalezar {
+  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+}
+
+.font-heading {
+  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+}
+
+.font-display {
+  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+}
+
+.font-price,
+.price-tag {
+  font-family: 'Lalezar', 'MainFont', system-ui, sans-serif;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: 0.02em;
 }
 
 .font-secondary {
-  font-family: 'Amiri', 'Cairo', serif;
+  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+.font-body {
+  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-heritage {
-  font-family: 'Amiri', 'Cairo', serif;
+  font-family: 'Lalezar', 'Alexandria', cursive, sans-serif;
+}
+
+.font-editorial {
+  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-serif {
@@ -357,29 +384,44 @@
 }
 
 .font-amiri {
-  font-family: 'Amiri', 'Cairo', serif;
+  font-family: 'Amiri', 'AdobeArabic', 'Cairo', serif;
 }
 
 .font-alexandria {
-  font-family: 'Alexandria', system-ui, -apple-system, sans-serif;
+  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+.font-ruqaa {
+  font-family: 'Aref Ruqaa', 'Amiri', serif;
+}
+
+.font-marhey {
+  font-family: 'Marhey', cursive, sans-serif;
 }
 
 .font-shin {
-  font-family: 'MainFont', 'Cairo', sans-serif;
+  font-family: 'Lalezar', 'MainFont', 'Cairo', sans-serif;
 }
 
 .font-wah-display {
-  font-family: var(--font-wah-display, 'Cairo', sans-serif);
-  letter-spacing: -0.01em;
+  font-family: var(--font-wah-display, 'Lalezar', 'MainFont', cursive, sans-serif);
+  letter-spacing: normal;
 }
 
 .font-wah-heading {
-  font-family: var(--font-wah-heading, 'Cairo', sans-serif);
-  letter-spacing: -0.01em;
+  font-family: var(--font-wah-heading, 'Lalezar', 'MainFont', cursive, sans-serif);
+  letter-spacing: normal;
 }
 
 .font-wah-body {
-  font-family: var(--font-wah-body, 'Cairo', sans-serif);
+  font-family: var(--font-wah-body, 'AdobeArabic', 'Alexandria', 'Cairo', sans-serif);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  letter-spacing: normal;
+  line-height: 1.3;
+  text-wrap: balance;
 }
 
 @layer base {
@@ -408,8 +450,8 @@
   }
 
   body {
-    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 1rem;
+    font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 0.98rem;
     line-height: 1.7;
     letter-spacing: normal;
     background-color: var(--background);
@@ -440,12 +482,24 @@
   h4,
   h5,
   h6 {
-    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
-    letter-spacing: -0.01em;
+    font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+    letter-spacing: normal;
+    line-height: 1.3;
+    text-wrap: balance;
   }
 
-  .font-heritage,
+  .font-heritage {
+    font-family: 'Lalezar', 'Alexandria', cursive, sans-serif;
+    letter-spacing: normal;
+  }
+
   .font-secondary,
+  .font-editorial,
+  .font-body {
+    font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+    letter-spacing: normal;
+  }
+
   .font-serif {
     font-family: 'Amiri', 'Cairo', serif;
     letter-spacing: normal;

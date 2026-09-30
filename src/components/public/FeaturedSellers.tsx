@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { Star, MapPin, CheckCircle2, ArrowLeft, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { WAHBadge } from '../../design-system/WAHBadge';
+import { HeritageCornerStamp } from '../common/HeritageCornerStamp';
 
 export const FeaturedSellers: React.FC = () => {
   const { sellers, navigateToSeller, setActivePage } = useApp();
@@ -98,6 +99,9 @@ export const FeaturedSellers: React.FC = () => {
                   محافظة {seller.governorate}
                 </WAHBadge>
               </div>
+
+              {/* Heritage Hallmark Seal on Card "صناعة" */}
+              <HeritageCornerStamp position="top-left" size={30} badgeLabel="صنعة" className="z-10" />
             </div>
 
             {/* Avatar & Content */}

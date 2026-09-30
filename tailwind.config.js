@@ -202,15 +202,46 @@ export default {
       },
       fontFamily: {
         sans: [
+          "'Lalezar'",
+          "'MainFont'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
         main: [
+          "'Lalezar'",
+          "'MainFont'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
+          "sans-serif",
+        ],
+        lalezar: [
+          "'Lalezar'",
+          "'MainFont'",
+          "cursive",
+          "system-ui",
+          "sans-serif",
+        ],
+        heading: [
+          "'Lalezar'",
+          "'MainFont'",
+          "cursive",
+          "system-ui",
+          "sans-serif",
+        ],
+        display: [
+          "'Lalezar'",
+          "'MainFont'",
+          "cursive",
+          "system-ui",
+          "sans-serif",
+        ],
+        price: [
+          "'Lalezar'",
+          "'MainFont'",
+          "system-ui",
           "sans-serif",
         ],
         cairo: [
@@ -220,21 +251,50 @@ export default {
           "sans-serif",
         ],
         secondary: [
-          "'Amiri'",
+          "'Alexandria'",
           "'Cairo'",
-          "serif",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
+        body: [
+          "'Alexandria'",
+          "'Cairo'",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
         ],
         heritage: [
-          "'Amiri'",
+          "'Lalezar'",
+          "'Alexandria'",
+          "cursive",
+          "sans-serif",
+        ],
+        editorial: [
+          "'Alexandria'",
           "'Cairo'",
-          "serif",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
         ],
         amiri: [
           "'Amiri'",
+          "'AdobeArabic'",
           "'Cairo'",
           "serif",
         ],
+        ruqaa: [
+          "'Aref Ruqaa'",
+          "'Amiri'",
+          "serif",
+        ],
+        marhey: [
+          "'Marhey'",
+          "cursive",
+          "sans-serif",
+        ],
         serif: [
+          "'AdobeArabic'",
           "'Amiri'",
           "'Cairo'",
           "serif",
@@ -247,8 +307,8 @@ export default {
         ],
 
         // Brand & Legacy aliases
-        shin: ["'MainFont'", "'Cairo'", "sans-serif"],
-        eskorte: ["'Amiri'", "'Cairo'", "serif"],
+        shin: ["'Lalezar'", "'MainFont'", "'Cairo'", "sans-serif"],
+        eskorte: ["'AdobeArabic'", "'Amiri'", "'Cairo'", "serif"],
         effra: ["'Cairo'", "sans-serif"],
       },
 

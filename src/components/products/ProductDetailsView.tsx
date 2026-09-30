@@ -434,6 +434,19 @@ export const ProductDetailsView: React.FC = () => {
     >
       {/* Background Decoration */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        {/* Subtle authentic handicraft pattern watermark (أعلى صفحة المنتج) */}
+        <div
+          className="absolute top-0 right-0 w-full h-[520px] opacity-[0.035] dark:opacity-[0.05] pointer-events-none mix-blend-multiply dark:mix-blend-screen"
+          style={{
+            backgroundImage: "url('/pattern/pat2.png')",
+            backgroundRepeat: 'repeat',
+            backgroundSize: '460px auto',
+            backgroundPosition: 'top center',
+            maskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 95%)'
+          }}
+          aria-hidden="true"
+        />
         <div
           className="
             absolute
@@ -993,6 +1006,7 @@ export const ProductDetailsView: React.FC = () => {
                 navigateToSeller(product.sellerId || product.sellerName || '')
               }
               className="
+                relative overflow-hidden
                 mt-8
                 flex
                 w-full
@@ -1000,7 +1014,7 @@ export const ProductDetailsView: React.FC = () => {
                 justify-between
                 border-y
                 border-black/10
-                py-4
+                py-4 px-2 rounded-xl
                 text-right
                 transition
                 hover:bg-black/[0.025]
@@ -1009,7 +1023,19 @@ export const ProductDetailsView: React.FC = () => {
                 cursor-pointer
               "
             >
-              <div className="flex items-center gap-3">
+              {/* Subtle authentic craft watermark behind maker */}
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.035] dark:opacity-[0.05] mix-blend-multiply dark:mix-blend-screen"
+                style={{
+                  backgroundImage: "url('/pattern/pat2.png')",
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '240px auto',
+                  backgroundPosition: 'center',
+                }}
+                aria-hidden="true"
+              />
+
+              <div className="relative z-10 flex items-center gap-3">
                 <div
                   className="
                     flex
@@ -2434,8 +2460,20 @@ export const ProductDetailsView: React.FC = () => {
 
             {/* Seller Workshop Ribbon */}
             {product.sellerName && (
-              <div className="mb-8 rounded-3xl border border-primary/20 bg-linear-to-r from-primary/10 via-amber-500/5 to-transparent p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-md">
-                <div className="flex items-center gap-3.5">
+              <div className="relative overflow-hidden mb-8 rounded-3xl border border-primary/20 bg-linear-to-r from-primary/10 via-amber-500/5 to-transparent p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-md">
+                {/* Authentic Handicraft Pattern watermark behind artisan workshop */}
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.06] mix-blend-multiply dark:mix-blend-screen"
+                  style={{
+                    backgroundImage: "url('/pattern/pat2.png')",
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '280px auto',
+                    backgroundPosition: 'center',
+                  }}
+                  aria-hidden="true"
+                />
+
+                <div className="relative z-10 flex items-center gap-3.5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-md">
                     <Store size={22} />
                   </div>

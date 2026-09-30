@@ -209,15 +209,38 @@ export const Footer: React.FC = () => {
 
           {/* 1. هوية المنصة والنبذة التأسيسية مع ختم نقشة وه وشخصية عم وه */}
           <div className="lg:col-span-3 space-y-5">
-            <div className="flex items-center gap-4">
-
-
+            {/* ختم نقشة وه التراثي ونهاية الموقع مع اللوجو وشخصية عم وه */}
+            <div className="relative inline-flex items-center gap-4 p-3 rounded-2xl border border-[#C99444]/30 bg-black/25 backdrop-blur-md overflow-hidden">
+              {/* Pattern watermark inside seal */}
+              <div
+                className="absolute inset-0 opacity-20 pointer-events-none mix-blend-screen"
+                style={{
+                  backgroundImage: "url('/pattern/pat2.png')",
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: '240px auto',
+                  backgroundPosition: 'center',
+                }}
+                aria-hidden="true"
+              />
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                 alt="شعار منصة وه"
-                width={130}
-                className="brightness-125"
+                width={125}
+                className="relative z-10 brightness-125 drop-shadow-md"
               />
+              <div className="relative z-10 flex items-center gap-2 pr-3 border-r border-[#C99444]/40">
+                <img
+                  src="/mascot.png"
+                  alt="عم وه"
+                  width={44}
+                  height={44}
+                  className="object-contain drop-shadow-md"
+                />
+                <div className="flex flex-col text-right leading-tight">
+                  <span className="text-[11px] font-black text-[#E0C79B]">عم وَه</span>
+                  <span className="text-[9px] text-[#C99444] font-bold">ختم الأصالة</span>
+                </div>
+              </div>
             </div>
             <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
               منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.

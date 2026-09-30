@@ -54,7 +54,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Almarai:wght@300;400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Lalezar&family=Marhey:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap"
           rel="stylesheet"
         />
         <link
@@ -62,6 +62,13 @@ export default function RootLayout({
           href="/fonts/mainfont.ttf"
           as="font"
           type="font/ttf"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/AdobeArabic-Regular.otf"
+          as="font"
+          type="font/otf"
           crossOrigin="anonymous"
         />
         <script
