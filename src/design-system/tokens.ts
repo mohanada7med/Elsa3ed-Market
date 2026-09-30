@@ -134,13 +134,16 @@ export const WAH_TOKENS = {
     }
   },
   typography: {
-    wahDisplay: "'MainFont', 'AdobeArabic', serif",
-    wahHeading: "'MainFont', 'AdobeArabic', serif",
-    wahBody: "'AdobeArabic', system-ui, sans-serif",
-    fontHeritage: "'MainFont', 'AdobeArabic', serif",
-    fontBody: "'AdobeArabic', system-ui, sans-serif",
-    fontMain: "'AdobeArabic', system-ui, sans-serif",
-    fontSecondary: "'MainFont', 'AdobeArabic', serif",
+    wahDisplay: "'Cairo', system-ui, -apple-system, sans-serif",
+    wahHeading: "'Cairo', system-ui, -apple-system, sans-serif",
+    wahBody: "'Cairo', system-ui, -apple-system, sans-serif",
+    fontHeritage: "'Amiri', 'Cairo', serif",
+    fontBody: "'Cairo', system-ui, -apple-system, sans-serif",
+    fontMain: "'Cairo', system-ui, -apple-system, sans-serif",
+    fontSecondary: "'Amiri', 'Cairo', serif",
+    fontCairo: "'Cairo', system-ui, -apple-system, sans-serif",
+    fontAmiri: "'Amiri', 'Cairo', serif",
+    fontAlexandria: "'Alexandria', system-ui, -apple-system, sans-serif",
   },
   radius: {
     sm: '0.5rem', // 8px

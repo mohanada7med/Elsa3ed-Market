@@ -202,57 +202,75 @@ export default {
       },
       fontFamily: {
         sans: [
-          "'AdobeArabic'",
+          "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
         main: [
-          "''",
+          "'Cairo'",
           "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
+        cairo: [
+          "'Cairo'",
+          "system-ui",
+          "-apple-system",
           "sans-serif",
         ],
         secondary: [
-          "''",
-          "'AdobeArabic'",
+          "'Amiri'",
+          "'Cairo'",
           "serif",
         ],
         heritage: [
-          "''",
-          "'AdobeArabic'",
+          "'Amiri'",
+          "'Cairo'",
+          "serif",
+        ],
+        amiri: [
+          "'Amiri'",
+          "'Cairo'",
           "serif",
         ],
         serif: [
-          "''",
-          "'AdobeArabic'",
+          "'Amiri'",
+          "'Cairo'",
           "serif",
         ],
+        alexandria: [
+          "'Alexandria'",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
 
-        // Legacy aliases
-        shin: ["'MainFont'", "sans-serif"],
-        eskorte: ["'MainFont'", "'AdobeArabic'", "serif"],
-        effra: ["'AdobeArabic'", "sans-serif"],
+        // Brand & Legacy aliases
+        shin: ["'MainFont'", "'Cairo'", "sans-serif"],
+        eskorte: ["'Amiri'", "'Cairo'", "serif"],
+        effra: ["'Cairo'", "sans-serif"],
       },
 
       fontSize: {
         // Small text
-        '2xs': ['1.15rem', { lineHeight: '2.1rem' }], // 18.4px
-        'xs': ['1.3rem', { lineHeight: '2.2rem' }],   // 20.8px
+        '2xs': ['0.6875rem', { lineHeight: '1.1rem' }], // 11px
+        'xs': ['0.75rem', { lineHeight: '1.25rem' }],   // 12px
 
-        // Normal text
-        'sm': ['1.5rem', { lineHeight: '2.4rem' }],   // 24px
-        'base': ['1.7rem', { lineHeight: '2.6rem' }], // 27.2px
+        // Normal body & reading
+        'sm': ['0.875rem', { lineHeight: '1.4rem' }],   // 14px
+        'base': ['1rem', { lineHeight: '1.65rem' }],    // 16px
 
         // Large body / supporting text
-        'lg': ['1.9rem', { lineHeight: '2.8rem' }],   // 30.4px
-        'xl': ['2.15rem', { lineHeight: '3.1rem' }],  // 34.4px
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],  // 18px
+        'xl': ['1.25rem', { lineHeight: '1.85rem' }],   // 20px
 
-        // Headings — unchanged
-        '2xl': ['1.85rem', { lineHeight: '2.45rem' }],
-        '3xl': ['2.25rem', { lineHeight: '2.8rem' }],
-        '4xl': ['2.85rem', { lineHeight: '3.2rem' }],
-        '5xl': ['3.75rem', { lineHeight: '1.15' }],
-        '6xl': ['4.75rem', { lineHeight: '1.1' }],
+        // Headings & Editorial Display
+        '2xl': ['1.5rem', { lineHeight: '2.1rem' }],    // 24px
+        '3xl': ['1.875rem', { lineHeight: '2.4rem' }],  // 30px
+        '4xl': ['2.25rem', { lineHeight: '2.75rem' }],  // 36px
+        '5xl': ['3rem', { lineHeight: '1.2' }],         // 48px
+        '6xl': ['3.75rem', { lineHeight: '1.15' }],     // 60px
       },
 
       borderRadius: {

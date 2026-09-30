@@ -1,12 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================================
-   LOCAL BRAND FONTS
-   - Main Body Font: public/fonts/AdobeArabic-Regular.otf (الخط الرئيسي للموقع والنصوص)
-   - Secondary / Heading Font: public/fonts/mainfont.ttf (الخط الثاني للعناوين والتراث)
+   WAH BRAND TYPOGRAPHY SYSTEM
+   - Primary UI, Navigation & Headings: 'Cairo' (خط كيرو العصري الأنيق)
+   - Authentic Heritage, Stories & Quotes: 'Amiri' (خط أميري التراثي الأصيل)
+   - Contemporary Clean Sans: 'Alexandria' (خط الإسكندرية الهندسي)
+   - Traditional Stout Calligraphy Accent: 'MainFont' (Adobe SHIN Stout Bold)
    ========================================================================= */
 @font-face {
   font-family: 'MainFont';
@@ -75,12 +78,13 @@
   --color-wahDark-card: #3B1E0E;
   --color-wahDark-elevated: #4A2715;
 
-  /* WAH Brand Identity Typography (Inverted: AdobeArabic for Body, MainFont for Headings) */
-  --font-wah-main: 'AdobeArabic', system-ui, -apple-system, sans-serif;
-  --font-wah-secondary: 'MainFont', 'AdobeArabic', serif;
-  --font-wah-display: 'MainFont', 'AdobeArabic', serif;
-  --font-wah-heading: 'MainFont', 'AdobeArabic', serif;
-  --font-wah-body: 'AdobeArabic', system-ui, sans-serif;
+  /* WAH Brand Identity Typography */
+  --font-wah-main: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-secondary: 'Amiri', 'Cairo', serif;
+  --font-wah-display: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heading: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heritage: 'Amiri', 'Cairo', serif;
+  --font-wah-body: 'Cairo', system-ui, -apple-system, sans-serif;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -331,34 +335,58 @@
   --wah-info: var(--info);
 }
 
-/* WAH Typography Hierarchy (Inverted) */
+/* WAH Typography Hierarchy */
 .font-main {
-  font-family: 'AdobeArabic', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-secondary {
-  font-family: 'MainFont', 'AdobeArabic', serif;
+  font-family: 'Amiri', 'Cairo', serif;
+}
+
+.font-heritage {
+  font-family: 'Amiri', 'Cairo', serif;
+}
+
+.font-serif {
+  font-family: 'Amiri', 'Cairo', serif;
+}
+
+.font-cairo {
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+.font-amiri {
+  font-family: 'Amiri', 'Cairo', serif;
+}
+
+.font-alexandria {
+  font-family: 'Alexandria', system-ui, -apple-system, sans-serif;
+}
+
+.font-shin {
+  font-family: 'MainFont', 'Cairo', sans-serif;
 }
 
 .font-wah-display {
-  font-family: var(--font-wah-display);
-  letter-spacing: -0.02em;
+  font-family: var(--font-wah-display, 'Cairo', sans-serif);
+  letter-spacing: -0.01em;
 }
 
 .font-wah-heading {
-  font-family: var(--font-wah-heading);
+  font-family: var(--font-wah-heading, 'Cairo', sans-serif);
   letter-spacing: -0.01em;
 }
 
 .font-wah-body {
-  font-family: var(--font-wah-body);
+  font-family: var(--font-wah-body, 'Cairo', sans-serif);
 }
 
 @layer base {
 
   html {
-    font-size: 112.5%;
-    /* ~18px base root */
+    font-size: 100%;
+    /* Standard 16px root for clean, predictable responsive design */
     -webkit-tap-highlight-color: transparent;
     -webkit-text-size-adjust: 100%;
   }
@@ -380,11 +408,10 @@
   }
 
   body {
-    font-family: 'AdobeArabic', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 1.25rem;
-    /* ~22.5px base for normal body text */
-    line-height: 1.8;
-    letter-spacing: 0.01em;
+    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: normal;
     background-color: var(--background);
     color: var(--foreground);
     transition: background-color 0.25s ease, color 0.25s ease;
@@ -392,8 +419,7 @@
   }
 
   p {
-    font-size: 1.25rem;
-    line-height: 1.8;
+    line-height: 1.75;
   }
 
   html.dark,
@@ -412,9 +438,16 @@
   h2,
   h3,
   h4,
+  h5,
+  h6 {
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
   .font-heritage,
-  .font-secondary {
-    font-family: 'foooont', 'AdobeArabic', serif;
+  .font-secondary,
+  .font-serif {
+    font-family: 'Amiri', 'Cairo', serif;
     letter-spacing: normal;
   }
 }

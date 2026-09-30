@@ -50,12 +50,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
+        {/* Typography: Cairo (Primary UI & Display), Amiri (Heritage & Editorial), Alexandria (Modern Sans) */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          rel="preload"
-          href="/fonts/AdobeArabic-Regular.otf"
-          as="font"
-          type="font/otf"
-          crossOrigin="anonymous"
+          href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
         />
         <link
           rel="preload"
