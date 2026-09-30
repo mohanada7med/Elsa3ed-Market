@@ -77,7 +77,7 @@ export const FoodDetailPage: React.FC = () => {
       >
         <div className="space-y-4 text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent dark:border-[#C99444]" />
-          <p className="text-sm font-black tracking-wide text-espresso dark:text-cream">
+          <p className="text-sm font-main tracking-wide text-espresso dark:text-cream">
             بنجيب سر الاكله دى من بيوت الصعيد...
           </p>
         </div>

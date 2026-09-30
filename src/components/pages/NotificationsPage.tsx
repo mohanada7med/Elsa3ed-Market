@@ -59,7 +59,7 @@ export const NotificationsPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream font-serif">
+            <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream font-main">
               مركز الإشعارات والتنبيهات
             </h1>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-1 max-w-2xl">

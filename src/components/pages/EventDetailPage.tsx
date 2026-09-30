@@ -1423,7 +1423,7 @@ export const EventDetailPage: React.FC = () => {
                         <ImageIcon size={20} />
                       </span>
                       <div>
-                        <h3 className="text-xl font-black sm:text-2xl font-serif">
+                        <h3 className="text-xl sm:text-2xl font-main">
                           معرض لقطات من قلب الليلة والموسم
                         </h3>
                         <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">

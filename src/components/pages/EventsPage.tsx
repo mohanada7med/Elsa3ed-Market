@@ -138,6 +138,7 @@ export const EventsPage: React.FC = () => {
         transition-colors duration-500
         dark:bg-espresso-900
         dark:text-cream
+        font-cairo
       "
     >
       {/* Authentic WAH Brand Watermark (الأحداث والمواسم) */}
@@ -199,7 +200,7 @@ export const EventsPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
-            <div className="mt-1 text-xs sm:text-sm font-main">
+            <div className="mt-1 text-xs sm:text-sm font-main font-bold">
               {showAdminManager ? 'إدارة احتفالات وليالي الصعيد' : 'مواسم وليالي الصعيد'}
             </div>
           </div>
@@ -473,7 +474,7 @@ export const EventsPage: React.FC = () => {
                       <span>{featuredEvent.locationName || featuredEvent.governorateName}</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main font-black tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
                       {featuredEvent.title}
                     </h2>
 
@@ -712,7 +713,7 @@ export const EventsPage: React.FC = () => {
                 <div className="mb-2 text-[10px] font-bold tracking-[0.3em] text-primary uppercase">
                   Upper Egypt Layali & Festivals
                 </div>
-                <h2 className="text-3xl font-black sm:text-4xl font-serif">
+                <h2 className="text-3xl font-black sm:text-4xl font-main">
                   أجندة أفراح وليالي الصعيد
                 </h2>
               </div>
@@ -756,7 +757,7 @@ export const EventsPage: React.FC = () => {
                   className="h-44 sm:h-52 w-auto object-contain drop-shadow-md mb-3"
                 />
 
-                <h3 className="text-xl font-black">ملقيناش مواسم أو ليالي مطابقة لبحثك يا بوي</h3>
+                <h3 className="text-xl font-black font-main">ملقيناش مواسم أو ليالي مطابقة لبحثك يا بوي</h3>
                 <p className="mt-2 text-sm text-black/60 dark:text-white/60 max-w-md">
                   جرّب البحث بكلمة تانية زي "قنا" أو "بلح" أو "أبو الحجاج" أو غيّر الفلتر لتصفح باقي الاحتفالات.
                 </p>
@@ -921,7 +922,7 @@ export const EventsPage: React.FC = () => {
                         </div>
 
                         {/* Title */}
-                        <h3 className="text-xl sm:text-2xl font-black mb-3 transition-colors group-hover:text-primary font-serif leading-snug line-clamp-2">
+                        <h3 className="text-xl sm:text-2xl font-black mb-3 transition-colors group-hover:text-primary font-cairo leading-snug line-clamp-2">
                           {event.title}
                         </h3>
 
@@ -995,7 +996,7 @@ export const EventsPage: React.FC = () => {
                     max-w-4xl
                     text-3xl
                     font-black
-                    font-serif
+                    font-main
                     leading-tight
                     tracking-[-0.04em]
                     sm:text-5xl

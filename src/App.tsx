@@ -404,7 +404,7 @@ const MainContent: React.FC = () => {
                     <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl">
                       🔒
                     </div>
-                    <h2 className="text-xl font-bold font-serif">تسجيل الدخول لإتمام الطلب</h2>
+                    <h2 className="text-xl font-bold font-main">تسجيل الدخول لإتمام الطلب</h2>
                     <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
                       يرجى تسجيل الدخول أو إنشاء حساب جديد لحفظ بيانات الشحن ومتابعة حالة طلبك التراثي.
                     </p>

@@ -189,7 +189,7 @@ export const ReelFeed: React.FC<ReelFeedProps> = ({
       <div className="relative w-full h-full sm:max-w-[440px] sm:h-[min(94dvh,880px)] sm:rounded-3xl overflow-hidden shadow-2xl bg-black border sm:border-white/10 flex flex-col">
         <div
           ref={containerRef}
-          className="reels-scroll-container w-full h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth scrollbar-none"
+          className="reels-scroll-container w-full h-full overflow-y-scroll snap-y snap-mandatory scrollbar-none"
           style={{
             height: '100%',
             WebkitOverflowScrolling: 'touch',

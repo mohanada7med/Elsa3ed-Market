@@ -35,7 +35,7 @@ export const ForbiddenPage: React.FC<ForbiddenPageProps> = ({ title, message }) 
           كود الخطأ: 403 Forbidden
         </span>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream mb-3 font-serif">
+        <h1 className="text-2xl sm:text-3xl font-black text-espresso dark:text-cream mb-3 font-main">
           {defaultTitle}
         </h1>
 

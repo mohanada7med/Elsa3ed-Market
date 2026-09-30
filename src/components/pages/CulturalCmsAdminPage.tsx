@@ -260,7 +260,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
           <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto text-2xl">
             🛡️
           </div>
-          <h2 className="text-xl font-bold font-serif">منطقة إدارية مقيدة</h2>
+          <h2 className="text-xl font-bold font-main">منطقة إدارية مقيدة</h2>
           <p className="text-xs text-black/60 dark:text-white/60 leading-relaxed">
             نظام إدارة وتوثيق محافظات وه (Governorate CMS) مخصص لصلاحيات الإدارة العليا فقط. يرجى تسجيل الدخول بالحساب الإداري المصرح له.
           </p>
@@ -856,7 +856,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
               <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
                 <div>
-                  <h3 className="text-lg font-bold font-serif">الملف التعريفي الشامل لمحافظة {activeGov.name}</h3>
+                  <h3 className="text-lg font-bold font-main">الملف التعريفي الشامل لمحافظة {activeGov.name}</h3>
                   <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">يمكن للإدارة تعديل كافة بيانات المحافظة مباشرة وحفظها في قاعدة البيانات.</p>
                 </div>
                 <button
@@ -929,7 +929,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               {/* Cities Section */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                  <h3 className="text-base font-bold font-main flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />
                     <span>مدن ومراكز محافظة {activeGov.name} ({cities.length})</span>
                   </h3>
@@ -973,7 +973,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               {/* Villages Section */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                  <h3 className="text-base font-bold font-main flex items-center gap-2">
                     <Compass className="w-4 h-4 text-primary" />
                     <span>القرى والنجوع التراثية ({villages.length})</span>
                   </h3>
@@ -1354,7 +1354,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               {/* Seasons Section */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                  <h3 className="text-base font-bold font-main flex items-center gap-2">
                     <Wheat className="w-4 h-4 text-amber-500" />
                     <span>مواسم الحصاد والتراث التلقائي ({seasons.length})</span>
                   </h3>
@@ -1416,7 +1416,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               {/* Cultural Events & Moulids Section (احتفالات وليالي الصعيد والموالد) */}
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                  <h3 className="text-base font-bold font-main flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-primary" />
                     <span>احتفالات وليالي وموالد الصعيد التراثية ({events.length})</span>
                   </h3>
@@ -1533,7 +1533,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4 mb-4">
                   <div>
-                    <h3 className="text-base font-bold font-serif">منتجات سوق وه المصنوعة في {activeGov.name} ({products.length})</h3>
+                    <h3 className="text-base font-bold font-main">منتجات سوق وه المصنوعة في {activeGov.name} ({products.length})</h3>
                     <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">المنتجات المرتبطة بحرفيي وتجار هذه المحافظة في المتجر المباشر.</p>
                   </div>
                 </div>
@@ -1572,7 +1572,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
             <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 shadow-lg backdrop-blur-xl space-y-4">
               <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
                 <div>
-                  <h3 className="text-base font-bold font-serif flex items-center gap-2">
+                  <h3 className="text-base font-bold font-main flex items-center gap-2">
                     <MapIcon className="w-4 h-4 text-primary" />
                     <span>الخريطة التفاعلية لمحافظة {activeGov.name}</span>
                   </h3>
@@ -1647,7 +1647,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
           <div className="bg-white/95 dark:bg-espresso-900/95 rounded-[2rem] p-6 sm:p-8 max-w-xl w-full border border-black/10 dark:border-white/10 shadow-2xl space-y-5 backdrop-blur-2xl">
             <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-4">
               <div>
-                <h3 className="text-lg font-bold font-serif">إضافة محتوى لمحافظة {activeGov.name}</h3>
+                <h3 className="text-lg font-bold font-main">إضافة محتوى لمحافظة {activeGov.name}</h3>
                 <p className="text-xs text-black/60 dark:text-white/60 mt-0.5">اختر نوع الكيان المطلوب إضافته وتوثيقه في قاعدة البيانات:</p>
               </div>
               <button type="button" onClick={() => setIsActionCenterOpen(false)} className="p-1.5 rounded-lg text-black/50 dark:text-white/50 hover:bg-black/5 cursor-pointer">
@@ -1823,7 +1823,7 @@ const RelationshipManagerSection: React.FC<RelationshipManagerProps> = ({
   return (
     <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
       <div className="border-b border-black/10 dark:border-white/10 pb-4">
-        <h3 className="text-base font-bold font-serif flex items-center gap-2">
+        <h3 className="text-base font-bold font-main flex items-center gap-2">
           <LinkIcon className="w-4 h-4 text-primary" />
           <span>مدير شبكة العلاقات التراثية الذكية ({governorate.name})</span>
         </h3>
@@ -1939,7 +1939,7 @@ const PendingReviewSection: React.FC<PendingReviewSectionProps> = ({
   return (
     <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg backdrop-blur-xl">
       <div className="border-b border-black/10 dark:border-white/10 pb-4">
-        <h3 className="text-base font-bold font-serif flex items-center gap-2">
+        <h3 className="text-base font-bold font-main flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-amber-500" />
           <span>طابور مراجعة المحتوى وتدقيق المصادر ({pendingItems.length})</span>
         </h3>
@@ -2375,7 +2375,7 @@ const EntityCreationModal: React.FC<EntityCreationModalProps> = ({
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 overflow-y-auto">
       <div className="bg-white dark:bg-[#181411] text-stone-900 dark:text-stone-100 rounded-none sm:rounded-[2rem] p-4 sm:p-7 max-w-2xl w-full h-full sm:h-auto max-h-[92dvh] border border-stone-200 dark:border-stone-800 shadow-2xl backdrop-blur-2xl my-auto overflow-y-auto">
         <div className="flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800 mb-5">
-          <h3 className="text-lg font-bold font-serif flex items-center gap-2 text-stone-900 dark:text-stone-100">
+          <h3 className="text-lg font-bold font-main flex items-center gap-2 text-stone-900 dark:text-stone-100">
             <Plus className="w-4 h-4 text-primary" />
             <span>{editingItem ? 'تعديل السجل في MongoDB' : `توثيق ${entityType} جديد في قاعدة البيانات`}</span>
           </h3>

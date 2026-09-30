@@ -283,7 +283,7 @@ export const AdminReportsManager: React.FC<AdminReportsManagerProps> = ({ onTick
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-black text-espresso dark:text-cream font-serif">
+                <h2 className="text-xl sm:text-2xl font-black text-espresso dark:text-cream font-main">
                   إدارة البلاغات والشكاوى والدعم الفني
                 </h2>
                 <p className="text-xs text-black/60 dark:text-white/60 font-medium">

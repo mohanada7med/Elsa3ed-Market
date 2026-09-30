@@ -75,7 +75,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               <AlertTriangle className="w-8 h-8" aria-hidden="true" />
             </div>
 
-            <h1 className="text-2xl font-black text-espresso dark:text-cream mb-2 font-serif">
+            <h1 className="text-2xl font-black text-espresso dark:text-cream mb-2 font-main">
               {isChunkError ? 'تحديث جديد للمنصة' : 'عذراً، حدث خطأ غير متوقع'}
             </h1>
 

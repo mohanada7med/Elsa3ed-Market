@@ -632,7 +632,7 @@ export const SellerProfileView: React.FC = () => {
                   <Store className="w-9 h-9 text-foreground-disabled opacity-50" />
                 </div>
 
-                <h4 className="mt-6 font-black text-lg font-serif">
+                <h4 className="mt-6 font-black text-lg font-main">
                   الصانع شغال على قطع جديدة
                 </h4>
 

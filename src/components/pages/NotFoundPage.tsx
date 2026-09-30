@@ -16,7 +16,7 @@ export const NotFoundPage: React.FC = () => {
           كود الخطأ: 404
         </span>
 
-        <h1 className="text-3xl sm:text-4xl font-black text-espresso dark:text-cream mb-3 font-serif">
+        <h1 className="text-3xl sm:text-4xl font-black text-espresso dark:text-cream mb-3 font-main">
           الصفحة دي مش موجودة
         </h1>
 

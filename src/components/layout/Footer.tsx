@@ -156,7 +156,7 @@ export const Footer: React.FC = () => {
 
         {/* Authentic WAH Heritage Icons Ambient Wallpaper (أكبر شوية في الخلفية كختم ونقشة نهاية الموقع) */}
         <div
-          className="absolute inset-0 opacity-[0.055] mix-blend-screen"
+          className="absolute inset-0 opacity-[0.022] mix-blend-screen"
           style={{
             backgroundImage: "url('/pattern/pat2.png')",
             backgroundRepeat: 'repeat',
@@ -174,7 +174,7 @@ export const Footer: React.FC = () => {
 
             <div className="lg:col-span-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <div>
-                <h3 className="text-2xl sm:text-3xl font-black font-heritage tracking-tight">
+                <h3 className="text-2xl sm:text-3xl font-cairo tracking-tight">
                   عندك ورشة أو نول في الصعيد؟
                 </h3>
                 <p className="text-xl sm:text-xl text-white/70 mt-1 max-w-xl">
@@ -199,7 +199,7 @@ export const Footer: React.FC = () => {
                 onClick={() => setShowIntroVideo(true)}
                 className="px-7 py-4 rounded-2xl bg-white/[0.04] border border-primary/30 hover:border-primary hover:bg-primary/15 text-xs sm:text-sm font-bold text-white hover:text-primary-hover transition-all duration-200 flex items-center gap-2.5 cursor-pointer backdrop-blur-xl active:scale-95 shadow-lg hover:shadow-[0_0_20px_rgba(154,106,53,0.2)]"
               >
-                <Film className="w-4 h-4 text-primary-hover" />
+                <Film className="w-4 h-4 text-white" />
                 <span>اتفرج على فيلم وه</span>
               </button>
             </div>
@@ -247,8 +247,8 @@ export const Footer: React.FC = () => {
 
           {/* 2. خريطة بوابات المنصة */}
           <div className="lg:col-span-5 space-y-4">
-            <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage pb-2 border-b border-white/10 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
+            <h4 className="text-xs font-main tracking-wider text-primary-hover uppercase  pb-2 border-b border-white/10 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-white" />
               <span className="text-white">أبواب ودليل منصة وه</span>
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5">
@@ -259,7 +259,7 @@ export const Footer: React.FC = () => {
                   onClick={() => setActivePage(portal.page as any)}
                   className="group flex items-center gap-2 text-xs text-white/75 hover:text-primary transition-colors duration-200 cursor-pointer text-right py-1"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5 text-primary shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
+                  <ChevronLeft className="w-3.5 h-3.5 text-white shrink-0 transition-transform duration-200 group-hover:-translate-x-1" />
                   <span className="truncate">{portal.label}</span>
                 </button>
               ))}
@@ -271,7 +271,7 @@ export const Footer: React.FC = () => {
 
             {/* خدمات المقتني */}
             <div className="space-y-3">
-              <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage pb-2 border-b border-white/10">
+              <h4 className="text-xs tracking-wider text-white uppercase font-main pb-2 border-b border-white/10">
                 خدماتك وحسابك
               </h4>
               <div className="flex flex-wrap gap-2">
@@ -288,7 +288,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowIntroVideo(true)}
-                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-primary-hover hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
                   <Film className="w-3.5 h-3.5" />
                   <span>فيلم وه التوثيقي</span>
@@ -300,7 +300,7 @@ export const Footer: React.FC = () => {
                       window.dispatchEvent(new CustomEvent('play-wah-intro'));
                     }
                   }}
-                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-primary-hover hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-primary/30 hover:border-primary text-xs text-white/80 hover:bg-primary hover:text-white font-bold transition-all duration-200 cursor-pointer flex items-center gap-1.5 active:scale-95"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>بداية وه (WahIntro)</span>
@@ -310,7 +310,7 @@ export const Footer: React.FC = () => {
 
             {/* نشرة بريد الجنوب */}
             <div className="space-y-3 pt-2">
-              <h4 className="text-xs font-extrabold tracking-wider text-primary-hover uppercase font-heritage">
+              <h4 className="text-xs font-main tracking-wider text-white uppercase">
                 جوابات وحكاوي الجنوب
               </h4>
               <p className="text-xs text-white/70">
@@ -361,7 +361,7 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center gap-3 text-xs text-white/60">
             <p className="font-medium tracking-wide">
               كل الحقوق محفوظة © {new Date().getFullYear()} —{' '}
-              <span className="text-primary-hover hover:text-primary font-bold cursor-pointer transition-colors duration-200">
+              <span className="text-white hover:text-primary font-bold cursor-pointer transition-colors duration-200">
                 مهند أحمد
               </span>{' '}
               &nbsp;|&nbsp; منصة{' '}
@@ -403,11 +403,11 @@ export const Footer: React.FC = () => {
               حرف يدوية أصيلة 100%
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <Truck className="w-3.5 h-3.5 text-primary-hover" />
+              <Truck className="w-3.5 h-3.5 text-white" />
               شحن وتغليف آمن للمحافظات
             </span>
             <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-white/10 bg-white/[0.03] text-[11px] font-bold backdrop-blur-md">
-              <Store className="w-3.5 h-3.5 text-primary-hover" />
+              <Store className="w-3.5 h-3.5 text-white" />
               دعم مباشر لشيوخ الصنعة
             </span>
           </div>

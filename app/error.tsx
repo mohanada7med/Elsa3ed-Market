@@ -22,7 +22,7 @@ export default function ErrorPage({
           <AlertTriangle className="w-8 h-8" aria-hidden="true" />
         </div>
 
-        <h1 className="text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] mb-2 font-serif">
+        <h1 className="text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] mb-2 font-main">
           عذراً، حدث خطأ غير متوقع
         </h1>
 

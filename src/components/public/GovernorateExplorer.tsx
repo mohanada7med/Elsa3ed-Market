@@ -441,7 +441,7 @@ export const GovernorateExplorer: React.FC = () => {
                       <div className="text-white/70 text-xs mb-1">
                         {gov.capitalCity}
                       </div>
-                      <h3 className="text-2xl font-bold font-serif leading-snug drop-shadow-md">
+                      <h3 className="text-2xl font-bold font-main leading-snug drop-shadow-md">
                         {gov.name}
                       </h3>
                     </div>
@@ -633,7 +633,7 @@ export const GovernorateExplorer: React.FC = () => {
                   <span className="text-xs font-bold text-primary">
                     من كلام أهلها
                   </span>
-                  <p className="mt-2 text-xl font-bold leading-9 font-serif">
+                  <p className="mt-2 text-xl font-bold leading-9 font-main">
                     {previewGov.folkloreProverb}
                   </p>
                 </div>

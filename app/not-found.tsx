@@ -11,7 +11,7 @@ export default function NotFound() {
           className="h-44 sm:h-52 w-auto object-contain mx-auto mb-4 drop-shadow-xl"
         />
 
-        <h1 className="text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] mb-2 font-serif">
+        <h1 className="text-2xl font-bold text-[#3B1E0E] dark:text-[#FFF9EE] mb-2 font-main">
           تايه في سكك الصعيد يا ولد عمي؟ (404)
         </h1>
 

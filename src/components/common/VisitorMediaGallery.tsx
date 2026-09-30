@@ -352,7 +352,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
             <Sparkles className="w-4 h-4" />
             <span>معرض وسائط التوثيق</span>
           </div>
-          <h3 className="font-serif text-2xl font-bold text-black/85 dark:text-white/85 sm:text-3xl">
+          <h3 className="font-main text-2xl font-bold text-black/85 dark:text-white/85 sm:text-3xl">
             {title}
           </h3>
         </div>
@@ -708,7 +708,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
                 <span className="rounded-full border border-primary/30 bg-primary/40 px-3 py-1 font-mono text-xs font-bold text-white shadow-sm backdrop-blur-md">
                   {lightboxIndex + 1} / {localGallery.length}
                 </span>
-                <span className="hidden sm:inline-block text-xs font-bold text-white/90 truncate max-w-xs font-serif">
+                <span className="hidden sm:inline-block text-xs font-bold text-white/90 truncate max-w-xs font-main">
                   {entityTitle || 'الأرشيف البصري'}
                 </span>
               </div>
@@ -819,7 +819,7 @@ export const VisitorMediaGallery: React.FC<VisitorMediaGalleryProps> = ({
             <div className="flex items-center justify-between border-b border-black/10 bg-white/80 p-5 dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <Sliders className="h-4 w-4" />
-                <h3 className="font-serif text-base text-black/85 dark:text-white/85">
+                <h3 className="font-main text-base text-black/85 dark:text-white/85">
                   إدارة وسائط المعرض
                 </h3>
               </div>

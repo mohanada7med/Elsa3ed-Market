@@ -165,7 +165,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
   return createPortal(
     <div
       dir="rtl"
-      className="fixed inset-0 z-9999999 flex flex-col justify-between bg-black/95 text-white select-none overflow-hidden backdrop-blur-2xl animate-in fade-in duration-300"
+      className="fixed inset-0 z-9999999 flex flex-col justify-between bg-black/95 text-white select-none overflow-hidden backdrop-blur-2xl animate-in fade-in duration-300 font-cairo"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -197,7 +197,7 @@ export const EventImageLightboxModal: React.FC<EventImageLightboxProps> = ({
             )}
           </div>
 
-          <h2 className="hidden sm:block text-sm font-bold text-white/90 truncate max-w-md font-serif">
+          <h2 className="hidden sm:block text-sm font-bold text-white/90 truncate max-w-md font-main">
             {title}
           </h2>
         </div>

@@ -45,10 +45,27 @@ export const CraftReelsPage: React.FC = () => {
     confirmModal
   } = useApp();
 
-  // View Mode: 'feed' (immersive full-screen, default) or 'grid' (catalog view)
-  const [viewMode, setViewMode] = useState<'feed' | 'grid'>('feed');
-  const [reels, setReels] = useState<CraftReel[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // View Mode: 'grid' (catalog view, default for fast browsing) or 'feed' (immersive full-screen)
+  const [viewMode, setViewMode] = useState<'feed' | 'grid'>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const viewParam = params.get('view');
+      const targetReelId = params.get('reel') || params.get('reelId') || sessionStorage.getItem('wah_selected_reel_id');
+      if (targetReelId || viewParam === 'feed') return 'feed';
+      if (viewParam === 'grid') return 'grid';
+    }
+    return 'grid';
+  });
+
+  const [reels, setReels] = useState<CraftReel[]>(() => {
+    const cached = craftReelsService.getReels();
+    return Array.isArray(cached) && cached.length > 0 ? cached : [];
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    const cached = craftReelsService.getReels();
+    return !cached || cached.length === 0;
+  });
+  const [visibleCount, setVisibleCount] = useState(18);
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
   const [selectedContentType, setSelectedContentType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -88,12 +105,18 @@ export const CraftReelsPage: React.FC = () => {
   };
 
   const loadReelsFromDb = async () => {
-    setIsLoading(true);
+    if (reels.length === 0) {
+      setIsLoading(true);
+    }
     try {
       const dbReels = await craftReelsService.fetchReelsFromDb();
-      setReels(dbReels);
+      if (Array.isArray(dbReels) && dbReels.length > 0) {
+        setReels(dbReels);
+      }
     } catch {
-      setReels(craftReelsService.getReels());
+      if (reels.length === 0) {
+        setReels(craftReelsService.getReels());
+      }
     } finally {
       setIsLoading(false);
     }
@@ -109,7 +132,7 @@ export const CraftReelsPage: React.FC = () => {
     }
   }, [currentUser?.id, currentUser?.role]);
 
-  // Handle deep-link direct open or view mode query parameter
+  // Handle deep-link direct open or view mode query parameter on initial mount only
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
@@ -119,20 +142,18 @@ export const CraftReelsPage: React.FC = () => {
       params.get('reelId') ||
       sessionStorage.getItem('wah_selected_reel_id');
 
-    if (viewParam === 'grid') {
-      setViewMode('grid');
-    } else {
-      setViewMode('feed');
-    }
-
     if (targetReelId) {
       setSelectedReelId(targetReelId);
       setViewMode('feed');
       try {
         sessionStorage.removeItem('wah_selected_reel_id');
       } catch { }
+    } else if (viewParam === 'feed') {
+      setViewMode('feed');
+    } else if (viewParam === 'grid') {
+      setViewMode('grid');
     }
-  }, [reels.length]);
+  }, []);
 
   // Clean scroll management for immersive feed view mode
   useEffect(() => {
@@ -185,18 +206,18 @@ export const CraftReelsPage: React.FC = () => {
       name: 'all',
       label: 'كل الصعيد',
       tag: 'جميع الحكايات',
-      img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png'
+      img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788790207/d13c685b-4403-4983-96fe-49f3b7a925c3.png'
     },
-    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/aswan/cover.jpg' },
-    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/luxor/cover.jpg' },
-    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015791/WAH/provinces/qena/cover.jpg' },
-    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015790/WAH/provinces/sohag/cover.jpg' },
-    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015789/WAH/provinces/asyut/cover.jpg' },
-    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788015793/WAH/provinces/minya/cover.jpg' },
-    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788699005/WAH/provinces/beni-suef/cover.jpg' },
-    { name: 'الوادي الجديد', label: 'الوادي الجديد', tag: 'سحر الطبيعة والعيون', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1788715713/WAH/heritage-places/white-desert-farafra/img_2340_1788715713136_1exk.jpg' },
-    { name: 'البحر الأحمر', label: 'البحر الأحمر', tag: 'بوابة قوافل الصعيد وحصن القصير التاريخي', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789125643/b615782b-1a99-4025-90b0-40d7f1696b9c.png' },
-    { name: 'الفيوم', label: 'الفيوم', tag: 'واحة الخضرة والمية العذبة', img: 'https://res.cloudinary.com/kuana1nl/image/upload/v1789125631/f7be86e1-059c-4bbe-9914-44b2e3ffe16e.png' }
+    { name: 'أسوان', label: 'أسوان', tag: 'بلاد الذهب والنيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/aswan/cover.jpg' },
+    { name: 'الأقصر', label: 'الأقصر', tag: 'عاصمة الآثار', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/luxor/cover.jpg' },
+    { name: 'قنا', label: 'قنا', tag: 'دندرة والتاريخ', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015791/WAH/provinces/qena/cover.jpg' },
+    { name: 'سوهاج', label: 'سوهاج', tag: 'أبيدوس والتراث الأصيل', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015790/WAH/provinces/sohag/cover.jpg' },
+    { name: 'أسيوط', label: 'أسيوط', tag: 'قلب الصعيد النابض', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015789/WAH/provinces/asyut/cover.jpg' },
+    { name: 'المنيا', label: 'المنيا', tag: 'عروس الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788015793/WAH/provinces/minya/cover.jpg' },
+    { name: 'بني سويف', label: 'بني سويف', tag: 'بوابة الصعيد', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788699005/WAH/provinces/beni-suef/cover.jpg' },
+    { name: 'الوادي الجديد', label: 'الوادي الجديد', tag: 'سحر الطبيعة والعيون', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1788715713/WAH/heritage-places/white-desert-farafra/img_2340_1788715713136_1exk.jpg' },
+    { name: 'البحر الأحمر', label: 'البحر الأحمر', tag: 'بوابة قوافل الصعيد وحصن القصير التاريخي', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1789125643/b615782b-1a99-4025-90b0-40d7f1696b9c.png' },
+    { name: 'الفيوم', label: 'الفيوم', tag: 'واحة الخضرة والمية العذبة', img: 'https://res.cloudinary.com/kuana1nl/image/upload/f_auto,q_auto,w_180,c_fill/v1789125631/f7be86e1-059c-4bbe-9914-44b2e3ffe16e.png' }
   ];
 
   // Filtered Reels
@@ -229,6 +250,11 @@ export const CraftReelsPage: React.FC = () => {
       return matchGov && matchContent && matchSearch;
     });
   }, [reels, selectedGovernorate, selectedContentType, searchQuery]);
+
+  // Reset pagination on filter change
+  useEffect(() => {
+    setVisibleCount(18);
+  }, [selectedGovernorate, selectedContentType, searchQuery]);
 
   // Switch to feed starting at a specific reel
   const openReelInFeed = (reelId: string) => {
@@ -550,6 +576,7 @@ export const CraftReelsPage: React.FC = () => {
         text-espresso
         dark:bg-espresso-900
         dark:text-cream
+        font-cairo
       "
     >
       <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
@@ -572,7 +599,7 @@ export const CraftReelsPage: React.FC = () => {
                 <Sparkles size={13} className="text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-wider text-primary">وه Stories</span>
               </div>
-              <h2 className="text-xs sm:text-sm font-black text-espresso dark:text-cream">
+              <h2 className="text-xs sm:text-sm font-main font-black text-espresso dark:text-cream">
                 معرض حكايات الصعيد ({filteredReels.length} فيديو)
               </h2>
             </div>
@@ -816,29 +843,30 @@ export const CraftReelsPage: React.FC = () => {
         ) : (
           <div>
             {filteredReels.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-                {filteredReels.map((reel) => {
-                  const categoryLabel =
-                    contentTypesList.find((c) => c.id === reel.contentType)?.label ||
-                    reel.craftType ||
-                    'حكاية';
-                  const displayLoc = reel.location || reel.governorate;
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+                  {filteredReels.slice(0, visibleCount).map((reel) => {
+                    const categoryLabel =
+                      contentTypesList.find((c) => c.id === reel.contentType)?.label ||
+                      reel.craftType ||
+                      'حكاية';
+                    const displayLoc = reel.location || reel.governorate;
 
-                  return (
-                    <div
-                      key={reel.id}
-                      id={`reel-card-${reel.id}`}
-                      onClick={() => openReelInFeed(reel.id)}
-                      className="group relative aspect-9/16 rounded-[1.5rem] overflow-hidden bg-black cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-black/10 dark:border-white/10"
-                    >
-                      {/* Poster Image / Video Preview */}
-                      <img
-                        src={getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 600)}
-                        alt={reel.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                      />
+                    return (
+                      <div
+                        key={reel.id}
+                        id={`reel-card-${reel.id}`}
+                        onClick={() => openReelInFeed(reel.id)}
+                        className="group relative aspect-9/16 rounded-[1.5rem] overflow-hidden bg-black cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-black/10 dark:border-white/10"
+                      >
+                        {/* Poster Image / Video Preview */}
+                        <img
+                          src={getOptimizedVideoPoster(reel.videoUrl, reel.posterUrl || reel.productImage, 340)}
+                          alt={reel.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                        />
 
                       {/* Gradient Dark Overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/50 group-hover:via-black/25 transition-colors" />
@@ -918,6 +946,19 @@ export const CraftReelsPage: React.FC = () => {
                   );
                 })}
               </div>
+
+              {filteredReels.length > visibleCount && (
+                <div className="mt-12 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((prev) => prev + 18)}
+                    className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-espresso text-cream dark:bg-cream dark:text-espresso font-main font-bold text-xs sm:text-sm hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all shadow-md cursor-pointer hover:scale-105 active:scale-95"
+                  >
+                    <span>عرض المزيد من الحكايات ({filteredReels.length - visibleCount} إضافية)</span>
+                  </button>
+                </div>
+              )}
+            </>
             ) : (
               <div className="bg-white/80 dark:bg-espresso-900/90 rounded-[2rem] p-12 text-center border border-black/10 dark:border-white/10 space-y-4 backdrop-blur-xl">
                 <Film className="w-12 h-12 text-black/30 dark:text-white/30 mx-auto" />

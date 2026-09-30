@@ -1403,7 +1403,7 @@ export const Header: React.FC<HeaderProps> = ({ className = '' }) => {
                   <p className="text-xs font-bold" style={{ color: '#C99444' }}>
                     منصة وه
                   </p>
-                  <h2 className="mt-1 text-xl font-bold font-serif">بتدور على إيه؟</h2>
+                  <h2 className="mt-1 text-xl font-bold font-main">بتدور على إيه؟</h2>
                 </div>
                 <button
                   type="button"

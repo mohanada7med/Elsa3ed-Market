@@ -188,11 +188,6 @@ export const ReelItem: React.FC<ReelItemProps> = ({
     if (currentUser?.id && currentUser.id !== 'guest-visitor' && currentUser.role !== 'guest') {
       const userLikes = craftReelsService.getUserLikedReels(currentUser.id);
       setIsLiked(userLikes.includes(reel.id) || Boolean((reel as any).isLiked));
-
-      // Asynchronously fetch fresh likes from server for this user
-      craftReelsService.fetchUserLikedReels(currentUser).then((freshLikes) => {
-        setIsLiked(freshLikes.includes(reel.id));
-      }).catch(() => { });
     } else {
       setIsLiked(false);
     }
@@ -628,31 +623,20 @@ export const ReelItem: React.FC<ReelItemProps> = ({
           CINEMATIC BACKDROP
       ===================================================== */}
 
-      <div className="absolute inset-0 overflow-hidden">
-
-        <motion.img
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img
           src={safePosterUrl}
           alt=""
           aria-hidden="true"
-          initial={{
-            scale: 1.15,
-            opacity: 0.25
-          }}
-          animate={{
-            scale: isActive ? 1.08 : 1.15,
-            opacity: isActive ? 0.38 : 0.2
-          }}
-          transition={{
-            duration: 1.2,
-            ease: 'easeOut'
-          }}
+          loading="lazy"
           className="
             absolute
             inset-0
             w-full
             h-full
             object-cover
-            blur-3xl
+            blur-2xl
+            opacity-30
           "
         />
 
@@ -929,7 +913,7 @@ export const ReelItem: React.FC<ReelItemProps> = ({
 
           {/* VIDEO */}
 
-          <motion.video
+          <video
             ref={videoRef}
             src={currentVideoSrc}
             poster={safePosterUrl}
@@ -950,60 +934,18 @@ export const ReelItem: React.FC<ReelItemProps> = ({
             }}
             onError={handleVideoError}
             onTimeUpdate={handleTimeUpdate}
-            initial={{
-              scale: 1.04,
-              opacity: 0
-            }}
-            animate={{
-              scale: isEntering ? 1.035 : 1,
-              opacity: isPlaying ? 1 : 0.98
-            }}
-            transition={{
-              scale: {
-                duration: 1.1,
-                ease: [0.22, 1, 0.36, 1]
-              },
-              opacity: {
-                duration: 0.45
-              }
-            }}
             className="
               absolute
               inset-0
               w-full
               h-full
               object-cover
+              transition-opacity
+              duration-300
             "
-          />
-
-          {/* =================================================
-              CINEMATIC LIGHT
-          ================================================= */}
-
-          <motion.div
-            animate={{
-              x: ['-120%', '120%']
+            style={{
+              opacity: isPlaying ? 1 : 0.98
             }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              repeatDelay: 4,
-              ease: 'easeInOut'
-            }}
-            className="
-              absolute
-              top-0
-              bottom-0
-              left-0
-              w-[35%]
-              z-[7]
-              pointer-events-none
-              bg-gradient-to-r
-              from-transparent
-              via-white/[0.045]
-              to-transparent
-              skew-x-[-15deg]
-            "
           />
 
           {/* =================================================

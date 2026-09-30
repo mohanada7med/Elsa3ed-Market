@@ -302,7 +302,7 @@ export const BuyerAccountPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-right gap-5">
             {/* User Avatar with Cloudinary Integration */}
             <div className="relative group shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#6B3A1F] text-[#FFF9EE] flex items-center justify-center font-black text-3xl font-serif shadow-md border-2 border-black/10 dark:border-white/10">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-[#6B3A1F] text-[#FFF9EE] flex items-center justify-center font-black text-3xl font-main shadow-md border-2 border-black/10 dark:border-white/10">
                 {isUploadingImage || isRemovingImage ? (
                   <div className="w-full h-full flex flex-col items-center justify-center bg-black/60 text-white">
                     <Loader2 className="w-6 h-6 animate-spin mb-1" />

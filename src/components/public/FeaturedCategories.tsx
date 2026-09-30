@@ -111,7 +111,7 @@ export const FeaturedCategories: React.FC = () => {
                   0{idx + 1}
                 </span>
 
-                <h3 className="text-white font-bold text-lg font-serif tracking-wide [writing-mode:vertical-rl] rotate-180 select-none">
+                <h3 className="text-white font-bold text-lg font-main tracking-wide [writing-mode:vertical-rl] rotate-180 select-none">
                   {cat.name}
                 </h3>
 
@@ -153,7 +153,7 @@ export const FeaturedCategories: React.FC = () => {
                         {cat.nameEn || 'Upper Egypt Craft'}
                       </span>
 
-                      <h3 className="text-3xl sm:text-4xl font-black text-white font-serif mb-3 leading-tight">
+                      <h3 className="text-3xl sm:text-4xl font-black text-white font-main mb-3 leading-tight">
                         {cat.name}
                       </h3>
 
@@ -206,7 +206,7 @@ export const FeaturedCategories: React.FC = () => {
             </div>
 
             <div className="absolute bottom-3 inset-x-3 text-right">
-              <h3 className="text-xl font-bold text-white font-serif mb-1">
+              <h3 className="text-xl font-bold text-white font-main mb-1">
                 {cat.name}
               </h3>
               <p className="text-xs text-white/70 line-clamp-1">

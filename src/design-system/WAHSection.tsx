@@ -66,7 +66,7 @@ export const WAHSection: React.FC<WAHSectionProps> = ({
                 </div>
               )}
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-espresso dark:text-cream font-serif tracking-tight leading-snug">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-espresso dark:text-cream font-main tracking-tight leading-snug">
                 {title}
               </h2>
 

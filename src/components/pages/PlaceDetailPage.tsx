@@ -172,6 +172,7 @@ export const PlaceDetailPage: React.FC = () => {
           dark:text-cream
           flex items-center justify-center
           px-5
+          font-cairo
         "
       >
         <div className="text-center">
@@ -201,6 +202,7 @@ export const PlaceDetailPage: React.FC = () => {
           dark:text-cream
           flex items-center justify-center
           px-5
+          font-cairo
         "
       >
         <div className="w-full max-w-md text-center">
@@ -215,7 +217,7 @@ export const PlaceDetailPage: React.FC = () => {
             <Landmark className="w-8 h-8 text-primary" />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-black mb-3">
+          <h2 className="text-2xl sm:text-3xl font-main font-black mb-3">
             المعلم غير موجود
           </h2>
 
@@ -282,6 +284,7 @@ export const PlaceDetailPage: React.FC = () => {
         dark:text-cream
         overflow-x-hidden
         selection:bg-primary/20
+        font-cairo
       "
     >
       {/* =========================================================
@@ -326,7 +329,7 @@ export const PlaceDetailPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH ARCHIVE
             </div>
-            <div className="mt-1 text-sm font-black">تفاصيل المعلم</div>
+            <div className="mt-1 text-sm font-main font-black">تفاصيل المعلم</div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -592,7 +595,7 @@ export const PlaceDetailPage: React.FC = () => {
                 {/* Title */}
                 <h1
                   className="
-                    font-serif font-black
+                    font-main font-black
                     text-white
                     text-[2.8rem]
                     leading-[0.98]
@@ -805,7 +808,7 @@ export const PlaceDetailPage: React.FC = () => {
                   <span className="w-10 h-px bg-primary/40" />
                 </div>
 
-                <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
+                <h2 className="font-main text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
                   حكاية <br />
                   <span className="text-primary">المكان</span>
                 </h2>
@@ -821,7 +824,7 @@ export const PlaceDetailPage: React.FC = () => {
                 <div className="absolute right-0 top-0 bottom-0 w-px bg-black/10 dark:bg-white/10" />
 
                 <div className="pr-6 sm:pr-9 lg:pr-14">
-                  <div className="text-lg sm:text-xl lg:text-3xl font-serif font-bold leading-[2] whitespace-pre-line break-words">
+                  <div className="text-lg sm:text-xl lg:text-3xl font-cairo font-bold leading-[2] whitespace-pre-line break-words">
                     {history}
                   </div>
 
@@ -831,7 +834,7 @@ export const PlaceDetailPage: React.FC = () => {
                         <Sparkles className="w-4 h-4" />
                         <span>القيمة والأهمية التاريخية</span>
                       </div>
-                      <p className="text-base sm:text-xl font-serif font-bold text-black/85 dark:text-white/85 leading-relaxed break-words">
+                      <p className="text-base sm:text-xl font-cairo font-bold text-black/85 dark:text-white/85 leading-relaxed break-words">
                         {place.significance}
                       </p>
                     </div>
@@ -854,7 +857,7 @@ export const PlaceDetailPage: React.FC = () => {
                     </span>
                     <span className="w-10 h-px bg-primary/40" />
                   </div>
-                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                  <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                     تفاصيل تستحق <span className="text-primary">التأمل</span>
                   </h2>
                 </div>
@@ -866,7 +869,7 @@ export const PlaceDetailPage: React.FC = () => {
                     key={index}
                     className="group py-6 sm:py-8 border-t border-black/10 dark:border-white/10 flex items-start gap-4 sm:gap-5"
                   >
-                    <span className="font-serif text-2xl sm:text-3xl font-black text-primary/40 group-hover:text-primary transition-colors">
+                    <span className="font-main text-2xl sm:text-3xl font-black text-primary/40 group-hover:text-primary transition-colors">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     <p className="text-sm sm:text-base font-bold leading-7 break-words flex-1">
@@ -891,7 +894,7 @@ export const PlaceDetailPage: React.FC = () => {
                 </span>
                 <span className="w-10 h-px bg-primary/40" />
               </div>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+              <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                 ذاكرة <span className="text-primary">بصرية</span>
               </h2>
             </div>
@@ -941,7 +944,7 @@ export const PlaceDetailPage: React.FC = () => {
                   Cinematic Archive
                 </span>
               </div>
-              <span className="text-xs font-serif italic text-black/40 dark:text-white/40">
+              <span className="text-xs font-cairo italic text-black/40 dark:text-white/40">
                 Visual Journey & Documentation
               </span>
             </div>
@@ -1011,7 +1014,7 @@ export const PlaceDetailPage: React.FC = () => {
                   </span>
                   <span className="w-10 h-px bg-primary/40" />
                 </div>
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                   دليل ومواعيد <span className="text-primary">الزيارة</span>
                 </h2>
                 <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
@@ -1208,7 +1211,7 @@ export const PlaceDetailPage: React.FC = () => {
                     </span>
                     <span className="w-10 h-px bg-primary/40" />
                   </div>
-                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                  <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                     العنوان <span className="text-primary">وكيفية الوصول</span>
                   </h2>
                   <p className="mt-5 text-sm leading-7 text-black/60 dark:text-white/60 max-w-md">
@@ -1310,7 +1313,7 @@ export const PlaceDetailPage: React.FC = () => {
                   </span>
                   <span className="w-10 h-px bg-primary/40" />
                 </div>
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                   خدمات ومرافق <span className="text-primary">الزوار</span>
                 </h2>
               </div>
@@ -1327,7 +1330,7 @@ export const PlaceDetailPage: React.FC = () => {
                       <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
                         <Users className="w-4 h-4" />
                       </div>
-                      <h3 className="font-bold text-base text-black/90 dark:text-white/90">
+                      <h3 className="font-main font-bold text-base text-black/90 dark:text-white/90">
                         {service.name}
                       </h3>
                     </div>
@@ -1352,7 +1355,7 @@ export const PlaceDetailPage: React.FC = () => {
                   </span>
                   <span className="w-10 h-px bg-primary/40" />
                 </div>
-                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black">
+                <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black">
                   فعاليات ومناسبات <span className="text-primary">المعلم</span>
                 </h2>
               </div>
@@ -1368,7 +1371,7 @@ export const PlaceDetailPage: React.FC = () => {
                     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                       <div className="flex items-center gap-2">
                         <PartyPopper className="w-5 h-5 text-primary" />
-                        <h3 className="font-bold text-lg text-black/90 dark:text-white/90">
+                        <h3 className="font-main font-bold text-lg text-black/90 dark:text-white/90">
                           {event.name}
                         </h3>
                       </div>
@@ -1413,7 +1416,7 @@ export const PlaceDetailPage: React.FC = () => {
               </span>
               <span className="w-10 h-px bg-primary/40" />
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
+            <h2 className="font-main text-3xl sm:text-4xl lg:text-5xl font-black mb-6">
               حرف تراثية <span className="text-primary">مرتبطة بالمكان</span>
             </h2>
             <div className="flex flex-wrap gap-3">
@@ -1500,6 +1503,7 @@ export const PlaceDetailPage: React.FC = () => {
                 </div>
                 <h2
                   className="
+                    font-main
                     max-w-4xl
                     text-4xl
                     font-black

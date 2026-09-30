@@ -349,7 +349,7 @@ export const CartPage: React.FC = () => {
             {/* Order Summary Sidebar (4 cols) */}
             <div className="lg:col-span-4 space-y-5 pb-12 sm:pb-0">
               <div className="bg-white/75 dark:bg-espresso-900/90 rounded-[2rem] border border-black/10 dark:border-white/10 p-5 sm:p-6 shadow-lg backdrop-blur-xl space-y-5 sticky top-28">
-                <h2 className="text-base sm:text-lg font-black pb-3 border-b border-black/10 dark:border-white/10 font-serif">
+                <h2 className="text-base sm:text-lg font-black pb-3 border-b border-black/10 dark:border-white/10 font-main">
                   ملخص الطلب والفاتورة
                 </h2>
 

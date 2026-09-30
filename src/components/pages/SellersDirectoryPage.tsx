@@ -151,9 +151,9 @@ export const SellersDirectoryPage: React.FC = () => {
               leading-8
               text-foreground-muted
             ">
-                ناس الصنعة اللي حافظوا على شغل إيديهم،
-                وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
-              </p>
+              ناس الصنعة اللي حافظوا على شغل إيديهم،
+              وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
+            </p>
           </div>
 
           {/* Stats */}
@@ -597,7 +597,7 @@ export const SellersDirectoryPage: React.FC = () => {
                         text-lg
                         sm:text-xl
                         font-black
-                        font-serif
+                        font-main
                         leading-tight
                         text-foreground
                         group-hover:text-primary
