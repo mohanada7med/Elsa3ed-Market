@@ -221,22 +221,22 @@ export const MobileBottomBar: React.FC = () => {
         onClick: () => setActivePage('home' as any),
       },
       {
-        id: 'products',
-        label: 'المقتنيات',
-        icon: Layers,
-        isActive: activePage === 'products',
+        id: 'map',
+        label: 'العصيد',
+        icon: MapPin,
+        isActive: activePage === 'map',
         onClick: () =>
-          setActivePage('products' as any),
+          setActivePage('map' as any),
       },
     ];
 
     centerItem = {
-      id: 'map',
-      label: 'لفة في الصعيد',
-      icon: MapPin,
-      isActive: activePage === 'map',
+      id: 'products',
+      label: 'المنتجات',
+      icon: Layers,
+      isActive: activePage === 'products',
       onClick: () =>
-        setActivePage('map' as any),
+        setActivePage('products' as any),
     };
 
     rightItems = [
