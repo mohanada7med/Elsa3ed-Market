@@ -135,7 +135,7 @@ export const QuickEventTextEditModal: React.FC<QuickEventTextEditModalProps> = (
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black font-serif">
+                <h2 className="text-base sm:text-lg font-main">
                   التعديل السريع لنصوص الاحتفال
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-primary text-black dark:text-espresso text-[10px] font-black">

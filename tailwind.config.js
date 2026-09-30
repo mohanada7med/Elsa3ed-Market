@@ -201,104 +201,117 @@ export default {
         'wah-border-strong': 'var(--wah-border-strong)',
       },
       fontFamily: {
+        // =========================================
+        // WAH TYPOGRAPHY SYSTEM
+        // MainFont → Headings / Titles
+        // Cairo    → Body / UI / Normal Text
+        // =========================================
+
         sans: [
-          "'Lalezar'",
-          "'MainFont'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
+
         main: [
-          "'Lalezar'",
           "'MainFont'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
-        lalezar: [
-          "'Lalezar'",
-          "'MainFont'",
-          "cursive",
-          "system-ui",
-          "sans-serif",
-        ],
+
         heading: [
-          "'Lalezar'",
           "'MainFont'",
-          "cursive",
+          "'Cairo'",
           "system-ui",
+          "-apple-system",
           "sans-serif",
         ],
+
         display: [
-          "'Lalezar'",
           "'MainFont'",
-          "cursive",
+          "'Cairo'",
           "system-ui",
+          "-apple-system",
           "sans-serif",
         ],
+
+        lalezar: [
+          "'MainFont'",
+          "'Cairo'",
+          "system-ui",
+          "-apple-system",
+          "sans-serif",
+        ],
+
         price: [
-          "'Lalezar'",
-          "'MainFont'",
+          "'Cairo'",
           "system-ui",
+          "-apple-system",
           "sans-serif",
         ],
+
         cairo: [
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
-        secondary: [
-          "'Alexandria'",
-          "'Cairo'",
-          "system-ui",
-          "-apple-system",
-          "sans-serif",
-        ],
+
         body: [
-          "'Alexandria'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
-        heritage: [
-          "'Lalezar'",
-          "'Alexandria'",
-          "cursive",
+
+        secondary: [
+          "'Cairo'",
+          "system-ui",
+          "-apple-system",
           "sans-serif",
         ],
+
         editorial: [
-          "'Alexandria'",
           "'Cairo'",
           "system-ui",
           "-apple-system",
           "sans-serif",
         ],
+
+        heritage: [
+          "'MainFont'",
+          "'Cairo'",
+          "system-ui",
+          "sans-serif",
+        ],
+
         amiri: [
           "'Amiri'",
-          "'AdobeArabic'",
           "'Cairo'",
           "serif",
         ],
+
         ruqaa: [
           "'Aref Ruqaa'",
           "'Amiri'",
           "serif",
         ],
+
         marhey: [
           "'Marhey'",
           "cursive",
           "sans-serif",
         ],
+
         serif: [
-          "'AdobeArabic'",
           "'Amiri'",
           "'Cairo'",
           "serif",
         ],
+
         alexandria: [
           "'Alexandria'",
           "system-ui",
@@ -306,12 +319,25 @@ export default {
           "sans-serif",
         ],
 
-        // Brand & Legacy aliases
-        shin: ["'Lalezar'", "'MainFont'", "'Cairo'", "sans-serif"],
-        eskorte: ["'AdobeArabic'", "'Amiri'", "'Cairo'", "serif"],
-        effra: ["'Cairo'", "sans-serif"],
-      },
+        // Legacy aliases
+        shin: [
+          "'MainFont'",
+          "'Cairo'",
+          "sans-serif",
+        ],
 
+        eskorte: [
+          "'AdobeArabic'",
+          "'Amiri'",
+          "'Cairo'",
+          "serif",
+        ],
+
+        effra: [
+          "'Cairo'",
+          "sans-serif",
+        ],
+      },
       fontSize: {
         // Small text
         '2xs': ['0.6875rem', { lineHeight: '1.1rem' }], // 11px

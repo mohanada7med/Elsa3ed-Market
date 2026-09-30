@@ -210,39 +210,29 @@ export const Footer: React.FC = () => {
           {/* 1. هوية المنصة والنبذة التأسيسية مع ختم نقشة وه وشخصية عم وه */}
           <div className="lg:col-span-3 space-y-5">
             {/* ختم نقشة وه التراثي ونهاية الموقع مع اللوجو وشخصية عم وه */}
-            <div className="relative inline-flex items-center gap-4 p-3 rounded-2xl border border-[#C99444]/30 bg-black/25 backdrop-blur-md overflow-hidden">
-              {/* Pattern watermark inside seal */}
-              <div
-                className="absolute inset-0 opacity-20 pointer-events-none mix-blend-screen"
-                style={{
-                  backgroundImage: "url('/pattern/pat2.png')",
-                  backgroundRepeat: 'repeat',
-                  backgroundSize: '240px auto',
-                  backgroundPosition: 'center',
-                }}
-                aria-hidden="true"
-              />
+            <div className="group relative inline-flex items-center justify-center p-3.5 sm:p-4 rounded-3xl overflow-hidden border border-[#C99444]/40 bg-gradient-to-b from-[#3B1E0E]/80 via-[#26160D]/90 to-[#1B1009]/95 backdrop-blur-xl shadow-[0_10px_30px_-5px_rgba(201,148,68,0.25)] transition-all duration-500 hover:border-[#C99444] hover:shadow-[0_15px_40px_-5px_rgba(201,148,68,0.4)]">
+
+              {/* 1. هالة إشعاع ذهبية متحركة في الخلفية */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(201,148,68,0.3)_0%,transparent_70%)] animate-pulse" />
+
+              {/* 2. نقشة تراثية مدمجة بالخلفية كعلامة مائية */}
+              <div className="absolute inset-0 bg-pattern-icons opacity-10 mix-blend-overlay pointer-events-none" />
+
+              {/* 3. شريط لمعة ضوئية يمر عند التمرير (Shine Effect) */}
+              <div className="absolute -inset-full top-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12 transition-all duration-1000 group-hover:translate-x-[250%]" />
+
+              {/* 4. زوايا زخرفية دقيقة مستوحاة من الهوية */}
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 border-t-2 border-r-2 border-[#C99444]/70 rounded-tr-sm pointer-events-none" />
+              <span className="absolute bottom-1.5 left-1.5 w-2 h-2 border-b-2 border-l-2 border-[#C99444]/70 rounded-bl-sm pointer-events-none" />
+
+              {/* 5. الشعار نفسه بتأثير ثلاثي الأبعاد وتكبير ناعم */}
               <img
                 src="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png"
                 alt="شعار منصة وه"
-                width={125}
-                className="relative z-10 brightness-125 drop-shadow-md"
+                width={130}
+                className="relative z-10 brightness-110 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="relative z-10 flex items-center gap-2 pr-3 border-r border-[#C99444]/40">
-                <img
-                  src="/mascot.png"
-                  alt="عم وه"
-                  width={44}
-                  height={44}
-                  className="object-contain drop-shadow-md"
-                />
-                <div className="flex flex-col text-right leading-tight">
-                  <span className="text-[11px] font-black text-[#E0C79B]">عم وَه</span>
-                  <span className="text-[9px] text-[#C99444] font-bold">ختم الأصالة</span>
-                </div>
-              </div>
-            </div>
-            <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
+            </div>            <p className="text-xs sm:text-sm leading-relaxed text-white/70 font-normal">
               منصة رقمية معمولة عشان تعرفك على روح صعيد مصر وتراثه الحي؛ بنوصلك بشيوخ الصنعة وأهل البلد في الجنوب، مع حكايات حية وتجربة تسوق موثقة.
             </p>
             <div className="flex items-center gap-3 pt-2 text-xs text-white/60">

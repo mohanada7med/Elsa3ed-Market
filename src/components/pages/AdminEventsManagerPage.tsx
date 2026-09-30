@@ -301,27 +301,27 @@ export const AdminEventsManagerComponent: React.FC<AdminEventsManagerProps> = ({
         {/* Stats strip */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-8 pt-6 border-t border-white/10">
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-amber-300">{stats.total}</span>
+            <span className="text-2xl font-main text-amber-300">{stats.total}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">إجمالي الليالي والمواسم</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-emerald-400">{stats.moulids}</span>
+            <span className="text-2xl font-main text-emerald-400">{stats.moulids}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">موالد وليالي أولياء</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-amber-400">{stats.harvests}</span>
+            <span className="text-2xl font-main text-amber-400">{stats.harvests}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">مواسم زراعة وحصاد</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-blue-400">{stats.festivals}</span>
+            <span className="text-2xl font-main text-blue-400">{stats.festivals}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">مهرجانات كبرى</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-purple-400">{stats.culturalNights}</span>
+            <span className="text-2xl font-main text-purple-400">{stats.culturalNights}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">فروسية ومرماح</p>
           </div>
           <div className="bg-white/5 rounded-2xl p-3 text-center border border-white/5">
-            <span className="text-2xl font-black font-serif text-rose-400">{stats.withVideos}</span>
+            <span className="text-2xl font-main text-rose-400">{stats.withVideos}</span>
             <p className="text-[11px] text-cream/70 mt-0.5">موثقة بفيديوهات 🎥</p>
           </div>
         </div>

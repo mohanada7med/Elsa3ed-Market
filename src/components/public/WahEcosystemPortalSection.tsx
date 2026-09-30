@@ -43,7 +43,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
   const portals: Portal[] = [
     {
       id: 'marketplace',
-      title: 'سوق وه.. من إيد الصانع لدارك',
+      title: '"سوق وه" من إيد الصانع لدارك',
       tagline: 'حاجة أصلية من الورشة لحد عندك',
       desc: 'سوق مليان خير الصعيد وشغل الورش الأصيل 100%، اشترِ اللي يعجبك والدفع أمان وشحن واصل لحد باب بيتك.',
       badge: 'دكان وه',
@@ -85,7 +85,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
 
     {
       id: 'map',
-      title: 'لفة على النيل والبلاد',
+      title: 'لفة على النيل',
       tagline: 'خريطة تاخدك لكل شبر في الصعيد',
       desc: 'لف في بلادنا براحتك من أول بحري الصعيد لحد أسوان وبلاد النوبة، دوس على الخريطة وشوف كل حتة.',
       badge: 'الخريطة الحية',
@@ -256,7 +256,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     7 أبواب تراثية رئيسية
                   </strong>
                   . في كل باب، هتلاقي{' '}
-                  <strong className="text-primary font-black">
+                  <strong className="                    text-primary dark:text-primary-hover
+ font-main">
                     «عم وه»
                   </strong>{' '}
                   متقمص دوراً أصيلاً وموثقاً حكايته بيده:
@@ -264,7 +265,8 @@ export const WahEcosystemPortalSection: React.FC = () => {
                   لحارس العتيق وراعي بهجة الموالد!
                 </p>
 
-                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-bold text-primary">
+                <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1 text-xs font-bold                     text-primary dark:text-primary-hover
+">
                   <Crown size={13} className="shrink-0" />
 
                   <span>
@@ -441,68 +443,6 @@ export const WahEcosystemPortalSection: React.FC = () => {
                       justify-between
                       relative
                     ">
-                      {/* Heritage Hallmark Seal on Card "تراث" */}
-                      <HeritageCornerStamp position="top-left" size={28} badgeLabel="تراث" className="left-16 top-0" />
-                      <div className="
-                        flex
-                        items-center
-                        gap-2.5
-                      ">
-                        <span className="
-                          font-mono
-                          text-xs
-                          px-2.5
-                          py-1
-                          rounded-full
-                          bg-black/50
-                          backdrop-blur-md
-                          text-[#d5a56d]
-                          font-bold
-                          border border-white/10
-                        ">
-                          باب 0{idx + 1}
-                        </span>
-
-                        <span className="
-                          inline-flex
-                          items-center
-                          gap-1.5
-                          px-3
-                          py-1
-                          rounded-full
-                          bg-primary
-                          text-white
-                          text-xs
-                          font-bold
-                          backdrop-blur-md
-                          shadow-md
-                        ">
-                          <Sparkles className="w-3.5 h-3.5" />
-
-                          <span>
-                            {portal.badge}
-                          </span>
-                        </span>
-
-                        <span className="
-                          inline-flex
-                          items-center
-                          gap-1
-                          px-3
-                          py-1
-                          rounded-full
-                          bg-amber-500/20
-                          text-amber-200
-                          border border-amber-500/40
-                          text-xs
-                          font-bold
-                          backdrop-blur-md
-                        ">
-                          <span>
-                            {portal.mascot.role}
-                          </span>
-                        </span>
-                      </div>
 
                       <div className="
                         w-10

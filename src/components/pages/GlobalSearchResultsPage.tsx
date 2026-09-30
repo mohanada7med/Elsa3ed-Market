@@ -137,7 +137,7 @@ export const GlobalSearchResultsPage: React.FC = () => {
             <Sparkles size={13} />
             <span>محرّك بحث التراث الصعيدي</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black font-serif mb-3 tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-main mb-3 tracking-tight">
             البحث الشامل في منصة <span className="text-primary">وَه</span>
           </h1>
           <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mb-6 font-medium">
@@ -173,8 +173,8 @@ export const GlobalSearchResultsPage: React.FC = () => {
             <button
               onClick={() => setActiveTypeFilter('all')}
               className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${activeTypeFilter === 'all'
-                  ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
-                  : 'bg-white/75 dark:bg-espresso-900/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-primary'
+                ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
+                : 'bg-white/75 dark:bg-espresso-900/90 text-black/70 dark:text-white/70 border border-black/10 dark:border-white/10 hover:border-primary'
                 }`}
             >
               الكل ({results.length})

@@ -199,7 +199,7 @@ export const EventsPage: React.FC = () => {
             <div className="text-[9px] font-bold tracking-[0.35em] text-primary">
               WAH
             </div>
-            <div className="mt-1 text-xs sm:text-sm font-black font-serif">
+            <div className="mt-1 text-xs sm:text-sm font-main">
               {showAdminManager ? 'إدارة احتفالات وليالي الصعيد' : 'مواسم وليالي الصعيد'}
             </div>
           </div>
@@ -302,22 +302,24 @@ export const EventsPage: React.FC = () => {
 
                   <h1
                     className="
-                  max-w-5xl
-                  text-[13vw]
-                  font-black
-                  font-serif
-                  leading-[0.82]
-                  tracking-[-0.06em]
-                  sm:text-[10vw]
-                  lg:text-[8rem]
-                  xl:text-[9.5rem]
-                "
+    max-w-4xl
+    font-main
+    text-[9vw]
+    leading-[0.95]
+    tracking-normal
+    sm:text-[7vw]
+    md:text-6xl
+    lg:text-7xl
+    xl:text-[5.5rem]
+  "
                   >
                     مواسم
                     <br />
-                    <span className="mr-[6vw] text-primary lg:mr-24">البهجة والليالي</span>
+                    <br />
+                    <span className="mr-[4vw] text-primary dark:text-primary-hover font-main lg:mr-8">
+                      البهجة والليالي
+                    </span>
                   </h1>
-
                   <div className="mt-8 flex max-w-2xl items-start gap-5">
                     <div className="mt-2 h-16 w-px bg-primary shrink-0" />
                     <p className="text-sm leading-8 text-black/75 dark:text-white/75 sm:text-base">
@@ -471,7 +473,7 @@ export const EventsPage: React.FC = () => {
                       <span>{featuredEvent.locationName || featuredEvent.governorateName}</span>
                     </div>
 
-                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
+                    <h2 className="text-2xl sm:text-4xl lg:text-5xl font-main tracking-tight leading-tight group-hover:text-primary-hover transition-colors">
                       {featuredEvent.title}
                     </h2>
 

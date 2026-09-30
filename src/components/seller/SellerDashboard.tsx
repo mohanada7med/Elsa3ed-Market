@@ -1025,7 +1025,7 @@ export const SellerDashboard: React.FC = () => {
                       <span className="w-2 h-2 rounded-full bg-primary animate-ping" />
                       <span>طلب قيد المراجعة والاعتماد</span>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl font-black font-serif">
+                    <h1 className="text-2xl sm:text-3xl font-main">
                       أهلاً بك يا أسطى {statusDetails?.name || currentUser.name}!
                     </h1>
                     <p className="text-xs sm:text-sm text-white/70 dark:text-black/70 mt-1 leading-relaxed">
@@ -1139,7 +1139,7 @@ export const SellerDashboard: React.FC = () => {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/40 text-rose-100 text-xs font-bold mb-2 border border-rose-400/30">
                     <span>طلب غير معتمد</span>
                   </div>
-                  <h1 className="text-2xl font-black font-serif">
+                  <h1 className="text-2xl font-main">
                     نعتذر، لم يتم قبول طلب اعتماد ورشتكم في الوقت الحالي
                   </h1>
                   <p className="text-xs text-rose-100 mt-1">
@@ -1191,7 +1191,7 @@ export const SellerDashboard: React.FC = () => {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/40 text-orange-100 text-xs font-bold mb-2 border border-orange-400/30">
                     <span>الحساب معلق مؤقتاً</span>
                   </div>
-                  <h1 className="text-2xl font-black font-serif">
+                  <h1 className="text-2xl font-main">
                     حساب ورشتكم معلق مؤقتاً
                   </h1>
                   <p className="text-xs text-amber-100 mt-1">
@@ -1269,7 +1269,7 @@ export const SellerDashboard: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-black font-serif">لوحة تحكم البائع الحرفي</h1>
+                <h1 className="text-2xl font-main">لوحة تحكم البائع الحرفي</h1>
                 <span className="bg-primary text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs">
                   ورشة معتمدة
                 </span>
@@ -2760,7 +2760,7 @@ export const SellerDashboard: React.FC = () => {
             <div className="space-y-8 animate-in fade-in">
               <div className="relative rounded-[2rem] bg-gradient-to-r from-[#3B1E0E] via-[#4A2715] to-[#3B1E0E] text-white p-6 sm:p-8 overflow-hidden shadow-xl border border-black/10 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div>
-                  <h2 className="text-xl sm:text-3xl font-black font-serif">فيديوهات ورشة الصنعة القصيرة</h2>
+                  <h2 className="text-xl sm:text-3xl font-main">فيديوهات ورشة الصنعة القصيرة</h2>
                   <p className="text-xs sm:text-sm text-white/80 mt-1">ارفع مقاطع فيديو عمودية (9:16) تبرز كواليس الصنع والتشكيل اليدوي لورشتك فقط</p>
                 </div>
                 <div className="flex items-center gap-3">

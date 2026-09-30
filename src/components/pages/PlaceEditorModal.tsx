@@ -431,7 +431,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black font-serif">
+                <h2 className="text-base sm:text-lg font-main">
                   تعديل محتوى وميديا المعلم التراثي
                 </h2>
                 <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold">
@@ -1129,11 +1129,10 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                         return (
                           <div
                             key={`${imgUrl}-${idx}`}
-                            className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 shadow-sm flex flex-col ${
-                              isCover
+                            className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 shadow-sm flex flex-col ${isCover
                                 ? 'border-primary ring-2 ring-primary/40 bg-primary/5'
                                 : 'border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/[0.03] hover:border-primary/50 hover:shadow-md'
-                            }`}
+                              }`}
                           >
                             {/* Thumbnail Canvas */}
                             <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/10">
@@ -1381,7 +1380,7 @@ export const PlaceEditorModal: React.FC<PlaceEditorModalProps> = ({
                     <span className="inline-block px-3 py-1 rounded-full bg-primary text-xs font-black w-max mb-2">
                       {CATEGORIES.find((c) => c.id === category)?.label || category}
                     </span>
-                    <h3 className="text-2xl font-black font-serif">{title || 'اسم المعلم'}</h3>
+                    <h3 className="text-2xl font-main">{title || 'اسم المعلم'}</h3>
                     <div className="flex items-center gap-3 text-xs mt-1 font-bold text-white/80">
                       <span>محافظة {currentGov.name}</span>
                       <span>•</span>

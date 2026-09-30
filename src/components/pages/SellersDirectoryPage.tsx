@@ -135,14 +135,12 @@ export const SellersDirectoryPage: React.FC = () => {
                 sm:text-5xl
                 lg:text-6xl
                 xl:text-7xl
-                font-black
-                font-serif
+                font-main
                 leading-[0.98]
                 tracking-tight
               "
             >
               شيوخ الكار
-              <span className="text-primary">.</span>
             </h1>
 
             <p className="
@@ -153,9 +151,9 @@ export const SellersDirectoryPage: React.FC = () => {
               leading-8
               text-foreground-muted
             ">
-              ناس الصنعة اللي حافظوا على شغل إيديهم،
-              وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
-            </p>
+                ناس الصنعة اللي حافظوا على شغل إيديهم،
+                وخلّوا حكايات الصعيد تعيش في كل قطعة بيعملوها.
+              </p>
           </div>
 
           {/* Stats */}
@@ -320,7 +318,7 @@ export const SellersDirectoryPage: React.FC = () => {
         ========================================================= */}
         <div className="flex items-center justify-between mb-5 px-1">
           <div>
-            <h2 className="text-lg sm:text-xl font-black font-serif text-foreground">
+            <h2 className="text-lg sm:text-xl font-main text-foreground">
               الحرفيين والورش
             </h2>
             <p className="text-[11px] sm:text-xs text-foreground-disabled mt-0.5">
@@ -368,7 +366,7 @@ export const SellersDirectoryPage: React.FC = () => {
               <Store className="w-7 h-7" />
             </div>
 
-            <h3 className="text-lg font-black font-serif text-foreground">
+            <h3 className="text-lg font-main text-foreground">
               مفيش صنعة مطابقة للبحث
             </h3>
 

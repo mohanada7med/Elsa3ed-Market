@@ -651,10 +651,10 @@ export const UpperEgyptMapPage: React.FC = () => {
                       )}
                     </div>
 
-                    <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black font-serif text-white tracking-tight">
+                    <h1 className="text-5xl sm:text-7xl lg:text-8xl font-main text-white tracking-tight">
                       {selectedGov?.name}
                     </h1>
-
+                    <br />
                     {selectedGov?.nickname && (
                       <p className="text-lg sm:text-2xl font-bold text-[#C99444]">{selectedGov.nickname}</p>
                     )}
@@ -733,7 +733,7 @@ export const UpperEgyptMapPage: React.FC = () => {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
                 <div>
                   <div className="text-xs font-bold tracking-[0.3em] text-primary">تفاصيل من قلب البلد</div>
-                  <h3 className="text-2xl sm:text-3xl font-black font-serif mt-1">
+                  <h3 className="text-2xl sm:text-3xl font-main mt-1">
                     دفتر حكايات {selectedGov?.name}
                   </h3>
                 </div>
@@ -932,7 +932,7 @@ export const UpperEgyptMapPage: React.FC = () => {
                 {activeTab === 'folklore' && (
                   <div className="space-y-6 text-center py-8">
                     <Scroll className="mx-auto h-12 w-12 text-primary" />
-                    <h4 className="text-xl font-black font-serif">حكايات وذكريات من {selectedGov?.name}</h4>
+                    <h4 className="text-xl font-main">حكايات وذكريات من {selectedGov?.name}</h4>
                     <p className="max-w-xl mx-auto text-sm text-black/70 dark:text-white/70 leading-relaxed">
                       {folkloreStory || 'لسه مفيش حكايات شعبية متسجلة للمحافظة دي في الداتابيز.'}
                     </p>

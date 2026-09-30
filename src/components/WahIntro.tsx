@@ -276,9 +276,10 @@ export const WahIntro: React.FC<WahIntroProps> = ({
                             : 'opacity-0 translate-y-2 pointer-events-none'
                             }`}
                     >
-                        <p className="text-2xl font-black tracking-tight text-[#3B1E0E] dark:text-[#FFF9EE] sm:text-3xl">
-                            دوس على <span className="text-primary">وه</span>
-                        </p>
+                        <h1 className="font-main text-2xl tracking-tight text-[#3B1E0E] dark:text-[#FFF9EE] sm:text-3xl">
+                            دوس على <span className="text-primary">وَه</span>
+                        </h1>
+                        <br />
                         <p className="mt-1.5 text-xs sm:text-sm font-semibold text-[#806f5b]/80 dark:text-[#a89988]">
                             وخلي الحكاية تبدأ
                         </p>

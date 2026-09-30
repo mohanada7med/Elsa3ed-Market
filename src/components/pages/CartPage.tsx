@@ -130,7 +130,7 @@ export const CartPage: React.FC = () => {
               <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-3xl font-black font-serif">
+              <h1 className="text-xl sm:text-3xl font-main">
                 سلة الشراء بتاعتك
               </h1>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 mt-0.5">
@@ -182,7 +182,7 @@ export const CartPage: React.FC = () => {
             />
 
             <div className="space-y-2">
-              <h2 className="text-xl sm:text-2xl font-black font-serif">
+              <h2 className="text-xl sm:text-2xl font-main">
                 سلتك فاضية يا بوي
               </h2>
               <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 max-w-sm mx-auto leading-relaxed">

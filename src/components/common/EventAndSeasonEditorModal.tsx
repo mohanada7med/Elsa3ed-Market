@@ -339,7 +339,7 @@ export const EventAndSeasonEditorModal: React.FC<EventAndSeasonEditorModalProps>
                   MongoDB Direct
                 </span>
               </div>
-              <h3 className="text-base sm:text-lg font-black font-serif text-stone-900 dark:text-stone-100 leading-snug">
+              <h3 className="text-base sm:text-lg font-main text-stone-900 dark:text-stone-100 leading-snug">
                 {isEditing
                   ? `تعديل: ${title || 'الليلة أو الموسم'}`
                   : itemType === 'season'

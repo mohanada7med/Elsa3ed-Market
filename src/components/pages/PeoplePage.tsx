@@ -327,7 +327,7 @@ export const PeoplePage: React.FC = () => {
               >
                 ناس
                 <br />
-                <span className="mr-[8vw] text-accent lg:mr-28">الصعيد</span>
+                <span className="mr-[8vw] text-primary dark:text-primary-hover lg:mr-28">الصعيد</span>
               </h1>
 
               <div className="mt-10 flex max-w-2xl items-start gap-5">
@@ -366,7 +366,7 @@ export const PeoplePage: React.FC = () => {
                         {people.length}
                       </div>
                       <div className="mt-2 text-xs text-foreground-secondary font-bold">
-                   علم ورمز موثق
+                        علم ورمز موثق
                       </div>
                     </div>
 

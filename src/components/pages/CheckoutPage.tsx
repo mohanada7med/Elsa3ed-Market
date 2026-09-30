@@ -73,7 +73,7 @@ export const CheckoutPage: React.FC = () => {
             <ShoppingBag className="w-10 h-10" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-2xl font-black font-serif text-espresso dark:text-cream">سلتك بانتظار إبداعاتك</h2>
+            <h2 className="text-2xl font-main text-espresso dark:text-cream">سلتك بانتظار إبداعاتك</h2>
             <p className="text-sm text-espresso/60 dark:text-cream/60 leading-relaxed">
               سلة التسوق فارغة حالياً، استكشف المنتجات التراثية المميزة أولاً.
             </p>
@@ -103,7 +103,7 @@ export const CheckoutPage: React.FC = () => {
                 <Check className="w-10 h-10 stroke-[3]" />
               </div>
               <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-black font-serif text-espresso dark:text-cream">
+                <h1 className="text-2xl sm:text-3xl font-main text-espresso dark:text-cream">
                   تم استلام وتأكيد طلبك بنجاح!
                 </h1>
                 <p className="text-sm text-espresso/60 dark:text-cream/60">

@@ -47,7 +47,7 @@ export const FeaturedCategories: React.FC = () => {
             <Compass className="w-4 h-4 animate-spin-slow" />
             <span>صنايع وحرف بلادنا</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-black font-serif tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-main tracking-tight">
             لفّة في حرف وصنعة الصعيد
           </h2>
         </div>

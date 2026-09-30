@@ -434,7 +434,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <Landmark className="w-4 h-4" />
                 <span>نظام إدارة التراث والمحتوى الجغرافي | WAH Governorate CMS</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black font-serif">
+              <h1 className="text-2xl sm:text-3xl font-main">
                 لوحة إدارة محافظات وه
               </h1>
               <p className="text-xs sm:text-sm text-white/70 dark:text-black/70 max-w-2xl leading-relaxed">
@@ -539,7 +539,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                       <div className="absolute top-3 left-3">{renderStatusBadge(gov.status)}</div>
 
                       <div className="absolute bottom-3 right-3 left-3 text-white">
-                        <h3 className="text-xl font-black font-serif leading-tight">محافظة {gov.name}</h3>
+                        <h3 className="text-xl font-main leading-tight">محافظة {gov.name}</h3>
                         <p className="text-xs text-stone-200 line-clamp-1 mt-0.5">{gov.nickname || gov.shortIntro}</p>
                       </div>
                     </div>
@@ -618,7 +618,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                 <span>كافة المحافظات</span>
               </button>
               <span className="text-primary font-bold">/</span>
-              <span className="text-sm font-black font-serif">لوحة إدارة محافظة {activeGov.name}</span>
+              <span className="text-sm font-main">لوحة إدارة محافظة {activeGov.name}</span>
             </div>
 
             <div className="flex items-center gap-3">
@@ -665,7 +665,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                   </span>
                   {renderStatusBadge(activeGov.status)}
                 </div>
-                <h2 className="text-2xl sm:text-4xl font-black font-serif text-white">مركز إدارة {activeGov.name}</h2>
+                <h2 className="text-2xl sm:text-4xl font-main text-white">مركز إدارة {activeGov.name}</h2>
                 <p className="text-xs sm:text-sm text-stone-200 leading-relaxed">
                   {activeGov.shortIntro || activeGov.nickname || 'التوثيق الشامل لكنوز وتراث المحافظة'}
                 </p>
@@ -708,7 +708,7 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     <Icon className={`w-4 h-4 ${stat.color}`} />
                     <span className="text-[10px] text-black/40 dark:text-white/40 font-bold">MongoDB</span>
                   </div>
-                  <div className="text-xl font-black font-serif">
+                  <div className="text-xl font-main">
                     {isStatsLoading ? '...' : stat.count}
                   </div>
                   <div className="text-[11px] font-bold text-black/60 dark:text-white/60 mt-0.5">{stat.label}</div>
@@ -749,8 +749,8 @@ export const CulturalCmsAdminPage: React.FC = () => {
                     setInternalSearch('');
                   }}
                   className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${isActive
-                      ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
-                      : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
+                    ? 'bg-[#6B3A1F] text-[#FFF9EE] shadow-md'
+                    : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5'
                     }`}
                 >
                   <Icon className="w-3.5 h-3.5" />

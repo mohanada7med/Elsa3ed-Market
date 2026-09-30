@@ -314,20 +314,19 @@ export const HeroSection: React.FC = () => {
 
             <h1
               className="
-                font-heritage
-                text-5xl
-                font-normal
-                leading-[1.15]
-                tracking-normal
-                text-foreground
-              "
+    text-5xl
+    leading-[1.15]
+    tracking-normal
+    text-foreground
+    font-heading
+  "
             >
               الصعيد{' '}
-              <span className="text-primary">
+              <span className="text-primary dark:text-primary-hover">
                 بيحكي
               </span>
             </h1>
-
+            <br />
             <p
               className="
                 text-xs
@@ -500,7 +499,7 @@ export const HeroSection: React.FC = () => {
             "
           >
             <div>
-              <span className="block text-sm font-black text-primary">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover">
                 {wahStats?.governoratesCount}
               </span>
 
@@ -512,7 +511,8 @@ export const HeroSection: React.FC = () => {
             <div className="h-4 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover
+">
                 +{wahStats?.placesCount}
               </span>
 
@@ -524,7 +524,7 @@ export const HeroSection: React.FC = () => {
             <div className="h-4 w-px bg-foreground/15" />
 
             <div>
-              <span className="block text-sm font-black text-primary">
+              <span className="block text-sm font-black text-primary dark:text-primary-hover">
                 {wahStats?.productsCount}
               </span>
 
@@ -843,19 +843,17 @@ export const HeroSection: React.FC = () => {
                 ease: [0.33, 1, 0.68, 1],
               }}
               className="
-                max-w-4xl
-                font-heritage
-                text-[6.5rem]
-                font-normal
-                leading-[1.1]
-                tracking-normal
-                text-foreground
-                drop-shadow-sm
-                xl:text-[7.5rem]
-              "
-            >
-              الصعيد{' '}
-              <span className="text-primary">
+  max-w-4xl
+  font-main
+  text-4xl sm:text-6xl md:text-7xl lg:text-[6.5rem] xl:text-[7.5rem]
+  font-normal
+  leading-[1.15]
+  tracking-normal
+  text-foreground
+  drop-shadow-sm
+">
+              الصعيد
+              <span className="mr-5 inline text-primary dark:text-primary-hover">
                 بيحكي
               </span>
             </motion.h1>
@@ -1110,6 +1108,7 @@ export const HeroSection: React.FC = () => {
                   backdrop-blur-md
                   transition-all
                   hover:border-primary
+                  
                 "
               >
                 <MapPin className="h-5 w-5 text-primary" />
@@ -1154,7 +1153,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary
+                    text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.governoratesCount}
@@ -1165,6 +1164,7 @@ export const HeroSection: React.FC = () => {
                     text-xs
                     font-medium
                     text-foreground-muted
+                    
                   "
                 >
                   محافظة فـ الصعيد
@@ -1184,7 +1184,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary
+                    text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.placesCount}+
@@ -1214,7 +1214,7 @@ export const HeroSection: React.FC = () => {
                     block
                     text-2xl
                     font-black
-                    text-primary
+                    text-primary dark:text-primary-hover
                   "
                 >
                   {wahStats?.productsCount}
@@ -1250,6 +1250,6 @@ export const HeroSection: React.FC = () => {
           bg-primary
         "
       />
-    </section>
+    </section >
   );
 };

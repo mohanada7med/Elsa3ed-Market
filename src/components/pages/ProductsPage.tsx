@@ -526,7 +526,7 @@ export const ProductsPage: React.FC = () => {
       {/* UNCLE WAH HERO BANNER - MASTER OF MARKETPLACE */}
       <div className="relative z-20 mx-auto max-w-[1700px] px-5 sm:px-8 lg:px-12 xl:px-16 -mt-4 mb-8">
         <UncleWahHeroBanner
-          doorTitle="سوق وه.. من إيد الصانع لدارك على طول"
+          doorTitle="سوق وه من إيد الصانع لدارك على طول"
           doorBadge="باب سوق وه"
           mascotSrc="/mascot/pro.png"
           mascotRole="عم وه تاجر الصنعة والبركة"

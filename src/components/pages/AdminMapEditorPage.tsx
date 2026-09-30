@@ -193,7 +193,7 @@ export const AdminMapEditorPage: React.FC = () => {
               <Compass className="w-3.5 h-3.5 text-primary" />
               <span>نظام إدارة الإحداثيات الجغرافية لموسوعة صعيد مصر</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black font-serif text-[#3B1E0E] dark:text-[#FFF9EE]">
+            <h1 className="text-2xl sm:text-3xl font-main text-[#3B1E0E] dark:text-[#FFF9EE]">
               محرر إحداثيات المواقع والمعالم (WAH GIS)
             </h1>
             <p className="text-xs sm:text-sm text-black/60 dark:text-white/60 dark:text-[#D6C6B1] mt-1">

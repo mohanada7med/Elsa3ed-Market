@@ -162,7 +162,7 @@ export const AdminMediaLibraryPage: React.FC = () => {
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-black font-serif">مكتبة وسائط منصة وه</h1>
+                <h1 className="text-xl sm:text-2xl font-main">مكتبة وسائط منصة وه</h1>
                 <p className="text-xs sm:text-sm text-black/60 dark:text-white/60">
                   إدارة وتوثيق الصور السحابية على Cloudinary وتصنيفها حسب الكيانات والمحافظات
                 </p>

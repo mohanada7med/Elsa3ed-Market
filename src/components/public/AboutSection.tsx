@@ -72,24 +72,30 @@ export const AboutSection: React.FC = () => {
             </div>
 
             {/* Hero Title */}
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif leading-[1.16] tracking-tight">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-main leading-[1.25] tracking-tight text-foreground">
               الصعيد{' '}
-              <span className="relative inline-block text-primary">
-                مش مجرد مكان
+              <span className="relative inline-block text-primary dark:text-primary-hover">
+                <span className="relative z-5">مش مجرد مكان</span>
                 <svg
-                  className="absolute -bottom-2 left-0 w-full h-2.5 text-primary/30 -z-10"
+                  className="absolute -bottom-2.5 left-0 w-full h-3 text-primary/35 pointer-events-none z-0"
                   viewBox="0 0 100 20"
                   preserveAspectRatio="none"
+                  aria-hidden="true"
                 >
-                  <path d="M0,15 Q50,0 100,15" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path
+                    d="M2,16 Q50,2 98,16"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
                 </svg>
               </span>
               <br />
-              <span className="text-foreground/80 font-normal text-2xl sm:text-4xl block mt-2">
+              <span className="text-foreground/80 font-normal text-2xl sm:text-4xl block mt-3">
                 الصعيد حكاية بتتعاش.
               </span>
             </h2>
-
             {/* Narrative Description */}
             <p className="mt-5 max-w-xl text-sm sm:text-base leading-relaxed text-foreground-muted font-normal">
               «وه» بتجمع روح الصعيد كله في مكان واحد؛ ناسه، بلاده، حرفه، أكله وحكاياته.

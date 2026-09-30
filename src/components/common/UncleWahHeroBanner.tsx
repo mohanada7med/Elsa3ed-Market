@@ -96,7 +96,7 @@ export const UncleWahHeroBanner: React.FC<UncleWahHeroBannerProps> = ({
           </div>
 
           {/* Door title header */}
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black font-serif text-foreground leading-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-main text-foreground leading-tight">
             {doorTitle}
           </h2>
 

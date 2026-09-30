@@ -13,7 +13,7 @@
    ========================================================================= */
 @font-face {
   font-family: 'MainFont';
-  src: url('/fonts/mainfont.ttf') format('truetype');
+  src: url('/fonts/alfont_com_Amira-Typo.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: 'MainFont';
-  src: url('/fonts/mainfont.ttf') format('truetype');
+  src: url('/fonts/alfont_com_Amira-Typo.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -29,7 +29,7 @@
 
 @font-face {
   font-family: 'MainFont';
-  src: url('/fonts/mainfont.ttf') format('truetype');
+  src: url('/fonts/alfont_com_Amira-Typo.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;
@@ -79,12 +79,12 @@
   --color-wahDark-elevated: #4A2715;
 
   /* WAH Brand Identity Typography - Lalezar as Primary & Alexandria as Secondary/Body */
-  --font-wah-main: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-secondary: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-display: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
-  --font-wah-heading: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
-  --font-wah-heritage: 'Lalezar', 'Alexandria', cursive, sans-serif;
-  --font-wah-body: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-main: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-secondary: 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-display: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heading: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heritage: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-body: 'Cairo', system-ui, -apple-system, sans-serif;
 
   /* Brand Primitive Colors */
   --color-primary: var(--primary);
@@ -337,24 +337,24 @@
 
 /* WAH Typography Hierarchy - Lalezar as Primary Display & Heading Font */
 .font-main {
-  font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-lalezar {
-  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
 }
 
 .font-heading {
-  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
 }
 
 .font-display {
-  font-family: 'Lalezar', 'MainFont', cursive, system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
 }
 
 .font-price,
 .price-tag {
-  font-family: 'Lalezar', 'MainFont', system-ui, sans-serif;
+  font-family: 'MainFont', system-ui, sans-serif;
   font-feature-settings: "tnum" 1;
   letter-spacing: 0.02em;
 }
@@ -368,7 +368,7 @@
 }
 
 .font-heritage {
-  font-family: 'Lalezar', 'Alexandria', cursive, sans-serif;
+  font-family: 'Alexandria', cursive, sans-serif;
 }
 
 .font-editorial {
@@ -400,7 +400,7 @@
 }
 
 .font-shin {
-  font-family: 'Lalezar', 'MainFont', 'Cairo', sans-serif;
+  font-family: 'MainFont', 'Cairo', sans-serif;
 }
 
 .font-wah-display {
@@ -414,11 +414,16 @@
 }
 
 .font-wah-body {
-  font-family: var(--font-wah-body, 'AdobeArabic', 'Alexandria', 'Cairo', sans-serif);
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
   letter-spacing: normal;
   line-height: 1.3;
   text-wrap: balance;
@@ -450,7 +455,8 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   body {
-    font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     font-size: 0.98rem;
     line-height: 1.7;
     letter-spacing: normal;
@@ -482,21 +488,21 @@ h1, h2, h3, h4, h5, h6 {
   h4,
   h5,
   h6 {
-    font-family: 'Lalezar', 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
     line-height: 1.3;
     text-wrap: balance;
   }
 
   .font-heritage {
-    font-family: 'Lalezar', 'Alexandria', cursive, sans-serif;
+    font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
   }
 
   .font-secondary,
   .font-editorial,
   .font-body {
-    font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+    font-family: 'Cairo', system-ui, -apple-system, sans-serif;
     letter-spacing: normal;
   }
 

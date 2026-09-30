@@ -286,7 +286,7 @@ export const GovernorateExplorer: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
-          className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif tracking-tight"
+          className="text-3xl sm:text-4xl lg:text-5xl font-main tracking-tight"
         >
           اكتشف الصعيد
         </motion.h2>

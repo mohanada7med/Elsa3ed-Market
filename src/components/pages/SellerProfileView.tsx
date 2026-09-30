@@ -210,7 +210,7 @@ export const SellerProfileView: React.FC = () => {
               <Store className="w-9 h-9" />
             </div>
 
-            <h3 className="mt-6 text-2xl font-black font-serif text-foreground">
+            <h3 className="mt-6 text-2xl font-main text-foreground">
               الورشة دي مش معروضة دلوقتي
             </h3>
 
@@ -439,7 +439,7 @@ export const SellerProfileView: React.FC = () => {
                       ورشة من قلب صعيد مصر
                     </p>
 
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-serif text-white leading-[1.05] tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-main text-white leading-[1.05] tracking-tight">
                       {brandTitle}
                     </h1>
 
@@ -593,7 +593,7 @@ export const SellerProfileView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <h2 className="text-3xl sm:text-4xl font-black font-serif">
+                  <h2 className="text-3xl sm:text-4xl font-main">
                     شغل إيدين {brandTitle}
                   </h2>
 
@@ -685,10 +685,11 @@ export const SellerProfileView: React.FC = () => {
                   أصل الصنعة
                 </div>
 
-                <h3 className="text-2xl sm:text-3xl font-black font-serif">
+                <h3 className="text-2xl sm:text-3xl font-main">
                   مش مجرد ورشة...
                   <br />
-                  <span className="text-primary">
+                  <br />
+                  <span className="text-primary dark:text-primary-hover">
                     دي حكاية بتكمل.
                   </span>
                 </h3>

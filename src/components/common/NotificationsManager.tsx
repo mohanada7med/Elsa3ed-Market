@@ -340,7 +340,7 @@ export const NotificationsManager: React.FC<NotificationsManagerProps> = ({
                   : 'تنبيهات ورشة الصنعة والمبيعات'}
               </span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-black font-serif tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-main tracking-tight">
               {viewMode === 'admin'
                 ? 'متابعة العمليات الحية، طلبات الورش، والتحويلات المالية'
                 : 'متابعة حركة الطلبات، رصيد الأرباح، ونفاد المخزون أولاً بأول'}
