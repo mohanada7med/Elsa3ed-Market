@@ -378,7 +378,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                     text-white
                     font-bold
                     text-base
-                    font-heritage
+                    font-cairo
                     tracking-wide
                     [writing-mode:vertical-rl]
                     rotate-180
@@ -491,7 +491,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                           lg:text-4xl
                           font-black
                           text-white
-                          font-heritage
+                          font-cairo
                           leading-tight
                         ">
                           {portal.title}
@@ -938,7 +938,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
                 leading-tight
                 tracking-tight
                 text-white
-                font-heritage
+                font-cairo
               ">
                 {portal.title}
               </h3>
@@ -996,6 +996,7 @@ export const WahEcosystemPortalSection: React.FC = () => {
           </motion.div>
         ))}
       </div>
+      
     </section>
   );
 };

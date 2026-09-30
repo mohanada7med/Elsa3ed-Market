@@ -143,7 +143,6 @@ export const WAH_TOKENS = {
     fontSecondary: "'Amiri', 'Cairo', serif",
     fontCairo: "'Cairo', system-ui, -apple-system, sans-serif",
     fontAmiri: "'Amiri', 'Cairo', serif",
-    fontAlexandria: "'Alexandria', system-ui, -apple-system, sans-serif",
   },
   radius: {
     sm: '0.5rem', // 8px

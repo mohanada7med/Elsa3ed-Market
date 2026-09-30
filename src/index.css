@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Almarai:wght@300;400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Lalezar&family=Marhey:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
@@ -6,10 +6,9 @@
 
 /* =========================================================================
    WAH BRAND TYPOGRAPHY SYSTEM
-   - Primary UI, Navigation & Headings: 'Cairo' (خط كيرو العصري الأنيق)
+   - Primary UI, Navigation & Body: 'Cairo' (خط كيرو العصري الأنيق)
    - Authentic Heritage, Stories & Quotes: 'Amiri' (خط أميري التراثي الأصيل)
-   - Contemporary Clean Sans: 'Alexandria' (خط الإسكندرية الهندسي)
-   - Traditional Stout Calligraphy Accent: 'MainFont' (Adobe SHIN Stout Bold)
+   - Traditional Stout Calligraphy Accent: 'MainFont' (Amira Typo)
    ========================================================================= */
 @font-face {
   font-family: 'MainFont';
@@ -78,12 +77,12 @@
   --color-wahDark-card: #3B1E0E;
   --color-wahDark-elevated: #4A2715;
 
-  /* WAH Brand Identity Typography - Lalezar as Primary & Alexandria as Secondary/Body */
+  /* WAH Brand Identity Typography - MainFont for headings/display, Cairo for body/UI, Amiri for heritage */
   --font-wah-main: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
   --font-wah-secondary: 'Cairo', system-ui, -apple-system, sans-serif;
   --font-wah-display: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
   --font-wah-heading: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
-  --font-wah-heritage: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
+  --font-wah-heritage: 'Amiri', 'Cairo', serif;
   --font-wah-body: 'Cairo', system-ui, -apple-system, sans-serif;
 
   /* Brand Primitive Colors */
@@ -335,21 +334,17 @@
   --wah-info: var(--info);
 }
 
-/* WAH Typography Hierarchy - Lalezar as Primary Display & Heading Font */
+/* WAH Typography Hierarchy */
 .font-main {
   font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
-.font-lalezar {
-  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
-}
-
 .font-heading {
-  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-display {
-  font-family: 'MainFont', 'Cairo', cursive, system-ui, -apple-system, sans-serif;
+  font-family: 'MainFont', 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-price,
@@ -360,19 +355,19 @@
 }
 
 .font-secondary {
-  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-body {
-  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-heritage {
-  font-family: 'Alexandria', cursive, sans-serif;
+  font-family: 'Amiri', 'Cairo', serif;
 }
 
 .font-editorial {
-  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .font-serif {
@@ -387,29 +382,17 @@
   font-family: 'Amiri', 'AdobeArabic', 'Cairo', serif;
 }
 
-.font-alexandria {
-  font-family: 'Alexandria', 'Cairo', system-ui, -apple-system, sans-serif;
-}
-
-.font-ruqaa {
-  font-family: 'Aref Ruqaa', 'Amiri', serif;
-}
-
-.font-marhey {
-  font-family: 'Marhey', cursive, sans-serif;
-}
-
 .font-shin {
   font-family: 'MainFont', 'Cairo', sans-serif;
 }
 
 .font-wah-display {
-  font-family: var(--font-wah-display, 'Lalezar', 'MainFont', cursive, sans-serif);
+  font-family: var(--font-wah-display, 'MainFont', 'Cairo', system-ui, sans-serif);
   letter-spacing: normal;
 }
 
 .font-wah-heading {
-  font-family: var(--font-wah-heading, 'Lalezar', 'MainFont', cursive, sans-serif);
+  font-family: var(--font-wah-heading, 'MainFont', 'Cairo', system-ui, sans-serif);
   letter-spacing: normal;
 }
 

@@ -238,14 +238,6 @@ export default {
           "sans-serif",
         ],
 
-        lalezar: [
-          "'MainFont'",
-          "'Cairo'",
-          "system-ui",
-          "-apple-system",
-          "sans-serif",
-        ],
-
         price: [
           "'Cairo'",
           "system-ui",
@@ -294,29 +286,10 @@ export default {
           "serif",
         ],
 
-        ruqaa: [
-          "'Aref Ruqaa'",
-          "'Amiri'",
-          "serif",
-        ],
-
-        marhey: [
-          "'Marhey'",
-          "cursive",
-          "sans-serif",
-        ],
-
         serif: [
           "'Amiri'",
           "'Cairo'",
           "serif",
-        ],
-
-        alexandria: [
-          "'Alexandria'",
-          "system-ui",
-          "-apple-system",
-          "sans-serif",
         ],
 
         // Legacy aliases

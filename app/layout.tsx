@@ -50,16 +50,16 @@ export default function RootLayout({
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preload" as="image" href="https://res.cloudinary.com/kuana1nl/image/upload/v1790728559/looooooooogo.png" type="image/png" />
-        {/* Typography: Cairo (Primary UI & Display), Amiri (Heritage & Editorial), Alexandria (Modern Sans) */}
+        {/* Typography: Cairo (Primary UI & Display), Amiri (Heritage & Editorial) */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700;800&family=Almarai:wght@300;400;700;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Lalezar&family=Marhey:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;800;900&display=swap"
           rel="stylesheet"
         />
         <link
           rel="preload"
-          href="/fonts/mainfont.ttf"
+          href="/fonts/alfont_com_Amira-Typo.ttf"
           as="font"
           type="font/ttf"
           crossOrigin="anonymous"
