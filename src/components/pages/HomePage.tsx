@@ -40,13 +40,16 @@ export const HomePage: React.FC = () => {
         <HeritageSectionDivider variant="flanked" label="فيديوهات الصعيد" />
 
         {/* 3. Craft Reels (وه بيحكي) */}
-        <CraftReelsSection />
+        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 550px' }}>
+          <CraftReelsSection />
+        </div>
 
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider variant="flanked" label="سوق ومنتجات وه" />
 
         {/* 4. Products Section - سوق وه */}
         <section
+          style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 650px' }}
           className="
     relative
     overflow-hidden
@@ -158,9 +161,10 @@ export const HomePage: React.FC = () => {
         <HeritageSectionDivider variant="flanked" label="اختبار الصعيد" />
 
         {/* 5. Dialect Dictionary & Quiz Page */}
-        <DialectDictionaryPage />
+        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 500px' }}>
+          <DialectDictionaryPage />
+        </div>
 
-        {/* فاصل تراثي أصيل */}
         {/* فاصل تراثي أصيل */}
         <HeritageSectionDivider
           variant="flanked"
@@ -168,7 +172,10 @@ export const HomePage: React.FC = () => {
         />
 
         {/* 6. Featured Sellers — شيوخ الصنعة */}
-        <section className="relative overflow-hidden">
+        <section
+          style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 450px' }}
+          className="relative overflow-hidden"
+        >
           {/* WAH Pattern — الصنعة فقط */}
           <div
             className="
@@ -203,7 +210,9 @@ export const HomePage: React.FC = () => {
         <HeritageSectionDivider variant="ribbon" />
 
         {/* 7. About Section */}
-        <AboutSection />
+        <div style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 400px' }}>
+          <AboutSection />
+        </div>
       </div>
     </div>
   );

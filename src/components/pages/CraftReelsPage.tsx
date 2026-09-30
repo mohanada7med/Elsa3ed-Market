@@ -368,6 +368,21 @@ export const CraftReelsPage: React.FC = () => {
     };
   }, [viewMode]);
 
+  /* ---------- media cleanup on unmount ---------- */
+
+  useEffect(() => {
+    return () => {
+      const videos = document.querySelectorAll('video');
+      videos.forEach((v) => {
+        try {
+          v.pause();
+          v.removeAttribute('src');
+          v.load();
+        } catch (_) { }
+      });
+    };
+  }, []);
+
   /* ---------- derived data (computed once per change, not per render) ---------- */
 
   const governorateCounts = useMemo(() => {
@@ -447,7 +462,31 @@ export const CraftReelsPage: React.FC = () => {
     window.scrollTo({ top: 0 });
   }, []);
 
+  const handleExitToHome = useCallback(() => {
+    // 1. Immediately pause and unbind all active videos across DOM
+    const videos = document.querySelectorAll('video');
+    videos.forEach((v) => {
+      try {
+        v.pause();
+        v.removeAttribute('src');
+        v.load();
+      } catch (_) { }
+    });
+
+    // 2. Clear viewMode immediately so feed unmounts
+    setViewMode('grid');
+
+    // 3. Switch active page immediately
+    setActivePage('home');
+  }, [setActivePage]);
+
   const backToGrid = useCallback(() => {
+    const videos = document.querySelectorAll('video');
+    videos.forEach((v) => {
+      try {
+        v.pause();
+      } catch (_) { }
+    });
     setSelectedReelId(null); // otherwise the feed re-opens on the old reel
     setViewMode('grid');
   }, []);
@@ -596,11 +635,13 @@ export const CraftReelsPage: React.FC = () => {
           <header className="absolute inset-x-0 top-0 z-50 flex items-center justify-between gap-2 bg-gradient-to-b from-black/90 to-transparent px-3 pb-6 pt-[max(calc(env(safe-area-inset-top,0px)+12px),2.5rem)] sm:px-6 sm:pt-3.5">
             <button
               type="button"
-              onClick={() => setActivePage('home')}
-              className="flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-xs font-bold text-white"
+              onClick={handleExitToHome}
+              className="flex items-center gap-1.5 rounded-full bg-black/60 hover:bg-black/80 px-3.5 py-1.5 text-xs font-bold text-white border border-white/20 active:scale-95 transition-all cursor-pointer shadow-md"
+              title="الرجوع للرئيسية"
+              aria-label="الرجوع للرئيسية"
             >
               <ArrowLeft size={14} />
-              <span className="hidden sm:inline">الرئيسية</span>
+              <span className="inline">الرئيسية</span>
             </button>
 
             <select
@@ -690,17 +731,24 @@ export const CraftReelsPage: React.FC = () => {
       <FloatingDock count={filteredReels.length} label="حكاية مصورة" />
 
       {/* Sticky toolbar: one solid bar instead of several glass panels */}
-      <div className="sticky top-0 z-30 border-b border-black/10 bg-cream/95 dark:border-white/10 dark:bg-espresso-900/95">
+      <div
+        className="sticky top-0 z-30 border-b border-black/10 bg-cream dark:border-white/10 dark:bg-espresso-900"
+        style={{
+          contain: 'layout paint',
+          transform: 'translateZ(0)',
+        }}
+      >
         <div className="mx-auto max-w-[1600px] space-y-3 px-5 py-3 sm:px-8 lg:px-12">
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setActivePage('home')}
-              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-black/5 px-3 py-2.5 text-xs font-bold dark:bg-white/10"
-              title="الرجوع للرئيسية"
+              onClick={handleExitToHome}
+              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-black/5 px-3 py-2.5 text-xs font-bold dark:bg-white/10 active:scale-95 transition-all cursor-pointer"
+              title="الرجوع للصفحة الرئيسية"
+              aria-label="الرجوع للصفحة الرئيسية"
             >
               <ArrowLeft size={14} />
-              <span className="hidden sm:inline">الرئيسية</span>
+              <span className="inline">الرئيسية</span>
             </button>
 
             <div className="relative min-w-0 flex-1">
@@ -708,6 +756,7 @@ export const CraftReelsPage: React.FC = () => {
                 size={16}
                 className="absolute right-3.5 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40"
               />
+
               <input
                 type="text"
                 value={searchQuery}
@@ -715,6 +764,7 @@ export const CraftReelsPage: React.FC = () => {
                 placeholder="ابحث عن مكان أو حرفة أو حكاية..."
                 className="h-11 w-full rounded-xl bg-black/[0.05] pl-10 pr-10 text-sm outline-none placeholder:text-black/35 focus:ring-2 focus:ring-primary/40 dark:bg-white/[0.07] dark:placeholder:text-white/30"
               />
+
               {searchQuery && (
                 <button
                   type="button"
@@ -729,13 +779,17 @@ export const CraftReelsPage: React.FC = () => {
             <button
               type="button"
               onClick={() =>
-                filteredReels.length > 0 ? openReelInFeed(filteredReels[0].id) : setViewMode('feed')
+                filteredReels.length > 0
+                  ? openReelInFeed(filteredReels[0].id)
+                  : setViewMode('feed')
               }
               className="flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-xs font-black text-white"
               title="مشاهدة بالشاشة الكاملة"
             >
               <Play size={14} className="fill-white" />
-              <span className="hidden sm:inline">شاهد بالشاشة الكاملة</span>
+              <span className="hidden sm:inline">
+                شاهد بالشاشة الكاملة
+              </span>
             </button>
 
             <button
@@ -745,32 +799,37 @@ export const CraftReelsPage: React.FC = () => {
               title="نشر حكاية جديدة"
             >
               <Plus size={14} />
-              <span className="hidden md:inline">نشر حكاية</span>
+              <span className="hidden md:inline">
+                نشر حكاية
+              </span>
             </button>
           </div>
 
-          {/* Governorates: text chips with counts (replaces 11 round images) */}
+          {/* Governorates */}
           <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
             <button
               type="button"
               onClick={() => setSelectedGovernorate('all')}
-              className={`${chipBase} ${selectedGovernorate === 'all' ? chipOn : chipIdle}`}
+              className={`${chipBase} ${selectedGovernorate === 'all' ? chipOn : chipIdle
+                }`}
             >
               كل الصعيد ({reels.length})
             </button>
+
             {GOVERNORATES.map((g) => (
               <button
                 key={g}
                 type="button"
                 onClick={() => setSelectedGovernorate(g)}
-                className={`${chipBase} ${selectedGovernorate === g ? chipOn : chipIdle}`}
+                className={`${chipBase} ${selectedGovernorate === g ? chipOn : chipIdle
+                  }`}
               >
                 {g} ({governorateCounts[g] || 0})
               </button>
             ))}
           </div>
 
-          {/* Content types: underlined tabs so they read as a second level */}
+          {/* Content types */}
           <div className="no-scrollbar flex items-center gap-5 overflow-x-auto">
             {CONTENT_TYPES.map((c) => (
               <button
@@ -778,8 +837,8 @@ export const CraftReelsPage: React.FC = () => {
                 type="button"
                 onClick={() => setSelectedContentType(c.id)}
                 className={`shrink-0 cursor-pointer whitespace-nowrap border-b-2 pb-1.5 text-xs font-bold transition-colors ${selectedContentType === c.id
-                    ? 'border-primary text-primary'
-                    : 'border-transparent text-black/55 hover:text-black dark:text-white/55 dark:hover:text-white'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-black/55 hover:text-black dark:text-white/55 dark:hover:text-white'
                   }`}
               >
                 {c.label}
@@ -788,7 +847,6 @@ export const CraftReelsPage: React.FC = () => {
           </div>
         </div>
       </div>
-
       <div className="mx-auto my-5 max-w-[1600px] px-5 sm:px-8 lg:px-12">
         <UncleWahHeroBanner
           doorTitle="حكاوي وتجارب حية من ورش ودكاكين الصعيد"

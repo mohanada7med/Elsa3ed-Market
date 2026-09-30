@@ -112,20 +112,77 @@ export const ReelActionButtons: React.FC<ReelActionButtonsProps> = ({
       </button>
 
       {/* 4. Mute / Sound Toggle */}
-      <button
-        type="button"
-        id={`reel-mute-btn-${reel.id}`}
-        onClick={onToggleMute}
-        className="w-11 h-11 rounded-full bg-black/60 hover:bg-black/80 sm:backdrop-blur-md border border-white/20 text-white flex items-center justify-center transition-all duration-200 active:scale-75 cursor-pointer"
-        title={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
-        aria-label={isMuted ? 'تشغيل الصوت' : 'كتم الصوت'}
-      >
-        {isMuted ? (
-          <VolumeX className="w-5 h-5 text-amber-400" />
-        ) : (
-          <Volume2 className="w-5 h-5 text-emerald-400" />
+      <div className="relative flex flex-col items-center">
+        {/* Tooltip hint pointing to the mute button */}
+        {isMuted && (
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleMute();
+            }}
+            className="
+              absolute
+              left-full
+              ml-2.5
+              top-1/2
+              -translate-y-1/2
+              z-50
+              flex
+              items-center
+              gap-1.5
+              px-2.5
+              py-1.5
+              rounded-xl
+              bg-amber-400
+              hover:bg-amber-300
+              text-stone-950
+              font-black
+              text-[11px]
+              whitespace-nowrap
+              shadow-xl
+              shadow-black/70
+              border
+              border-amber-200
+              cursor-pointer
+              pointer-events-auto
+              animate-bounce
+              transition-transform
+              active:scale-95
+            "
+          >
+            {/* Arrow pointing left directly to the button */}
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-y-[5px] border-y-transparent border-r-[6px] border-r-amber-400" />
+            <Volume2 className="w-3.5 h-3.5 shrink-0 fill-stone-950" />
+            <span>دوس هنا لتشغيل الصوت</span>
+          </div>
         )}
-      </button>
+
+        <button
+          type="button"
+          id={`reel-mute-btn-${reel.id}`}
+          onClick={onToggleMute}
+          className="flex flex-col items-center gap-1 group cursor-pointer"
+          title={isMuted ? 'دوس على الزرار علشان تشغل الصوت' : 'كتم الصوت'}
+          aria-label={isMuted ? 'دوس على الزرار علشان تشغل الصوت' : 'كتم الصوت'}
+        >
+          <div
+            className={`w-11 h-11 rounded-full flex items-center justify-center sm:backdrop-blur-md border transition-all duration-200 active:scale-75 ${
+              isMuted
+                ? 'bg-black/85 hover:bg-black/95 border-amber-400 text-amber-300 ring-2 ring-amber-400/50 shadow-lg shadow-amber-900/40 animate-pulse'
+                : 'bg-black/60 hover:bg-black/80 border-white/20 text-white'
+            }`}
+          >
+            {isMuted ? (
+              <VolumeX className="w-5 h-5 text-amber-400" />
+            ) : (
+              <Volume2 className="w-5 h-5 text-emerald-400" />
+            )}
+          </div>
+          <span className="text-[10px] font-bold text-white drop-shadow-md leading-none">
+            {isMuted ? 'تشغيل الصوت' : 'الصوت'}
+          </span>
+        </button>
+      </div>
 
       {/* 5. Delete (Admin or Owner Only) */}
       {canDelete && (

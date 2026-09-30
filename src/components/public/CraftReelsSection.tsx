@@ -53,8 +53,37 @@ export const CraftReelsSection: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isInView, setIsInView] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  /* ================= DETECT VIEWPORT VISIBILITY ================= */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { rootMargin: '100px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  /* ================= CLEANUP ON UNMOUNT ================= */
+  useEffect(() => {
+    return () => {
+      if (videoRef.current) {
+        try {
+          videoRef.current.pause();
+          videoRef.current.removeAttribute('src');
+          videoRef.current.load();
+        } catch (_) { }
+      }
+    };
+  }, []);
 
   /* ================= DETECT MOBILE ================= */
   useEffect(() => {
@@ -95,10 +124,10 @@ export const CraftReelsSection: React.FC = () => {
 
   /* ================= AUTOPLAY ================= */
   useEffect(() => {
-    if (!reels.length || isHovered || isPaused || selectedReelId) return;
+    if (!isInView || !reels.length || isHovered || isPaused || selectedReelId) return;
     const interval = setInterval(goNext, AUTOPLAY_TIME);
     return () => clearInterval(interval);
-  }, [reels.length, isHovered, isPaused, selectedReelId, goNext, activeIndex]);
+  }, [isInView, reels.length, isHovered, isPaused, selectedReelId, goNext, activeIndex]);
 
   /* ================= VIDEO SYNC ================= */
   const currentReel = reels[activeIndex];
@@ -107,7 +136,7 @@ export const CraftReelsSection: React.FC = () => {
     const video = videoRef.current;
     if (!video || !currentReel) return;
 
-    if (isModalOpen || selectedReelId) {
+    if (!isInView || isModalOpen || selectedReelId) {
       try {
         video.pause();
       } catch (_) { }
@@ -130,7 +159,7 @@ export const CraftReelsSection: React.FC = () => {
     return () => {
       active = false;
     };
-  }, [activeIndex, currentReel?.id, isMuted, isModalOpen, selectedReelId]);
+  }, [isInView, activeIndex, currentReel?.id, isMuted, isModalOpen, selectedReelId]);
 
   /* ================= MEDIA GETTERS ================= */
   const getVideo = (reel: CraftReel) =>
@@ -501,9 +530,6 @@ export const CraftReelsSection: React.FC = () => {
                   }}
                 >
                   <div className="relative w-full h-full bg-stone-900 overflow-hidden">
-                    {/* Heritage Hallmark Seal on Card "حكاية" */}
-                    <HeritageCornerStamp position="top-right" size={30} badgeLabel="حكاية" className="z-30 pointer-events-none" />
-
                     {/* Active Reel Display */}
                     {isCurrent ? (
                       <div className="relative w-full h-full bg-black">
@@ -545,10 +571,17 @@ export const CraftReelsSection: React.FC = () => {
                                 e.stopPropagation();
                                 setIsMuted((m) => !m);
                               }}
-                              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/50 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-black/70 transition"
+                              className={`h-7 sm:h-8 flex items-center justify-center gap-1.5 transition-all cursor-pointer ${isMuted
+                                  ? 'px-3 rounded-full bg-amber-400 text-stone-950 font-bold border border-amber-300 shadow-lg shadow-amber-900/40 animate-pulse'
+                                  : 'w-7 sm:w-8 rounded-full bg-black/50 backdrop-blur-xl border border-white/10 text-white hover:bg-black/70'
+                                }`}
+                              title={isMuted ? 'دوس على الزرار علشان تشغل الصوت' : 'كتم الصوت'}
                             >
                               {isMuted ? (
-                                <VolumeX className="w-3.5 h-3.5" />
+                                <>
+                                  <VolumeX className="w-3.5 h-3.5 shrink-0" />
+                                  <span className="text-[10px] whitespace-nowrap">دوس لتشغيل الصوت 🔊</span>
+                                </>
                               ) : (
                                 <Volume2 className="w-3.5 h-3.5" />
                               )}
@@ -567,6 +600,21 @@ export const CraftReelsSection: React.FC = () => {
                             </button>
                           </div>
                         </div>
+
+                        {/* Floating Sound Prompt Banner */}
+                        {isMuted && videoLoaded && (
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsMuted(false);
+                            }}
+                            className="absolute top-16 left-1/2 -translate-x-1/2 z-35 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-950/90 border border-amber-400 text-amber-300 text-xs font-black shadow-xl shadow-black/70 cursor-pointer pointer-events-auto animate-bounce backdrop-blur-sm whitespace-nowrap"
+                            title="دوس على الزرار علشان تشغل الصوت"
+                          >
+                            <VolumeX className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                            <span>دوس على الزرار علشان تشغل الصوت 🔊</span>
+                          </div>
+                        )}
 
                         {/* Play/Pause Center Tap Area */}
                         <button
